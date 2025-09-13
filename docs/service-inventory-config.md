@@ -3,8 +3,8 @@
 The AI Landing Zone Service Inventory is a curated list of Azure services that form the architecture of the AI Landing Zone. It defines which services are deployed by default, which are feature-flagged, and how they align across Bicep, Terraform, and Portal implementations. This inventory ensures consistency, feature parity, and modularity across deployment options, supporting both generative and non-generative AI workloads.
 
 ## Service Inventory
-| Category | Service | Purpose | Deploy Default | Feature Flag | Notes |
-|----------|---------|---------|----------------|--------------|-------|
+| Category | Service | Purpose | Default Deployment | Feature Flags | Notes |
+|----------|---------|---------|--------------------|--------------|-------|
 | Core AI  | Azure AI Foundry Hub / Project | Model catalog, prompt flow, orchestration | Yes | Hub add-ons | Multi-project supported |
 | Core AI  | Azure OpenAI deployments | LLM & embedding models | Yes | Extra models / regions | PTU + PAYGO pairing |
 | Orchestration | Azure Container Apps | Agent / API services hosting | Yes | GPU workload profile | Scale rules standardized |
