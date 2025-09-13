@@ -1,11 +1,24 @@
 ## Operational Excellence
 
-| ID   | Specification |
-|------|--------------|
-|      |              |
-|      |              |
-|      |              |
-|      |              |
-|      |              |
-|      |              |
-|      |              |
+Operational excellence is about running the AI Landing Zone as a product. It covers day‑2 operations, change management, readiness, and continuous improvement so teams can onboard and scale AI workloads safely and quickly. Keep guidance concise, opinionated, and automatable.
+
+| ID     | Specification |
+|--------|--------------|
+| OE-R1  | **Environment Strategy & Rings**: Define a minimum set of environments (sandbox, dev, test, prod) with clear promotion gates for models, prompts, and vector indexes. Use separate Azure AI Foundry projects or AML workspaces per environment; never mix experimental and production artifacts. Document a lightweight promotion checklist (security scan passed, evaluation metrics threshold met, cost impact reviewed). |
+| OE-R2  | **Runbooks & Playbooks**: Provide runbooks for common incidents (quota exhaustion, model latency spike, vector index corruption, key rotation failure) and playbooks for safe rollback (switch traffic to PAYGO endpoint, fail over to secondary region, revert prompt flow version). Store playbooks in source control; reference them from operational alerts. |
+| OE-R3  | **SLOs / SLIs**: Define service level objectives for median & P95 end‑to‑end response latency, success rate, and groundedness / evaluation score (where applicable). Collect SLIs from APIM (token usage & latency), Azure Monitor traces, and evaluation pipelines. Publish current vs target in a dashboard. Trigger an operational review if error budget consumption >50% mid‑period. |
+| OE-R4  | **Capacity & Quota Management**: Implement a weekly job (pipeline or scheduled workflow) to query model deployment quotas, PTU utilization, and storage / vector index size growth. Raise early warning when forecasted usage crosses 70% of quota within 30 days. Maintain a documented escalation path to request capacity increases. |
+| OE-R5  | **Change Management (Models & Prompts)**: Version prompts, model deployments, and orchestration flows. Require automated evaluation (quality & safety metrics) before merging a change impacting production. Store model deployment manifests (Bicep/Terraform parameters) under source control to support immutable redeploy and drift detection. |
+| OE-R6  | **Operational Tags & Metadata**: Enforce tagging (service, owner, dataSensitivity, environment, costCenter, businessCriticality) through policy. Use tags in cost and incident queries, and in Service Groups (preview) to aggregate cross‑subscription assets for runbooks. |
+| OE-R7  | **Resilient Release Workflow**: Adopt progressive rollout for high‑impact changes (new model version, major prompt). Route a small % of traffic via APIM or gateway policies (canary) and auto‑promote only if error & latency deltas remain within thresholds. Provide guidance for feature flags in application layer to toggle model/endpoint selection. |
+| OE-R8  | **Secrets & Key Rotation**: Although Entra ID is preferred, where keys remain (e.g., legacy integration), automate rotation (every 90 days) using Key Vault rotation policies and track upcoming expirations. Include a runbook for emergency key revoke. |
+| OE-R9  | **Observability Baseline**: Define a standard minimal instrumentation package (correlation ID, model name, deployment, token counts, prompt template version). Require all services (frontend, orchestrator, functions, container apps) to emit structured logs. Provide sample middleware / SDK configuration in repository. |
+| OE-R10 | **Incident Response & Post‑Incident Reviews**: Define Sev categories with time‑to‑acknowledge and time‑to‑mitigate targets. After Sev‑1/2 incidents, complete a blameless post‑incident review with actionable follow‑ups (automation, guardrail enhancement) tracked to closure. |
+| OE-R11 | **Preview Feature Evaluation**: For preview services (e.g., Service Groups, emerging model safety features), isolate usage to non‑prod or a dedicated pilot project until risk assessment & rollback path documented. |
+| OE-R12 | **Regional Divergence Handling**: When AI model region differs from platform region, document explicit data flow & latency impact. Provide guidance to keep stateful data (chat history, vector indexes) close to model inference region or implement caching to reduce inter‑region hops. |
+| OE-R13 | **Cost & Efficiency Reviews**: Schedule a monthly operational review to examine PTU utilization vs spend, idle compute, and low‑value model deployments. Decommission unused endpoints (no traffic for 30 days). |
+| OE-R14 | **Drift & Configuration Compliance**: Run a nightly pipeline to compare deployed resources (Bicep/Terraform state) vs source definitions. Flag drift (e.g., manual model SKU change) and create work item for remediation within agreed SLA. |
+| OE-R15 | **AI Safety Operations Integration**: Integrate responsible AI evaluation results (evaluation metrics, red team findings) into standard operational dashboard and gating logic; treat safety regressions as operational incidents. |
+
+Tradeoffs: A richer environment & promotion model adds governance overhead; keep early phases lean (dev + prod) and expand only when concurrent teams / risk justify it. Canary & progressive rollout reduce blast radius but require extra routing logic (APIM policies, application feature flags). Central quotas can accelerate approvals but may become contention points—monitor process lead times.
+
