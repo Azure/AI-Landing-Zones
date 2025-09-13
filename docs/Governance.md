@@ -12,6 +12,3 @@
 | G-R8 | **Time‑boxed policy waivers**: Implement waiver workflow (issue template + owner + expiry + compensating control). Dashboard MUST surface active waivers & auto‑notify owner 7 days before expiry. No open‑ended waivers allowed. |
 | G-R9 | **Data residency control**: Maintain residency decision checklist (data categories, encryption, replication scope). Sensitive embeddings MUST NOT replicate cross‑sovereign boundaries without documented DSR (data sharing request) approval. Reference the Sovereign Landing Zone pattern when applicable. |
 
-**Tradeoffs & Rationale**: Strong mandatory language accelerates consistent governance but increases initial onboarding friction. Audit‑first phases reduce disruption; moving to deny enforces guardrails once adoption stabilizes. Service Groups add preview risk; mitigation is isolation to non‑critical automation paths and maintained rollback. The model allows listing controls for cost & safety, but may slow experimentation—offset via a defined fast-track review SLA.
-
-
