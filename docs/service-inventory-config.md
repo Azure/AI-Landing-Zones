@@ -25,7 +25,9 @@ The AI Landing Zone Service Inventory is a curated list of Azure services that f
 
 ## Service Configuration
 
-This section normalizes service-level configuration across the Terraform pattern [(`terraform-azurerm-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone) and the Bicep pattern [(`bicep-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/bicep-avm-ptn-aiml-landing-zone). For each service, we list: purpose, object/parameter mapping, deploy flags, principal configuration domains, notable defaults, and recommended adjustments. Only salient (landing-zone-shaping) parameters are included—fine‑grained, rarely changed properties (e.g., individual Application Gateway path rule details) remain the source of truth in upstream pattern docs.
+This section normalizes service-level configuration across the Terraform pattern [(`terraform-azurerm-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone) and the Bicep pattern [(`bicep-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/bicep-avm-ptn-aiml-landing-zone).
+For each service, we list: purpose, object/parameter mapping, deploy flags, principal configuration domains, notable defaults, and recommended adjustments.
+Only salient (landing-zone-shaping) parameters are included. Fine‑grained, rarely changed properties (e.g., individual Application Gateway path rule details) remain the source of truth in upstream pattern docs.
 
 ### Legend / Cross-Cutting
 - Deploy Toggle (Bicep): `deployToggles.*` (e.g. `deployToggles.apim`). Terraform typically uses an object-level `deploy` bool or optional presence.
