@@ -5,7 +5,7 @@ The AI Landing Zone Service Inventory is a curated list of Azure services that f
 ## Service Inventory
 | Category | Service | Purpose | Default Deployment | Feature Flags | Notes |
 |----------|---------|---------|--------------------|--------------|-------|
-| Core AI  | Azure AI Foundry Hub / Project | Model catalog, prompt flow, orchestration | Yes | Hub add-ons | Multi-project supported |
+| Core AI  | Azure AI Foundry (Resource + Projects) | Model catalog, agents, orchestration & evaluations | Yes | Project add-ons | Multi-project supported |
 | Core AI  | Azure OpenAI deployments | LLM & embedding models | Yes | Extra models / regions | PTU + PAYGO pairing |
 | Orchestration | Azure Container Apps | Agent / API services hosting | Yes | GPU workload profile | Scale rules standardized |
 | Gateway | Azure API Management | GenAI gateway, routing, auth, usage control | Yes | Multi-region | Token & latency policies |
@@ -147,7 +147,7 @@ Partition strategy: Pre-create containers for chat sessions, embedding metadata 
 |--------|-----------|-------|
 | Object | `ks_ai_search_definition` (main) or BYOR `ai_search_definition` | `searchDefinition` |
 | Deploy Flag | `.deploy` | `deployToggles.search` |
-| Capacity | `replica_count`, `partition_count` | same | Adjust replicas for query throughput, partitions for index size—start 2x1. |
+| Capacity | `replica_count`, `partition_count` | same | Adjust replicas for query throughput, partitions for index size-start 2x1. |
 | Semantic | `semantic_search_enabled`, `semantic_search_sku` | `semanticSearchEnabled`, `semanticSearchSku` | Enable only when semantic ranking adds value; monitor cost. |
 | Local Auth | `local_authentication_enabled` (true default) | `localAuthenticationEnabled` | Consider disabling for enterprise RBAC control. |
 | Network | `public_network_access_enabled` (default false) | `publicNetworkAccessEnabled` | Keep false + private endpoint. |
@@ -181,7 +181,7 @@ Lifecycle: Define external blob lifecycle rules (not yet surfaced) for archiving
 |--------|-----------|-------|
 | Workspace | `law_definition` | `lawDefinition` |
 | Retention | `retention` (30) | `retentionInDays` | Increase to 60–90 for incident forensics; archive beyond. |
-| App Insights | (not isolated object—often implicit) | `appInsightsDefinition` (if exposed) | Link to workspace (Continuous Export or DCR). |
+| App Insights | (not isolated object-often implicit) | `appInsightsDefinition` (if exposed) | Link to workspace (Continuous Export or DCR). |
 | Diagnostic Settings | Per-resource `enable_diagnostic_settings` | `enableDiagnosticSettings` | Ensure categories: `Audit`, `Request`, `ConsoleLogs` (Container Apps), `GatewayLogs` (APIM). |
 
 ### Container Apps (Individual Services / Agents)

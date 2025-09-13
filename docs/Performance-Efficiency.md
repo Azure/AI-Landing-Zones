@@ -21,5 +21,5 @@ Design for efficient use of compute, tokens, memory, storage, and network so you
 | PE-R15 | **Graceful Degradation Paths**: Document fallback hierarchy (primary PTU -> secondary PAYGO -> smaller model -> static answer / offline notice) with expected quality & latency tradeoffs. |
 | PE-R16 | **Periodic Performance Review**: Monthly review to compare current latency & token efficiency vs baseline; if regression >10% without quality gain, create optimization work item. |
 
-Tradeoffs: Aggressive caching reduces cost but risks stale answers; enforce TTL & safety re‑checks for long‑lived cache. Smaller models speed responses but may lower accuracy—use evaluation gating. Higher min replicas mitigate cold start but raise idle cost. Cross‑region optimization may add operational complexity if you duplicate data; balance latency vs data residency requirements.
+Tradeoffs: Aggressive caching reduces cost but risks stale answers; enforce TTL & safety re‑checks for long‑lived cache. Smaller models speed responses but may lower accuracy-use evaluation gating. Higher min replicas mitigate cold start but raise idle cost. Cross‑region optimization may add operational complexity if you duplicate data; balance latency vs data residency requirements.
 
