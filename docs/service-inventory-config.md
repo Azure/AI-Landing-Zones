@@ -25,7 +25,7 @@ The AI Landing Zone Service Inventory is a curated list of Azure services that f
 
 ## Service Configuration
 
-This section normalizes service-level configuration across the Terraform pattern [(`terraform-azurerm-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone) and the Bicep pattern [(`bicep-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/bicep-avm-ptn-aiml-landing-zone). For each service we list: purpose, object/parameter mapping, deploy flags, principal configuration domains, notable defaults, and recommended adjustments. Only salient (landing-zone-shaping) parameters are included—fine‑grained, rarely changed properties (e.g., individual Application Gateway path rule details) remain source-of-truth in upstream pattern docs.
+This section normalizes service-level configuration across the Terraform pattern [(`terraform-azurerm-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone) and the Bicep pattern [(`bicep-avm-ptn-aiml-landing-zone`)](https://github.com/Azure/bicep-avm-ptn-aiml-landing-zone). For each service, we list: purpose, object/parameter mapping, deploy flags, principal configuration domains, notable defaults, and recommended adjustments. Only salient (landing-zone-shaping) parameters are included—fine‑grained, rarely changed properties (e.g., individual Application Gateway path rule details) remain the source of truth in upstream pattern docs.
 
 ### Legend / Cross-Cutting
 - Deploy Toggle (Bicep): `deployToggles.*` (e.g. `deployToggles.apim`). Terraform typically uses an object-level `deploy` bool or optional presence.
@@ -41,7 +41,7 @@ This section normalizes service-level configuration across the Terraform pattern
 ### Virtual Network
 | Aspect | Terraform | Bicep | Notes |
 |--------|-----------|-------|-------|
-| Object | `vnet_definition` | `vnetDefinition` | Provides address space, subnets, peering, optional VWAN hub peering. |
+| Object | `vnet_definition` | `vnetDefinition` | Provides address space, subnets, peering, and optional VWAN hub peering. |
 | Peering | `vnet_peering_configuration`, `vwan_hub_peering_configuration`, separate `hub_vnet_peering_definition` | `hubVnetPeeringDefinition` | Use only when integrating with platform landing zone hub. |
 | Subnets | Map with `enabled`, `address_prefix`, etc. | Same conceptual map | Each downstream service consumes named subnets; keep reserved ranges for private endpoints & firewall. |
 | DDoS | `ddos_protection_plan_resource_id` | `ddosProtectionPlanResourceId` | Attach if elevated L3/L4 protection required. |
@@ -59,24 +59,24 @@ Recommended: Reserve at least /27 per high-traffic private endpoint set; documen
 | Purge on Destroy | `purge_on_destroy` | `purgeOnDestroy` | Enable only in ephemeral/non-prod. |
 | Telemetry | `enable_telemetry` (module-wide) | `enableTelemetry` (per resource) | Leave enabled for usage insights unless policy forbids. |
 
-Defaults & Guidance: Hub SKU `S0`; consider capacity planning when enabling multi-project model eval flows. Enforce tagging for cost allocation at project level. Use project connections for principle-of-least-privilege secrets retrieval rather than broad role assignments on hub.
+Defaults & Guidance: Hub SKU `S0`; consider capacity planning when enabling multi-project model eval flows. Enforce tagging for cost allocation at the project level. Use project connections for principle-of-least-privilege secrets retrieval rather than broad role assignments on the hub.
 
 ### Azure OpenAI / AI Model Deployments
-(Covered inside AI Foundry model deployments.) Ensure version upgrade strategy (`version_upgrade_option` / `versionUpgradeOption`) set to controlled for regulated workloads. Apply RAI policy names where available.
+(Covered inside AI Foundry model deployments.) Ensure version upgrade strategy (`version_upgrade_option` / `versionUpgradeOption`) is set to controlled for regulated workloads. Apply RAI policy names where available.
 
 ### Azure API Management (Gateway)
 | Aspect | Terraform | Bicep |
 |--------|-----------|-------|
 | Object | `apim_definition` | `apimDefinition` |
 | Deploy Flag | `apim_definition.deploy` | `deployToggles.apim` |
-| SKU / Capacity | `sku_root`, `sku_capacity` | `apimDefinition.sku{,Capacity}` | Default Premium x3 (Terraform). Bicep similar secure baseline. |
+| SKU / Capacity | `sku_root`, `sku_capacity` | `apimDefinition.sku{,Capacity}` | Default Premium x3 (Terraform). Bicep is a similar secure baseline. |
 | Multi-Region | `additional_locations[]` | `additionalLocations[]` | Provide zones & capacity for each region; plan for latency-based routing policies. |
 | Hostnames & Certs | `hostname_configuration` (management, portal, proxy, scm) + Key Vault refs | Same object | Centralize cert rotation in Key Vault with user-assigned identity. |
 | Auth (Portal) | `sign_in`, `sign_up`, `tenant_access` | same | Keep developer portal disabled in prod until hardened. |
 | Protocols | `protocols.enable_http2` | `protocols.enableHttp2` | Enable HTTP/2 for latency (idempotent). |
 | Role Assignments | Map | Map | Use granular built-in APIM roles rather than Owner. |
 
-Guidance: For GenAI token control enforce custom policies (rate, quota) in separate named policy fragments; store model endpoints as products with subscription requirement to control usage.
+Guidance: For GenAI token control, enforce custom policies (rate, quota) in separate named policy fragments; store model endpoints as products with subscription requirements to control usage.
 
 ### Application Gateway + WAF Policy
 | Aspect | Terraform | Bicep |
@@ -84,7 +84,7 @@ Guidance: For GenAI token control enforce custom policies (rate, quota) in separ
 | Gateway Object | `app_gateway_definition` | `appGatewayDefinition` |
 | Deploy Flag | `app_gateway_definition.deploy` | `deployToggles.appGateway` |
 | SKU / Scale | `sku` or `autoscale_configuration` | `appGatewayDefinition.sku` / `autoscaleConfiguration` | Autoscale recommended; min 2, max sized to peak concurrency. |
-| Backend Pools | `backend_address_pools` | same | For Container Apps prefer internal FQDN over IP for resilience. |
+| Backend Pools | `backend_address_pools` | same | For Container Apps, prefer internal FQDN over IP for resilience. |
 | Routing Rules | `request_routing_rules`, `url_path_map_configurations` | same | Keep rule priorities unique and documented. |
 | Probes | `probe_configurations` | same | Short intervals (<=30s) plus 3 threshold for faster failover. |
 | WAF Policy | Separate `waf_policy_definition` or `firewall_policy_id` link | `wafPolicyDefinition` or reference ID | Centralize managed rule overrides; start Detection in test → Prevention in prod. |
@@ -101,7 +101,7 @@ WAF Policy Defaults: Mode `Prevention`, OWASP 3.2 baseline; adjust file upload l
 | SKU/Tier | `sku`, `tier` | `sku`, `tier` | Use Premium only if TLS inspection required (watch cost). |
 | Zones | `zones` default [1,2,3] | `zones` | Maintain multi-AZ for resilience. |
 
-Guidance: Combine firewall route table with UDR directing 0.0.0.0/0 from private subnets to firewall if strict egress mandated; otherwise rely on service tags and private endpoints.
+Guidance: Combine firewall route table with UDR directing 0.0.0.0/0 from private subnets to firewall if strict egress is mandated; otherwise, rely on service tags and private endpoints.
 
 ### Container Apps Managed Environment
 | Aspect | Terraform | Bicep |
@@ -138,7 +138,7 @@ Container Apps (per app) are defined separately (`containerAppsList` in Bicep vs
 | Local Auth | `local_authentication_disabled` (true default) | `localAuthenticationDisabled` | Keep disabled (AAD RBAC). |
 | Network | `public_network_access_enabled` | `publicNetworkAccessEnabled` | False + private endpoint for production. |
 
-Partition strategy: Pre-create containers for chat sessions, embeddings metadata with partition keys (`/sessionId`, `/docCollection`) to avoid hot partitions.
+Partition strategy: Pre-create containers for chat sessions, embedding metadata with partition keys (`/sessionId`, `/docCollection`) to avoid hot partitions.
 
 ### Azure AI Search (Vector / Hybrid)
 | Aspect | Terraform | Bicep |
@@ -150,7 +150,7 @@ Partition strategy: Pre-create containers for chat sessions, embeddings metadata
 | Local Auth | `local_authentication_enabled` (true default) | `localAuthenticationEnabled` | Consider disabling for enterprise RBAC control. |
 | Network | `public_network_access_enabled` (default false) | `publicNetworkAccessEnabled` | Keep false + private endpoint. |
 
-If using Cosmos DB vectors, decide single vs dual index strategy (hybrid search vs dedicated vector-only). Document per-skill index schema.
+If using Cosmos DB vectors, decide on a single vs dual index strategy (hybrid search vs dedicated vector-only) document per-skill index schema.
 
 ### Storage Account
 | Aspect | Terraform | Bicep |
@@ -162,7 +162,7 @@ If using Cosmos DB vectors, decide single vs dual index strategy (hybrid search 
 | Shared Keys | `shared_access_key_enabled` (false default in module variant) | `sharedAccessKeyEnabled` | Keep disabled; use SAS only if required, rotate. |
 | Endpoints | `endpoints` map | `endpoints` | Enable only required subservices (Blob primarily). |
 
-Lifecycle: Define blob lifecycle rules externally (not yet surfaced) for archival of chat transcripts >90d.
+Lifecycle: Define external blob lifecycle rules (not yet surfaced) for archiving chat transcripts over 90 days.
 
 ### Key Vault
 | Aspect | Terraform | Bicep |
@@ -232,7 +232,7 @@ Azure Policy Initiatives are not parameterized as a simple object in these patte
 
 ### Security Baseline Quick Reference
 - Disable public network access everywhere unless explicitly required for controlled ingress (APIM, App Gateway public IP, optional Firewall PIP).
-- Prefer private DNS zones for all PaaS endpoints; ensure zone links established before deploying dependent services to avoid resolution race.
+- Prefer private DNS zones for all PaaS endpoints; ensure zone links are established before deploying dependent services to avoid resolution race.
 - Enforce Microsoft Entra ID RBAC (disable local/shared keys) for Storage, Cosmos DB, Key Vault, Search. Rotate any remaining keys via automation.
 - Use managed identity for all outbound calls from Container Apps and automation scripts; avoid embedding keys/secrets.
 - Centralize egress filtering either with Azure Firewall or service tags + NSGs; document exceptions.
@@ -247,6 +247,6 @@ Azure Policy Initiatives are not parameterized as a simple object in these patte
 - Maintain an IaC parameter catalog (this document) versioned alongside deployment pipelines.
 - Use environment-specific parameter overlays (dev/stage/prod) that differ only where required (e.g., capacity, retention, feature flags).
 - Implement drift detection (e.g., nightly `terraform plan` or Bicep what-if) and alert on configuration divergence from declared state.
-- Capture WAF rule overrides and APIM policy revisions in changelog for auditing.
+- Capture WAF rule overrides and APIM policy revisions in the changelog for auditing.
 
 ---
