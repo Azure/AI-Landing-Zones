@@ -2,12 +2,12 @@
 
 The AI Landing Zone provides an enterprise-scale production-ready reference architecture with implementation (Portal, Bicep & Terraform) to deploy secure and resilient AI Apps & Agents solutions in Azure.
 
-- The AI Landing Zone is an [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones) meant to act as a foundation for various use cases, scenarios, and patterns of AI Apps & Agents-based solutions which can be deployed with or without [platform landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones).
+- The AI Landing Zone is an [application landing zone](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones) meant to act as a foundation for various use cases, scenarios, and patterns of AI Apps & Agents-based solutions which can be deployed with or without [platform landing zone](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones).
 - The IaC implementations of the AI Landing Zone, i.e., Bicep and Terraform, are based on [Azure Verified Modules](https://aka.ms/AVM).
-- The AI Landing Zone focuses on [AI on Azure Platform](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures). A future version of it will cover [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
+- The AI Landing Zone focuses on [AI on Azure Platform](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/platform/architectures). A future version of it will cover [AI on Azure Infrastructure](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
 - The AI Landing Zone has been designed and tested for Azure Public Cloud, but can be leveraged in the Azure Government and Sovereign Cloud.
-- The AI Landing Zone can cover both generative and non-generative scenarios per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
-- The AI Landing Zone leverages [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/) as the orchestration framework.
+- The AI Landing Zone can cover both generative and non-generative scenarios per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
+- The AI Landing Zone leverages [Semantic Kernel](https://learn.microsoft.com/semantic-kernel/overview/) as the orchestration framework.
 - Given the pace of innovation and change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with the latest features.
 
 ## Reference Architectures
@@ -69,13 +69,13 @@ The AI Landing Zone serves as a foundational architecture for deploying specific
 - Modernize your code
 
 ## Cloud Adoption Framework
-The AI Landing Zone aligns with the guidance in the [CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/). For a holistic implementation of the AI Landing Zone, we recommend reviewing the [AI Checklist](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/#ai-checklists). To understand how to leverage the AI Landing Zone as part of a wider strategy, review the guidance on [AI Strategy](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy). AI Landing Zone is part of the AI Ready stage, in particular, the [AI on Azure platforms (PaaS)](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures).
+The AI Landing Zone aligns with the guidance in the [CAF AI Scenario](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/). For a holistic implementation of the AI Landing Zone, we recommend reviewing the [AI Checklist](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/#ai-checklists). To understand how to leverage the AI Landing Zone as part of a wider strategy, review the guidance on [AI Strategy](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/strategy). AI Landing Zone is part of the AI Ready stage, in particular, the [AI on Azure platforms (PaaS)](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/platform/architectures).
 
-![image](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/images/ai-ready.svg)
+![image](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/images/ai-ready.svg)
 
 ## Well-Architected Framework
-The AI Landing Zone aligns with the guidance in the WAF AI workload. For a holistic implementation of the AI Landing Zone, we recommend reviewing the design methodology, principles, and areas of [AI workloads on Azure](https://learn.microsoft.com/en-us/azure/well-architected/ai/).
-![image](https://learn.microsoft.com/en-us/azure/well-architected/ai/images/ai-architecture-pattern.png)
+The AI Landing Zone aligns with the guidance in the WAF AI workload. For a holistic implementation of the AI Landing Zone, we recommend reviewing the design methodology, principles, and areas of [AI workloads on Azure](https://learn.microsoft.com/azure/well-architected/ai/).
+![image](https://learn.microsoft.com/azure/well-architected/ai/images/ai-architecture-pattern.png)
 
 ## Contributing
 
@@ -95,6 +95,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
 trademarks or logos are subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not confuse or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos is subject to those third parties' policies.
