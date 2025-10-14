@@ -1,4 +1,24 @@
-## Security
+## Secur|  S-R5  | **Monitor outputs and apply prompt shielding:** The AI Landing Zone should implement/guide on using AI Content Safety. <br><br>Best Practice:<br><br>Regularly inspect the data returned by AI models to detect and mitigate risks associated with malicious or unpredictable user prompts. Implement [Prompt Shields](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection) to scan text for the risk of a user input attack on generative Al models. |
+|  S-R6  | The AI Landing Zone must provide implementation and guidance on zero trust. |
+
+## Define and Maintain Data Boundaries
+
+- Use [Microsoft Purview](https://learn.microsoft.com/en-us/purview/create-sensitivity-labels) to classify data sensitivity and define access policies.
+- Implement [Azure RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview) to restrict data access by workload and user group.
+- Use [Azure Private Link](https://learn.microsoft.com/en-us/azure/private-link/private-link-overview) for network-level data isolation between AI applications.
+
+## Implement Comprehensive Data Loss Prevention
+
+- Use [Microsoft Purview DLP](https://learn.microsoft.com/en-us/purview/dlp-learn-about-dlp) to scan and block sensitive data in AI workflows.
+- Configure [content filtering](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview) to prevent leakage of sensitive information.
+- Implement custom filters to detect and redact organization-specific sensitive data.
+- For [Microsoft Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/dlp-example-6), configure DLP policies for agents.
+
+## Protect AI Artifacts from Compromise
+
+- Store models and datasets in [Azure Blob Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-overview) with [private endpoints](https://learn.microsoft.com/en-us/azure/storage/common/storage-private-endpoints).
+- Apply [encryption at rest](https://learn.microsoft.com/en-us/azure/storage/common/storage-service-encryption) and [in transit](https://learn.microsoft.com/en-us/azure/storage/common/storage-require-secure-transfer).
+- Enforce strict access policies and monitor for unauthorized access attempts.y
 
 | ID    | Specification |
 |-------|--------------|
