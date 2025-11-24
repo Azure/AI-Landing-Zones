@@ -1,0 +1,2207 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "AI/ML Landing Zone",
+    "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules via linked templates."
+  },
+  "parameters": {
+    "deployToggles": {
+      "type": "object",
+      "metadata": {
+        "description": "Required. Per-service deployment toggles."
+      }, 
+      "defaultValue": {
+          "acaEnvironmentNsg": true,
+          "agentNsg": true,
+          "apiManagement": true,
+          "apiManagementNsg": true,
+          "appConfig": true,
+          "appInsights": true,
+          "applicationGateway": true,
+          "applicationGatewayNsg": true,
+          "applicationGatewayPublicIp": true,
+          "bastionHost": true,
+          "wafPolicy": true,
+          "buildVm": true,
+          "containerApps": true,
+          "containerEnv": true,
+          "containerRegistry": true,
+          "cosmosDb": true,
+          "devopsBuildAgentsNsg": true,
+          "firewall": true,
+          "firewallPublicIp": true,
+          "groundingWithBingSearch": true,
+          "jumpVm": true,
+          "jumpboxNsg": true,
+          "keyVault": true,
+          "logAnalytics": true,
+          "peNsg": true,
+          "searchService": true,
+          "storageAccount": true,
+          "virtualNetwork": true,
+          "bastionNsg": true
+      }
+    },
+    "flagPlatformLandingZone": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Optional. Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone."
+      }
+    },
+    "vnetBaseAddress": {
+      "type": "string",
+      "defaultValue": "192.168.0.0",
+      "metadata": {
+        "description": "Optional. Base address for the virtual network in CIDR notation (e.g., 192.168.0.0)."
+      }
+    },
+    "existingSubnets": 
+    {
+      "type": "object",
+      "metadata": {
+        "description": "Optional. Existing subnet names when reusing an existing virtual network."
+      },
+      "defaultValue":
+    {
+      "agentSubnet": "",
+      "peSubnet": "",
+      "bastionSubnet": "",
+      "firewallSubnet": "",
+      "appGwSubnet": "",
+      "apimSubnet": "",
+      "acaEnvSubnet": "",
+      "jumpboxSubnet": "",
+      "devopsSubnet": ""
+    }
+  },
+    "existingVnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Existing virtual network name when reusing an existing virtual network."
+      }
+    },
+    "existingVnetId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Existing virtual network name when reusing an existing virtual network."
+      }
+    },
+    "resourceIds": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Existing resource IDs to reuse (can be empty)."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional. Azure region for AI LZ resources. Defaults to the resource group location."
+      }
+    },
+    "baseName": {
+      "type": "string",
+      "defaultValue": "ailz",
+      "metadata": {
+        "description": "Optional. Base name to seed resource names; defaults to a 12-char token."
+      }
+    },
+    "enableTelemetry": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Optional. Enable/Disable usage telemetry for module."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Tags to apply to all resources."
+      }
+    },
+    "privateDnsZonesDefinition": {
+      "type": "object",
+      "defaultValue": {
+        "allowInternetResolutionFallback": false,
+        "createNetworkLinks": true,
+        "cognitiveservicesZoneId": "",
+        "apimZoneId": "",
+        "openaiZoneId": "",
+        "aiServicesZoneId": "",
+        "searchZoneId": "",
+        "cosmosSqlZoneId": "",
+        "blobZoneId": "",
+        "keyVaultZoneId": "",
+        "appConfigZoneId": "",
+        "containerAppsZoneId": "",
+        "acrZoneId": "",
+        "appInsightsZoneId": "",
+        "tags": {}
+      },
+      "metadata": {
+        "description": "Optional. Private DNS Zone configuration for private endpoints. Used when not in platform landing zone mode."
+      }
+    },
+    "hubVnetPeeringDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Hub VNet peering configuration."
+      }
+    },
+    "logAnalyticsDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Log Analytics workspace configuration."
+      }
+    },
+    "appInsightsDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Application Insights configuration."
+      }
+    },
+    "containerAppEnvDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Container Apps Environment configuration."
+      }
+    },
+    "containerRegistryDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Container Registry configuration."
+      }
+    },
+    "storageAccountDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Storage Account configuration."
+      }
+    },
+    "appConfigurationDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. App Configuration Store configuration."
+      }
+    },
+    "cosmosDbDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Cosmos DB configuration."
+      }
+    },
+    "keyVaultDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Key Vault configuration."
+      }
+    },
+    "aiSearchDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. AI Search configuration."
+      }
+    },
+    "apimDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. API Management configuration."
+      }
+    },
+    "aiFoundryDefinition": {
+      "type": "object",
+      "defaultValue": {
+        "baseName": "[parameters('baseName')]"
+      },
+      "metadata": {
+        "description": "Optional. AI Foundry configuration."
+      }
+    },
+    "groundingWithBingDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Grounding with Bing configuration."
+      }
+    },
+    "wafPolicyDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. WAF Policy configuration."
+      }
+    },
+    "appGatewayDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Application Gateway configuration."
+      }
+    },
+    "firewallPolicyDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Azure Firewall Policy configuration."
+      }
+    },
+    "firewallDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Azure Firewall configuration."
+      }
+    },
+    "buildVmDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Build VM configuration."
+      }
+    },
+    "jumpVmDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Jump VM configuration."
+      }
+    },
+    "buildVmMaintenanceDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Build VM Maintenance configuration."
+      }
+    },
+    "jumpVmMaintenanceDefinition": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Jump VM Maintenance configuration."
+      }
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "defaultValue": "[deployment().properties.templateLink.uri]",
+      "metadata": {
+        "description": "The base URI where artifacts required by this template are located including a trailing '/'"
+      }
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
+      }
+    }
+  },
+  "variables": {
+    "uniqueSuffix": "[substring(uniqueString(deployment().name, parameters('location'), resourceGroup().id), 0, 8)]",
+    "defaultAppGWSecurityRules" : [{"name": "Allow-GatewayManager-Inbound", 
+                                    "properties": {
+                                      "access": "Allow",
+                                      "direction": "Inbound",
+                                      "priority": 100,
+                                      "protocol": "Tcp",
+                                      "description": "Allow Azure Application Gateway management traffic on ports 65200-65535",
+                                      "sourceAddressPrefix": "GatewayManager",
+                                      "sourcePortRange": "*",
+                                      "destinationAddressPrefix": "*",
+                                      "destinationPortRange": "65200-65535"
+                                      }
+                                    },
+                                    {
+                                      "name": "Allow-Internet-HTTP-Inbound",
+                                      "properties": {
+                                        "access": "Allow",
+                                        "direction": "Inbound",
+                                        "priority": 110,
+                                        "protocol": "Tcp",
+                                        "description": "Allow Internet HTTP traffic from Internet",
+                                        "sourceAddressPrefix": "Internet",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "80"
+                                    }
+                                  },
+                                  {
+                                    "name": "Allow-Internet-HTTPS-Inbound",
+                                    "properties": {
+                                      "access": "Allow",
+                                      "direction": "Inbound",
+                                      "priority": 120,
+                                      "protocol": "Tcp",
+                                      "description": "Allow HTTPS traffic from Internet",
+                                      "sourceAddressPrefix": "Internet",
+                                      "sourcePortRange": "*",
+                                      "destinationAddressPrefix": "*",
+                                      "destinationPortRange": "443"
+                                    }
+                                  }
+              ],
+    "deployAgentNsg": "[coalesce(parameters('deployToggles').agentNsg, true())]",
+    "deployPeNsg": "[coalesce(parameters('deployToggles').peNsg, true())]",
+    "deployApplicationGatewayNsg": "[coalesce(parameters('deployToggles').applicationGatewayNsg, true())]",
+    "deployApiManagementNsg": "[coalesce(parameters('deployToggles').apiManagementNsg, true())]",
+    "deployAcaEnvironmentNsg": "[coalesce(parameters('deployToggles').acaEnvironmentNsg, true())]",
+    "deployJumpboxNsg": "[coalesce(parameters('deployToggles').jumpboxNsg, true())]",
+    "deployDevopsBuildAgentsNsg": "[coalesce(parameters('deployToggles').devopsBuildAgentsNsg, true())]",
+    "deployVnet": "[coalesce(parameters('deployToggles').virtualNetwork, true())]",
+    "deployLogAnalytics": "[coalesce(parameters('deployToggles').logAnalytics, true())]",
+    "deployAppInsights": "[coalesce(parameters('deployToggles').appInsights, true())]",
+    "deployContainerAppEnv": "[coalesce(parameters('deployToggles').containerEnv, true())]",
+    "deployAcr": "[coalesce(parameters('deployToggles').containerRegistry, true())]",
+    "deploySa": "[coalesce(parameters('deployToggles').storageAccount, true())]",
+    "deployAppConfig": "[coalesce(parameters('deployToggles').appConfig, true())]",
+    "deployCosmosDb": "[coalesce(parameters('deployToggles').cosmosDb, true())]",
+    "deployKeyVault": "[coalesce(parameters('deployToggles').keyVault, true())]",
+    "deployAiSearch": "[coalesce(parameters('deployToggles').searchService, true())]",
+    "deployApim": "[coalesce(parameters('deployToggles').apiManagement, true())]",
+    "deployWafPolicy": "[coalesce(parameters('deployToggles').wafPolicy, true())]",
+    "deployAppGateway": "[coalesce(parameters('deployToggles').applicationGateway, true())]",
+    "deployFirewallPolicy": "[coalesce(parameters('deployToggles').firewall, true())]",
+    "deployFirewall": "[coalesce(parameters('deployToggles').firewall, true())]",
+    "deployBuildVm": "[coalesce(parameters('deployToggles').buildVm, true())]",
+    "deployJumpVm": "[coalesce(parameters('deployToggles').jumpVm, true())]",
+    "deployBingGrounding": "[coalesce(parameters('deployToggles').groundingWithBingSearch, true())]",
+    "deployAppGatewayPip": "[coalesce(parameters('deployToggles').applicationGatewayPublicIp, true())]",
+    "deployFirewallPip": "[coalesce(parameters('deployToggles').firewallPublicIp, true())]",
+
+    "deployPdnsAndPe": "[not(parameters('flagPlatformLandingZone'))]",
+
+
+
+    "useExistingPdz": {
+      "apim": "[not(empty(parameters('privateDnsZonesDefinition').apimZoneId))]",
+      "cognitiveservices": "[not(empty(parameters('privateDnsZonesDefinition').cognitiveservicesZoneId))]",
+      "openai": "[not(empty(parameters('privateDnsZonesDefinition').openaiZoneId))]",
+      "aiServices": "[not(empty(parameters('privateDnsZonesDefinition').aiServicesZoneId))]",
+      "search": "[not(empty(parameters('privateDnsZonesDefinition').searchZoneId))]",
+      "cosmosSql": "[not(empty(parameters('privateDnsZonesDefinition').cosmosSqlZoneId))]",
+      "blob": "[not(empty(parameters('privateDnsZonesDefinition').blobZoneId))]",
+      "keyVault": "[not(empty(parameters('privateDnsZonesDefinition').keyVaultZoneId))]",
+      "appConfig": "[not(empty(parameters('privateDnsZonesDefinition').appConfigZoneId))]",
+      "containerApps": "[not(empty(parameters('privateDnsZonesDefinition').containerAppsZoneId))]",
+      "acr": "[not(empty(parameters('privateDnsZonesDefinition').acrZoneId))]",
+      "appInsights": "[not(empty(parameters('privateDnsZonesDefinition').appInsightsZoneId))]"
+    },
+
+    "deployPdnsApim": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').apim))]",
+    "deployPdnsCogSvcs": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').cognitiveservices))]",
+    "deployPdnsOpenAI": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').openai))]",
+    "deployPdnsAiServices": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').aiServices))]",
+    "deployPdnsSearch": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').search))]",
+    "deployPdnsCosmosSql": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').cosmosSql))]",
+    "deployPdnsBlob": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').blob))]",
+    "deployPdnsKeyVault": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').keyVault))]",
+    "deployPdnsAppConfig": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').appConfig))]",
+    "deployPdnsContainerApps": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').containerApps))]",
+    "deployPdnsAcr": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').acr))]",
+    "deployPdnsAppInsights": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').appInsights))]",
+
+
+    "vnetName": "[if(variables('deployVnet'), concat('vnet-', parameters('baseName')), parameters('existingVnetName'))]",
+    "appGwPrivateIp": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.0.200')]",
+    "existingSubnets": {
+      "agentSubnet": "",
+      "peSubnet": "",
+      "bastionSubnet": "",
+      "firewallSubnet": "",
+      "appGwSubnet": "",
+      "apimSubnet": "",
+      "acaEnvSubnet": "",
+      "jumpboxSubnet": "",
+      "devopsSubnet": ""
+    },
+    "lawName": "[if(variables('deployLogAnalytics'), concat('law-', parameters('baseName')), split(parameters('resourceIds').logAnalyticsWorkspaceResourceId, '/')[8])]",
+    "appiName": "[if(variables('deployAppInsights'), concat('appi-', parameters('baseName')), split(parameters('resourceIds').appInsightsResourceId, '/')[8])]",
+    "containerEnvName": "[if(variables('deployContainerAppEnv'),  concat('cae-', parameters('baseName')), split(parameters('resourceIds').containerAppsEnvironmentResourceId, '/')[8])]",
+    "acrName": "[if(variables('deployAcr'), concat('acr', parameters('baseName')), split(parameters('resourceIds').containerRegistryResourceId, '/')[8])]",
+    "storageAccountName": "[if(variables('deploySa'), toLower(concat('st', parameters('baseName'))), split(parameters('resourceIds').storageAccountResourceId, '/')[8])]",
+    "appConfigName": "[if(variables('deployAppConfig'), concat('appcs-', parameters('baseName')), split(parameters('resourceIds').appConfigResourceId, '/')[8])]",
+
+    "baseTemplateUri": "[parameters('_artifactsLocation')]",
+    "networkSecurityGroupTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.network-security-group.json', parameters('_artifactsLocationSasToken')))]",
+    "virtualNetworkTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.virtual-network.json', parameters('_artifactsLocationSasToken')))]",
+    "privateDnsZoneTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.private-dns-zone.json', parameters('_artifactsLocationSasToken')))]",
+    "publicIpTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.public-ip-address.json', parameters('_artifactsLocationSasToken')))]",
+    "privateEndpointTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.private-endpoint.json', parameters('_artifactsLocationSasToken')))]",
+    "logAnalyticsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.operational-insights.workspace.json', parameters('_artifactsLocationSasToken')))]",
+    "appInsightsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.insights.component.json', parameters('_artifactsLocationSasToken')))]",
+    "containerAppEnvTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app.managed-environment.json', parameters('_artifactsLocationSasToken')))]",
+    "containerRegistryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.container-registry.registry.json', parameters('_artifactsLocationSasToken')))]",
+    "storageAccountTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.storage.storage-account.json', parameters('_artifactsLocationSasToken')))]",
+    "appConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app-configuration.configuration-store.json', parameters('_artifactsLocationSasToken')))]",
+    "cosmosDbTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.document-db.database-account.json', parameters('_artifactsLocationSasToken')))]",
+    "keyVaultTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.key-vault.vault.json', parameters('_artifactsLocationSasToken')))]",
+    "aiSearchTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.search.search-service.json', parameters('_artifactsLocationSasToken')))]",
+    "apimTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.api-management.service.json', parameters('_artifactsLocationSasToken')))]",
+    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.ptn.ai-ml.ai-foundry.json', parameters('_artifactsLocationSasToken')))]",
+    "wafPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.waf-policy.json', parameters('_artifactsLocationSasToken')))]",
+    "applicationGatewayTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.application-gateway.json', parameters('_artifactsLocationSasToken')))]",
+    "firewallPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.firewall-policy.json', parameters('_artifactsLocationSasToken')))]",
+    "azureFirewallTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.azure-firewall.json', parameters('_artifactsLocationSasToken')))]",
+    "buildVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.build-vm.json', parameters('_artifactsLocationSasToken')))]",
+    "jumpVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.jump-vm.json', parameters('_artifactsLocationSasToken')))]",
+    "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', parameters('_artifactsLocationSasToken')))]"
+  },
+  "resources": [
+    {
+      "condition": "[parameters('enableTelemetry')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2024-03-01",
+      "name": "[concat('46d3xbcp.ptn.aiml-lz.', substring(uniqueString(deployment().name, parameters('location')), 0, 4))]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": [],
+          "outputs": {
+            "telemetry": {
+              "type": "String",
+              "value": "For more information, see https://aka.ms/avm/TelemetryInfo"
+            }
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployAgentNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-agent",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-agent-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployPeNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-pe",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-pe-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployApplicationGatewayNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-appgw",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-appgw-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'),'securityRules', variables('defaultAppGWSecurityRules'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployApiManagementNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-apim",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-apim-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployAcaEnvironmentNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-aca-env",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-aca-env-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployJumpboxNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-jumpbox",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-jumpbox-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployDevopsBuildAgentsNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-devops-build-agents",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": "[createObject('name', concat('nsg-devops-build-agents-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('deployVnet')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-vnet",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('virtualNetworkTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }, 
+        "parameters": {
+          "vnet": {
+            "value": {
+              "name": "[variables('vnetName')]",
+              "addressPrefixes": ["[concat(parameters('vnetBaseAddress'), '/22')]"],
+              "location": "[parameters('location')]",
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "subnets": [
+            {
+              "enabled": true,
+              "name": "agent-subnet",
+              "addressPrefix": "[concat(parameters('vnetBaseAddress'), '/27')]",
+              "delegation": "Microsoft.App/environments",
+              "networkSecurityGroupResourceId": "[if(variables('deployAgentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-agent-', parameters('baseName'))), coalesce(parameters('resourceIds').agentNsgResourceId, ''))]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "pe-subnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.32/27')]",
+              "serviceEndpoints": ["Microsoft.AzureCosmosDB"],
+              "privateEndpointNetworkPolicies": "Disabled",
+              "networkSecurityGroupResourceId": "[if(variables('deployPeNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-pe-', parameters('baseName'))), null())]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "AzureBastionSubnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.64/26')]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "AzureFirewallSubnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.128/26')]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "appgw-subnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.192/27')]",
+              "networkSecurityGroupResourceId": "[if(variables('deployApplicationGatewayNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-appgw-', parameters('baseName'))), coalesce(parameters('resourceIds').applicationGatewayNsgResourceId, ''))]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "apim-subnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.224/27')]",
+              "networkSecurityGroupResourceId": "[if(variables('deployApiManagementNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-apim-', parameters('baseName'))), coalesce(parameters('resourceIds').apimNsgResourceId, ''))]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "jumpbox-subnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.1.0/28')]",
+              "networkSecurityGroupResourceId": "[if(variables('deployJumpboxNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-jumpbox-', parameters('baseName'))), coalesce(parameters('resourceIds').jumpboxNsgResourceId, ''))]"
+            },
+            {
+              "enabled": ["variables('deployContainerAppEnv')"],
+              "name": "aca-env-subnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.2.0/23')]",
+              "delegation": "Microsoft.App/environments",
+              "serviceEndpoints": ["Microsoft.AzureCosmosDB"],
+              "networkSecurityGroupResourceId": "[if(variables('deployAcaEnvironmentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-aca-env-', parameters('baseName'))), coalesce(parameters('resourceIds').acaEnvironmentNsgResourceId, ''))]"
+            },
+            {
+              "enabled": ["variables('deployPdnsAndPe')"],
+              "name": "devops-build-agents-subnet",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.1.32/27')]",
+              "networkSecurityGroupResourceId": "[if(variables('deployDevopsBuildAgentsNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-devops-build-agents-', parameters('baseName'))), coalesce(parameters('resourceIds').devopsBuildAgentsNsgResourceId, ''))]"
+            }
+          ]
+          }
+        }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-agent')]",
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-pe')]",
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-appgw')]",
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-apim')]",
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-aca-env')]",
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-jumpbox')]",
+          "[resourceId('Microsoft.Resources/deployments', 'm-nsg-devops-build-agents')]"
+        ]
+      }
+    },
+    {
+      "condition": "[variables('deployPdnsApim')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-apim-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "privateDnsZone": {
+            "value": {
+              "name": "privatelink.apimanagement.azure.net",
+              "location": "global",
+              "tags": {},
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "virtualNetworkLinks": [
+                {
+                  "name": "[concat(variables('vnetName'), '-apim-link')]",
+                  "registrationEnabled": false,
+                  "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+                }
+              ]
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+        ] 
+      }
+    },
+    {
+      "condition": "[variables('deployPdnsCogSvcs')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-cognitiveservices-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "privateDnsZone": {
+            "value": {
+              "name": "privatelink.cognitiveservices.azure.com",
+              "location": "global",
+              "tags": {},
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "virtualNetworkLinks": [
+                {
+                  "name": "[concat(variables('vnetName'), '-cogsvcs-link')]",
+                  "registrationEnabled": false,
+                  "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+                }
+              ]
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+        ]
+      } 
+    },
+    {
+      "condition": "[variables('deployPdnsOpenAI')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-openai-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.openai.azure.com",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-openai-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+  },
+    {
+      "condition": "[variables('deployPdnsAiServices')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-aiservices-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.aiservices.azure.com",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-aiservices-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+  },
+    {
+      "condition": "[variables('deployPdnsSearch')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-search-std-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.search.windows.net",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-search-std-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+    {
+      "condition": "[variables('deployPdnsCosmosSql')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-cosmos-std-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.documents.azure.com",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-cosmos-std-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+    {
+      "condition": "[variables('deployPdnsBlob')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-blob-std-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "[concat('privatelink.blob.', environment().suffixes.storage)]",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-blob-std-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+    {
+      "condition": "[variables('deployPdnsKeyVault')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "kv-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.vaultcore.azure.net",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-kv-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+
+    {
+      "condition": "[variables('deployPdnsAppConfig')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "appconfig-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.azconfig.io",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-appcfg-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+    {
+      "condition": "[variables('deployPdnsContainerApps')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "dep-containerapps-env-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "[concat('privatelink.', parameters('location'), '.azurecontainerapps.io')]",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-containerapps-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+
+    {
+      "condition": "[variables('deployPdnsAcr')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "acr-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.azurecr.io",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-acr-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+    {
+      "condition": "[variables('deployPdnsAppInsights')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "ai-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        }
+      ,
+      "parameters": {
+        "privateDnsZone": {
+          "value": {
+            "name": "privatelink.applicationinsights.azure.com",
+            "location": "global",
+            "tags": {},
+            "enableTelemetry": "[parameters('enableTelemetry')]",
+            "virtualNetworkLinks": [
+              {
+                "name": "[concat(variables('vnetName'), '-ai-link')]",
+                "registrationEnabled": false,
+                "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+              }
+            ]
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+      ]
+    }
+},
+{
+  "condition": "[variables('deployAppGatewayPip')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "m-appgw-pip",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('publicIpTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "pip": {
+        "value": {
+          "name": "[concat('pip-appgw-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "sku": "Standard",
+          "skuTier": "Regional",
+          "publicIPAllocationMethod": "Static",
+          "publicIPAddressVersion": "IPv4",
+          "zones": [1,2,3],
+          "enableTelemetry": "[parameters('enableTelemetry')]"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployFirewallPip')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "m-fw-pip",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('publicIpTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "pip": {
+        "value": {
+          "name": "[concat('pip-fw-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "sku": "Standard",
+          "skuTier": "Regional",
+          "publicIPAllocationMethod": "Static",
+          "publicIPAddressVersion": "IPv4",
+          "zones": [1,2,3],
+          "enableTelemetry": "[parameters('enableTelemetry')]"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployLogAnalytics')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "deployLogAnalytics",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('logAnalyticsTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "logAnalytics": {
+        "value": {
+          "name": "[variables('lawName')]",
+          "location": "[parameters('location')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "tags": "[parameters('tags')]",
+          "dataRetention": 30
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployAppInsights')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "deployAppInsights",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('appInsightsTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "appInsights": {
+        "value": {
+          "name": "[variables('appiName')]",
+          "location": "[parameters('location')]",
+          "workspaceResourceId": "[if(variables('deployLogAnalytics'), reference('deployLogAnalytics').outputs.resourceId.value, coalesce(parameters('resourceIds').logAnalyticsWorkspaceResourceId, ''))]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "tags": "[parameters('tags')]",
+          "disableIpMasking": true
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'deployLogAnalytics')]"
+    ]
+  }
+}, 
+{
+  "condition": "[variables('deployAcr')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "deployContainerRegistry",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('containerRegistryTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "acr": {
+        "value": {
+          "name": "[variables('acrName')]",
+          "location": "[parameters('location')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "tags": "[parameters('tags')]",
+          "publicNetworkAccess": "Disabled"        }
+      }
+    }
+  }
+},
+
+{
+  "condition": "[variables('deployContainerAppEnv')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "deployContainerEnv",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('containerAppEnvTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "containerAppEnv": {
+        "value": {
+          "name": "[concat('cae-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "tags": "[parameters('tags')]",
+          "workloadProfiles": [
+            {
+              "workloadProfileType": "D4",
+              "name": "default",
+              "minimumCount": 1,
+              "maximumCount": 3
+            }
+          ],
+          "infrastructureSubnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/aca-env-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').acaEnvSubnet))]",
+          "internal": false,
+          "publicNetworkAccess": "Disabled",
+          "zoneRedundant": true,
+          "appInsigthsConnectionString": "[if(variables('deployAppInsights'), reference('deployAppInsights').outputs.connectionString.value, parameters('appInsightsConnectionString'))]"   
+        
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]",
+      "[resourceId('Microsoft.Resources/deployments', 'deployAppInsights')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deploySa')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "deployStorageAccount",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('storageAccountTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "storageAccount": {
+        "value": {
+          "name": "[variables('storageAccountName')]",
+          "location": "[parameters('location')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "tags": "[parameters('tags')]",
+          "kind": "StorageV2",
+          "sku": "Standard_LRS",
+          "publicNetworkAccess": "Disabled"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployAppConfig')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "configurationStoreDeploymentFixed",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('appConfigTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "appConfiguration": {
+        "value": {
+          "name": "[variables('appConfigName')]",
+          "location": "[parameters('location')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "tags": "[parameters('tags')]"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployCosmosDb')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "cosmosDbModule",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('cosmosDbTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "cosmosDb": {
+        "value": {
+          "name": "[concat('cosmos-', parameters('baseName'))]",
+          "location": "[parameters('location')]"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployKeyVault')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "keyVaultModule",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('keyVaultTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "keyVault": {
+        "value": {
+          "name": "[concat('kv-', parameters('baseName'))]",
+          "location": "[parameters('location')]"
+        }
+      }
+    }
+  }
+},
+
+{
+  "condition": "[variables('deployAiSearch')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "aiSearchModule",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('aiSearchTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "aiSearch": {
+        "value": {
+          "name": "[concat('search-', parameters('baseName'))]",
+          "location": "[parameters('location')]"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployApim')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "apimDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('apimTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "apiManagement": {
+        "value": {
+          "name": "[concat('apim-', parameters('baseName'))]",
+          "publisherEmail": "admin@contoso.com",
+          "publisherName": "Contoso",
+          "sku": "StandardV2",
+          "skuCapacity": 1,
+          "virtualNetworkType": "None",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "minApiVersion": "2022-08-01"
+        }
+      }
+    }
+  }
+},
+{
+  "condition": "[variables('deployWafPolicy')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "wafPolicyDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('wafPolicyTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "wafPolicy": {
+        "value": {
+          "name": "[concat('wafpolicy-', parameters('baseName'))]",
+          "managedRules": {
+            "exclusions": [],
+            "managedRuleSets": [
+              {
+                "ruleSetType": "OWASP",
+                "ruleSetVersion": "3.2",
+                "ruleGroupOverrides": []
+              }
+            ]
+          }, 
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]"
+        }
+      }
+    }
+  }
+}, 
+
+{
+  "condition": "[variables('deployFirewallPolicy')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "firewallPolicyDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('firewallPolicyTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "firewallPolicy": {
+        "value": {
+          "name": "[concat('afwp-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]"
+          }
+        }
+      }
+    }
+}, 
+
+{
+  "condition": "[variables('deployPdnsKeyVault')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('kv-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-kv-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "kvconnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, coalesce(parameters('resourceIds').keyVaultResourceId, ''))]",
+                "groupIds": ["vault"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "kvDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "kvARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesece(parameters('resourceIds').keyVaultPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'keyVaultModule')]",
+      "[resourceId('Microsoft.Resources/deployments', 'kv-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deployPdnsSearch')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('search-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-srch-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "searchConnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, coalesce(parameters('resourceIds').searchResourceId, ''))]",
+                "groupIds": ["searchService"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "searchDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "searchARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsSearch'), reference('dep-search-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').searchPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+      "[resourceId('Microsoft.Resources/deployments', 'dep-search-std-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deployPdnsCosmosSql')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('cosmos-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-cos-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "cosmosConnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deployCosmosDb'), reference('cosmosDbModule').outputs.resourceId.value, coalesce(parameters('resourceIds').cosmosResourceId, ''))]",
+                "groupIds": ["Sql"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "cosmosDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "cosmosARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsCosmosSql'), reference('dep-cosmos-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').cosmosPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]",
+      "[resourceId('Microsoft.Resources/deployments', 'dep-cosmos-std-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deployPdnsBlob')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('blob-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-st-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "blobConnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "groupIds": ["blob"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "blobDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "blobARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsBlob'), reference('dep-blob-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').blobPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]",
+      "[resourceId('Microsoft.Resources/deployments', 'dep-blob-std-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deployPdnsAppConfig')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('appconfig-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-appcs-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "appConfigConnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deployAppConfig'), reference('configurationStoreDeploymentFixed').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "groupIds": ["configurationStores"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "appConfigDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "appConfigARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsAppConfig'), reference('appconfig-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').appConfigPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'configurationStoreDeploymentFixed')]",
+      "[resourceId('Microsoft.Resources/deployments', 'appconfig-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deployPdnsApim')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('apim-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-apim-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "apimGatewayConnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deployApim'), reference('apimDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "groupIds": ["Gateway"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "apimDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "apimARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsApim'), reference('dep-apim-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').apimPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'apimDeployment')]",
+      "[resourceId('Microsoft.Resources/deployments', 'dep-apim-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+
+{
+  "condition": "[variables('deployPdnsAcr')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('acr-private-endpoint-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-acr-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "acrConnection",
+              "properties": {
+                "privateLinkServiceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "groupIds": ["registry"]
+              }
+            }
+          ],
+          
+          "privateDnsZoneGroup": {
+            "name": "acrDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "acrARecord",
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsAcr'), reference('acr-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').acrPrivateDnsZoneResourceId, ''))]"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]",
+      "[resourceId('Microsoft.Resources/deployments', 'acr-private-dns-zone')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+{
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('aiFoundryDeployment-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": { 
+      "uri": "[variables('aiFoundryTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "enableTelemetry": {
+        "value": "[parameters('enableTelemetry')]"
+      },
+      "aiFoundry": {
+        "value": {
+          "baseName": "[parameters('baseName')]",
+          "location": "[parameters('location')]",
+          "includeAssociatedResources": true,
+          "tags": "[parameters('tags')]",
+          "privateEndpointSubnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "aiFoundryConfiguration": {
+            "accountName": "[concat('ai', parameters('baseName'))]",
+            "allowProjectManagement": true,
+            "createCapabilityHosts" : false,
+            "disableLocalAuth" : false,
+            "location": "[parameters('location')]",
+            "networking": {
+              "cognitiveServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsCogSvcs'), reference('dep-cognitiveservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryCogsPrivateDnsZoneResourceId, ''))]",
+              "openaiPrivateDnsZoneResourceId": "[if(variables('deployPdnsOpenAI'), reference('dep-openai-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryOpenAIPrivateDnsZoneResourceId, ''))]",
+              "aiServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsAiServices'), reference('dep-aiservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]",
+              "agentServiceSubnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
+            },
+            "project" : {
+              "name": "aifoundry-default-project",
+              "displayName": "Default AI Foundry Project.",
+              "description": "This is the default project for AI Foundry."
+
+            }
+          },
+          "aiModelDeployments" : [
+            {
+              "model": {
+                    "format": "OpenAI",
+                    "name": "gpt-4o",
+                    "version": "2024-11-20"
+                },
+              "name": "gpt-4o",
+              "sku": {
+                    "capacity": 10,
+                    "name": "GlobalStandard"
+                }
+            },
+            {
+              "model": {
+                  "format": "OpenAI",
+                  "name": "text-embedding-3-large",
+                  "version": "1"
+                },
+              "name": "text-embedding-3-large",
+              "sku": {
+                  "capacity": 1,
+                  "name": "Standard"
+              }
+            }           
+          ],
+          "aiSearchConfiguration": {
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsSearch'), reference('dep-search-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+          },
+          "cosmosDbConfiguration": {
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsCosmosSql'), reference('dep-cosmos-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+          }, 
+          "keyVaultConfiguration": {
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+          },
+          "storageAccountConfiguration": {
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsBlob'), reference('dep-blob-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+          }
+        }
+      }
+  },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dep-cognitiveservices-private-dns-zone')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dep-openai-private-dns-zone')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dep-aiservices-private-dns-zone')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dep-search-std-private-dns-zone')]",
+        "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dep-cosmos-std-private-dns-zone')]",
+        "[resourceId('Microsoft.Resources/deployments', 'kv-private-dns-zone')]",
+        "[resourceId('Microsoft.Resources/deployments', 'dep-blob-std-private-dns-zone')]"
+      ]
+  }
+},
+{
+  "condition" : "[variables('deployBingGrounding')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "bingsearchDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "relativePath": "wrappers/res.cogs.bing.json",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "accountName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]"
+      },
+      "projectName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiProjectName.value]"
+      },
+      "bingSearchName": {
+        "value": "[concat('bing-', parameters('baseName'))]"
+      },
+      "existingResourceId": {
+        "value": ""
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]"
+    ]
+  }
+},
+{
+  "condition": "[variables('deployAppGateway')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "applicationGatewayDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('applicationGatewayTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "enableTelemetry": {
+        "value": "[parameters('enableTelemetry')]"
+      },
+      "applicationGateway": {
+        "value": {
+          "name": "[concat('agw-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "sku": "WAF_v2",
+          "gatewayIpConfigurations": [
+            {
+              "name": "appGatewayIpConfig",
+              "properties": {
+                "subnet": {
+                  "id": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/appgw-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').appGwSubnet))]"
+                }
+              }
+            }
+          ],
+
+          "firewallPolicyResourceId": "[if(variables('deployWafPolicy'), reference('wafPolicyDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwWafPolicyResourceId, ''))]",
+          "tags": "[parameters('tags')]",
+          "frontendIPConfigurations": "[concat( if(variables('deployAppGatewayPip'), createArray(createObject('name', 'publicFrontend', 'properties', createObject('publicIPAddress', createObject('id', if(variables('deployAppGatewayPip'), reference('m-appgw-pip').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwPublicIpResourceId, '')))))), createArray()), createArray(createObject('name', 'privateFrontend', 'properties', createObject('privateIPAllocationMethod', 'Static', 'privateIPAddress', variables('appGwPrivateIp'), 'subnet', createObject('id', if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/appgw-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').appGwSubnet)))))))]",
+          "frontendPorts": [
+            {
+              "name": "port80",
+              "properties": {
+                "port": 80
+              }
+            }
+          ],
+          "backendAddressPools": [
+            {
+              "name": "defaultBackendPool"
+            }
+          ],
+          "backendHttpSettingsCollection": [
+            {
+              "name": "defaultHttpSetting",
+              "properties": {
+                "port": 80,
+                "protocol": "Http",
+                "cookieBasedAffinity": "Disabled",
+                "requestTimeout": 20
+              }
+            }
+          ],
+          "httpListeners": [
+            {
+              "name": "httpListener",
+              "properties": {
+                "frontendIPConfiguration": {
+                  "id": "[concat( resourceId('Microsoft.Network/applicationGateways', concat('agw-', parameters('baseName'))), '/frontendIPConfigurations/', if(variables('deployAppGatewayPip'), 'publicFrontend', 'privateFrontend'))]"
+                },
+                "frontendPort": {
+                  "id": "[concat( resourceId('Microsoft.Network/applicationGateways', concat('agw-', parameters('baseName'))), '/frontendPorts/port80')]"
+                },
+                "protocol": "Http"
+              }
+            }
+          ],
+          "requestRoutingRules": [
+            {
+              "name": "httpRoutingRule",
+              "properties": {
+                "backendAddressPool": {
+                  "id": "[concat( resourceId('Microsoft.Network/applicationGateways', concat('agw-', parameters('baseName'))), '/backendAddressPools/defaultBackendPool')]"
+                },
+                "backendHttpSettings": {
+                  "id": "[concat( resourceId('Microsoft.Network/applicationGateways', concat('agw-', parameters('baseName'))), '/backendHttpSettingsCollection/defaultHttpSetting')]"
+                },
+                "httpListener": {
+                  "id": "[concat( resourceId('Microsoft.Network/applicationGateways', concat('agw-', parameters('baseName'))), '/httpListeners/httpListener')]"
+                },
+                "ruleType": "Basic",
+                "priority": 100
+              }
+            }
+          ]
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-appgw-pip')]",
+      "[resourceId('Microsoft.Resources/deployments', 'wafPolicyDeployment')]"
+    ]
+  }
+},
+{
+  "condition": "[variables('deployFirewall')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "azureFirewallDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('azureFirewallTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "enableTelemetry": {
+        "value": "[parameters('enableTelemetry')]"
+      },
+      "firewall": {
+        "value": {
+          "name": "[concat('afw-', parameters('baseName'))]",
+          "virtualNetworkResourceId": "[if(variables('deployVnet'), reference('m-vnet').outputs.resourceId.value, parameters('existingVnetId'))]",
+          "publicIpResourceId": "[if(variables('deployFirewallPip'), reference('m-fw-pip').outputs.resourceId.value, coalesce(parameters('resourceIds').firewallPublicIpResourceId, ''))]",
+          "firewallPolicyId": "[if(variables('deployFirewallPolicy'), reference('firewallPolicyDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').firewallPolicyResourceId, ''))]",
+          "availabilityZones": [1,2,3],
+          "azureSkuTier": "Standard",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]"
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]",
+      "[resourceId('Microsoft.Resources/deployments', 'm-firewall-pip')]",
+      "[resourceId('Microsoft.Resources/deployments', 'firewallPolicyDeployment')]"
+    ]
+  }
+},
+{
+  "condition": "[variables('deployJumpVm')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('jumpVmDeployment-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('jumpVmTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "jumpVm": {
+        "value": {
+          "name": "[concat('vm-', substring(parameters('baseName'), 0, 6), '-jmp')]",
+          "sku": "Standard_D4as_v5",
+          "adminUsername": "azureuser",
+          "osType": "Windows",
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2022-datacenter-azure-edition",
+            "version": "latest"
+          },
+          "nicConfigurations": [
+            {
+              "nicSuffix": "-nic",
+              "ipConfigurations": [
+                {
+                  "name": "ipconfig01",
+                  "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
+                }
+              ]
+            }
+          ],
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "managedDisk" : {
+              "storageAccountType": "Standard_LRS"
+            }
+          },
+          "disablePasswordAuthentication": false,
+          "adminPassword": "P@ssw0rd123!",
+          "availabilityZone": 1,
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]"
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+},
+{
+  "condition": "[variables('deployBuildVm')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "[concat('buildVmDeployment-', variables('uniqueSuffix'))]",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('buildVmTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "buildVm": {
+        "value": {
+          "name": "[concat('vm-', substring(parameters('baseName'), 0, 6), '-bld')]",
+          "sku": "Standard_F4s_v2",
+          "adminUsername": "builduser",
+          "osType": "Linux",
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "0001-com-ubuntu-server-jammy",
+            "sku": "22_04-lts",
+            "version": "latest"
+          },
+          "runner": "github",
+          "github": {
+            "owner": "your-org",
+            "repo": "your-repo"
+          },
+          "nicConfigurations": [
+            {
+              "nicSuffix": "-nic",
+              "ipConfigurations": [
+                {
+                  "name": "ipconfig01",
+                  "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
+                }
+              ]
+            }
+          ],
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "managedDisk" : {
+              "storageAccountType": "Standard_LRS"
+            }
+          },
+          "disablePasswordAuthentication": false,
+          "adminPassword": "P@ssw0rd123!",
+          "availabilityZone": 1,
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]"
+        }
+      }
+    },
+    "dependsOn": [
+      "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+    ]
+  }
+}
+  ]
+      ,
+      "outputs": {
+
+    
+
+  }
+}
