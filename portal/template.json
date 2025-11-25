@@ -90,6 +90,34 @@
         "description": "Optional. Existing virtual network name when reusing an existing virtual network."
       }
     },
+    "appGwPrivateIp": {
+      "type": "string",
+      "defaultValue": "192.168.0.200",
+      "metadata": {
+        "description": "Optional. The private IP address for the Application Gateway."
+      }
+    },
+    "peerVnetName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Name of the hub virtual network to peer with."
+      }
+    },
+    "peerVnetId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Resource ID of the hub virtual network to peer with."
+      }
+    },
+    "deployPeering": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Optional. Enable VNet peering with the specified hub virtual network."
+      }
+    },
     "resourceIds": {
       "type": "object",
       "defaultValue": {},
@@ -418,7 +446,6 @@
 
 
     "vnetName": "[if(variables('deployVnet'), concat('vnet-', parameters('baseName')), parameters('existingVnetName'))]",
-    "appGwPrivateIp": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.0.200')]",
     "existingSubnets": {
       "agentSubnet": "",
       "peSubnet": "",
@@ -1976,7 +2003,7 @@
 
           "firewallPolicyResourceId": "[if(variables('deployWafPolicy'), reference('wafPolicyDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwWafPolicyResourceId, ''))]",
           "tags": "[parameters('tags')]",
-          "frontendIPConfigurations": "[concat( if(variables('deployAppGatewayPip'), createArray(createObject('name', 'publicFrontend', 'properties', createObject('publicIPAddress', createObject('id', if(variables('deployAppGatewayPip'), reference('m-appgw-pip').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwPublicIpResourceId, '')))))), createArray()), createArray(createObject('name', 'privateFrontend', 'properties', createObject('privateIPAllocationMethod', 'Static', 'privateIPAddress', variables('appGwPrivateIp'), 'subnet', createObject('id', if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/appgw-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').appGwSubnet)))))))]",
+          "frontendIPConfigurations": "[concat( if(variables('deployAppGatewayPip'), createArray(createObject('name', 'publicFrontend', 'properties', createObject('publicIPAddress', createObject('id', if(variables('deployAppGatewayPip'), reference('m-appgw-pip').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwPublicIpResourceId, '')))))), createArray()), createArray(createObject('name', 'privateFrontend', 'properties', createObject('privateIPAllocationMethod', 'Static', 'privateIPAddress', parameters('appGwPrivateIp'), 'subnet', createObject('id', if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/appgw-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').appGwSubnet)))))))]",
           "frontendPorts": [
             {
               "name": "port80",
@@ -2196,6 +2223,24 @@
       "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
     ]
   }
+},
+{
+  "condition": "[parameters('deployPeering')]",
+  "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+  "apiVersion": "2024-05-01",
+  "name": "[concat(variables('vnetName'), '/base-to-peer')]",
+  "properties": {
+    "remoteVirtualNetwork": {
+      "id": "[parameters('peerVnetId')]"
+    },
+    "allowVirtualNetworkAccess": true,
+    "allowForwardedTraffic": true,
+    "allowGatewayTransit": false,
+    "useRemoteGateways": false
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+  ]
 }
   ]
       ,

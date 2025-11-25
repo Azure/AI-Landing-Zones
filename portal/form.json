@@ -897,7 +897,7 @@
                 "toolTip": "Select subnet for App Gateway",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]"
                 },
                 "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]"
               },
@@ -945,6 +945,20 @@
                 },
                 "visible": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true')))]"
               },
+          {
+                "name": "appGwPrivateIp",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Static IP Address for Application Gateway",
+                "placeholder": "",
+                "defaultValue": "192.168.0.200",
+                "toolTip": "The private IP address for the Application Gateway",
+                "constraints": {
+                    "required": "[and( equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]",
+                    "regex": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+                    "validationMessage": "Please enter a valid IP Address (e.g., 192.168.0.200)."
+                },
+                "visible": "[and( equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]"
+            },
             {
               "name": "deployPeering",
               "type": "Microsoft.Common.OptionsGroup",
@@ -976,27 +990,6 @@
                 "required": "[equals(steps('networking').deployPeering, 'true')]"
               },
               "visible": "[equals(steps('networking').deployPeering, 'true')]"
-            },
-            {
-              "name": "peeringtoHub",
-              "type": "Microsoft.Common.OptionsGroup",
-              "label": "Is the target network for peering a Platform Hub?",
-              "defaultValue": "Yes",
-              "toolTip": "Deploy Virtual Network Peering",
-              "constraints": {
-                "allowedValues": [
-                  {
-                    "label": "Yes",
-                    "value": "true"
-                  },
-                  {
-                    "label": "No",
-                    "value": "false"
-                  }
-                ],
-                "required": "[and( equals(steps('networking').deployPeering, 'true'), equals(steps('basics').platformLandingZone, 'true'))]"
-              },
-              "visible": "[and( equals(steps('networking').deployPeering, 'true'), equals(steps('basics').platformLandingZone, 'true'))]"
             },
             {
               "name": "cognitiveServicesPrivateDnsZone",
@@ -1175,6 +1168,7 @@
           "bastionNsg": "[equals(steps('basics').platformLandingZone, 'false')]"
         },
         "flagPlatformLandingZone": "[equals(steps('basics').platformLandingZone, 'true')]",
+        "deployPeering": "[equals(steps('networking').deployPeering, 'true')]",
         "enableTelemetry": "[equals(steps('basics').enableTelemetry, 'true')]", 
         "baseName": "[steps('basics').baseName]",
         "vnetBaseAddress": "[steps('networking').vnetAddressSpace]",
@@ -1191,6 +1185,9 @@
         },
         "existingVnetName": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.name, '')]",
         "existingVnetId": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.id, '')]",
+        "appGwPrivateIp" : "[coalesce(steps('networking').appGwPrivateIp, '')]",
+        "peerVnetId": "[if(equals(steps('networking').deployPeering, 'true'), steps('networking').peerVnet.id, '')]",
+        "peerVnetName": "[if(equals(steps('networking').deployPeering, 'true'), steps('networking').peerVnet.name, '')]",
         "resourceIds": {
           "virtualNetworkResourceId": "",
           "logAnalyticsWorkspaceResourceId": "",
