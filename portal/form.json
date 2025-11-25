@@ -864,9 +864,9 @@
                 "toolTip": "Select subnet for Private Endpoint",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'))]"
+                  "required": "[equals(steps('networking').createSubnets,'false')]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'))]"
+                "visible": "[equals(steps('networking').createSubnets,'false')]"
               },
               {
                 "name": "azureBastionSubnet",
@@ -1188,6 +1188,19 @@
         "appGwPrivateIp" : "[coalesce(steps('networking').appGwPrivateIp, '')]",
         "peerVnetId": "[if(equals(steps('networking').deployPeering, 'true'), steps('networking').peerVnet.id, '')]",
         "peerVnetName": "[if(equals(steps('networking').deployPeering, 'true'), steps('networking').peerVnet.name, '')]",
+        "existingDNSZones": {
+          "cognitiveservicesZoneId": "[coalesce(steps('networking').cognitiveServicesPrivateDnsZone.id, '')]",
+          "openaiZoneId": "[coalesce(steps('networking').openaiPrivateDnsZone.id, '')]",
+          "aiServicesZoneId": "[coalesce(steps('networking').aiServicesPrivateDnsZone.id, '')]",
+          "searchZoneId": "[coalesce(steps('networking').searchPrivateDnsZone.id, '')]",
+          "cosmosSqlZoneId": "[coalesce(steps('networking').cosmosSqlPrivateDnsZone.id, '')]",
+          "blobZoneId": "[coalesce(steps('networking').blobPrivateDnsZone.id, '')]",
+          "keyVaultZoneId": "[coalesce(steps('networking').keyVaultPrivateDnsZone.id, '')]",
+          "appConfigZoneId": "[coalesce(steps('networking').appConfigPrivateDnsZone.id, '')]",
+          "containerAppsZoneId": "[coalesce(steps('networking').containerAppsPrivateDnsZone.id, '')]",
+          "acrZoneId": "[coalesce(steps('networking').acrPrivateDnsZone.id, '')]",
+          "appInsightsZoneId": "[coalesce(steps('networking').appInsightsPrivateDnsZone.id, '')]"
+        },
         "resourceIds": {
           "virtualNetworkResourceId": "",
           "logAnalyticsWorkspaceResourceId": "",

@@ -118,6 +118,25 @@
         "description": "Optional. Enable VNet peering with the specified hub virtual network."
       }
     },
+    "existingDNSZones": {
+      "type": "object",
+      "metadata": {
+        "description": "Optional. Existing Private DNS Zone IDs when reusing existing zones from a platform landing zone."
+      },
+      "defaultValue": {
+          "cognitiveservicesZoneId": "",
+          "openaiZoneId": "",
+          "aiServicesZoneId": "",
+          "searchZoneId": "",
+          "cosmosSqlZoneId": "",
+          "blobZoneId": "",
+          "keyVaultZoneId": "",
+          "appConfigZoneId": "",
+          "containerAppsZoneId": "",
+          "acrZoneId": "",
+          "appInsightsZoneId": ""
+      }
+    },
     "resourceIds": {
       "type": "object",
       "defaultValue": {},
@@ -660,10 +679,10 @@
               "name": "agent-subnet",
               "addressPrefix": "[concat(parameters('vnetBaseAddress'), '/27')]",
               "delegation": "Microsoft.App/environments",
-              "networkSecurityGroupResourceId": "[if(variables('deployAgentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-agent-', parameters('baseName'))), coalesce(parameters('resourceIds').agentNsgResourceId, ''))]"
+              "networkSecurityGroupResourceId": "[if(variables('deployAgentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-agent-', parameters('baseName'))), null())]"
             },
             {
-              "enabled": ["variables('deployPdnsAndPe')"],
+              "enabled": true,
               "name": "pe-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.32/27')]",
               "serviceEndpoints": ["Microsoft.AzureCosmosDB"],
@@ -684,19 +703,19 @@
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "appgw-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.192/27')]",
-              "networkSecurityGroupResourceId": "[if(variables('deployApplicationGatewayNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-appgw-', parameters('baseName'))), coalesce(parameters('resourceIds').applicationGatewayNsgResourceId, ''))]"
+              "networkSecurityGroupResourceId": "[if(variables('deployApplicationGatewayNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-appgw-', parameters('baseName'))), null())]"
             },
             {
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "apim-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.224/27')]",
-              "networkSecurityGroupResourceId": "[if(variables('deployApiManagementNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-apim-', parameters('baseName'))), coalesce(parameters('resourceIds').apimNsgResourceId, ''))]"
+              "networkSecurityGroupResourceId": "[if(variables('deployApiManagementNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-apim-', parameters('baseName'))), null())]"
             },
             {
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "jumpbox-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.1.0/28')]",
-              "networkSecurityGroupResourceId": "[if(variables('deployJumpboxNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-jumpbox-', parameters('baseName'))), coalesce(parameters('resourceIds').jumpboxNsgResourceId, ''))]"
+              "networkSecurityGroupResourceId": "[if(variables('deployJumpboxNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-jumpbox-', parameters('baseName'))), null())]"
             },
             {
               "enabled": ["variables('deployContainerAppEnv')"],
@@ -704,13 +723,13 @@
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.2.0/23')]",
               "delegation": "Microsoft.App/environments",
               "serviceEndpoints": ["Microsoft.AzureCosmosDB"],
-              "networkSecurityGroupResourceId": "[if(variables('deployAcaEnvironmentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-aca-env-', parameters('baseName'))), coalesce(parameters('resourceIds').acaEnvironmentNsgResourceId, ''))]"
+              "networkSecurityGroupResourceId": "[if(variables('deployAcaEnvironmentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-aca-env-', parameters('baseName'))), null())]"
             },
             {
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "devops-build-agents-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.1.32/27')]",
-              "networkSecurityGroupResourceId": "[if(variables('deployDevopsBuildAgentsNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-devops-build-agents-', parameters('baseName'))), coalesce(parameters('resourceIds').devopsBuildAgentsNsgResourceId, ''))]"
+              "networkSecurityGroupResourceId": "[if(variables('deployDevopsBuildAgentsNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-devops-build-agents-', parameters('baseName'))), null())]"
             }
           ]
           }
@@ -1874,9 +1893,9 @@
             "disableLocalAuth" : false,
             "location": "[parameters('location')]",
             "networking": {
-              "cognitiveServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsCogSvcs'), reference('dep-cognitiveservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryCogsPrivateDnsZoneResourceId, ''))]",
-              "openaiPrivateDnsZoneResourceId": "[if(variables('deployPdnsOpenAI'), reference('dep-openai-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryOpenAIPrivateDnsZoneResourceId, ''))]",
-              "aiServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsAiServices'), reference('dep-aiservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]",
+              "cognitiveServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsCogSvcs'), reference('dep-cognitiveservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').cognitiveservicesZoneId, ''))]",
+              "openaiPrivateDnsZoneResourceId": "[if(variables('deployPdnsOpenAI'), reference('dep-openai-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').openaiZoneId, ''))]",
+              "aiServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsAiServices'), reference('dep-aiservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').aiServicesZoneId, ''))]",
               "agentServiceSubnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
             },
             "project" : {
@@ -1913,16 +1932,16 @@
             }           
           ],
           "aiSearchConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsSearch'), reference('dep-search-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsSearch'), reference('dep-search-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').searchZoneId, ''))]"
           },
           "cosmosDbConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsCosmosSql'), reference('dep-cosmos-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsCosmosSql'), reference('dep-cosmos-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').cosmosSqlZoneId, ''))]"
           }, 
           "keyVaultConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').keyVaultZoneId, ''))]"
           },
           "storageAccountConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsBlob'), reference('dep-blob-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').aiFoundryAiServicesPrivateDnsZoneResourceId, ''))]"
+            "privateDnsZoneResourceId": "[if(variables('deployPdnsBlob'), reference('dep-blob-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').blobZoneId, ''))]"
           }
         }
       }
