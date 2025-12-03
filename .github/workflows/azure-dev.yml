@@ -2,10 +2,6 @@ name: Deploy AI Landing Zone
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-      - newinitial
 
 permissions:
   id-token: write
@@ -29,9 +25,16 @@ jobs:
         run: chmod +x bicep/scripts/*.sh
 
       - name: Install azd
-        uses: Azure/setup-azd@v1.0.0
+        uses: Azure/setup-azd@v2
 
-      - name: Log in with Azure (Federated Credentials)
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in with Azure Developer CLI
         if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
           azd auth login `
@@ -40,5 +43,23 @@ jobs:
             --tenant-id "$AZURE_TENANT_ID"
         shell: pwsh
 
+      - name: Run Pre-provision and What-If
+        run: |
+          # Run pre-provision script to generate templates
+          ./bicep/scripts/preprovision.sh
+          
+          # Run What-If analysis
+          az deployment group what-if \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file bicep/deploy/main.bicep \
+            --parameters bicep/deploy/main.bicepparam
+
       - name: Provision Infrastructure
-        run: azd provision --no-prompt
+        run: |
+          az deployment group create \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file bicep/deploy/main.bicep \
+            --parameters bicep/deploy/main.bicepparam
+
+          # Run post-provision script to cleanup
+          ./bicep/scripts/postprovision.sh
