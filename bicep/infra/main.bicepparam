@@ -1,6 +1,6 @@
 using './main.bicep'
 
-@description('Per-service deployment toggles.')
+// Per-service deployment toggles.
 param deployToggles = {
   acaEnvironmentNsg: true
   agentNsg: true
@@ -32,8 +32,8 @@ param deployToggles = {
   wafPolicy: true
 }
 
-@description('Existing resource IDs (empty means create new).')
+// Existing resource IDs (empty means create new).
 param resourceIds = {}
 
-@description('Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.')
+// Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.
 param flagPlatformLandingZone = false
