@@ -1,7 +1,10 @@
-name: Deploy AI Landing Zone
+name: Deploy AI Landing Zone - Bicep
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - '**'
 
 permissions:
   id-token: write
@@ -51,15 +54,15 @@ jobs:
           # Run What-If analysis
           az deployment group what-if \
             --resource-group "$AZURE_RESOURCE_GROUP" \
-            --template-file bicep/deploy/main.bicep \
-            --parameters bicep/deploy/main.bicepparam
+            --template-file bicep/infra/main.bicep \
+            --parameters bicep/infra/main.bicepparam
 
       - name: Provision Infrastructure
         run: |
           az deployment group create \
             --resource-group "$AZURE_RESOURCE_GROUP" \
-            --template-file bicep/deploy/main.bicep \
-            --parameters bicep/deploy/main.bicepparam
+            --template-file bicep/infra/main.bicep \
+            --parameters bicep/infra/main.bicepparam
 
           # Run post-provision script to cleanup
           ./bicep/scripts/postprovision.sh
