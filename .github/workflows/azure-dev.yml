@@ -47,7 +47,7 @@ jobs:
           az deployment group what-if \
             --resource-group "$AZURE_RESOURCE_GROUP" \
             --template-file bicep/deploy/main.bicep \
-            --parameters bicep/infra/main.bicepparam
+            --parameters bicep/deploy/main.bicepparam
 
       # - name: Provision Infrastructure
       #   run: |
