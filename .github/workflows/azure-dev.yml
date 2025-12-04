@@ -1,11 +1,13 @@
 name: Deploy AI Landing Zone - Bicep
 
-on:
+on: 
   workflow_dispatch:
   push:
     branches:
-      - '**'
+      - main
+      - newinitial
     paths:
+      - 'bicep/infra/**'      
       - 'bicep/**'      
 
 permissions:
