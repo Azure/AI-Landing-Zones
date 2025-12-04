@@ -49,12 +49,12 @@ jobs:
             --template-file bicep/infra/main.bicep \
             --parameters bicep/infra/main.bicepparam
 
-      - name: Provision Infrastructure
-        run: |
-          az deployment group create \
-            --resource-group "$AZURE_RESOURCE_GROUP" \
-            --template-file bicep/infra/main.bicep \
-            --parameters bicep/infra/main.bicepparam
+      # - name: Provision Infrastructure
+      #   run: |
+      #     az deployment group create \
+      #       --resource-group "$AZURE_RESOURCE_GROUP" \
+      #       --template-file bicep/infra/main.bicep \
+      #       --parameters bicep/infra/main.bicepparam
 
-          # Run post-provision script to cleanup
-          ./bicep/scripts/postprovision.sh
+      #     # Run post-provision script to cleanup
+      #     ./bicep/scripts/postprovision.sh
