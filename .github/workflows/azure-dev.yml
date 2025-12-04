@@ -43,10 +43,10 @@ jobs:
           # Run pre-provision script to generate templates
           ./bicep/scripts/preprovision.sh
           
-          # Run What-If analysis
+          # Run What-If analysis using the modularized template
           az deployment group what-if \
             --resource-group "$AZURE_RESOURCE_GROUP" \
-            --template-file bicep/infra/main.bicep \
+            --template-file bicep/infra/main-modularized.bicep \
             --parameters bicep/infra/main.bicepparam
 
       # - name: Provision Infrastructure
