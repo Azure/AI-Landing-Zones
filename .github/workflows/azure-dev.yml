@@ -7,7 +7,8 @@ on:
       - newinitial
     paths:
       - 'bicep/infra/**'      
-      - 'bicep/**'      
+      - 'bicep/**'  
+      - '.github/workflows/azure-dev.yml'    
 
 permissions:
   id-token: write
