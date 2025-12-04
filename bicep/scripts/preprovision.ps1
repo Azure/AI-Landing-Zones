@@ -433,62 +433,65 @@ foreach ($wrapperFile in $wrapperFiles) {
 # STEP 4: BICEP TEMPLATE TRANSFORMATION
 #===============================================================================
 
-# Step 4: Update main.bicep with Template Spec references (in-place)
+# Step 4: Update all bicep files with Template Spec references
 Write-Host ""
 if ($templateSpecs.Count -gt 0) {
-  Write-Host "[4] Step 4: Updating main.bicep references..." -ForegroundColor Cyan
-} else {
-  Write-Host "[4] Step 4: Skipping main.bicep transformation (no Template Specs found)..." -ForegroundColor Yellow
-}
-
-$mainBicepPath = Join-Path $deployDir 'main.bicep'
-
-if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
-  $content = Get-Content $mainBicepPath -Raw
-  $replacementCount = 0
+  Write-Host "[4] Step 4: Updating bicep references..." -ForegroundColor Cyan
   
-  # Replace wrapper references with Template Spec references
-  foreach ($wrapperFile in $templateSpecs.Keys) {
-    $wrapperPath = "wrappers/$wrapperFile"
+  # Find all bicep files in deploy directory
+  $bicepFiles = Get-ChildItem -Path $deployDir -Filter "*.bicep" -Recurse
+  
+  foreach ($file in $bicepFiles) {
+    Write-Host "  Processing: $($file.Name)" -ForegroundColor Gray
     
-    # Convert ARM Resource ID to Bicep Template Spec format
-    # From: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Resources/templateSpecs/{name}/versions/{version}
-    # To: ts:{sub}/{rg}/{name}:{version}
-    $tsId = $templateSpecs[$wrapperFile]
+    $content = Get-Content $file.FullName -Raw
+    $fileModified = $false
+    $replacementCount = 0
     
-    # Skip if template spec ID is empty or invalid
-    if ([string]::IsNullOrWhiteSpace($tsId)) {
-      Write-Host "  [!] Skipping $wrapperFile - no valid Template Spec ID" -ForegroundColor Yellow
-      continue
-    }
-    
-    if ($tsId -match '/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft\.Resources/templateSpecs/([^/]+)/versions/([^/]+)') {
-      $subscription = $matches[1]
-      $resourceGroup = $matches[2] 
-      $templateSpecName = $matches[3]
-      $version = $matches[4]
-      $tsReference = "ts:$subscription/$resourceGroup/$templateSpecName`:$version"
-    } else {
-      # Skip invalid template spec IDs to avoid empty references
-      Write-Host "  [!] Skipping $wrapperFile - invalid Template Spec ID format: $tsId" -ForegroundColor Yellow
-      continue
-    }
-    
-    if ($content.Contains($wrapperPath)) {
-      $content = $content.Replace("'$wrapperPath'", "'$tsReference'")
-      $replacementCount++
+    # Replace wrapper references with Template Spec references
+    foreach ($wrapperFile in $templateSpecs.Keys) {
+      $tsId = $templateSpecs[$wrapperFile]
       
-      # Show clean, properly formatted replacement message
-      Write-Host "  [+] Replaced:" -ForegroundColor Green
-      Write-Host "    $wrapperPath" -ForegroundColor White
-      Write-Host "    -> $tsReference" -ForegroundColor Gray
+      # Skip if template spec ID is empty or invalid
+      if ([string]::IsNullOrWhiteSpace($tsId)) {
+        continue
+      }
+      
+      if ($tsId -match '/subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft\.Resources/templateSpecs/([^/]+)/versions/([^/]+)') {
+        $subscription = $matches[1]
+        $resourceGroup = $matches[2] 
+        $templateSpecName = $matches[3]
+        $version = $matches[4]
+        $tsReference = "ts:$subscription/$resourceGroup/$templateSpecName`:$version"
+        
+        # Pattern 1: 'wrappers/file.bicep' (used in main.bicep)
+        $wrapperPath = "wrappers/$wrapperFile"
+        if ($content.Contains("'$wrapperPath'")) {
+          $content = $content.Replace("'$wrapperPath'", "'$tsReference'")
+          $replacementCount++
+          $fileModified = $true
+        }
+        
+        # Pattern 2: '../wrappers/file.bicep' (used in modules/*.bicep)
+        $wrapperPathRel = "../wrappers/$wrapperFile"
+        if ($content.Contains("'$wrapperPathRel'")) {
+          $content = $content.Replace("'$wrapperPathRel'", "'$tsReference'")
+          $replacementCount++
+          $fileModified = $true
+        }
+      }
+    }
+    
+    if ($fileModified) {
+      Set-Content -Path $file.FullName -Value $content -Encoding UTF8
+      Write-Host "    [+] Updated references in $($file.Name)" -ForegroundColor Green
     }
   }
   
-  # Save back to main.bicep (in-place replacement)
-  Set-Content -Path $mainBicepPath -Value $content -Encoding UTF8
   Write-Host ""
-  Write-Host "  [+] Updated deploy/main.bicep ($replacementCount references replaced)" -ForegroundColor Green
+  Write-Host "  [+] Updated bicep files with Template Spec references" -ForegroundColor Green
+} else {
+  Write-Host "[4] Step 4: Skipping bicep transformation (no Template Specs found)..." -ForegroundColor Yellow
 }
 
 #===============================================================================

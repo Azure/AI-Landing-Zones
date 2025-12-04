@@ -432,57 +432,63 @@ done
 # STEP 4: BICEP TEMPLATE TRANSFORMATION
 #===============================================================================
 
-# Step 4: Update main.bicep with Template Spec references (in-place)
+# Step 4: Update all bicep files with Template Spec references
 echo ""
-print_step "4" "Step 4: Updating main.bicep references..."
+print_step "4" "Step 4: Updating bicep references..."
 
-main_bicep_path="$deploy_dir/main.bicep"
-
-if [ -f "$main_bicep_path" ] && [ -s "$temp_mapping_file" ]; then
+if [ -s "$temp_mapping_file" ]; then
     replacement_count=0
     
-    # Create a temporary file for the updated content
-    temp_bicep_file=$(mktemp)
-    trap 'rm -f "$temp_bicep_file" "$temp_mapping_file"' EXIT
-    
-    # Copy original content to temp file
-    cp "$main_bicep_path" "$temp_bicep_file"
-    
-    # Process each template spec mapping
-    while IFS='|' read -r wrapper_file ts_id; do
-        [ -z "$wrapper_file" ] || [ -z "$ts_id" ] && continue
+    # Find all bicep files in deploy directory
+    find "$deploy_dir" -name "*.bicep" | while read -r bicep_file; do
+        print_gray "  Processing: $(basename "$bicep_file")"
         
-        wrapper_path="wrappers/$wrapper_file"
+        # Create temp file
+        temp_bicep_file=$(mktemp)
+        cp "$bicep_file" "$temp_bicep_file"
+        file_modified=false
         
-        # Convert ARM Resource ID to Bicep Template Spec format
-        if echo "$ts_id" | grep -q "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.Resources/templateSpecs/.*/versions/.*"; then
-            subscription=$(echo "$ts_id" | sed 's|.*/subscriptions/\([^/]*\)/.*|\1|')
-            resource_group=$(echo "$ts_id" | sed 's|.*/resourceGroups/\([^/]*\)/.*|\1|')
-            template_spec_name=$(echo "$ts_id" | sed 's|.*/templateSpecs/\([^/]*\)/.*|\1|')
-            version=$(echo "$ts_id" | sed 's|.*/versions/\([^/]*\).*|\1|')
-            ts_reference="ts:$subscription/$resource_group/$template_spec_name:$version"
+        while IFS='|' read -r wrapper_file ts_id; do
+            [ -z "$wrapper_file" ] || [ -z "$ts_id" ] && continue
             
-            # Replace in the temp file
-            if grep -q "'$wrapper_path'" "$temp_bicep_file"; then
-                sed "s|'$wrapper_path'|'$ts_reference'|g" "$temp_bicep_file" > "${temp_bicep_file}.new"
-                mv "${temp_bicep_file}.new" "$temp_bicep_file"
-                replacement_count=$((replacement_count + 1))
+            # Convert ARM Resource ID to Bicep Template Spec format
+            if echo "$ts_id" | grep -q "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.Resources/templateSpecs/.*/versions/.*"; then
+                subscription=$(echo "$ts_id" | sed 's|.*/subscriptions/\([^/]*\)/.*|\1|')
+                resource_group=$(echo "$ts_id" | sed 's|.*/resourceGroups/\([^/]*\)/.*|\1|')
+                template_spec_name=$(echo "$ts_id" | sed 's|.*/templateSpecs/\([^/]*\)/.*|\1|')
+                version=$(echo "$ts_id" | sed 's|.*/versions/\([^/]*\).*|\1|')
+                ts_reference="ts:$subscription/$resource_group/$template_spec_name:$version"
                 
-                print_success "  [+] Replaced:"
-                print_white "    $wrapper_path"
-                print_gray "    -> $ts_reference"
+                # Pattern 1: 'wrappers/file.bicep' (used in main.bicep)
+                wrapper_path="wrappers/$wrapper_file"
+                if grep -q "'$wrapper_path'" "$temp_bicep_file"; then
+                    sed "s|'$wrapper_path'|'$ts_reference'|g" "$temp_bicep_file" > "${temp_bicep_file}.new"
+                    mv "${temp_bicep_file}.new" "$temp_bicep_file"
+                    file_modified=true
+                    replacement_count=$((replacement_count + 1))
+                fi
+                
+                # Pattern 2: '../wrappers/file.bicep' (used in modules/*.bicep)
+                wrapper_path_rel="../wrappers/$wrapper_file"
+                if grep -q "'$wrapper_path_rel'" "$temp_bicep_file"; then
+                    sed "s|'$wrapper_path_rel'|'$ts_reference'|g" "$temp_bicep_file" > "${temp_bicep_file}.new"
+                    mv "${temp_bicep_file}.new" "$temp_bicep_file"
+                    file_modified=true
+                    replacement_count=$((replacement_count + 1))
+                fi
             fi
-        else
-            print_warning "  [!] Skipping $wrapper_file - invalid Template Spec ID format: $ts_id"
+        done < "$temp_mapping_file"
+        
+        if [ "$file_modified" = true ]; then
+            cp "$temp_bicep_file" "$bicep_file"
+            print_success "    [+] Updated references in $(basename "$bicep_file")"
         fi
-    done < "$temp_mapping_file"
-    
-    # Save the updated content back to main.bicep
-    cp "$temp_bicep_file" "$main_bicep_path"
-    rm -f "$temp_bicep_file"
+        
+        rm -f "$temp_bicep_file"
+    done
     
     echo ""
-    print_success "  [+] Updated deploy/main.bicep ($replacement_count references replaced)"
+    print_success "  [+] Updated bicep files with Template Spec references"
 fi
 
 #===============================================================================
