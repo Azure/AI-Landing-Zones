@@ -43,18 +43,38 @@ jobs:
           # Run pre-provision script to generate templates
           ./bicep/scripts/preprovision.sh
           
-          # Run What-If analysis using the optimized template from deploy/ directory
+          # Run What-If analysis and capture output
           az deployment group what-if \
             --resource-group "$AZURE_RESOURCE_GROUP" \
             --template-file bicep/deploy/main.bicep \
-            --parameters bicep/deploy/main.bicepparam
+            --parameters bicep/deploy/main.bicepparam > what-if-raw.txt
+          
+          # Create a clean summary for easy review
+          echo "WHAT-IF SUMMARY" > what-if-summary.txt
+          echo "===============" >> what-if-summary.txt
+          echo "" >> what-if-summary.txt
+          
+          # Extract lines starting with +, -, or ~ (Create, Delete, Modify)
+          # Using grep to filter for lines with change indicators
+          grep -E "^[[:space:]]*[\+\-\~]" what-if-raw.txt >> what-if-summary.txt || echo "No changes detected." >> what-if-summary.txt
+          
+          # Display summary in logs
+          cat what-if-summary.txt
+
+      - name: Upload What-If Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: what-if-results
+          path: |
+            what-if-raw.txt
+            what-if-summary.txt
 
       # - name: Provision Infrastructure
       #   run: |
       #     az deployment group create \
       #       --resource-group "$AZURE_RESOURCE_GROUP" \
-      #       --template-file bicep/infra/main.bicep \
-      #       --parameters bicep/infra/main.bicepparam
+      #       --template-file bicep/deploy/main.bicep \
+      #       --parameters bicep/deploy/main.bicepparam
 
       #     # Run post-provision script to cleanup
       #     ./bicep/scripts/postprovision.sh
