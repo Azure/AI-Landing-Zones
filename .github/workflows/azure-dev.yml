@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - '**'
+    paths:
+      - 'bicep/**'      
 
 permissions:
   id-token: write
