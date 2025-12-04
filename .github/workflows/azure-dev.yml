@@ -1,4 +1,4 @@
-name: Deploy AI Landing Zone - Bicep
+name: Deploy AI Landing Zone-Bicep
 
 on:  
   push:
