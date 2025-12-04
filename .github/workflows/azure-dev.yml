@@ -1,7 +1,6 @@
 name: Deploy AI Landing Zone - Bicep
 
 on: 
-  workflow_dispatch:
   push:
     branches:
       - main
