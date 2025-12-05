@@ -676,6 +676,7 @@ module aiFoundry 'wrappers/avm.ptn.ai-ml.ai-foundry.bicep' = if (aiFoundryDefini
   params: {
     aiFoundry: union(
       {
+        baseName: baseName
         name: 'aihub-${baseName}'
         location: location
         enableTelemetry: enableTelemetry
