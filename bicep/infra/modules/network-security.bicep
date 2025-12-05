@@ -151,6 +151,121 @@ module bastionNsgWrapper '../wrappers/avm.res.network.network-security-group.bic
         name: 'nsg-bastion-${baseName}'
         location: location
         enableTelemetry: enableTelemetry
+        securityRules: [
+          {
+            name: 'AllowHttpsInbound'
+            properties: {
+              priority: 120
+              protocol: 'Tcp'
+              access: 'Allow'
+              direction: 'Inbound'
+              sourceAddressPrefix: 'Internet'
+              sourcePortRange: '*'
+              destinationAddressPrefix: '*'
+              destinationPortRange: '443'
+            }
+          }
+          {
+            name: 'AllowGatewayManagerInbound'
+            properties: {
+              priority: 130
+              protocol: 'Tcp'
+              access: 'Allow'
+              direction: 'Inbound'
+              sourceAddressPrefix: 'GatewayManager'
+              sourcePortRange: '*'
+              destinationAddressPrefix: '*'
+              destinationPortRange: '443'
+            }
+          }
+          {
+            name: 'AllowAzureLoadBalancerInbound'
+            properties: {
+              priority: 140
+              protocol: 'Tcp'
+              access: 'Allow'
+              direction: 'Inbound'
+              sourceAddressPrefix: 'AzureLoadBalancer'
+              sourcePortRange: '*'
+              destinationAddressPrefix: '*'
+              destinationPortRange: '443'
+            }
+          }
+          {
+            name: 'AllowBastionHostCommunication'
+            properties: {
+              priority: 150
+              protocol: '*'
+              access: 'Allow'
+              direction: 'Inbound'
+              sourceAddressPrefix: 'VirtualNetwork'
+              sourcePortRange: '*'
+              destinationAddressPrefix: 'VirtualNetwork'
+              destinationPortRanges: [
+                '8080'
+                '5701'
+              ]
+            }
+          }
+          {
+            name: 'AllowSshRdpOutbound'
+            properties: {
+              priority: 100
+              protocol: '*'
+              access: 'Allow'
+              direction: 'Outbound'
+              sourceAddressPrefix: '*'
+              sourcePortRange: '*'
+              destinationAddressPrefix: 'VirtualNetwork'
+              destinationPortRanges: [
+                '22'
+                '3389'
+              ]
+            }
+          }
+          {
+            name: 'AllowAzureCloudOutbound'
+            properties: {
+              priority: 110
+              protocol: 'Tcp'
+              access: 'Allow'
+              direction: 'Outbound'
+              sourceAddressPrefix: '*'
+              sourcePortRange: '*'
+              destinationAddressPrefix: 'AzureCloud'
+              destinationPortRange: '443'
+            }
+          }
+          {
+            name: 'AllowBastionCommunication'
+            properties: {
+              priority: 120
+              protocol: '*'
+              access: 'Allow'
+              direction: 'Outbound'
+              sourceAddressPrefix: 'VirtualNetwork'
+              sourcePortRange: '*'
+              destinationAddressPrefix: 'VirtualNetwork'
+              destinationPortRanges: [
+                '8080'
+                '5701'
+              ]
+            }
+          }
+          {
+            name: 'AllowGetSessionInformation'
+            properties: {
+              priority: 130
+              protocol: '*'
+              access: 'Allow'
+              direction: 'Outbound'
+              sourceAddressPrefix: '*'
+              sourcePortRange: '*'
+              destinationAddressPrefix: 'Internet'
+              destinationPortRange: '80'
+            }
+          }
+        ]
       },
       nsgDefinitions!.?bastion ?? {}
     )
