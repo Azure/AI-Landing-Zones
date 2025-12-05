@@ -22,7 +22,7 @@ jobs:
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME || 'ai-landing-zone' }}
-      AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'eastus2' }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'swedencentral' }}
       AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP || 'rg-aifoundry' }}
     steps:
       - name: Checkout
@@ -105,7 +105,7 @@ jobs:
             --output json
           
           echo "Fetching failed operations..."
-          az deployment operation list \
+          az deployment operation group list \
             --name "$DEPLOYMENT_NAME" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
             --query "[?properties.provisioningState=='Failed']" \
