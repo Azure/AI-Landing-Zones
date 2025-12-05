@@ -80,6 +80,90 @@ var varHubPeerVnetName = varDeployHubPeering && length(varHubPeerParts) >= 9 ? v
 // VIRTUAL NETWORK
 // -----------------------
 
+var agentSubnet = union(
+  {
+    enabled: true
+    name: 'agent-subnet'
+    addressPrefix: '192.168.0.0/27'
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.CognitiveServices']
+  },
+  !empty(agentNsgResourceId) ? { networkSecurityGroupResourceId: agentNsgResourceId } : {}
+)
+
+var peSubnet = union(
+  {
+    enabled: true
+    name: 'pe-subnet'
+    addressPrefix: '192.168.0.32/27'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+    privateEndpointNetworkPolicies: 'Disabled'
+  },
+  !empty(peNsgResourceId) ? { networkSecurityGroupResourceId: peNsgResourceId } : {}
+)
+
+var bastionSubnet = union(
+  {
+    enabled: true
+    name: 'AzureBastionSubnet'
+    addressPrefix: '192.168.0.64/26'
+  },
+  !empty(bastionNsgResourceId) ? { networkSecurityGroupResourceId: bastionNsgResourceId } : {}
+)
+
+var firewallSubnet = {
+  enabled: true
+  name: 'AzureFirewallSubnet'
+  addressPrefix: '192.168.0.128/26'
+}
+
+var appGatewaySubnet = union(
+  {
+    enabled: true
+    name: 'appgw-subnet'
+    addressPrefix: '192.168.0.192/27'
+  },
+  !empty(applicationGatewayNsgResourceId) ? { networkSecurityGroupResourceId: applicationGatewayNsgResourceId } : {}
+)
+
+var apimSubnet = union(
+  {
+    enabled: true
+    name: 'apim-subnet'
+    addressPrefix: '192.168.0.224/27'
+  },
+  !empty(apiManagementNsgResourceId) ? { networkSecurityGroupResourceId: apiManagementNsgResourceId } : {}
+)
+
+var jumpboxSubnet = union(
+  {
+    enabled: true
+    name: 'jumpbox-subnet'
+    addressPrefix: '192.168.1.0/28'
+  },
+  !empty(jumpboxNsgResourceId) ? { networkSecurityGroupResourceId: jumpboxNsgResourceId } : {}
+)
+
+var acaEnvSubnet = union(
+  {
+    enabled: true
+    name: 'aca-env-subnet'
+    addressPrefix: '192.168.2.0/23'
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+  },
+  !empty(acaEnvironmentNsgResourceId) ? { networkSecurityGroupResourceId: acaEnvironmentNsgResourceId } : {}
+)
+
+var devopsAgentsSubnet = union(
+  {
+    enabled: true
+    name: 'devops-agents-subnet'
+    addressPrefix: '192.168.1.32/27'
+  },
+  !empty(devopsBuildAgentsNsgResourceId) ? { networkSecurityGroupResourceId: devopsBuildAgentsNsgResourceId } : {}
+)
+
 module vNetworkWrapper '../wrappers/avm.res.network.virtual-network.bicep' = if (varDeployVnet) {
   name: 'm-vnet'
   params: {
@@ -90,65 +174,15 @@ module vNetworkWrapper '../wrappers/avm.res.network.virtual-network.bicep' = if 
         location: location
         enableTelemetry: enableTelemetry
         subnets: [
-          {
-            enabled: true
-            name: 'agent-subnet'
-            addressPrefix: '192.168.0.0/27'
-            delegation: 'Microsoft.App/environments'
-            serviceEndpoints: ['Microsoft.CognitiveServices']
-            networkSecurityGroupResourceId: !empty(agentNsgResourceId) ? agentNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'pe-subnet'
-            addressPrefix: '192.168.0.32/27'
-            serviceEndpoints: ['Microsoft.AzureCosmosDB']
-            privateEndpointNetworkPolicies: 'Disabled'
-            networkSecurityGroupResourceId: !empty(peNsgResourceId) ? peNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'AzureBastionSubnet'
-            addressPrefix: '192.168.0.64/26'
-            networkSecurityGroupResourceId: !empty(bastionNsgResourceId) ? bastionNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'AzureFirewallSubnet'
-            addressPrefix: '192.168.0.128/26'
-          }
-          {
-            enabled: true
-            name: 'appgw-subnet'
-            addressPrefix: '192.168.0.192/27'
-            networkSecurityGroupResourceId: !empty(applicationGatewayNsgResourceId) ? applicationGatewayNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'apim-subnet'
-            addressPrefix: '192.168.0.224/27'
-            networkSecurityGroupResourceId: !empty(apiManagementNsgResourceId) ? apiManagementNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'jumpbox-subnet'
-            addressPrefix: '192.168.1.0/28'
-            networkSecurityGroupResourceId: !empty(jumpboxNsgResourceId) ? jumpboxNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'aca-env-subnet'
-            addressPrefix: '192.168.2.0/23'
-            delegation: 'Microsoft.App/environments'
-            serviceEndpoints: ['Microsoft.AzureCosmosDB']
-            networkSecurityGroupResourceId: !empty(acaEnvironmentNsgResourceId) ? acaEnvironmentNsgResourceId : null
-          }
-          {
-            enabled: true
-            name: 'devops-agents-subnet'
-            addressPrefix: '192.168.1.32/27'
-            networkSecurityGroupResourceId: !empty(devopsBuildAgentsNsgResourceId) ? devopsBuildAgentsNsgResourceId : null
-          }
+          agentSubnet
+          peSubnet
+          bastionSubnet
+          firewallSubnet
+          appGatewaySubnet
+          apimSubnet
+          jumpboxSubnet
+          acaEnvSubnet
+          devopsAgentsSubnet
         ]
       },
       vNetDefinition ?? {}
