@@ -1,7 +1,7 @@
 using './main.bicep'
 
 // Base name for resources to avoid naming conflicts with soft-deleted resources
-param baseName = 'ailz-v2'
+param baseName = 'ailzv2'
 
 // Per-service deployment toggles.
 param deployToggles = {
