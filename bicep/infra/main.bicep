@@ -739,6 +739,6 @@ output jumpVmResourceId string = compute.outputs.jumpVmResourceId
 output aiFoundryProjectName string = (aiFoundryDefinition != null) ? aiFoundry!.outputs.aiProjectName : ''
 
 @description('Bing Search Outputs')
-output bingSearchResourceId string = varInvokeBingModule ? bingSearch!.outputs.resourceId : ''
-output bingConnectionId string = varInvokeBingModule ? bingSearch!.outputs.bingConnectionId : ''
-output bingResourceGroupName string = varInvokeBingModule ? bingSearch!.outputs.resourceGroupName : ''
+output bingSearchResourceId string = (varInvokeBingModule && aiFoundryDefinition != null) ? bingSearch!.outputs.resourceId : ''
+output bingConnectionId string = (varInvokeBingModule && aiFoundryDefinition != null) ? bingSearch!.outputs.bingConnectionId : ''
+output bingResourceGroupName string = (varInvokeBingModule && aiFoundryDefinition != null) ? bingSearch!.outputs.resourceGroupName : ''
