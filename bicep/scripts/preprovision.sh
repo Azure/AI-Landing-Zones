@@ -386,41 +386,32 @@ for wrapper_file in "$deploy_wrappers_dir"/*.bicep; do
         existing_ts=$(az ts list -g "$TEMPLATE_SPEC_RG" --query "[?name=='$ts_name'].name" -o tsv 2>/dev/null || echo "")
         
         if [ -n "$existing_ts" ]; then
-            print_info "    [i] Template Spec already exists, skipping..."
-
-            # Get existing Template Spec ID (specific version when available)
-            ts_id=$(az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" --query id -o tsv 2>/dev/null || \
-                    az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" --query id -o tsv 2>/dev/null || echo "")
-
-            if [ -n "$ts_id" ]; then
-                echo "$(basename "$wrapper_file")|$ts_id" >> "$temp_mapping_file"
-                print_success "    [+] Using existing Template Spec: $ts_name"
-            fi
+            print_info "    [i] Template Spec exists, updating..."
         else
             printf "${GRAY}    [+] Creating new Template Spec...${NC}"
+        fi
             
-            # Create new template spec with version (with timeout handling)
-            if timeout 300 az ts create -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" -l "$LOCATION" \
-                    --template-file "$json_path" --display-name "Wrapper: $wrapper_name" \
-                    --description "Auto-generated Template Spec for $wrapper_name wrapper" \
-                    --only-show-errors > /dev/null 2>&1; then
-                echo ""
-                print_gray "    [i] Getting Template Spec ID..."
-                
-                # Get Template Spec ID
-                ts_id=$(az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" --query id -o tsv 2>/dev/null || echo "")
-                
-                if [ -n "$ts_id" ]; then
-                    echo "$(basename "$wrapper_file")|$ts_id" >> "$temp_mapping_file"
-                    print_success "    [+] Published Template Spec:"
-                    print_white "      $ts_name"
-                else
-                    print_error "    [X] Failed to get Template Spec ID for: $ts_name"
-                fi
+        # Create or Update template spec with version (with timeout handling)
+        if timeout 300 az ts create -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" -l "$LOCATION" \
+                --template-file "$json_path" --display-name "Wrapper: $wrapper_name" \
+                --description "Auto-generated Template Spec for $wrapper_name wrapper" \
+                --only-show-errors > /dev/null 2>&1; then
+            echo ""
+            print_gray "    [i] Getting Template Spec ID..."
+            
+            # Get Template Spec ID
+            ts_id=$(az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" --query id -o tsv 2>/dev/null || echo "")
+            
+            if [ -n "$ts_id" ]; then
+                echo "$(basename "$wrapper_file")|$ts_id" >> "$temp_mapping_file"
+                print_success "    [+] Published Template Spec:"
+                print_white "      $ts_name"
             else
-                echo ""
-                print_error "    [X] Failed to publish Template Spec: $wrapper_name"
+                print_error "    [X] Failed to get Template Spec ID for: $ts_name"
             fi
+        else
+            echo ""
+            print_error "    [X] Failed to publish Template Spec: $wrapper_name"
         fi
     fi
     
