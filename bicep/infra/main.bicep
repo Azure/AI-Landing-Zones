@@ -649,9 +649,9 @@ module compute './modules/compute.bicep' = {
 // MODULE 11: AI FOUNDRY
 // -----------------------
 
-var varAiServicesDnsZoneId = varDeployPdnsAndPe ? privateDnsZones.outputs.aiServicesDnsZoneId : privateDnsZonesDefinition.aiServicesZoneId
-var varCognitiveServicesDnsZoneId = varDeployPdnsAndPe ? privateDnsZones.outputs.cognitiveServicesDnsZoneId : privateDnsZonesDefinition.cognitiveservicesZoneId
-var varOpenAiDnsZoneId = varDeployPdnsAndPe ? privateDnsZones.outputs.openAiDnsZoneId : privateDnsZonesDefinition.openaiZoneId
+var varAiServicesDnsZoneId = varDeployPdnsAndPe ? privateDnsZones!.outputs.aiServicesDnsZoneId : privateDnsZonesDefinition.aiServicesZoneId
+var varCognitiveServicesDnsZoneId = varDeployPdnsAndPe ? privateDnsZones!.outputs.cognitiveServicesDnsZoneId : privateDnsZonesDefinition.cognitiveservicesZoneId
+var varOpenAiDnsZoneId = varDeployPdnsAndPe ? privateDnsZones!.outputs.openAiDnsZoneId : privateDnsZonesDefinition.openaiZoneId
 
 var defaultAiFoundryNetworking = {
   aiServicesPrivateDnsZoneResourceId: varAiServicesDnsZoneId
