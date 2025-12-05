@@ -8,9 +8,9 @@ param deployToggles = {
   apiManagementNsg: false
   appConfig: true
   appInsights: true
-  applicationGateway: true
-  applicationGatewayNsg: true
-  applicationGatewayPublicIp: true
+  applicationGateway: false
+  applicationGatewayNsg: false
+  applicationGatewayPublicIp: false
   bastionHost: true
   bastionNsg: true
   buildVm: true
