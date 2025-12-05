@@ -38,11 +38,20 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Ensure Bicep is installed
+        run: |
+          az bicep install
+          az bicep version
+
       - name: Run Pre-provision and What-If
         run: |
           # Run pre-provision script to generate templates
           ./bicep/scripts/preprovision.sh
           
+          # Verify auth and build (primes the cache and validates)
+          az account get-access-token --query "expiresOn"
+          az bicep build --file bicep/deploy/main.bicep
+
           # Run What-If analysis and capture output
           az deployment group what-if \
             --resource-group "$AZURE_RESOURCE_GROUP" \
