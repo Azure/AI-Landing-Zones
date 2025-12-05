@@ -96,7 +96,7 @@ module vNetworkWrapper '../wrappers/avm.res.network.virtual-network.bicep' = if 
             addressPrefix: '192.168.0.0/27'
             delegation: 'Microsoft.App/environments'
             serviceEndpoints: ['Microsoft.CognitiveServices']
-            networkSecurityGroupResourceId: agentNsgResourceId
+            networkSecurityGroupResourceId: !empty(agentNsgResourceId) ? agentNsgResourceId : null
           }
           {
             enabled: true
@@ -104,13 +104,13 @@ module vNetworkWrapper '../wrappers/avm.res.network.virtual-network.bicep' = if 
             addressPrefix: '192.168.0.32/27'
             serviceEndpoints: ['Microsoft.AzureCosmosDB']
             privateEndpointNetworkPolicies: 'Disabled'
-            networkSecurityGroupResourceId: peNsgResourceId
+            networkSecurityGroupResourceId: !empty(peNsgResourceId) ? peNsgResourceId : null
           }
           {
             enabled: true
             name: 'AzureBastionSubnet'
             addressPrefix: '192.168.0.64/26'
-            networkSecurityGroupResourceId: bastionNsgResourceId
+            networkSecurityGroupResourceId: !empty(bastionNsgResourceId) ? bastionNsgResourceId : null
           }
           {
             enabled: true
@@ -121,19 +121,19 @@ module vNetworkWrapper '../wrappers/avm.res.network.virtual-network.bicep' = if 
             enabled: true
             name: 'appgw-subnet'
             addressPrefix: '192.168.0.192/27'
-            networkSecurityGroupResourceId: applicationGatewayNsgResourceId
+            networkSecurityGroupResourceId: !empty(applicationGatewayNsgResourceId) ? applicationGatewayNsgResourceId : null
           }
           {
             enabled: true
             name: 'apim-subnet'
             addressPrefix: '192.168.0.224/27'
-            networkSecurityGroupResourceId: apiManagementNsgResourceId
+            networkSecurityGroupResourceId: !empty(apiManagementNsgResourceId) ? apiManagementNsgResourceId : null
           }
           {
             enabled: true
             name: 'jumpbox-subnet'
             addressPrefix: '192.168.1.0/28'
-            networkSecurityGroupResourceId: jumpboxNsgResourceId
+            networkSecurityGroupResourceId: !empty(jumpboxNsgResourceId) ? jumpboxNsgResourceId : null
           }
           {
             enabled: true
@@ -141,13 +141,13 @@ module vNetworkWrapper '../wrappers/avm.res.network.virtual-network.bicep' = if 
             addressPrefix: '192.168.2.0/23'
             delegation: 'Microsoft.App/environments'
             serviceEndpoints: ['Microsoft.AzureCosmosDB']
-            networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
+            networkSecurityGroupResourceId: !empty(acaEnvironmentNsgResourceId) ? acaEnvironmentNsgResourceId : null
           }
           {
             enabled: true
             name: 'devops-agents-subnet'
             addressPrefix: '192.168.1.32/27'
-            networkSecurityGroupResourceId: devopsBuildAgentsNsgResourceId
+            networkSecurityGroupResourceId: !empty(devopsBuildAgentsNsgResourceId) ? devopsBuildAgentsNsgResourceId : null
           }
         ]
       },
