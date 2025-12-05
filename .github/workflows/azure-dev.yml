@@ -69,12 +69,12 @@ jobs:
             what-if-raw.txt
             what-if-summary.txt
 
-      # - name: Provision Infrastructure
-      #   run: |
-      #     az deployment group create \
-      #       --resource-group "$AZURE_RESOURCE_GROUP" \
-      #       --template-file bicep/deploy/main.bicep \
-      #       --parameters bicep/deploy/main.bicepparam
+      - name: Provision Infrastructure
+        run: |
+          az deployment group create \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file bicep/deploy/main.bicep \
+            --parameters bicep/deploy/main.bicepparam
 
-      #     # Run post-provision script to cleanup
-      #     ./bicep/scripts/postprovision.sh
+          # Run post-provision script to cleanup
+          ./bicep/scripts/postprovision.sh
