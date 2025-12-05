@@ -710,6 +710,7 @@ output bastionNsgResourceId string = bastionNsgResourceId
 
 @description('Virtual Network Outputs')
 output virtualNetworkResourceId string = virtualNetworkResourceId
+output bastionHostResourceId string = networkingCore.outputs.bastionHostResourceId
 
 @description('Observability Outputs')
 output logAnalyticsWorkspaceResourceId string = varLogAnalyticsWorkspaceResourceId
@@ -734,6 +735,8 @@ output firewallPolicyResourceId string = firewallPolicyResourceId
 @description('Compute Outputs')
 output buildVmResourceId string = compute.outputs.buildVmResourceId
 output jumpVmResourceId string = compute.outputs.jumpVmResourceId
+#disable-next-line outputs-should-not-contain-secrets
+output jumpVmAdminPassword string = jumpVmAdminPassword
 
 @description('AI Foundry Output')
 output aiFoundryProjectName string = (aiFoundryDefinition != null) ? aiFoundry!.outputs.aiProjectName : ''

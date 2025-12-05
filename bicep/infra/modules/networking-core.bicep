@@ -61,6 +61,7 @@ param bastionNsgResourceId string = ''
 var varDeployVnet = deployToggles.virtualNetwork && empty(resourceIds.?virtualNetworkResourceId)
 var varDeployApGatewayPip = deployToggles.applicationGatewayPublicIp && empty(resourceIds.?appGatewayPublicIpResourceId)
 var varDeployFirewallPip = deployToggles.?firewall && empty(resourceIds.?firewallPublicIpResourceId)
+var varDeployBastion = deployToggles.?bastionHost && empty(resourceIds.?bastionHostResourceId)
 var varDeployHubPeering = hubVnetPeeringDefinition != null && !empty(hubVnetPeeringDefinition.?peerVnetResourceId)
 
 // -----------------------
@@ -271,6 +272,37 @@ var firewallPublicIpResourceId = resourceIds.?firewallPublicIpResourceId ?? (var
   ? firewallPipWrapper!.outputs.resourceId
   : '')
 
+// Bastion Public IP
+module bastionPipWrapper '../wrappers/avm.res.network.public-ip-address.bicep' = if (varDeployBastion) {
+  name: 'm-bastion-pip'
+  params: {
+    pip: {
+      name: 'pip-bastion-${baseName}'
+      skuName: 'Standard'
+      skuTier: 'Regional'
+      publicIPAllocationMethod: 'Static'
+      publicIPAddressVersion: 'IPv4'
+      zones: [1, 2, 3]
+      location: location
+      enableTelemetry: enableTelemetry
+    }
+  }
+}
+
+var bastionPublicIpResourceId = varDeployBastion ? bastionPipWrapper!.outputs.resourceId : ''
+
+// Bastion Host
+module bastionHostWrapper '../wrappers/avm.res.network.bastion-host.bicep' = if (varDeployBastion) {
+  name: 'm-bastion-host'
+  params: {
+    name: 'bastion-${baseName}'
+    location: location
+    enableTelemetry: enableTelemetry
+    virtualNetworkResourceId: virtualNetworkResourceId
+    publicIPAddressResourceId: bastionPublicIpResourceId
+  }
+}
+
 // -----------------------
 // VNET PEERING
 // -----------------------
@@ -346,3 +378,6 @@ output appGatewayPublicIpResourceId string = appGatewayPublicIpResourceId
 
 @description('Azure Firewall Public IP Resource ID')
 output firewallPublicIpResourceId string = firewallPublicIpResourceId
+
+@description('Bastion Host Resource ID')
+output bastionHostResourceId string = varDeployBastion ? bastionHostWrapper!.outputs.resourceId : ''
