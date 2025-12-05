@@ -105,7 +105,7 @@ jobs:
             --output json
           
           echo "Fetching failed operations..."
-          az deployment group operation list \
+          az deployment operation list \
             --name "$DEPLOYMENT_NAME" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
             --query "[?properties.provisioningState=='Failed']" \

@@ -52,11 +52,11 @@ param aiFoundryDefinition = {
   }
   aiModelDeployments: [
     {
-      name: 'gpt-51-nano'
+      name: 'gpt-4o'
       model: {
         format: 'OpenAI'
-        name: 'gpt5.1-nano'
-        version: '1'
+        name: 'gpt-4o'
+        version: '2024-05-13'
       }
       sku: {
         name: 'Standard'
