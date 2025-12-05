@@ -649,6 +649,28 @@ module compute './modules/compute.bicep' = {
 // MODULE 11: AI FOUNDRY
 // -----------------------
 
+var varAiServicesDnsZoneId = varDeployPdnsAndPe ? privateDnsZones.outputs.aiServicesDnsZoneId : privateDnsZonesDefinition.aiServicesZoneId
+var varCognitiveServicesDnsZoneId = varDeployPdnsAndPe ? privateDnsZones.outputs.cognitiveServicesDnsZoneId : privateDnsZonesDefinition.cognitiveservicesZoneId
+var varOpenAiDnsZoneId = varDeployPdnsAndPe ? privateDnsZones.outputs.openAiDnsZoneId : privateDnsZonesDefinition.openaiZoneId
+
+var defaultAiFoundryNetworking = {
+  aiServicesPrivateDnsZoneResourceId: varAiServicesDnsZoneId
+  cognitiveServicesPrivateDnsZoneResourceId: varCognitiveServicesDnsZoneId
+  openAiPrivateDnsZoneResourceId: varOpenAiDnsZoneId
+  agentServiceSubnetResourceId: '${virtualNetworkResourceId}/subnets/agent-subnet'
+}
+
+var userAiFoundryConfig = aiFoundryDefinition.?aiFoundryConfiguration ?? {}
+var mergedNetworking = union(
+  defaultAiFoundryNetworking,
+  userAiFoundryConfig.?networking ?? {}
+)
+
+var finalAiFoundryConfig = union(
+  userAiFoundryConfig,
+  { networking: mergedNetworking }
+)
+
 module aiFoundry 'wrappers/avm.ptn.ai-ml.ai-foundry.bicep' = if (aiFoundryDefinition != null) {
   name: 'aiFoundryDeployment'
   params: {
@@ -658,8 +680,16 @@ module aiFoundry 'wrappers/avm.ptn.ai-ml.ai-foundry.bicep' = if (aiFoundryDefini
         location: location
         enableTelemetry: enableTelemetry
         tags: tags
+        privateEndpointSubnetResourceId: varPeSubnetId
+        aiSearchConfiguration: !empty(aiSearchResourceId) ? { existingResourceId: aiSearchResourceId } : {}
+        keyVaultConfiguration: !empty(keyVaultResourceId) ? { existingResourceId: keyVaultResourceId } : {}
+        storageAccountConfiguration: !empty(varSaResourceId) ? { existingResourceId: varSaResourceId } : {}
+        cosmosDbConfiguration: !empty(cosmosDbResourceId) ? { existingResourceId: cosmosDbResourceId } : {}
       },
-      aiFoundryDefinition ?? {}
+      aiFoundryDefinition ?? {},
+      {
+        aiFoundryConfiguration: finalAiFoundryConfig
+      }
     )
   }
 }

@@ -37,3 +37,28 @@ param resourceIds = {}
 
 // Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.
 param flagPlatformLandingZone = false
+
+// AI Foundry Configuration
+param aiFoundryDefinition = {
+  aiFoundryConfiguration: {
+    createCapabilityHosts: true
+    project: {
+      name: 'project-hb'
+      displayName: 'HB Foundry Project'
+    }
+  }
+  aiModelDeployments: [
+    {
+      name: 'gpt-51-nano'
+      model: {
+        format: 'OpenAI'
+        name: 'gpt5.1-nano'
+        version: '1'
+      }
+      sku: {
+        name: 'Standard'
+        capacity: 10
+      }
+    }
+  ]
+}
