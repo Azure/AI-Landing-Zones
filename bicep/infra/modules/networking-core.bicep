@@ -85,7 +85,6 @@ var agentSubnet = union(
     enabled: true
     name: 'agent-subnet'
     addressPrefix: '192.168.0.0/27'
-    delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.CognitiveServices']
   },
   !empty(agentNsgResourceId) ? { networkSecurityGroupResourceId: agentNsgResourceId } : {}
