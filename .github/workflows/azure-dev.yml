@@ -79,11 +79,34 @@ jobs:
             what-if-summary.txt
 
       - name: Provision Infrastructure
+        id: provision
         run: |
+          DEPLOYMENT_NAME="main-${{ github.run_id }}"
+          echo "DEPLOYMENT_NAME=$DEPLOYMENT_NAME" >> $GITHUB_ENV
+          
           az deployment group create \
+            --name "$DEPLOYMENT_NAME" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
             --template-file bicep/deploy/main.bicep \
-            --parameters bicep/deploy/main.bicepparam
+            --parameters bicep/deploy/main.bicepparam \
+            --verbose
 
           # Run post-provision script to cleanup
           ./bicep/scripts/postprovision.sh
+
+      - name: Get Deployment Errors
+        if: failure() && steps.provision.outcome == 'failure'
+        run: |
+          echo "Deployment failed. Fetching error details..."
+          az deployment group show \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query properties.error \
+            --output json
+          
+          echo "Fetching failed operations..."
+          az deployment group operation list \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query "[?properties.provisioningState=='Failed']" \
+            --output json
