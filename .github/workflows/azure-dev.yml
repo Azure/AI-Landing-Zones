@@ -1,0 +1,112 @@
+name: Deploy AI Landing Zone-Bicep
+
+on:  
+  push:
+    branches:
+      - main
+      - newinitial
+    paths:
+      - 'bicep/infra/**'      
+      - 'bicep/**'  
+      - '.github/workflows/azure-dev.yml'    
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME || 'ai-landing-zone' }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION || 'swedencentral' }}
+      AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP || 'rg-aifoundry' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: chmod +x bicep/scripts/*.sh
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Ensure Bicep is installed
+        run: |
+          az bicep install
+          az bicep version
+
+      - name: Run Pre-provision and What-If
+        run: |
+          # Run pre-provision script to generate templates
+          ./bicep/scripts/preprovision.sh
+          
+          # Verify auth and build (primes the cache and validates)
+          az account get-access-token --query "expiresOn"
+          az bicep build --file bicep/deploy/main.bicep
+
+          # Run What-If analysis and capture output
+          az deployment group what-if \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file bicep/deploy/main.bicep \
+            --parameters bicep/deploy/main.bicepparam > what-if-raw.txt
+          
+          # Create a clean summary for easy review
+          echo "WHAT-IF SUMMARY" > what-if-summary.txt
+          echo "===============" >> what-if-summary.txt
+          echo "" >> what-if-summary.txt
+          
+          # Extract lines starting with +, -, or ~ (Create, Delete, Modify)
+          # Using grep to filter for lines with change indicators
+          grep -E "^[[:space:]]*[\+\-\~]" what-if-raw.txt >> what-if-summary.txt || echo "No changes detected." >> what-if-summary.txt
+          
+          # Display summary in logs
+          cat what-if-summary.txt
+
+      - name: Upload What-If Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: what-if-results
+          path: |
+            what-if-raw.txt
+            what-if-summary.txt
+
+      - name: Provision Infrastructure
+        id: provision
+        run: |
+          DEPLOYMENT_NAME="main-${{ github.run_id }}"
+          echo "DEPLOYMENT_NAME=$DEPLOYMENT_NAME" >> $GITHUB_ENV
+          
+          az deployment group create \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file bicep/deploy/main.bicep \
+            --parameters bicep/deploy/main.bicepparam \
+            --verbose
+
+          # Run post-provision script to cleanup
+          ./bicep/scripts/postprovision.sh
+
+      - name: Get Deployment Errors
+        if: failure() && steps.provision.outcome == 'failure'
+        run: |
+          echo "Deployment failed. Fetching error details..."
+          az deployment group show \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query properties.error \
+            --output json
+          
+          echo "Fetching failed operations..."
+          az deployment operation group list \
+            --name "$DEPLOYMENT_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query "[?properties.provisioningState=='Failed']" \
+            --output json
