@@ -1,39 +1,57 @@
 using './main.bicep'
 
-@description('Per-service deployment toggles.')
 param deployToggles = {
-  acaEnvironmentNsg: true
-  agentNsg: true
-  apiManagement: false
-  apiManagementNsg: false
-  appConfig: true
-  appInsights: true
-  applicationGateway: true
-  applicationGatewayNsg: true
-  applicationGatewayPublicIp: true
-  bastionHost: true
-  bastionNsg: true
-  buildVm: true
-  containerApps: true
-  containerEnv: true
-  containerRegistry: true
-  cosmosDb: true
-  devopsBuildAgentsNsg: true
-  firewall: true
-  groundingWithBingSearch: true
-  jumpVm: true
-  jumpboxNsg: true
-  keyVault: true
+  // OBSERVABILITY - Monitoring
   logAnalytics: true
-  peNsg: true
-  searchService: true
-  storageAccount: true
+  appInsights: true
+  
+  // NETWORKING - Virtual Network
   virtualNetwork: true
-  wafPolicy: true
+  
+  // NETWORKING - Network Security Groups
+  peNsg: true
+  agentNsg: false
+  acaEnvironmentNsg: false
+  apiManagementNsg: false
+  applicationGatewayNsg: false
+  jumpboxNsg: false
+  devopsBuildAgentsNsg: false
+  bastionNsg: false
+  
+  // SECURITY - Key Management & Storage
+  keyVault: true
+  storageAccount: true
+  
+  // DATA - Databases
+  cosmosDb: false
+  
+  // DATA - Search & Knowledge
+  searchService: false
+  groundingWithBingSearch: false
+  
+  // COMPUTE - Container Infrastructure
+  containerRegistry: false
+  containerEnv: false
+  containerApps: false
+  
+  // COMPUTE - Virtual Machines
+  buildVm: false
+  jumpVm: false
+  bastionHost: false
+  
+  // GOVERNANCE - Configuration & Management
+  appConfig: false
+  apiManagement: false
+  
+  // NETWORKING - Gateways & Security
+  applicationGateway: false
+  applicationGatewayPublicIp: false
+  wafPolicy: false
+  firewall: false
 }
 
-@description('Existing resource IDs (empty means create new).')
+// Existing resource IDs (empty means create new).
 param resourceIds = {}
 
-@description('Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.')
+// Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.
 param flagPlatformLandingZone = false
