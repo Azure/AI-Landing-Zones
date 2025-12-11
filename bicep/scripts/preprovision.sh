@@ -295,37 +295,58 @@ if [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ] && [ "$USE_EXISTING_TEMPLATE_SPE
 fi
 
 #===============================================================================
-# STEP 3: TEMPLATE SPEC CREATION & PUBLISHING
+# STEP 3: TEMPLATE SPEC CREATION & PUBLISHING (PARALLEL)
 #===============================================================================
 
-# Create a temporary file to store template spec mappings (initialize empty)
+# Create temporary files for parallel processing
 temp_mapping_file=$(mktemp)
-trap 'rm -f "$temp_mapping_file"' EXIT
+temp_job_dir=$(mktemp -d)
+trap 'rm -f "$temp_mapping_file"; rm -rf "$temp_job_dir"' EXIT
 
 # Step 3: Template Specs processing
 echo ""
 if [ "$USE_EXISTING_TEMPLATE_SPECS" = "true" ]; then
-    print_step "3" "Step 3: Getting existing Template Spec IDs..."
+    print_step "3" "Step 3: Getting existing Template Spec IDs (parallel)..."
 else
-    print_step "3" "Step 3: Building Template Specs..."
+    print_step "3" "Step 3: Building Template Specs (parallel)..."
 fi
 
-# Find all wrapper files
-for wrapper_file in "$deploy_wrappers_dir"/*.bicep; do
-    [ ! -f "$wrapper_file" ] && continue
+# Determine max parallel jobs (default: min of processor count or 10)
+if command -v nproc > /dev/null 2>&1; then
+    max_parallel_jobs=$(nproc)
+elif command -v sysctl > /dev/null 2>&1; then
+    max_parallel_jobs=$(sysctl -n hw.ncpu 2>/dev/null || echo "4")
+else
+    max_parallel_jobs=4
+fi
+max_parallel_jobs=$((max_parallel_jobs > 10 ? 10 : max_parallel_jobs))
+
+# Allow override via environment variable
+if [ -n "$AZURE_PARALLEL_JOBS" ]; then
+    max_parallel_jobs="$AZURE_PARALLEL_JOBS"
+fi
+
+# Count wrapper files
+wrapper_count=$(find "$deploy_wrappers_dir" -name "*.bicep" -type f | wc -l)
+print_info "Processing $wrapper_count wrappers with up to $max_parallel_jobs parallel jobs"
+echo ""
+
+# Extract environment name once (used by all jobs)
+env_prefix=$(echo "$RESOURCE_GROUP" | sed -n 's/^rg-\(.*\)$/\1/p')
+if [ -z "$env_prefix" ]; then
+    env_prefix="main"
+fi
+
+# Function to process a single wrapper (executed in background)
+process_wrapper() {
+    wrapper_file="$1"
+    job_id="$2"
+    result_file="$temp_job_dir/result_$job_id"
     
     wrapper_name=$(basename "$wrapper_file" .bicep)
     
-    # Extract environment name from ResourceGroup (assumes rg-<envname> pattern, fallback to 'main')
-    env_prefix=$(echo "$RESOURCE_GROUP" | sed -n 's/^rg-\(.*\)$/\1/p')
-    if [ -z "$env_prefix" ]; then
-        env_prefix="main"
-    fi
-    
-    # Truncate long wrapper names to avoid Template Spec name limits (64 chars max)
+    # Truncate long wrapper names
     if [ ${#wrapper_name} -gt 40 ]; then
-        # For long names, create meaningful abbreviations
-        # Split by dots and take first letter of each part except the last
         short_wrapper_name=$(echo "$wrapper_name" | awk -F. '{
             if (NF >= 3) {
                 result = ""
@@ -345,88 +366,168 @@ for wrapper_file in "$deploy_wrappers_dir"/*.bicep; do
     ts_name="ts-$env_prefix-wrp-$short_wrapper_name"
     version="current"
     
-    print_substep "Processing: $wrapper_name"
-    
     # Build bicep to JSON only if we're creating new Template Specs
     json_path=""
     if [ "$USE_EXISTING_TEMPLATE_SPECS" != "true" ]; then
         json_path="${wrapper_file%.*}.json"
         
         if command -v bicep > /dev/null 2>&1; then
-            bicep_cmd="bicep build"
+            bicep build "$wrapper_file" --outfile "$json_path" > /dev/null 2>&1
         else
-            bicep_cmd="az bicep build --file"
+            az bicep build --file "$wrapper_file" --outfile "$json_path" > /dev/null 2>&1
         fi
         
-        if $bicep_cmd "$wrapper_file" --outfile "$json_path" > /dev/null 2>&1; then
-            print_gray "    [+] Built JSON: $wrapper_name.json"
-        else
-            print_error "    [X] Failed to build: $wrapper_name"
-            continue
+        if [ ! -f "$json_path" ]; then
+            echo "FAILED|$wrapper_name|Failed to build Bicep" > "$result_file"
+            return 1
         fi
     fi
     
     # Check for existing Template Spec or create new one
+    ts_id=""
+    action=""
+    
     if [ "$USE_EXISTING_TEMPLATE_SPECS" = "true" ]; then
-        # Use existing Template Specs from specified resource group
-        print_gray "    [?] Looking for existing Template Spec..."
+        # Use existing Template Specs
         ts_id=$(az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" --query id -o tsv 2>/dev/null || \
                 az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" --query id -o tsv 2>/dev/null || echo "")
         
         if [ -n "$ts_id" ]; then
-            echo "$(basename "$wrapper_file")|$ts_id" >> "$temp_mapping_file"
-            print_success "    [+] Found existing Template Spec: $ts_name"
+            action="Found"
+            echo "SUCCESS|$wrapper_name|$ts_id|$ts_name|$action" > "$result_file"
         else
-            print_warning "    [!] Template Spec not found: $ts_name"
+            echo "FAILED|$wrapper_name|Template Spec not found" > "$result_file"
+            return 1
         fi
     else
-        print_gray "    [?] Checking if Template Spec exists..."
-        
         # Check if Template Spec exists
         existing_ts=$(az ts list -g "$TEMPLATE_SPEC_RG" --query "[?name=='$ts_name'].name" -o tsv 2>/dev/null || echo "")
         
         if [ -n "$existing_ts" ]; then
-            print_info "    [i] Template Spec already exists, skipping..."
-
-            # Get existing Template Spec ID (specific version when available)
+            # Reuse existing
             ts_id=$(az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" --query id -o tsv 2>/dev/null || \
                     az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" --query id -o tsv 2>/dev/null || echo "")
-
-            if [ -n "$ts_id" ]; then
-                echo "$(basename "$wrapper_file")|$ts_id" >> "$temp_mapping_file"
-                print_success "    [+] Using existing Template Spec: $ts_name"
-            fi
+            action="Reused"
         else
-            printf "${GRAY}    [+] Creating new Template Spec...${NC}"
-            
-            # Create new template spec with version (with timeout handling)
-            if timeout 300 az ts create -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" -l "$LOCATION" \
+            # Create new template spec
+            if az ts create -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" -l "$LOCATION" \
                     --template-file "$json_path" --display-name "Wrapper: $wrapper_name" \
                     --description "Auto-generated Template Spec for $wrapper_name wrapper" \
                     --only-show-errors > /dev/null 2>&1; then
-                echo ""
-                print_gray "    [i] Getting Template Spec ID..."
                 
-                # Get Template Spec ID
                 ts_id=$(az ts show -g "$TEMPLATE_SPEC_RG" -n "$ts_name" -v "$version" --query id -o tsv 2>/dev/null || echo "")
-                
-                if [ -n "$ts_id" ]; then
-                    echo "$(basename "$wrapper_file")|$ts_id" >> "$temp_mapping_file"
-                    print_success "    [+] Published Template Spec:"
-                    print_white "      $ts_name"
-                else
-                    print_error "    [X] Failed to get Template Spec ID for: $ts_name"
-                fi
-            else
-                echo ""
-                print_error "    [X] Failed to publish Template Spec: $wrapper_name"
+                action="Created"
             fi
+        fi
+        
+        if [ -n "$ts_id" ]; then
+            echo "SUCCESS|$wrapper_name|$ts_id|$ts_name|$action" > "$result_file"
+        else
+            echo "FAILED|$wrapper_name|Failed to create/get Template Spec" > "$result_file"
+            return 1
         fi
     fi
     
     # Clean up JSON file
     [ -f "$json_path" ] && rm -f "$json_path"
+    
+    return 0
+}
+
+# Export variables and functions for background jobs
+export TEMPLATE_SPEC_RG LOCATION USE_EXISTING_TEMPLATE_SPECS temp_job_dir env_prefix
+export -f process_wrapper
+
+# SPAWN PHASE: Launch parallel jobs
+pids=()
+job_id=0
+start_time=$(date +%s)
+
+for wrapper_file in "$deploy_wrappers_dir"/*.bicep; do
+    [ ! -f "$wrapper_file" ] && continue
+    
+    # Start background job
+    process_wrapper "$wrapper_file" "$job_id" &
+    pids+=($!)
+    job_id=$((job_id + 1))
+    
+    # THROTTLE: Wait if too many jobs running
+    while [ $(jobs -r | wc -l) -ge $max_parallel_jobs ]; do
+        sleep 0.1
+    done
 done
+
+print_success "[⚡] All $job_id jobs spawned, monitoring completion..."
+echo ""
+
+# MONITOR PHASE: Wait for all jobs and collect results
+completed=0
+failed=0
+created=0
+reused=0
+found=0
+
+for pid in "${pids[@]}"; do
+    wait "$pid"
+    completed=$((completed + 1))
+    progress_percent=$((completed * 100 / job_id))
+    
+    # Find and process result file for this job
+    result_files=$(find "$temp_job_dir" -name "result_*" -type f 2>/dev/null)
+    for result_file in $result_files; do
+        if [ -f "$result_file" ]; then
+            result=$(cat "$result_file")
+            rm -f "$result_file"
+            
+            status=$(echo "$result" | cut -d'|' -f1)
+            wrapper_name=$(echo "$result" | cut -d'|' -f2)
+            
+            if [ "$status" = "SUCCESS" ]; then
+                ts_id=$(echo "$result" | cut -d'|' -f3)
+                ts_name=$(echo "$result" | cut -d'|' -f4)
+                action=$(echo "$result" | cut -d'|' -f5)
+                
+                # Store in mapping file
+                echo "$(basename "$wrapper_name").bicep|$ts_id" >> "$temp_mapping_file"
+                
+                # Track actions
+                case "$action" in
+                    "Created") created=$((created + 1)); symbol="✓" ;;
+                    "Reused") reused=$((reused + 1)); symbol="↻" ;;
+                    "Found") found=$((found + 1)); symbol="→" ;;
+                    *) symbol="+" ;;
+                esac
+                
+                printf "${GREEN}  [%s] (%d/%d | %d%%) %s${NC}\n" "$symbol" "$completed" "$job_id" "$progress_percent" "$wrapper_name"
+            else
+                failed=$((failed + 1))
+                error_msg=$(echo "$result" | cut -d'|' -f3)
+                printf "${RED}  [✗] (%d/%d | %d%%) %s - %s${NC}\n" "$completed" "$job_id" "$progress_percent" "$wrapper_name" "$error_msg"
+            fi
+        fi
+    done
+done
+
+# Calculate duration and speedup
+end_time=$(date +%s)
+duration=$((end_time - start_time))
+estimated_sequential=$((job_id * 8))
+if [ $duration -gt 0 ]; then
+    speedup=$(awk "BEGIN {printf \"%.1f\", $estimated_sequential / $duration}")
+else
+    speedup="1.0"
+fi
+
+# Summary
+echo ""
+print_success "[✓] Template Specs processing completed in ${duration}s!"
+print_info "    Success: $((completed - failed)) | Failed: $failed"
+[ $created -gt 0 ] && print_white "    Created: $created"
+[ $reused -gt 0 ] && print_white "    Reused: $reused"
+[ $found -gt 0 ] && print_white "    Found: $found"
+if [ $(echo "$speedup > 1" | bc -l 2>/dev/null || echo "0") -eq 1 ]; then
+    printf "${YELLOW}  [⚡] Speedup: ${speedup}x faster than sequential processing!${NC}\n"
+fi
 
 #===============================================================================
 # STEP 4: BICEP TEMPLATE TRANSFORMATION

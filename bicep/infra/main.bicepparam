@@ -1,39 +1,45 @@
 using './main.bicep'
 
-@description('Per-service deployment toggles.')
 param deployToggles = {
-  acaEnvironmentNsg: true
-  agentNsg: true
+  // CORE - Monitoring 
+  logAnalytics: true
+  appInsights: true
+  
+  // CORE - Networking 
+  virtualNetwork: true
+  peNsg: true
+  
+  // CORE - Security & Storage 
+  keyVault: true
+  storageAccount: true
+  
+  // OPTIONAL - Container infrastructure 
+  containerRegistry: false
+  containerEnv: false
+  containerApps: false
+  
+  // DISABLED 
+  acaEnvironmentNsg: false
+  agentNsg: false
   apiManagement: false
   apiManagementNsg: false
-  appConfig: true
-  appInsights: true
-  applicationGateway: true
-  applicationGatewayNsg: true
-  applicationGatewayPublicIp: true
-  bastionHost: true
-  bastionNsg: true
-  buildVm: true
-  containerApps: true
-  containerEnv: true
-  containerRegistry: true
-  cosmosDb: true
-  devopsBuildAgentsNsg: true
-  firewall: true
-  groundingWithBingSearch: true
-  jumpVm: true
-  jumpboxNsg: true
-  keyVault: true
-  logAnalytics: true
-  peNsg: true
-  searchService: true
-  storageAccount: true
-  virtualNetwork: true
-  wafPolicy: true
+  appConfig: false
+  applicationGateway: false
+  applicationGatewayNsg: false
+  applicationGatewayPublicIp: false
+  bastionHost: false
+  bastionNsg: false
+  buildVm: false
+  cosmosDb: false
+  devopsBuildAgentsNsg: false
+  firewall: false
+  groundingWithBingSearch: false
+  jumpVm: false
+  jumpboxNsg: false
+  searchService: false
+  wafPolicy: false
 }
 
-@description('Existing resource IDs (empty means create new).')
 param resourceIds = {}
 
-@description('Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.')
 param flagPlatformLandingZone = false

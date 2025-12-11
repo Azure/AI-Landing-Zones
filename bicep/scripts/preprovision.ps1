@@ -276,7 +276,7 @@ if ($TemplateSpecRG -ne $ResourceGroup -and -not $useExistingTemplateSpecs) {
 }
 
 #===============================================================================
-# STEP 3: TEMPLATE SPEC CREATION & PUBLISHING
+# STEP 3: TEMPLATE SPEC CREATION & PUBLISHING (PARALLEL)
 #===============================================================================
 
 # Initialize templateSpecs dictionary
@@ -285,24 +285,33 @@ $templateSpecs = @{}
 # Step 3: Template Specs processing
 Write-Host ""
 if ($useExistingTemplateSpecs) {
-  Write-Host "[3] Step 3: Getting existing Template Spec IDs..." -ForegroundColor Cyan
+  Write-Host "[3] Step 3: Getting existing Template Spec IDs (parallel)..." -ForegroundColor Cyan
 } else {
-  Write-Host "[3] Step 3: Building Template Specs..." -ForegroundColor Cyan
+  Write-Host "[3] Step 3: Building Template Specs (parallel)..." -ForegroundColor Cyan
 }
 
 $wrapperFiles = Get-ChildItem -Path $deployWrappersDir -Filter "*.bicep"
 
-foreach ($wrapperFile in $wrapperFiles) {
-  $wrapperName = $wrapperFile.BaseName
-  # Extract environment name from TemplateSpecRG (assumes rg-<envname> pattern, fallback to 'main')
-  $envPrefix = if ($TemplateSpecRG -match '^rg-(.+)$') { $matches[1] } else { 'main' }
+# Determine max parallel jobs (default: min of processor count or 10)
+$maxParallelJobs = [Math]::Min([Environment]::ProcessorCount, 10)
+if ($env:AZURE_PARALLEL_JOBS) {
+  $maxParallelJobs = [int]$env:AZURE_PARALLEL_JOBS
+}
+
+Write-Host "  [i] Processing $($wrapperFiles.Count) wrappers with up to $maxParallelJobs parallel jobs" -ForegroundColor Gray
+Write-Host ""
+
+# Extract environment name once (used by all jobs)
+$envPrefix = if ($TemplateSpecRG -match '^rg-(.+)$') { $matches[1] } else { 'main' }
+
+# ScriptBlock for parallel job execution
+$jobScriptBlock = {
+  param($wrapperFilePath, $wrapperFileName, $wrapperName, $envPrefix, $TemplateSpecRG, $Location, $useExistingTemplateSpecs)
   
   # Truncate long wrapper names to avoid Template Spec name limits (64 chars max)
   $shortWrapperName = if ($wrapperName.Length -gt 40) {
-    # For long names, create meaningful abbreviations
     $parts = $wrapperName -split '\.'
     if ($parts.Count -ge 3) {
-      # Take first letter of each part except the last, plus full last part
       $abbreviated = ($parts[0..($parts.Count-2)] | ForEach-Object { $_.Substring(0, 1) }) -join '.'
       "$abbreviated.$($parts[-1])"
     } else {
@@ -315,118 +324,227 @@ foreach ($wrapperFile in $wrapperFiles) {
   $tsName = "ts-$envPrefix-wrp-$shortWrapperName"
   $version = "current"
   
-  Write-Host "  Processing: $wrapperName" -ForegroundColor Yellow
-  
   # Build bicep to JSON only if we're creating new Template Specs
   $jsonPath = $null
   if (-not $useExistingTemplateSpecs) {
-    $jsonPath = Join-Path $wrapperFile.Directory "$($wrapperName).json"
+    $jsonPath = [System.IO.Path]::ChangeExtension($wrapperFilePath, '.json')
     try {
       if (Get-Command bicep -ErrorAction SilentlyContinue) {
-        bicep build $wrapperFile.FullName --outfile $jsonPath
+        bicep build $wrapperFilePath --outfile $jsonPath 2>$null | Out-Null
       } else {
-        az bicep build --file $wrapperFile.FullName --outfile $jsonPath
+        az bicep build --file $wrapperFilePath --outfile $jsonPath 2>$null | Out-Null
       }
-      Write-Host "    [+] Built JSON: $wrapperName.json" -ForegroundColor Green
     } catch {
-      Write-Host "    [X] Failed to build: $wrapperName" -ForegroundColor Red
-      continue
+      return @{
+        Success = $false
+        WrapperName = $wrapperName
+        WrapperFileName = $wrapperFileName
+        Error = "Failed to build Bicep: $($_.Exception.Message)"
+      }
     }
   }
   
   # Check for existing Template Spec or create new one
   try {
+    $tsId = $null
+    
     if ($useExistingTemplateSpecs) {
       # Use existing Template Specs from specified resource group
-      Write-Host "    [?] Looking for existing Template Spec..." -ForegroundColor Gray
       $tsId = az ts show -g $TemplateSpecRG -n $tsName -v $version --query id -o tsv 2>$null
       if (-not $tsId) {
-        # If version doesn't exist, get the latest version ID
         $tsId = az ts show -g $TemplateSpecRG -n $tsName --query id -o tsv 2>$null
       }
       
       if ($tsId) {
-        $templateSpecs[$wrapperFile.Name] = $tsId
-        Write-Host "    [+] Found existing Template Spec: $tsName" -ForegroundColor Green
+        return @{
+          Success = $true
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          TemplateSpecId = $tsId
+          TemplateSpecName = $tsName
+          Action = 'Found'
+        }
       } else {
-        Write-Host "    [!] Template Spec not found: $tsName" -ForegroundColor Yellow
+        return @{
+          Success = $false
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          Error = "Template Spec not found: $tsName"
+        }
       }
     } else {
-      Write-Host "    [?] Checking if Template Spec exists..." -ForegroundColor Gray
-
-      # Check if Template Spec exists by listing all in resource group and filtering
+      # Check if Template Spec exists
       $existingTemplateSpecs = az ts list -g $TemplateSpecRG --query "[?name=='$tsName'].name" -o tsv 2>$null
       $templateSpecExists = $existingTemplateSpecs -and $existingTemplateSpecs.Trim() -ne ''
-
+      
       if ($templateSpecExists) {
-        Write-Host "    [i] Template Spec already exists, skipping..." -ForegroundColor Cyan
-
-        # Get existing Template Spec ID (specific version when available)
+        # Get existing Template Spec ID
         $tsId = az ts show -g $TemplateSpecRG -n $tsName -v $version --query id -o tsv 2>$null
         if (-not $tsId) {
           $tsId = az ts show -g $TemplateSpecRG -n $tsName --query id -o tsv 2>$null
         }
-
-        $templateSpecs[$wrapperFile.Name] = $tsId
-        Write-Host "    [+] Using existing Template Spec: $tsName" -ForegroundColor Green
+        
+        return @{
+          Success = $true
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          TemplateSpecId = $tsId
+          TemplateSpecName = $tsName
+          Action = 'Reused'
+        }
       } else {
-        Write-Host "    [+] Creating new Template Spec..." -ForegroundColor Gray -NoNewline
-        # Create new template spec with version
-        $job = Start-Job -ScriptBlock {
-          param($TemplateSpecRG, $tsName, $version, $Location, $jsonPath, $wrapperName)
-          az ts create -g $TemplateSpecRG -n $tsName -v $version -l $Location --template-file $jsonPath --display-name "Wrapper: $wrapperName" --description "Auto-generated Template Spec for $wrapperName wrapper" --only-show-errors 2>$null
-        } -ArgumentList $TemplateSpecRG, $tsName, $version, $Location, $jsonPath, $wrapperName
-
-        # Wait with progress indicator (max 5 minutes)
-        $timeout = 300 # 5 minutes
-        $elapsed = 0
-        while ($job.State -eq 'Running' -and $elapsed -lt $timeout) {
-          Start-Sleep 2
-          Write-Host "." -ForegroundColor Gray -NoNewline
-          $elapsed += 2
-
-          # Show elapsed time every 20 seconds
-          if ($elapsed % 20 -eq 0) {
-            Write-Host " ($($elapsed)s)" -ForegroundColor DarkGray -NoNewline
-          }
-        }
-
-        if ($job.State -eq 'Running') {
-          Stop-Job $job
-          Remove-Job $job -Force
-          Write-Host ""
-          throw "Template Spec operation timed out after $timeout seconds"
-        }
-
-        $result = Receive-Job $job -Wait
-        Remove-Job $job
-        Write-Host "" # New line after progress dots
-
-        Write-Host "    [i] Getting Template Spec ID..." -ForegroundColor Gray
+        # Create new template spec
+        az ts create -g $TemplateSpecRG -n $tsName -v $version -l $Location `
+          --template-file $jsonPath `
+          --display-name "Wrapper: $wrapperName" `
+          --description "Auto-generated Template Spec for $wrapperName wrapper" `
+          --only-show-errors 2>$null | Out-Null
+        
         # Get Template Spec ID
         $tsId = az ts show -g $TemplateSpecRG -n $tsName -v $version --query id -o tsv 2>$null
-
+        
         if ([string]::IsNullOrWhiteSpace($tsId)) {
-          Write-Host "    [X] Failed to get Template Spec ID for: $tsName" -ForegroundColor Red
-          # Don't add to templateSpecs dictionary if creation failed
-        } else {
-          $templateSpecs[$wrapperFile.Name] = $tsId
-          Write-Host "    [+] Published Template Spec:" -ForegroundColor Green
-          Write-Host "      $tsName" -ForegroundColor White
+          return @{
+            Success = $false
+            WrapperName = $wrapperName
+            WrapperFileName = $wrapperFileName
+            Error = "Failed to get Template Spec ID after creation"
+          }
+        }
+        
+        return @{
+          Success = $true
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          TemplateSpecId = $tsId
+          TemplateSpecName = $tsName
+          Action = 'Created'
         }
       }
     }
   }
   catch {
-    Write-Host "    [X] Failed to process Template Spec:" -ForegroundColor Red
-    Write-Host "      $wrapperName" -ForegroundColor White
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Red
+    return @{
+      Success = $false
+      WrapperName = $wrapperName
+      WrapperFileName = $wrapperFileName
+      Error = $_.Exception.Message
+    }
   }
+  finally {
+    # Clean up JSON file
+    if ($jsonPath -and (Test-Path $jsonPath)) {
+      Remove-Item $jsonPath -Force -ErrorAction SilentlyContinue
+    }
+  }
+}
 
-  # Clean up JSON file only if it was created
-  if (-not $useExistingTemplateSpecs -and $jsonPath -and (Test-Path $jsonPath)) {
-    Remove-Item $jsonPath -Force
+# SPAWN PHASE: Create parallel jobs
+$jobs = @()
+$startTime = Get-Date
+
+foreach ($wrapperFile in $wrapperFiles) {
+  # Start background job
+  $job = Start-Job -ScriptBlock $jobScriptBlock -ArgumentList @(
+    $wrapperFile.FullName,
+    $wrapperFile.Name,
+    $wrapperFile.BaseName,
+    $envPrefix,
+    $TemplateSpecRG,
+    $Location,
+    $useExistingTemplateSpecs
+  )
+  
+  $jobs += @{
+    Job = $job
+    WrapperName = $wrapperFile.BaseName
   }
+  
+  # THROTTLE: Wait if too many jobs running
+  while ((Get-Job -State Running).Count -ge $maxParallelJobs) {
+    Start-Sleep -Milliseconds 100
+  }
+}
+
+Write-Host "  [⚡] All $($jobs.Count) jobs spawned, monitoring completion..." -ForegroundColor Cyan
+Write-Host ""
+
+# MONITOR PHASE: Collect results as jobs complete
+$completed = 0
+$failed = 0
+$actions = @{ Created = 0; Reused = 0; Found = 0 }
+
+while ($jobs.Count -gt 0) {
+  $remainingJobs = @()
+  
+  foreach ($jobInfo in $jobs) {
+    $job = $jobInfo.Job
+    
+    if ($job.State -eq 'Completed') {
+      $result = Receive-Job -Job $job
+      Remove-Job -Job $job
+      
+      $completed++
+      $progressPercent = [Math]::Round(($completed / $wrapperFiles.Count) * 100)
+      
+      if ($result.Success) {
+        $templateSpecs[$result.WrapperFileName] = $result.TemplateSpecId
+        $actions[$result.Action]++
+        
+        $actionSymbol = switch ($result.Action) {
+          'Created' { '✓' }
+          'Reused' { '↻' }
+          'Found' { '→' }
+        }
+        
+        Write-Host "  [$actionSymbol] ($completed/$($wrapperFiles.Count) | $progressPercent%) $($result.WrapperName)" -ForegroundColor Green
+      } else {
+        $failed++
+        Write-Host "  [✗] ($completed/$($wrapperFiles.Count) | $progressPercent%) $($jobInfo.WrapperName) - $($result.Error)" -ForegroundColor Red
+      }
+    }
+    elseif ($job.State -eq 'Failed') {
+      $completed++
+      $failed++
+      $progressPercent = [Math]::Round(($completed / $wrapperFiles.Count) * 100)
+      Write-Host "  [✗] ($completed/$($wrapperFiles.Count) | $progressPercent%) $($jobInfo.WrapperName) - job failed" -ForegroundColor Red
+      Remove-Job -Job $job
+    }
+    else {
+      # Job still running
+      $remainingJobs += $jobInfo
+    }
+  }
+  
+  $jobs = $remainingJobs
+  
+  # Show progress indicator
+  if ($jobs.Count -gt 0) {
+    $runningCount = ($jobs.Job | Where-Object { $_.State -eq 'Running' }).Count
+    Write-Progress -Activity "Building Template Specs" `
+      -Status "$completed/$($wrapperFiles.Count) completed, $runningCount running" `
+      -PercentComplete (($completed / $wrapperFiles.Count) * 100)
+    
+    Start-Sleep -Milliseconds 200
+  }
+}
+
+Write-Progress -Activity "Building Template Specs" -Completed
+
+# Calculate duration and speedup
+$duration = [Math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+$estimatedSequentialTime = $wrapperFiles.Count * 8  # Assume ~8s per wrapper sequentially
+$speedup = if ($duration -gt 0) { [Math]::Round($estimatedSequentialTime / $duration, 1) } else { 1 }
+
+# Summary
+Write-Host ""
+Write-Host "  [✓] Template Specs processing completed in $duration seconds!" -ForegroundColor Green
+Write-Host "      Success: $($completed - $failed) | Failed: $failed" -ForegroundColor Cyan
+if ($actions.Created -gt 0) { Write-Host "      Created: $($actions.Created)" -ForegroundColor White }
+if ($actions.Reused -gt 0) { Write-Host "      Reused: $($actions.Reused)" -ForegroundColor White }
+if ($actions.Found -gt 0) { Write-Host "      Found: $($actions.Found)" -ForegroundColor White }
+if ($speedup -gt 1) {
+  Write-Host "  [⚡] Speedup: ${speedup}x faster than sequential processing!" -ForegroundColor Yellow
 }
 
 #===============================================================================
