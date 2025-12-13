@@ -40,6 +40,8 @@ az provider register --namespace Microsoft.DocumentDB
 az provider register --namespace Microsoft.Search
 az provider register --namespace Microsoft.ContainerRegistry
 az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.Compute
+az feature register --name EncryptionAtHost --namespace Microsoft.Compute
 ```
 
 **Note:** Provider registration can take 5-10 minutes. Check status with:
