@@ -16,6 +16,12 @@ param bingConnectionName string = '${bingSearchName}-connection'
 @description('Optional. Existing Bing Grounding account resource ID to reuse instead of creating a new one.')
 param existingResourceId string = ''
 
+@description('Optional. The SKU of the Bing Search resource. Defaults to G1.')
+param sku string = 'G1'
+
+@description('Optional. The Kind of the Bing Search resource. Defaults to Bing.Grounding.')
+param kind string = 'Bing.Grounding'
+
 // Resolve create vs reuse
 var varIsReuse = !empty(existingResourceId)
 var varIdSegs = split(existingResourceId, '/')
@@ -42,9 +48,9 @@ resource existingBing 'Microsoft.Bing/accounts@2025-05-01-preview' existing = if
 resource bingAccount 'Microsoft.Bing/accounts@2025-05-01-preview' = if (!varIsReuse) {
   name: bingSearchName
   location: 'global'
-  kind: 'Bing.Grounding'
+  kind: kind
   sku: {
-    name: 'G1'
+    name: sku
   }
 }
 
