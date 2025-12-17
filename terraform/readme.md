@@ -117,12 +117,13 @@ az ad sp create-for-rbac --name "<SP_NAME>" --role="Contributor" --scopes="/subs
 
 **Save these values securely!** You won't be able to see the password again.
 
-**Add Role assignment to Service Principal**
+**Add role assignment to Service Principal**
 
 ```powershell
-# The Service Principal requires the "User Access Administrator" role to grant Key Vault permissions. 
-# Replace <SP_AppId> with the Application ID from the output above. This value corresponds to the Service Principal's AppId.
-# Assigning the role:
+# To grant Key Vault permissions, the Service Principal must have either "Owner" or "User Access Administrator". 
+# Following least privilege principle, assign "User Access Administrator". 
+# Replace <SP_AppId> with the Application ID from the output above. 
+# Assign the role:
 az role assignment create --assignee "<SP_AppID>" --role="User Access Administrator" --scope="/subscriptions/<SUBSCRIPTION_ID>"
 ```
 **Step 3: Set Environment Variables**
