@@ -118,27 +118,12 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
               },
               "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
 
-            },
-            {
-              "name": "existingAISearch",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select AI Search Service",
-              "resourceType": "Microsoft.Search/searchServices",
-              "toolTip": "Select an existing AI Search service to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('aiServices').deployAiSearch, 'import')]"
-              },
-              "visible": "[equals(steps('aiServices').deployAiSearch, 'import')]"
             },
             {
               "name": "deployGroundingWithBing",
@@ -155,26 +140,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
               },
               "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
-            },
-            {
-              "name": "existingBingGrounding",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Grounding with Bing Service",
-              "resourceType": "Microsoft.Bing/accounts",
-              "toolTip": "Select an existing Bing Grounding service to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('aiServices').deployGroundingWithBing, 'import')]"
-              },
-              "visible": "[equals(steps('aiServices').deployGroundingWithBing, 'import')]"
             },
             {
               "name": "deployCosmos",
@@ -191,26 +161,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
               },
               "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
-            },
-            {
-              "name": "existingCosmosDb",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Cosmos DB Service",
-              "resourceType": "Microsoft.DocumentDB/databaseAccounts",
-              "toolTip": "Select an existing Cosmos DB service to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('aiServices').deployCosmos, 'import')]"
-              },
-              "visible": "[equals(steps('aiServices').deployCosmos, 'import')]"
             },
             {
               "name": "deployKeyVault",
@@ -227,26 +182,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
               },
               "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
-            },
-            {
-              "name": "existingKeyVault",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Key Vault Service",
-              "resourceType": "Microsoft.KeyVault/vaults",
-              "toolTip": "Select an existing Key Vault service to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('aiServices').deployKeyVault, 'import')]"
-              },
-              "visible": "[equals(steps('aiServices').deployKeyVault, 'import')]"
             },
             {
               "name": "deployStorageAccount",
@@ -263,26 +203,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
               },
               "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
-            },
-            {
-              "name": "existingStorageAccount",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Storage Account Service",
-              "resourceType": "Microsoft.Storage/storageAccounts",
-              "toolTip": "Select an existing Storage Account service to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('aiServices').deployStorageAccount, 'import')]"
-              },
-              "visible": "[equals(steps('aiServices').deployStorageAccount, 'import')]"
             }
           ]
         },
@@ -325,26 +250,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('applications').deployAppComponents, 'custom')]"
               },
               "visible": "[equals(steps('applications').deployAppComponents, 'custom')]"
-            },
-            {
-              "name": "existingAcr",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure Container Registry Service",
-              "resourceType": "Microsoft.ContainerRegistry/registries",
-              "toolTip": "Select an existing Azure Container Registry service to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('applications').deployAcr, 'import')]"
-              },
-              "visible": "[equals(steps('applications').deployAcr, 'import')]"
             },
             {
               "name": "deployContainerAppEnv",
@@ -361,26 +271,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('applications').deployAppComponents, 'custom')]"
               },
               "visible": "[equals(steps('applications').deployAppComponents, 'custom')]"
-            },
-            {
-              "name": "existingContainerAppEnv",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure Container Apps Environment",
-              "resourceType": "Microsoft.ContainerApp/managedEnvironments",
-              "toolTip": "Select an existing Azure Container Apps Environment to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('applications').deployContainerAppEnv, 'import')]"
-              },
-              "visible": "[equals(steps('applications').deployContainerAppEnv, 'import')]"
             },
             {
               "name": "deployAppConfig",
@@ -397,26 +292,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('applications').deployAppComponents, 'custom')]"
               },
               "visible": "[equals(steps('applications').deployAppComponents, 'custom')]"
-            },
-            {
-              "name": "existingAppConfig",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure App Configuration",
-              "resourceType": "Microsoft.AppConfiguration/configurationStores",
-              "toolTip": "Select an existing Azure App Configuration to integrate with AI Foundry",
-              "constraints": {
-                "required": "[equals(steps('applications').deployAppConfig, 'import')]"
-              },
-              "visible": "[equals(steps('applications').deployAppConfig, 'import')]"
             },
             {
               "name": "deployApim",
@@ -433,26 +313,11 @@
                   {
                   "label": "No",
                   "value": "false"
-                  },
-                  {
-                  "label": "Import Resource",
-                  "value": "import"
                   }
                 ],
                 "required": "[and(equals(steps('applications').deployAppComponents, 'custom'), equals(steps('basics').platformLandingZone, 'false'))]"
               },
                 "visible": "[and(equals(steps('applications').deployAppComponents, 'custom'), equals(steps('basics').platformLandingZone, 'false'))]"
-            },
-            {
-              "name": "existingApim",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure API Management",
-              "resourceType": "Microsoft.ApiManagement/service",
-              "toolTip": "Select an existing Azure API Management to integrate with AI Foundry",
-                "constraints": {
-                "required": "[and(equals(steps('applications').deployApim, 'import'), equals(steps('basics').platformLandingZone, 'false'))]"
-                },
-              "visible": "[and(equals(steps('applications').deployApim, 'import'), equals(steps('basics').platformLandingZone, 'false'))]"
             },
             {
               "name": "deployAppGateway",
@@ -541,26 +406,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('devops').deployCompute, 'custom')]"
               },
               "visible": "[equals(steps('devops').deployCompute, 'custom')]"
-            },
-            {
-              "name": "existingBuildVM",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure Virtual Machine",
-              "resourceType": "Microsoft.Compute/virtualMachines",
-              "toolTip": "Select an existing Azure Virtual Machine to act as the Build VM",
-              "constraints": {
-                "required": "[equals(steps('devops').deployBuildVm, 'import')]"
-              },
-              "visible": "[equals(steps('devops').deployBuildVm, 'import')]"
             },
             {
               "name": "deployJumpVm",
@@ -577,26 +427,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
-                "required": "[and(equals(steps('devops').deployCompute, 'custom'), equals(steps('basics').platformLandingZone, 'false'))]"
+                "required": "[equals(steps('devops').deployCompute, 'custom')]"
               },
-              "visible": "[and(equals(steps('devops').deployCompute, 'custom'), equals(steps('basics').platformLandingZone, 'false'))]"
-            },
-            {
-              "name": "existingJumpVM",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure Virtual Machine",
-              "resourceType": "Microsoft.Compute/virtualMachines",
-              "toolTip": "Select an existing Azure Virtual Machine to act as the Jump VM",
-              "constraints": {
-                "required": "[and(equals(steps('devops').deployJumpVm, 'import'), equals(steps('basics').platformLandingZone, 'false'))]"
-              },
-              "visible": "[and(equals(steps('devops').deployJumpVm, 'import'), equals(steps('basics').platformLandingZone, 'false'))]"
+              "visible": "[equals(steps('devops').deployCompute, 'custom')]"
             },
             {
               "name": "adminUsername",
@@ -613,16 +448,46 @@
             },
             {
               "name": "adminPassword",
-              "type": "Microsoft.Common.TextBox",
-              "label": "Password for Admin Access",
-              "defaultValue": "",
+              "type": "Microsoft.Common.PasswordBox",
+              "label": {
+                "password": "Password for Admin Access",
+                "confirmPassword": "Confirm Password"
+              },
               "toolTip": "Password for administrative access to the virtual machines",
               "constraints": {
                 "required": "[or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]",
                 "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_\\-+=[\\]{}|\\\\:'\",.?`~\";]).{8,123}$",
                 "validationMessage": "Your password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character (@ # $ % ^ & * - _ ! + = [ ] { } | \\ : ' , . ? ` ~ \" ( ) ; )"
               },
+              "options": {
+                "hideConfirmation": false
+              },
                 "visible": "[or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
+            },
+            {
+                "name": "vmSkuSize",
+                "type": "Microsoft.Compute.SizeSelector",
+                "label": "Size",
+                "toolTip": "",
+                "recommendedSizes": [
+                    "Standard_D4as_v5",
+                    "Standard_F4s_v2"
+                ],
+                "constraints": {
+                  "numAvailabilityZonesRequired": 1,
+                  "zone": "1"
+                },
+                "options": {
+                    "hideDiskTypeFilter": false
+                },
+                "osPlatform": "Windows",
+                "imageReference": {
+                    "publisher": "MicrosoftWindowsServer",
+                    "offer": "WindowsServer",
+                    "sku": "2022-datacenter-azure-edition"
+                },
+                "count": 1,
+                "visible": true
             }
           ]
         },
@@ -665,26 +530,11 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
               },
               "visible": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
-            }, 
-            {
-              "name": "existingLogAnalytics",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Log Analytics Workspace",
-              "resourceType": "Microsoft.OperationalInsights/workspaces",
-              "toolTip": "Select an existing Log Analytics Workspace",
-              "constraints": {
-                "required": "[equals(steps('monitoring').deployLogAnalytics, 'import')]"
-              },
-              "visible": "[equals(steps('monitoring').deployLogAnalytics, 'import')]"
             },
             {
               "name": "deployAppInsights",
@@ -701,27 +551,12 @@
                   {
                     "label": "No",
                     "value": "false"
-                  },
-                  {
-                    "label": "Import Resource",
-                    "value": "import"
                   }
                 ],
                 "required": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
               },
               "visible": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
-            },
-            {
-              "name": "existingAppInsights",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Application Insights Resource",
-              "resourceType": "Microsoft.Insights/components",
-              "toolTip": "Select an existing Application Insights resource",
-              "constraints": {
-                "required": "[equals(steps('monitoring').deployAppInsights, 'import')]"
-              },
-              "visible": "[equals(steps('monitoring').deployAppInsights, 'import')]"
-            }             
+            }            
           ]
         },
         {
@@ -919,9 +754,9 @@
                 "toolTip": "Select subnet for Jump Box",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), or(equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]"
+                "visible": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]"
               },
               {
                 "name": "containerEnvSubnet",
@@ -1157,8 +992,8 @@
           "firewall": "[and(equals(steps('networking').deployFirewall, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
           "firewallPublicIp": "[and(equals(steps('networking').deployFirewallPip, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
           "groundingWithBingSearch": "[or( equals(steps('aiServices').deployGroundingWithBing, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
-          "jumpVm": "[and( equals(steps('basics').platformLandingZone, 'false'), or( equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]",
-          "jumpboxNsg": "[and(or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ) ,equals(steps('basics').platformLandingZone, 'false'), or( equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]",
+          "jumpVm": "[or( equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true'))]",
+          "jumpboxNsg": "[and(or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ), or( equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]",
           "keyVault": "[or( equals(steps('aiServices').deployKeyVault, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
           "logAnalytics": "[or( equals(steps('monitoring').deployLogAnalytics, 'true'), equals(steps('monitoring').deployMonitoring, 'full'))]",
           "peNsg": "[and( equals(steps('basics').platformLandingZone, 'false'),or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ))]",
@@ -1183,6 +1018,9 @@
           "jumpboxSubnet": "[coalesce(steps('networking').jumpBoxSubnet, '')]",
           "devopsSubnet": "[coalesce(steps('networking').devopsAgentsSubnet, '')]"
         },
+        "vmadmin": "[coalesce(steps('devops').adminUsername, '')]",
+        "vmPassword": "[coalesce(steps('devops').adminPassword, '')]",
+        "vmSize": "[coalesce(steps('devops').vmSkuSize, 'Standard_D4as_v5')]",
         "existingVnetName": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.name, '')]",
         "existingVnetId": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.id, '')]",
         "appGwPrivateIp" : "[coalesce(steps('networking').appGwPrivateIp, '')]",
@@ -1201,221 +1039,11 @@
           "acrZoneId": "[coalesce(steps('networking').acrPrivateDnsZone.id, '')]",
           "appInsightsZoneId": "[coalesce(steps('networking').appInsightsPrivateDnsZone.id, '')]"
         },
-        "resourceIds": {
-          "virtualNetworkResourceId": "",
-          "logAnalyticsWorkspaceResourceId": "",
-          "appInsightsResourceId": "",
-          "containerAppsEnvironmentResourceId": "",
-          "containerRegistryResourceId": "",
-          "storageAccountResourceId": "",
-          "appConfigResourceId": "",
-          "apimServiceResourceId": "",
-          "applicationGatewayResourceId": "",
-          "firewallPolicyResourceId": "",
-          "firewallResourceId": "",
-          "appGatewayPublicIpResourceId": "",
-          "firewallPublicIpResourceId": ""
-        },
         "tags": {
             "Project": "AI-ML-Landing-Zone",
             "DeployedBy": "UI-Form",
             "BaseName": "[steps('basics').baseName]"
-        },
-        "privateDnsZonesDefinition": {
-          "allowInternetResolutionFallback": false,
-          "createNetworkLinks": true,
-          "cognitiveservicesZoneId": "",
-          "apimZoneId": "",
-          "openaiZoneId": "",
-          "aiServicesZoneId": "",
-          "searchZoneId": "",
-          "cosmosSqlZoneId": "",
-          "blobZoneId": "",
-          "keyVaultZoneId": "",
-          "appConfigZoneId": "",
-          "containerAppsZoneId": "",
-          "acrZoneId": "",
-          "appInsightsZoneId": "",
-          "tags": {}
-        },
-        "nsgDefinitions": {},
-        "hubVnetPeeringDefinition": {},
-        "logAnalyticsDefinition": {
-          "retentionInDays": 30,
-          "skuName": "PerGB2018"
-        },
-        "appInsightsDefinition": {
-          "kind": "web",
-          "applicationType": "web"
-        },
-        "containerAppEnvDefinition": {
-          "zoneRedundant": true,
-          "internal": true
-        },
-        "containerRegistryDefinition": {
-          "acrSku": "Premium",
-          "publicNetworkAccess": "Disabled",
-          "acrAdminUserEnabled": false
-        },
-        "storageAccountDefinition": {
-          "kind": "StorageV2",
-          "skuName": "Standard_LRS",
-          "allowBlobPublicAccess": false,
-          "supportsHttpsTrafficOnly": true,
-          "minimumTlsVersion": "TLS1_2"
-        },
-        "appConfigurationDefinition": {
-          "sku": "Standard",
-          "publicNetworkAccess": "Disabled"
-        },
-        "cosmosDbDefinition": {
-          "kind": "GlobalDocumentDB",
-          "consistencyLevel": "Session",
-          "enableFreeTier": false,
-          "databaseAccountOfferType": "Standard",
-          "publicNetworkAccess": "Disabled"
-        },
-        "keyVaultDefinition": {
-          "sku": "standard",
-          "enableSoftDelete": true,
-          "softDeleteRetentionInDays": 90,
-          "enablePurgeProtection": true,
-          "publicNetworkAccess": "Disabled"
-        },
-        "aiSearchDefinition": {
-          "sku": "Standard",
-          "replicaCount": 1,
-          "partitionCount": 1,
-          "publicNetworkAccess": "Disabled"
-        },
-        "apimDefinition": {
-          "sku": "StandardV2",
-          "skuCapacity": 1,
-          "publisherEmail": "admin@contoso.com",
-          "publisherName": "Contoso",
-          "virtualNetworkType": "None",
-          "minApiVersion": "2022-08-01"
-        },
-        "aiFoundryDefinition": {
-          "includeAssociatedResources": true,
-          "aiFoundryConfiguration": {
-            "allowProjectManagement": true,
-            "createCapabilityHosts": false,
-            "disableLocalAuth": false,
-            "sku": "S0",
-            "project": {
-              "name": "aifoundry-default-project",
-              "displayName": "Default AI Foundry Project",
-              "description": "This is the default project for AI Foundry."
-            }
-          },
-          "aiModelDeployments": [
-            {
-              "model": {
-                "format": "OpenAI",
-                "name": "gpt-4o",
-                "version": "2024-11-20"
-              },
-              "name": "gpt-4o",
-              "sku": {
-                "name": "GlobalStandard",
-                "capacity": 10
-              }
-            },
-            {
-              "model": {
-                "format": "OpenAI",
-                "name": "text-embedding-3-large",
-                "version": "1"
-              },
-              "name": "text-embedding-3-large",
-              "sku": {
-                "name": "Standard",
-                "capacity": 1
-              }
-            }
-          ]
-        },
-        "groundingWithBingDefinition": {},
-        "wafPolicyDefinition": {
-          "managedRules": {
-            "exclusions": [],
-            "managedRuleSets": [
-              {
-                "ruleSetType": "OWASP",
-                "ruleSetVersion": "3.2",
-                "ruleGroupOverrides": []
-              }
-            ]
-          }
-        },
-        "appGatewayDefinition": {
-          "sku": "WAF_v2",
-          "tier": "WAF_v2",
-          "capacity": 2,
-          "autoscaleConfiguration": {
-            "minCapacity": 2,
-            "maxCapacity": 10
-          }
-        },
-        "firewallPolicyDefinition": {
-          "threatIntelMode": "Alert",
-          "tier": "Standard"
-        },
-        "firewallDefinition": {
-          "azureSkuTier": "Standard",
-          "availabilityZones": [1, 2, 3]
-        },
-        "buildVmDefinition": {
-          "sku": "Standard_F4s_v2",
-          "adminUsername": "builduser",
-          "osType": "Linux",
-          "imageReference": {
-            "publisher": "Canonical",
-            "offer": "0001-com-ubuntu-server-jammy",
-            "sku": "22_04-lts",
-            "version": "latest"
-          },
-          "runner": "github",
-          "github": {
-            "owner": "your-org",
-            "repo": "your-repo"
-          },
-          "osDisk": {
-            "caching": "ReadWrite",
-            "createOption": "FromImage",
-            "deleteOption": "Delete",
-            "managedDisk": {
-              "storageAccountType": "Standard_LRS"
-            }
-          },
-          "disablePasswordAuthentication": false,
-          "adminPassword": "P@ssw0rd123!",
-          "availabilityZone": 1
-        },
-        "jumpVmDefinition": {
-          "sku": "Standard_D4as_v5",
-          "adminUsername": "azureuser",
-          "osType": "Windows",
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2022-datacenter-azure-edition",
-            "version": "latest"
-          },
-          "adminPassword": "P@ssw0rd123!",
-          "osDisk": {
-            "caching": "ReadWrite",
-            "createOption": "FromImage",
-            "deleteOption": "Delete",
-            "managedDisk": {
-              "storageAccountType": "Standard_LRS"
-            }
-          },
-          "availabilityZone": 1
-        },
-        "_artifactsLocation": "https://raw.githubusercontent.com/Azure/bicep-avm-ptn-aiml-landing-zone/refs/heads/main/infra/",
-        "_artifactsLocationSasToken": ""
+        }
       }
     }
   }

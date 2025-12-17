@@ -43,6 +43,26 @@
           "bastionNsg": true
       }
     },
+    "vmadmin": {
+      "type": "string",
+      "defaultValue": "azureuser",
+      "metadata": {
+        "description": "Optional. Admin username for the jumpbox and build VMs."
+      }
+    },
+    "vmPassword": {
+      "type": "secureString",
+      "metadata": {
+        "description": "Admin password for the jumpbox and build VMs."
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4as_v5",
+      "metadata": {
+        "description": "Optional. VM size for the jumpbox VM."
+      }
+    },
     "flagPlatformLandingZone": {
       "type": "bool",
       "defaultValue": false,
@@ -137,13 +157,6 @@
           "appInsightsZoneId": ""
       }
     },
-    "resourceIds": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Existing resource IDs to reuse (can be empty)."
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -170,192 +183,6 @@
       "defaultValue": {},
       "metadata": {
         "description": "Optional. Tags to apply to all resources."
-      }
-    },
-    "privateDnsZonesDefinition": {
-      "type": "object",
-      "defaultValue": {
-        "allowInternetResolutionFallback": false,
-        "createNetworkLinks": true,
-        "cognitiveservicesZoneId": "",
-        "apimZoneId": "",
-        "openaiZoneId": "",
-        "aiServicesZoneId": "",
-        "searchZoneId": "",
-        "cosmosSqlZoneId": "",
-        "blobZoneId": "",
-        "keyVaultZoneId": "",
-        "appConfigZoneId": "",
-        "containerAppsZoneId": "",
-        "acrZoneId": "",
-        "appInsightsZoneId": "",
-        "tags": {}
-      },
-      "metadata": {
-        "description": "Optional. Private DNS Zone configuration for private endpoints. Used when not in platform landing zone mode."
-      }
-    },
-    "hubVnetPeeringDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Hub VNet peering configuration."
-      }
-    },
-    "logAnalyticsDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Log Analytics workspace configuration."
-      }
-    },
-    "appInsightsDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Application Insights configuration."
-      }
-    },
-    "containerAppEnvDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Container Apps Environment configuration."
-      }
-    },
-    "containerRegistryDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Container Registry configuration."
-      }
-    },
-    "storageAccountDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Storage Account configuration."
-      }
-    },
-    "appConfigurationDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. App Configuration Store configuration."
-      }
-    },
-    "cosmosDbDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Cosmos DB configuration."
-      }
-    },
-    "keyVaultDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Key Vault configuration."
-      }
-    },
-    "aiSearchDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. AI Search configuration."
-      }
-    },
-    "apimDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. API Management configuration."
-      }
-    },
-    "aiFoundryDefinition": {
-      "type": "object",
-      "defaultValue": {
-        "baseName": "[parameters('baseName')]"
-      },
-      "metadata": {
-        "description": "Optional. AI Foundry configuration."
-      }
-    },
-    "groundingWithBingDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Grounding with Bing configuration."
-      }
-    },
-    "wafPolicyDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. WAF Policy configuration."
-      }
-    },
-    "appGatewayDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Application Gateway configuration."
-      }
-    },
-    "firewallPolicyDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Azure Firewall Policy configuration."
-      }
-    },
-    "firewallDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Azure Firewall configuration."
-      }
-    },
-    "buildVmDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Build VM configuration."
-      }
-    },
-    "jumpVmDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Jump VM configuration."
-      }
-    },
-    "buildVmMaintenanceDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Build VM Maintenance configuration."
-      }
-    },
-    "jumpVmMaintenanceDefinition": {
-      "type": "object",
-      "defaultValue": {},
-      "metadata": {
-        "description": "Optional. Jump VM Maintenance configuration."
-      }
-    },
-    "_artifactsLocation": {
-      "type": "string",
-      "defaultValue": "[deployment().properties.templateLink.uri]",
-      "metadata": {
-        "description": "The base URI where artifacts required by this template are located including a trailing '/'"
-      }
-    },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated. Use the defaultValue if the staging location is not secured."
       }
     }
   },
@@ -433,80 +260,59 @@
 
     "deployPdnsAndPe": "[not(parameters('flagPlatformLandingZone'))]",
 
-
-
-    "useExistingPdz": {
-      "apim": "[not(empty(parameters('privateDnsZonesDefinition').apimZoneId))]",
-      "cognitiveservices": "[not(empty(parameters('privateDnsZonesDefinition').cognitiveservicesZoneId))]",
-      "openai": "[not(empty(parameters('privateDnsZonesDefinition').openaiZoneId))]",
-      "aiServices": "[not(empty(parameters('privateDnsZonesDefinition').aiServicesZoneId))]",
-      "search": "[not(empty(parameters('privateDnsZonesDefinition').searchZoneId))]",
-      "cosmosSql": "[not(empty(parameters('privateDnsZonesDefinition').cosmosSqlZoneId))]",
-      "blob": "[not(empty(parameters('privateDnsZonesDefinition').blobZoneId))]",
-      "keyVault": "[not(empty(parameters('privateDnsZonesDefinition').keyVaultZoneId))]",
-      "appConfig": "[not(empty(parameters('privateDnsZonesDefinition').appConfigZoneId))]",
-      "containerApps": "[not(empty(parameters('privateDnsZonesDefinition').containerAppsZoneId))]",
-      "acr": "[not(empty(parameters('privateDnsZonesDefinition').acrZoneId))]",
-      "appInsights": "[not(empty(parameters('privateDnsZonesDefinition').appInsightsZoneId))]"
-    },
-
-    "deployPdnsApim": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').apim))]",
-    "deployPdnsCogSvcs": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').cognitiveservices))]",
-    "deployPdnsOpenAI": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').openai))]",
-    "deployPdnsAiServices": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').aiServices))]",
-    "deployPdnsSearch": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').search))]",
-    "deployPdnsCosmosSql": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').cosmosSql))]",
-    "deployPdnsBlob": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').blob))]",
-    "deployPdnsKeyVault": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').keyVault))]",
-    "deployPdnsAppConfig": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').appConfig))]",
-    "deployPdnsContainerApps": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').containerApps))]",
-    "deployPdnsAcr": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').acr))]",
-    "deployPdnsAppInsights": "[and(variables('deployPdnsAndPe'), not(variables('useExistingPdz').appInsights))]",
+    "deployPdnsApim": "[and(variables('deployPdnsAndPe'), variables('deployApim'))]",
+    "deployPdnsCogSvcs": "[variables('deployPdnsAndPe')]",
+    "deployPdnsOpenAI": "[variables('deployPdnsAndPe')]",
+    "deployPdnsAiServices": "[variables('deployPdnsAndPe')]",
+    "deployPdnsSearch": "[and(variables('deployPdnsAndPe'), variables('deployAiSearch'))]",
+    "deployPdnsCosmosSql": "[and(variables('deployPdnsAndPe'), variables('deployCosmosDb'))]",
+    "deployPdnsBlob": "[and(variables('deployPdnsAndPe'), variables('deploySa'))]",
+    "deployPdnsKeyVault": "[and(variables('deployPdnsAndPe'), variables('deployKeyVault'))]",
+    "deployPdnsAppConfig": "[and(variables('deployPdnsAndPe'), variables('deployAppConfig'))]",
+    "deployPdnsContainerApps": "[and(variables('deployPdnsAndPe'), variables('deployContainerAppEnv'))]",
+    "deployPdnsAcr": "[and(variables('deployPdnsAndPe'), variables('deployAcr'))]",
+    "deployPdnsAppInsights": "[and(variables('deployPdnsAndPe'), variables('deployAppInsights'))]",
 
 
     "vnetName": "[if(variables('deployVnet'), concat('vnet-', parameters('baseName')), parameters('existingVnetName'))]",
-    "existingSubnets": {
-      "agentSubnet": "",
-      "peSubnet": "",
-      "bastionSubnet": "",
-      "firewallSubnet": "",
-      "appGwSubnet": "",
-      "apimSubnet": "",
-      "acaEnvSubnet": "",
-      "jumpboxSubnet": "",
-      "devopsSubnet": ""
-    },
-    "lawName": "[if(variables('deployLogAnalytics'), concat('law-', parameters('baseName')), split(parameters('resourceIds').logAnalyticsWorkspaceResourceId, '/')[8])]",
-    "appiName": "[if(variables('deployAppInsights'), concat('appi-', parameters('baseName')), split(parameters('resourceIds').appInsightsResourceId, '/')[8])]",
-    "containerEnvName": "[if(variables('deployContainerAppEnv'),  concat('cae-', parameters('baseName')), split(parameters('resourceIds').containerAppsEnvironmentResourceId, '/')[8])]",
-    "acrName": "[if(variables('deployAcr'), concat('acr', parameters('baseName')), split(parameters('resourceIds').containerRegistryResourceId, '/')[8])]",
-    "storageAccountName": "[if(variables('deploySa'), toLower(concat('st', parameters('baseName'))), split(parameters('resourceIds').storageAccountResourceId, '/')[8])]",
-    "appConfigName": "[if(variables('deployAppConfig'), concat('appcs-', parameters('baseName')), split(parameters('resourceIds').appConfigResourceId, '/')[8])]",
 
-    "baseTemplateUri": "[parameters('_artifactsLocation')]",
-    "networkSecurityGroupTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.network-security-group.json', parameters('_artifactsLocationSasToken')))]",
-    "virtualNetworkTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.virtual-network.json', parameters('_artifactsLocationSasToken')))]",
-    "privateDnsZoneTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.private-dns-zone.json', parameters('_artifactsLocationSasToken')))]",
-    "publicIpTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.public-ip-address.json', parameters('_artifactsLocationSasToken')))]",
-    "privateEndpointTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.private-endpoint.json', parameters('_artifactsLocationSasToken')))]",
-    "logAnalyticsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.operational-insights.workspace.json', parameters('_artifactsLocationSasToken')))]",
-    "appInsightsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.insights.component.json', parameters('_artifactsLocationSasToken')))]",
-    "containerAppEnvTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app.managed-environment.json', parameters('_artifactsLocationSasToken')))]",
-    "containerRegistryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.container-registry.registry.json', parameters('_artifactsLocationSasToken')))]",
-    "storageAccountTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.storage.storage-account.json', parameters('_artifactsLocationSasToken')))]",
-    "appConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app-configuration.configuration-store.json', parameters('_artifactsLocationSasToken')))]",
-    "cosmosDbTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.document-db.database-account.json', parameters('_artifactsLocationSasToken')))]",
-    "keyVaultTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.key-vault.vault.json', parameters('_artifactsLocationSasToken')))]",
-    "aiSearchTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.search.search-service.json', parameters('_artifactsLocationSasToken')))]",
-    "apimTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.api-management.service.json', parameters('_artifactsLocationSasToken')))]",
-    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.ptn.ai-ml.ai-foundry.json', parameters('_artifactsLocationSasToken')))]",
-    "wafPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.waf-policy.json', parameters('_artifactsLocationSasToken')))]",
-    "applicationGatewayTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.application-gateway.json', parameters('_artifactsLocationSasToken')))]",
-    "firewallPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.firewall-policy.json', parameters('_artifactsLocationSasToken')))]",
-    "azureFirewallTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.azure-firewall.json', parameters('_artifactsLocationSasToken')))]",
-    "buildVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.build-vm.json', parameters('_artifactsLocationSasToken')))]",
-    "jumpVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.jump-vm.json', parameters('_artifactsLocationSasToken')))]",
-    "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', parameters('_artifactsLocationSasToken')))]"
+    "lawName": "[concat('law-', parameters('baseName'))]",
+    "appiName": "[concat('appi-', parameters('baseName'))]",
+    "containerEnvName": "[concat('cae-', parameters('baseName'))]",
+    "acrName": "[concat('acr', parameters('baseName'))]",
+    "storageAccountName": "[toLower(concat('st', parameters('baseName')))]",
+    "appConfigName": "[concat('appcs-', parameters('baseName'))]",
+    "bingGroundingName": "[concat('bing-', parameters('baseName'))]",
+    "buildVMConcat": "[concat('vm-', parameters('baseName'), '-bld')]",
+    "buildVMName": "[if(greater(length(variables('buildVMConcat')), 15), toLower(substring(variables('buildVMConcat'), 0, 15)), toLower(variables('buildVMConcat')))]",
+    "jumpVMConcat": "[concat('vm-', parameters('baseName'), '-jmp')]",
+    "jumpVMName": "[if(greater(length(variables('jumpVMConcat')), 15), toLower(substring(variables('jumpVMConcat'), 0, 15)), toLower(variables('jumpVMConcat')))]",
+
+    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/bicep-avm-ptn-aiml-landing-zone/refs/heads/main/infra/",
+    "artifactsLocationSasToken": "",
+    "networkSecurityGroupTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.network-security-group.json', variables('artifactsLocationSasToken')))]",
+    "virtualNetworkTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.virtual-network.json', variables('artifactsLocationSasToken')))]",
+    "privateDnsZoneTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.private-dns-zone.json', variables('artifactsLocationSasToken')))]",
+    "publicIpTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.public-ip-address.json', variables('artifactsLocationSasToken')))]",
+    "privateEndpointTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.private-endpoint.json', variables('artifactsLocationSasToken')))]",
+    "logAnalyticsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.operational-insights.workspace.json', variables('artifactsLocationSasToken')))]",
+    "appInsightsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.insights.component.json', variables('artifactsLocationSasToken')))]",
+    "containerAppEnvTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app.managed-environment.json', variables('artifactsLocationSasToken')))]",
+    "containerRegistryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.container-registry.registry.json', variables('artifactsLocationSasToken')))]",
+    "storageAccountTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.storage.storage-account.json', variables('artifactsLocationSasToken')))]",
+    "appConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app-configuration.configuration-store.json', variables('artifactsLocationSasToken')))]",
+    "cosmosDbTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.document-db.database-account.json', variables('artifactsLocationSasToken')))]",
+    "keyVaultTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.key-vault.vault.json', variables('artifactsLocationSasToken')))]",
+    "aiSearchTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.search.search-service.json', variables('artifactsLocationSasToken')))]",
+    "apimTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.api-management.service.json', variables('artifactsLocationSasToken')))]",
+    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.ptn.ai-ml.ai-foundry.json', variables('artifactsLocationSasToken')))]",
+    "wafPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.waf-policy.json', variables('artifactsLocationSasToken')))]",
+    "applicationGatewayTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.application-gateway.json', variables('artifactsLocationSasToken')))]",
+    "firewallPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.firewall-policy.json', variables('artifactsLocationSasToken')))]",
+    "azureFirewallTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.azure-firewall.json', variables('artifactsLocationSasToken')))]",
+    "buildVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.build-vm.json', variables('artifactsLocationSasToken')))]",
+    "jumpVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.jump-vm.json', variables('artifactsLocationSasToken')))]",
+    "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', variables('artifactsLocationSasToken')))]"
   },
   "resources": [
     {
@@ -1246,7 +1052,7 @@
         "value": {
           "name": "[variables('appiName')]",
           "location": "[parameters('location')]",
-          "workspaceResourceId": "[if(variables('deployLogAnalytics'), reference('deployLogAnalytics').outputs.resourceId.value, coalesce(parameters('resourceIds').logAnalyticsWorkspaceResourceId, ''))]",
+          "workspaceResourceId": "[if(variables('deployLogAnalytics'), reference('deployLogAnalytics').outputs.resourceId.value, '')]",
           "enableTelemetry": "[parameters('enableTelemetry')]",
           "tags": "[parameters('tags')]",
           "disableIpMasking": true
@@ -1312,7 +1118,7 @@
           "internal": false,
           "publicNetworkAccess": "Disabled",
           "zoneRedundant": true,
-          "appInsigthsConnectionString": "[if(variables('deployAppInsights'), reference('deployAppInsights').outputs.connectionString.value, parameters('appInsightsConnectionString'))]"   
+          "appInsigthsConnectionString": "[if(variables('deployAppInsights'), reference('deployAppInsights').outputs.connectionString.value, '')]"   
         
         }
       }
@@ -1546,7 +1352,7 @@
             {
               "name": "kvconnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, coalesce(parameters('resourceIds').keyVaultResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
                 "groupIds": ["vault"]
               }
             }
@@ -1595,7 +1401,7 @@
             {
               "name": "searchConnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, coalesce(parameters('resourceIds').searchResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
                 "groupIds": ["searchService"]
               }
             }
@@ -1644,7 +1450,7 @@
             {
               "name": "cosmosConnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deployCosmosDb'), reference('cosmosDbModule').outputs.resourceId.value, coalesce(parameters('resourceIds').cosmosResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deployCosmosDb'), reference('cosmosDbModule').outputs.resourceId.value, '')]",
                 "groupIds": ["Sql"]
               }
             }
@@ -1693,7 +1499,7 @@
             {
               "name": "blobConnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
                 "groupIds": ["blob"]
               }
             }
@@ -1742,7 +1548,7 @@
             {
               "name": "appConfigConnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deployAppConfig'), reference('configurationStoreDeploymentFixed').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deployAppConfig'), reference('configurationStoreDeploymentFixed').outputs.resourceId.value, '')]",
                 "groupIds": ["configurationStores"]
               }
             }
@@ -1791,7 +1597,7 @@
             {
               "name": "apimGatewayConnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deployApim'), reference('apimDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deployApim'), reference('apimDeployment').outputs.resourceId.value, '')]",
                 "groupIds": ["Gateway"]
               }
             }
@@ -1840,7 +1646,7 @@
             {
               "name": "acrConnection",
               "properties": {
-                "privateLinkServiceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, coalesce(parameters('resourceIds').storageAccountResourceId, ''))]",
+                "privateLinkServiceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
                 "groupIds": ["registry"]
               }
             }
@@ -1978,10 +1784,7 @@
         "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiProjectName.value]"
       },
       "bingSearchName": {
-        "value": "[concat('bing-', parameters('baseName'))]"
-      },
-      "existingResourceId": {
-        "value": ""
+        "value": "[variables('bingGroundingName')]"
       }
     },
     "dependsOn": [
@@ -2020,9 +1823,9 @@
             }
           ],
 
-          "firewallPolicyResourceId": "[if(variables('deployWafPolicy'), reference('wafPolicyDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwWafPolicyResourceId, ''))]",
+          "firewallPolicyResourceId": "[if(variables('deployWafPolicy'), reference('wafPolicyDeployment').outputs.resourceId.value, null())]",
           "tags": "[parameters('tags')]",
-          "frontendIPConfigurations": "[concat( if(variables('deployAppGatewayPip'), createArray(createObject('name', 'publicFrontend', 'properties', createObject('publicIPAddress', createObject('id', if(variables('deployAppGatewayPip'), reference('m-appgw-pip').outputs.resourceId.value, coalesce(parameters('resourceIds').appGwPublicIpResourceId, '')))))), createArray()), createArray(createObject('name', 'privateFrontend', 'properties', createObject('privateIPAllocationMethod', 'Static', 'privateIPAddress', parameters('appGwPrivateIp'), 'subnet', createObject('id', if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/appgw-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').appGwSubnet)))))))]",
+          "frontendIPConfigurations": "[concat( if(variables('deployAppGatewayPip'), createArray(createObject('name', 'publicFrontend', 'properties', createObject('publicIPAddress', createObject('id', if(variables('deployAppGatewayPip'), reference('m-appgw-pip').outputs.resourceId.value, null()))))), createArray()), createArray(createObject('name', 'privateFrontend', 'properties', createObject('privateIPAllocationMethod', 'Static', 'privateIPAddress', parameters('appGwPrivateIp'), 'subnet', createObject('id', if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/appgw-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').appGwSubnet)))))))]",
           "frontendPorts": [
             {
               "name": "port80",
@@ -2108,8 +1911,8 @@
         "value": {
           "name": "[concat('afw-', parameters('baseName'))]",
           "virtualNetworkResourceId": "[if(variables('deployVnet'), reference('m-vnet').outputs.resourceId.value, parameters('existingVnetId'))]",
-          "publicIpResourceId": "[if(variables('deployFirewallPip'), reference('m-fw-pip').outputs.resourceId.value, coalesce(parameters('resourceIds').firewallPublicIpResourceId, ''))]",
-          "firewallPolicyId": "[if(variables('deployFirewallPolicy'), reference('firewallPolicyDeployment').outputs.resourceId.value, coalesce(parameters('resourceIds').firewallPolicyResourceId, ''))]",
+          "publicIpResourceId": "[if(variables('deployFirewallPip'), reference('m-fw-pip').outputs.resourceId.value, null())]",
+          "firewallPolicyId": "[if(variables('deployFirewallPolicy'), reference('firewallPolicyDeployment').outputs.resourceId.value, null())]",
           "availabilityZones": [1,2,3],
           "azureSkuTier": "Standard",
           "location": "[parameters('location')]",
@@ -2138,9 +1941,9 @@
     "parameters": {
       "jumpVm": {
         "value": {
-          "name": "[concat('vm-', substring(parameters('baseName'), 0, 6), '-jmp')]",
-          "sku": "Standard_D4as_v5",
-          "adminUsername": "azureuser",
+          "name": "[variables('jumpVMName')]",
+          "sku": "[parameters('vmSize')]",
+          "adminUsername": "[parameters('vmadmin')]",
           "osType": "Windows",
           "imageReference": {
             "publisher": "MicrosoftWindowsServer",
@@ -2168,7 +1971,7 @@
             }
           },
           "disablePasswordAuthentication": false,
-          "adminPassword": "P@ssw0rd123!",
+          "adminPassword": "[parameters('vmPassword')]",
           "availabilityZone": 1,
           "location": "[parameters('location')]",
           "tags": "[parameters('tags')]",
@@ -2195,9 +1998,9 @@
     "parameters": {
       "buildVm": {
         "value": {
-          "name": "[concat('vm-', substring(parameters('baseName'), 0, 6), '-bld')]",
-          "sku": "Standard_F4s_v2",
-          "adminUsername": "builduser",
+          "name": "[variables('buildVMName')]",
+          "sku": "[parameters('vmSize')]",
+          "adminUsername": "[parameters('vmadmin')]",
           "osType": "Linux",
           "imageReference": {
             "publisher": "Canonical",
@@ -2230,7 +2033,7 @@
             }
           },
           "disablePasswordAuthentication": false,
-          "adminPassword": "P@ssw0rd123!",
+          "adminPassword": "[parameters('vmPassword')]",
           "availabilityZone": 1,
           "location": "[parameters('location')]",
           "tags": "[parameters('tags')]",
