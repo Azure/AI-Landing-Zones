@@ -330,6 +330,9 @@ Apply complete! Resources: XX added, 0 changed, 0 destroyed.
   - Region capacity (try a different region)
   - Permission issues (ensure you have Contributor role)
   - Provider not registered (see Prerequisites Step 3)
+  - Key Vault public access is disabled.  
+    - In production, GitHub workflows run within the network so this is not an issue.  
+    - For local runs, set access to “Allow public access from specific virtual networks and IP addresses” and whitelist workstation’s public IP.  
 
 ---
 
