@@ -288,7 +288,7 @@
     "jumpVMConcat": "[concat('vm-', parameters('baseName'), '-jmp')]",
     "jumpVMName": "[if(greater(length(variables('jumpVMConcat')), 15), toLower(substring(variables('jumpVMConcat'), 0, 15)), toLower(variables('jumpVMConcat')))]",
 
-    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/bicep-avm-ptn-aiml-landing-zone/refs/heads/main/infra/",
+    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/portal/portal/",
     "artifactsLocationSasToken": "",
     "networkSecurityGroupTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.network-security-group.json', variables('artifactsLocationSasToken')))]",
     "virtualNetworkTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.virtual-network.json', variables('artifactsLocationSasToken')))]",
@@ -312,7 +312,8 @@
     "azureFirewallTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.azure-firewall.json', variables('artifactsLocationSasToken')))]",
     "buildVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.build-vm.json', variables('artifactsLocationSasToken')))]",
     "jumpVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.jump-vm.json', variables('artifactsLocationSasToken')))]",
-    "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', variables('artifactsLocationSasToken')))]"
+    "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', variables('artifactsLocationSasToken')))]",
+    "bingGroundingTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.cogs.bing.json', variables('artifactsLocationSasToken')))]"
   },
   "resources": [
     {
@@ -1772,8 +1773,8 @@
   "name": "bingsearchDeployment",
   "properties": {
     "mode": "Incremental",
-    "templateLink": {
-      "relativePath": "wrappers/res.cogs.bing.json",
+    "templateLink": { 
+      "uri": "[variables('bingGroundingTemplateUri')]",
       "contentVersion": "1.0.0.0"
     },
     "parameters": {
