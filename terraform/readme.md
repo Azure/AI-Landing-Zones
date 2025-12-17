@@ -100,10 +100,12 @@ az account show --query id --output tsv
 ```powershell
 # Replace <SUBSCRIPTION_ID> with your actual subscription ID
 # Replace <SP_NAME> with a descriptive name (e.g., "terraform-ai-landing-zone-sp")
+# The below command creates a Service Principal and assigns contributor role to the subscription
 az ad sp create-for-rbac --name "<SP_NAME>" --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
 ```
 
 **Example output:**
+
 ```json
 {
   "appId": "12345678-1234-1234-1234-123456789abc",
@@ -115,6 +117,11 @@ az ad sp create-for-rbac --name "<SP_NAME>" --role="Contributor" --scopes="/subs
 
 **Save these values securely!** You won't be able to see the password again.
 
+```powershell
+# The Service Principal requires the "User Access Administrator" role to grant Key Vault permissions. 
+# Assigning the role:
+az role assignment create --assignee "<SP_NAME>" --role="User Access Administrator" --scope="/subscriptions/<SUBSCRIPTION_ID>"
+```
 **Step 3: Set Environment Variables**
 
 In PowerShell, set these environment variables (they must be named exactly as shown):
