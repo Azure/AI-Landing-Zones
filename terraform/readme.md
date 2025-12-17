@@ -288,6 +288,11 @@ See what Terraform will create without actually creating it:
 terraform plan
 ```
 
+**Tip: To capture the full output for easier review, redirect it to a file:**
+```powershell
+terraform plan > plan_output.txt
+```
+
 **Expected output:**
 - A long list of resources to be created (50+ resources)
 - At the end: `Plan: XX to add, 0 to change, 0 to destroy.`
