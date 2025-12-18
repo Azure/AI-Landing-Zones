@@ -7,7 +7,7 @@ param aiFoundry aiFoundryDefinitionType
 param enableTelemetry bool = true
 
 // Create the AI Foundry deployment using the AVM pattern module
-module inner 'br/public:avm/ptn/ai-ml/ai-foundry:0.4.0' = {
+module inner 'br/public:avm/ptn/ai-ml/ai-foundry:0.6.0' = {
   name: 'aif-avm-${aiFoundry.baseName!}'
   params: {
     // Required
