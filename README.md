@@ -41,8 +41,8 @@ The AI Landing Zone cover the following design areas which are across the Cloud 
 ## Use cases & Scenarios
 The AI Landing Zone act as a foundation architecture which can be leveraged to deploy a particular AI usecase & scenario on Azure, such as the below, either with its default architecture or by extending it with additional Azure services as needed.
 
-- Chat Using Azure AI Foundry
-- Agents Using Azure AI Foundry
+- Chat Using Microsoft Foundry
+- Agents Using Microsoft Foundry
 - Document generation
 - Conversational Agent
 - Build your own copilot

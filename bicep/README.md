@@ -4,7 +4,7 @@ This repository contains a **Bicep template** that is built on top of **Azure Ve
 
 ## Architecture
 
- This architecture delivers a full **AI Landing Zone** built around **Azure AI Foundry**. The **AI Foundry Agent service**, together with **AI Search, Cosmos DB, Storage, and Key Vault**, operates securely and seamlessly. A dedicated **Azure Container Apps** environment enables custom **GenAI applications**, and supporting services cover configuration, data, and observability. Thanks to its modular design, you can deploy everything or only the components you need.
+ This architecture delivers a full **AI Landing Zone** built around **Microsoft Foundry**. The **AI Foundry Agent service**, together with **AI Search, Cosmos DB, Storage, and Key Vault**, operates securely and seamlessly. A dedicated **Azure Container Apps** environment enables custom **GenAI applications**, and supporting services cover configuration, data, and observability. Thanks to its modular design, you can deploy everything or only the components you need.
 
 ![Architecture](./docs/architecture.png)
 *AI Landing Zone*

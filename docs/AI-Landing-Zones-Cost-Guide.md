@@ -213,7 +213,7 @@
 
 ### **3. AI & COGNITIVE SERVICES**
 
-#### **Azure AI Foundry / AI Services**
+#### **Microsoft Foundry / AI Services**
 - **Service:** Azure AI Services (multi-service account)
 - **Region:** East US
 - **API Calls:** Variable (usage-based)

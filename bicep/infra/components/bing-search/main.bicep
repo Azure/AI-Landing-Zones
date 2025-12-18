@@ -1,5 +1,5 @@
 metadata name = 'bing-search'
-metadata description = 'Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry.'
+metadata description = 'Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Microsoft Foundry.'
 
 @description('Conditional. The name of the Azure Cognitive Services account to be used for the Bing Search tool. Required if `enableBingSearchConnection` is true.')
 param accountName string
