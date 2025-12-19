@@ -83,6 +83,43 @@ print_white() {
 
 print_header
 
+#===============================================================================
+# AUTHENTICATION CHECK
+#===============================================================================
+
+print_step "0" "Step 0: Checking Azure authentication..."
+
+# Check Azure CLI authentication
+print_gray "Checking Azure CLI authentication..."
+if ! az account show > /dev/null 2>&1; then
+    echo ""
+    print_error "Not authenticated with Azure CLI"
+    print_warning "Please authenticate before running this script:"
+    print_warning "    1. Run: az login"
+    print_warning "    2. Set subscription: az account set --subscription <subscription-id>"
+    echo ""
+    exit 1
+fi
+
+CURRENT_ACCOUNT=$(az account show --query "{name:name, id:id}" -o json 2>/dev/null)
+print_success "Azure CLI authenticated"
+if [ -n "$CURRENT_ACCOUNT" ]; then
+    ACCOUNT_NAME=$(echo "$CURRENT_ACCOUNT" | grep -o '"name":"[^"]*"' | cut -d'"' -f4)
+    ACCOUNT_ID=$(echo "$CURRENT_ACCOUNT" | grep -o '"id":"[^"]*"' | cut -d'"' -f4)
+    printf "${GRAY}  [i] Current account: %s (%s)${NC}\n" "$ACCOUNT_NAME" "$ACCOUNT_ID"
+fi
+
+# Check Azure Developer CLI authentication (optional but recommended)
+print_gray "Checking Azure Developer CLI authentication..."
+if azd auth login --check-status > /dev/null 2>&1; then
+    print_success "Azure Developer CLI authenticated"
+else
+    print_warning "Azure Developer CLI not authenticated (optional)"
+    print_gray "[i] You can authenticate with: azd auth login"
+fi
+
+echo ""
+
 # Check and prompt for required environment variables
 missing_vars=""
 if [ -z "$LOCATION" ]; then
@@ -584,32 +621,6 @@ if [ -f "$main_bicep_path" ] && [ -s "$temp_mapping_file" ]; then
     
     echo ""
     print_success "  [+] Updated deploy/main.bicep ($replacement_count references replaced)"
-fi
-
-#===============================================================================
-# STEP 5: APPLY TAGS
-#===============================================================================
-
-# Step 5: Apply tags to resource groups
-echo ""
-print_step "[5] Step 5: Applying tags..."
-
-# Apply tag to main resource group
-print_gray "  Applying tags to resource group: $RESOURCE_GROUP"
-if az group update --name "$RESOURCE_GROUP" --tags "SecurityControl=Ignore" --only-show-errors >/dev/null 2>&1; then
-    print_success "  [+] Applied tags to: $RESOURCE_GROUP"
-else
-    print_warning "  [!] Warning: Failed to apply tags to resource group: $RESOURCE_GROUP"
-fi
-
-# Apply tag to Template Spec resource group if different
-if [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
-    print_gray "  Applying tags to Template Spec resource group: $TEMPLATE_SPEC_RG"
-    if az group update --name "$TEMPLATE_SPEC_RG" --tags "SecurityControl=Ignore" --only-show-errors >/dev/null 2>&1; then
-        print_success "  [+] Applied tags to: $TEMPLATE_SPEC_RG"
-    else
-        print_warning "  [!] Warning: Failed to apply tags to Template Spec resource group: $TEMPLATE_SPEC_RG"
-    fi
 fi
 
 #===============================================================================

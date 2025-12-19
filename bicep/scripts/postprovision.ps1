@@ -141,40 +141,6 @@ if (Test-Path $deployDir) {
 }
 
 #===============================================================================
-# STEP 3: REMOVE TAGS
-#===============================================================================
-
-# Step 3: Remove temporary tags from resource groups
-Write-Host ""
-Write-Host "[3] Step 3: Removing temporary tags..." -ForegroundColor Cyan
-
-# Remove tag from main resource group
-if ($ResourceGroup) {
-  try {
-    Write-Host "  Removing temporary tags from resource group: $ResourceGroup" -ForegroundColor Gray
-    $resourceId = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup"
-    az tag update --resource-id $resourceId --operation Delete --tags SecurityControl --only-show-errors | Out-Null
-    Write-Host "  [+] Removed temporary tags from: $ResourceGroup" -ForegroundColor Green
-  } catch {
-    Write-Host "  [!] Warning: Failed to remove temporary tags from resource group: $ResourceGroup" -ForegroundColor Yellow
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-  }
-}
-
-# Remove tag from Template Spec resource group if different
-if ($TemplateSpecRG -and $TemplateSpecRG -ne $ResourceGroup) {
-  try {
-    Write-Host "  Removing temporary tags from Template Spec resource group: $TemplateSpecRG" -ForegroundColor Gray
-    $resourceId = "/subscriptions/$SubscriptionId/resourceGroups/$TemplateSpecRG"
-    az tag update --resource-id $resourceId --operation Delete --tags SecurityControl --only-show-errors | Out-Null
-    Write-Host "  [+] Removed temporary tags from: $TemplateSpecRG" -ForegroundColor Green
-  } catch {
-    Write-Host "  [!] Warning: Failed to remove temporary tags from Template Spec resource group: $TemplateSpecRG" -ForegroundColor Yellow
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-  }
-}
-
-#===============================================================================
 # COMPLETION SUMMARY
 #===============================================================================
 

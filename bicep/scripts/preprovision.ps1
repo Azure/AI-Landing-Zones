@@ -47,6 +47,49 @@ Write-Host "[*] AI/ML Landing Zone - Template Spec Preprovision" -ForegroundColo
 Write-Host ("=" * 50) -ForegroundColor DarkGray
 Write-Host ""
 
+#===============================================================================
+# AUTHENTICATION CHECK
+#===============================================================================
+
+Write-Host "[0] Step 0: Checking Azure authentication..." -ForegroundColor Cyan
+
+# Check Azure CLI authentication
+Write-Host "  Checking Azure CLI authentication..." -ForegroundColor Gray
+try {
+  $null = az account show 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "Not authenticated"
+  }
+  $currentAccount = az account show --query "{name:name, id:id}" -o json | ConvertFrom-Json
+  Write-Host "  [+] Azure CLI authenticated" -ForegroundColor Green
+  Write-Host "  [i] Current account: $($currentAccount.name) ($($currentAccount.id))" -ForegroundColor DarkGray
+} catch {
+  Write-Host ""
+  Write-Host "  [X] Not authenticated with Azure CLI" -ForegroundColor Red
+  Write-Host "  [!] Please authenticate before running this script:" -ForegroundColor Yellow
+  Write-Host "      1. Run: az login" -ForegroundColor Yellow
+  Write-Host "      2. Set subscription: az account set --subscription <subscription-id>" -ForegroundColor Yellow
+  Write-Host ""
+  exit 1
+}
+
+# Check Azure Developer CLI authentication (optional but recommended)
+Write-Host "  Checking Azure Developer CLI authentication..." -ForegroundColor Gray
+try {
+  $azdAuthStatus = azd auth login --check-status 2>&1
+  if ($LASTEXITCODE -eq 0) {
+    Write-Host "  [+] Azure Developer CLI authenticated" -ForegroundColor Green
+  } else {
+    Write-Host "  [!] Azure Developer CLI not authenticated (optional)" -ForegroundColor Yellow
+    Write-Host "  [i] You can authenticate with: azd auth login" -ForegroundColor DarkGray
+  }
+} catch {
+  Write-Host "  [!] Azure Developer CLI not found or not authenticated (optional)" -ForegroundColor Yellow
+  Write-Host "  [i] You can authenticate with: azd auth login" -ForegroundColor DarkGray
+}
+
+Write-Host ""
+
 # Force interactive mode for console input
 if (-not [Console]::IsInputRedirected) {
   # Enable console input for interactive prompts
@@ -607,36 +650,6 @@ if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
   Set-Content -Path $mainBicepPath -Value $content -Encoding UTF8
   Write-Host ""
   Write-Host "  [+] Updated deploy/main.bicep ($replacementCount references replaced)" -ForegroundColor Green
-}
-
-#===============================================================================
-# STEP 5: APPLY TAGS
-#===============================================================================
-
-# Step 5: Apply tags to resource groups
-Write-Host ""
-Write-Host "[5] Step 5: Applying tags..." -ForegroundColor Cyan
-
-# Apply tag to main resource group
-try {
-  Write-Host "  Applying tags to resource group: $ResourceGroup" -ForegroundColor Gray
-  az group update --name $ResourceGroup --tags "SecurityControl=Ignore" --only-show-errors | Out-Null
-  Write-Host "  [+] Applied tags to: $ResourceGroup" -ForegroundColor Green
-} catch {
-  Write-Host "  [!] Warning: Failed to apply tags to resource group: $ResourceGroup" -ForegroundColor Yellow
-  Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-}
-
-# Apply tag to Template Spec resource group if different
-if ($TemplateSpecRG -ne $ResourceGroup) {
-  try {
-    Write-Host "  Applying tags to Template Spec resource group: $TemplateSpecRG" -ForegroundColor Gray
-    az group update --name $TemplateSpecRG --tags "SecurityControl=Ignore" --only-show-errors | Out-Null
-    Write-Host "  [+] Applied tags to: $TemplateSpecRG" -ForegroundColor Green
-  } catch {
-    Write-Host "  [!] Warning: Failed to apply tags to Template Spec resource group: $TemplateSpecRG" -ForegroundColor Yellow
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-  }
 }
 
 #===============================================================================
