@@ -1470,6 +1470,14 @@ output appInsightsPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?a
 // 7 NETWORKING - PRIVATE ENDPOINTS
 // -----------------------
 
+// The custom AI Foundry component creates private endpoints for:
+// - AI Services account
+// - AI Search
+// - Storage (blob)
+// - Cosmos DB (SQL)
+// Avoid duplicating those private endpoints here.
+var varAiFoundryManagesCorePrivateEndpoints = varDeployPdnsAndPe
+
 // 7.1. App Configuration Private Endpoint
 @description('Optional. App Configuration Private Endpoint configuration.')
 param appConfigPrivateEndpointDefinition privateDnsZoneDefinitionType?
@@ -1655,7 +1663,7 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
 @description('Optional. Storage Account Private Endpoint configuration.')
 param storageBlobPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasStorage) {
+module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasStorage && !varAiFoundryManagesCorePrivateEndpoints) {
   name: 'blob-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1697,7 +1705,7 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
 @description('Optional. Cosmos DB Private Endpoint configuration.')
 param cosmosPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasCosmos) {
+module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasCosmos && !varAiFoundryManagesCorePrivateEndpoints) {
   name: 'cosmos-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1737,7 +1745,7 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
 @description('Optional. Azure AI Search Private Endpoint configuration.')
 param searchPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasSearch) {
+module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasSearch && !varAiFoundryManagesCorePrivateEndpoints) {
   name: 'search-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -2290,210 +2298,102 @@ param aiFoundryDefinition aiFoundryDefinitionType = {
   baseName: baseName
 }
 
-// Agent subnet ID variable needed for AI Foundry capability hosts
-var varAgentSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
-  ? '${virtualNetworkResourceId}/subnets/agent-subnet'
-  : '${resourceIds.virtualNetworkResourceId!}/subnets/agent-subnet'
+var varAiFoundryModelDeploymentsMapped = [
+  for d in (aiFoundryDefinition.?aiModelDeployments ?? []): {
+    name: string(d.?name ?? d.model.name)
+    modelName: string(d.model.name)
+    modelFormat: string(d.model.format)
+    modelVersion: string(d.model.version)
+    modelSkuName: string(d.sku.name)
+    modelCapacity: int(d.sku.capacity ?? 1)
+  }
+]
 
-// Holds the aiFoundryConfiguration object if defined in aiFoundryDefinition;
-// otherwise defaults to an empty object to avoid null reference errors.
-var varAfConfigObj = !empty(aiFoundryDefinition.?aiFoundryConfiguration)
-  ? aiFoundryDefinition.aiFoundryConfiguration!
-  : {}
-
-// Boolean flag indicating whether capability hosts should be created.
-// Safely checks for the property in varAfConfigObj, defaults to false if missing.
-var varAfAgentSvcEnabled = contains(varAfConfigObj, 'createCapabilityHosts')
-  ? bool(varAfConfigObj.createCapabilityHosts!)
-  : false
-
-// Determines if dependent resources should be deployed for Ai Foundry.
-// This is true only if agent service is enabled AND includeAssociatedResources
-// is either true or not explicitly set (defaults to true).
-var varAfWantsDeps = varAfAgentSvcEnabled && (contains(aiFoundryDefinition, 'includeAssociatedResources')
-  ? aiFoundryDefinition.includeAssociatedResources!
-  : true)
-
-// Boolean flag indicating whether project management is allowed in the AI Foundry account.
-// Project management enabled? Respect explicit false; default to true only if absent.
-var varAfProjectEnabled = contains(varAfConfigObj, 'allowProjectManagement')
-  ? varAfConfigObj.allowProjectManagement!
-  : true
-
-// search
-var varAfSearchCfg = contains(aiFoundryDefinition, 'aiSearchConfiguration')
-  ? aiFoundryDefinition.aiSearchConfiguration!
-  : {}
-
-// Override Search PDZ binding if applicable
-var varAfAiSearchCfgComplete = union(
-  varAfSearchCfg,
-  (!empty((!varUseExistingPdz.search
-      ? privateDnsZoneSearch!.outputs.resourceId
-      : privateDnsZonesDefinition.searchZoneId!)))
-    ? {
-        privateDnsZoneResourceId: (!varUseExistingPdz.search
-          ? privateDnsZoneSearch!.outputs.resourceId
-          : privateDnsZonesDefinition.searchZoneId!)
+var varAiFoundryModelDeployments = empty(varAiFoundryModelDeploymentsMapped)
+  ? [
+      {
+        name: 'gpt-4o'
+        modelName: 'gpt-4o'
+        modelFormat: 'OpenAI'
+        modelVersion: '2024-11-20'
+        modelSkuName: 'GlobalStandard'
+        modelCapacity: 10
       }
-    : {}
-)
-
-// cosmos
-var varAfCosmosCfg = contains(aiFoundryDefinition, 'cosmosDbConfiguration')
-  ? aiFoundryDefinition.cosmosDbConfiguration!
-  : {}
-// Override Cosmos PDZ binding if applicable
-var varAfCosmosCfgComplete = union(
-  varAfCosmosCfg,
-  (!empty((!varUseExistingPdz.cosmosSql
-      ? privateDnsZoneCosmos!.outputs.resourceId
-      : privateDnsZonesDefinition.cosmosSqlZoneId!)))
-    ? {
-        privateDnsZoneResourceId: (!varUseExistingPdz.cosmosSql
-          ? privateDnsZoneCosmos!.outputs.resourceId
-          : privateDnsZonesDefinition.cosmosSqlZoneId!)
+      {
+        name: 'text-embedding-3-large'
+        modelName: 'text-embedding-3-large'
+        modelFormat: 'OpenAI'
+        modelVersion: '1'
+        modelSkuName: 'Standard'
+        modelCapacity: 1
       }
-    : {}
-)
+    ]
+  : varAiFoundryModelDeploymentsMapped
 
-// keyvault
-var varAfKvCfg = contains(aiFoundryDefinition, 'keyVaultConfiguration')
-  ? aiFoundryDefinition.keyVaultConfiguration!
-  : {}
-// Override Key Vault PDZ binding if applicable
-var varAfKVCfgComplete = union(
-  varAfKvCfg,
-  (!empty((!varUseExistingPdz.keyVault
-      ? privateDnsZoneKeyVault!.outputs.resourceId
-      : privateDnsZonesDefinition.keyVaultZoneId!)))
-    ? {
-        privateDnsZoneResourceId: (!varUseExistingPdz.keyVault
-          ? privateDnsZoneKeyVault!.outputs.resourceId
-          : privateDnsZonesDefinition.keyVaultZoneId!)
-      }
-    : {}
-)
+var varAiFoundryAiSearchResourceId = !empty(resourceIds.?searchServiceResourceId!)
+  ? resourceIds.searchServiceResourceId!
+  : (deployAiSearch ? aiSearchModule!.outputs.resourceId : '')
 
-// storage
-var varAfStorageCfg = contains(aiFoundryDefinition, 'storageAccountConfiguration')
-  ? aiFoundryDefinition.storageAccountConfiguration!
-  : {}
+var varAiFoundryStorageResourceId = varSaResourceId
 
-// Override Storage (blob) PDZ binding if applicable
-var varAfStorageCfgComplete = union(
-  varAfStorageCfg,
-  (!empty((!varUseExistingPdz.blob ? privateDnsZoneBlob!.outputs.resourceId : privateDnsZonesDefinition.blobZoneId!)))
-    ? {
-        blobPrivateDnsZoneResourceId: (!varUseExistingPdz.blob
-          ? privateDnsZoneBlob!.outputs.resourceId
-          : privateDnsZonesDefinition.blobZoneId!)
-      }
-    : {}
-)
+var varAiFoundryCosmosResourceId = deployCosmosDb ? cosmosDbModule!.outputs.resourceId : ''
 
-// ai services
-var varAfAiServicesPdzId = !varUseExistingPdz.aiServices
-  ? privateDnsZoneAiService!.outputs.resourceId
-  : privateDnsZonesDefinition.aiServicesZoneId!
+var varAiFoundryCurrentRgName = resourceGroup().name
+var varAiFoundryExistingDnsZones = {
+  'privatelink.services.ai.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.aiServices ? split(privateDnsZonesDefinition.aiServicesZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.openai.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.openai ? split(privateDnsZonesDefinition.openaiZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.cognitiveservices.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.cognitiveservices ? split(privateDnsZonesDefinition.cognitiveservicesZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.search.windows.net': varDeployPdnsAndPe ? (varUseExistingPdz.search ? split(privateDnsZonesDefinition.searchZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.blob.${environment().suffixes.storage}': varDeployPdnsAndPe ? (varUseExistingPdz.blob ? split(privateDnsZonesDefinition.blobZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.documents.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.cosmosSql ? split(privateDnsZonesDefinition.cosmosSqlZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+}
 
-// open ai
-var varAfOpenAIPdzId = !varUseExistingPdz.openai
-  ? privateDnsZoneOpenAi!.outputs.resourceId
-  : privateDnsZonesDefinition.openaiZoneId!
-
-// cognitive services
-var varAfCognitiveServicesPdzId = !varUseExistingPdz.cognitiveservices
-  ? privateDnsZoneCogSvcs!.outputs.resourceId
-  : privateDnsZonesDefinition.cognitiveservicesZoneId!
-
-// networking
-var varAfNetworkingOverride = union(
-  (varAfAgentSvcEnabled ? { agentServiceSubnetResourceId: varAgentSubnetId } : {}),
-  { aiServicesPrivateDnsZoneResourceId: varAfAiServicesPdzId },
-  { openAiPrivateDnsZoneResourceId: varAfOpenAIPdzId },
-  { cognitiveServicesPrivateDnsZoneResourceId: varAfCognitiveServicesPdzId }
-)
-
-// 16.1 AI Foundry Configuration
-module aiFoundry 'wrappers/avm.ptn.ai-ml.ai-foundry.bicep' = {
+module aiFoundry 'components/ai-foundry/main.bicep' = {
   name: 'aiFoundryDeployment-${varUniqueSuffix}'
   params: {
-    aiFoundry: union(
-      {
-        // Required
-        baseName: baseName
+    location: location
 
-        // Optionals with defaults
-        includeAssociatedResources: varAfWantsDeps
-        location: location
-        tags: tags
+    // Prefix used by the custom component to build names (it appends a short suffix internally).
+    aiServices: 'ai${baseName}'
 
-        privateEndpointSubnetResourceId: varPeSubnetId
+    firstProjectName: aiFoundryDefinition.?aiFoundryConfiguration.?project.?name ?? 'aifoundry-default-project'
+    projectDescription: aiFoundryDefinition.?aiFoundryConfiguration.?project.?description ?? 'This is the default project for AI Foundry.'
+    displayName: aiFoundryDefinition.?aiFoundryConfiguration.?project.?displayName ?? 'Default AI Foundry Project.'
 
-        aiFoundryConfiguration: {
-          accountName: 'ai${baseName}'
-          allowProjectManagement: varAfProjectEnabled
-          createCapabilityHosts: varAfAgentSvcEnabled
-          disableLocalAuth: false
-          location: location
+    // Reuse landing zone networking; do not create/update subnets here.
+    existingVnetResourceId: virtualNetworkResourceId
+    vnetName: varVnetName
+    agentSubnetName: 'agent-subnet'
+    peSubnetName: 'pe-subnet'
+    deployVnetAndSubnets: false
 
-          networking: varDeployPdnsAndPe ? varAfNetworkingOverride : {}
+    // Reuse resources created by this template when present; otherwise the custom component can create them.
+    aiSearchResourceId: varAiFoundryAiSearchResourceId
+    azureStorageAccountResourceId: varAiFoundryStorageResourceId
+    azureCosmosDBAccountResourceId: varAiFoundryCosmosResourceId
 
-          project: varAfProjectEnabled
-            ? {
-                name: 'aifoundry-default-project'
-                displayName: 'Default AI Foundry Project.'
-                description: 'This is the default project for AI Foundry.'
-              }
-            : null
-        }
+    // Private networking integration
+    deployPrivateEndpointsAndDns: varDeployPdnsAndPe
+    existingDnsZones: varAiFoundryExistingDnsZones
 
-        aiModelDeployments: !empty(aiFoundryDefinition.?aiModelDeployments)
-          ? aiFoundryDefinition.aiModelDeployments!
-          : [
-              {
-                model: {
-                  format: 'OpenAI'
-                  name: 'gpt-4o'
-                  version: '2024-11-20'
-                }
-                name: 'gpt-4o'
-                sku: {
-                  name: 'GlobalStandard'
-                  capacity: 10
-                }
-              }
-              {
-                model: {
-                  format: 'OpenAI'
-                  name: 'text-embedding-3-large'
-                  version: '1'
-                }
-                name: 'text-embedding-3-large'
-                sku: {
-                  name: 'Standard'
-                  capacity: 1
-                }
-              }
-            ]
-
-        aiSearchConfiguration: varAfAiSearchCfgComplete
-        cosmosDbConfiguration: varAfCosmosCfgComplete
-        keyVaultConfiguration: varAfKVCfgComplete
-        storageAccountConfiguration: varAfStorageCfgComplete
-      },
-      aiFoundryDefinition ?? {}
-    )
-    enableTelemetry: enableTelemetry
+    // Model deployments
+    modelDeployments: varAiFoundryModelDeployments
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.?searchServiceResourceId!)) ? aiSearchModule : null
+    deployAiSearch ? aiSearchModule : null
+    #disable-next-line BCP321
+    varDeploySa ? storageAccount : null
+    #disable-next-line BCP321
+    deployCosmosDb ? cosmosDbModule : null
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
     (varDeployPdnsAndPe && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
+    #disable-next-line BCP321
+    (varDeployPdnsAndPe && !varUseExistingPdz.blob) ? privateDnsZoneBlob : null
+    #disable-next-line BCP321
+    (varDeployPdnsAndPe && !varUseExistingPdz.cosmosSql) ? privateDnsZoneCosmos : null
     #disable-next-line BCP321
     (varDeployPdnsAndPe && !varUseExistingPdz.cognitiveservices) ? privateDnsZoneCogSvcs : null
     #disable-next-line BCP321
@@ -3020,10 +2920,10 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
 
 // Network Security Group Outputs
 @description('Agent subnet Network Security Group resource ID (newly created or existing).')
-output agentNsgResourceId string = agentNsgResourceId!
+output agentNsgResourceId string = agentNsgResourceId ?? ''
 
 @description('Private Endpoints subnet Network Security Group resource ID (newly created or existing).')
-output peNsgResourceId string = peNsgResourceId!
+output peNsgResourceId string = peNsgResourceId ?? ''
 
 @description('Application Gateway subnet Network Security Group resource ID (newly created or existing).')
 output applicationGatewayNsgResourceId string = applicationGatewayNsgResourceId
@@ -3129,7 +3029,7 @@ output aiFoundryAiServicesName string = aiFoundry.outputs.aiServicesName
 output aiFoundryCosmosAccountName string = aiFoundry.outputs.cosmosAccountName
 
 @description('AI Foundry Key Vault name.')
-output aiFoundryKeyVaultName string = aiFoundry.outputs.keyVaultName
+output aiFoundryKeyVaultName string = deployKeyVault ? keyVaultModule!.outputs.name : ''
 
 @description('AI Foundry Storage Account name.')
 output aiFoundryStorageAccountName string = aiFoundry.outputs.storageAccountName

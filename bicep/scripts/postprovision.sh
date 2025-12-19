@@ -184,36 +184,6 @@ else
 fi
 
 #===============================================================================
-# STEP 3: REMOVE TEMPORARY TAGS
-#===============================================================================
-
-# Step 3: Remove temporary tags from resource groups
-echo ""
-print_step "3" "Step 3: Removing temporary tags..."
-
-# Remove tag from main resource group
-if [ -n "$RESOURCE_GROUP" ]; then
-    print_gray "Removing temporary tags from resource group: $RESOURCE_GROUP"
-    resource_id="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP"
-    if az tag update --resource-id "$resource_id" --operation Delete --tags SecurityControl --only-show-errors >/dev/null 2>&1; then
-        print_success "Removed temporary tags from: $RESOURCE_GROUP"
-    else
-        print_warning "Warning: Failed to remove temporary tags from resource group: $RESOURCE_GROUP"
-    fi
-fi
-
-# Remove tag from Template Spec resource group if different
-if [ -n "$TEMPLATE_SPEC_RG" ] && [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
-    print_gray "Removing temporary tags from Template Spec resource group: $TEMPLATE_SPEC_RG"
-    resource_id="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$TEMPLATE_SPEC_RG"
-    if az tag update --resource-id "$resource_id" --operation Delete --tags SecurityControl --only-show-errors >/dev/null 2>&1; then
-        print_success "Removed temporary tags from: $TEMPLATE_SPEC_RG"
-    else
-        print_warning "Warning: Failed to remove temporary tags from Template Spec resource group: $TEMPLATE_SPEC_RG"
-    fi
-fi
-
-#===============================================================================
 # COMPLETION SUMMARY
 #===============================================================================
 

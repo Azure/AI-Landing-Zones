@@ -2,6 +2,18 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.5
+
+### Changed
+
+- Replaced the Microsoft Foundry implementation that followed the AVM pattern with a custom module adapted from the Microsoft Foundry samples (enables tighter control over deployment ordering and model deployments).
+- In the custom Microsoft Foundry module adapted from the Microsoft Foundry samples, the following adjustments were made to improve deployment stability and align with Microsoft Foundry service behavior:
+	- Reference the account-level capability host that the Foundry Agent Service creates automatically (name pattern: `${accountName}@aml_aiagentservice`) instead of creating an additional account-level capability host resource (creating another one causes `Conflict`). ([add-project-capability-host.bicep](infra/components/ai-foundry/modules-network-secured/add-project-capability-host.bicep#L25))
+	- Keep project capability host creation dependent on the account-level capability host being available (reduces intermittent "CapabilityHost not in succeeded state" failures). ([add-project-capability-host.bicep](infra/components/ai-foundry/modules-network-secured/add-project-capability-host.bicep#L41))
+	- Bumped capability host API versions from preview to GA (`2025-06-01`) to align with Foundry Agent Service documentation. ([add-project-capability-host.bicep](infra/components/ai-foundry/modules-network-secured/add-project-capability-host.bicep#L27))
+	- Fixed `DeploymentOutputEvaluationFailed` when NSG deploy toggles are disabled by ensuring `agentNsgResourceId`/`peNsgResourceId` outputs never return `null` (return `''` instead). ([main.bicep](infra/main.bicep#L2923-L2926))
+	- Updated private DNS zone naming to use `environment().suffixes.storage` for cloud compatibility and cleaned up Bicep linter warnings. ([private-endpoint-and-dns.bicep](infra/components/ai-foundry/modules-network-secured/private-endpoint-and-dns.bicep#L204))
+
 ## 0.1.4
 
 ### Changed
