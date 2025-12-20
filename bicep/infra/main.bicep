@@ -455,7 +455,7 @@ module apiManagementNsgWrapper 'wrappers/avm.res.network.network-security-group.
               sourceAddressPrefix: 'VirtualNetwork'
               sourcePortRange: '*'
               destinationAddressPrefix: 'Sql'
-              destinationPortRange: '1443'
+              destinationPortRange: '1433'
             }
           }
           {
