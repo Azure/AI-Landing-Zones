@@ -23,7 +23,6 @@ var effectiveModelDeployments = !empty(modelDeployments)
       }
     ]
 
-#disable-next-line BCP036
 resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   name: accountName
   location: location
@@ -44,13 +43,15 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
       bypass:'AzureServices'
     }
     publicNetworkAccess: 'Disabled'
-    networkInjections:((networkInjection == 'true') ? [
-      {
-        scenario: 'agent'
-        subnetArmId: agentSubnetId
-        useMicrosoftManagedNetwork: false
-      }
-      ] : null )
+    networkInjections: (networkInjection == 'true')
+      ? any([
+          {
+            scenario: 'agent'
+            subnetArmId: agentSubnetId
+            useMicrosoftManagedNetwork: false
+          }
+        ])
+      : null
     disableLocalAuth: false
   }
 }

@@ -11,7 +11,7 @@ This repository contains a **Bicep template** that is built on top of **Azure Ve
 
 Flexibility comes from **deployment options**: you choose whether to create or reuse each service. This approach supports both greenfield deployments and integration with an existing platform landing zone.
 
-Network isolation is enabled by default, routing all traffic through Private Endpoints. Name resolution uses Private DNS zones created during deployment or linked to existing platform zones.
+Network isolation is enabled by default. Most PaaS connectivity uses Private Endpoints and Private DNS zones created during deployment (or linked to existing platform zones). API Management is deployed as **PremiumV2 + Internal VNet injection** by default (no APIM Private Endpoint).
 
 ## Documentation
 

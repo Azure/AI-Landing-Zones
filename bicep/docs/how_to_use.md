@@ -60,7 +60,7 @@ $env:AZURE_SUBSCRIPTION_ID = "00000000-1111-2222-3333-444444444444"
 
 5. **(Optional) Customize parameters**
 
-   Edit `bicep/infra/main.bicepparam` if you want to adjust deployment options. (See [Configuration options](#4-configuration-options) and [Reference docs](#5-reference-docs))
+   Edit `bicep/infra/sample.main.bicepparam` if you want to adjust deployment options. (See [Configuration options](#4-configuration-options) and [Reference docs](#5-reference-docs))
 
 6. **Provision the infrastructure**
 
@@ -108,7 +108,7 @@ Both VMs provide access to resources within the virtual network.
 
 ## 4) Configuration options
 
-Update parameters in the `bicep/infra/main.bicepparam` file:
+Update parameters in the `bicep/infra/sample.main.bicepparam` file:
 
 ```bicep
 using 'main.bicep'
@@ -143,6 +143,7 @@ The template supports flexible deployment patterns through parameter configurati
 
 ### AI Foundry Options
 
+* **Enable/disable**: Set `deployToggles.aiFoundry` to control whether AI Foundry (and its internal dependencies) are deployed
 * **Full setup**: AI Foundry with all dependencies (Search, Cosmos DB, Key Vault, and Storage)
 * **Project only**: AI Foundry project only (no Agent Service or dependencies)
 * **Custom models**: Configure specific AI model deployments

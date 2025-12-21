@@ -510,7 +510,7 @@ These costs are **usage-based** and can vary significantly:
 
 ## 📞 NEED HELP?
 
-- Review the Bicep template: `main.bicepparam` to see which services are enabled
+- Review the Bicep template: `bicep/infra/sample.main.bicepparam` to see which services are enabled
 - Adjust `deployToggles` to disable expensive services you don't need
 - Contact Azure Support for EA/CSP pricing discussions
 - Use Azure Cost Management after deployment for real-time cost tracking

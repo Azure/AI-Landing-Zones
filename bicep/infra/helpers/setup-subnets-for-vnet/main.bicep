@@ -7,6 +7,9 @@ param existingVNetSubnetsDefinition object
 @description('Required. NSG resource IDs for automatic association with subnets.')
 param nsgResourceIds object
 
+@description('Optional. If set, ensures the apim-subnet has this delegation (used for APIM VNet injection requirements).')
+param apimSubnetDelegationServiceName string = ''
+
 // This wrapper handles subnet selection and deployment logic
 
 // Default subnets for existing VNet scenario (192.168.x.x addressing)
@@ -41,6 +44,7 @@ var defaultExistingVnetSubnets = [
   {
     name: 'apim-subnet'
     addressPrefix: '192.168.1.160/27'
+    delegation: !empty(apimSubnetDelegationServiceName) ? apimSubnetDelegationServiceName : null
     networkSecurityGroupResourceId: !empty(nsgResourceIds.apiManagementNsgResourceId) ? nsgResourceIds.apiManagementNsgResourceId : null
   }
   {
@@ -91,6 +95,7 @@ module existingVNetSubnetsDeployment '../deploy-subnets-to-vnet/main.bicep' = {
   params: {
     existingVNetName: existingVNetSubnetsDefinition.existingVNetName
     subnets: subnetsForExistingVnet
+    apimSubnetDelegationServiceName: apimSubnetDelegationServiceName
   }
 }
 

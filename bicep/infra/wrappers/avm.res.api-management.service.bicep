@@ -15,13 +15,13 @@ param apiManagement apimDefinitionType
 // ============================================================================
 
 #disable-next-line BCP081
-module apiManagementService 'br/public:avm/res/api-management/service:0.11.1' = {
+module apiManagementService 'br/public:avm/res/api-management/service:0.13.0' = {
   name: 'apim-service-${apiManagement.name!}'
   params: {
     name: apiManagement.name
     publisherEmail: apiManagement.publisherEmail
     publisherName: apiManagement.publisherName
-    sku: apiManagement.?sku
+    sku: any(apiManagement.?sku)
     skuCapacity: apiManagement.?skuCapacity
     location: apiManagement.?location
     tags: apiManagement.?tags

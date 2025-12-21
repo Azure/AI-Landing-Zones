@@ -7,6 +7,14 @@ param subnets array
 @description('Required. Existing Virtual Network name or Resource ID. When using Resource ID, the component should be deployed to the target resource group scope.')
 param existingVNetName string
 
+@description('Optional. If set, and a subnet named apim-subnet has no explicit delegation, this delegation will be applied. Used for APIM VNet injection requirements.')
+param apimSubnetDelegationServiceName string = ''
+
+var effectiveDelegationPerSubnet = [for subnet in subnets: !empty(subnet.?delegation ?? '')
+  ? subnet.delegation
+  : (subnet.name == 'apim-subnet' ? apimSubnetDelegationServiceName : '')
+]
+
 // Parse Resource ID to extract VNet name (supports both name and Resource ID formats)
 var vnetIdSegments = split(existingVNetName, '/')
 var vnetName = length(vnetIdSegments) > 1 ? last(vnetIdSegments) : existingVNetName
@@ -25,11 +33,11 @@ resource deployedSubnets 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' 
     addressPrefixes: subnet.?addressPrefixes
     applicationGatewayIPConfigurations: subnet.?applicationGatewayIPConfigurations
     defaultOutboundAccess: subnet.?defaultOutboundAccess
-    delegations: subnet.?delegation != null ? [
+    delegations: !empty(effectiveDelegationPerSubnet[index]) ? [
       {
         name: '${subnet.name}-delegation'
         properties: {
-          serviceName: subnet.delegation
+          serviceName: effectiveDelegationPerSubnet[index]
         }
       }
     ] : []

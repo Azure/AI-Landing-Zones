@@ -26,11 +26,11 @@ Security Benefits:
 @description('Name of the AI Foundry account')
 param aiAccountName string
 @description('Name of the AI Search service')
-param aiSearchName string
+param aiSearchName string = ''
 @description('Name of the storage account')
-param storageName string
+param storageName string = ''
 @description('Name of the Cosmos DB account')
-param cosmosDBName string
+param cosmosDBName string = ''
 @description('Name of the Vnet')
 param vnetName string
 @description('Name of the Customer subnet')
@@ -78,17 +78,17 @@ resource aiAccount 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = 
   scope: resourceGroup()
 }
 
-resource aiSearch 'Microsoft.Search/searchServices@2023-11-01' existing = {
+resource aiSearch 'Microsoft.Search/searchServices@2023-11-01' existing = if (!empty(aiSearchName)) {
   name: aiSearchName
   scope: resourceGroup(aiSearchSubscriptionId, aiSearchResourceGroupName)
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = if (!empty(storageName)) {
   name: storageName
   scope: resourceGroup(storageAccountSubscriptionId, storageAccountResourceGroupName)
 }
 
-resource cosmosDBAccount 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' existing = {
+resource cosmosDBAccount 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' existing = if (!empty(cosmosDBName)) {
   name: cosmosDBName
   scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
 }
@@ -130,7 +130,7 @@ resource aiAccountPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01
 // Private endpoint for AI Search
 // - Creates network interface in customer hub subnet
 // - Establishes private connection to AI Search service
-resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
+resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = if (!empty(aiSearchName)) {
   name: '${aiSearchName}-private-endpoint'
   location: resourceGroup().location
   properties: {
@@ -139,7 +139,7 @@ resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
       {
         name: '${aiSearchName}-private-link-service-connection'
         properties: {
-          privateLinkServiceId: aiSearch.id
+          privateLinkServiceId: aiSearch!.id
           groupIds: [ 'searchService' ] // Target search service
         }
       }
@@ -152,7 +152,7 @@ resource aiSearchPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
 // Private endpoint for Storage Account
 // - Creates network interface in customer hub subnet
 // - Establishes private connection to blob storage
-resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
+resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = if (!empty(storageName)) {
   name: '${storageName}-private-endpoint'
   location: resourceGroup().location
   properties: {
@@ -161,7 +161,7 @@ resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' 
       {
         name: '${storageName}-private-link-service-connection'
         properties: {
-          privateLinkServiceId: storageAccount.id // Target blob storage
+          privateLinkServiceId: storageAccount!.id // Target blob storage
           groupIds: [ 'blob' ]
         }
       }
@@ -171,7 +171,7 @@ resource storagePrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' 
 
 /*--------------------------------------------- Cosmos DB Private Endpoint -------------------------------------*/
 
-resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = {
+resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = if (!empty(cosmosDBName)) {
   name: '${cosmosDBName}-private-endpoint'
   location: resourceGroup().location
   properties: {
@@ -180,7 +180,7 @@ resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
       {
         name: '${cosmosDBName}-private-link-service-connection'
         properties: {
-          privateLinkServiceId: cosmosDBAccount.id // Target Cosmos DB account
+          privateLinkServiceId: cosmosDBAccount!.id // Target Cosmos DB account
           groupIds: [ 'Sql' ]
         }
       }
@@ -252,44 +252,50 @@ resource existingCognitiveServicesPrivateDnsZone 'Microsoft.Network/privateDnsZo
 //creating condition if user pass existing dns zones or not
 var cognitiveServicesDnsZoneId = empty(cognitiveServicesDnsZoneRG) ? cognitiveServicesPrivateDnsZone.id : existingCognitiveServicesPrivateDnsZone.id
 
-resource aiSearchPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (empty(aiSearchDnsZoneRG)) {
+resource aiSearchPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (!empty(aiSearchName) && empty(aiSearchDnsZoneRG)) {
   name: aiSearchDnsZoneName
   location: 'global'
 }
 
 // Reference existing private DNS zone if provided
-resource existingAiSearchPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (!empty(aiSearchDnsZoneRG)) {
+resource existingAiSearchPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (!empty(aiSearchName) && !empty(aiSearchDnsZoneRG)) {
   name: aiSearchDnsZoneName
   scope: resourceGroup(aiSearchDnsZoneRG)
 }
 //creating condition if user pass existing dns zones or not
-var aiSearchDnsZoneId = empty(aiSearchDnsZoneRG) ? aiSearchPrivateDnsZone.id : existingAiSearchPrivateDnsZone.id
+var aiSearchDnsZoneId = empty(aiSearchName)
+  ? ''
+  : (empty(aiSearchDnsZoneRG) ? aiSearchPrivateDnsZone!.id : existingAiSearchPrivateDnsZone!.id)
 
-resource storagePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (empty(storageDnsZoneRG)) {
+resource storagePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (!empty(storageName) && empty(storageDnsZoneRG)) {
   name: storageDnsZoneName
   location: 'global'
 }
 
 // Reference existing private DNS zone if provided
-resource existingStoragePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (!empty(storageDnsZoneRG)) {
+resource existingStoragePrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (!empty(storageName) && !empty(storageDnsZoneRG)) {
   name: storageDnsZoneName
   scope: resourceGroup(storageDnsZoneRG)
 }
 //creating condition if user pass existing dns zones or not
-var storageDnsZoneId = empty(storageDnsZoneRG) ? storagePrivateDnsZone.id : existingStoragePrivateDnsZone.id
+var storageDnsZoneId = empty(storageName)
+  ? ''
+  : (empty(storageDnsZoneRG) ? storagePrivateDnsZone!.id : existingStoragePrivateDnsZone!.id)
 
-resource cosmosDBPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (empty(cosmosDBDnsZoneRG)) {
+resource cosmosDBPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (!empty(cosmosDBName) && empty(cosmosDBDnsZoneRG)) {
   name: cosmosDBDnsZoneName
   location: 'global'
 }
 
 // Reference existing private DNS zone if provided
-resource existingCosmosDBPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (!empty(cosmosDBDnsZoneRG)) {
+resource existingCosmosDBPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (!empty(cosmosDBName) && !empty(cosmosDBDnsZoneRG)) {
   name: cosmosDBDnsZoneName
   scope: resourceGroup(cosmosDBDnsZoneRG)
 }
 //creating condition if user pass existing dns zones or not
-var cosmosDBDnsZoneId = empty(cosmosDBDnsZoneRG) ? cosmosDBPrivateDnsZone.id : existingCosmosDBPrivateDnsZone.id
+var cosmosDBDnsZoneId = empty(cosmosDBName)
+  ? ''
+  : (empty(cosmosDBDnsZoneRG) ? cosmosDBPrivateDnsZone!.id : existingCosmosDBPrivateDnsZone!.id)
 
 // ---- DNS VNet Links ----
 resource aiServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(aiServicesDnsZoneRG)) {
@@ -319,7 +325,7 @@ resource cognitiveServicesLink 'Microsoft.Network/privateDnsZones/virtualNetwork
     registrationEnabled: false
   }
 }
-resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(aiSearchDnsZoneRG)) {
+resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (!empty(aiSearchName) && empty(aiSearchDnsZoneRG)) {
   parent: aiSearchPrivateDnsZone
   location: 'global'
   name: 'aiSearch-${suffix}-link'
@@ -328,7 +334,7 @@ resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
     registrationEnabled: false
   }
 }
-resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(storageDnsZoneRG)) {
+resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (!empty(storageName) && empty(storageDnsZoneRG)) {
   parent: storagePrivateDnsZone
   location: 'global'
   name: 'storage-${suffix}-link'
@@ -337,7 +343,7 @@ resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024
     registrationEnabled: false
   }
 }
-resource cosmosDBLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (empty(cosmosDBDnsZoneRG)) {
+resource cosmosDBLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (!empty(cosmosDBName) && empty(cosmosDBDnsZoneRG)) {
   parent: cosmosDBPrivateDnsZone
   location: 'global'
   name: 'cosmosDB-${suffix}-link'
@@ -359,7 +365,7 @@ resource aiServicesDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGr
     ]
   }
 }
-resource aiSearchDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = {
+resource aiSearchDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = if (!empty(aiSearchName)) {
   parent: aiSearchPrivateEndpoint
   name: '${aiSearchName}-dns-group'
   properties: {
@@ -368,7 +374,7 @@ resource aiSearchDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGrou
     ]
   }
 }
-resource storageDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = {
+resource storageDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = if (!empty(storageName)) {
   parent: storagePrivateEndpoint
   name: '${storageName}-dns-group'
   properties: {
@@ -377,7 +383,7 @@ resource storageDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroup
     ]
   }
 }
-resource cosmosDBDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = {
+resource cosmosDBDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = if (!empty(cosmosDBName)) {
   parent: cosmosDBPrivateEndpoint
   name: '${cosmosDBName}-dns-group'
   properties: {
