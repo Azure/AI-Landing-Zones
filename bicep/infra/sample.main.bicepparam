@@ -10,7 +10,7 @@ using './main.bicep'
 
 param deployToggles = {
   // AI
-  aiFoundry: false
+  aiFoundry: true
 
   // OBSERVABILITY - Monitoring
   logAnalytics: false

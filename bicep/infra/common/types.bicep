@@ -25,7 +25,7 @@ type aiFoundryDefinitionType = {
   @description('Optional. Enable/Disable usage telemetry for the module. Default is true.')
   enableTelemetry: bool?
 
-  @description('Optional. Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to false.')
+  @description('Optional. Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to true.')
   includeAssociatedResources: bool?
 
   @description('Optional. Location for all resources. Defaults to the resource group location.')
@@ -57,7 +57,7 @@ type aiFoundryDefinitionType = {
     accountName: string?
     @description('Optional. Whether to allow project management in the account. Defaults to true.')
     allowProjectManagement: bool?
-    @description('Optional. Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to false.')
+    @description('Optional. Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to true.')
     createCapabilityHosts: bool?
     @description('Optional. Disables local authentication methods so that the account requires Microsoft Entra ID identities exclusively for authentication. Defaults to false for backward compatibility.')
     disableLocalAuth: bool?
@@ -680,8 +680,8 @@ type apimDefinitionType = {
   @description('Optional. Role assignments for the API Management service.')
   roleAssignments: array?
 
-  @description('Optional. SKU of the API Management service. Allowed values: Basic, BasicV2, Consumption, Developer, Premium, Standard, StandardV2.')
-  sku: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'Standard' | 'StandardV2'?
+  @description('Optional. SKU of the API Management service. Allowed values: Basic, BasicV2, Consumption, Developer, Premium, PremiumV2, Standard, StandardV2.')
+  sku: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'PremiumV2' | 'Standard' | 'StandardV2'?
 
 
   @description('Optional. Subnet resource ID for VNet integration.')
@@ -1316,6 +1316,9 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy Storage Account (true) or not (false).')
   storageAccount: bool
+
+  @description('Required. Toggle to deploy AI Foundry (true) or not (false).')
+  aiFoundry: bool
 
   @description('Required. Toggle to deploy Azure AI Search (true) or not (false).')
   searchService: bool

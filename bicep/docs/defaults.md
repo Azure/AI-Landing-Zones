@@ -200,6 +200,11 @@ Private endpoints provide secure, private connectivity to Azure PaaS services fr
 
 ### API Management Private Endpoint
 
+> Note: By default this template deploys API Management in **Internal VNet** mode (see the **API Management** section below).
+> Private Endpoints for API Management are **not supported** when `virtualNetworkType` is `Internal`.
+> Therefore, this template only deploys the APIM Private Endpoint when you explicitly configure `apimDefinition.virtualNetworkType = 'None'`
+> (and the APIM SKU supports Private Endpoints: `StandardV2`, `Premium`, or `PremiumV2`).
+
 | parameter | default | description |
 |-----------|---------|-------------|
 | apimPrivateEndpointDefinition.name | pe-apim-${baseName} | Name of the API Management private endpoint |
@@ -337,9 +342,9 @@ API gateway service for managing, securing, and monitoring AI/ML service endpoin
 | apimDefinition.name | apim-${baseName} | Name of the API Management service instance |
 | apimDefinition.publisherEmail | admin@contoso.com | Publisher contact email (change to your organization email) |
 | apimDefinition.publisherName | Contoso | Publisher organization name (change to your organization) |
-| apimDefinition.sku | StandardV2 | Service tier supporting private endpoints and advanced features |
-| apimDefinition.skuCapacity | 1 | Number of gateway units for traffic handling capacity |
-| apimDefinition.virtualNetworkType | None | Virtual network integration type (None = public access) |
+| apimDefinition.sku | PremiumV2 | Default tier for APIM deployed in Internal VNet mode |
+| apimDefinition.skuCapacity | 3 | Number of gateway units for traffic handling capacity |
+| apimDefinition.virtualNetworkType | Internal | Virtual network integration type (Internal = private IP in the APIM subnet) |
 | apimDefinition.minApiVersion | 2022-08-01 | Minimum API version accepted for requests |
 
 ---
@@ -354,6 +359,8 @@ AI Foundry provides a comprehensive platform for AI/ML development, deployment, 
 |-----------|---------|-------------|
 | aiFoundryDefinition.aiFoundryConfiguration.accountName | ai${baseName} | Name of the AI Foundry account (Azure AI Services multi-service account) |
 | aiFoundryDefinition.aiFoundryConfiguration.disableLocalAuth | false | Whether to disable local authentication (enable for Azure AD only) |
+| aiFoundryDefinition.includeAssociatedResources | true | Whether the Foundry component creates the associated dependency resources (Search/Storage/Cosmos) and their PE/DNS |
+| aiFoundryDefinition.aiFoundryConfiguration.createCapabilityHosts | true | Whether the Foundry component creates Capability Hosts (Agent Service). Requires includeAssociatedResources = true |
 | aiFoundryDefinition.aiFoundryConfiguration.project.name | aifoundry-default-project | Internal name of the default AI Foundry project |
 | aiFoundryDefinition.aiFoundryConfiguration.project.displayName | Default AI Foundry Project. | Display name shown in the AI Foundry portal |
 | aiFoundryDefinition.aiFoundryConfiguration.project.description | This is the default project for AI Foundry. | Description of the project's purpose and scope |

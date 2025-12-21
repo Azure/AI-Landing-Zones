@@ -373,7 +373,14 @@ var applicationGatewayNsgResourceId = resourceIds.?applicationGatewayNsgResource
   ? applicationGatewayNsgWrapper!.outputs.resourceId
   : '')
 
-var varDeployApiManagementNsg = deployToggles.apiManagementNsg && empty(resourceIds.?apiManagementNsgResourceId)
+// APIM Internal/External VNet injection requires an NSG on the APIM subnet.
+// Force NSG deployment when APIM is enabled and virtualNetworkType is not 'None', even if the toggle is off.
+var varApimRequiresSubnetNsg = deployToggles.apiManagement && ((apimDefinition.?virtualNetworkType ?? 'Internal') != 'None')
+var varDeployApiManagementNsg = (deployToggles.apiManagementNsg || varApimRequiresSubnetNsg) && empty(resourceIds.?apiManagementNsgResourceId)
+
+// APIM VNet injection also requires the APIM subnet to be delegated.
+// See: https://aka.ms/apim-vnet-outbound
+var varApimSubnetDelegationServiceName = varApimRequiresSubnetNsg ? 'Microsoft.Web/hostingEnvironments' : ''
 
 // 2.4 API Management Subnet NSG
 module apiManagementNsgWrapper 'wrappers/avm.res.network.network-security-group.bicep' = if (varDeployApiManagementNsg) {
@@ -805,14 +812,17 @@ module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (va
             // Min: /29 (8 IPs) if very small, but not practical
             // Recommended: /27 (32 IPs) or larger for production App Gateway
           }
-          {
-            enabled: true
-            name: 'apim-subnet'
-            addressPrefix: '192.168.0.224/27'
-            networkSecurityGroupResourceId: apiManagementNsgResourceId
-            // Min: /28 (16 IPs) for dev/test SKUs
-            // Recommended: /27 or larger for production multi-zone APIM
-          }
+          union(
+            {
+              enabled: true
+              name: 'apim-subnet'
+              addressPrefix: '192.168.0.224/27'
+              networkSecurityGroupResourceId: apiManagementNsgResourceId
+              // Min: /28 (16 IPs) for dev/test SKUs
+              // Recommended: /27 or larger for production multi-zone APIM
+            },
+            !empty(varApimSubnetDelegationServiceName) ? { delegation: varApimSubnetDelegationServiceName } : {}
+          )
           {
             enabled: true
             name: 'jumpbox-subnet'
@@ -869,6 +879,7 @@ module existingVNetSubnets './helpers/setup-subnets-for-vnet/main.bicep' = if (v
       devopsBuildAgentsNsgResourceId: devopsBuildAgentsNsgResourceId!
       bastionNsgResourceId: bastionNsgResourceId!
     }
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
 }
 
@@ -887,6 +898,7 @@ module existingVNetSubnetsCrossScope './helpers/setup-subnets-for-vnet/main.bice
       acaEnvironmentNsgResourceId: acaEnvironmentNsgResourceId!
       devopsBuildAgentsNsgResourceId: devopsBuildAgentsNsgResourceId!
     }
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
 }
 
@@ -1476,7 +1488,8 @@ output appInsightsPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?a
 // - Storage (blob)
 // - Cosmos DB (SQL)
 // Avoid duplicating those private endpoints here.
-var varAiFoundryManagesCorePrivateEndpoints = varDeployPdnsAndPe
+var varDeployAiFoundry = deployToggles.aiFoundry
+var varAiFoundryManagesCorePrivateEndpoints = varDeployPdnsAndPe && varDeployAiFoundry
 
 // 7.1. App Configuration Private Endpoint
 @description('Optional. App Configuration Private Endpoint configuration.')
@@ -1526,9 +1539,14 @@ param apimPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
 // StandardV2 and Premium SKUs support Private Endpoints with gateway groupId
 // Basic and Developer SKUs do not support Private Endpoints
-var apimSupportsPe = contains(['StandardV2', 'Premium'], (apimDefinition.?sku ?? 'StandardV2'))
+// IMPORTANT: APIM default in this template is Premium + Internal VNet.
+// Private Endpoint is not supported for APIM when virtualNetworkType is Internal.
+// Only create the APIM private endpoint when the user explicitly sets virtualNetworkType to 'None'.
+var varApimSkuEffectiveForPe = apimDefinition.?sku ?? 'PremiumV2'
+var apimSupportsPe = contains(['StandardV2', 'Premium', 'PremiumV2'], varApimSkuEffectiveForPe)
+var varApimWantsPrivateEndpoint = (apimDefinition != null) && ((apimDefinition.?virtualNetworkType ?? 'Internal') == 'None')
 
-module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasApim && (apimDefinition.?virtualNetworkType ?? 'None') == 'None' && apimSupportsPe) {
+module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasApim && varApimWantsPrivateEndpoint && apimSupportsPe) {
   name: 'apim-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1543,7 +1561,7 @@ module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = i
             name: 'apimGatewayConnection'
             properties: {
               privateLinkServiceId: empty(resourceIds.?apimServiceResourceId!)
-                ? apiManagement!.outputs.resourceId
+                ? (varDeployApimNative ? apiManagementNative!.outputs.resourceId : apiManagement!.outputs.resourceId)
                 : existingApim.id
               groupIds: [
                 'Gateway'
@@ -2233,6 +2251,11 @@ param apimDefinition apimDefinitionType?
 // 15.1. API Management Service
 var varDeployApim = empty(resourceIds.?apimServiceResourceId!) && deployToggles.apiManagement
 
+// PremiumV2 is not yet supported by the AVM APIM module used by this repo.
+// When the user selects PremiumV2, we deploy APIM using a native resource module.
+var varApimSkuEffective = apimDefinition.?sku ?? 'PremiumV2'
+var varDeployApimNative = varDeployApim && (varApimSkuEffective == 'PremiumV2')
+
 // Naming
 var varApimIdSegments = empty(resourceIds.?apimServiceResourceId!)
   ? ['']
@@ -2248,10 +2271,40 @@ resource existingApim 'Microsoft.ApiManagement/service@2024-06-01-preview' exist
 
 var varApimServiceResourceId = !empty(resourceIds.?apimServiceResourceId!)
   ? existingApim.id
-  : (varDeployApim ? apiManagement!.outputs.resourceId : '')
+  : (varDeployApim ? (varDeployApimNative ? apiManagementNative!.outputs.resourceId : apiManagement!.outputs.resourceId) : '')
+
+module apiManagementNative 'components/apim/main.bicep' = if (varDeployApimNative) {
+  name: 'apimDeploymentNative'
+  params: {
+    apiManagement: union(
+      {
+        // Required properties
+        name: 'apim-${baseName}'
+        publisherEmail: 'admin@contoso.com'
+        publisherName: 'Contoso'
+
+        // PremiumV2 SKU configuration for Internal VNet injection (private gateway)
+        sku: 'PremiumV2'
+        skuCapacity: 3
+
+        // Network configuration - Internal VNet injection
+        virtualNetworkType: 'Internal'
+        subnetResourceId: varApimSubnetId
+
+        // Basic configuration
+        location: location
+        tags: tags
+
+        // API Management configuration
+        minApiVersion: '2022-08-01'
+      },
+      apimDefinition ?? {}
+    )
+  }
+}
 
 #disable-next-line BCP081
-module apiManagement 'wrappers/avm.res.api-management.service.bicep' = if (varDeployApim) {
+module apiManagement 'wrappers/avm.res.api-management.service.bicep' = if (varDeployApim && !varDeployApimNative) {
   name: 'apimDeployment'
   params: {
     apiManagement: union(
@@ -2262,7 +2315,7 @@ module apiManagement 'wrappers/avm.res.api-management.service.bicep' = if (varDe
         publisherName: 'Contoso'
 
         // Premium SKU configuration for Internal VNet mode
-        // Premium supports full VNet integration with Internal mode
+        // Premium supports full VNet injection with Internal mode
         // Allows complete network isolation without exposing public endpoints
         sku: 'Premium'
         skuCapacity: 3
@@ -2296,6 +2349,13 @@ module apiManagement 'wrappers/avm.res.api-management.service.bicep' = if (varDe
 param aiFoundryDefinition aiFoundryDefinitionType = {
   // Required
   baseName: baseName
+
+  // Defaults: deploy Foundry Agent Service (Capability Hosts) and its dependent resources
+  // unless explicitly disabled by the user.
+  includeAssociatedResources: true
+  aiFoundryConfiguration: {
+    createCapabilityHosts: true
+  }
 }
 
 var varAiFoundryModelDeploymentsMapped = [
@@ -2348,7 +2408,7 @@ var varAiFoundryExistingDnsZones = {
   'privatelink.documents.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.cosmosSql ? split(privateDnsZonesDefinition.cosmosSqlZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
 }
 
-module aiFoundry 'components/ai-foundry/main.bicep' = {
+module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
   name: 'aiFoundryDeployment-${varUniqueSuffix}'
   params: {
     location: location
@@ -2375,6 +2435,10 @@ module aiFoundry 'components/ai-foundry/main.bicep' = {
     // Private networking integration
     deployPrivateEndpointsAndDns: varDeployPdnsAndPe
     existingDnsZones: varAiFoundryExistingDnsZones
+
+    // Control whether the component creates associated resources and/or capability hosts (agent service)
+    includeAssociatedResources: aiFoundryDefinition.?includeAssociatedResources ?? true
+    createCapabilityHosts: aiFoundryDefinition.?aiFoundryConfiguration.?createCapabilityHosts ?? true
 
     // Model deployments
     modelDeployments: varAiFoundryModelDeployments
@@ -2412,7 +2476,7 @@ module aiFoundry 'components/ai-foundry/main.bicep' = {
 param groundingWithBingDefinition kSGroundingWithBingDefinitionType?
 
 // Decide if Bing module runs (create or reuse+connect)
-var varInvokeBingModule = (!empty(resourceIds.?groundingServiceResourceId!)) || (deployToggles.groundingWithBingSearch && empty(resourceIds.?groundingServiceResourceId!))
+var varInvokeBingModule = varDeployAiFoundry && ((!empty(resourceIds.?groundingServiceResourceId!)) || (deployToggles.groundingWithBingSearch && empty(resourceIds.?groundingServiceResourceId!)))
 
 var varBingNameEffective = empty(groundingWithBingDefinition!.?name!)
   ? 'bing-${baseName}'
@@ -2425,8 +2489,8 @@ module bingSearch 'components/bing-search/main.bicep' = if (varInvokeBingModule)
   name: 'bingsearchDeployment'
   params: {
     // AF context from the AVM/Foundry module outputs
-    accountName: aiFoundry.outputs.aiServicesName
-    projectName: aiFoundry.outputs.aiProjectName
+    accountName: aiFoundry!.outputs.aiServicesName
+    projectName: aiFoundry!.outputs.aiProjectName
 
     // Deterministic default for the Bing account (only used on create path)
     bingSearchName: varBingNameEffective
@@ -3010,29 +3074,31 @@ output aiSearchName string = deployAiSearch ? aiSearchModule!.outputs.name : ''
 output apimServiceResourceId string = varApimServiceResourceId
 
 @description('API Management service name.')
-output apimServiceName string = varDeployApim ? apiManagement!.outputs.name : ''
+output apimServiceName string = varDeployApim
+  ? (varDeployApimNative ? apiManagementNative!.outputs.name : apiManagement!.outputs.name)
+  : ''
 
 // AI Foundry Outputs
 @description('AI Foundry resource group name.')
-output aiFoundryResourceGroupName string = aiFoundry.outputs.resourceGroupName
+output aiFoundryResourceGroupName string = varDeployAiFoundry ? aiFoundry!.outputs.resourceGroupName : ''
 
 @description('AI Foundry project name.')
-output aiFoundryProjectName string = aiFoundry.outputs.aiProjectName
+output aiFoundryProjectName string = varDeployAiFoundry ? aiFoundry!.outputs.aiProjectName : ''
 
 @description('AI Foundry AI Search service name.')
-output aiFoundrySearchServiceName string = aiFoundry.outputs.aiSearchName
+output aiFoundrySearchServiceName string = varDeployAiFoundry ? aiFoundry!.outputs.aiSearchName : ''
 
 @description('AI Foundry AI Services name.')
-output aiFoundryAiServicesName string = aiFoundry.outputs.aiServicesName
+output aiFoundryAiServicesName string = varDeployAiFoundry ? aiFoundry!.outputs.aiServicesName : ''
 
 @description('AI Foundry Cosmos DB account name.')
-output aiFoundryCosmosAccountName string = aiFoundry.outputs.cosmosAccountName
+output aiFoundryCosmosAccountName string = varDeployAiFoundry ? aiFoundry!.outputs.cosmosAccountName : ''
 
 @description('AI Foundry Key Vault name.')
 output aiFoundryKeyVaultName string = deployKeyVault ? keyVaultModule!.outputs.name : ''
 
 @description('AI Foundry Storage Account name.')
-output aiFoundryStorageAccountName string = aiFoundry.outputs.storageAccountName
+output aiFoundryStorageAccountName string = varDeployAiFoundry ? aiFoundry!.outputs.storageAccountName : ''
 
 // Bing Grounding Outputs
 @description('Bing Search service resource ID (if deployed).')

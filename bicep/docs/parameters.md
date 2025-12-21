@@ -168,6 +168,9 @@ Each parameter includes information about its type, requirements, default values
 - **`agentNsg`** (`bool`) - Required
   - **Description:** Toggle to deploy NSG for agent (workload) subnet (true) or not (false).
 
+- **`aiFoundry`** (`bool`) - Required
+  - **Description:** Toggle to deploy AI Foundry (true) or not (false).
+
 - **`apiManagement`** (`bool`) - Required
   - **Description:** Toggle to deploy API Management (true) or not (false).
 
@@ -3934,7 +3937,7 @@ Each parameter includes information about its type, requirements, default values
     - **Description:** Whether to allow project management in the account. Defaults to true.
 
   - **`createCapabilityHosts`** (`bool`) - Optional
-    - **Description:** Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to false.
+    - **Description:** Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to true.
 
   - **`disableLocalAuth`** (`bool`) - Optional
     - **Description:** Disables local authentication methods so that the account requires Microsoft Entra ID identities exclusively for authentication. Defaults to false for backward compatibility.
@@ -4085,7 +4088,7 @@ Each parameter includes information about its type, requirements, default values
   - **Description:** Enable/Disable usage telemetry for the module. Default is true.
 
 - **`includeAssociatedResources`** (`bool`) - Optional
-  - **Description:** Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to false.
+  - **Description:** Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to true.
 
 - **`keyVaultConfiguration`** (`object`) - Optional
   - **Description:** Custom configuration for Key Vault.
