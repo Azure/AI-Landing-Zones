@@ -23,6 +23,7 @@ param deployToggles = {
   applicationGateway: false
   applicationGatewayPublicIp: false
   firewall: false
+  userDefinedRoutes: true
   wafPolicy: false
   buildVm: false
   bastionHost: false
@@ -66,3 +67,19 @@ param privateDnsZonesDefinition = {
 }
 
 param resourceIds = {}
+
+// -----------------------------------------------------------------------------
+// OPTIONAL: UDR to hub firewall (Platform-integrated)
+// -----------------------------------------------------------------------------
+// When enabled, creates a Route Table with a default route (0.0.0.0/0) pointing
+// to the hub firewall/NVA private IP and associates it to key workload subnets.
+//
+// IMPORTANT:
+// - This example assumes the hub firewall already exists (deployToggles.firewall=false).
+// - Set firewallPrivateIp to the hub firewall/NVA private IP.
+//
+// To enable:
+// 1) In deployToggles above, set: userDefinedRoutes: true
+// 2) Set firewallPrivateIp
+// 3) Optional: set appGatewayInternetRoutingException = true to keep App Gateway v2 subnet using Internet routing
+param firewallPrivateIp = '10.0.0.4'

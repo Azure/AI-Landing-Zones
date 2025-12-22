@@ -53,8 +53,26 @@ param deployToggles = {
   applicationGatewayPublicIp: false
   wafPolicy: false
   firewall: false
+  userDefinedRoutes: false
 }
 
 param resourceIds = {}
 
 param flagPlatformLandingZone = false
+
+// -----------------------------------------------------------------------------
+// OPTIONAL: User Defined Routes (UDR)
+// -----------------------------------------------------------------------------
+// Creates a Route Table with a default route (0.0.0.0/0) pointing to a firewall/NVA
+// and associates it to key workload subnets.
+//
+// To enable:
+// 1) In deployToggles above, set: userDefinedRoutes: true
+// 2) Set firewallPrivateIp to the firewall/NVA private IP (next hop)
+// 3) Optional: set appGatewayInternetRoutingException = true to keep App Gateway v2 subnet using Internet routing
+//
+// Defensive behavior: if userDefinedRoutes is true but firewallPrivateIp is empty
+// (and there is no firewall signal via deploy/reuse), UDR deployment is skipped.
+//
+// param firewallPrivateIp = ''
+// param appGatewayInternetRoutingException = false

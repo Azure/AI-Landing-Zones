@@ -59,6 +59,7 @@ param deployToggles = {
   applicationGatewayPublicIp: false
   wafPolicy: false
   firewall: false
+  userDefinedRoutes: false
 }
 
 // Existing resource IDs (empty means create new).

@@ -753,6 +753,9 @@ type vmDefinitionType = {
   osType: ('Linux' | 'Windows')?
   @description('Optional. Marketplace image reference for the VM.')
   imageReference: vmImageReferenceType?
+
+  @description('Optional. Enable/disable EncryptionAtHost for the VM.')
+  encryptionAtHost: bool?
   @description('Optional. Admin password for the VM.')
   @secure()
   adminPassword: string?
@@ -1340,6 +1343,9 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy Azure Firewall (true) or not (false).')
   firewall: bool
+
+  @description('Required. Toggle to deploy User Defined Routes (UDR) (Route Table + association).')
+  userDefinedRoutes: bool
 
   @description('Required. Toggle to deploy Container Apps (true) or not (false).')
   containerApps: bool

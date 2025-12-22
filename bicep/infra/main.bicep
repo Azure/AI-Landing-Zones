@@ -174,7 +174,7 @@ import {
 @description('Required. Per-service deployment toggles.')
 param deployToggles deployTogglesType
 
-@description('Optional. Enable platform landing zone integration. When true, private DNS zones and private endpoints are managed by the platform landing zone.')
+@description('Optional. Enable platform landing zone integration. When true, private DNS zones are managed by the platform landing zone. Private endpoints are still deployed in the workload VNet.')
 param flagPlatformLandingZone bool = false
 
 @description('Optional. Existing resource IDs to reuse (can be empty).')
@@ -758,6 +758,89 @@ var varExistingVNetResourceGroupName = varDeploySubnetsToExistingVnet && varIsEx
   : ''
 var varIsCrossScope = varIsExistingVNetResourceId && !empty(varExistingVNetSubscriptionId) && !empty(varExistingVNetResourceGroupName)
 
+var varDefaultSpokeSubnets = [
+  {
+    enabled: true
+    name: 'agent-subnet'
+    addressPrefix: '192.168.0.0/27'
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.CognitiveServices']
+    networkSecurityGroupResourceId: agentNsgResourceId
+    // Min: /27 (32 IPs) will work for small setups
+    // Recommended: /24 (256 IPs) per Microsoft guidance for delegated Agent subnets
+  }
+  {
+    enabled: true
+    name: 'pe-subnet'
+    addressPrefix: '192.168.0.32/27'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+    privateEndpointNetworkPolicies: 'Disabled'
+    networkSecurityGroupResourceId: peNsgResourceId
+    // Min: /28 (16 IPs) can work for a couple of Private Endpoints
+    // Recommended: /27 or larger if you expect many PEs (each uses 1 IP)
+  }
+  {
+    enabled: true
+    name: 'AzureBastionSubnet'
+    addressPrefix: '192.168.0.64/26'
+    networkSecurityGroupResourceId: bastionNsgResourceId
+    // Min (required by Azure): /26 (64 IPs)
+    // Recommended: /26 (mandatory, cannot be smaller)
+  }
+  {
+    enabled: true
+    name: 'AzureFirewallSubnet'
+    addressPrefix: '192.168.0.128/26'
+    // Min (required by Azure): /26 (64 IPs)
+    // Recommended: /26 or /25 if you want future scale
+  }
+  {
+    enabled: true
+    name: 'appgw-subnet'
+    addressPrefix: '192.168.0.192/27'
+    networkSecurityGroupResourceId: applicationGatewayNsgResourceId
+    // Min: /29 (8 IPs) if very small, but not practical
+    // Recommended: /27 (32 IPs) or larger for production App Gateway
+  }
+  union(
+    {
+      enabled: true
+      name: 'apim-subnet'
+      addressPrefix: '192.168.0.224/27'
+      networkSecurityGroupResourceId: apiManagementNsgResourceId
+      // Min: /28 (16 IPs) for dev/test SKUs
+      // Recommended: /27 or larger for production multi-zone APIM
+    },
+    !empty(varApimSubnetDelegationServiceName) ? { delegation: varApimSubnetDelegationServiceName } : {}
+  )
+  {
+    enabled: true
+    name: 'jumpbox-subnet'
+    addressPrefix: '192.168.1.0/28'
+    networkSecurityGroupResourceId: jumpboxNsgResourceId
+    // Min: /29 (8 IPs) for 1–2 VMs
+    // Recommended: /28 (16 IPs) to host a couple of VMs comfortably
+  }
+  {
+    enabled: true
+    name: 'aca-env-subnet'
+    addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+    networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
+    // Min (required by Azure): /23 (512 IPs)
+    // Recommended: /23 or /22 if expecting many apps & scale-out
+  }
+  {
+    enabled: true
+    name: 'devops-agents-subnet'
+    addressPrefix: '192.168.1.32/27'
+    networkSecurityGroupResourceId: devopsBuildAgentsNsgResourceId
+    // Min: /28 (16 IPs) if you run few agents
+    // Recommended: /27 (32 IPs) to allow scaling
+  }
+]
+
 // 3.1 Virtual Network and Subnets
 module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (varDeployVnet) {
   name: 'm-vnet'
@@ -768,88 +851,7 @@ module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (va
         addressPrefixes: ['192.168.0.0/22']
         location: location
         enableTelemetry: enableTelemetry
-        subnets: [
-          {
-            enabled: true
-            name: 'agent-subnet'
-            addressPrefix: '192.168.0.0/27'
-            delegation: 'Microsoft.App/environments'
-            serviceEndpoints: ['Microsoft.CognitiveServices']
-            networkSecurityGroupResourceId: agentNsgResourceId
-            // Min: /27 (32 IPs) will work for small setups
-            // Recommended: /24 (256 IPs) per Microsoft guidance for delegated Agent subnets
-          }
-          {
-            enabled: true
-            name: 'pe-subnet'
-            addressPrefix: '192.168.0.32/27'
-            serviceEndpoints: ['Microsoft.AzureCosmosDB']
-            privateEndpointNetworkPolicies: 'Disabled'
-            networkSecurityGroupResourceId: peNsgResourceId
-            // Min: /28 (16 IPs) can work for a couple of Private Endpoints
-            // Recommended: /27 or larger if you expect many PEs (each uses 1 IP)
-          }
-          {
-            enabled: true
-            name: 'AzureBastionSubnet'
-            addressPrefix: '192.168.0.64/26'
-            networkSecurityGroupResourceId: bastionNsgResourceId
-            // Min (required by Azure): /26 (64 IPs)
-            // Recommended: /26 (mandatory, cannot be smaller)
-          }
-          {
-            enabled: true
-            name: 'AzureFirewallSubnet'
-            addressPrefix: '192.168.0.128/26'
-            // Min (required by Azure): /26 (64 IPs)
-            // Recommended: /26 or /25 if you want future scale
-          }
-          {
-            enabled: true
-            name: 'appgw-subnet'
-            addressPrefix: '192.168.0.192/27'
-            networkSecurityGroupResourceId: applicationGatewayNsgResourceId
-            // Min: /29 (8 IPs) if very small, but not practical
-            // Recommended: /27 (32 IPs) or larger for production App Gateway
-          }
-          union(
-            {
-              enabled: true
-              name: 'apim-subnet'
-              addressPrefix: '192.168.0.224/27'
-              networkSecurityGroupResourceId: apiManagementNsgResourceId
-              // Min: /28 (16 IPs) for dev/test SKUs
-              // Recommended: /27 or larger for production multi-zone APIM
-            },
-            !empty(varApimSubnetDelegationServiceName) ? { delegation: varApimSubnetDelegationServiceName } : {}
-          )
-          {
-            enabled: true
-            name: 'jumpbox-subnet'
-            addressPrefix: '192.168.1.0/28'
-            networkSecurityGroupResourceId: jumpboxNsgResourceId
-            // Min: /29 (8 IPs) for 1–2 VMs
-            // Recommended: /28 (16 IPs) to host a couple of VMs comfortably
-          }
-          {
-            enabled: true
-            name: 'aca-env-subnet'
-            addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
-            delegation: 'Microsoft.App/environments'
-            serviceEndpoints: ['Microsoft.AzureCosmosDB']
-            networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
-            // Min (required by Azure): /23 (512 IPs)
-            // Recommended: /23 or /22 if expecting many apps & scale-out
-          }
-          {
-            enabled: true
-            name: 'devops-agents-subnet'
-            addressPrefix: '192.168.1.32/27'
-            networkSecurityGroupResourceId: devopsBuildAgentsNsgResourceId
-            // Min: /28 (16 IPs) if you run few agents
-            // Recommended: /27 (32 IPs) to allow scaling
-          }
-        ]
+        subnets: vNetDefinition.?subnets ?? varDefaultSpokeSubnets
       },
       vNetDefinition ?? {}
     )
@@ -919,7 +921,11 @@ var virtualNetworkResourceId = resourceIds.?virtualNetworkResourceId ?? (varDepl
 
 // 4.1 Platform Landing Zone Integration Logic
 var varIsPlatformLz = flagPlatformLandingZone
-var varDeployPdnsAndPe = !varIsPlatformLz
+// Platform Landing Zone integration model in this repo:
+// - Private Endpoints are created in the workload (spoke) VNet in both modes.
+// - Private DNS Zones are created by this template only when NOT integrating with a Platform Landing Zone.
+var varDeployPrivateDnsZones = !varIsPlatformLz
+var varDeployPrivateEndpoints = true
 
 // 4.2 DNS Zone Configuration Variables
 var varUseExistingPdz = {
@@ -960,7 +966,7 @@ var varHasKv = keyVaultDefinition != null
 @description('Optional. API Management Private DNS Zone configuration.')
 param apimPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneApim 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.apim) {
+module privateDnsZoneApim 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.apim) {
   name: 'dep-apim-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -988,7 +994,7 @@ module privateDnsZoneApim 'wrappers/avm.res.network.private-dns-zone.bicep' = if
 @description('Optional. Cognitive Services Private DNS Zone configuration.')
 param cognitiveServicesPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneCogSvcs 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.cognitiveservices) {
+module privateDnsZoneCogSvcs 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices) {
   name: 'dep-cogsvcs-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1016,7 +1022,7 @@ module privateDnsZoneCogSvcs 'wrappers/avm.res.network.private-dns-zone.bicep' =
 @description('Optional. OpenAI Private DNS Zone configuration.')
 param openAiPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneOpenAi 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.openai) {
+module privateDnsZoneOpenAi 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.openai) {
   name: 'dep-openai-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1044,7 +1050,7 @@ module privateDnsZoneOpenAi 'wrappers/avm.res.network.private-dns-zone.bicep' = 
 @description('Optional. AI Services Private DNS Zone configuration.')
 param aiServicesPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneAiService 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.aiServices) {
+module privateDnsZoneAiService 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.aiServices) {
   name: 'dep-aiservices-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1072,7 +1078,7 @@ module privateDnsZoneAiService 'wrappers/avm.res.network.private-dns-zone.bicep'
 @description('Optional. Azure AI Search Private DNS Zone configuration.')
 param searchPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneSearch 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.search) {
+module privateDnsZoneSearch 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.search) {
   name: 'dep-search-std-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1100,7 +1106,7 @@ module privateDnsZoneSearch 'wrappers/avm.res.network.private-dns-zone.bicep' = 
 @description('Optional. Cosmos DB Private DNS Zone configuration.')
 param cosmosPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneCosmos 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.cosmosSql) {
+module privateDnsZoneCosmos 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.cosmosSql) {
   name: 'dep-cosmos-std-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1128,7 +1134,7 @@ module privateDnsZoneCosmos 'wrappers/avm.res.network.private-dns-zone.bicep' = 
 @description('Optional. Blob Storage Private DNS Zone configuration.')
 param blobPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneBlob 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.blob) {
+module privateDnsZoneBlob 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.blob) {
   name: 'dep-blob-std-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1156,7 +1162,7 @@ module privateDnsZoneBlob 'wrappers/avm.res.network.private-dns-zone.bicep' = if
 @description('Optional. Key Vault Private DNS Zone configuration.')
 param keyVaultPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneKeyVault 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.keyVault) {
+module privateDnsZoneKeyVault 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.keyVault) {
   name: 'kv-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1184,7 +1190,7 @@ module privateDnsZoneKeyVault 'wrappers/avm.res.network.private-dns-zone.bicep' 
 @description('Optional. App Configuration Private DNS Zone configuration.')
 param appConfigPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneAppConfig 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.appConfig) {
+module privateDnsZoneAppConfig 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.appConfig) {
   name: 'appconfig-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1212,7 +1218,7 @@ module privateDnsZoneAppConfig 'wrappers/avm.res.network.private-dns-zone.bicep'
 @description('Optional. Container Apps Private DNS Zone configuration.')
 param containerAppsPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneContainerApps 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.containerApps) {
+module privateDnsZoneContainerApps 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.containerApps) {
   name: 'dep-containerapps-env-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1240,7 +1246,7 @@ module privateDnsZoneContainerApps 'wrappers/avm.res.network.private-dns-zone.bi
 @description('Optional. Container Registry Private DNS Zone configuration.')
 param acrPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneAcr 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.acr) {
+module privateDnsZoneAcr 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.acr) {
   name: 'acr-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1268,7 +1274,7 @@ module privateDnsZoneAcr 'wrappers/avm.res.network.private-dns-zone.bicep' = if 
 @description('Optional. Application Insights Private DNS Zone configuration.')
 param appInsightsPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
-module privateDnsZoneInsights 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPdnsAndPe && !varUseExistingPdz.appInsights) {
+module privateDnsZoneInsights 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.appInsights) {
   name: 'ai-private-dns-zone'
   params: {
     privateDnsZone: union(
@@ -1291,6 +1297,45 @@ module privateDnsZoneInsights 'wrappers/avm.res.network.private-dns-zone.bicep' 
     )
   }
 }
+
+// Resolve Private DNS Zone resource IDs (existing or newly created). In Platform LZ mode,
+// these will typically be provided via privateDnsZonesDefinition.*ZoneId.
+var varApimPrivateDnsZoneResourceId = privateDnsZonesDefinition.?apimZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.apim
+  ? privateDnsZoneApim!.outputs.resourceId
+  : '')
+var varCognitiveServicesPrivateDnsZoneResourceId = privateDnsZonesDefinition.?cognitiveservicesZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices
+  ? privateDnsZoneCogSvcs!.outputs.resourceId
+  : '')
+var varOpenAiPrivateDnsZoneResourceId = privateDnsZonesDefinition.?openaiZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.openai
+  ? privateDnsZoneOpenAi!.outputs.resourceId
+  : '')
+var varAiServicesPrivateDnsZoneResourceId = privateDnsZonesDefinition.?aiServicesZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.aiServices
+  ? privateDnsZoneAiService!.outputs.resourceId
+  : '')
+var varSearchPrivateDnsZoneResourceId = privateDnsZonesDefinition.?searchZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.search
+  ? privateDnsZoneSearch!.outputs.resourceId
+  : '')
+var varCosmosSqlPrivateDnsZoneResourceId = privateDnsZonesDefinition.?cosmosSqlZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.cosmosSql
+  ? privateDnsZoneCosmos!.outputs.resourceId
+  : '')
+var varBlobPrivateDnsZoneResourceId = privateDnsZonesDefinition.?blobZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.blob
+  ? privateDnsZoneBlob!.outputs.resourceId
+  : '')
+var varKeyVaultPrivateDnsZoneResourceId = privateDnsZonesDefinition.?keyVaultZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.keyVault
+  ? privateDnsZoneKeyVault!.outputs.resourceId
+  : '')
+var varAppConfigPrivateDnsZoneResourceId = privateDnsZonesDefinition.?appConfigZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.appConfig
+  ? privateDnsZoneAppConfig!.outputs.resourceId
+  : '')
+var varContainerAppsPrivateDnsZoneResourceId = privateDnsZonesDefinition.?containerAppsZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.containerApps
+  ? privateDnsZoneContainerApps!.outputs.resourceId
+  : '')
+var varAcrPrivateDnsZoneResourceId = privateDnsZonesDefinition.?acrZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.acr
+  ? privateDnsZoneAcr!.outputs.resourceId
+  : '')
+var varAppInsightsPrivateDnsZoneResourceId = privateDnsZonesDefinition.?appInsightsZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.appInsights
+  ? privateDnsZoneInsights!.outputs.resourceId
+  : '')
 
 // -----------------------
 // 5 NETWORKING - PUBLIC IP ADDRESSES
@@ -1419,64 +1464,40 @@ module hubToSpokePeering './components/vnet-peering/main.bicep' = if (varDeployH
 // -----------------------
 
 @description('API Management Private DNS Zone resource ID (newly created or existing).')
-output apimPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?apimZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.apim
-  ? privateDnsZoneApim!.outputs.resourceId
-  : '')
+output apimPrivateDnsZoneResourceId string = varApimPrivateDnsZoneResourceId
 
 @description('Cognitive Services Private DNS Zone resource ID (newly created or existing).')
-output cognitiveServicesPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?cognitiveservicesZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.cognitiveservices
-  ? privateDnsZoneCogSvcs!.outputs.resourceId
-  : '')
+output cognitiveServicesPrivateDnsZoneResourceId string = varCognitiveServicesPrivateDnsZoneResourceId
 
 @description('OpenAI Private DNS Zone resource ID (newly created or existing).')
-output openAiPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?openaiZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.openai
-  ? privateDnsZoneOpenAi!.outputs.resourceId
-  : '')
+output openAiPrivateDnsZoneResourceId string = varOpenAiPrivateDnsZoneResourceId
 
 @description('AI Services Private DNS Zone resource ID (newly created or existing).')
-output aiServicesPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?aiServicesZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.aiServices
-  ? privateDnsZoneAiService!.outputs.resourceId
-  : '')
+output aiServicesPrivateDnsZoneResourceId string = varAiServicesPrivateDnsZoneResourceId
 
 @description('Azure AI Search Private DNS Zone resource ID (newly created or existing).')
-output searchPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?searchZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.search
-  ? privateDnsZoneSearch!.outputs.resourceId
-  : '')
+output searchPrivateDnsZoneResourceId string = varSearchPrivateDnsZoneResourceId
 
 @description('Cosmos DB (SQL API) Private DNS Zone resource ID (newly created or existing).')
-output cosmosSqlPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?cosmosSqlZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.cosmosSql
-  ? privateDnsZoneCosmos!.outputs.resourceId
-  : '')
+output cosmosSqlPrivateDnsZoneResourceId string = varCosmosSqlPrivateDnsZoneResourceId
 
 @description('Blob Storage Private DNS Zone resource ID (newly created or existing).')
-output blobPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?blobZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.blob
-  ? privateDnsZoneBlob!.outputs.resourceId
-  : '')
+output blobPrivateDnsZoneResourceId string = varBlobPrivateDnsZoneResourceId
 
 @description('Key Vault Private DNS Zone resource ID (newly created or existing).')
-output keyVaultPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?keyVaultZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.keyVault
-  ? privateDnsZoneKeyVault!.outputs.resourceId
-  : '')
+output keyVaultPrivateDnsZoneResourceId string = varKeyVaultPrivateDnsZoneResourceId
 
 @description('App Configuration Private DNS Zone resource ID (newly created or existing).')
-output appConfigPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?appConfigZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.appConfig
-  ? privateDnsZoneAppConfig!.outputs.resourceId
-  : '')
+output appConfigPrivateDnsZoneResourceId string = varAppConfigPrivateDnsZoneResourceId
 
 @description('Container Apps Private DNS Zone resource ID (newly created or existing).')
-output containerAppsPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?containerAppsZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.containerApps
-  ? privateDnsZoneContainerApps!.outputs.resourceId
-  : '')
+output containerAppsPrivateDnsZoneResourceId string = varContainerAppsPrivateDnsZoneResourceId
 
 @description('Container Registry Private DNS Zone resource ID (newly created or existing).')
-output acrPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?acrZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.acr
-  ? privateDnsZoneAcr!.outputs.resourceId
-  : '')
+output acrPrivateDnsZoneResourceId string = varAcrPrivateDnsZoneResourceId
 
 @description('Application Insights Private DNS Zone resource ID (newly created or existing).')
-output appInsightsPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?appInsightsZoneId ?? (varDeployPdnsAndPe && !varUseExistingPdz.appInsights
-  ? privateDnsZoneInsights!.outputs.resourceId
-  : '')
+output appInsightsPrivateDnsZoneResourceId string = varAppInsightsPrivateDnsZoneResourceId
 
 // -----------------------
 // 7 NETWORKING - PRIVATE ENDPOINTS
@@ -1489,13 +1510,13 @@ output appInsightsPrivateDnsZoneResourceId string = privateDnsZonesDefinition.?a
 // - Cosmos DB (SQL)
 // Avoid duplicating those private endpoints here.
 var varDeployAiFoundry = deployToggles.aiFoundry
-var varAiFoundryManagesCorePrivateEndpoints = varDeployPdnsAndPe && varDeployAiFoundry
+var varAiFoundryManagesCorePrivateEndpoints = varDeployPrivateEndpoints && varDeployAiFoundry
 
 // 7.1. App Configuration Private Endpoint
 @description('Optional. App Configuration Private Endpoint configuration.')
 param appConfigPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasAppConfig) {
+module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasAppConfig) {
   name: 'appconfig-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1516,17 +1537,15 @@ module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varAppConfigPrivateDnsZoneResourceId) ? {
           name: 'appConfigDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'appConfigARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.appConfig
-                ? privateDnsZoneAppConfig!.outputs.resourceId
-                : privateDnsZonesDefinition.appConfigZoneId!
+              privateDnsZoneResourceId: varAppConfigPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       appConfigPrivateEndpointDefinition ?? {}
     )
@@ -1546,7 +1565,7 @@ var varApimSkuEffectiveForPe = apimDefinition.?sku ?? 'PremiumV2'
 var apimSupportsPe = contains(['StandardV2', 'Premium', 'PremiumV2'], varApimSkuEffectiveForPe)
 var varApimWantsPrivateEndpoint = (apimDefinition != null) && ((apimDefinition.?virtualNetworkType ?? 'Internal') == 'None')
 
-module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasApim && varApimWantsPrivateEndpoint && apimSupportsPe) {
+module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasApim && varApimWantsPrivateEndpoint && apimSupportsPe) {
   name: 'apim-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1569,17 +1588,15 @@ module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = i
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varApimPrivateDnsZoneResourceId) ? {
           name: 'apimDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'apimARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.apim
-                ? privateDnsZoneApim!.outputs.resourceId
-                : privateDnsZonesDefinition.apimZoneId!
+              privateDnsZoneResourceId: varApimPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       apimPrivateEndpointDefinition ?? {}
     )
@@ -1590,7 +1607,7 @@ module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = i
 @description('Optional. Container Apps Environment Private Endpoint configuration.')
 param containerAppEnvPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasContainerEnv) {
+module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasContainerEnv) {
   name: 'containerapps-env-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1611,17 +1628,15 @@ module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoin
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varContainerAppsPrivateDnsZoneResourceId) ? {
           name: 'ccaDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'ccaARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.containerApps
-                ? privateDnsZoneContainerApps!.outputs.resourceId
-                : privateDnsZonesDefinition.containerAppsZoneId!
+              privateDnsZoneResourceId: varContainerAppsPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       containerAppEnvPrivateEndpointDefinition ?? {}
     )
@@ -1637,7 +1652,7 @@ module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoin
 @description('Optional. Azure Container Registry Private Endpoint configuration.')
 param acrPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasAcr) {
+module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasAcr) {
   name: 'acr-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1656,17 +1671,15 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varAcrPrivateDnsZoneResourceId) ? {
           name: 'acrDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'acrARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.acr
-                ? privateDnsZoneAcr!.outputs.resourceId
-                : privateDnsZonesDefinition.acrZoneId!
+              privateDnsZoneResourceId: varAcrPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       acrPrivateEndpointDefinition ?? {}
     )
@@ -1681,7 +1694,7 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
 @description('Optional. Storage Account Private Endpoint configuration.')
 param storageBlobPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasStorage && !varAiFoundryManagesCorePrivateEndpoints) {
+module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasStorage && !varAiFoundryManagesCorePrivateEndpoints) {
   name: 'blob-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1702,17 +1715,15 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varBlobPrivateDnsZoneResourceId) ? {
           name: 'blobDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'blobARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.blob
-                ? privateDnsZoneBlob!.outputs.resourceId
-                : privateDnsZonesDefinition.blobZoneId!
+              privateDnsZoneResourceId: varBlobPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       storageBlobPrivateEndpointDefinition ?? {}
     )
@@ -1723,7 +1734,7 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
 @description('Optional. Cosmos DB Private Endpoint configuration.')
 param cosmosPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasCosmos && !varAiFoundryManagesCorePrivateEndpoints) {
+module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasCosmos && !varAiFoundryManagesCorePrivateEndpoints) {
   name: 'cosmos-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1742,17 +1753,15 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varCosmosSqlPrivateDnsZoneResourceId) ? {
           name: 'cosmosDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'cosmosARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.cosmosSql
-                ? privateDnsZoneCosmos!.outputs.resourceId
-                : privateDnsZonesDefinition.cosmosSqlZoneId!
+              privateDnsZoneResourceId: varCosmosSqlPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       cosmosPrivateEndpointDefinition ?? {}
     )
@@ -1763,7 +1772,7 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
 @description('Optional. Azure AI Search Private Endpoint configuration.')
 param searchPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasSearch && !varAiFoundryManagesCorePrivateEndpoints) {
+module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasSearch && !varAiFoundryManagesCorePrivateEndpoints) {
   name: 'search-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1782,17 +1791,15 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varSearchPrivateDnsZoneResourceId) ? {
           name: 'searchDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'searchARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.search
-                ? privateDnsZoneSearch!.outputs.resourceId
-                : privateDnsZonesDefinition.searchZoneId!
+              privateDnsZoneResourceId: varSearchPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       searchPrivateEndpointDefinition ?? {}
     )
@@ -1803,7 +1810,7 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
   ]
 }
 
@@ -1811,7 +1818,7 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
 @description('Optional. Key Vault Private Endpoint configuration.')
 param keyVaultPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPdnsAndPe && varHasKv) {
+module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasKv) {
   name: 'kv-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1830,17 +1837,15 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
             }
           }
         ]
-        privateDnsZoneGroup: {
+        privateDnsZoneGroup: !empty(varKeyVaultPrivateDnsZoneResourceId) ? {
           name: 'kvDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
               name: 'kvARecord'
-              privateDnsZoneResourceId: !varUseExistingPdz.keyVault
-                ? privateDnsZoneKeyVault!.outputs.resourceId
-                : privateDnsZonesDefinition.keyVaultZoneId!
+              privateDnsZoneResourceId: varKeyVaultPrivateDnsZoneResourceId
             }
           ]
-        }
+        } : null
       },
       keyVaultPrivateEndpointDefinition ?? {}
     )
@@ -2081,11 +2086,11 @@ module containerApps 'wrappers/avm.res.app.container-app.bicep' = [
       #disable-next-line BCP321
       (empty(resourceIds.?containerEnvResourceId!)) ? containerEnv : null
       #disable-next-line BCP321
-      (varDeployPdnsAndPe && !varUseExistingPdz.containerApps && varHasContainerEnv)
+      (varDeployPrivateDnsZones && !varUseExistingPdz.containerApps && varHasContainerEnv)
         ? privateDnsZoneContainerApps
         : null
       #disable-next-line BCP321
-      (varDeployPdnsAndPe && varHasContainerEnv) ? privateEndpointContainerAppsEnv : null
+      (varDeployPrivateEndpoints && varHasContainerEnv) ? privateEndpointContainerAppsEnv : null
     ]
   }
 ]
@@ -2400,12 +2405,12 @@ var varAiFoundryCosmosResourceId = deployCosmosDb ? cosmosDbModule!.outputs.reso
 
 var varAiFoundryCurrentRgName = resourceGroup().name
 var varAiFoundryExistingDnsZones = {
-  'privatelink.services.ai.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.aiServices ? split(privateDnsZonesDefinition.aiServicesZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
-  'privatelink.openai.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.openai ? split(privateDnsZonesDefinition.openaiZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
-  'privatelink.cognitiveservices.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.cognitiveservices ? split(privateDnsZonesDefinition.cognitiveservicesZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
-  'privatelink.search.windows.net': varDeployPdnsAndPe ? (varUseExistingPdz.search ? split(privateDnsZonesDefinition.searchZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
-  'privatelink.blob.${environment().suffixes.storage}': varDeployPdnsAndPe ? (varUseExistingPdz.blob ? split(privateDnsZonesDefinition.blobZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
-  'privatelink.documents.azure.com': varDeployPdnsAndPe ? (varUseExistingPdz.cosmosSql ? split(privateDnsZonesDefinition.cosmosSqlZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.services.ai.azure.com': varDeployPrivateEndpoints ? (varUseExistingPdz.aiServices ? split(privateDnsZonesDefinition.aiServicesZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.openai.azure.com': varDeployPrivateEndpoints ? (varUseExistingPdz.openai ? split(privateDnsZonesDefinition.openaiZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.cognitiveservices.azure.com': varDeployPrivateEndpoints ? (varUseExistingPdz.cognitiveservices ? split(privateDnsZonesDefinition.cognitiveservicesZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.search.windows.net': varDeployPrivateEndpoints ? (varUseExistingPdz.search ? split(privateDnsZonesDefinition.searchZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.blob.${environment().suffixes.storage}': varDeployPrivateEndpoints ? (varUseExistingPdz.blob ? split(privateDnsZonesDefinition.blobZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.documents.azure.com': varDeployPrivateEndpoints ? (varUseExistingPdz.cosmosSql ? split(privateDnsZonesDefinition.cosmosSqlZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
 }
 
 module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
@@ -2433,7 +2438,7 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
     azureCosmosDBAccountResourceId: varAiFoundryCosmosResourceId
 
     // Private networking integration
-    deployPrivateEndpointsAndDns: varDeployPdnsAndPe
+    deployPrivateEndpointsAndDns: varDeployPrivateEndpoints
     existingDnsZones: varAiFoundryExistingDnsZones
 
     // Control whether the component creates associated resources and/or capability hosts (agent service)
@@ -2453,17 +2458,17 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.blob) ? privateDnsZoneBlob : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.blob) ? privateDnsZoneBlob : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.cosmosSql) ? privateDnsZoneCosmos : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.cosmosSql) ? privateDnsZoneCosmos : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.cognitiveservices) ? privateDnsZoneCogSvcs : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices) ? privateDnsZoneCogSvcs : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.openai) ? privateDnsZoneOpenAi : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.openai) ? privateDnsZoneOpenAi : null
     #disable-next-line BCP321
-    (varDeployPdnsAndPe && !varUseExistingPdz.aiServices) ? privateDnsZoneAiService : null
+    (varDeployPrivateDnsZones && !varUseExistingPdz.aiServices) ? privateDnsZoneAiService : null
   ]
 }
 
@@ -2797,6 +2802,127 @@ module azureFirewall 'wrappers/avm.res.network.azure-firewall.bicep' = if (varDe
 }
 
 // -----------------------
+// 18.5 USER DEFINED ROUTES (UDR)
+// -----------------------
+
+// Optional. When deployToggles.userDefinedRoutes is true, deploys a Route Table with a default route (0.0.0.0/0)
+// and associates it to selected workload subnets.
+
+@description('Optional. Name of the Route Table created when deployToggles.userDefinedRoutes is true.')
+param userDefinedRouteTableName string = 'rt-${baseName}'
+
+@description('Optional. Firewall/NVA next hop private IP for the UDR default route.')
+param firewallPrivateIp string = ''
+
+@description('Optional. When true, creates an App Gateway subnet routing exception: appgw-subnet gets 0.0.0.0/0 -> Internet instead of 0.0.0.0/0 -> VirtualAppliance. Mirrors Terraform use_internet_routing behavior for App Gateway v2.')
+param appGatewayInternetRoutingException bool = false
+
+// Note: next hop must be known at the start of the deployment.
+var varUdrNextHopIp = firewallPrivateIp
+
+// Defensive behavior:
+// - If UDR is requested but we don't have a consistent firewall/NVA signal + next hop IP,
+//   do NOT deploy the route table. This avoids breaking egress by accidentally forcing 0.0.0.0/0 to a bad next hop.
+// - If the firewall is deployed/reused, that is a valid signal.
+// - If firewallPrivateIp is provided, that is a valid signal.
+var varHasFirewallSignal = (deployToggles.?firewall ?? false) || !empty(resourceIds.?firewallResourceId!) || !empty(firewallPrivateIp)
+var varDeployUdrEffective = deployToggles.userDefinedRoutes && varHasFirewallSignal && !empty(varUdrNextHopIp)
+
+resource udrRouteTable 'Microsoft.Network/routeTables@2023-11-01' = if (varDeployUdrEffective) {
+  name: userDefinedRouteTableName
+  location: location
+  tags: tags
+}
+
+resource udrDefaultRoute 'Microsoft.Network/routeTables/routes@2023-11-01' = if (varDeployUdrEffective) {
+  name: 'default-route'
+  parent: udrRouteTable
+  properties: {
+    addressPrefix: '0.0.0.0/0'
+    nextHopType: 'VirtualAppliance'
+    nextHopIpAddress: varUdrNextHopIp
+  }
+}
+
+resource udrAppGwRouteTable 'Microsoft.Network/routeTables@2023-11-01' = if (varDeployUdrEffective && appGatewayInternetRoutingException) {
+  name: 'rt-appgw-${baseName}'
+  location: location
+  tags: tags
+}
+
+resource udrAppGwDefaultRoute 'Microsoft.Network/routeTables/routes@2023-11-01' = if (varDeployUdrEffective && appGatewayInternetRoutingException) {
+  name: 'default-route'
+  parent: udrAppGwRouteTable
+  properties: {
+    addressPrefix: '0.0.0.0/0'
+    nextHopType: 'Internet'
+  }
+}
+
+var varUdrDefaultRouteTableId = varDeployUdrEffective ? udrRouteTable.id : ''
+var varUdrAppGwRouteTableId = (varDeployUdrEffective && appGatewayInternetRoutingException) ? udrAppGwRouteTable.id : ''
+
+var varUdrSubnetDefinitions = [
+  {
+    name: 'agent-subnet'
+    addressPrefix: '192.168.0.0/27'
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.CognitiveServices']
+    networkSecurityGroupResourceId: agentNsgResourceId
+    routeTableResourceId: varUdrDefaultRouteTableId
+  }
+  {
+    name: 'jumpbox-subnet'
+    addressPrefix: '192.168.1.0/28'
+    networkSecurityGroupResourceId: jumpboxNsgResourceId
+    routeTableResourceId: varUdrDefaultRouteTableId
+  }
+  {
+    name: 'aca-env-subnet'
+    addressPrefix: '192.168.2.0/23'
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+    networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
+    routeTableResourceId: varUdrDefaultRouteTableId
+  }
+  {
+    name: 'devops-agents-subnet'
+    addressPrefix: '192.168.1.32/27'
+    networkSecurityGroupResourceId: devopsBuildAgentsNsgResourceId
+    routeTableResourceId: varUdrDefaultRouteTableId
+  }
+  {
+    name: 'appgw-subnet'
+    addressPrefix: '192.168.0.192/27'
+    networkSecurityGroupResourceId: applicationGatewayNsgResourceId
+    routeTableResourceId: appGatewayInternetRoutingException ? varUdrAppGwRouteTableId : varUdrDefaultRouteTableId
+  }
+  {
+    name: 'apim-subnet'
+    addressPrefix: '192.168.0.224/27'
+    networkSecurityGroupResourceId: apiManagementNsgResourceId
+    routeTableResourceId: varUdrDefaultRouteTableId
+  }
+]
+
+module udrSubnetAssociation './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association'
+  params: {
+    existingVNetName: virtualNetworkResourceId
+    subnets: varUdrSubnetDefinitions
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
+  }
+  dependsOn: [
+    #disable-next-line BCP321
+    varDeployVnet ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
+  ]
+}
+
+// -----------------------
 // 19 VIRTUAL MACHINES
 // -----------------------
 
@@ -2901,6 +3027,21 @@ param jumpVmMaintenanceDefinition vmMaintenanceDefinitionType?
 @secure()
 param jumpVmAdminPassword string = '${toUpper(substring(replace(newGuid(), '-', ''), 0, 8))}${toLower(substring(replace(newGuid(), '-', ''), 8, 8))}@${substring(replace(newGuid(), '-', ''), 16, 4)}!'
 
+@description('Size of the test VM')
+param vmSize string = 'Standard_D8s_v5'
+
+@description('Image SKU (e.g., win11-25h2-ent, win11-23h2-ent, 2022-datacenter).')
+param vmImageSku string = 'win11-25h2-ent'
+
+@description('Image publisher (Windows 11: MicrosoftWindowsDesktop, Windows Server: MicrosoftWindowsServer).')
+param vmImagePublisher string = 'MicrosoftWindowsDesktop'
+
+@description('Image offer (Windows 11: windows-11, Windows Server: WindowsServer).')
+param vmImageOffer string = 'windows-11'
+
+@description('Image version (use latest unless you need a pinned build).')
+param vmImageVersion string = 'latest'
+
 var varDeployJumpVm = deployToggles.?jumpVm ?? false
 var varJumpVmMaintenanceConfigured = varDeployJumpVm && (jumpVmMaintenanceDefinition != null)
 var varJumpSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
@@ -2928,15 +3069,16 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
       {
         // Required parameters
         name: 'vm-${substring(baseName, 0, 6)}-jmp' // Shorter name to avoid Windows 15-char limit
-        sku: 'Standard_D4as_v5'
+        sku: vmSize
         adminUsername: 'azureuser'
         osType: 'Windows'
         imageReference: {
-          publisher: 'MicrosoftWindowsServer'
-          offer: 'WindowsServer'
-          sku: '2022-datacenter-azure-edition'
-          version: 'latest'
+          publisher: vmImagePublisher
+          offer: vmImageOffer
+          sku: vmImageSku
+          version: vmImageVersion
         }
+        encryptionAtHost: false
         // Auto-generated random password
         adminPassword: jumpVmAdminPassword
         nicConfigurations: [
@@ -2954,6 +3096,7 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
           caching: 'ReadWrite'
           createOption: 'FromImage'
           deleteOption: 'Delete'
+          diskSizeGB: 250
           managedDisk: {
             storageAccountType: 'Standard_LRS'
           }

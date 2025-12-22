@@ -53,8 +53,26 @@ param deployToggles = {
   applicationGatewayPublicIp: false
   wafPolicy: false
   firewall: false
+  userDefinedRoutes: false
 }
 
 param resourceIds = {}
 
 param flagPlatformLandingZone = false
+
+// -----------------------------------------------------------------------------
+// OPTIONAL: UDR to spoke firewall (Standalone)
+// -----------------------------------------------------------------------------
+// When enabled, creates a Route Table with a default route (0.0.0.0/0) pointing
+// to a firewall/NVA in the spoke VNet and associates it to key workload subnets.
+//
+// IMPORTANT:
+// - Only enable this if you have a valid next hop.
+// - Either deploy a firewall via deployToggles.firewall=true OR reuse an existing firewall,
+//   and set firewallPrivateIp to the firewall/NVA private IP.
+//
+// To enable:
+// 1) In deployToggles above, set: userDefinedRoutes: true
+// 2) Set firewallPrivateIp
+// 3) Optional: set appGatewayInternetRoutingException = true to keep App Gateway v2 subnet using Internet routing
+// param firewallPrivateIp = '192.168.0.132'

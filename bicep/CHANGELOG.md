@@ -2,6 +2,19 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.7
+
+### Changed
+- Platform Landing Zone integration: decoupled Private DNS Zone creation from Private Endpoint creation.
+  - `flagPlatformLandingZone = true` no longer disables Private Endpoints; it only prevents this template from creating Private DNS Zones.
+  - Private Endpoint DNS zone-group configuration is now applied only when a corresponding zone ID is available.
+- Added optional User Defined Routes (UDR): deploy a Route Table with default route (`0.0.0.0/0`) and associate it to key workload subnets.
+  - Toggle is `deployToggles.userDefinedRoutes`.
+  - Implemented defensive behavior: if UDR is enabled but firewall/NVA next-hop inputs are inconsistent, UDR deployment is skipped to avoid breaking egress.
+  - Added optional App Gateway v2 internet routing exception: when `appGatewayInternetRoutingException = true`, the `appgw-subnet` gets `0.0.0.0/0 -> Internet` via a separate route table.
+- Updated AI Foundry wiring to align with the new PDNS/PE split (use Platform-owned DNS zones while still deploying Private Endpoints in the workload VNet).
+- Added Platform Landing Zone documentation.
+
 ## 0.1.6
 
 ### Changed

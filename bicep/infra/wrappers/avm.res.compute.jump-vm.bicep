@@ -15,6 +15,7 @@ module inner 'br/public:avm/res/compute/virtual-machine:0.20.0' = {
     vmSize: jumpVm.sku!
     imageReference: jumpVm.imageReference!
     osType: jumpVm.osType!
+    encryptionAtHost: jumpVm.?encryptionAtHost
     
     // Optional
     nicConfigurations: jumpVm.nicConfigurations!

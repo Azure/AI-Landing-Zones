@@ -14,6 +14,7 @@ module inner 'br/public:avm/res/compute/virtual-machine:0.20.0' = {
     vmSize: virtualMachine.sku!
     imageReference: virtualMachine.imageReference!
     osType: virtualMachine.osType!
+    encryptionAtHost: virtualMachine.?encryptionAtHost
     location: virtualMachine.?location ?? resourceGroup().location
     tags: virtualMachine.?tags
     enableTelemetry: virtualMachine.?enableTelemetry ?? true

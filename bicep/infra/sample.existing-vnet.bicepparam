@@ -45,6 +45,9 @@ param deployToggles = {
   // Container Apps workloads not deployed in this example
   containerApps: false
   groundingWithBingSearch: false
+
+  // Routing
+  userDefinedRoutes: false
 }
 
 param existingVNetSubnetsDefinition = {
@@ -80,3 +83,20 @@ param existingVNetSubnetsDefinition = {
 param resourceIds = {}
 
 param flagPlatformLandingZone = false
+
+// -----------------------------------------------------------------------------
+// OPTIONAL: UDR to hub firewall (Platform / Existing VNet)
+// -----------------------------------------------------------------------------
+// When enabled, creates a Route Table with a default route (0.0.0.0/0) pointing
+// to the hub firewall/NVA IP and associates it to key workload subnets.
+//
+// IMPORTANT:
+// - This is optional; enabling without a valid next hop can break egress.
+// - If the template cannot determine a consistent firewall signal, it will skip
+//   deploying UDR (defensive behavior).
+//
+// To enable:
+// 1) In deployToggles above, set: userDefinedRoutes: true
+// 2) Set firewallPrivateIp
+// 3) Optional: set appGatewayInternetRoutingException = true to keep App Gateway v2 subnet using Internet routing
+// param firewallPrivateIp = '10.0.0.4'
