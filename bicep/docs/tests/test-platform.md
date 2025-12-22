@@ -13,8 +13,8 @@ The goal is to have:
 - A **test VM in the hub**
 
 Who does what in this test:
-- **Platform steps (this guide):** deploy the hub, own the PDNS zones, create hub→spoke peering, and (optionally) link PDNS zones to the spoke VNet.
-- **Workload steps:** deploy the spoke workload with `flagPlatformLandingZone=true`, optionally create spoke→hub peering, and enable forced tunneling via UDR.
+- **Platform steps (this guide):** deploy the hub, own the PDNS zones, create hub→spoke peering, and link PDNS zones to the spoke VNet.
+- **Workload steps:** deploy the spoke workload with `flagPlatformLandingZone=true`, create spoke→hub peering, and enable forced tunneling via UDR.
 
 ## Topology (default CIDRs)
 
@@ -37,7 +37,7 @@ Who does what in this test:
         |      (RDP via Bastion only)                                         |
         +--------------------------------------------------------------------+
                                ||  VNet peering (must be Connected)
-                               ||  - spoke -> hub : optional (workload can create)
+                               ||  - spoke -> hub : required (workload creates)
                                ||  - hub   -> spoke: required (platform must create)
                                ||  - allowForwardedTraffic: enabled (required for FT)
                                \/
@@ -56,7 +56,7 @@ Who does what in this test:
 
 DNS (platform-owned):
   - `bicep/tests/platform.bicep` creates the Private DNS Zones and links them to the hub VNet.
-  - Step 3 (optional) links those zones to the spoke VNet after the spoke exists.
+  - Step 3 links those zones to the spoke VNet after the spoke exists.
   - In platform-integrated mode, the workload deployment does NOT write DNS records into the platform zones
     (it does not create Private DNS Zone Groups). Use your platform process for that.
 
@@ -109,7 +109,6 @@ Keep these outputs handy:
 - `platformResourceGroupName`
 - `hubVnetResourceId`
 - `firewallPrivateIp`
-- `privateDnsZonesDeployed` (array of `{ name, id }`)
 
 You will share (at minimum) `hubVnetResourceId` and `firewallPrivateIp` with the workload tester.
 
@@ -131,13 +130,11 @@ Now deploy the main template for your workload/spoke and reference the platform 
 - `deployToggles.userDefinedRoutes = true` (to validate forced-tunneling/UDR in the spoke)
 - `firewallPrivateIp = <firewallPrivateIp output from step 1>`
 
-Optional:
+Required for this test procedure:
 
-- `privateDnsZonesDefinition.*ZoneId = ...` pointing to the PDNS zones created in the hub (outputs/visibility only)
-
-- `hubVnetPeeringDefinition.peerVnetResourceId = <hubVnetResourceId output from step 1>` (creates only the spoke → hub peering)
-
-> Tip: `privateDnsZonesDeployed` from step 1 gives you the zone IDs.
+- `hubVnetPeeringDefinition.peerVnetResourceId = <hubVnetResourceId output from step 1>` (creates the spoke → hub peering)
+  - Why we require it in this runbook: it ensures the workload always creates the spoke-side peering (no dependency on a separate platform action for that side).
+  - Note: this only requires permissions on the spoke/workload VNet.
 
 ### Deploy the workload
 
@@ -147,11 +144,11 @@ Example (adjust RG and parameter file as needed):
 
 Tip (recommended): ask the workload tester to send you their deployment outputs (at minimum the spoke VNet resource ID).
 
-## Step 3 — (Optional) Link the PDNS zones to the Spoke VNet
+## Step 3 — Link the PDNS zones to the Spoke VNet
 
 In PLZ setups, the platform typically owns **creating PDNS VNet links** for spoke VNets.
 
-The template [bicep/tests/platform.bicep](../../tests/platform.bicep) supports an optional parameter:
+The template [bicep/tests/platform.bicep](../../tests/platform.bicep) supports a parameter:
 - `spokeVnetResourceId` (resource ID of the spoke VNet)
 
 After the spoke VNet exists, re-deploy the platform template adding that parameter to create the VNet links.
@@ -168,7 +165,7 @@ Example:
 
 In many PLZ setups, the workload deployment identity cannot create peering on the **hub** VNet (platform-owned).
 
-- If you set `hubVnetPeeringDefinition.peerVnetResourceId` in the workload deployment, the template can create the **spoke → hub** peering.
+- This runbook requires the workload deployment to create the **spoke → hub** peering (Step 2).
 - The platform team must still create the **hub → spoke** peering (reverse peering) using your platform process (Portal, policy-driven automation, or a separate platform deployment).
 - Ensure peering is configured with forwarded traffic enabled if you expect forced tunneling to work.
 
