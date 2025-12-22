@@ -248,7 +248,7 @@ var varUniqueSuffix = substring(uniqueString(deployment().name, location, resour
 // -----------------------
 
 @description('Optional. Enable Microsoft Defender for AI (part of Defender for Cloud).')
-param enableDefenderForAI bool = true
+param enableDefenderForAI bool = false
 
 // Deploy Microsoft Defender for AI at subscription level via module
 module defenderModule './components/defender/main.bicep' = if (enableDefenderForAI) {
