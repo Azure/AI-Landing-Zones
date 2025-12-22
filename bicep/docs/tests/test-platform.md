@@ -138,11 +138,41 @@ Required for this test procedure:
 
 ### Deploy the workload
 
-Example (adjust RG and parameter file as needed):
+Use the same flow as [bicep/docs/how_to_use.md](../how_to_use.md) (azd-based provisioning).
 
-`az deployment group create --resource-group rg-ai-lz-workload-test --template-file bicep/infra/main.bicep --parameters bicep/infra/sample.platform-landing-zone.bicepparam`
+1) Create the workload RG:
 
-Tip (recommended): ask the workload tester to send you their deployment outputs (at minimum the spoke VNet resource ID).
+`az group create --name rg-ai-lz-workload-test --location eastus2`
+
+2) Initialize the project environment (run once per new environment name):
+
+`azd init -e ai-lz-plz-test`
+
+3) Set environment variables (PowerShell):
+
+`$env:AZURE_LOCATION = "eastus2"`
+
+`$env:AZURE_RESOURCE_GROUP = "rg-ai-lz-workload-test"`
+
+`$env:AZURE_SUBSCRIPTION_ID = "00000000-1111-2222-3333-444444444444"`
+
+4) Configure parameters for this PLZ test:
+
+- Copy the PLZ sample parameters into the file used by `azd`:
+
+`Copy-Item bicep/infra/sample.platform-landing-zone.bicepparam bicep/infra/main.bicepparam -Force`
+
+- Edit `bicep/infra/main.bicepparam` and set:
+  - `firewallPrivateIp = <firewallPrivateIp from Step 1>`
+  - `hubVnetPeeringDefinition.peerVnetResourceId = <hubVnetResourceId from Step 1>`
+
+5) Provision the workload:
+
+`azd provision`
+
+After provisioning, capture the spoke VNet resource ID for Step 3:
+
+`az network vnet show --resource-group rg-ai-lz-workload-test --name vnet-<baseName> --query id -o tsv`
 
 ## Step 3 — Link the PDNS zones to the Spoke VNet
 
@@ -154,8 +184,12 @@ The template [bicep/tests/platform.bicep](../../tests/platform.bicep) supports a
 After the spoke VNet exists, re-deploy the platform template adding that parameter to create the VNet links.
 
 How to get the spoke VNet resource ID:
-- From the workload deployment outputs (recommended), or
-- From the Azure Portal: Spoke VNet → Overview → Resource ID
+
+- Recommended (Azure CLI, greenfield default VNet name):
+
+`az network vnet show --resource-group rg-ai-lz-workload-test --name vnet-<baseName> --query id -o tsv`
+
+- Or from the Azure Portal: Spoke VNet → Overview → Resource ID
 
 Example:
 

@@ -18,7 +18,7 @@ Use this scenario for a **new environment from scratch**.
 Use the parameter file:
 
 - [bicep/infra/sample.greenfield.bicepparam](../infra/sample.greenfield.bicepparam)
-- (Same as) [bicep/infra/sample.main.bicepparam](../infra/sample.main.bicepparam)
+- (Same as) [bicep/infra/main.bicepparam](../infra/main.bicepparam)
 
 ---
 
