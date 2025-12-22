@@ -44,7 +44,8 @@ var firewallRuleCollectionGroupName = 'rcg-allow-egress'
 var bastionName = 'bas-ai-lz-hub'
 var bastionPipName = 'pip-ai-lz-bastion'
 
-var testVmName = 'vm-ai-lz-hubtest'
+// Windows computerName has a 15 character limit.
+var testVmName = 'vm-ailz-hubtst'
 var testVmNicName = '${testVmName}-nic'
 var vmNsgName = 'nsg-${hubVmSubnetName}'
 
@@ -86,6 +87,9 @@ resource bastionSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' = 
   properties: {
     addressPrefix: bastionSubnetCidr
   }
+  dependsOn: [
+    firewallSubnet
+  ]
 }
 
 resource hubVmNsg 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
@@ -119,6 +123,9 @@ resource hubVmSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' = {
       id: hubVmNsg.id
     }
   }
+  dependsOn: [
+    bastionSubnet
+  ]
 }
 
 resource firewallPip 'Microsoft.Network/publicIPAddresses@2024-05-01' = {
@@ -165,6 +172,8 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
             ]
             sourceAddresses: [
               '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
             ]
             destinationAddresses: [
               '*'

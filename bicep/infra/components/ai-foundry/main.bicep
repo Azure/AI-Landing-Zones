@@ -163,6 +163,9 @@ param projectCapHost string = 'caphostproj'
 @description('If false, skips creation of private endpoints and private DNS configuration (useful for Platform Landing Zone scenarios).')
 param deployPrivateEndpointsAndDns bool = true
 
+@description('When false, the component will still create Private Endpoints but will skip Private DNS Zones, DNS VNet links, and Private DNS Zone Groups. Use this for Platform Landing Zone (Model B) scenarios where the workload deployer has no permissions on platform-owned DNS resources.')
+param configurePrivateDns bool = true
+
 @description('Optional. When false, the module will NOT deploy associated resources (AI Search, Storage, Cosmos) or their private endpoints/DNS.')
 param includeAssociatedResources bool = false
 
@@ -290,6 +293,7 @@ module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.b
     storageAccountResourceGroupName: azureStorageResourceGroupName
     storageAccountSubscriptionId: azureStorageSubscriptionId
     existingDnsZones: existingDnsZones
+    configurePrivateDns: configurePrivateDns
   }
   dependsOn: [
     #disable-next-line BCP321

@@ -69,6 +69,17 @@ param resourceIds = {}
 param flagPlatformLandingZone = true
 
 // -----------------------------------------------------------------------------
+// OPTIONAL: Microsoft Defender for AI (subscription-scoped)
+// -----------------------------------------------------------------------------
+// WARNING:
+// - This configures Defender for Cloud pricing at subscription scope via `Microsoft.Security/pricings`.
+// - Requires subscription-level permissions (typically Subscription Owner, or equivalent Security admin permissions).
+// - Keep disabled by default to avoid deployments failing in restricted subscriptions.
+//
+// To enable:
+// param enableDefenderForAI = true
+
+// -----------------------------------------------------------------------------
 // OPTIONAL: Test APIM Private Endpoint path
 // -----------------------------------------------------------------------------
 // By default, this file focuses on APIM with Internal VNet injection (no APIM PE).

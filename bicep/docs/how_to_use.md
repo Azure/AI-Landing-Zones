@@ -164,6 +164,7 @@ For detailed configuration and examples, see:
 * **Global resources**: Storage accounts and Container Registry require globally unique names
 * **Platform integration**: Set `flagPlatformLandingZone = true` to integrate with existing platform DNS zones
 * **VM deployment**: Build/Jump VMs only deploy when required parameters are provided (SSH keys, passwords)
+* **Defender for AI (optional)**: `enableDefenderForAI` deploys at **subscription scope** (configures `Microsoft.Security/pricings`). This requires subscription-level permissions; it is `false` by default to avoid deployment failures in restricted subscriptions.
 
 ## 7) CI/CD pipelines (overview)
 

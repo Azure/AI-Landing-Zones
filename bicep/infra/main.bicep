@@ -758,6 +758,16 @@ var varExistingVNetResourceGroupName = varDeploySubnetsToExistingVnet && varIsEx
   : ''
 var varIsCrossScope = varIsExistingVNetResourceId && !empty(varExistingVNetSubscriptionId) && !empty(varExistingVNetResourceGroupName)
 
+// When reusing an existing spoke VNet, we may still want to create the spoke->hub peering.
+// To keep peering deployment conditions start-of-deployment evaluable (BCP177), derive the local VNet name only from inputs.
+var varSpokeVnetNameForPeering = !empty(resourceIds.?virtualNetworkResourceId)
+  ? split(resourceIds.virtualNetworkResourceId!, '/')[8]
+  : (varDeploySubnetsToExistingVnet
+    ? (varIsExistingVNetResourceId
+      ? varExistingVNetIdSegments[8]
+      : existingVNetSubnetsDefinition!.existingVNetName)
+    : '')
+
 var varDefaultSpokeSubnets = [
   {
     enabled: true
@@ -842,7 +852,7 @@ var varDefaultSpokeSubnets = [
 ]
 
 // 3.1 Virtual Network and Subnets
-module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (varDeployVnet) {
+module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (varDeployVnet && !(hubVnetPeeringDefinition != null && !empty(hubVnetPeeringDefinition.?peerVnetResourceId))) {
   name: 'm-vnet'
   params: {
     vnet: union(
@@ -911,7 +921,7 @@ var existingVNetResourceId = varDeploySubnetsToExistingVnet
   : ''
 
 // 3.3 VNet Resource ID Resolution
-var virtualNetworkResourceId = resourceIds.?virtualNetworkResourceId ?? (varDeployHubPeering && varDeployVnet
+var virtualNetworkResourceId = resourceIds.?virtualNetworkResourceId ?? (varDeploySpokeToHubPeering && varDeployVnet
   ? spokeVNetWithPeering!.outputs.resourceId
   : (varDeployVnet ? vNetworkWrapper!.outputs.resourceId : existingVNetResourceId))
 
@@ -1407,19 +1417,23 @@ var firewallPublicIpResourceId = resourceIds.?firewallPublicIpResourceId ?? (var
 param hubVnetPeeringDefinition hubVnetPeeringDefinitionType?
 
 // 6.1 Hub VNet Peering Configuration
-var varDeployHubPeering = hubVnetPeeringDefinition != null && !empty(hubVnetPeeringDefinition.?peerVnetResourceId)
+// Platform Landing Zone (Model B): workload deployments typically do not have permissions on the hub VNet / hub RG.
+// In PLZ mode, we allow creating ONLY the spoke-side peering (workload scope) and never attempt hub-side reverse peering.
+var varWantsHubPeering = hubVnetPeeringDefinition != null && !empty(hubVnetPeeringDefinition.?peerVnetResourceId)
+var varDeploySpokeToHubPeering = varWantsHubPeering
+var varDeployHubToSpokePeering = !varIsPlatformLz && varWantsHubPeering && (hubVnetPeeringDefinition.?createReversePeering ?? true)
 
 // Parse hub VNet resource ID
-var varHubPeerVnetId = varDeployHubPeering ? hubVnetPeeringDefinition!.peerVnetResourceId! : ''
+var varHubPeerVnetId = varWantsHubPeering ? hubVnetPeeringDefinition!.peerVnetResourceId! : ''
 var varHubPeerParts = split(varHubPeerVnetId, '/')
-var varHubPeerSub = varDeployHubPeering && length(varHubPeerParts) >= 3
+var varHubPeerSub = varWantsHubPeering && length(varHubPeerParts) >= 3
   ? varHubPeerParts[2]
   : subscription().subscriptionId
-var varHubPeerRg = varDeployHubPeering && length(varHubPeerParts) >= 5 ? varHubPeerParts[4] : resourceGroup().name
-var varHubPeerVnetName = varDeployHubPeering && length(varHubPeerParts) >= 9 ? varHubPeerParts[8] : ''
+var varHubPeerRg = varWantsHubPeering && length(varHubPeerParts) >= 5 ? varHubPeerParts[4] : resourceGroup().name
+var varHubPeerVnetName = varWantsHubPeering && length(varHubPeerParts) >= 9 ? varHubPeerParts[8] : ''
 
 // 6.2 Spoke VNet with Peering
-module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = if (varDeployHubPeering && varDeployVnet) {
+module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = if (varDeploySpokeToHubPeering && varDeployVnet) {
   name: 'm-spoke-vnet-peering'
   params: {
     vnet: union(
@@ -1444,8 +1458,36 @@ module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = i
   }
 }
 
+// Spoke-to-hub peering when reusing an existing spoke VNet
+module spokeToHubPeering './components/vnet-peering/main.bicep' = if (varDeploySpokeToHubPeering && !varDeployVnet && !varIsCrossScope && !empty(varSpokeVnetNameForPeering)) {
+  name: 'm-spoke-to-hub-peering'
+  params: {
+    localVnetName: varSpokeVnetNameForPeering
+    remotePeeringName: hubVnetPeeringDefinition!.?name ?? 'to-hub'
+    remoteVirtualNetworkResourceId: varHubPeerVnetId
+    allowVirtualNetworkAccess: hubVnetPeeringDefinition!.?allowVirtualNetworkAccess ?? true
+    allowForwardedTraffic: hubVnetPeeringDefinition!.?allowForwardedTraffic ?? true
+    allowGatewayTransit: hubVnetPeeringDefinition!.?allowGatewayTransit ?? false
+    useRemoteGateways: hubVnetPeeringDefinition!.?useRemoteGateways ?? false
+  }
+}
+
+module spokeToHubPeeringCrossScope './components/vnet-peering/main.bicep' = if (varDeploySpokeToHubPeering && !varDeployVnet && varIsCrossScope && !empty(varSpokeVnetNameForPeering)) {
+  name: 'm-spoke-to-hub-peering-cross-scope'
+  scope: resourceGroup(varExistingVNetSubscriptionId, varExistingVNetResourceGroupName)
+  params: {
+    localVnetName: varSpokeVnetNameForPeering
+    remotePeeringName: hubVnetPeeringDefinition!.?name ?? 'to-hub'
+    remoteVirtualNetworkResourceId: varHubPeerVnetId
+    allowVirtualNetworkAccess: hubVnetPeeringDefinition!.?allowVirtualNetworkAccess ?? true
+    allowForwardedTraffic: hubVnetPeeringDefinition!.?allowForwardedTraffic ?? true
+    allowGatewayTransit: hubVnetPeeringDefinition!.?allowGatewayTransit ?? false
+    useRemoteGateways: hubVnetPeeringDefinition!.?useRemoteGateways ?? false
+  }
+}
+
 // 6.3 Hub-to-Spoke Reverse Peering
-module hubToSpokePeering './components/vnet-peering/main.bicep' = if (varDeployHubPeering && (hubVnetPeeringDefinition!.?createReversePeering ?? true)) {
+module hubToSpokePeering './components/vnet-peering/main.bicep' = if (varDeployHubToSpokePeering) {
   name: 'm-hub-to-spoke-peering'
   scope: resourceGroup(varHubPeerSub, varHubPeerRg)
   params: {
@@ -1537,7 +1579,7 @@ module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varAppConfigPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varAppConfigPrivateDnsZoneResourceId)) ? {
           name: 'appConfigDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1588,7 +1630,7 @@ module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = i
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varApimPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varApimPrivateDnsZoneResourceId)) ? {
           name: 'apimDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1628,7 +1670,7 @@ module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoin
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varContainerAppsPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varContainerAppsPrivateDnsZoneResourceId)) ? {
           name: 'ccaDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1671,7 +1713,7 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varAcrPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varAcrPrivateDnsZoneResourceId)) ? {
           name: 'acrDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1715,7 +1757,7 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varBlobPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varBlobPrivateDnsZoneResourceId)) ? {
           name: 'blobDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1753,7 +1795,7 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varCosmosSqlPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varCosmosSqlPrivateDnsZoneResourceId)) ? {
           name: 'cosmosDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1791,7 +1833,7 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varSearchPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varSearchPrivateDnsZoneResourceId)) ? {
           name: 'searchDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -1837,7 +1879,7 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
             }
           }
         ]
-        privateDnsZoneGroup: !empty(varKeyVaultPrivateDnsZoneResourceId) ? {
+        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varKeyVaultPrivateDnsZoneResourceId)) ? {
           name: 'kvDnsZoneGroup'
           privateDnsZoneGroupConfigs: [
             {
@@ -2439,6 +2481,7 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
 
     // Private networking integration
     deployPrivateEndpointsAndDns: varDeployPrivateEndpoints
+    configurePrivateDns: !varIsPlatformLz
     existingDnsZones: varAiFoundryExistingDnsZones
 
     // Control whether the component creates associated resources and/or capability hosts (agent service)
@@ -3163,7 +3206,7 @@ output firewallPublicIpResourceId string = firewallPublicIpResourceId
 
 // VNet Peering Outputs
 @description('Hub to Spoke peering resource ID (if hub peering is enabled).')
-output hubToSpokePeeringResourceId string = varDeployHubPeering && (hubVnetPeeringDefinition!.?createReversePeering ?? true)
+output hubToSpokePeeringResourceId string = varDeployHubToSpokePeering
   ? hubToSpokePeering!.outputs.peeringResourceId
   : ''
 

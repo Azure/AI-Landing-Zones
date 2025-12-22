@@ -76,3 +76,14 @@ param flagPlatformLandingZone = false
 //
 // param firewallPrivateIp = ''
 // param appGatewayInternetRoutingException = false
+
+// -----------------------------------------------------------------------------
+// OPTIONAL: Microsoft Defender for AI (subscription-scoped)
+// -----------------------------------------------------------------------------
+// WARNING:
+// - This configures Defender for Cloud pricing at subscription scope via `Microsoft.Security/pricings`.
+// - Requires subscription-level permissions (typically Subscription Owner, or equivalent Security admin permissions).
+// - Keep disabled by default to avoid deployments failing in restricted subscriptions.
+//
+// To enable:
+// param enableDefenderForAI = true

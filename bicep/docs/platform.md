@@ -24,12 +24,25 @@ The goal of Platform mode is to align with the common hub/spoke split:
 
 - Private Endpoints: **created** (in the workload VNet)
 - Private DNS Zones: **not created** by this template
-- You should provide the Platform Landing Zone Private DNS Zone resource IDs via `privateDnsZonesDefinition.*ZoneId`
+
+Important (hub/spoke split and permissions):
+
+- This template can create **spoke → hub** VNet peering in Platform mode (because it only requires permissions on the workload/spoke VNet).
+- This template does **not** create the **hub → spoke** reverse peering in Platform mode.
+- This template does **not** configure Private Endpoint **Private DNS Zone Groups** in Platform mode.
+
+In other words: the workload deployment should not need (and usually should not have) permissions on platform-owned resources (hub VNet, shared Private DNS Zones).
+
+If you provide the Platform Private DNS Zone IDs via `privateDnsZonesDefinition.*ZoneId`, they are used for outputs/visibility only in Platform mode (the workload deployment will not attempt to join them).
 
 Important:
 
 - This template does **not** create Private DNS Zone **virtual network links** in Platform mode.
 - The Platform Landing Zone must already link the shared zones to the workload VNet (or you must link them via a separate process with permissions on the zones).
+
+Additionally:
+
+- The Platform Landing Zone must establish hub↔spoke **peering** (or equivalent connectivity) before forced tunneling via UDR will work.
 
 This matches the typical hub/spoke model:
 
@@ -56,8 +69,8 @@ Common zone IDs used by this repo:
 
 Notes:
 
-- If a zone ID is not provided, the corresponding Private Endpoint can still be created, but **DNS zone-group configuration for that endpoint is skipped**.
-  - In that case, name resolution will only work if you have another DNS solution (custom DNS, conditional forwarders, etc.).
+- Standalone mode: if a zone ID is not provided, the corresponding Private Endpoint can still be created, but DNS zone-group configuration for that endpoint is skipped.
+- Platform mode: DNS zone-group configuration is always skipped by the workload template; name resolution requires a platform DNS pattern (zone groups managed by platform, Private DNS Resolver, custom DNS with conditional forwarders, etc.).
 
 ## Private Endpoints (PE)
 
@@ -105,7 +118,12 @@ Defensive behavior:
 ```bicep
 param flagPlatformLandingZone = true
 
-// Use shared Platform Landing Zone Private DNS Zones
+// Optional: create the spoke-side peering (spoke → hub). The platform must still create the hub → spoke peering.
+param hubVnetPeeringDefinition = {
+  peerVnetResourceId: '/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/virtualNetworks/<hubVnetName>'
+}
+
+// Optional: provide shared Platform Landing Zone Private DNS Zones (for outputs/visibility)
 param privateDnsZonesDefinition = {
   openaiZoneId: '/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com'
   cognitiveservicesZoneId: '/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com'

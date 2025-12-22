@@ -57,6 +57,7 @@ Each parameter includes information about its type, requirements, default values
     - [cosmosDbDefinition](#cosmosdbdefinition)
     - [cosmosPrivateDnsZoneDefinition](#cosmosprivatednszonedefinition)
     - [cosmosPrivateEndpointDefinition](#cosmosprivateendpointdefinition)
+    - [enableDefenderForAI](#enabledefenderforai)
     - [enableTelemetry](#enabletelemetry)
     - [existingVNetSubnetsDefinition](#existingvnetsubnetsdefinition)
     - [flagPlatformLandingZone](#flagplatformlandingzone)
@@ -5822,6 +5823,12 @@ Each parameter includes information about its type, requirements, default values
 | Parameter | Type | Required | Description |
 | :-- | :-- | :-- | :-- |
 | `enableTelemetry` | `bool` | Optional | Enable/Disable usage telemetry for module. |
+
+### `enableDefenderForAI`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `enableDefenderForAI` | `bool` | Optional | Enable Microsoft Defender for AI by configuring Defender for Cloud pricing at subscription scope (`Microsoft.Security/pricings`). Requires subscription-level permissions. Default is false. |
 
 ### `existingVNetSubnetsDefinition`
 

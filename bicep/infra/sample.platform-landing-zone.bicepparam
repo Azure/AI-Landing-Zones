@@ -83,3 +83,14 @@ param resourceIds = {}
 // 2) Set firewallPrivateIp
 // 3) Optional: set appGatewayInternetRoutingException = true to keep App Gateway v2 subnet using Internet routing
 param firewallPrivateIp = '10.0.0.4'
+
+// -----------------------------------------------------------------------------
+// OPTIONAL: Microsoft Defender for AI (subscription-scoped)
+// -----------------------------------------------------------------------------
+// WARNING:
+// - This configures Defender for Cloud pricing at subscription scope via `Microsoft.Security/pricings`.
+// - Requires subscription-level permissions (typically Subscription Owner, or equivalent Security admin permissions).
+// - Keep disabled by default to avoid deployments failing in restricted subscriptions.
+//
+// To enable:
+// param enableDefenderForAI = true

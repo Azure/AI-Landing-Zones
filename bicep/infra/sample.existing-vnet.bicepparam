@@ -4,6 +4,17 @@ using './main.bicep'
 // This scenario creates the AI Landing Zone subnets inside an existing VNet.
 // NOTE: you must set existingVNetSubnetsDefinition.existingVNetName (and likely ensure the VNet exists in the same subscription/resource group scope).
 
+// -----------------------------------------------------------------------------
+// OPTIONAL: Microsoft Defender for AI (subscription-scoped)
+// -----------------------------------------------------------------------------
+// WARNING:
+// - This configures Defender for Cloud pricing at subscription scope via `Microsoft.Security/pricings`.
+// - Requires subscription-level permissions (typically Subscription Owner, or equivalent Security admin permissions).
+// - Keep disabled by default to avoid deployments failing in restricted subscriptions.
+//
+// To enable:
+// param enableDefenderForAI = true
+
 param deployToggles = {
   // AI
   aiFoundry: true
