@@ -63,7 +63,21 @@ write-host "Installing Python 3.11"
 choco install python311 -y --ignoredetectedreboot --force
 
 Write-Host "Installing AZD..."
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-RestMethod 'https://aka.ms/install-azd.ps1' | Invoke-Expression"
+try {
+    $azdMsiUrl = 'https://github.com/Azure/azure-dev/releases/latest/download/azd-windows-amd64.msi'
+    $azdMsiPath = Join-Path $env:TEMP 'azd-windows-amd64.msi'
+
+    Write-Host "Downloading AZD MSI from GitHub Releases: $azdMsiUrl"
+    Invoke-WebRequest -Uri $azdMsiUrl -OutFile $azdMsiPath -UseBasicParsing
+
+    Write-Host "Installing AZD MSI..."
+    Start-Process "msiexec.exe" -ArgumentList "/i `"$azdMsiPath`" /quiet /norestart" -NoNewWindow -Wait
+
+    Remove-Item -Force $azdMsiPath -ErrorAction SilentlyContinue
+} catch {
+    Write-Host "ERROR: AZD installation failed: $_" -ForegroundColor Red
+    throw
+}
 
 Write-Host "Searching for installed AZD executable..."
 

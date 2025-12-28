@@ -200,7 +200,7 @@ param firewallPolicyDefinition = {
       priority: 110
       ruleCollections: [
         {
-          name: 'rc-allow-foundry-agent'
+          name: 'rc-allow-foundry-agent-network'
           priority: 100
           ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
           action: {
@@ -296,6 +296,16 @@ param firewallPolicyDefinition = {
                 '*'
               ]
             }
+          ]
+        }
+        {
+          name: 'rc-allow-foundry-agent-app'
+          priority: 110
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
             {
               name: 'allow-aca-platform-fqdns'
               ruleType: 'ApplicationRule'

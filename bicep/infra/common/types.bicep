@@ -808,6 +808,8 @@ type vmDefinitionType = {
   publicKeys: array?
   
   // Jump VM specific properties
+  @description('Optional. When true (default), runs the Jump VM Custom Script Extension to download and execute bicep/infra/install.ps1 (Jump VM only).')
+  enableAutoInstall: bool?
   @description('Optional. Resource ID of the maintenance configuration (Jump VM only).')
   maintenanceConfigurationResourceId: string?
   @description('Optional. Patch mode for the VM (Jump VM only).')

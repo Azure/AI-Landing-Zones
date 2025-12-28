@@ -187,7 +187,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
     priority: 100
     ruleCollections: [
       {
-        name: 'AllowFoundryAgentEgress'
+        name: 'AllowFoundryAgentEgressNetwork'
         priority: 100
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
@@ -271,8 +271,18 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               '*'
             ]
           }
+        ]
+      }
+      {
+        name: 'AllowFoundryAgentEgressApp'
+        priority: 110
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        action: {
+          type: 'Allow'
+        }
+        rules: [
           {
-            name: 'allow-aca-platform-fqdns'
+            name: 'allow-bootstrap-fqdns'
             ruleType: 'ApplicationRule'
             sourceAddresses: [
               '10.0.0.0/8'
@@ -286,6 +296,19 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               }
             ]
             targetFqdns: [
+              // CSE downloads + repo clone
+              'raw.githubusercontent.com'
+              '*.githubusercontent.com'
+              'github.com'
+
+              // Chocolatey bootstrap + package downloads (used by install.ps1)
+              'community.chocolatey.org'
+              'chocolatey.org'
+              'packages.chocolatey.org'
+
+              // WSL update MSI (used by install.ps1)
+              'wslstorestorage.blob.${environment().suffixes.storage}'
+
               'mcr.microsoft.com'
               '*.data.mcr.microsoft.com'
               'packages.aks.azure.com'
@@ -427,7 +450,7 @@ resource testVm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
 }
 
 var testVmInstallFileUris = [
-  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/fix/issue-63/bicep/infra/install.ps1'
+  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/fix/issue-63/bicep/infra/install.ps1'
 ]
 
 resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {

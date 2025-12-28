@@ -3259,10 +3259,10 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
 }
 
 var jumpVmInstallFileUris = [
-  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/fix/issue-63/bicep/infra/install.ps1'
+  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/fix/issue-63/bicep/infra/install.ps1'
 ]
 
-resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = if (varDeployJumpVm) {
+resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = if (varDeployJumpVm && (jumpVmDefinition.?enableAutoInstall ?? true)) {
   name: '${varJumpVmName}/cse'
   location: location
   properties: {
