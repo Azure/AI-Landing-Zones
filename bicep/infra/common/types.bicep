@@ -1545,7 +1545,7 @@ type existingVNetSubnetsDefinitionType = {
     serviceEndpointPolicies: array?
 
     @description('Optional. Service endpoints enabled on the subnet.')
-    serviceEndpoints: array?
+    serviceEndpoints: string[]?
 
     @description('Optional. Sharing scope for the subnet.')
     sharingScope: 'DelegatedServices' | 'Tenant'?
@@ -1780,7 +1780,7 @@ type vNetDefinitionType = {
     serviceEndpointPolicies: array?
 
     @description('Optional. Service endpoints enabled on the subnet.')
-    serviceEndpoints: array?
+    serviceEndpoints: string[]?
 
     @description('Optional. Sharing scope for the subnet. Allowed values: DelegatedServices, Tenant.')
     sharingScope: 'DelegatedServices' | 'Tenant'?

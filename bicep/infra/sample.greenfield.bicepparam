@@ -1,89 +1,271 @@
 using './main.bicep'
 
-// Greenfield — full new and isolated deployment.
+// Greenfield (standalone): creates a new, isolated workload environment.
 
 param deployToggles = {
-  // AI
   aiFoundry: true
-
-  // OBSERVABILITY - Monitoring
   logAnalytics: true
   appInsights: true
-
-  // NETWORKING - Virtual Network
   virtualNetwork: true
-
-  // NETWORKING - Network Security Groups
   peNsg: true
   agentNsg: false
   acaEnvironmentNsg: false
   apiManagementNsg: false
   applicationGatewayNsg: false
-  jumpboxNsg: false
+  jumpboxNsg: true
   devopsBuildAgentsNsg: false
-  bastionNsg: false
-
-  // SECURITY - Key Management & Storage
+  bastionNsg: true
   keyVault: true
   storageAccount: true
-
-  // DATA - Databases
   cosmosDb: false
-
-  // DATA - Search & Knowledge
   searchService: false
   groundingWithBingSearch: false
-
-  // COMPUTE - Container Infrastructure
   containerRegistry: false
   containerEnv: false
   containerApps: false
-
-  // COMPUTE - Virtual Machines
   buildVm: false
-  jumpVm: false
-  bastionHost: false
-
-  // GOVERNANCE - Configuration & Management
+  jumpVm: true
+  bastionHost: true
   appConfig: false
   apiManagement: false
-
-  // NETWORKING - Gateways & Security
   applicationGateway: false
   applicationGatewayPublicIp: false
   wafPolicy: false
-  firewall: false
-  userDefinedRoutes: false
+  firewall: true
+  userDefinedRoutes: true
 }
 
 param resourceIds = {}
 
 param flagPlatformLandingZone = false
 
-// -----------------------------------------------------------------------------
-// OPTIONAL: UDR to spoke firewall (Standalone)
-// -----------------------------------------------------------------------------
-// When enabled, creates a Route Table with a default route (0.0.0.0/0) pointing
-// to a firewall/NVA in the spoke VNet and associates it to key workload subnets.
-//
-// IMPORTANT:
-// - Only enable this if you have a valid next hop.
-// - Either deploy a firewall via deployToggles.firewall=true OR reuse an existing firewall,
-//   and set firewallPrivateIp to the firewall/NVA private IP.
-//
-// To enable:
-// 1) In deployToggles above, set: userDefinedRoutes: true
-// 2) Set firewallPrivateIp
-// 3) Optional: set appGatewayInternetRoutingException = true to keep App Gateway v2 subnet using Internet routing
-// param firewallPrivateIp = '192.168.0.132'
+// Required for forced tunneling: Azure Firewall private IP (next hop).
+// With the default subnet layout, Azure Firewall is assigned the first usable IP in AzureFirewallSubnet (192.168.0.128/26) => 192.168.0.132.
+param firewallPrivateIp = '192.168.0.132'
 
-// -----------------------------------------------------------------------------
-// OPTIONAL: Microsoft Defender for AI (subscription-scoped)
-// -----------------------------------------------------------------------------
-// WARNING:
-// - This configures Defender for Cloud pricing at subscription scope via `Microsoft.Security/pricings`.
-// - Requires subscription-level permissions (typically Subscription Owner, or equivalent Security admin permissions).
-// - Keep disabled by default to avoid deployments failing in restricted subscriptions.
-//
-// To enable:
+// Default egress for Jump VM (jumpbox-subnet) via Azure Firewall Policy.
+// - DNS to Azure DNS (168.63.129.16) on TCP/UDP 53
+// - Web to internet on TCP 80/443
+param firewallPolicyDefinition = {
+  name: 'afwp-sample'
+  ruleCollectionGroups: [
+    {
+      name: 'rcg-jumpbox-egress'
+      priority: 100
+      ruleCollections: [
+        {
+          name: 'rc-allow-dns'
+          priority: 100
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-azure-dns-udp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'UDP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/28'
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-azure-dns-tcp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/28'
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+          ]
+        }
+        {
+          name: 'rc-allow-web'
+          priority: 200
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-https-out'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/28'
+              ]
+              destinationAddresses: [
+                '*'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-http-out'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/28'
+              ]
+              destinationAddresses: [
+                '*'
+              ]
+              destinationPorts: [
+                '80'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    {
+      name: 'rcg-foundry-agent-egress'
+      priority: 110
+      ruleCollections: [
+        {
+          name: 'rc-allow-foundry-agent'
+          priority: 100
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-azure-dns-udp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'UDP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-azure-dns-tcp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-azuread-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureActiveDirectory'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-mcr-and-afd-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'MicrosoftContainerRegistry'
+                'AzureFrontDoorFirstParty'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-foundry-agent-infra-private'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'Any'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '10.0.0.0/8'
+                '172.16.0.0/12'
+                '192.168.0.0/16'
+                '100.64.0.0/10'
+              ]
+              destinationPorts: [
+                '*'
+              ]
+            }
+            {
+              name: 'allow-aca-platform-fqdns'
+              ruleType: 'ApplicationRule'
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              protocols: [
+                {
+                  protocolType: 'Https'
+                  port: 443
+                }
+              ]
+              targetFqdns: [
+                'mcr.microsoft.com'
+                '*.data.mcr.microsoft.com'
+                'packages.aks.azure.com'
+                'acs-mirror.azureedge.net'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+// Optional (subscription-scoped): enable Defender for AI pricing.
 // param enableDefenderForAI = true

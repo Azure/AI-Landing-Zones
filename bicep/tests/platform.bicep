@@ -44,17 +44,26 @@ var firewallRuleCollectionGroupName = 'rcg-allow-egress'
 var bastionName = 'bas-ai-lz-hub'
 var bastionPipName = 'pip-ai-lz-bastion'
 
+var hubUdrName = 'udr-ai-lz-hub'
+
 // Windows computerName has a 15 character limit.
 var testVmName = 'vm-ailz-hubtst'
 var testVmNicName = '${testVmName}-nic'
 var vmNsgName = 'nsg-${hubVmSubnetName}'
 
+// Deterministic short token used by the install script for AZD env naming.
+var resourceToken = toLower(substring(uniqueString(resourceGroup().id), 0, 6))
+
 var privateDnsZoneNames = [
   'privatelink.blob.${environment().suffixes.storage}'
+  'privatelink.file.${environment().suffixes.storage}'
   'privatelink.vaultcore.azure.net'
   'privatelink.azurecr.io'
   'privatelink.cognitiveservices.azure.com'
   'privatelink.openai.azure.com'
+  'privatelink.services.ai.azure.com'
+  'privatelink.search.windows.net'
+  'privatelink.documents.azure.com'
 ]
 
 resource hubVnet 'Microsoft.Network/virtualNetworks@2024-05-01' = {
@@ -114,6 +123,24 @@ resource hubVmNsg 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
   }
 }
 
+resource hubUdr 'Microsoft.Network/routeTables@2023-11-01' = {
+  name: hubUdrName
+  location: location
+  properties: {
+    disableBgpRoutePropagation: true
+    routes: [
+      {
+        name: 'default-to-hub-firewall'
+        properties: {
+          addressPrefix: '0.0.0.0/0'
+          nextHopType: 'VirtualAppliance'
+          nextHopIpAddress: azureFirewall.properties.ipConfigurations[0].properties.privateIPAddress
+        }
+      }
+    ]
+  }
+}
+
 resource hubVmSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' = {
   parent: hubVnet
   name: hubVmSubnetName
@@ -121,6 +148,9 @@ resource hubVmSubnet 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' = {
     addressPrefix: hubVmSubnetCidr
     networkSecurityGroup: {
       id: hubVmNsg.id
+    }
+    routeTable: {
+      id: hubUdr.id
     }
   }
   dependsOn: [
@@ -157,7 +187,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
     priority: 100
     ruleCollections: [
       {
-        name: 'AllowAllOutbound'
+        name: 'AllowFoundryAgentEgress'
         priority: 100
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
@@ -165,7 +195,63 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
         }
         rules: [
           {
-            name: 'allow-all-outbound'
+            name: 'allow-azure-dns'
+            ruleType: 'NetworkRule'
+            ipProtocols: [
+              'TCP'
+              'UDP'
+            ]
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            destinationAddresses: [
+              '168.63.129.16'
+            ]
+            destinationPorts: [
+              '53'
+            ]
+          }
+          {
+            name: 'allow-azuread-https'
+            ruleType: 'NetworkRule'
+            ipProtocols: [
+              'TCP'
+            ]
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            destinationAddresses: [
+              'AzureActiveDirectory'
+            ]
+            destinationPorts: [
+              '443'
+            ]
+          }
+          {
+            name: 'allow-mcr-and-afd-https'
+            ruleType: 'NetworkRule'
+            ipProtocols: [
+              'TCP'
+            ]
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            destinationAddresses: [
+              'MicrosoftContainerRegistry'
+              'AzureFrontDoorFirstParty'
+            ]
+            destinationPorts: [
+              '443'
+            ]
+          }
+          {
+            name: 'allow-foundry-agent-infra-private'
             ruleType: 'NetworkRule'
             ipProtocols: [
               'Any'
@@ -176,10 +262,34 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               '192.168.0.0/16'
             ]
             destinationAddresses: [
-              '*'
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+              '100.64.0.0/10'
             ]
             destinationPorts: [
               '*'
+            ]
+          }
+          {
+            name: 'allow-aca-platform-fqdns'
+            ruleType: 'ApplicationRule'
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            protocols: [
+              {
+                protocolType: 'Https'
+                port: 443
+              }
+            ]
+            targetFqdns: [
+              'mcr.microsoft.com'
+              '*.data.mcr.microsoft.com'
+              'packages.aks.azure.com'
+              'acs-mirror.azureedge.net'
             ]
           }
         ]
@@ -312,6 +422,27 @@ resource testVm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
           }
         }
       ]
+    }
+  }
+}
+
+var testVmInstallFileUris = [
+  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/fix/issue-63/bicep/infra/install.ps1'
+]
+
+resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
+  parent: testVm
+  name: 'cse'
+  location: location
+  properties: {
+    publisher: 'Microsoft.Compute'
+    type: 'CustomScriptExtension'
+    typeHandlerVersion: '1.10'
+    autoUpgradeMinorVersion: true
+    forceUpdateTag: 'alwaysRun'
+    settings: {
+      fileUris: testVmInstallFileUris
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release fix/issue-63 -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
     }
   }
 }

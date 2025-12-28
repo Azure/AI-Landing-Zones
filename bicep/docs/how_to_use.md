@@ -26,10 +26,13 @@
    az login
    ```
 
+> [!NOTE]
+> Replace `RANDOM_SUFFIX` with a unique value (for example a timestamp or a short random number) to avoid name collisions.
+
 2. **Create the resource group** where you're gonna deploy the AI Landing Zone Resources
 
    ```bash
-   az group create --name "rg-aiml-dev" --location "eastus2"
+   az group create --name "rg-ai-lz-RANDOM_SUFFIX" --location "eastus2"
    ```
 
 3. **Initialize the project**
@@ -37,7 +40,7 @@
    In an empty folder (e.g., `deploy`), run:
 
    ```bash
-   azd init -t Azure/AI-Landing-Zones -e aiml-dev
+   azd init -t Azure/AI-Landing-Zones -e ai-lz-RANDOM_SUFFIX
    ```
 
 4. **Set environment variables** `AZURE_LOCATION`, `AZURE_RESOURCE_GROUP`, `AZURE_SUBSCRIPTION_ID`.
@@ -46,7 +49,7 @@
 
 ```bash
 export AZURE_LOCATION="eastus2"
-export AZURE_RESOURCE_GROUP="rg-aiml-dev"
+export AZURE_RESOURCE_GROUP="rg-ai-lz-RANDOM_SUFFIX"
 export AZURE_SUBSCRIPTION_ID="00000000-1111-2222-3333-444444444444"
 ```
 
@@ -54,7 +57,7 @@ export AZURE_SUBSCRIPTION_ID="00000000-1111-2222-3333-444444444444"
 
 ```powershell
 $env:AZURE_LOCATION = "eastus2"
-$env:AZURE_RESOURCE_GROUP = "rg-aiml-dev"
+$env:AZURE_RESOURCE_GROUP = "rg-ai-lz-RANDOM_SUFFIX"
 $env:AZURE_SUBSCRIPTION_ID = "00000000-1111-2222-3333-444444444444"
 ```
 

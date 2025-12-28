@@ -41,19 +41,21 @@ resource deployedSubnets 'Microsoft.Network/virtualNetworks/subnets@2023-11-01' 
         }
       }
     ] : []
-    natGateway: subnet.?natGatewayResourceId != null ? {
+    natGateway: !empty(subnet.?natGatewayResourceId ?? '') ? {
       id: subnet.natGatewayResourceId
     } : null
-    networkSecurityGroup: subnet.?networkSecurityGroupResourceId != null ? {
+    networkSecurityGroup: !empty(subnet.?networkSecurityGroupResourceId ?? '') ? {
       id: subnet.networkSecurityGroupResourceId
     } : null
     privateEndpointNetworkPolicies: subnet.?privateEndpointNetworkPolicies
     privateLinkServiceNetworkPolicies: subnet.?privateLinkServiceNetworkPolicies
-    routeTable: subnet.?routeTableResourceId != null ? {
+    routeTable: !empty(subnet.?routeTableResourceId ?? '') ? {
       id: subnet.routeTableResourceId
     } : null
     serviceEndpointPolicies: subnet.?serviceEndpointPolicies
-    serviceEndpoints: subnet.?serviceEndpoints
+    serviceEndpoints: [for serviceName in (subnet.?serviceEndpoints ?? []): {
+      service: serviceName
+    }]
     sharingScope: subnet.?sharingScope
   }
 }]

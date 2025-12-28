@@ -1442,6 +1442,7 @@ module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = i
         addressPrefixes: ['192.168.0.0/22']
         location: location
         enableTelemetry: enableTelemetry
+        subnets: vNetDefinition.?subnets ?? varDefaultSpokeSubnets
         peerings: [
           {
             name: hubVnetPeeringDefinition!.?name ?? 'to-hub'
@@ -1453,7 +1454,7 @@ module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = i
           }
         ]
       },
-      hubVnetPeeringDefinition ?? {}
+      vNetDefinition ?? {}
     )
   }
 }
@@ -1592,6 +1593,10 @@ module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep
       appConfigPrivateEndpointDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+  ]
 }
 
 // 7.2. API Management Private Endpoint
@@ -1643,6 +1648,10 @@ module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = i
       apimPrivateEndpointDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+  ]
 }
 
 // 7.3. Container Apps Environment Private Endpoint
@@ -1686,6 +1695,8 @@ module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoin
   dependsOn: [
     #disable-next-line BCP321
     varDeployContainerAppEnv ? containerEnv : null
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
   ]
 
 }
@@ -1729,6 +1740,8 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
   dependsOn: [
     #disable-next-line BCP321
     (varDeployAcr) ? containerRegistry : null
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
   ]
 }
 
@@ -1770,6 +1783,10 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
       storageBlobPrivateEndpointDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+  ]
 }
 
 // 7.6. Cosmos DB (SQL) Private Endpoint
@@ -1808,6 +1825,10 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
       cosmosPrivateEndpointDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+  ]
 }
 
 // 7.7. Azure AI Search Private Endpoint
@@ -1853,6 +1874,8 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
     (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
   ]
 }
 
@@ -1892,6 +1915,10 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
       keyVaultPrivateEndpointDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+  ]
 }
 
 // -----------------------
@@ -2948,11 +2975,11 @@ var varUdrSubnetDefinitions = [
   }
 ]
 
-module udrSubnetAssociation './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
-  name: 'm-udr-subnet-association'
+module udrSubnetAssociation01 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association-01'
   params: {
     existingVNetName: virtualNetworkResourceId
-    subnets: varUdrSubnetDefinitions
+    subnets: [varUdrSubnetDefinitions[0]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
   dependsOn: [
@@ -2962,6 +2989,66 @@ module udrSubnetAssociation './helpers/deploy-subnets-to-vnet/main.bicep' = if (
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
+  ]
+}
+
+module udrSubnetAssociation02 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association-02'
+  params: {
+    existingVNetName: virtualNetworkResourceId
+    subnets: [varUdrSubnetDefinitions[1]]
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
+  }
+  dependsOn: [
+    udrSubnetAssociation01
+  ]
+}
+
+module udrSubnetAssociation03 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association-03'
+  params: {
+    existingVNetName: virtualNetworkResourceId
+    subnets: [varUdrSubnetDefinitions[2]]
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
+  }
+  dependsOn: [
+    udrSubnetAssociation02
+  ]
+}
+
+module udrSubnetAssociation04 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association-04'
+  params: {
+    existingVNetName: virtualNetworkResourceId
+    subnets: [varUdrSubnetDefinitions[3]]
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
+  }
+  dependsOn: [
+    udrSubnetAssociation03
+  ]
+}
+
+module udrSubnetAssociation05 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association-05'
+  params: {
+    existingVNetName: virtualNetworkResourceId
+    subnets: [varUdrSubnetDefinitions[4]]
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
+  }
+  dependsOn: [
+    udrSubnetAssociation04
+  ]
+}
+
+module udrSubnetAssociation06 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
+  name: 'm-udr-subnet-association-06'
+  params: {
+    existingVNetName: virtualNetworkResourceId
+    subnets: [varUdrSubnetDefinitions[5]]
+    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
+  }
+  dependsOn: [
+    udrSubnetAssociation05
   ]
 }
 
@@ -3087,9 +3174,12 @@ param vmImageVersion string = 'latest'
 
 var varDeployJumpVm = deployToggles.?jumpVm ?? false
 var varJumpVmMaintenanceConfigured = varDeployJumpVm && (jumpVmMaintenanceDefinition != null)
+var varJumpVmName = empty(jumpVmDefinition.?name ?? '')
+  ? 'vm-${substring(baseName, 0, 6)}-jmp'
+  : (jumpVmDefinition.?name ?? 'vm-${substring(baseName, 0, 6)}-jmp')
 var varJumpSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
-  ? '${virtualNetworkResourceId}/subnets/agent-subnet'
-  : '${resourceIds.virtualNetworkResourceId!}/subnets/agent-subnet'
+  ? '${virtualNetworkResourceId}/subnets/jumpbox-subnet'
+  : '${resourceIds.virtualNetworkResourceId!}/subnets/jumpbox-subnet'
 
 module jumpVmMaintenanceConfiguration 'wrappers/avm.res.maintenance.maintenance-configuration.bicep' = if (varJumpVmMaintenanceConfigured) {
   name: 'jumpVmMaintenanceConfigurationDeployment-${varUniqueSuffix}'
@@ -3111,7 +3201,7 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
     jumpVm: union(
       {
         // Required parameters
-        name: 'vm-${substring(baseName, 0, 6)}-jmp' // Shorter name to avoid Windows 15-char limit
+        name: varJumpVmName // Shorter name to avoid Windows 15-char limit
         sku: vmSize
         adminUsername: 'azureuser'
         osType: 'Windows'
@@ -3122,6 +3212,10 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
           version: vmImageVersion
         }
         encryptionAtHost: false
+        managedIdentities: {
+          systemAssigned: true
+          userAssignedResourceIds: []
+        }
         // Auto-generated random password
         adminPassword: jumpVmAdminPassword
         nicConfigurations: [
@@ -3161,6 +3255,29 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
   dependsOn: [
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+  ]
+}
+
+var jumpVmInstallFileUris = [
+  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/fix/issue-63/bicep/infra/install.ps1'
+]
+
+resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = if (varDeployJumpVm) {
+  name: '${varJumpVmName}/cse'
+  location: location
+  properties: {
+    publisher: 'Microsoft.Compute'
+    type: 'CustomScriptExtension'
+    typeHandlerVersion: '1.10'
+    autoUpgradeMinorVersion: true
+    forceUpdateTag: 'alwaysRun'
+    settings: {
+      fileUris: jumpVmInstallFileUris
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release fix/issue-63 -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
+    }
+  }
+  dependsOn: [
+    jumpVm
   ]
 }
 
