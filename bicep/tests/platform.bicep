@@ -317,6 +317,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
 
               // Azure CLI
               'azurecliprod.blob.${environment().suffixes.storage}'
+              'azcliprod.blob.${environment().suffixes.storage}'
 
               // Python
               'www.python.org'
