@@ -3172,6 +3172,9 @@ param vmImageOffer string = 'windows-11'
 @description('Image version (use latest unless you need a pinned build).')
 param vmImageVersion string = 'latest'
 
+@description('Optional. Cache-busting tag for the Jump VM Custom Script Extension. Defaults to a new GUID each deployment to force re-run.')
+param jumpVmCseForceUpdateTag string = newGuid()
+
 var varDeployJumpVm = deployToggles.?jumpVm ?? false
 var varJumpVmMaintenanceConfigured = varDeployJumpVm && (jumpVmMaintenanceDefinition != null)
 var varJumpVmName = empty(jumpVmDefinition.?name ?? '')
@@ -3270,7 +3273,7 @@ resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = i
     type: 'CustomScriptExtension'
     typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
-    forceUpdateTag: 'alwaysRun'
+    forceUpdateTag: jumpVmCseForceUpdateTag
     settings: {
       fileUris: jumpVmInstallFileUris
       commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release fix/issue-63 -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'

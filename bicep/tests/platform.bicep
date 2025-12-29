@@ -9,6 +9,9 @@ param adminUsername string = 'azureuser'
 @description('Admin password for the test VM.')
 param adminPassword string
 
+@description('Optional. Cache-busting tag for the VM Custom Script Extension. Defaults to a new GUID each deployment to force re-run.')
+param testVmCseForceUpdateTag string = newGuid()
+
 @description('Size of the test VM')
 param vmSize string = 'Standard_D8s_v5'
 
@@ -187,7 +190,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
     priority: 100
     ruleCollections: [
       {
-        name: 'AllowFoundryAgentEgressNetwork'
+        name: 'AllowAILandingZoneNetwork'
         priority: 100
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
@@ -274,7 +277,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
         ]
       }
       {
-        name: 'AllowFoundryAgentEgressApp'
+        name: 'AllowAILandingZoneApp'
         priority: 110
         ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
         action: {
@@ -305,6 +308,31 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               'community.chocolatey.org'
               'chocolatey.org'
               'packages.chocolatey.org'
+
+              // Common Chocolatey package payload sources (used by install.ps1)
+              // VS Code
+              'update.code.visualstudio.com'
+              'vscode.download.prss.microsoft.com'
+              'az764295.vo.msecnd.net'
+
+              // Azure CLI
+              'azurecliprod.blob.${environment().suffixes.storage}'
+
+              // Python
+              'www.python.org'
+              'python.org'
+
+              // Docker Desktop
+              'desktop.docker.com'
+              'download.docker.com'
+
+              // TLS revocation/OCSP endpoints (can break downloads if blocked)
+              'crl.microsoft.com'
+              'ocsp.msocsp.com'
+              'www.digicert.com'
+              'ocsp.digicert.com'
+              'crl3.digicert.com'
+              'crl4.digicert.com'
 
               // WSL update MSI (used by install.ps1)
               'wslstorestorage.blob.${environment().suffixes.storage}'
@@ -462,7 +490,7 @@ resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
     type: 'CustomScriptExtension'
     typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
-    forceUpdateTag: 'alwaysRun'
+    forceUpdateTag: testVmCseForceUpdateTag
     settings: {
       fileUris: testVmInstallFileUris
       commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release fix/issue-63 -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
