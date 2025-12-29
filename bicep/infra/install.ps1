@@ -45,6 +45,36 @@ function Invoke-CheckedCommand {
     }
 }
 
+function Invoke-BestEffortCommand {
+    param(
+        [Parameter(Mandatory = $true)] [string] $FilePath,
+        [Parameter(Mandatory = $true)] [string[]] $ArgumentList,
+        [Parameter(Mandatory = $true)] [string] $Description
+    )
+
+    try {
+        Write-Host $Description
+        & $FilePath @ArgumentList
+        if ($LASTEXITCODE -ne 0) {
+            throw "$Description failed (exit code: $LASTEXITCODE)."
+        }
+        return $true
+    } catch {
+        Write-Host "WARNING: $Description failed: $_" -ForegroundColor Yellow
+        try {
+            $chocoLog = Join-Path $env:ProgramData 'chocolatey\logs\chocolatey.log'
+            if (Test-Path $chocoLog) {
+                Write-Host "\n---- Tail of Chocolatey log ($chocoLog) ----" -ForegroundColor Yellow
+                Get-Content -Path $chocoLog -Tail 120 -ErrorAction SilentlyContinue
+                Write-Host "---- End Chocolatey log ----\n" -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Host "WARNING: Failed to dump Chocolatey logs: $_" -ForegroundColor Yellow
+        }
+        return $false
+    }
+}
+
 function Assert-CommandExists {
     param(
         [Parameter(Mandatory = $true)] [string] $CommandName,
@@ -54,6 +84,17 @@ function Assert-CommandExists {
     $cmd = Get-Command $CommandName -ErrorAction SilentlyContinue
     if (-not $cmd) {
         throw "Required tool missing after install: $What (command '$CommandName' not found on PATH)."
+    }
+}
+
+function Assert-PathExists {
+    param(
+        [Parameter(Mandatory = $true)] [string] $Path,
+        [Parameter(Mandatory = $true)] [string] $What
+    )
+
+    if (-not (Test-Path $Path)) {
+        throw "Required component missing after install: $What (expected path not found: $Path)."
     }
 }
 
@@ -92,8 +133,6 @@ try {
     )
 
     Write-Section "Tooling"
-
-    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'vscode', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Visual Studio Code'
 
     Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'azure-cli', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Azure CLI'
     Add-ToPathIfExists -Paths @(
@@ -197,11 +236,12 @@ try {
 
     Write-Section "More Tools (best-effort)"
 
+    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'vscode', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Visual Studio Code'
+    Assert-PathExists -Path 'C:\Program Files\Microsoft VS Code\Code.exe' -What 'Visual Studio Code'
+
     Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'powershell-core', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading PowerShell Core'
     Add-ToPathIfExists -Paths @('C:\Program Files\PowerShell\7')
     Assert-CommandExists -CommandName 'pwsh' -What 'PowerShell Core (pwsh)'
-
-    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'notepadplusplus', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Notepad++'
 
     try {
         Write-Host "Enabling WSL features (best-effort)"
@@ -222,11 +262,8 @@ try {
         Write-Host "WARNING: WSL setup failed: $_" -ForegroundColor Yellow
     }
 
-    try {
-        Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'docker-desktop', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Docker Desktop (best-effort)'
-    } catch {
-        Write-Host "WARNING: Docker Desktop install failed: $_" -ForegroundColor Yellow
-    }
+    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'docker-desktop', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Docker Desktop'
+    Assert-PathExists -Path 'C:\Program Files\Docker\Docker\Docker Desktop.exe' -What 'Docker Desktop'
 
 
     Write-Section "Repo"
