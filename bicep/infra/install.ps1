@@ -37,10 +37,35 @@ function Write-InstallState([string] $message) {
 
 function Save-SelfToPersistentPath {
     try {
-        $self = $MyInvocation.MyCommand.Path
+        New-Item -ItemType Directory -Path $stateRoot -Force | Out-Null
+
+        $self = $null
+        try {
+            if (-not [string]::IsNullOrWhiteSpace($PSCommandPath) -and (Test-Path $PSCommandPath)) {
+                $self = $PSCommandPath
+            }
+        } catch { }
+
+        if ([string]::IsNullOrWhiteSpace($self)) {
+            try {
+                $candidate = $MyInvocation.MyCommand.Path
+                if (-not [string]::IsNullOrWhiteSpace($candidate) -and (Test-Path $candidate)) {
+                    $self = $candidate
+                }
+            } catch { }
+        }
+
         if (-not [string]::IsNullOrWhiteSpace($self) -and (Test-Path $self)) {
             Copy-Item -Path $self -Destination $persistedScriptPath -Force
+            return
         }
+
+        # Fall back to downloading the script from GitHub raw.
+        # This is more reliable in CSE contexts where $PSCommandPath may be empty.
+        $cacheBuster = [Guid]::NewGuid().ToString('N')
+        $rawUrl = "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/$release/bicep/infra/install.ps1?cb=$cacheBuster"
+        Write-InstallState "Persisting install.ps1 by downloading: $rawUrl"
+        Invoke-WebRequest -Uri $rawUrl -OutFile $persistedScriptPath -UseBasicParsing
     } catch {
         Write-Host "WARNING: Failed to persist install.ps1 for post-reboot continuation: $_" -ForegroundColor Yellow
     }
@@ -188,7 +213,7 @@ function Add-ToPathIfExists {
     }
 }
 
-function Ensure-WindowsInstallerAvailable {
+function Enable-WindowsInstallerAvailable {
     try {
         $svc = Get-Service -Name 'msiserver' -ErrorAction SilentlyContinue
         if ($svc) {
@@ -291,7 +316,7 @@ try {
 
     Write-Section "Chocolatey"
     Set-ExecutionPolicy Bypass -Scope Process -Force
-    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
     $chocoExe = Join-Path $env:ProgramData 'chocolatey\bin\choco.exe'
     if (-not (Test-Path $chocoExe)) {
@@ -304,8 +329,6 @@ try {
 
     Write-Section "Tooling"
 
-            'C:\\Program Files\\PowerShell\\7',
-            'C:\\Program Files\\Docker\\Docker\\resources\\bin'
     Add-ToPathIfExists -Paths @(
         'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
         'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
@@ -320,7 +343,7 @@ try {
     Assert-CommandExists -CommandName 'git' -What 'Git'
 
     Write-Host "Ensuring Windows Installer service is available"
-    Ensure-WindowsInstallerAvailable
+    Enable-WindowsInstallerAvailable
 
     $pythonExe = 'C:\Python311\python.exe'
     if (Test-Path $pythonExe) {
@@ -465,11 +488,7 @@ try {
 
     Write-Section "Azure Login (best-effort)"
     Write-Host "Logging into Azure (managed identity)"
-    try {
-        az login --identity | Out-Null
-    } catch {
-        Write-Host "WARNING: 'az login --identity' failed (no managed identity or blocked egress). Continuing." -ForegroundColor Yellow
-    }
+    Invoke-BestEffortCommand -FilePath 'az' -ArgumentList @('login', '--identity', '--allow-no-subscriptions') -Description "az login --identity --allow-no-subscriptions"
 
     Write-Host "Logging into AZD (managed identity)"
     try {

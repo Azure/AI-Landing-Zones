@@ -254,6 +254,25 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
             ]
           }
           {
+            name: 'allow-azure-cloud-https'
+            ruleType: 'NetworkRule'
+            ipProtocols: [
+              'TCP'
+            ]
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            destinationAddresses: [
+              // Broad Azure public-cloud endpoints (helps Azure CLI/AZD avoid TLS failures caused by missing ancillary Azure endpoints).
+              'AzureCloud'
+            ]
+            destinationPorts: [
+              '443'
+            ]
+          }
+          {
             name: 'allow-mcr-and-afd-https'
             ruleType: 'NetworkRule'
             ipProtocols: [
