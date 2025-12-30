@@ -76,26 +76,24 @@ function Register-PostRebootTask {
         [Parameter(Mandatory = $true)] [string] $ScriptPath
     )
 
-    $argList = @(
-        '-ExecutionPolicy', 'Bypass',
-        '-File', ('"' + $ScriptPath + '"'),
-        '-release', ('"' + $release + '"'),
-        '-azureTenantID', ('"' + $azureTenantID + '"'),
-        '-azureSubscriptionID', ('"' + $azureSubscriptionID + '"'),
-        '-AzureResourceGroupName', ('"' + $AzureResourceGroupName + '"'),
-        '-azureLocation', ('"' + $azureLocation + '"'),
-        '-AzdEnvName', ('"' + $AzdEnvName + '"'),
-        '-resourceToken', ('"' + $resourceToken + '"'),
-        '-useUAI', ('"' + $useUAI + '"')
-    )
-
-    $cmd = 'powershell.exe ' + ($argList -join ' ')
+    # schtasks.exe limits the /TR string length (commonly 261 chars).
+    # Stage 2 only needs to finalize WSL/Docker; it does not require all stage-1 parameters.
+    $cmd = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File ' + ('"' + $ScriptPath + '"') + ' -release ' + ('"' + $release + '"')
 
     try {
         schtasks /delete /tn $postRebootTaskName /f | Out-Null
     } catch { }
 
     schtasks /create /tn $postRebootTaskName /sc onstart /tr $cmd /ru SYSTEM /rl HIGHEST /f | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to create post-reboot task '$postRebootTaskName' (schtasks exit code: $LASTEXITCODE)."
+    }
+
+    schtasks /query /tn $postRebootTaskName | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Post-reboot task '$postRebootTaskName' was not found after creation."
+    }
+
     Write-InstallState "Registered post-reboot task: $postRebootTaskName"
 }
 
