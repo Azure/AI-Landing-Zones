@@ -142,6 +142,19 @@ function Wait-ForDockerInfo {
     throw "docker info did not succeed within ${TimeoutSeconds}s. Last output: $last"
 }
 
+function Install-WslKernelUpdateBestEffort {
+    try {
+        Write-Host "Installing WSL kernel update MSI (best-effort)"
+        $wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
+        Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -OutFile $wslMsi -UseBasicParsing
+        $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -NoNewWindow -Wait -PassThru
+        Write-Host "WSL MSI exit code: $($wslProc.ExitCode)"
+        Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "WARNING: WSL kernel update MSI install failed: $_" -ForegroundColor Yellow
+    }
+}
+
 Start-Transcript -Path C:\WindowsAzure\Logs\AI-Landing-Zones_CustomScriptExtension.txt -Append
 
 Set-StrictMode -Version Latest
@@ -280,11 +293,20 @@ try {
         )
 
         Write-Section "WSL finalize"
+        Install-WslKernelUpdateBestEffort
         try {
             Write-Host "Installing WSL (no distro) if needed (best-effort)"
             & wsl.exe --install --no-distribution 2>&1 | Out-String | Write-Host
         } catch {
             Write-Host "WARNING: wsl --install failed: $_" -ForegroundColor Yellow
+        }
+
+        try {
+            Write-Host "WSL status (best-effort)"
+            & wsl.exe --status 2>&1 | Out-String | Write-Host
+            & wsl.exe -l -v 2>&1 | Out-String | Write-Host
+        } catch {
+            Write-Host "WARNING: wsl --status/-l failed: $_" -ForegroundColor Yellow
         }
 
         try {
@@ -316,14 +338,27 @@ try {
             throw "Docker Engine not ready after reboot continuation."
         }
 
-        # Docker Desktop may return transient 500s while the backend is still initializing.
-        # Retry docker info until it succeeds.
+        # Docker Desktop may return transient 500s while the backend is still initializing (often due to WSL/kernel readiness).
+        # Retry docker info until it succeeds; if it keeps failing, attempt a one-time engine switch.
         try {
             $dockerInfo = Wait-ForDockerInfo -TimeoutSeconds 600
             $dockerInfo | Write-Host
         } catch {
-            Write-Host "ERROR: docker info failed to become healthy: $_" -ForegroundColor Red
-            throw
+            Write-Host "WARNING: docker info not healthy yet: $_" -ForegroundColor Yellow
+
+            $dockerCli = 'C:\Program Files\Docker\Docker\DockerCli.exe'
+            if (Test-Path $dockerCli) {
+                try {
+                    Write-Host "Attempting to switch Docker Desktop to Windows engine (best-effort)"
+                    & $dockerCli -SwitchWindowsEngine 2>&1 | Out-String | Write-Host
+                    Start-Sleep -Seconds 30
+                } catch {
+                    Write-Host "WARNING: Docker engine switch failed: $_" -ForegroundColor Yellow
+                }
+            }
+
+            $dockerInfo = Wait-ForDockerInfo -TimeoutSeconds 600
+            $dockerInfo | Write-Host
         }
 
         New-Item -ItemType File -Path $dockerOkMarker -Force | Out-Null
