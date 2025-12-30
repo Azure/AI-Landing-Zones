@@ -188,6 +188,30 @@ function Add-ToPathIfExists {
     }
 }
 
+function Ensure-WindowsInstallerAvailable {
+    try {
+        $svc = Get-Service -Name 'msiserver' -ErrorAction SilentlyContinue
+        if ($svc) {
+            if ($svc.StartType -eq 'Disabled') {
+                sc.exe config msiserver start= demand | Out-Null
+            }
+            if ($svc.Status -ne 'Running') {
+                Start-Service -Name 'msiserver' -ErrorAction SilentlyContinue
+                Start-Sleep -Seconds 2
+            }
+        }
+    } catch {
+        Write-Host "WARNING: Failed to start Windows Installer service (msiserver): $_" -ForegroundColor Yellow
+    }
+
+    # If Python (and other installers) still fail with 1601, attempt a light re-registration.
+    try {
+        & msiexec.exe /regserver | Out-Null
+    } catch {
+        Write-Host "WARNING: Failed to re-register Windows Installer: $_" -ForegroundColor Yellow
+    }
+}
+
 Write-Host "`n==================== PARAMETERS ====================" -ForegroundColor Cyan
 $PSBoundParameters.GetEnumerator() | ForEach-Object {
     $name = $_.Key
@@ -295,12 +319,25 @@ try {
     )
     Assert-CommandExists -CommandName 'git' -What 'Git'
 
-    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'python311', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Python 3.11'
-    Add-ToPathIfExists -Paths @(
-        'C:\Python311',
-        'C:\Python311\Scripts'
-    )
-    Assert-CommandExists -CommandName 'python' -What 'Python'
+    Write-Host "Ensuring Windows Installer service is available"
+    Ensure-WindowsInstallerAvailable
+
+    $pythonExe = 'C:\Python311\python.exe'
+    if (Test-Path $pythonExe) {
+        Write-Host "Python already present at $pythonExe; skipping Chocolatey python311 install."
+        Add-ToPathIfExists -Paths @(
+            'C:\Python311',
+            'C:\Python311\Scripts'
+        )
+        Assert-CommandExists -CommandName 'python' -What 'Python'
+    } else {
+        Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'python311', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Python 3.11'
+        Add-ToPathIfExists -Paths @(
+            'C:\Python311',
+            'C:\Python311\Scripts'
+        )
+        Assert-CommandExists -CommandName 'python' -What 'Python'
+    }
 
     Write-Section "AZD"
     Write-Host "Installing AZD..."
