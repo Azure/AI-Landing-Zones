@@ -119,6 +119,29 @@ function Wait-ForDockerEngine {
     return $false
 }
 
+function Wait-ForDockerInfo {
+    param(
+        [int] $TimeoutSeconds = 600
+    )
+
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $last = $null
+    while ((Get-Date) -lt $deadline) {
+        try {
+            $last = (& docker info 2>&1 | Out-String)
+            if ($LASTEXITCODE -eq 0) {
+                return $last
+            }
+        } catch {
+            $last = $_.ToString()
+        }
+
+        Start-Sleep -Seconds 10
+    }
+
+    throw "docker info did not succeed within ${TimeoutSeconds}s. Last output: $last"
+}
+
 Start-Transcript -Path C:\WindowsAzure\Logs\AI-Landing-Zones_CustomScriptExtension.txt -Append
 
 Set-StrictMode -Version Latest
@@ -283,6 +306,9 @@ try {
             try { Start-Process -FilePath $dockerDesktopExe -WindowStyle Hidden | Out-Null } catch { }
         }
 
+        # Ensure docker CLI targets the standard engine pipe (Docker Desktop can switch contexts and set DOCKER_HOST).
+        $env:DOCKER_HOST = 'npipe:////./pipe/docker_engine'
+
         $engineUp = Wait-ForDockerEngine -TimeoutSeconds 420
         if (-not $engineUp) {
             Write-Host "ERROR: Docker Engine did not become ready (\\\\.\\pipe\\docker_engine not found)." -ForegroundColor Red
@@ -290,10 +316,13 @@ try {
             throw "Docker Engine not ready after reboot continuation."
         }
 
+        # Docker Desktop may return transient 500s while the backend is still initializing.
+        # Retry docker info until it succeeds.
         try {
-            & docker info 2>&1 | Out-String | Write-Host
+            $dockerInfo = Wait-ForDockerInfo -TimeoutSeconds 600
+            $dockerInfo | Write-Host
         } catch {
-            Write-Host "ERROR: docker info failed after engine pipe appeared: $_" -ForegroundColor Red
+            Write-Host "ERROR: docker info failed to become healthy: $_" -ForegroundColor Red
             throw
         }
 
