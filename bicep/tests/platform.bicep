@@ -235,6 +235,25 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
             ]
           }
           {
+            name: 'allow-azure-resource-manager-https'
+            ruleType: 'NetworkRule'
+            ipProtocols: [
+              'TCP'
+            ]
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            destinationAddresses: [
+              // Required for Azure CLI / AZD to call ARM after obtaining tokens.
+              'AzureResourceManager'
+            ]
+            destinationPorts: [
+              '443'
+            ]
+          }
+          {
             name: 'allow-mcr-and-afd-https'
             ruleType: 'NetworkRule'
             ipProtocols: [
