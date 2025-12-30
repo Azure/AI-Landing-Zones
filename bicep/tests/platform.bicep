@@ -303,6 +303,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               'raw.githubusercontent.com'
               '*.githubusercontent.com'
               'github.com'
+              'codeload.github.com'
 
               // Chocolatey bootstrap + package downloads (used by install.ps1)
               'community.chocolatey.org'
@@ -327,6 +328,9 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               'desktop.docker.com'
               'download.docker.com'
 
+              // Visual C++ Redistributables (python311 dependency)
+              'download.visualstudio.microsoft.com'
+
               // TLS revocation/OCSP endpoints (can break downloads if blocked)
               'crl.microsoft.com'
               'ocsp.msocsp.com'
@@ -342,6 +346,48 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               '*.data.mcr.microsoft.com'
               'packages.aks.azure.com'
               'acs-mirror.azureedge.net'
+            ]
+          }
+          {
+            name: 'allow-chocolatey-http'
+            ruleType: 'ApplicationRule'
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            protocols: [
+              {
+                protocolType: 'Http'
+                port: 80
+              }
+            ]
+            targetFqdns: [
+              'community.chocolatey.org'
+              'chocolatey.org'
+            ]
+          }
+          {
+            name: 'allow-tls-revocation-http'
+            ruleType: 'ApplicationRule'
+            sourceAddresses: [
+              '10.0.0.0/8'
+              '172.16.0.0/12'
+              '192.168.0.0/16'
+            ]
+            protocols: [
+              {
+                protocolType: 'Http'
+                port: 80
+              }
+            ]
+            targetFqdns: [
+              // OCSP/CRL checks are commonly done over HTTP (80)
+              'crl.microsoft.com'
+              'ocsp.msocsp.com'
+              'ocsp.digicert.com'
+              'crl3.digicert.com'
+              'crl4.digicert.com'
             ]
           }
         ]

@@ -19,6 +19,83 @@ Param (
   [string] $useUAI 
 )
 
+$stateRoot = 'C:\ProgramData\AI-Landing-Zones'
+$stage1Marker = Join-Path $stateRoot 'stage1.completed'
+$stage2Marker = Join-Path $stateRoot 'stage2.completed'
+$dockerOkMarker = Join-Path $stateRoot 'docker.engine.ok'
+$persistedScriptPath = Join-Path $stateRoot 'install.ps1'
+$postRebootTaskName = 'AI-Landing-Zones-PostReboot'
+
+New-Item -ItemType Directory -Path $stateRoot -Force | Out-Null
+
+function Write-InstallState([string] $message) {
+    $ts = (Get-Date).ToString('s')
+    $line = "$ts $message"
+    try { Add-Content -Path (Join-Path $stateRoot 'install.state.log') -Value $line -Encoding UTF8 } catch { }
+    Write-Host $line
+}
+
+function Save-SelfToPersistentPath {
+    try {
+        $self = $MyInvocation.MyCommand.Path
+        if (-not [string]::IsNullOrWhiteSpace($self) -and (Test-Path $self)) {
+            Copy-Item -Path $self -Destination $persistedScriptPath -Force
+        }
+    } catch {
+        Write-Host "WARNING: Failed to persist install.ps1 for post-reboot continuation: $_" -ForegroundColor Yellow
+    }
+}
+
+function Register-PostRebootTask {
+    param(
+        [Parameter(Mandatory = $true)] [string] $ScriptPath
+    )
+
+    $argList = @(
+        '-ExecutionPolicy', 'Bypass',
+        '-File', ('"' + $ScriptPath + '"'),
+        '-release', ('"' + $release + '"'),
+        '-azureTenantID', ('"' + $azureTenantID + '"'),
+        '-azureSubscriptionID', ('"' + $azureSubscriptionID + '"'),
+        '-AzureResourceGroupName', ('"' + $AzureResourceGroupName + '"'),
+        '-azureLocation', ('"' + $azureLocation + '"'),
+        '-AzdEnvName', ('"' + $AzdEnvName + '"'),
+        '-resourceToken', ('"' + $resourceToken + '"'),
+        '-useUAI', ('"' + $useUAI + '"')
+    )
+
+    $cmd = 'powershell.exe ' + ($argList -join ' ')
+
+    try {
+        schtasks /delete /tn $postRebootTaskName /f | Out-Null
+    } catch { }
+
+    schtasks /create /tn $postRebootTaskName /sc onstart /tr $cmd /ru SYSTEM /rl HIGHEST /f | Out-Null
+    Write-InstallState "Registered post-reboot task: $postRebootTaskName"
+}
+
+function Unregister-PostRebootTask {
+    try {
+        schtasks /delete /tn $postRebootTaskName /f | Out-Null
+        Write-InstallState "Removed post-reboot task: $postRebootTaskName"
+    } catch { }
+}
+
+function Wait-ForDockerEngine {
+    param(
+        [int] $TimeoutSeconds = 300
+    )
+
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        if (Test-Path '\\.\pipe\docker_engine') {
+            return $true
+        }
+        Start-Sleep -Seconds 5
+    }
+    return $false
+}
+
 Start-Transcript -Path C:\WindowsAzure\Logs\AI-Landing-Zones_CustomScriptExtension.txt -Append
 
 Set-StrictMode -Version Latest
@@ -119,6 +196,75 @@ $PSBoundParameters.GetEnumerator() | ForEach-Object {
 }
 Write-Host "====================================================`n" -ForegroundColor Cyan
 try {
+    $isStage2 = Test-Path $stage1Marker
+    if ($isStage2 -and -not (Test-Path $stage2Marker)) {
+        Write-InstallState "Entering post-reboot continuation (stage 2)."
+
+        Add-ToPathIfExists -Paths @(
+            (Join-Path $env:ProgramData 'chocolatey\bin'),
+            'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
+            'C:\Program Files\Git\cmd',
+            'C:\Python311',
+            'C:\Python311\Scripts',
+            'C:\Program Files\PowerShell\7'
+        )
+
+        Write-Section "WSL finalize"
+        try {
+            Write-Host "Installing WSL (no distro) if needed (best-effort)"
+            & wsl.exe --install --no-distribution 2>&1 | Out-String | Write-Host
+        } catch {
+            Write-Host "WARNING: wsl --install failed: $_" -ForegroundColor Yellow
+        }
+
+        try {
+            Write-Host "Updating WSL (best-effort)"
+            & wsl.exe --update 2>&1 | Out-String | Write-Host
+            & wsl.exe --set-default-version 2 2>&1 | Out-String | Write-Host
+        } catch {
+            Write-Host "WARNING: WSL update/default-version failed: $_" -ForegroundColor Yellow
+        }
+
+        Write-Section "Docker finalize"
+        try {
+            Start-Service -Name 'com.docker.service' -ErrorAction SilentlyContinue
+        } catch { }
+
+        # Attempt to start Docker Desktop backend. Even if it can't show UI, this can initialize the engine.
+        $dockerDesktopExe = 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
+        if (Test-Path $dockerDesktopExe) {
+            try { Start-Process -FilePath $dockerDesktopExe -WindowStyle Hidden | Out-Null } catch { }
+        }
+
+        $engineUp = Wait-ForDockerEngine -TimeoutSeconds 420
+        if (-not $engineUp) {
+            Write-Host "ERROR: Docker Engine did not become ready (\\\\.\\pipe\\docker_engine not found)." -ForegroundColor Red
+            try { & docker version 2>&1 | Out-String | Write-Host } catch { }
+            throw "Docker Engine not ready after reboot continuation."
+        }
+
+        try {
+            & docker info 2>&1 | Out-String | Write-Host
+        } catch {
+            Write-Host "ERROR: docker info failed after engine pipe appeared: $_" -ForegroundColor Red
+            throw
+        }
+
+        New-Item -ItemType File -Path $dockerOkMarker -Force | Out-Null
+        New-Item -ItemType File -Path $stage2Marker -Force | Out-Null
+        Unregister-PostRebootTask
+
+        Write-InstallState "Stage 2 complete. Docker engine OK."
+        return
+    }
+
+    if (Test-Path $stage2Marker) {
+        Write-InstallState "Stage 2 already completed previously. Nothing to do."
+        return
+    }
+
+    Write-InstallState "Entering initial run (stage 1)."
+
     Write-Section "Chocolatey"
     Set-ExecutionPolicy Bypass -Scope Process -Force
     iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -134,7 +280,8 @@ try {
 
     Write-Section "Tooling"
 
-    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'azure-cli', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Azure CLI'
+            'C:\\Program Files\\PowerShell\\7',
+            'C:\\Program Files\\Docker\\Docker\\resources\\bin'
     Add-ToPathIfExists -Paths @(
         'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
         'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
@@ -243,25 +390,25 @@ try {
     Add-ToPathIfExists -Paths @('C:\Program Files\PowerShell\7')
     Assert-CommandExists -CommandName 'pwsh' -What 'PowerShell Core (pwsh)'
 
+    Write-Section "WSL prerequisites"
     try {
-        Write-Host "Enabling WSL features (best-effort)"
+        Write-Host "Enabling WSL features (requires reboot to take effect)"
         Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
         Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
 
-        Write-Host "Updating WSL (best-effort)"
-        $wslMsi = Join-Path $PWD 'wsl_update_x64.msi'
+        Write-Host "Installing WSL update MSI (best-effort)"
+        $wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
         Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -OutFile $wslMsi -UseBasicParsing
-        $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet" -NoNewWindow -Wait -PassThru
+        $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -NoNewWindow -Wait -PassThru
         if ($wslProc.ExitCode -ne 0) {
             throw "WSL MSI installation failed (exit code: $($wslProc.ExitCode))."
         }
-
-        wsl.exe --update
-        wsl.exe --set-default-version 2
+        Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
     } catch {
-        Write-Host "WARNING: WSL setup failed: $_" -ForegroundColor Yellow
+        Write-Host "WARNING: WSL prerequisites setup failed: $_" -ForegroundColor Yellow
     }
 
+    Write-Section "Docker Desktop"
     Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'docker-desktop', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Docker Desktop'
     Assert-PathExists -Path 'C:\Program Files\Docker\Docker\Docker Desktop.exe' -What 'Docker Desktop'
 
@@ -319,11 +466,17 @@ try {
     Invoke-CheckedCommand -FilePath $azdExe -ArgumentList @('version') -Description 'azd version'
     Invoke-CheckedCommand -FilePath 'pwsh' -ArgumentList @('-NoProfile', '-Command', '$PSVersionTable.PSVersion.ToString()') -Description 'pwsh version'
 
-    Write-Section "Finish"
-    Write-Host "Installation completed successfully!"
-    Write-Host "Rebooting in 60 seconds to complete setup..."
-    $runTime = (Get-Date).AddMinutes(1).ToString("HH:mm")
-    schtasks /create /tn "FinishSetupReboot" /sc once /st $runTime /tr "shutdown /r /t 0 /c 'Rebooting after CSE setup'" /ru SYSTEM /f | Out-Null
+    Write-Section "Post-reboot continuation"
+    Save-SelfToPersistentPath
+    if (-not (Test-Path $persistedScriptPath)) {
+        throw "Failed to persist install.ps1 to $persistedScriptPath for post-reboot continuation."
+    }
+    Register-PostRebootTask -ScriptPath $persistedScriptPath
+    New-Item -ItemType File -Path $stage1Marker -Force | Out-Null
+
+    Write-Section "Finish (stage 1)"
+    Write-Host "Stage 1 completed. Rebooting in 60 seconds to finalize WSL + Docker Engine..."
+    shutdown /r /t 60 /c "Rebooting to finalize WSL + Docker Desktop" | Out-Null
 } catch {
     Write-Host "FATAL: install.ps1 failed: $_" -ForegroundColor Red
     try {
