@@ -312,6 +312,8 @@ try {
         # If WSL isn't installed (common on clean images), install it via GitHub releases to avoid Microsoft Store dependencies.
         try {
             $wslStatusText = (& wsl.exe --status 2>&1 | Out-String)
+            # Some hosts emit UTF-16-like output with NUL separators; normalize for matching.
+            $wslStatusText = $wslStatusText -replace "`0", ''
             if ($wslStatusText -match 'not installed') {
                 Write-Host "WSL not installed; attempting GitHub MSI install." -ForegroundColor Yellow
                 Install-WslMsiFromGitHubBestEffort
