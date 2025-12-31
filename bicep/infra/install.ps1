@@ -155,6 +155,22 @@ function Install-WslKernelUpdateBestEffort {
     }
 }
 
+function Install-WslMsiFromGitHubBestEffort {
+    try {
+        Write-Host "Installing WSL MSI from GitHub Releases (best-effort)"
+        $wslMsiUrl = 'https://github.com/microsoft/WSL/releases/latest/download/wsl.msi'
+        $wslMsiPath = Join-Path $env:TEMP 'wsl.msi'
+
+        Invoke-WebRequest -Uri $wslMsiUrl -OutFile $wslMsiPath -UseBasicParsing
+        $proc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsiPath`" /quiet /norestart" -NoNewWindow -Wait -PassThru
+        Write-Host "WSL MSI (GitHub) exit code: $($proc.ExitCode)"
+
+        Remove-Item -Force $wslMsiPath -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "WARNING: WSL MSI (GitHub) install failed: $_" -ForegroundColor Yellow
+    }
+}
+
 Start-Transcript -Path C:\WindowsAzure\Logs\AI-Landing-Zones_CustomScriptExtension.txt -Append
 
 Set-StrictMode -Version Latest
@@ -293,6 +309,15 @@ try {
         )
 
         Write-Section "WSL finalize"
+        # If WSL isn't installed (common on clean images), install it via GitHub releases to avoid Microsoft Store dependencies.
+        try {
+            $wslStatusText = (& wsl.exe --status 2>&1 | Out-String)
+            if ($wslStatusText -match 'not installed') {
+                Write-Host "WSL not installed; attempting GitHub MSI install." -ForegroundColor Yellow
+                Install-WslMsiFromGitHubBestEffort
+            }
+        } catch { }
+
         Install-WslKernelUpdateBestEffort
         try {
             Write-Host "Installing WSL (no distro) if needed (best-effort)"
