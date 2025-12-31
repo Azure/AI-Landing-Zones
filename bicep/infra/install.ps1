@@ -171,6 +171,19 @@ function Install-WslMsiFromGitHubBestEffort {
     }
 }
 
+function Test-WslInstalled {
+    try {
+        $txt = (& wsl.exe --status 2>&1 | Out-String)
+        $txt = $txt -replace "`0", ''
+        if ($txt -match 'not installed') {
+            return $false
+        }
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 Start-Transcript -Path C:\WindowsAzure\Logs\AI-Landing-Zones_CustomScriptExtension.txt -Append
 
 Set-StrictMode -Version Latest
@@ -310,15 +323,21 @@ try {
 
         Write-Section "WSL finalize"
         # If WSL isn't installed (common on clean images), install it via GitHub releases to avoid Microsoft Store dependencies.
-        try {
-            $wslStatusText = (& wsl.exe --status 2>&1 | Out-String)
-            # Some hosts emit UTF-16-like output with NUL separators; normalize for matching.
-            $wslStatusText = $wslStatusText -replace "`0", ''
-            if ($wslStatusText -match 'not installed') {
-                Write-Host "WSL not installed; attempting GitHub MSI install." -ForegroundColor Yellow
-                Install-WslMsiFromGitHubBestEffort
+        if (-not (Test-WslInstalled)) {
+            Write-Host "WSL not installed; attempting GitHub MSI install." -ForegroundColor Yellow
+            Install-WslMsiFromGitHubBestEffort
+
+            if (-not (Test-WslInstalled)) {
+                Write-Host "WSL still not installed after MSI. Scheduling another reboot to apply changes." -ForegroundColor Yellow
+                Save-SelfToPersistentPath
+                if (-not (Test-Path $persistedScriptPath)) {
+                    throw "Failed to persist install.ps1 to $persistedScriptPath for WSL post-reboot continuation."
+                }
+                Register-PostRebootTask -ScriptPath $persistedScriptPath
+                shutdown /r /t 60 /c "Rebooting to apply WSL installation" | Out-Null
+                return
             }
-        } catch { }
+        }
 
         Install-WslKernelUpdateBestEffort
         try {
