@@ -28,10 +28,6 @@ Param (
 
 $stateRoot = 'C:\ProgramData\AI-Landing-Zones'
 $stage1Marker = Join-Path $stateRoot 'stage1.completed'
-$stage2Marker = Join-Path $stateRoot 'stage2.completed'
-$dockerOkMarker = Join-Path $stateRoot 'docker.engine.ok'
-$persistedScriptPath = Join-Path $stateRoot 'install.ps1'
-$postRebootTaskName = 'AI-Landing-Zones-PostReboot'
 
 New-Item -ItemType Directory -Path $stateRoot -Force | Out-Null
 
@@ -220,7 +216,7 @@ function Add-ToPathIfExists {
     }
 }
 
-function Refresh-ProcessPathFromRegistry {
+function Update-ProcessPathFromRegistry {
     try {
         $machinePath = (Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -Name 'Path' -ErrorAction SilentlyContinue).Path
         $userPath = (Get-ItemProperty -Path 'HKCU:\Environment' -Name 'Path' -ErrorAction SilentlyContinue).Path
@@ -265,7 +261,7 @@ function Resolve-AzureCliPath {
 function Assert-AzureCliAvailable {
     param([Parameter(Mandatory = $true)] [string] $What)
 
-    Refresh-ProcessPathFromRegistry
+    Update-ProcessPathFromRegistry
     Add-ToPathIfExists -Paths @(
         'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
         'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
@@ -378,7 +374,7 @@ try {
         'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
         'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
     )
-    Refresh-ProcessPathFromRegistry
+    Update-ProcessPathFromRegistry
 
     Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'git', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Git'
     Add-ToPathIfExists -Paths @(
@@ -406,7 +402,7 @@ try {
 
     Add-ToEnvironmentPath -Scope Machine -Paths @('C:\Python311', 'C:\Python311\Scripts')
     Add-ToEnvironmentPath -Scope User -Paths @('C:\Python311', 'C:\Python311\Scripts')
-    Refresh-ProcessPathFromRegistry
+    Update-ProcessPathFromRegistry
 
     Write-Section "AZD"
     Write-Host "Installing AZD..."
@@ -460,7 +456,7 @@ $azdDir = Split-Path $azdExe
 Add-ToEnvironmentPath -Scope Machine -Paths @($azdDir)
 Add-ToEnvironmentPath -Scope User -Paths @($azdDir)
 Add-ToPathIfExists -Paths @($azdDir)
-Refresh-ProcessPathFromRegistry
+Update-ProcessPathFromRegistry
 
     Write-Section "More Tools (best-effort)"
 
@@ -501,7 +497,7 @@ Refresh-ProcessPathFromRegistry
     Add-ToEnvironmentPath -Scope Machine -Paths @('C:\Program Files\Docker\Docker\resources\bin')
     Add-ToEnvironmentPath -Scope User -Paths @('C:\Program Files\Docker\Docker\resources\bin')
     Add-ToPathIfExists -Paths @('C:\Program Files\Docker\Docker\resources\bin')
-    Refresh-ProcessPathFromRegistry
+    Update-ProcessPathFromRegistry
 
 
     if (-not $skipRepoClone) {

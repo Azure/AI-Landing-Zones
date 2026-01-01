@@ -611,7 +611,7 @@ resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
     forceUpdateTag: testVmCseForceUpdateTag
     settings: {
       fileUris: testVmInstallFileUris
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release ${testVmInstallScriptRelease} -skipReboot true -skipWsl true -skipRepoClone true -skipAzdInit true -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
+      commandToExecute: 'powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& { & .\\install.ps1 -release ${testVmInstallScriptRelease} -skipReboot:$true -skipWsl:$true -skipRepoClone:$true -skipAzdInit:$true -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false }"'
     }
   }
 }
