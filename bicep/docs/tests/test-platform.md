@@ -72,7 +72,7 @@ Routing (forced tunneling test):
 Outbound Internet (hub test VM):
 - The hub test template ([bicep/tests/platform.bicep](../../tests/platform.bicep)) uses **forced tunneling** for the hub test VM too: it associates a **route table** to `hub-vm-subnet` with `0.0.0.0/0 -> VirtualAppliance(firewallPrivateIp)`.
 - That means the hub test VM only has outbound internet if the **Azure Firewall policy** allows it.
-- The default policy in the test hub is optimized for **Foundry Agent Service egress**, not general web browsing.
+- For training and troubleshooting simplicity, the test template allows **full outbound internet** from `hub-vm-subnet`.
 - Quick validation (from inside the hub VM):
   - `Resolve-DnsName login.microsoftonline.com`
   - `Test-NetConnection login.microsoftonline.com -Port 443`
@@ -82,10 +82,7 @@ Outbound Internet (hub test VM):
   - `Test-NetConnection packages.aks.azure.com -Port 443`
 - If validation fails:
   - Confirm the subnet has a route table attached and the default route points at `firewallPrivateIp`.
-  - Confirm the Azure Firewall policy allows:
-    - DNS (UDP/TCP 53) to Azure DNS (`168.63.129.16`)
-    - `AzureActiveDirectory` service tag (Managed Identity)
-    - Container Apps / platform dependencies (MCR + AKS package endpoints)
+  - Confirm the Azure Firewall policy includes an allow rule for the hub VM subnet (in the test template this is named `allow-hub-vm-all-egress`).
   - Confirm there is **no TLS inspection** (no self-signed cert injection) on the firewall.
 
 ## Prerequisites
@@ -143,6 +140,172 @@ You will share (at minimum) `hubVnetResourceId` and `firewallPrivateIp` with the
 Tip (training-friendly): copy the two values below into your notes:
 - `hubVnetResourceId`
 - `firewallPrivateIp`
+
+## Step 1.5 — Install tools on the hub test VM (CSE stage 1 only, then manual)
+
+The test hub deploys a Windows VM (`vm-ailz-hubtst`) that you can reach via **Bastion**.
+
+By default, the template runs `install.ps1` via **Custom Script Extension (CSE)**.
+The script is intentionally **single-pass**:
+- Installs the base tooling (Chocolatey + Azure CLI + Git + Python + VS Code + PowerShell 7 + Docker Desktop + AZD)
+- **Does not reboot**
+- **Does not run WSL/Docker “finalize”** (no WSL update/restart stage)
+
+You then finish WSL/Docker setup manually (Step 3/4 below) only if you actually need Docker.
+
+Important (when testing changes to `install.ps1`): the VM downloads the script from GitHub.
+If your changes are in a fork/branch, deploy the hub template overriding the repo/branch:
+
+`az deployment group create --name ailz-platform-RANDOM_SUFFIX --resource-group rg-ailz-platform-RANDOM_SUFFIX --template-file bicep/tests/platform.bicep --parameters adminPassword='REPLACE_ME_STRONG_PASSWORD' testVmInstallScriptRepo='YOUR_GH_ORG/AI-Landing-Zones' testVmInstallScriptRelease='YOUR_BRANCH'`
+
+If you prefer to do everything manually (no CSE at all), follow the steps below.
+
+Important:
+- You must connect to `vm-ailz-hubtst` using **Bastion** (RDP).
+- Run these commands from an **elevated PowerShell** (Run as Administrator).
+- This VM uses **forced tunneling** through Azure Firewall.
+
+### 1) Install base tooling (manual)
+
+Copy/paste (elevated PowerShell):
+
+```powershell
+# Ensure TLS 1.2 for legacy .NET downloaders
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+# Install Chocolatey if missing
+if (-not (Get-Command choco.exe -ErrorAction SilentlyContinue)) {
+  Set-ExecutionPolicy Bypass -Scope Process -Force
+  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+}
+
+# Install/upgrade base tooling
+choco upgrade azure-cli git python311 vscode powershell-core docker-desktop -y --no-progress --force --ignoredetectedreboot
+
+# Install AZD (Azure Developer CLI) via MSI
+$azdMsiUrl = 'https://github.com/Azure/azure-dev/releases/latest/download/azd-windows-amd64.msi'
+$azdMsiPath = Join-Path $env:TEMP 'azd-windows-amd64.msi'
+Invoke-WebRequest -Uri $azdMsiUrl -OutFile $azdMsiPath -UseBasicParsing
+Start-Process msiexec.exe -ArgumentList "/i `"$azdMsiPath`" /quiet /norestart" -Wait
+Remove-Item -Force $azdMsiPath -ErrorAction SilentlyContinue
+
+# Refresh environment (best-effort) then validate tool availability
+$refreshCmd = Join-Path $env:ProgramData 'chocolatey\bin\RefreshEnv.cmd'
+if (Test-Path $refreshCmd) { & $refreshCmd | Out-Null }
+try { refreshenv | Out-Null } catch { }
+
+az version
+git --version
+python --version
+pwsh -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+azd version
+docker version
+```
+
+Why:
+- The TLS line avoids failures against endpoints that reject TLS 1.0/1.1.
+- Chocolatey provides repeatable installs without manual downloads.
+- `--ignoredetectedreboot` keeps installs moving even when an installer requests a reboot (you handle reboot in Step 3).
+- The validation confirms tools are actually reachable on PATH in an interactive session (not only installed on disk).
+
+Notes:
+- If `az` is not found but Azure CLI installed, verify the folder exists and add it to PATH:
+  - `C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin`
+- If `docker` commands fail, Docker Desktop typically needs WSL2 enabled + a reboot (next steps).
+
+### 2) (Included above) Install AZD (Azure Developer CLI)
+
+AZD install + `azd version` validation are included in the single copy/paste block above.
+If `azd` is not found after running it, check the default install path and add it to PATH:
+
+- `C:\Program Files\Azure Dev CLI`
+
+### 3) Enable WSL prerequisites + install kernel + reboot
+
+Docker Desktop is most reliable with WSL2 enabled.
+
+Copy/paste (elevated PowerShell):
+
+```powershell
+# Enable WSL2 prerequisites (takes effect after reboot)
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
+
+# Install WSL kernel update MSI
+$wslMsiUrl = 'https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi'
+$wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
+Invoke-WebRequest -Uri $wslMsiUrl -OutFile $wslMsi -UseBasicParsing
+Start-Process msiexec.exe -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -Wait
+Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
+
+Write-Host 'Reboot required to apply WSL features. Reboot now, then run:' -ForegroundColor Yellow
+Write-Host '  wsl.exe --install --no-distribution' -ForegroundColor Yellow
+Write-Host '  wsl.exe --status' -ForegroundColor Yellow
+Write-Host '  wsl.exe --set-default-version 2' -ForegroundColor Yellow
+```
+
+Why:
+- Enables Windows features required for WSL2 (Docker Desktop commonly relies on WSL2 for Linux containers).
+- Installs the WSL kernel update from Microsoft-hosted storage without using the Microsoft Store.
+- A reboot is required for optional features to take effect.
+
+### 4) Start Docker Desktop and validate the engine
+
+1) Launch Docker Desktop once (Start menu) and wait for it to finish initializing.
+2) Validate in PowerShell:
+
+`docker info`
+
+Why: `docker info` validates the Docker Engine is running and the CLI can reach it (more reliable than `docker version` alone in some transient states).
+
+If it fails initially, wait 2–5 minutes and retry; WSL/kernel readiness can cause transient errors.
+
+If Docker Desktop opens a terminal saying:
+"Windows Subsystem for Linux must be updated to the latest version to proceed"
+
+Reboot, then run:
+
+`wsl.exe --status`
+
+`wsl.exe --set-default-version 2`
+
+Launch Docker Desktop again and validate:
+
+`docker info`
+
+Notes (common causes):
+- **No reboot yet**: the Windows optional features only take effect after reboot.
+- **Older Windows build**: on some builds `wsl --version` / `wsl --install` are not available; the MSI kernel update in Step 4 helps, but you may still need Windows Updates to get a newer WSL.
+- **Nested virtualization not available**: WSL2 (and Docker Desktop with Linux containers) requires virtualization support. Validate in an elevated prompt:
+  - `systeminfo | findstr /i "Hyper-V Requirements"`
+
+### 5) Clone the repo (optional)
+
+If you want the VM ready for hands-on testing from inside the hub:
+
+`New-Item -ItemType Directory -Path 'C:\github' -Force | Out-Null`
+
+`Set-Location 'C:\github'`
+
+`git clone https://github.com/Azure/AI-Landing-Zones --depth 1`
+
+Why:
+- `--depth 1` reduces download size/time (important behind strict egress).
+- Cloning gives you local access to templates/scripts for inspection and manual operations.
+
+Note: if you want to test a specific branch, add `-b <branchName>` to the `git clone` command.
+
+### 6) Optional: managed identity login (best-effort)
+
+If the VM has a managed identity and your environment allows it:
+
+`az login --identity --allow-no-subscriptions`
+
+Why: signs in using the VM's managed identity without requiring interactive browser auth.
+
+`azd auth login --managed-identity`
+
+Why: allows AZD commands that need auth context to run using managed identity.
 
 ## Step 2 — Deploy the workload (Spoke) with `flagPlatformLandingZone=true`
 

@@ -10,6 +10,13 @@
 Param (
     [string] $release = "main",
 
+        # Defaults tuned for Azure VM Custom Script Extension (CSE): install tools and exit successfully.
+        # Set to $false only if you explicitly want the old multi-stage reboot/WSL finalize flow.
+        [bool] $skipReboot = $true,
+        [bool] $skipWsl = $true,
+        [bool] $skipRepoClone = $true,
+        [bool] $skipAzdInit = $true,
+
   [string] $azureTenantID,
   [string] $azureSubscriptionID,
   [string] $AzureResourceGroupName,
@@ -35,73 +42,10 @@ function Write-InstallState([string] $message) {
     Write-Host $line
 }
 
-function Save-SelfToPersistentPath {
-    try {
-        New-Item -ItemType Directory -Path $stateRoot -Force | Out-Null
-
-        $self = $null
-        try {
-            if (-not [string]::IsNullOrWhiteSpace($PSCommandPath) -and (Test-Path $PSCommandPath)) {
-                $self = $PSCommandPath
-            }
-        } catch { }
-
-        if ([string]::IsNullOrWhiteSpace($self)) {
-            try {
-                $candidate = $MyInvocation.MyCommand.Path
-                if (-not [string]::IsNullOrWhiteSpace($candidate) -and (Test-Path $candidate)) {
-                    $self = $candidate
-                }
-            } catch { }
-        }
-
-        if (-not [string]::IsNullOrWhiteSpace($self) -and (Test-Path $self)) {
-            Copy-Item -Path $self -Destination $persistedScriptPath -Force
-            return
-        }
-
-        # Fall back to downloading the script from GitHub raw.
-        # This is more reliable in CSE contexts where $PSCommandPath may be empty.
-        $cacheBuster = [Guid]::NewGuid().ToString('N')
-        $rawUrl = "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/$release/bicep/infra/install.ps1?cb=$cacheBuster"
-        Write-InstallState "Persisting install.ps1 by downloading: $rawUrl"
-        Invoke-WebRequest -Uri $rawUrl -OutFile $persistedScriptPath -UseBasicParsing
-    } catch {
-        Write-Host "WARNING: Failed to persist install.ps1 for post-reboot continuation: $_" -ForegroundColor Yellow
-    }
-}
-
-function Register-PostRebootTask {
-    param(
-        [Parameter(Mandatory = $true)] [string] $ScriptPath
-    )
-
-    # schtasks.exe limits the /TR string length (commonly 261 chars).
-    # Stage 2 only needs to finalize WSL/Docker; it does not require all stage-1 parameters.
-    $cmd = 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File ' + ('"' + $ScriptPath + '"') + ' -release ' + ('"' + $release + '"')
-
-    try {
-        schtasks /delete /tn $postRebootTaskName /f | Out-Null
-    } catch { }
-
-    schtasks /create /tn $postRebootTaskName /sc onstart /tr $cmd /ru SYSTEM /rl HIGHEST /f | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Failed to create post-reboot task '$postRebootTaskName' (schtasks exit code: $LASTEXITCODE)."
-    }
-
-    schtasks /query /tn $postRebootTaskName | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Post-reboot task '$postRebootTaskName' was not found after creation."
-    }
-
-    Write-InstallState "Registered post-reboot task: $postRebootTaskName"
-}
-
 function Unregister-PostRebootTask {
-    try {
-        schtasks /delete /tn $postRebootTaskName /f | Out-Null
-        Write-InstallState "Removed post-reboot task: $postRebootTaskName"
-    } catch { }
+    # Reboots/post-reboot continuation are intentionally disabled.
+    # Keep as a no-op to avoid breaking older code paths.
+    return
 }
 
 function Wait-ForDockerEngine {
@@ -276,6 +220,91 @@ function Add-ToPathIfExists {
     }
 }
 
+function Refresh-ProcessPathFromRegistry {
+    try {
+        $machinePath = (Get-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment' -Name 'Path' -ErrorAction SilentlyContinue).Path
+        $userPath = (Get-ItemProperty -Path 'HKCU:\Environment' -Name 'Path' -ErrorAction SilentlyContinue).Path
+
+        $combined = @()
+        if (-not [string]::IsNullOrWhiteSpace($machinePath)) { $combined += $machinePath }
+        if (-not [string]::IsNullOrWhiteSpace($userPath)) { $combined += $userPath }
+
+        if ($combined.Count -gt 0) {
+            $env:Path = ($combined -join ';')
+        }
+    } catch {
+        Write-Host "WARNING: Failed to refresh PATH from registry: $_" -ForegroundColor Yellow
+    }
+}
+
+function Resolve-AzureCliPath {
+    $cmd = Get-Command 'az' -ErrorAction SilentlyContinue
+    if ($cmd) {
+        if ($cmd.PSObject.Properties.Match('Path').Count -gt 0 -and -not [string]::IsNullOrWhiteSpace($cmd.Path)) {
+            return $cmd.Path
+        }
+        return 'az'
+    }
+
+    $candidatePaths = @(
+        'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin\az.cmd',
+        'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.cmd',
+        'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin\az.ps1',
+        'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin\az.ps1'
+    )
+
+    foreach ($p in $candidatePaths) {
+        if (Test-Path $p) {
+            return $p
+        }
+    }
+
+    return $null
+}
+
+function Assert-AzureCliAvailable {
+    param([Parameter(Mandatory = $true)] [string] $What)
+
+    Refresh-ProcessPathFromRegistry
+    Add-ToPathIfExists -Paths @(
+        'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
+        'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
+    )
+
+    $azPath = Resolve-AzureCliPath
+    if (-not $azPath) {
+        throw "Required tool missing after install: $What (Azure CLI not found on PATH and not found in known install locations)."
+    }
+
+    return $azPath
+}
+
+function Add-ToEnvironmentPath {
+    param(
+        [Parameter(Mandatory = $true)] [ValidateSet('Machine', 'User')] [string] $Scope,
+        [Parameter(Mandatory = $true)] [string[]] $Paths
+    )
+
+    foreach ($p in $Paths) {
+        if ([string]::IsNullOrWhiteSpace($p)) { continue }
+        if (-not (Test-Path $p)) { continue }
+
+        try {
+            $existing = [Environment]::GetEnvironmentVariable('Path', $Scope)
+            if ([string]::IsNullOrWhiteSpace($existing)) {
+                [Environment]::SetEnvironmentVariable('Path', $p, $Scope)
+                continue
+            }
+
+            if ($existing -notlike "*$p*") {
+                [Environment]::SetEnvironmentVariable('Path', "$existing;$p", $Scope)
+            }
+        } catch {
+            Write-Host "WARNING: Failed to update $Scope PATH with '$p': $_" -ForegroundColor Yellow
+        }
+    }
+}
+
 function Enable-WindowsInstallerAvailable {
     try {
         $svc = Get-Service -Name 'msiserver' -ErrorAction SilentlyContinue
@@ -308,115 +337,8 @@ $PSBoundParameters.GetEnumerator() | ForEach-Object {
 }
 Write-Host "====================================================`n" -ForegroundColor Cyan
 try {
-    $isStage2 = Test-Path $stage1Marker
-    if ($isStage2 -and -not (Test-Path $stage2Marker)) {
-        Write-InstallState "Entering post-reboot continuation (stage 2)."
-
-        Add-ToPathIfExists -Paths @(
-            (Join-Path $env:ProgramData 'chocolatey\bin'),
-            'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
-            'C:\Program Files\Git\cmd',
-            'C:\Python311',
-            'C:\Python311\Scripts',
-            'C:\Program Files\PowerShell\7'
-        )
-
-        Write-Section "WSL finalize"
-        # If WSL isn't installed (common on clean images), install it via GitHub releases to avoid Microsoft Store dependencies.
-        if (-not (Test-WslInstalled)) {
-            Write-Host "WSL not installed; attempting GitHub MSI install." -ForegroundColor Yellow
-            Install-WslMsiFromGitHubBestEffort
-
-            if (-not (Test-WslInstalled)) {
-                Write-Host "WSL still not installed after MSI. Scheduling another reboot to apply changes." -ForegroundColor Yellow
-                Save-SelfToPersistentPath
-                if (-not (Test-Path $persistedScriptPath)) {
-                    throw "Failed to persist install.ps1 to $persistedScriptPath for WSL post-reboot continuation."
-                }
-                Register-PostRebootTask -ScriptPath $persistedScriptPath
-                shutdown /r /t 60 /c "Rebooting to apply WSL installation" | Out-Null
-                return
-            }
-        }
-
-        Install-WslKernelUpdateBestEffort
-        try {
-            Write-Host "Installing WSL (no distro) if needed (best-effort)"
-            & wsl.exe --install --no-distribution 2>&1 | Out-String | Write-Host
-        } catch {
-            Write-Host "WARNING: wsl --install failed: $_" -ForegroundColor Yellow
-        }
-
-        try {
-            Write-Host "WSL status (best-effort)"
-            & wsl.exe --status 2>&1 | Out-String | Write-Host
-            & wsl.exe -l -v 2>&1 | Out-String | Write-Host
-        } catch {
-            Write-Host "WARNING: wsl --status/-l failed: $_" -ForegroundColor Yellow
-        }
-
-        try {
-            Write-Host "Updating WSL (best-effort)"
-            & wsl.exe --update 2>&1 | Out-String | Write-Host
-            & wsl.exe --set-default-version 2 2>&1 | Out-String | Write-Host
-        } catch {
-            Write-Host "WARNING: WSL update/default-version failed: $_" -ForegroundColor Yellow
-        }
-
-        Write-Section "Docker finalize"
-        try {
-            Start-Service -Name 'com.docker.service' -ErrorAction SilentlyContinue
-        } catch { }
-
-        # Attempt to start Docker Desktop backend. Even if it can't show UI, this can initialize the engine.
-        $dockerDesktopExe = 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
-        if (Test-Path $dockerDesktopExe) {
-            try { Start-Process -FilePath $dockerDesktopExe -WindowStyle Hidden | Out-Null } catch { }
-        }
-
-        # Ensure docker CLI targets the standard engine pipe (Docker Desktop can switch contexts and set DOCKER_HOST).
-        $env:DOCKER_HOST = 'npipe:////./pipe/docker_engine'
-
-        $engineUp = Wait-ForDockerEngine -TimeoutSeconds 420
-        if (-not $engineUp) {
-            Write-Host "ERROR: Docker Engine did not become ready (\\\\.\\pipe\\docker_engine not found)." -ForegroundColor Red
-            try { & docker version 2>&1 | Out-String | Write-Host } catch { }
-            throw "Docker Engine not ready after reboot continuation."
-        }
-
-        # Docker Desktop may return transient 500s while the backend is still initializing (often due to WSL/kernel readiness).
-        # Retry docker info until it succeeds; if it keeps failing, attempt a one-time engine switch.
-        try {
-            $dockerInfo = Wait-ForDockerInfo -TimeoutSeconds 600
-            $dockerInfo | Write-Host
-        } catch {
-            Write-Host "WARNING: docker info not healthy yet: $_" -ForegroundColor Yellow
-
-            $dockerCli = 'C:\Program Files\Docker\Docker\DockerCli.exe'
-            if (Test-Path $dockerCli) {
-                try {
-                    Write-Host "Attempting to switch Docker Desktop to Windows engine (best-effort)"
-                    & $dockerCli -SwitchWindowsEngine 2>&1 | Out-String | Write-Host
-                    Start-Sleep -Seconds 30
-                } catch {
-                    Write-Host "WARNING: Docker engine switch failed: $_" -ForegroundColor Yellow
-                }
-            }
-
-            $dockerInfo = Wait-ForDockerInfo -TimeoutSeconds 600
-            $dockerInfo | Write-Host
-        }
-
-        New-Item -ItemType File -Path $dockerOkMarker -Force | Out-Null
-        New-Item -ItemType File -Path $stage2Marker -Force | Out-Null
-        Unregister-PostRebootTask
-
-        Write-InstallState "Stage 2 complete. Docker engine OK."
-        return
-    }
-
-    if (Test-Path $stage2Marker) {
-        Write-InstallState "Stage 2 already completed previously. Nothing to do."
+    if (Test-Path $stage1Marker) {
+        Write-InstallState "Stage 1 already completed previously. Nothing to do."
         return
     }
 
@@ -437,11 +359,26 @@ try {
 
     Write-Section "Tooling"
 
-    Add-ToPathIfExists -Paths @(
+    # MSI-based installs (Azure CLI, Python, Docker Desktop, etc.) can fail if Windows Installer is disabled.
+    Write-Host "Ensuring Windows Installer service is available"
+    Enable-WindowsInstallerAvailable
+
+    Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'azure-cli', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Azure CLI'
+    try {
+        $script:AzCliPath = Assert-AzureCliAvailable -What 'Azure CLI'
+    } catch {
+        Write-Host "WARNING: Azure CLI not detected immediately after install (PATH propagation in CSE can lag). Continuing." -ForegroundColor Yellow
+        $script:AzCliPath = Resolve-AzureCliPath
+    }
+    Add-ToEnvironmentPath -Scope Machine -Paths @(
         'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
         'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
     )
-    Assert-CommandExists -CommandName 'az' -What 'Azure CLI'
+    Add-ToEnvironmentPath -Scope User -Paths @(
+        'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin',
+        'C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2\wbin'
+    )
+    Refresh-ProcessPathFromRegistry
 
     Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'git', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Git'
     Add-ToPathIfExists -Paths @(
@@ -449,9 +386,6 @@ try {
         'C:\Program Files\Git\bin'
     )
     Assert-CommandExists -CommandName 'git' -What 'Git'
-
-    Write-Host "Ensuring Windows Installer service is available"
-    Enable-WindowsInstallerAvailable
 
     $pythonExe = 'C:\Python311\python.exe'
     if (Test-Path $pythonExe) {
@@ -469,6 +403,10 @@ try {
         )
         Assert-CommandExists -CommandName 'python' -What 'Python'
     }
+
+    Add-ToEnvironmentPath -Scope Machine -Paths @('C:\Python311', 'C:\Python311\Scripts')
+    Add-ToEnvironmentPath -Scope User -Paths @('C:\Python311', 'C:\Python311\Scripts')
+    Refresh-ProcessPathFromRegistry
 
     Write-Section "AZD"
     Write-Host "Installing AZD..."
@@ -509,45 +447,20 @@ foreach ($path in $possibleAzdLocations) {
 
 if (-not $azdExe) {
     Write-Host "ERROR: azd.exe not found after installation. Installation path changed or MSI failed." -ForegroundColor Red
-    Write-Host "Dumping filesystem search for troubleshooting..."
-    Get-ChildItem -Path "C:\" -Recurse -Filter "azd.exe" -ErrorAction SilentlyContinue | Select-Object FullName
+    Write-Host "Searched these locations:" -ForegroundColor Yellow
+    $possibleAzdLocations | ForEach-Object { Write-Host (" - {0}" -f $_) -ForegroundColor Yellow }
     exit 1
 } else {
     Write-Host "AZD successfully located at: $azdExe" -ForegroundColor Green
 }
 
-# Add to PATH for immediate use
-$env:PATH = "$(Split-Path $azdExe);$env:PATH"
-Write-Host "Updated PATH for this session: $env:PATH"
-
 $azdDir = Split-Path $azdExe
 
-try {
-    $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
-    if ($machinePath -notlike "*$azdDir*") {
-        [Environment]::SetEnvironmentVariable("Path", "$machinePath;$azdDir", "Machine")
-        Write-Host "Added $azdDir to MACHINE Path"
-    } else {
-        Write-Host "AZD directory already present in MACHINE Path"
-    }
-} catch {
-    Write-Host "Failed to update MACHINE Path: $_" -ForegroundColor Yellow
-}
-
-try {
-    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    if ($userPath -and $userPath -notlike "*$azdDir*") {
-        [Environment]::SetEnvironmentVariable("Path", "$userPath;$azdDir", "User")
-        Write-Host "Added $azdDir to USER Path"
-    } elseif (-not $userPath) {
-        [Environment]::SetEnvironmentVariable("Path", $azdDir, "User")
-        Write-Host "Initialized USER Path with AZD directory"
-    } else {
-        Write-Host "AZD directory already present in USER Path"
-    }
-} catch {
-    Write-Host "Failed to update USER Path: $_" -ForegroundColor Yellow
-}
+# Ensure azd is available both in this run and for interactive sessions.
+Add-ToEnvironmentPath -Scope Machine -Paths @($azdDir)
+Add-ToEnvironmentPath -Scope User -Paths @($azdDir)
+Add-ToPathIfExists -Paths @($azdDir)
+Refresh-ProcessPathFromRegistry
 
     Write-Section "More Tools (best-effort)"
 
@@ -558,89 +471,106 @@ try {
     Add-ToPathIfExists -Paths @('C:\Program Files\PowerShell\7')
     Assert-CommandExists -CommandName 'pwsh' -What 'PowerShell Core (pwsh)'
 
-    Write-Section "WSL prerequisites"
-    try {
-        Write-Host "Enabling WSL features (requires reboot to take effect)"
-        Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
-        Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
+    if (-not $skipWsl) {
+        Write-Section "WSL prerequisites"
+        try {
+            Write-Host "Enabling WSL features (requires reboot to take effect)"
+            Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
+            Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
 
-        Write-Host "Installing WSL update MSI (best-effort)"
-        $wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
-        Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -OutFile $wslMsi -UseBasicParsing
-        $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -NoNewWindow -Wait -PassThru
-        if ($wslProc.ExitCode -ne 0) {
-            throw "WSL MSI installation failed (exit code: $($wslProc.ExitCode))."
+            Write-Host "Installing WSL update MSI (best-effort)"
+            $wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
+            Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -OutFile $wslMsi -UseBasicParsing
+            $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -NoNewWindow -Wait -PassThru
+            if ($wslProc.ExitCode -ne 0) {
+                throw "WSL MSI installation failed (exit code: $($wslProc.ExitCode))."
+            }
+            Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
+        } catch {
+            Write-Host "WARNING: WSL prerequisites setup failed: $_" -ForegroundColor Yellow
         }
-        Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
-    } catch {
-        Write-Host "WARNING: WSL prerequisites setup failed: $_" -ForegroundColor Yellow
+    } else {
+        Write-Host "Skipping WSL prerequisites (skipWsl=true)." -ForegroundColor Yellow
     }
 
     Write-Section "Docker Desktop"
     Invoke-CheckedCommand -FilePath $chocoExe -ArgumentList @('upgrade', 'docker-desktop', '-y', '--ignoredetectedreboot', '--force', '--no-progress') -Description 'Installing/Upgrading Docker Desktop'
     Assert-PathExists -Path 'C:\Program Files\Docker\Docker\Docker Desktop.exe' -What 'Docker Desktop'
 
+    # Ensure docker CLI is available for interactive sessions.
+    Add-ToEnvironmentPath -Scope Machine -Paths @('C:\Program Files\Docker\Docker\resources\bin')
+    Add-ToEnvironmentPath -Scope User -Paths @('C:\Program Files\Docker\Docker\resources\bin')
+    Add-ToPathIfExists -Paths @('C:\Program Files\Docker\Docker\resources\bin')
+    Refresh-ProcessPathFromRegistry
 
-    Write-Section "Repo"
-    Write-Host "Cloning AI-Landing-Zones repo"
-    New-Item -ItemType Directory -Path 'C:\github' -Force | Out-Null
-    Set-Location 'C:\github'
 
-    if (Test-Path "C:\github\AI-Landing-Zones") {
-        Write-Host "Existing repo folder found; deleting for a clean clone"
-        Remove-Item -Recurse -Force "C:\github\AI-Landing-Zones"
+    if (-not $skipRepoClone) {
+        Write-Section "Repo"
+        Write-Host "Cloning AI-Landing-Zones repo"
+        New-Item -ItemType Directory -Path 'C:\github' -Force | Out-Null
+        Set-Location 'C:\github'
+
+        if (Test-Path "C:\github\AI-Landing-Zones") {
+            Write-Host "Existing repo folder found; deleting for a clean clone"
+            Remove-Item -Recurse -Force "C:\github\AI-Landing-Zones"
+        }
+
+        Invoke-CheckedCommand -FilePath 'git' -ArgumentList @('clone', 'https://github.com/Azure/AI-Landing-Zones', '-b', $release, '--depth', '1') -Description "git clone (branch: $release)"
+    } else {
+        Write-Host "Skipping repo clone (skipRepoClone=true)." -ForegroundColor Yellow
     }
 
-    Invoke-CheckedCommand -FilePath 'git' -ArgumentList @('clone', 'https://github.com/Azure/AI-Landing-Zones', '-b', $release, '--depth', '1') -Description "git clone (branch: $release)"
 
+    if (-not $skipAzdInit -and -not $skipRepoClone) {
+        Write-Section "Azure Login (best-effort)"
+        Write-Host "Logging into Azure (managed identity)"
+        $azCli = if ($script:AzCliPath) { $script:AzCliPath } else { 'az' }
+        Invoke-BestEffortCommand -FilePath $azCli -ArgumentList @('login', '--identity', '--allow-no-subscriptions') -Description "az login --identity --allow-no-subscriptions"
 
-    Write-Section "Azure Login (best-effort)"
-    Write-Host "Logging into Azure (managed identity)"
-    Invoke-BestEffortCommand -FilePath 'az' -ArgumentList @('login', '--identity', '--allow-no-subscriptions') -Description "az login --identity --allow-no-subscriptions"
+        Write-Host "Logging into AZD (managed identity)"
+        try {
+            & $azdExe auth login --managed-identity | Out-Null
+        } catch {
+            Write-Host "WARNING: 'azd auth login --managed-identity' failed. Continuing." -ForegroundColor Yellow
+        }
 
-    Write-Host "Logging into AZD (managed identity)"
-    try {
-        & $azdExe auth login --managed-identity | Out-Null
-    } catch {
-        Write-Host "WARNING: 'azd auth login --managed-identity' failed. Continuing." -ForegroundColor Yellow
+        Write-Section "AZD init (best-effort)"
+        Set-Location 'C:\github\AI-Landing-Zones'
+        Write-Host "Initializing AZD environment (best-effort)"
+
+        try {
+            & $azdExe init -e $AzdEnvName --subscription $azureSubscriptionID --location $azureLocation | Out-Null
+            & $azdExe env set AZURE_TENANT_ID $azureTenantID | Out-Null
+            & $azdExe env set AZURE_RESOURCE_GROUP $AzureResourceGroupName | Out-Null
+            & $azdExe env set AZURE_SUBSCRIPTION_ID $azureSubscriptionID | Out-Null
+            & $azdExe env set AZURE_LOCATION $azureLocation | Out-Null
+            & $azdExe env set RESOURCE_TOKEN $resourceToken | Out-Null
+        } catch {
+            Write-Host "WARNING: azd init/env set failed. Continuing." -ForegroundColor Yellow
+        }
+
+        Invoke-CheckedCommand -FilePath 'git' -ArgumentList @('config', '--global', '--add', 'safe.directory', 'C:/github/AI-Landing-Zones') -Description 'Configuring git safe.directory'
+    } else {
+        Write-Host "Skipping Azure login + azd init (skipAzdInit=true)." -ForegroundColor Yellow
     }
-
-
-    Write-Section "AZD init (best-effort)"
-    Set-Location 'C:\github\AI-Landing-Zones'
-    Write-Host "Initializing AZD environment (best-effort)"
-
-    try {
-        & $azdExe init -e $AzdEnvName --subscription $azureSubscriptionID --location $azureLocation | Out-Null
-        & $azdExe env set AZURE_TENANT_ID $azureTenantID | Out-Null
-        & $azdExe env set AZURE_RESOURCE_GROUP $AzureResourceGroupName | Out-Null
-        & $azdExe env set AZURE_SUBSCRIPTION_ID $azureSubscriptionID | Out-Null
-        & $azdExe env set AZURE_LOCATION $azureLocation | Out-Null
-        & $azdExe env set RESOURCE_TOKEN $resourceToken | Out-Null
-    } catch {
-        Write-Host "WARNING: azd init/env set failed. Continuing." -ForegroundColor Yellow
-    }
-
-    Invoke-CheckedCommand -FilePath 'git' -ArgumentList @('config', '--global', '--add', 'safe.directory', 'C:/github/AI-Landing-Zones') -Description 'Configuring git safe.directory'
 
     Write-Section "Sanity Checks"
-    Write-Host ("az version: {0}" -f ((az version | ConvertTo-Json -Compress) | Out-String))
-    Invoke-CheckedCommand -FilePath 'git' -ArgumentList @('--version') -Description 'git --version'
-    Invoke-CheckedCommand -FilePath 'python' -ArgumentList @('--version') -Description 'python --version'
-    Invoke-CheckedCommand -FilePath $azdExe -ArgumentList @('version') -Description 'azd version'
-    Invoke-CheckedCommand -FilePath 'pwsh' -ArgumentList @('-NoProfile', '-Command', '$PSVersionTable.PSVersion.ToString()') -Description 'pwsh version'
-
-    Write-Section "Post-reboot continuation"
-    Save-SelfToPersistentPath
-    if (-not (Test-Path $persistedScriptPath)) {
-        throw "Failed to persist install.ps1 to $persistedScriptPath for post-reboot continuation."
+    try {
+        $azCli = if ($script:AzCliPath) { $script:AzCliPath } else { 'az' }
+        $azVersionRaw = & $azCli 'version' 2>&1 | Out-String
+        Write-Host ("az version (raw): {0}" -f $azVersionRaw.Trim())
+    } catch {
+        Write-Host "WARNING: Failed to print az version: $_" -ForegroundColor Yellow
     }
-    Register-PostRebootTask -ScriptPath $persistedScriptPath
-    New-Item -ItemType File -Path $stage1Marker -Force | Out-Null
+    Invoke-BestEffortCommand -FilePath 'git' -ArgumentList @('--version') -Description 'git --version'
+    Invoke-BestEffortCommand -FilePath 'python' -ArgumentList @('--version') -Description 'python --version'
+    Invoke-BestEffortCommand -FilePath $azdExe -ArgumentList @('version') -Description 'azd version'
+    Invoke-BestEffortCommand -FilePath 'pwsh' -ArgumentList @('-NoProfile', '-Command', '$PSVersionTable.PSVersion.ToString()') -Description 'pwsh version'
 
-    Write-Section "Finish (stage 1)"
-    Write-Host "Stage 1 completed. Rebooting in 60 seconds to finalize WSL + Docker Engine..."
-    shutdown /r /t 60 /c "Rebooting to finalize WSL + Docker Desktop" | Out-Null
+    New-Item -ItemType File -Path $stage1Marker -Force | Out-Null
+    Write-InstallState "Install completed (stage 1 only). No reboot is performed by this script."
+    Write-Host "Manual next steps (if you need Docker/WSL): enable WSL features, reboot the VM, then start Docker Desktop and validate 'docker info'." -ForegroundColor Yellow
+    return
 } catch {
     Write-Host "FATAL: install.ps1 failed: $_" -ForegroundColor Red
     try {

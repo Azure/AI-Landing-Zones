@@ -30,6 +30,19 @@ param vmImageVersion string = 'latest'
 @description('Optional. Resource ID of an existing spoke VNet. When provided, the template will link all Private DNS Zones to it (in addition to the hub VNet).')
 param spokeVnetResourceId string = ''
 
+@description('Optional. Public URL of install.ps1 for the test VM Custom Script Extension. Override to point to your fork/branch when testing changes.')
+param testVmInstallScriptUri string = 'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/fix/issue-63/bicep/infra/install.ps1'
+
+@description('Optional. GitHub repo owner/name used to build the default raw URL for install.ps1 when testVmInstallScriptUri is empty.')
+param testVmInstallScriptRepo string = 'Azure/AI-Landing-Zones'
+
+@description('Optional. Git branch/tag name passed to install.ps1 (-release). Keep in sync with testVmInstallScriptUri when overriding.')
+param testVmInstallScriptRelease string = 'fix/issue-63'
+
+var resolvedTestVmInstallScriptUri = empty(testVmInstallScriptUri)
+  ? 'https://raw.githubusercontent.com/${testVmInstallScriptRepo}/${testVmInstallScriptRelease}/bicep/infra/install.ps1'
+  : testVmInstallScriptUri
+
 var hubVnetName = 'vnet-ai-lz-hub'
 var hubVnetCidr = '10.0.0.0/16'
 
@@ -198,6 +211,22 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
         }
         rules: [
           {
+            name: 'allow-hub-vm-all-egress'
+            ruleType: 'NetworkRule'
+            ipProtocols: [
+              'Any'
+            ]
+            sourceAddresses: [
+              hubVmSubnetCidr
+            ]
+            destinationAddresses: [
+              '0.0.0.0/0'
+            ]
+            destinationPorts: [
+              '*'
+            ]
+          }
+          {
             name: 'allow-azure-dns'
             ruleType: 'NetworkRule'
             ipProtocols: [
@@ -341,6 +370,7 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
               'raw.githubusercontent.com'
               '*.githubusercontent.com'
               'github.com'
+              'objects.githubusercontent.com'
               'codeload.github.com'
 
               // Chocolatey bootstrap + package downloads (used by install.ps1)
@@ -379,6 +409,9 @@ resource firewallPolicyRcg 'Microsoft.Network/firewallPolicies/ruleCollectionGro
 
               // WSL update MSI (used by install.ps1)
               'wslstorestorage.blob.${environment().suffixes.storage}'
+
+              // WSL update storage CNAMEs can vary by region/time; allow the stable suffix
+              '*.store.${environment().suffixes.storage}'
 
               'mcr.microsoft.com'
               '*.data.mcr.microsoft.com'
@@ -563,7 +596,7 @@ resource testVm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
 }
 
 var testVmInstallFileUris = [
-  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/fix/issue-63/bicep/infra/install.ps1'
+  resolvedTestVmInstallScriptUri
 ]
 
 resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
@@ -578,7 +611,7 @@ resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
     forceUpdateTag: testVmCseForceUpdateTag
     settings: {
       fileUris: testVmInstallFileUris
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release fix/issue-63 -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release ${testVmInstallScriptRelease} -skipReboot true -skipWsl true -skipRepoClone true -skipAzdInit true -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
     }
   }
 }

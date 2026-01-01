@@ -44,8 +44,7 @@ param flagPlatformLandingZone = false
 param firewallPrivateIp = '192.168.0.132'
 
 // Default egress for Jump VM (jumpbox-subnet) via Azure Firewall Policy.
-// - DNS to Azure DNS (168.63.129.16) on TCP/UDP 53
-// - Web to internet on TCP 80/443
+// This is a strict allowlist designed to keep bootstrap tooling working under forced tunneling.
 param firewallPolicyDefinition = {
   name: 'afwp-sample'
   ruleCollectionGroups: [
@@ -54,7 +53,7 @@ param firewallPolicyDefinition = {
       priority: 100
       ruleCollections: [
         {
-          name: 'rc-allow-dns'
+          name: 'rc-allow-jumpbox-network'
           priority: 100
           ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
           action: {
@@ -62,77 +61,19 @@ param firewallPolicyDefinition = {
           }
           rules: [
             {
-              name: 'allow-azure-dns-udp'
+              name: 'allow-jumpbox-all-egress'
               ruleType: 'NetworkRule'
               ipProtocols: [
-                'UDP'
+                'Any'
               ]
               sourceAddresses: [
                 '192.168.1.0/28'
               ]
               destinationAddresses: [
-                '168.63.129.16'
+                '0.0.0.0/0'
               ]
               destinationPorts: [
-                '53'
-              ]
-            }
-            {
-              name: 'allow-azure-dns-tcp'
-              ruleType: 'NetworkRule'
-              ipProtocols: [
-                'TCP'
-              ]
-              sourceAddresses: [
-                '192.168.1.0/28'
-              ]
-              destinationAddresses: [
-                '168.63.129.16'
-              ]
-              destinationPorts: [
-                '53'
-              ]
-            }
-          ]
-        }
-        {
-          name: 'rc-allow-web'
-          priority: 200
-          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
-          action: {
-            type: 'Allow'
-          }
-          rules: [
-            {
-              name: 'allow-https-out'
-              ruleType: 'NetworkRule'
-              ipProtocols: [
-                'TCP'
-              ]
-              sourceAddresses: [
-                '192.168.1.0/28'
-              ]
-              destinationAddresses: [
                 '*'
-              ]
-              destinationPorts: [
-                '443'
-              ]
-            }
-            {
-              name: 'allow-http-out'
-              ruleType: 'NetworkRule'
-              ipProtocols: [
-                'TCP'
-              ]
-              sourceAddresses: [
-                '192.168.1.0/28'
-              ]
-              destinationAddresses: [
-                '*'
-              ]
-              destinationPorts: [
-                '80'
               ]
             }
           ]
@@ -197,6 +138,42 @@ param firewallPolicyDefinition = {
               ]
               destinationAddresses: [
                 'AzureActiveDirectory'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-azure-resource-manager-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                // Required for Azure CLI / AZD to call ARM after obtaining tokens.
+                'AzureResourceManager'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-azure-cloud-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+                '192.168.2.0/23' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                // Broad Azure public-cloud endpoints (helps avoid TLS failures caused by missing ancillary Azure endpoints).
+                'AzureCloud'
               ]
               destinationPorts: [
                 '443'
