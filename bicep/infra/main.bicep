@@ -3276,7 +3276,7 @@ resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = i
     forceUpdateTag: jumpVmCseForceUpdateTag
     settings: {
       fileUris: jumpVmInstallFileUris
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release fix/issue-63 -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false'
+      commandToExecute: 'powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& { & .\\install.ps1 -release fix/issue-63 -skipReboot:$true -skipRepoClone:$true -skipAzdInit:$true -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false }"'
     }
   }
   dependsOn: [

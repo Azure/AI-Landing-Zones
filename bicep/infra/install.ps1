@@ -13,7 +13,6 @@ Param (
         # Defaults tuned for Azure VM Custom Script Extension (CSE): install tools and exit successfully.
         # Set to $false only if you explicitly want the old multi-stage reboot/WSL finalize flow.
         [bool] $skipReboot = $true,
-        [bool] $skipWsl = $true,
         [bool] $skipRepoClone = $true,
         [bool] $skipAzdInit = $true,
 
@@ -467,26 +466,22 @@ Update-ProcessPathFromRegistry
     Add-ToPathIfExists -Paths @('C:\Program Files\PowerShell\7')
     Assert-CommandExists -CommandName 'pwsh' -What 'PowerShell Core (pwsh)'
 
-    if (-not $skipWsl) {
-        Write-Section "WSL prerequisites"
-        try {
-            Write-Host "Enabling WSL features (requires reboot to take effect)"
-            Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
-            Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
+    Write-Section "WSL prerequisites"
+    try {
+        Write-Host "Enabling WSL features (requires reboot to take effect)"
+        Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart | Out-Null
+        Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -NoRestart | Out-Null
 
-            Write-Host "Installing WSL update MSI (best-effort)"
-            $wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
-            Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -OutFile $wslMsi -UseBasicParsing
-            $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -NoNewWindow -Wait -PassThru
-            if ($wslProc.ExitCode -ne 0) {
-                throw "WSL MSI installation failed (exit code: $($wslProc.ExitCode))."
-            }
-            Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
-        } catch {
-            Write-Host "WARNING: WSL prerequisites setup failed: $_" -ForegroundColor Yellow
+        Write-Host "Installing WSL update MSI (best-effort)"
+        $wslMsi = Join-Path $env:TEMP 'wsl_update_x64.msi'
+        Invoke-WebRequest -Uri "https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi" -OutFile $wslMsi -UseBasicParsing
+        $wslProc = Start-Process "msiexec.exe" -ArgumentList "/i `"$wslMsi`" /quiet /norestart" -NoNewWindow -Wait -PassThru
+        if ($wslProc.ExitCode -ne 0) {
+            throw "WSL MSI installation failed (exit code: $($wslProc.ExitCode))."
         }
-    } else {
-        Write-Host "Skipping WSL prerequisites (skipWsl=true)." -ForegroundColor Yellow
+        Remove-Item -Force $wslMsi -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "WARNING: WSL prerequisites setup failed: $_" -ForegroundColor Yellow
     }
 
     Write-Section "Docker Desktop"
