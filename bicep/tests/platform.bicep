@@ -31,13 +31,13 @@ param vmImageVersion string = 'latest'
 param spokeVnetResourceId string = ''
 
 @description('Optional. Public URL of install.ps1 for the test VM Custom Script Extension. Override to point to your fork/branch when testing changes.')
-param testVmInstallScriptUri string = 'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/fix/issue-63/bicep/infra/install.ps1'
+param testVmInstallScriptUri string = ''
 
 @description('Optional. GitHub repo owner/name used to build the default raw URL for install.ps1 when testVmInstallScriptUri is empty.')
 param testVmInstallScriptRepo string = 'Azure/AI-Landing-Zones'
 
 @description('Optional. Git branch/tag name passed to install.ps1 (-release). Keep in sync with testVmInstallScriptUri when overriding.')
-param testVmInstallScriptRelease string = 'fix/issue-63'
+param testVmInstallScriptRelease string = 'main'
 
 var resolvedTestVmInstallScriptUri = empty(testVmInstallScriptUri)
   ? 'https://raw.githubusercontent.com/${testVmInstallScriptRepo}/${testVmInstallScriptRelease}/bicep/infra/install.ps1'
@@ -554,6 +554,9 @@ resource testVmNic 'Microsoft.Network/networkInterfaces@2024-05-01' = {
 resource testVm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: testVmName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     hardwareProfile: {
       vmSize: vmSize
@@ -598,6 +601,16 @@ resource testVm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
 var testVmInstallFileUris = [
   resolvedTestVmInstallScriptUri
 ]
+
+resource testVmContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(resourceGroup().id, testVm.id, 'Contributor')
+  scope: resourceGroup()
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c') // Contributor
+    principalId: testVm.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
 
 resource testVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = {
   parent: testVm
@@ -652,6 +665,7 @@ output firewallResourceId string = azureFirewall.id
 output firewallPrivateIp string = azureFirewall.properties.ipConfigurations[0].properties.privateIPAddress
 output bastionResourceId string = bastion.id
 output testVmResourceId string = testVm.id
+output testVmManagedIdentityPrincipalId string = testVm.identity.principalId
 output privateDnsZonesDeployed array = [for (zoneName, i) in privateDnsZoneNames: {
   name: zoneName
   id: privateDnsZones[i].id

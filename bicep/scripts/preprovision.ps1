@@ -679,10 +679,32 @@ if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
   Write-Host ""
   Write-Host "  [+] Updated deploy/main.bicep ($replacementCount references replaced)" -ForegroundColor Green
 
+  #===============================================================================
+  # STEP 5: APPLY TAGS
+  #===============================================================================
+
+  Write-Host ""
+  Write-Host "[5] Step 5: Applying Resource Group tags..." -ForegroundColor Cyan
+  Write-Host "[i] Temporarily applying Resource Group tags to ignore controls..." -ForegroundColor Yellow
+
+  az group update --name $ResourceGroup --tags "SecurityControl=Ignore" | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to apply tags to Resource Group: $ResourceGroup"
+  }
+  Write-Host "[+] Added tags to Resource Group: $ResourceGroup" -ForegroundColor Green
+
+  if ($TemplateSpecRG -and ($TemplateSpecRG -ne $ResourceGroup)) {
+    az group update --name $TemplateSpecRG --tags "SecurityControl=Ignore" | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to apply tags to Template Spec Resource Group: $TemplateSpecRG"
+    }
+    Write-Host "[+] Added tags to Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Green
+  }
+
   # Proactively restore Template Spec artifacts so subsequent `bicep build` / `azd provision`
   # does not fail due to auth/restore timing issues.
   Write-Host "" 
-  Write-Host "[5] Step 5: Restoring Template Spec artifacts..." -ForegroundColor Cyan
+  Write-Host "[6] Step 6: Restoring Template Spec artifacts..." -ForegroundColor Cyan
 
   # Warm up token (helps avoid intermittent Azure CLI auth timeouts during restore)
   try {

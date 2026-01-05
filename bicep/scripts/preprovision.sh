@@ -647,11 +647,33 @@ if [ -f "$main_bicep_path" ] && [ -s "$temp_mapping_file" ]; then
     print_success "  [+] Updated deploy/main.bicep ($replacement_count references replaced)"
 
     #===============================================================================
-    # STEP 5: RESTORE TEMPLATE SPEC ARTIFACTS
+    # STEP 5: APPLY TAGS
     #===============================================================================
 
     echo ""
-    print_step "5" "Step 5: Restoring Template Spec artifacts..."
+    print_step "5" "Step 5: Applying Resource Group tags..."
+    print_info "Temporarily applying Resource Group tags to ignore controls..."
+
+    if ! az group update --name "$RESOURCE_GROUP" --tags "SecurityControl=Ignore" > /dev/null; then
+        print_error "Failed to apply tags to Resource Group: $RESOURCE_GROUP"
+        exit 1
+    fi
+    print_success "Added tags to Resource Group: $RESOURCE_GROUP"
+
+    if [ -n "$TEMPLATE_SPEC_RG" ] && [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
+        if ! az group update --name "$TEMPLATE_SPEC_RG" --tags "SecurityControl=Ignore" > /dev/null; then
+            print_error "Failed to apply tags to Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+            exit 1
+        fi
+        print_success "Added tags to Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+    fi
+
+    #===============================================================================
+    # STEP 6: RESTORE TEMPLATE SPEC ARTIFACTS
+    #===============================================================================
+
+    echo ""
+    print_step "6" "Step 6: Restoring Template Spec artifacts..."
 
     # Warm up token (helps avoid intermittent Azure CLI auth timeouts during restore)
     az account get-access-token --resource https://management.azure.com/ --query expiresOn -o tsv >/dev/null 2>&1 || true

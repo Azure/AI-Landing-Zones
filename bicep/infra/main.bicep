@@ -758,6 +758,28 @@ var varExistingVNetResourceGroupName = varDeploySubnetsToExistingVnet && varIsEx
   : ''
 var varIsCrossScope = varIsExistingVNetResourceId && !empty(varExistingVNetSubscriptionId) && !empty(varExistingVNetResourceGroupName)
 
+// Determine the Resource Group scope where the VNet lives.
+// This must be start-of-deployment evaluable (BCP177-safe), so we ONLY derive it from inputs:
+// - resourceIds.virtualNetworkResourceId (preferred when reusing an existing VNet)
+// - existingVNetSubnetsDefinition.existingVNetName (only when it is a full resource ID)
+// When neither is provided, the VNet is created in the current resource group.
+var varHasSpokeVnetResourceId = !empty(resourceIds.?virtualNetworkResourceId)
+var varSpokeVnetIdSegments = varHasSpokeVnetResourceId ? split(resourceIds.virtualNetworkResourceId!, '/') : array([])
+var varSpokeVnetSubscriptionId = varHasSpokeVnetResourceId && length(varSpokeVnetIdSegments) >= 3
+  ? varSpokeVnetIdSegments[2]
+  : ''
+var varSpokeVnetResourceGroupName = varHasSpokeVnetResourceId && length(varSpokeVnetIdSegments) >= 5
+  ? varSpokeVnetIdSegments[4]
+  : ''
+
+var varVnetScopeSubscriptionId = varHasSpokeVnetResourceId
+  ? varSpokeVnetSubscriptionId
+  : (varIsCrossScope ? varExistingVNetSubscriptionId : subscription().subscriptionId)
+var varVnetScopeResourceGroupName = varHasSpokeVnetResourceId
+  ? varSpokeVnetResourceGroupName
+  : (varIsCrossScope ? varExistingVNetResourceGroupName : resourceGroup().name)
+var varVnetResourceGroupScope = resourceGroup(varVnetScopeSubscriptionId, varVnetScopeResourceGroupName)
+
 // When reusing an existing spoke VNet, we may still want to create the spoke->hub peering.
 // To keep peering deployment conditions start-of-deployment evaluable (BCP177), derive the local VNet name only from inputs.
 var varSpokeVnetNameForPeering = !empty(resourceIds.?virtualNetworkResourceId)
@@ -1384,10 +1406,14 @@ var appGatewayPublicIpResourceId = resourceIds.?appGatewayPublicIpResourceId ?? 
 @description('Conditional Public IP for Azure Firewall. Required when deploy firewall is true and no existing ID is provided.')
 param firewallPublicIp publicIpDefinitionType?
 
-var varDeployFirewallPip = deployToggles.?firewall && empty(resourceIds.?firewallPublicIpResourceId)
+// In Platform Landing Zone mode, do not deploy a spoke firewall. Forced tunneling is expected to route to the hub firewall.
+var varDeploySpokeFirewall = (deployToggles.?firewall ?? false) && !varIsPlatformLz
+
+var varDeployFirewallPip = varDeploySpokeFirewall && empty(resourceIds.?firewallPublicIpResourceId)
 
 module firewallPipWrapper 'wrappers/avm.res.network.public-ip-address.bicep' = if (varDeployFirewallPip) {
   name: 'm-fw-pip'
+  scope: varVnetResourceGroupScope
   params: {
     pip: union(
       {
@@ -1451,6 +1477,10 @@ module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = i
             allowForwardedTraffic: hubVnetPeeringDefinition!.?allowForwardedTraffic ?? true
             allowGatewayTransit: hubVnetPeeringDefinition!.?allowGatewayTransit ?? false
             useRemoteGateways: hubVnetPeeringDefinition!.?useRemoteGateways ?? false
+            // Important for PLZ: never attempt to create the hub-side peering from the workload deployment.
+            // The hub-side peering is created either by the platform team (manual) or by the dedicated hub-to-spoke module
+            // when not in Platform Landing Zone mode.
+            remotePeeringEnabled: false
           }
         ]
       },
@@ -2432,6 +2462,12 @@ param aiFoundryDefinition aiFoundryDefinitionType = {
   }
 }
 
+@description('Optional. When false, disables the best-effort capability-host delay deployment script used to mitigate transient AI Foundry CapabilityHost provisioning races. Default: enabled.')
+param enableCapabilityHostDelayScript bool = true
+
+@description('Optional. How long to wait (in seconds) before creating the project capability host, to give the service time to finish provisioning the account-level capability host. Default: 600 (10 minutes).')
+param capabilityHostWaitSeconds int = 600
+
 var varAiFoundryModelDeploymentsMapped = [
   for d in (aiFoundryDefinition.?aiModelDeployments ?? []): {
     name: string(d.?name ?? d.model.name)
@@ -2514,6 +2550,8 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
     // Control whether the component creates associated resources and/or capability hosts (agent service)
     includeAssociatedResources: aiFoundryDefinition.?includeAssociatedResources ?? true
     createCapabilityHosts: aiFoundryDefinition.?aiFoundryConfiguration.?createCapabilityHosts ?? true
+    enableCapabilityHostDelayScript: enableCapabilityHostDelayScript
+    capabilityHostWaitSeconds: capabilityHostWaitSeconds
 
     // Model deployments
     modelDeployments: varAiFoundryModelDeployments
@@ -2783,10 +2821,11 @@ module applicationGateway 'wrappers/avm.res.network.application-gateway.bicep' =
 @description('Conditional. Azure Firewall Policy configuration. Required if deploy.firewall is true and resourceIds.firewallPolicyResourceId is empty.')
 param firewallPolicyDefinition firewallPolicyDefinitionType?
 
-var varDeployAfwPolicy = deployToggles.firewall && empty(resourceIds.?firewallPolicyResourceId!)
+var varDeployAfwPolicy = varDeploySpokeFirewall && empty(resourceIds.?firewallPolicyResourceId!)
 
 module fwPolicy 'wrappers/avm.res.network.firewall-policy.bicep' = if (varDeployAfwPolicy) {
   name: 'firewallPolicyDeployment'
+  scope: varVnetResourceGroupScope
   params: {
     firewallPolicy: union(
       {
@@ -2809,7 +2848,7 @@ var firewallPolicyResourceId = resourceIds.?firewallPolicyResourceId ?? (varDepl
 @description('Conditional. Azure Firewall configuration. Required if deploy.firewall is true and resourceIds.firewallResourceId is empty.')
 param firewallDefinition firewallDefinitionType?
 
-var varDeployFirewall = empty(resourceIds.?firewallResourceId!) && deployToggles.firewall
+var varDeployFirewall = empty(resourceIds.?firewallResourceId!) && varDeploySpokeFirewall
 
 resource existingFirewall 'Microsoft.Network/azureFirewalls@2024-07-01' existing = if (!empty(resourceIds.?firewallResourceId!)) {
   name: varAfwNameExisting
@@ -2831,6 +2870,7 @@ var varAfwName = !empty(resourceIds.?firewallResourceId!)
 
 module azureFirewall 'wrappers/avm.res.network.azure-firewall.bicep' = if (varDeployFirewall) {
   name: 'azureFirewallDeployment'
+  scope: varVnetResourceGroupScope
   params: {
     firewall: union(
       {
@@ -2895,7 +2935,8 @@ var varUdrNextHopIp = firewallPrivateIp
 //   do NOT deploy the route table. This avoids breaking egress by accidentally forcing 0.0.0.0/0 to a bad next hop.
 // - If the firewall is deployed/reused, that is a valid signal.
 // - If firewallPrivateIp is provided, that is a valid signal.
-var varHasFirewallSignal = (deployToggles.?firewall ?? false) || !empty(resourceIds.?firewallResourceId!) || !empty(firewallPrivateIp)
+// UDR can route either via a deployed spoke firewall, an existing firewall resource, or a user-provided next hop IP (e.g., hub firewall).
+var varHasFirewallSignal = varDeploySpokeFirewall || !empty(resourceIds.?firewallResourceId!) || !empty(firewallPrivateIp)
 var varDeployUdrEffective = deployToggles.userDefinedRoutes && varHasFirewallSignal && !empty(varUdrNextHopIp)
 
 resource udrRouteTable 'Microsoft.Network/routeTables@2023-11-01' = if (varDeployUdrEffective) {
@@ -2977,6 +3018,7 @@ var varUdrSubnetDefinitions = [
 
 module udrSubnetAssociation01 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
   name: 'm-udr-subnet-association-01'
+  scope: varVnetResourceGroupScope
   params: {
     existingVNetName: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[0]]
@@ -2994,6 +3036,7 @@ module udrSubnetAssociation01 './helpers/deploy-subnets-to-vnet/main.bicep' = if
 
 module udrSubnetAssociation02 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
   name: 'm-udr-subnet-association-02'
+  scope: varVnetResourceGroupScope
   params: {
     existingVNetName: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[1]]
@@ -3006,6 +3049,7 @@ module udrSubnetAssociation02 './helpers/deploy-subnets-to-vnet/main.bicep' = if
 
 module udrSubnetAssociation03 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
   name: 'm-udr-subnet-association-03'
+  scope: varVnetResourceGroupScope
   params: {
     existingVNetName: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[2]]
@@ -3018,6 +3062,7 @@ module udrSubnetAssociation03 './helpers/deploy-subnets-to-vnet/main.bicep' = if
 
 module udrSubnetAssociation04 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
   name: 'm-udr-subnet-association-04'
+  scope: varVnetResourceGroupScope
   params: {
     existingVNetName: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[3]]
@@ -3030,6 +3075,7 @@ module udrSubnetAssociation04 './helpers/deploy-subnets-to-vnet/main.bicep' = if
 
 module udrSubnetAssociation05 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
   name: 'm-udr-subnet-association-05'
+  scope: varVnetResourceGroupScope
   params: {
     existingVNetName: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[4]]
@@ -3042,6 +3088,7 @@ module udrSubnetAssociation05 './helpers/deploy-subnets-to-vnet/main.bicep' = if
 
 module udrSubnetAssociation06 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
   name: 'm-udr-subnet-association-06'
+  scope: varVnetResourceGroupScope
   params: {
     existingVNetName: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[5]]
@@ -3068,7 +3115,9 @@ param buildVmMaintenanceDefinition vmMaintenanceDefinitionType?
 @secure()
 param buildVmAdminPassword string = '${toUpper(substring(replace(newGuid(), '-', ''), 0, 8))}${toLower(substring(replace(newGuid(), '-', ''), 8, 8))}@${substring(replace(newGuid(), '-', ''), 16, 4)}!'
 
-var varDeployBuildVm = deployToggles.?buildVm ?? false
+var varWantsBuildVm = deployToggles.?buildVm ?? false
+// In Platform Landing Zone mode, do not deploy workload VMs.
+var varDeployBuildVm = varWantsBuildVm && !varIsPlatformLz
 var varBuildSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
   ? '${virtualNetworkResourceId}/subnets/agent-subnet'
   : '${resourceIds.virtualNetworkResourceId!}/subnets/agent-subnet'
@@ -3172,10 +3221,19 @@ param vmImageOffer string = 'windows-11'
 @description('Image version (use latest unless you need a pinned build).')
 param vmImageVersion string = 'latest'
 
-@description('Optional. Cache-busting tag for the Jump VM Custom Script Extension. Defaults to a new GUID each deployment to force re-run.')
-param jumpVmCseForceUpdateTag string = newGuid()
+@description('Optional. Cache-busting tag for the Jump VM Custom Script Extension. When set, forces the extension to re-run. Default: empty (no forced re-run).')
+param jumpVmCseForceUpdateTag string = ''
 
-var varDeployJumpVm = deployToggles.?jumpVm ?? false
+@description('Optional. Public URL of install.ps1 for the Jump VM Custom Script Extension. Override to point to your fork/branch when testing changes.')
+param jumpVmInstallScriptUri string = ''
+
+@description('Optional. GitHub repo owner/name used to build the default raw URL for install.ps1 when jumpVmInstallScriptUri is empty.')
+param jumpVmInstallScriptRepo string = 'Azure/AI-Landing-Zones'
+
+@description('Optional. Git branch/tag name passed to install.ps1 (-release). Keep in sync with jumpVmInstallScriptUri when overriding.')
+param jumpVmInstallScriptRelease string = 'main'
+
+var varDeployJumpVm = (deployToggles.?jumpVm ?? false) && !varIsPlatformLz
 var varJumpVmMaintenanceConfigured = varDeployJumpVm && (jumpVmMaintenanceDefinition != null)
 var varJumpVmName = empty(jumpVmDefinition.?name ?? '')
   ? 'vm-${substring(baseName, 0, 6)}-jmp'
@@ -3262,7 +3320,9 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
 }
 
 var jumpVmInstallFileUris = [
-  'https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/fix/issue-63/bicep/infra/install.ps1'
+  (empty(jumpVmInstallScriptUri)
+    ? 'https://raw.githubusercontent.com/${jumpVmInstallScriptRepo}/${jumpVmInstallScriptRelease}/bicep/infra/install.ps1'
+    : jumpVmInstallScriptUri)
 ]
 
 resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = if (varDeployJumpVm && (jumpVmDefinition.?enableAutoInstall ?? true)) {
@@ -3273,15 +3333,31 @@ resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = i
     type: 'CustomScriptExtension'
     typeHandlerVersion: '1.10'
     autoUpgradeMinorVersion: true
-    forceUpdateTag: jumpVmCseForceUpdateTag
     settings: {
       fileUris: jumpVmInstallFileUris
-      commandToExecute: 'powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& { & .\\install.ps1 -release fix/issue-63 -skipReboot:$true -skipRepoClone:$true -skipAzdInit:$true -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false }"'
+      commandToExecute: 'powershell.exe -NoProfile -ExecutionPolicy Unrestricted -Command "& { & .\\install.ps1 -release ${jumpVmInstallScriptRelease} -skipReboot:$true -skipRepoClone:$true -skipAzdInit:$true -azureTenantID ${subscription().tenantId} -azureSubscriptionID ${subscription().subscriptionId} -AzureResourceGroupName ${resourceGroup().name} -azureLocation ${location} -AzdEnvName ai-lz-${resourceToken} -resourceToken ${resourceToken} -useUAI false }"'
     }
+    ...(empty(jumpVmCseForceUpdateTag) ? {} : {
+      forceUpdateTag: jumpVmCseForceUpdateTag
+    })
   }
   dependsOn: [
     jumpVm
   ]
+}
+
+// Jump VM Role Assignment - Contributor at Resource Group scope
+resource jumpVmContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (varDeployJumpVm && (jumpVmDefinition.?assignContributorRoleAtResourceGroup ?? true)) {
+  name: guid(resourceGroup().id, varJumpVmName, 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+  scope: resourceGroup()
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      'b24988ac-6180-42a0-ab88-20f7382dd24c'
+    ) // Contributor
+    principalId: jumpVm!.outputs.systemAssignedMIPrincipalId
+    principalType: 'ServicePrincipal'
+  }
 }
 
 // -----------------------
@@ -3456,6 +3532,9 @@ output jumpVmResourceId string = varDeployJumpVm ? jumpVm!.outputs.resourceId : 
 
 @description('Jump VM name (if deployed).')
 output jumpVmName string = varDeployJumpVm ? jumpVm!.outputs.name : ''
+
+@description('Jump VM managed identity principal ID (if deployed).')
+output jumpVmManagedIdentityPrincipalId string = varDeployJumpVm ? jumpVm!.outputs.systemAssignedMIPrincipalId : ''
 
 // Container Apps Outputs
 @description('Container Apps deployment count.')

@@ -253,3 +253,6 @@ param firewallPolicyDefinition = {
     }
   ]
 }
+
+// Optional (subscription-scoped): enable Defender for AI pricing.
+// param enableDefenderForAI = true

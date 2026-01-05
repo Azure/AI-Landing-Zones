@@ -765,7 +765,9 @@ type vmDefinitionType = {
   lock: object?
   @description('Optional. Managed identities.')
   managedIdentities: object?
-  @description('Optional. Role assignments.')
+  @description('Optional. Enable system-assigned managed identity for the VM. Default is true.')
+  enableSystemAssignedManagedIdentity: bool?
+  @description('Optional. Role assignments for the VM managed identity. Each assignment can specify roleDefinitionIdOrName and principalType. Scope defaults to resource group if resourceGroupName is specified, otherwise uses the VM resource scope.')
   roleAssignments: array?
   @description('Optional. Force password reset on first login.')
   requireGuestProvisionSignal: bool?
@@ -810,6 +812,8 @@ type vmDefinitionType = {
   // Jump VM specific properties
   @description('Optional. When true (default), runs the Jump VM Custom Script Extension to download and execute bicep/infra/install.ps1 (Jump VM only).')
   enableAutoInstall: bool?
+  @description('Optional. When true (default), creates a Contributor role assignment for the Jump VM managed identity at the deployment resource group scope (Jump VM only).')
+  assignContributorRoleAtResourceGroup: bool?
   @description('Optional. Resource ID of the maintenance configuration (Jump VM only).')
   maintenanceConfigurationResourceId: string?
   @description('Optional. Patch mode for the VM (Jump VM only).')

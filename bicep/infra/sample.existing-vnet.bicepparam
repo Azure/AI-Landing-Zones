@@ -1,7 +1,43 @@
 using './main.bicep'
 
-// Existing VNet: creates the landing zone subnets inside an existing VNet.
-// Required: set `existingVNetSubnetsDefinition.existingVNetName`.
+// Existing VNet (reuse as-is): deploy the landing zone into an already-created VNet.
+// In this mode you provide `resourceIds.virtualNetworkResourceId` and the template will
+// reference subnets by name.
+//
+// Note on subnet changes:
+// - If you enable features that require subnet association updates (for example `userDefinedRoutes=true`),
+//   the template will update the existing subnets to attach route tables / NSGs / delegations as needed.
+// - If you want a strict "no subnet modifications" deployment, keep `userDefinedRoutes=false` and
+//   provide pre-configured NSG/UDR/delegations on the subnets.
+//
+// IMPORTANT: the existing VNet must already contain the required subnets with the expected names.
+// With the default toggle set below, you should have (at minimum):
+// - agent-subnet (delegated to Microsoft.App/environments)
+// - aca-env-subnet (delegated to Microsoft.App/environments)
+// - pe-subnet (Private Endpoint subnet, with Private Endpoint network policies Disabled)
+// - jumpbox-subnet
+// - AzureBastionSubnet
+// - AzureFirewallSubnet
+// - devops-agents-subnet
+// - appgw-subnet (even if Application Gateway is disabled; safe to keep for parity)
+// - apim-subnet (even if APIM is disabled; safe to keep for parity)
+
+// Addressing assumption (matches main.bicep defaults):
+// - VNet address space: 192.168.0.0/22
+// - Subnets:
+//   - agent-subnet:        192.168.0.0/27
+//   - pe-subnet:           192.168.0.32/27
+//   - AzureBastionSubnet:  192.168.0.64/26
+//   - AzureFirewallSubnet: 192.168.0.128/26
+//   - jumpbox-subnet:      192.168.1.0/28
+//   - devops-agents-subnet:192.168.1.32/27
+//   - aca-env-subnet:      192.168.2.0/23
+//   - appgw-subnet:        192.168.0.192/27
+//   - apim-subnet:         192.168.0.224/27
+//
+// Why this matters: the `firewallPolicyDefinition` below contains `sourceAddresses` examples that are
+// intentionally aligned to these subnet ranges (for example, jumpbox-subnet = 192.168.1.0/28).
+// If your existing VNet uses different CIDRs, update the `sourceAddresses` to match your subnets.
 
 param deployToggles = {
   aiFoundry: true
@@ -36,62 +72,17 @@ param deployToggles = {
   userDefinedRoutes: true
 }
 
-param existingVNetSubnetsDefinition = {
-  existingVNetName: 'your-existing-vnet-name'
-  useDefaultSubnets: false
-  subnets: [
-    {
-      name: 'agent-subnet'
-      addressPrefix: '192.168.0.0/27'
-      delegation: 'Microsoft.App/environments'
-        serviceEndpoints: [
-          'Microsoft.CognitiveServices'
-        ]
-    }
-    {
-      name: 'pe-subnet'
-      addressPrefix: '192.168.0.32/27'
-        serviceEndpoints: [
-          'Microsoft.AzureCosmosDB'
-        ]
-      privateEndpointNetworkPolicies: 'Disabled'
-    }
-    {
-      name: 'aca-env-subnet'
-      addressPrefix: '192.168.2.0/23'
-      delegation: 'Microsoft.App/environments'
-        serviceEndpoints: [
-          'Microsoft.AzureCosmosDB'
-        ]
-    }
-    {
-      name: 'devops-agents-subnet'
-      addressPrefix: '192.168.1.32/27'
-    }
-    {
-      name: 'AzureBastionSubnet'
-      addressPrefix: '192.168.0.64/26'
-    }
-    {
-      name: 'AzureFirewallSubnet'
-      addressPrefix: '192.168.0.128/26'
-    }
-    {
-      name: 'jumpbox-subnet'
-      addressPrefix: '192.168.1.0/28'
-    }
-    {
-      name: 'appgw-subnet'
-      addressPrefix: '192.168.0.192/27'
-    }
-    {
-      name: 'apim-subnet'
-      addressPrefix: '192.168.0.224/27'
-    }
-  ]
+param resourceIds = {
+  // Required for VNet reuse: full resource ID of the existing VNet.
+  // Example:
+  // '/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rg-ailz-vnet-123/providers/Microsoft.Network/virtualNetworks/vnet-existing-123'
+  virtualNetworkResourceId: '/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/<existing-resource-group>/providers/Microsoft.Network/virtualNetworks/<existing-vnet-name>'
 }
 
-param resourceIds = {}
+// Cross-resource-group note:
+// If your VNet is in a different resource group than the workload deployment RG, the template will deploy
+// VNet-bound resources (like Azure Firewall, its Public IP, and subnet associations) into the VNet's RG.
+// Ensure the deploying identity has permissions on BOTH resource groups.
 
 param flagPlatformLandingZone = false
 

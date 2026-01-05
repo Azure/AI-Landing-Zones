@@ -167,6 +167,8 @@ For detailed configuration and examples, see:
 * **Global resources**: Storage accounts and Container Registry require globally unique names
 * **Platform integration**: Set `flagPlatformLandingZone = true` to integrate with existing platform DNS zones
 * **VM deployment**: Build/Jump VMs only deploy when required parameters are provided (SSH keys, passwords)
+* **Forced tunneling + CSE downloads**: If the Jump VM Custom Script Extension fails with `File download failure`, the VM typically cannot reach the `jumpVmInstallScriptUri` URL. Under forced tunneling, double-check `firewallPrivateIp` points to the actual next hop (workload firewall if you deploy one; hub firewall only if you're intentionally routing through the hub) and that the firewall policy allows outbound HTTPS to `raw.githubusercontent.com`.
+* **AI Foundry CapabilityHost (transient)**: In some runs the service-managed *Account CapabilityHost* may still be provisioning when the template tries to create the *Project CapabilityHost*, resulting in `UserError: Account CapabilityHost is not in succeeded state, please retry Project CapabilityHost creation after Account CapabilityHost is succeeded`. This is typically transient—re-run `azd provision`.
 * **Defender for AI (optional)**: `enableDefenderForAI` deploys at **subscription scope** (configures `Microsoft.Security/pricings`). This requires subscription-level permissions; it is `false` by default to avoid deployment failures in restricted subscriptions.
 
 ## 7) CI/CD pipelines (overview)

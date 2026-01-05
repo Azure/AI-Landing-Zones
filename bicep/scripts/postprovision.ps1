@@ -128,11 +128,52 @@ if ($TemplateSpecRG -eq $ResourceGroup) {
 Write-Host ""
 
 #===============================================================================
-# STEP 2: DIRECTORY CLEANUP
+# STEP 2: REMOVE TEMPORARY TAGS
 #===============================================================================
 
-# Step 2: Clean up deploy directory
-Write-Host "[2] Step 2: Cleaning up deploy directory..." -ForegroundColor Cyan
+Write-Host "[2] Step 2: Removing temporary Resource Group tags..." -ForegroundColor Cyan
+Write-Host "[i] Removing temporary Resource Group tags..." -ForegroundColor Yellow
+
+try {
+  $rgId = az group show --name $ResourceGroup --query id -o tsv
+  if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($rgId)) {
+    throw "Failed to resolve resource ID for Resource Group: $ResourceGroup"
+  }
+  az tag update --resource-id $rgId --operation Delete --tags SecurityControl | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to remove tags from Resource Group: $ResourceGroup"
+  }
+  Write-Host "[+] Removed tags from Resource Group: $ResourceGroup" -ForegroundColor Green
+} catch {
+  Write-Host "[!] Failed to remove tags from Resource Group: $ResourceGroup" -ForegroundColor Yellow
+  Write-Host "    $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+if ($TemplateSpecRG -and ($TemplateSpecRG -ne $ResourceGroup)) {
+  try {
+    $tsRgId = az group show --name $TemplateSpecRG --query id -o tsv
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($tsRgId)) {
+      throw "Failed to resolve resource ID for Template Spec Resource Group: $TemplateSpecRG"
+    }
+    az tag update --resource-id $tsRgId --operation Delete --tags SecurityControl | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to remove tags from Template Spec Resource Group: $TemplateSpecRG"
+    }
+    Write-Host "[+] Removed tags from Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Green
+  } catch {
+    Write-Host "[!] Failed to remove tags from Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Yellow
+    Write-Host "    $($_.Exception.Message)" -ForegroundColor Yellow
+  }
+}
+
+Write-Host ""
+
+#===============================================================================
+# STEP 3: DIRECTORY CLEANUP
+#===============================================================================
+
+# Step 3: Clean up deploy directory
+Write-Host "[3] Step 3: Cleaning up deploy directory..." -ForegroundColor Cyan
 if (Test-Path $deployDir) {
   Remove-Item -Path $deployDir -Recurse -Force
   Write-Host "  [+] Removed deploy directory: ./deploy/" -ForegroundColor Green

@@ -172,6 +172,12 @@ param includeAssociatedResources bool = false
 @description('Optional. When false, the module will NOT create Capability Hosts (Foundry Agent Service) or perform its dependent role assignments.')
 param createCapabilityHosts bool = false
 
+@description('Optional. When false, skips the best-effort deployment script delay used before creating the project capability host (useful when deploymentScripts are blocked by policy).')
+param enableCapabilityHostDelayScript bool = true
+
+@description('Optional. How long to wait (in seconds) before creating the project capability host, to give the service time to finish provisioning the account-level capability host. Default: 600 (10 minutes).')
+param capabilityHostWaitSeconds int = 600
+
 var effectiveCreateCapabilityHosts = createCapabilityHosts && includeAssociatedResources
 
 // Create Virtual Network and Subnets
@@ -415,6 +421,8 @@ module addProjectCapabilityHost 'modules-network-secured/add-project-capability-
     azureStorageConnection: aiProjectWithConnections!.outputs.azureStorageConnection
     aiSearchConnection: aiProjectWithConnections!.outputs.aiSearchConnection
     projectCapHost: projectCapHost
+    enableCapabilityHostDelayScript: enableCapabilityHostDelayScript
+    capabilityHostWaitSeconds: capabilityHostWaitSeconds
   }
   dependsOn: [
      aiSearch!      // Ensure AI Search exists
