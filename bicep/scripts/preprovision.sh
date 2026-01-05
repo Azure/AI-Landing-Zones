@@ -27,6 +27,18 @@ SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID:-}"
 RESOURCE_GROUP="${AZURE_RESOURCE_GROUP:-}"
 TEMPLATE_SPEC_RG="${AZURE_TS_RG:-}"
 
+# Toggle Template Specs. Default: enabled.
+# Set AZURE_DEPLOY_TS=false to skip Template Specs and keep local wrapper references.
+DEPLOY_TS_RAW="${AZURE_DEPLOY_TS:-}"
+DEPLOY_TEMPLATE_SPECS="true"
+if [ -n "$DEPLOY_TS_RAW" ]; then
+    DEPLOY_TS_NORM=$(echo "$DEPLOY_TS_RAW" | tr '[:upper:]' '[:lower:]' | xargs)
+    case "$DEPLOY_TS_NORM" in
+        0|false|no|off) DEPLOY_TEMPLATE_SPECS="false" ;;
+        *) DEPLOY_TEMPLATE_SPECS="true" ;;
+    esac
+fi
+
 # Color codes for output (compatible with most terminals)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -248,8 +260,20 @@ print_white "Subscription ID: $SUBSCRIPTION_ID"
 print_white "Location: $LOCATION"  
 print_white "Resource Group: $RESOURCE_GROUP"
 print_white "Template Spec RG: $TEMPLATE_SPEC_RG"
+print_white "Deploy Template Specs (AZURE_DEPLOY_TS): $DEPLOY_TEMPLATE_SPECS"
 print_white "Use Existing Template Specs: $USE_EXISTING_TEMPLATE_SPECS"
 echo ""
+
+if [ "$DEPLOY_TEMPLATE_SPECS" != "true" ]; then
+    print_step "3" "Step 3: Skipping Template Specs (AZURE_DEPLOY_TS=false)"
+    print_gray "[i] Deploy will use local wrapper modules from ./bicep/deploy/wrappers"
+    echo ""
+    printf "${GREEN}[OK] Preprovision complete!${NC}\n"
+    printf "${WHITE}  Template Specs: disabled${NC}\n"
+    printf "${WHITE}  Deploy directory ready: ./bicep/deploy/${NC}\n"
+    echo ""
+    exit 0
+fi
 
 #===============================================================================
 # STEP 1: SETUP & DIRECTORY PREPARATION
@@ -621,6 +645,69 @@ if [ -f "$main_bicep_path" ] && [ -s "$temp_mapping_file" ]; then
     
     echo ""
     print_success "  [+] Updated deploy/main.bicep ($replacement_count references replaced)"
+
+    #===============================================================================
+    # STEP 5: APPLY TAGS
+    #===============================================================================
+
+    echo ""
+    print_step "5" "Step 5: Applying Resource Group tags..."
+    print_info "Temporarily applying Resource Group tags to ignore controls..."
+
+    if ! az group update --name "$RESOURCE_GROUP" --tags "SecurityControl=Ignore" > /dev/null; then
+        print_error "Failed to apply tags to Resource Group: $RESOURCE_GROUP"
+        exit 1
+    fi
+    print_success "Added tags to Resource Group: $RESOURCE_GROUP"
+
+    if [ -n "$TEMPLATE_SPEC_RG" ] && [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
+        if ! az group update --name "$TEMPLATE_SPEC_RG" --tags "SecurityControl=Ignore" > /dev/null; then
+            print_error "Failed to apply tags to Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+            exit 1
+        fi
+        print_success "Added tags to Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+    fi
+
+    #===============================================================================
+    # STEP 6: RESTORE TEMPLATE SPEC ARTIFACTS
+    #===============================================================================
+
+    echo ""
+    print_step "6" "Step 6: Restoring Template Spec artifacts..."
+
+    # Warm up token (helps avoid intermittent Azure CLI auth timeouts during restore)
+    az account get-access-token --resource https://management.azure.com/ --query expiresOn -o tsv >/dev/null 2>&1 || true
+
+    max_attempts=5
+    attempt=1
+    while [ $attempt -le $max_attempts ]; do
+        print_gray "bicep restore attempt $attempt/$max_attempts"
+        if command -v bicep >/dev/null 2>&1; then
+            if bicep restore "$main_bicep_path" >/dev/null 2>&1; then
+                print_success "Artifact restore completed"
+                break
+            fi
+        else
+            if az bicep restore --file "$main_bicep_path" >/dev/null 2>&1; then
+                print_success "Artifact restore completed"
+                break
+            fi
+        fi
+
+        if [ $attempt -eq $max_attempts ]; then
+            print_error "Artifact restore failed after $max_attempts attempts"
+            print_warning "Fix suggestions:"
+            print_warning "  1) Run: az login"
+            print_warning "  2) Run: az account set --subscription <subscription-id>"
+            exit 1
+        fi
+
+        sleep_seconds=$((2 * attempt))
+        if [ $sleep_seconds -gt 30 ]; then sleep_seconds=30; fi
+        print_warning "Restore attempt failed; retrying in ${sleep_seconds}s..."
+        sleep "$sleep_seconds"
+        attempt=$((attempt + 1))
+    done
 fi
 
 #===============================================================================

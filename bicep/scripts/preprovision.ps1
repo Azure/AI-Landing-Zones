@@ -212,6 +212,20 @@ if ($missingVars.Count -gt 0) {
   
   Write-Host ""
 }
+  #===============================================================================
+  # TEMPLATE SPEC TOGGLE
+  #===============================================================================
+
+  # By default, this script uses Template Specs for wrapper modules. You can disable
+  # this behavior for local/dev provisioning (avoids ts: restore/auth issues) by setting:
+  #   AZURE_DEPLOY_TS=false
+
+  $deployTemplateSpecs = $true
+  if (-not [string]::IsNullOrWhiteSpace($env:AZURE_DEPLOY_TS)) {
+    $raw = $env:AZURE_DEPLOY_TS.Trim().ToLowerInvariant()
+    $deployTemplateSpecs = -not ($raw -in @('0', 'false', 'no', 'off'))
+  }
+
 
 # Determine behavior based on AZURE_TS_RG
 $useExistingTemplateSpecs = -not [string]::IsNullOrWhiteSpace($TemplateSpecRG)
@@ -225,6 +239,7 @@ Write-Host "  Subscription ID: $SubscriptionId" -ForegroundColor White
 Write-Host "  Location: $Location" -ForegroundColor White  
 Write-Host "  Resource Group: $ResourceGroup" -ForegroundColor White
 Write-Host "  Template Spec RG: $TemplateSpecRG" -ForegroundColor White
+Write-Host "  Deploy Template Specs (AZURE_DEPLOY_TS): $deployTemplateSpecs" -ForegroundColor White
 Write-Host "  Use Existing Template Specs: $useExistingTemplateSpecs" -ForegroundColor White
 Write-Host ""
 
@@ -316,6 +331,19 @@ if ($TemplateSpecRG -ne $ResourceGroup -and -not $useExistingTemplateSpecs) {
   } else {
     Write-Host "  [+] Template Spec resource group already exists: $TemplateSpecRG" -ForegroundColor Green
   }
+}
+
+if (-not $deployTemplateSpecs) {
+  Write-Host "[3] Step 3: Skipping Template Specs (AZURE_DEPLOY_TS=false)" -ForegroundColor Yellow
+  Write-Host "  [i] Deploy will use local wrapper modules from ./bicep/deploy/wrappers" -ForegroundColor Gray
+  $templateSpecs = @{}
+
+  Write-Host ""
+  Write-Host "[OK] Preprovision complete!" -ForegroundColor Green
+  Write-Host "  Template Specs: disabled" -ForegroundColor White
+  Write-Host "  Deploy directory ready: ./bicep/deploy/" -ForegroundColor White
+  Write-Host ""
+  exit 0
 }
 
 #===============================================================================
@@ -650,6 +678,69 @@ if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
   Set-Content -Path $mainBicepPath -Value $content -Encoding UTF8
   Write-Host ""
   Write-Host "  [+] Updated deploy/main.bicep ($replacementCount references replaced)" -ForegroundColor Green
+
+  #===============================================================================
+  # STEP 5: APPLY TAGS
+  #===============================================================================
+
+  Write-Host ""
+  Write-Host "[5] Step 5: Applying Resource Group tags..." -ForegroundColor Cyan
+  Write-Host "[i] Temporarily applying Resource Group tags to ignore controls..." -ForegroundColor Yellow
+
+  az group update --name $ResourceGroup --tags "SecurityControl=Ignore" | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to apply tags to Resource Group: $ResourceGroup"
+  }
+  Write-Host "[+] Added tags to Resource Group: $ResourceGroup" -ForegroundColor Green
+
+  if ($TemplateSpecRG -and ($TemplateSpecRG -ne $ResourceGroup)) {
+    az group update --name $TemplateSpecRG --tags "SecurityControl=Ignore" | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to apply tags to Template Spec Resource Group: $TemplateSpecRG"
+    }
+    Write-Host "[+] Added tags to Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Green
+  }
+
+  # Proactively restore Template Spec artifacts so subsequent `bicep build` / `azd provision`
+  # does not fail due to auth/restore timing issues.
+  Write-Host "" 
+  Write-Host "[6] Step 6: Restoring Template Spec artifacts..." -ForegroundColor Cyan
+
+  # Warm up token (helps avoid intermittent Azure CLI auth timeouts during restore)
+  try {
+    $null = az account get-access-token --resource https://management.azure.com/ --query expiresOn -o tsv 2>$null
+  } catch {
+    # non-fatal
+  }
+
+  $maxRestoreAttempts = 5
+  for ($attempt = 1; $attempt -le $maxRestoreAttempts; $attempt++) {
+    Write-Host "  [i] bicep restore attempt $attempt/$maxRestoreAttempts" -ForegroundColor Gray
+    try {
+      if (Get-Command bicep -ErrorAction SilentlyContinue) {
+        bicep restore $mainBicepPath 2>$null | Out-Null
+      } else {
+        az bicep restore --file $mainBicepPath 2>$null | Out-Null
+      }
+      Write-Host "  [+] Artifact restore completed" -ForegroundColor Green
+      break
+    } catch {
+      if ($attempt -eq $maxRestoreAttempts) {
+        Write-Host "  [X] Artifact restore failed after $maxRestoreAttempts attempts" -ForegroundColor Red
+        Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "" 
+        Write-Host "  [!] Fix suggestions:" -ForegroundColor Yellow
+        Write-Host "      1) Run: az login" -ForegroundColor White
+        Write-Host "      2) Run: az account set --subscription $SubscriptionId" -ForegroundColor White
+        Write-Host "      3) Re-run: azd provision" -ForegroundColor White
+        Write-Host "" 
+        throw
+      }
+      $sleepSeconds = [Math]::Min(30, 2 * $attempt)
+      Write-Host "  [!] Restore attempt failed; retrying in ${sleepSeconds}s..." -ForegroundColor Yellow
+      Start-Sleep -Seconds $sleepSeconds
+    }
+  }
 }
 
 #===============================================================================

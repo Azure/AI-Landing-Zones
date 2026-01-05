@@ -26,10 +26,13 @@
    az login
    ```
 
+> [!NOTE]
+> Replace `RANDOM_SUFFIX` with a unique value (for example a timestamp or a short random number) to avoid name collisions.
+
 2. **Create the resource group** where you're gonna deploy the AI Landing Zone Resources
 
    ```bash
-   az group create --name "rg-aiml-dev" --location "eastus2"
+   az group create --name "rg-ai-lz-RANDOM_SUFFIX" --location "eastus2"
    ```
 
 3. **Initialize the project**
@@ -37,7 +40,7 @@
    In an empty folder (e.g., `deploy`), run:
 
    ```bash
-   azd init -t Azure/AI-Landing-Zones -e aiml-dev
+   azd init -t Azure/AI-Landing-Zones -e ai-lz-RANDOM_SUFFIX
    ```
 
 4. **Set environment variables** `AZURE_LOCATION`, `AZURE_RESOURCE_GROUP`, `AZURE_SUBSCRIPTION_ID`.
@@ -46,7 +49,7 @@
 
 ```bash
 export AZURE_LOCATION="eastus2"
-export AZURE_RESOURCE_GROUP="rg-aiml-dev"
+export AZURE_RESOURCE_GROUP="rg-ai-lz-RANDOM_SUFFIX"
 export AZURE_SUBSCRIPTION_ID="00000000-1111-2222-3333-444444444444"
 ```
 
@@ -54,13 +57,13 @@ export AZURE_SUBSCRIPTION_ID="00000000-1111-2222-3333-444444444444"
 
 ```powershell
 $env:AZURE_LOCATION = "eastus2"
-$env:AZURE_RESOURCE_GROUP = "rg-aiml-dev"
+$env:AZURE_RESOURCE_GROUP = "rg-ai-lz-RANDOM_SUFFIX"
 $env:AZURE_SUBSCRIPTION_ID = "00000000-1111-2222-3333-444444444444"
 ```
 
 5. **(Optional) Customize parameters**
 
-   Edit `bicep/infra/sample.main.bicepparam` if you want to adjust deployment options. (See [Configuration options](#4-configuration-options) and [Reference docs](#5-reference-docs))
+   Edit `bicep/infra/main.bicepparam` if you want to adjust deployment options. (See [Configuration options](#4-configuration-options) and [Reference docs](#5-reference-docs))
 
 6. **Provision the infrastructure**
 
@@ -108,7 +111,7 @@ Both VMs provide access to resources within the virtual network.
 
 ## 4) Configuration options
 
-Update parameters in the `bicep/infra/sample.main.bicepparam` file:
+Update parameters in the `bicep/infra/main.bicepparam` file:
 
 ```bicep
 using 'main.bicep'
@@ -164,6 +167,9 @@ For detailed configuration and examples, see:
 * **Global resources**: Storage accounts and Container Registry require globally unique names
 * **Platform integration**: Set `flagPlatformLandingZone = true` to integrate with existing platform DNS zones
 * **VM deployment**: Build/Jump VMs only deploy when required parameters are provided (SSH keys, passwords)
+* **Forced tunneling + CSE downloads**: If the Jump VM Custom Script Extension fails with `File download failure`, the VM typically cannot reach the `jumpVmInstallScriptUri` URL. Under forced tunneling, double-check `firewallPrivateIp` points to the actual next hop (workload firewall if you deploy one; hub firewall only if you're intentionally routing through the hub) and that the firewall policy allows outbound HTTPS to `raw.githubusercontent.com`.
+* **AI Foundry CapabilityHost (transient)**: In some runs the service-managed *Account CapabilityHost* may still be provisioning when the template tries to create the *Project CapabilityHost*, resulting in `UserError: Account CapabilityHost is not in succeeded state, please retry Project CapabilityHost creation after Account CapabilityHost is succeeded`. This is typically transient—re-run `azd provision`.
+* **Defender for AI (optional)**: `enableDefenderForAI` deploys at **subscription scope** (configures `Microsoft.Security/pricings`). This requires subscription-level permissions; it is `false` by default to avoid deployment failures in restricted subscriptions.
 
 ## 7) CI/CD pipelines (overview)
 

@@ -163,11 +163,20 @@ param projectCapHost string = 'caphostproj'
 @description('If false, skips creation of private endpoints and private DNS configuration (useful for Platform Landing Zone scenarios).')
 param deployPrivateEndpointsAndDns bool = true
 
+@description('When false, the component will still create Private Endpoints but will skip Private DNS Zones, DNS VNet links, and Private DNS Zone Groups. Use this for Platform Landing Zone (Model B) scenarios where the workload deployer has no permissions on platform-owned DNS resources.')
+param configurePrivateDns bool = true
+
 @description('Optional. When false, the module will NOT deploy associated resources (AI Search, Storage, Cosmos) or their private endpoints/DNS.')
 param includeAssociatedResources bool = false
 
 @description('Optional. When false, the module will NOT create Capability Hosts (Foundry Agent Service) or perform its dependent role assignments.')
 param createCapabilityHosts bool = false
+
+@description('Optional. When false, skips the best-effort deployment script delay used before creating the project capability host (useful when deploymentScripts are blocked by policy).')
+param enableCapabilityHostDelayScript bool = true
+
+@description('Optional. How long to wait (in seconds) before creating the project capability host, to give the service time to finish provisioning the account-level capability host. Default: 600 (10 minutes).')
+param capabilityHostWaitSeconds int = 600
 
 var effectiveCreateCapabilityHosts = createCapabilityHosts && includeAssociatedResources
 
@@ -290,6 +299,7 @@ module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.b
     storageAccountResourceGroupName: azureStorageResourceGroupName
     storageAccountSubscriptionId: azureStorageSubscriptionId
     existingDnsZones: existingDnsZones
+    configurePrivateDns: configurePrivateDns
   }
   dependsOn: [
     #disable-next-line BCP321
@@ -411,6 +421,8 @@ module addProjectCapabilityHost 'modules-network-secured/add-project-capability-
     azureStorageConnection: aiProjectWithConnections!.outputs.azureStorageConnection
     aiSearchConnection: aiProjectWithConnections!.outputs.aiSearchConnection
     projectCapHost: projectCapHost
+    enableCapabilityHostDelayScript: enableCapabilityHostDelayScript
+    capabilityHostWaitSeconds: capabilityHostWaitSeconds
   }
   dependsOn: [
      aiSearch!      // Ensure AI Search exists

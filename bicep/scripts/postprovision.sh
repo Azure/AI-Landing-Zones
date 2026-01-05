@@ -171,11 +171,44 @@ fi
 echo ""
 
 #===============================================================================
-# STEP 2: DIRECTORY CLEANUP
+# STEP 2: REMOVE TEMPORARY TAGS
 #===============================================================================
 
-# Step 2: Clean up deploy directory
-print_step "2" "Step 2: Cleaning up deploy directory..."
+print_step "2" "Step 2: Removing temporary Resource Group tags..."
+print_info "Removing temporary Resource Group tags..."
+
+rg_id="$(az group show --name "$RESOURCE_GROUP" --query id -o tsv 2>/dev/null || echo "")"
+if [ -n "$rg_id" ]; then
+    if az tag update --resource-id "$rg_id" --operation Delete --tags SecurityControl > /dev/null 2>&1; then
+        print_success "Removed tags from Resource Group: $RESOURCE_GROUP"
+    else
+        print_warning "Failed to remove tags from Resource Group: $RESOURCE_GROUP"
+    fi
+else
+    print_warning "Failed to resolve resource ID for Resource Group: $RESOURCE_GROUP"
+fi
+
+if [ -n "$TEMPLATE_SPEC_RG" ] && [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
+    ts_rg_id="$(az group show --name "$TEMPLATE_SPEC_RG" --query id -o tsv 2>/dev/null || echo "")"
+    if [ -n "$ts_rg_id" ]; then
+        if az tag update --resource-id "$ts_rg_id" --operation Delete --tags SecurityControl > /dev/null 2>&1; then
+            print_success "Removed tags from Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+        else
+            print_warning "Failed to remove tags from Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+        fi
+    else
+        print_warning "Failed to resolve resource ID for Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+    fi
+fi
+
+echo ""
+
+#===============================================================================
+# STEP 3: DIRECTORY CLEANUP
+#===============================================================================
+
+# Step 3: Clean up deploy directory
+print_step "3" "Step 3: Cleaning up deploy directory..."
 if [ -d "$deploy_dir" ]; then
     rm -rf "$deploy_dir"
     print_success "Removed deploy directory: ./deploy/"

@@ -2,6 +2,35 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.8
+
+### Changed
+- Improved Jump VM (jumpbox) provisioning reliability, especially under forced tunneling ([issue #63](https://github.com/Azure/AI-Landing-Zones/issues/63)):
+  - Hardened the Custom Script Extension bootstrap (`install.ps1`) with more reliable WSL detection/installation and a reboot flow when required.
+  - Stabilized Docker Desktop readiness checks and post-reboot continuation.
+  - Made bootstrap steps more idempotent on reruns (e.g., Python install and tool setup).
+  - Adjusted egress allow-listing to keep `az login` / Azure resource access working when egress is restricted.
+- Improved AI Foundry deployment stability by increasing the wait time for capability host readiness (eventual consistency) and wiring the wait through the main template.
+- Improved redeploy/idempotency behavior:
+  - Made Jump VM CSE “force rerun” opt-in (to avoid extension updates failing when the VM is stopped).
+  - Added `jumpVmDefinition.assignContributorRoleAtResourceGroup` to optionally skip the resource-group Contributor role assignment (helps avoid `RoleAssignmentExists` in environments where RBAC is managed outside the template).
+- Improved support for “Existing VNet” scenarios, including deployments where the target VNet is in a different resource group (scoping VNet-bound operations to the VNet’s resource group derived from the VNet resource ID).
+- Documentation updates:
+  - Added/updated test runbooks for Platform Landing Zone, Existing VNet, and Greenfield scenarios.
+
+## 0.1.7
+
+### Changed
+- Platform Landing Zone integration: decoupled Private DNS Zone creation from Private Endpoint creation.
+  - `flagPlatformLandingZone = true` no longer disables Private Endpoints; it only prevents this template from creating Private DNS Zones.
+  - Private Endpoint DNS zone-group configuration is now applied only when a corresponding zone ID is available.
+- Added optional User Defined Routes (UDR): deploy a Route Table with default route (`0.0.0.0/0`) and associate it to key workload subnets.
+  - Toggle is `deployToggles.userDefinedRoutes`.
+  - Implemented defensive behavior: if UDR is enabled but firewall/NVA next-hop inputs are inconsistent, UDR deployment is skipped to avoid breaking egress.
+  - Added optional App Gateway v2 internet routing exception: when `appGatewayInternetRoutingException = true`, the `appgw-subnet` gets `0.0.0.0/0 -> Internet` via a separate route table.
+- Updated AI Foundry wiring to align with the new PDNS/PE split (use Platform-owned DNS zones while still deploying Private Endpoints in the workload VNet).
+- Added Platform Landing Zone documentation.
+
 ## 0.1.6
 
 ### Changed

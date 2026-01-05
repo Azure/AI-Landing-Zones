@@ -15,6 +15,7 @@ module inner 'br/public:avm/res/compute/virtual-machine:0.20.0' = {
     vmSize: jumpVm.sku!
     imageReference: jumpVm.imageReference!
     osType: jumpVm.osType!
+    encryptionAtHost: jumpVm.?encryptionAtHost
     
     // Optional
     nicConfigurations: jumpVm.nicConfigurations!
@@ -38,3 +39,4 @@ output resourceId string = inner.outputs.resourceId
 output name string = inner.outputs.name
 output location string = inner.outputs.location
 output resourceGroupName string = inner.outputs.resourceGroupName
+output systemAssignedMIPrincipalId string = inner.outputs.systemAssignedMIPrincipalId

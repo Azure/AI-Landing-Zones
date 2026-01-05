@@ -5,6 +5,7 @@
 ## Table of Contents
 
 - [Global & Shared](#global--shared)
+- [Security](#security)
 - [Network Security Groups](#network-security-groups)
 - [Virtual Network](#virtual-network)
 - [Private DNS Zones](#private-dns-zones)
@@ -31,6 +32,16 @@ Global configuration parameters that affect the overall deployment behavior and 
 | resourceIds | {} | Existing resource IDs to reuse (can be empty for new deployments) |
 | enableTelemetry | true | Enable/Disable usage telemetry collection for Microsoft to improve the template |
 | tags | {} | Common tags to apply to all resources in the deployment |
+
+---
+
+## Security
+
+Security-related deployment options.
+
+| parameter | default | description |
+|-----------|---------|-------------|
+| enableDefenderForAI | false | Enables Microsoft Defender for AI by configuring Defender for Cloud pricing at **subscription scope** (`Microsoft.Security/pricings`). Requires subscription-level permissions; keep `false` by default to avoid deployment failures in restricted environments. |
 
 ---
 
