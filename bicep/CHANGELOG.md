@@ -2,6 +2,22 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.8
+
+### Changed
+- Improved Jump VM (jumpbox) provisioning reliability, especially under forced tunneling ([issue #63](https://github.com/Azure/AI-Landing-Zones/issues/63)):
+  - Hardened the Custom Script Extension bootstrap (`install.ps1`) with more reliable WSL detection/installation and a reboot flow when required.
+  - Stabilized Docker Desktop readiness checks and post-reboot continuation.
+  - Made bootstrap steps more idempotent on reruns (e.g., Python install and tool setup).
+  - Adjusted egress allow-listing to keep `az login` / Azure resource access working when egress is restricted.
+- Improved AI Foundry deployment stability by increasing the wait time for capability host readiness (eventual consistency) and wiring the wait through the main template.
+- Improved redeploy/idempotency behavior:
+  - Made Jump VM CSE “force rerun” opt-in (to avoid extension updates failing when the VM is stopped).
+  - Added `jumpVmDefinition.assignContributorRoleAtResourceGroup` to optionally skip the resource-group Contributor role assignment (helps avoid `RoleAssignmentExists` in environments where RBAC is managed outside the template).
+- Improved support for “Existing VNet” scenarios, including deployments where the target VNet is in a different resource group (scoping VNet-bound operations to the VNet’s resource group derived from the VNet resource ID).
+- Documentation updates:
+  - Added/updated test runbooks for Platform Landing Zone, Existing VNet, and Greenfield scenarios.
+
 ## 0.1.7
 
 ### Changed
