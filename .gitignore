@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# MkDocs build output
+site/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -11,6 +14,38 @@
 *.sln.docstates
 *.env
 .venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.so
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments (common names)
+venv/
+env/
+
+# Test / type-check / lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+.hypothesis/
+.pytype/
+.pyre/
 .local/
 .azure
 .bld/
