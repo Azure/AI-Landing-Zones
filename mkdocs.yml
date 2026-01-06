@@ -1,0 +1,21 @@
+
+site_name: Azure AI Landing Zone
+site_description: Documentation for Azure AI Landing Zone
+site_author: Microsoft
+
+theme:
+  name: material
+  language: en
+  palette:
+    scheme: default
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - toc.integrate
+    - content.code.annotate
+
+nav:
+  - Home: index.md
+
+extra:
+  generator: false
