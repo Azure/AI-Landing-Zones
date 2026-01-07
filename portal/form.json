@@ -80,30 +80,6 @@
           "label": "AI Services Configuration",
           "elements": [
             {
-              "name": "deployAiFoundry",
-              "type": "Microsoft.Common.OptionsGroup",
-              "label": "AI Foundry Options",
-              "defaultValue": "Full Setup",
-              "toolTip": "Deploy Azure AI Foundry with default AI models",
-              "constraints": {
-                "allowedValues": [
-                  {
-                    "label": "Full Setup",
-                    "value": "full"
-                  },
-                  {
-                    "label": "Project Only",
-                    "value": "project"
-                  },
-                  {
-                    "label": "Custom",
-                    "value": "custom"
-                  }
-                ],
-                "required": true
-              }
-            },
-            {
               "name": "deployAiSearch",
               "type": "Microsoft.Common.OptionsGroup",
               "label": "Deploy AI Search",
@@ -120,9 +96,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+              "visible": "true"
 
             },
             {
@@ -142,9 +118,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployCosmos",
@@ -163,9 +139,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployKeyVault",
@@ -184,9 +160,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployStorageAccount",
@@ -205,9 +181,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('aiServices').deployAiFoundry, 'custom')]"
+              "visible": "true"
             }
           ]
         },
@@ -215,26 +191,6 @@
           "name": "applications", 
           "label": "Application Services Configuration",
           "elements": [
-            {
-              "name": "deployAppComponents",
-              "type": "Microsoft.Common.OptionsGroup",
-              "label": "AI Application Options",
-              "defaultValue": "Full Setup",
-              "toolTip": "Deploy Azure Container Apps Environment and related components",
-              "constraints": {
-                "allowedValues": [
-                  {
-                    "label": "Full Setup",
-                    "value": "full"
-                  },
-                  {
-                    "label": "Custom",
-                    "value": "custom"
-                  }
-                ],
-                "required": true
-              }
-            },
             {
               "name": "deployAcr",
               "type": "Microsoft.Common.OptionsGroup",
@@ -252,9 +208,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('applications').deployAppComponents, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('applications').deployAppComponents, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployContainerAppEnv",
@@ -273,9 +229,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('applications').deployAppComponents, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('applications').deployAppComponents, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployAppConfig",
@@ -294,9 +250,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('applications').deployAppComponents, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('applications').deployAppComponents, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployApim",
@@ -315,9 +271,9 @@
                   "value": "false"
                   }
                 ],
-                "required": "[and(equals(steps('applications').deployAppComponents, 'custom'), equals(steps('basics').platformLandingZone, 'false'))]"
+                "required": "[equals(steps('basics').platformLandingZone, 'false')]"
               },
-                "visible": "[and(equals(steps('applications').deployAppComponents, 'custom'), equals(steps('basics').platformLandingZone, 'false'))]"
+                "visible": "[equals(steps('basics').platformLandingZone, 'false')]"
             },
             {
               "name": "deployAppGateway",
@@ -336,9 +292,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[and( equals(steps('basics').platformLandingZone, 'false'), equals(steps('applications').deployAppComponents, 'custom'))]"
+                "required": "[equals(steps('basics').platformLandingZone, 'false')]"
               },
-              "visible": "[and(equals(steps('basics').platformLandingZone, 'false'), equals(steps('applications').deployAppComponents, 'custom'))]"
+              "visible": "[equals(steps('basics').platformLandingZone, 'false')]"
             },
             {
               "name": "deployAppGatewayPip",
@@ -368,30 +324,6 @@
           "label": "DevOps Configuration",
           "elements": [
             {
-              "name": "deployCompute",
-              "type": "Microsoft.Common.OptionsGroup",
-              "label": "Deploy Virtual Machines",
-              "defaultValue": "Yes",
-              "toolTip": "Deploy required VMs to host runners for CI/CD build agents",
-              "constraints": {
-                "allowedValues": [
-                  {
-                    "label": "Yes",
-                    "value": "true"
-                  },
-                  {
-                    "label": "No",
-                    "value": "false"
-                  },
-                  {
-                    "label": "Custom",
-                    "value": "custom"
-                  }                  
-                ],
-                "required": true
-              }
-            },
-            {
               "name": "deployBuildVm",
               "type": "Microsoft.Common.OptionsGroup",
               "label": "Deploy Build Virtual Machine",
@@ -408,9 +340,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('devops').deployCompute, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('devops').deployCompute, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployJumpVm",
@@ -429,9 +361,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('devops').deployCompute, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('devops').deployCompute, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "adminUsername",
@@ -444,7 +376,7 @@
                 "validationMessage": "Please enter a valid username for admin access",
                 "regex": "^[a-zA-Z][a-zA-Z0-9_]{5,19}$"
               },
-                "visible": "[or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
+                "visible": "[or(equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
             },
             {
               "name": "adminPassword",
@@ -462,7 +394,7 @@
               "options": {
                 "hideConfirmation": false
               },
-                "visible": "[or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
+                "visible": "[or(equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
             },
             {
                 "name": "vmSkuSize",
@@ -487,7 +419,7 @@
                     "sku": "2022-datacenter-azure-edition"
                 },
                 "count": 1,
-                "visible": true
+                "visible": "[or(equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
             }
           ]
         },
@@ -495,26 +427,6 @@
           "name": "monitoring",
           "label": "Monitoring Configuration",
           "elements": [
-            {
-              "name": "deployMonitoring",
-              "type": "Microsoft.Common.OptionsGroup",
-              "label": "Monitoring Options",
-              "defaultValue": "Full Setup",
-              "toolTip": "Configure monitoring with Azure Monitor and Application Insights",
-              "constraints": {
-                "allowedValues": [
-                  {
-                    "label": "Full Setup",
-                    "value": "full"
-                  },
-                  {
-                    "label": "Custom",
-                    "value": "custom"
-                  }
-                ],
-                "required": true
-              }
-            },
             {
               "name": "deployLogAnalytics",
               "type": "Microsoft.Common.OptionsGroup",
@@ -532,9 +444,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
+                "required": "true"
               },
-              "visible": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
+              "visible": "true"
             },
             {
               "name": "deployAppInsights",
@@ -553,9 +465,9 @@
                     "value": "false"
                   }
                 ],
-                "required": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
+                "required": "[equals(steps('monitoring').deployLogAnalytics, 'true')]"
               },
-              "visible": "[equals(steps('monitoring').deployMonitoring, 'custom')]"
+              "visible": "[equals(steps('monitoring').deployLogAnalytics, 'true')]"
             }            
           ]
         },
@@ -732,9 +644,9 @@
                 "toolTip": "Select subnet for App Gateway",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), equals(steps('applications').deployAppGateway, 'true'))]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]"
+                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), equals(steps('applications').deployAppGateway, 'true'))]"
               },
               {
                 "name": "apimSubnet",
@@ -743,9 +655,9 @@
                 "toolTip": "Select subnet for APIM",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), equals(steps('applications').deployApim, 'true'))]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployApim, 'true'), equals(steps('applications').deployAppComponents, 'full')))]"
+                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('basics').platformLandingZone,'false'), equals(steps('applications').deployApim, 'true'))]"
               },
               {
                 "name": "jumpBoxSubnet",
@@ -754,9 +666,9 @@
                 "toolTip": "Select subnet for Jump Box",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('devops').deployJumpVm, 'true'))]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]"
+                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('devops').deployJumpVm, 'true'))]"
               },
               {
                 "name": "containerEnvSubnet",
@@ -765,9 +677,9 @@
                 "toolTip": "Select subnet for Azure Container Apps Environment",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), or( equals(steps('applications').deployContainerAppEnv, 'true'), equals(steps('applications').deployAppComponents, 'full') ))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('applications').deployContainerAppEnv, 'true'))]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), or( equals(steps('applications').deployContainerAppEnv, 'true'), equals(steps('applications').deployAppComponents, 'full') ))]"
+                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('applications').deployContainerAppEnv, 'true'))]"
               },
               {
                 "name": "devopsAgentsSubnet",
@@ -776,9 +688,9 @@
                 "toolTip": "Select subnet for DevOps Agents",
                 "constraints": {
                   "allowedValues": "[map(steps('networking').subNetProvidersApi.value, (item) => parse(concat('{\"label\":\"', item.name,' (',if(contains(item.properties,'addressPrefix'),item.properties.addressPrefix,first(item.properties.addressPrefixes)), ')', '\",\"value\":\"', item.name, '\"}')))]",
-                  "required": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true')))]"
+                  "required": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('devops').deployBuildVm, 'true'))]"
                 },
-                "visible": "[and( equals(steps('networking').createSubnets,'false'), or(equals(steps('devops').deployCompute, 'true'), equals(steps('devops').deployBuildVm, 'true')))]"
+                "visible": "[and( equals(steps('networking').createSubnets,'false'), equals(steps('devops').deployBuildVm, 'true'))]"
               },
           {
                 "name": "appGwPrivateIp",
@@ -792,7 +704,7 @@
                     "regex": "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
                     "validationMessage": "Please enter a valid IP Address (e.g., 192.168.0.200)."
                 },
-                "visible": "[and( equals(steps('basics').platformLandingZone,'false'), or(equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppGateway, 'true')))]"
+                "visible": "[and( equals(steps('basics').platformLandingZone,'false'), equals(steps('applications').deployAppGateway, 'true'))]"
             },
             {
               "name": "deployPeering",
@@ -910,9 +822,9 @@
               "resourceType": "Microsoft.network/privateDnsZones",
               "toolTip": "Select an existing DNS zone for Azure App Configuration private endpoints",
               "constraints": {
-              "required": "[and(equals(steps('basics').platformLandingZone, 'true'), or( equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppConfig, 'true') ) )]"
+              "required": "[and(equals(steps('basics').platformLandingZone, 'true'), equals(steps('applications').deployAppConfig, 'true') )]"
               },
-              "visible": "[and(equals(steps('basics').platformLandingZone, 'true'), or( equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAppConfig, 'true') ) )]"
+              "visible": "[and(equals(steps('basics').platformLandingZone, 'true'), equals(steps('applications').deployAppConfig, 'true') )]"
             },
             {
               "name": "containerAppsPrivateDnsZone",
@@ -921,9 +833,9 @@
               "resourceType": "Microsoft.network/privateDnsZones",
               "toolTip": "Select an existing DNS zone for Azure Container Apps private endpoints",
               "constraints": {
-                "required": "[and(equals(steps('basics').platformLandingZone, 'true'), or( equals(steps('applications').deployAppComponents, 'full') ,equals(steps('applications').deployContainerAppEnv, 'true')))]"
+                "required": "[and(equals(steps('basics').platformLandingZone, 'true'), equals(steps('applications').deployContainerAppEnv, 'true'))]"
               },
-              "visible": "[and(equals(steps('basics').platformLandingZone, 'true'), or( equals(steps('applications').deployAppComponents, 'full') ,equals(steps('applications').deployContainerAppEnv, 'true')))]"
+              "visible": "[and(equals(steps('basics').platformLandingZone, 'true'), equals(steps('applications').deployContainerAppEnv, 'true'))]"
             },
             {
               "name": "acrPrivateDnsZone",
@@ -932,9 +844,9 @@
               "resourceType": "Microsoft.network/privateDnsZones",
               "toolTip": "Select an existing DNS zone for Azure Container Registry private endpoints",
                 "constraints": {
-                "required": "[and(equals(steps('basics').platformLandingZone, 'true'), or( equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAcr, 'true')))]"
+                "required": "[and(equals(steps('basics').platformLandingZone, 'true'), equals(steps('applications').deployAcr, 'true'))]"
               },
-              "visible": "[and(equals(steps('basics').platformLandingZone, 'true'), or( equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployAcr, 'true')))]"
+              "visible": "[and(equals(steps('basics').platformLandingZone, 'true'), equals(steps('applications').deployAcr, 'true'))]"
             },
             {
               "name": "appInsightsPrivateDnsZone",
@@ -972,33 +884,33 @@
       "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
       "parameters": {
         "deployToggles": {
-          "acaEnvironmentNsg": "[and(or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ) , or (equals(steps('applications').deployAppComponents, 'full'), equals(steps('applications').deployContainerAppEnv, 'true')) )]",
+          "acaEnvironmentNsg": "[and(or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ) , equals(steps('applications').deployContainerAppEnv, 'true') )]",
           "agentNsg": "[or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') )]",
-          "apiManagement": "[and(or(equals(steps('applications').deployApim, 'true'), equals(steps('applications').deployAppComponents, 'full')), equals(steps('basics').platformLandingZone, 'false'))]",
-          "apiManagementNsg": "[and( or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ) , and(or(equals(steps('applications').deployApim, 'true'), equals(steps('applications').deployAppComponents, 'full')), equals(steps('basics').platformLandingZone, 'false')))]",
-          "appConfig": "[or(equals(steps('applications').deployAppConfig, 'true'), equals(steps('applications').deployAppComponents, 'full'))]",
-          "appInsights": "[or( equals(steps('monitoring').deployAppInsights, 'true'), equals(steps('monitoring').deployMonitoring, 'full'))]",
-          "applicationGateway": "[and(or(equals(steps('applications').deployAppGateway, 'true'), equals(steps('applications').deployAppComponents, 'full')), equals(steps('basics').platformLandingZone, 'false'))]",
-          "applicationGatewayNsg": "[and( or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true')) , and(or(equals(steps('applications').deployAppGateway, 'true'), equals(steps('applications').deployAppComponents, 'full')), equals(steps('basics').platformLandingZone, 'false')))]",
-          "applicationGatewayPublicIp": "[and(or(equals(steps('applications').deployAppGatewayPip, 'true'), equals(steps('applications').deployAppComponents, 'full')), equals(steps('basics').platformLandingZone, 'false'))]",
+          "apiManagement": "[and(equals(steps('applications').deployApim, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
+          "apiManagementNsg": "[and( or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ) , and(equals(steps('applications').deployApim, 'true'), equals(steps('basics').platformLandingZone, 'false')))]",
+          "appConfig": "[equals(steps('applications').deployAppConfig, 'true')]",
+          "appInsights": "[equals(steps('monitoring').deployAppInsights, 'true')]",
+          "applicationGateway": "[and(equals(steps('applications').deployAppGateway, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
+          "applicationGatewayNsg": "[and( or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true')) , and(equals(steps('applications').deployAppGateway, 'true'), equals(steps('basics').platformLandingZone, 'false')))]",
+          "applicationGatewayPublicIp": "[and(equals(steps('applications').deployAppGatewayPip, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
           "bastionHost": "[equals(steps('basics').platformLandingZone, 'false')]",
-          "wafPolicy": "[and(or(equals(steps('applications').deployAppGateway, 'true'), equals(steps('applications').deployAppComponents, 'full')), equals(steps('basics').platformLandingZone, 'false'))]",
-          "buildVm": "[or( equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployCompute, 'true'))]",
-          "containerApps": "[or( equals(steps('applications').deployContainerAppEnv, 'true'), equals(steps('applications').deployAppComponents, 'full'))]",
-          "containerEnv": "[or( equals(steps('applications').deployContainerAppEnv, 'true'), equals(steps('applications').deployAppComponents, 'full'))]",
-          "containerRegistry": "[or( equals(steps('applications').deployAcr, 'true'), equals(steps('applications').deployAppComponents, 'full'))]",
-          "cosmosDb": "[or( equals(steps('aiServices').deployCosmos, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
+          "wafPolicy": "[and(equals(steps('applications').deployAppGateway, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
+          "buildVm": "[equals(steps('devops').deployBuildVm, 'true')]",
+          "containerApps": "[equals(steps('applications').deployContainerAppEnv, 'true')]",
+          "containerEnv": "[equals(steps('applications').deployContainerAppEnv, 'true')]",
+          "containerRegistry": "[equals(steps('applications').deployAcr, 'true')]",
+          "cosmosDb": "[equals(steps('aiServices').deployCosmos, 'true')]",
           "devopsBuildAgentsNsg": "[or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') )]",
           "firewall": "[and(equals(steps('networking').deployFirewall, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
           "firewallPublicIp": "[and(equals(steps('networking').deployFirewallPip, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
-          "groundingWithBingSearch": "[or( equals(steps('aiServices').deployGroundingWithBing, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
-          "jumpVm": "[or( equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true'))]",
-          "jumpboxNsg": "[and(or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ), or( equals(steps('devops').deployJumpVm, 'true'), equals(steps('devops').deployCompute, 'true')))]",
-          "keyVault": "[or( equals(steps('aiServices').deployKeyVault, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
-          "logAnalytics": "[or( equals(steps('monitoring').deployLogAnalytics, 'true'), equals(steps('monitoring').deployMonitoring, 'full'))]",
+          "groundingWithBingSearch": "[equals(steps('aiServices').deployGroundingWithBing, 'true')]",
+          "jumpVm": "[equals(steps('devops').deployJumpVm, 'true')]",
+          "jumpboxNsg": "[and(or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ), equals(steps('devops').deployJumpVm, 'true'))]",
+          "keyVault": "[equals(steps('aiServices').deployKeyVault, 'true')]",
+          "logAnalytics": "[equals(steps('monitoring').deployLogAnalytics, 'true')]",
           "peNsg": "[and( equals(steps('basics').platformLandingZone, 'false'),or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ))]",
-          "searchService": "[or( equals(steps('aiServices').deployAiSearch, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
-          "storageAccount": "[or( equals(steps('aiServices').deployStorageAccount, 'true'), equals(steps('aiServices').deployAiFoundry, 'full'))]",
+          "searchService": "[equals(steps('aiServices').deployAiSearch, 'true')]",
+          "storageAccount": "[equals(steps('aiServices').deployStorageAccount, 'true')]",
           "virtualNetwork": "[equals(steps('networking').deployVnet, 'true')]",
           "bastionNsg": "[equals(steps('basics').platformLandingZone, 'false')]"
         },
