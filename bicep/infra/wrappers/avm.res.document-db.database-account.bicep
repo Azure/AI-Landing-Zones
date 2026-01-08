@@ -37,6 +37,7 @@ module inner 'br/public:avm/res/document-db/database-account:0.16.0' = {
     maxStalenessPrefix: cosmosDb.?maxStalenessPrefix
     minimumTlsVersion: cosmosDb.?minimumTlsVersion
     mongodbDatabases: cosmosDb.?mongodbDatabases
+    networkRestrictions: cosmosDb.?networkRestrictions
     privateEndpoints: cosmosDb.?privateEndpoints
     roleAssignments: cosmosDb.?roleAssignments
     serverVersion: cosmosDb.?serverVersion

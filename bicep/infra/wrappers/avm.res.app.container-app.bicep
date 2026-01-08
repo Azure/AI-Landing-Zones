@@ -11,7 +11,7 @@ module inner 'br/public:avm/res/app/container-app:0.18.1' = {
   params: {
     // Required parameters
     name: containerApp.name
-    environmentResourceId: containerApp.environmentResourceId
+    environmentResourceId: containerApp.environmentResourceId!
     
     // Provide default container configuration
     containers: [
@@ -30,6 +30,16 @@ module inner 'br/public:avm/res/app/container-app:0.18.1' = {
     tags: containerApp.?tags
     workloadProfileName: containerApp.?workloadProfileName
     activeRevisionsMode: containerApp.?activeRevisionsMode
+
+    // Ingress + IP allowlist
+    disableIngress: containerApp.?disableIngress
+    ingressExternal: containerApp.?ingressExternal
+    ingressTransport: containerApp.?ingressTransport
+    ingressAllowInsecure: containerApp.?ingressAllowInsecure
+    ingressTargetPort: containerApp.?ingressTargetPort
+    exposedPort: containerApp.?exposedPort
+    ipSecurityRestrictions: containerApp.?ipSecurityRestrictions
+
     clientCertificateMode: containerApp.?clientCertificateMode
     lock: containerApp.?lock
     managedIdentities: containerApp.?managedIdentities

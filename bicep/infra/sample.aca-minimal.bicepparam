@@ -275,7 +275,7 @@ param containerAppEnvDefinition = {
 
 param containerAppsList = [
   {
-    name: 'ca-aca-minimal'
+    name: 'ca-aca-helloworld'
 
     activeRevisionsMode: 'Single'
 

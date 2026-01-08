@@ -2,6 +2,20 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.9
+
+### Changed
+- Hardened Key Vault and Cosmos DB deployments:
+  - Adjusted network ACL / bypass defaults for stricter networking scenarios.
+  - Made Cosmos configuration merges defensive to avoid invalid template payloads.
+  - Improved allow-list (ACL) behavior by ensuring required API subresources exist so allow-list rules are applied consistently.
+- Refactored Jump VM RBAC provisioning: introduced a dedicated role-assignment module that resolves the VM managed identity principalId internally and gates resource-group Contributor assignment behind `jumpVmDefinition.assignContributorRoleAtResourceGroup`.
+
+### Added
+- Added/updated deployment samples:
+  - Minimal Azure Container Apps (ACA) sample.
+  - Minimal API Management (APIM) sample.
+  
 ## 0.1.8
 
 ### Changed
@@ -16,7 +30,7 @@ The latest version of the changelog can be found [here](https://github.com/Azure
   - Added `jumpVmDefinition.assignContributorRoleAtResourceGroup` to optionally skip the resource-group Contributor role assignment (helps avoid `RoleAssignmentExists` in environments where RBAC is managed outside the template).
 - Improved support for “Existing VNet” scenarios, including deployments where the target VNet is in a different resource group (scoping VNet-bound operations to the VNet’s resource group derived from the VNet resource ID).
 - Documentation updates:
-  - Added/updated test runbooks for Platform Landing Zone, Existing VNet, and Greenfield scenarios.
+  - Added/updated test runbooks for Platform Landing Zone, Existing VNet, and Standalone scenarios.
 
 ## 0.1.7
 

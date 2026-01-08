@@ -57,7 +57,8 @@ param deployToggles = {
   userDefinedRoutes: true
 }
 
-param resourceIds = {}
+param resourceIds = {
+}
 
 param flagPlatformLandingZone = true
 

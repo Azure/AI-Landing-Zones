@@ -10,10 +10,14 @@ param azureStorageAccountResourceId string
 @description('ResourceId of Cosmos DB Account')
 param azureCosmosDBAccountResourceId string
 
+@description('Optional. Resource ID of the Key Vault used by AI Foundry.')
+param keyVaultResourceId string = ''
+
 // Check if existing resources have been passed in
 var storagePassedIn = azureStorageAccountResourceId != ''
 var searchPassedIn = aiSearchResourceId != ''
 var cosmosPassedIn = azureCosmosDBAccountResourceId != ''
+var keyVaultPassedIn = keyVaultResourceId != ''
 
 var storageParts = split(azureStorageAccountResourceId, '/')
 var azureStorageSubscriptionId = storagePassedIn && length(storageParts) > 2 ? storageParts[2] : subscription().subscriptionId
@@ -26,6 +30,10 @@ var aiSearchServiceResourceGroupName = searchPassedIn && length(acsParts) > 4 ? 
 var cosmosParts = split(azureCosmosDBAccountResourceId, '/')
 var cosmosDBSubscriptionId = cosmosPassedIn && length(cosmosParts) > 2 ? cosmosParts[2] : subscription().subscriptionId
 var cosmosDBResourceGroupName = cosmosPassedIn && length(cosmosParts) > 4 ? cosmosParts[4] : resourceGroup().name
+
+var keyVaultParts = split(keyVaultResourceId, '/')
+var keyVaultSubscriptionId = keyVaultPassedIn && length(keyVaultParts) > 2 ? keyVaultParts[2] : subscription().subscriptionId
+var keyVaultResourceGroupName = keyVaultPassedIn && length(keyVaultParts) > 4 ? keyVaultParts[4] : resourceGroup().name
 
 // Validate AI Search
 resource aiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' existing = if (searchPassedIn) {
@@ -45,10 +53,17 @@ resource azureStorageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' exis
   scope: resourceGroup(azureStorageSubscriptionId,azureStorageResourceGroupName)
 }
 
+// Validate Key Vault
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (keyVaultPassedIn) {
+  name: last(split(keyVaultResourceId, '/'))
+  scope: resourceGroup(keyVaultSubscriptionId, keyVaultResourceGroupName)
+}
+
 // output aiServiceExists bool = aiServicesPassedIn && (aiServiceAccount.name == aiServiceParts[8])
 output aiSearchExists bool = searchPassedIn && (aiSearch.name == acsParts[8])
 output cosmosDBExists bool = cosmosPassedIn && (cosmosDBAccount.name == cosmosParts[8])
 output azureStorageExists bool = storagePassedIn && (azureStorageAccount.name == storageParts[8])
+output keyVaultExists bool = keyVaultPassedIn && (keyVault.name == keyVaultParts[8])
 
 output aiSearchServiceSubscriptionId string = aiSearchServiceSubscriptionId
 output aiSearchServiceResourceGroupName string = aiSearchServiceResourceGroupName
@@ -58,6 +73,9 @@ output cosmosDBResourceGroupName string = cosmosDBResourceGroupName
 
 output azureStorageSubscriptionId string = azureStorageSubscriptionId
 output azureStorageResourceGroupName string = azureStorageResourceGroupName
+
+output keyVaultSubscriptionId string = keyVaultSubscriptionId
+output keyVaultResourceGroupName string = keyVaultResourceGroupName
 
 // Adding DNS Zone Check
 

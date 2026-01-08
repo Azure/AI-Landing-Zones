@@ -50,12 +50,14 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
     name: cosmosDBName
     properties: {
       category: 'CosmosDB'
-      target: cosmosDBAccount.properties.documentEndpoint
+      // Avoid referencing runtime properties of a resource that may still be finalizing provisioning.
+      // Cosmos DB SQL API document endpoint follows the well-known pattern below.
+      target: 'https://${cosmosDBName}.documents.azure.com:443/'
       authType: 'AAD'
       metadata: {
         ApiType: 'Azure'
         ResourceId: cosmosDBAccount.id
-        location: cosmosDBAccount.location
+        location: location
       }
     }
   }
@@ -64,12 +66,14 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
     name: azureStorageName
     properties: {
       category: 'AzureStorageAccount'
-      target: storageAccount.properties.primaryEndpoints.blob
+      // Avoid referencing runtime properties of a resource that may still be finalizing provisioning.
+      // Blob primary endpoint follows the well-known pattern below.
+      target: 'https://${azureStorageName}.blob.${environment().suffixes.storage}/'
       authType: 'AAD'
       metadata: {
         ApiType: 'Azure'
         ResourceId: storageAccount.id
-        location: storageAccount.location
+        location: location
       }
     }
   }
@@ -83,7 +87,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-04-01-previ
       metadata: {
         ApiType: 'Azure'
         ResourceId: searchService.id
-        location: searchService.location
+        location: location
       }
     }
   }

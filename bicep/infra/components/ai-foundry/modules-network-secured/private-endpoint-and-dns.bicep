@@ -31,12 +31,12 @@ param aiSearchName string = ''
 param storageName string = ''
 @description('Name of the Cosmos DB account')
 param cosmosDBName string = ''
+@description('Name of the Key Vault')
+param keyVaultName string = ''
 @description('Name of the Vnet')
 param vnetName string
 @description('Name of the Customer subnet')
 param peSubnetName string
-@description('Suffix for unique resource names')
-param suffix string
 
 @description('Resource Group name for existing Virtual Network (if different from current resource group)')
 param vnetResourceGroupName string = resourceGroup().name
@@ -62,6 +62,12 @@ param cosmosDBSubscriptionId string = subscription().subscriptionId
 @description('Resource group name for Cosmos DB account')
 param cosmosDBResourceGroupName string = resourceGroup().name
 
+@description('Subscription ID for Key Vault')
+param keyVaultSubscriptionId string = subscription().subscriptionId
+
+@description('Resource group name for Key Vault')
+param keyVaultResourceGroupName string = resourceGroup().name
+
 @description('Map of DNS zone FQDNs to resource group names. If provided, reference existing DNS zones in this resource group instead of creating them.')
 param existingDnsZones object = {
   'privatelink.services.ai.azure.com': ''
@@ -70,6 +76,7 @@ param existingDnsZones object = {
   'privatelink.search.windows.net': ''
   'privatelink.blob.${environment().suffixes.storage}': ''
   'privatelink.documents.azure.com': ''
+  'privatelink.vaultcore.azure.net': ''
 }
 
 @description('When false, skip all Private DNS operations (zones, VNet links, and Private DNS Zone Groups). Private Endpoints are still created.')
@@ -94,6 +101,11 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing 
 resource cosmosDBAccount 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' existing = if (!empty(cosmosDBName)) {
   name: cosmosDBName
   scope: resourceGroup(cosmosDBSubscriptionId, cosmosDBResourceGroupName)
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (!empty(keyVaultName)) {
+  name: keyVaultName
+  scope: resourceGroup(keyVaultSubscriptionId, keyVaultResourceGroupName)
 }
 
 // Reference existing network resources
@@ -191,6 +203,25 @@ resource cosmosDBPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01'
   }
 }
 
+/*--------------------------------------------- Key Vault Private Endpoint -------------------------------------*/
+
+resource keyVaultPrivateEndpoint 'Microsoft.Network/privateEndpoints@2024-05-01' = if (!empty(keyVaultName)) {
+  name: '${keyVaultName}-private-endpoint'
+  location: resourceGroup().location
+  properties: {
+    subnet: { id: peSubnet.id }
+    privateLinkServiceConnections: [
+      {
+        name: '${keyVaultName}-private-link-service-connection'
+        properties: {
+          privateLinkServiceId: keyVault!.id
+          groupIds: [ 'vault' ]
+        }
+      }
+    ]
+  }
+}
+
 /* -------------------------------------------- Private DNS Zones -------------------------------------------- */
 
 // Format: 1) Private DNS Zone
@@ -206,6 +237,7 @@ var cognitiveServicesDnsZoneName = 'privatelink.cognitiveservices.azure.com'
 var aiSearchDnsZoneName = 'privatelink.search.windows.net'
 var storageDnsZoneName = 'privatelink.blob.${environment().suffixes.storage}'
 var cosmosDBDnsZoneName = 'privatelink.documents.azure.com'
+var keyVaultDnsZoneName = 'privatelink.vaultcore.azure.net'
 
 // ---- DNS Zone Resource Group lookups ----
 var aiServicesDnsZoneRG = existingDnsZones[aiServicesDnsZoneName]
@@ -214,6 +246,7 @@ var cognitiveServicesDnsZoneRG = existingDnsZones[cognitiveServicesDnsZoneName]
 var aiSearchDnsZoneRG = existingDnsZones[aiSearchDnsZoneName]
 var storageDnsZoneRG = existingDnsZones[storageDnsZoneName]
 var cosmosDBDnsZoneRG = existingDnsZones[cosmosDBDnsZoneName]
+var keyVaultDnsZoneRG = existingDnsZones[keyVaultDnsZoneName]
 
 // ---- DNS Zone Resources and References ----
 resource aiServicesPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (configurePrivateDns && empty(aiServicesDnsZoneRG)) {
@@ -312,11 +345,31 @@ var cosmosDBDnsZoneId = empty(cosmosDBName)
       ? (empty(cosmosDBDnsZoneRG) ? cosmosDBPrivateDnsZone!.id : existingCosmosDBPrivateDnsZone!.id)
       : '')
 
+resource keyVaultPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = if (configurePrivateDns && !empty(keyVaultName) && empty(keyVaultDnsZoneRG)) {
+  name: keyVaultDnsZoneName
+  location: 'global'
+}
+
+resource existingKeyVaultPrivateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (configurePrivateDns && !empty(keyVaultName) && !empty(keyVaultDnsZoneRG)) {
+  name: keyVaultDnsZoneName
+  scope: resourceGroup(keyVaultDnsZoneRG)
+}
+
+var keyVaultDnsZoneId = empty(keyVaultName)
+  ? ''
+  : (configurePrivateDns
+      ? (empty(keyVaultDnsZoneRG) ? keyVaultPrivateDnsZone!.id : existingKeyVaultPrivateDnsZone!.id)
+      : '')
+
+// Deterministic VNet link suffix: ensures the same VNet gets the same link name on reruns.
+// This avoids failures when redeploying Foundry with a different aiServices/baseName into the same VNet.
+var vnetLinkSuffix = substring(uniqueString(vnet.id), 0, 8)
+
 // ---- DNS VNet Links ----
 resource aiServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && empty(aiServicesDnsZoneRG)) {
   parent: aiServicesPrivateDnsZone
   location: 'global'
-  name: 'aiServices-${suffix}-link'
+  name: 'aiServices-${vnetLinkSuffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -325,7 +378,7 @@ resource aiServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2
 resource openAiLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && empty(openAiDnsZoneRG)) {
   parent: openAiPrivateDnsZone
   location: 'global'
-  name: 'aiServicesOpenAI-${suffix}-link'
+  name: 'aiServicesOpenAI-${vnetLinkSuffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -334,7 +387,7 @@ resource openAiLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-
 resource cognitiveServicesLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && empty(cognitiveServicesDnsZoneRG)) {
   parent: cognitiveServicesPrivateDnsZone
   location: 'global'
-  name: 'aiServicesCognitiveServices-${suffix}-link'
+  name: 'aiServicesCognitiveServices-${vnetLinkSuffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -343,7 +396,7 @@ resource cognitiveServicesLink 'Microsoft.Network/privateDnsZones/virtualNetwork
 resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && !empty(aiSearchName) && empty(aiSearchDnsZoneRG)) {
   parent: aiSearchPrivateDnsZone
   location: 'global'
-  name: 'aiSearch-${suffix}-link'
+  name: 'aiSearch-${vnetLinkSuffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -352,7 +405,7 @@ resource aiSearchLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@202
 resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && !empty(storageName) && empty(storageDnsZoneRG)) {
   parent: storagePrivateDnsZone
   location: 'global'
-  name: 'storage-${suffix}-link'
+  name: 'storage-${vnetLinkSuffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -361,7 +414,17 @@ resource storageLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024
 resource cosmosDBLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && !empty(cosmosDBName) && empty(cosmosDBDnsZoneRG)) {
   parent: cosmosDBPrivateDnsZone
   location: 'global'
-  name: 'cosmosDB-${suffix}-link'
+  name: 'cosmosDB-${vnetLinkSuffix}-link'
+  properties: {
+    virtualNetwork: { id: vnet.id }
+    registrationEnabled: false
+  }
+}
+
+resource keyVaultLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = if (configurePrivateDns && !empty(keyVaultName) && empty(keyVaultDnsZoneRG)) {
+  parent: keyVaultPrivateDnsZone
+  location: 'global'
+  name: 'keyVault-${vnetLinkSuffix}-link'
   properties: {
     virtualNetwork: { id: vnet.id }
     registrationEnabled: false
@@ -404,6 +467,16 @@ resource cosmosDBDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGrou
   properties: {
     privateDnsZoneConfigs: [
       { name: '${cosmosDBName}-dns-config', properties: { privateDnsZoneId: cosmosDBDnsZoneId } }
+    ]
+  }
+}
+
+resource keyVaultDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2024-05-01' = if (configurePrivateDns && !empty(keyVaultName)) {
+  parent: keyVaultPrivateEndpoint
+  name: '${keyVaultName}-dns-group'
+  properties: {
+    privateDnsZoneConfigs: [
+      { name: '${keyVaultName}-dns-config', properties: { privateDnsZoneId: keyVaultDnsZoneId } }
     ]
   }
 }
