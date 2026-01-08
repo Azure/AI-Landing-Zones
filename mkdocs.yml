@@ -1,21 +1,48 @@
-
-site_name: Azure AI Landing Zone
-site_description: Documentation for Azure AI Landing Zone
+site_name: Azure AI Landing Zones
+site_description: Documentation for Azure AI Landing Zones
 site_author: Microsoft
-
+repo_url: https://github.com/Azure/AI-Landing-Zones
 theme:
   name: material
+  custom_dir: overrides
   language: en
+  logo: media/logo.svg
+  favicon: media/logo.svg
   palette:
     scheme: default
   features:
-    - navigation.instant
+    - content.icon
+    - content.iconify
     - navigation.tracking
     - toc.integrate
     - content.code.annotate
-
+    - navigation.top
+plugins:
+  - search
+  - macros
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 nav:
   - Home: index.md
-
+  - What's New: whatisnew.md
+  - Architecture:
+      - "Design Checklist": architecture/design-checklist.md
+      - "Cost Guide": architecture/cost-guide.md
+      - "FAQ": architecture/faq.md
+  - Bicep Template:
+      - "How to use": bicep/how-to-use.md
+      - "Parametrizing": bicep/parametrizing.md
+      - "Examples": bicep/examples.md
+  - Terraform Template: terraform/index.md
+  - Portal installation: portal/index.md  
 extra:
   generator: false
+
+extra_css:
+  - stylesheets/extra.css
