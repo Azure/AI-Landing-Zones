@@ -14,6 +14,7 @@
 .azure
 .bld/
 .azd/
+.azd
 
 # Bicep build outputs (don’t commit generated ARM templates)
 bicep/**/*.json
