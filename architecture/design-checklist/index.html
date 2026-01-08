@@ -1,0 +1,1016 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for Azure AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../../whatisnew/">
+      
+      
+        <link rel="next" href="../cost-guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Design Checklist - Azure AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Azure AI Landing Zones" class="md-header__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Azure AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Design Checklist
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    Azure AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Template
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep Template
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to use
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/parametrizing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parametrizing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Design Checklist</h1>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Design Area</th>
+<th>Design Consideration</th>
+<th>Design Recommendation</th>
+<th>References</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C-R1</td>
+<td>Compute</td>
+<td>Determine the compute options of your models, orchestrators, self hosted agents and application (frontend, backend &amp; Ingestion) in an AI Landing Zone.</td>
+<td>Recommended to standardize the compute options across all components to ensure consistency and ease of management. Leverage PaaS compute options such as Azure Container Apps, Azure Apps Service, Azure Kubernetes Service to optimize resource utilization and simplify management.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/foundry-models-overview#model-deployment-managed-compute-and-serverless-api-deployments">Compute for Models</a><br> <a href="https://learn.microsoft.com/en-us/azure/architecture/guide/technology-choices/compute-decision-tree">Compute for orchestrators, self hosted agents and application</a></td>
+</tr>
+<tr>
+<td>CO-R1</td>
+<td>Cost</td>
+<td>Familirize yourself with pricing &amp; billing model of Azure AI Foundry and its services</td>
+<td>Estimate costs before using Azure AI Foundry and its services for an AI application</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/manage-costs">Manage Cost</a></td>
+</tr>
+<tr>
+<td>CO-R2</td>
+<td>Cost</td>
+<td>Consider having PTU &amp; PAYGO Endpoints endpoints. If you have predictable workloads, use AI commitment tiers in Azure AI services. For Azure OpenAI models, use <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/provisioned-throughput">provisioned throughput units</a> (PTUs), which can be less expensive than pay-as-you-go (consumption-based) pricing.</td>
+<td>It's common to combine PTU endpoints and consumption-based endpoints for cost optimization. Use PTUs on the AI model primary endpoint and a secondary, consumption-based AI endpoint for spillover.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/azure-openai-gateway-multi-backend#multiple-azure-openai-instances-in-a-single-region-and-single-subscription">Introduce a gateway for multiple Azure OpenAI instances</a></td>
+</tr>
+<tr>
+<td>CO-R3</td>
+<td>Cost</td>
+<td>Consider the various Azure OpenAI deployment types in particular the global deployment type.</td>
+<td>Azure OpenAI models allow you to use different deployment types. Global deployment offers lower cost-per-token pricing on certain OpenAI models.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/deployment-types">Deployment types</a></td>
+</tr>
+<tr>
+<td>CO-R4</td>
+<td>Cost</td>
+<td>Cosider implementing auto shutdown policy for compute resources in non-prod environment.</td>
+<td>Define and enforce a policy stating that AI resources must use the automatic shutdown feature on virtual machines and compute instances in Azure AI Foundry and Azure Machine Learning. Automatic shutdown is applicable to nonproduction environments and production workloads that you can take offline for certain periods of time.</td>
+<td></td>
+</tr>
+<tr>
+<td>D-R1</td>
+<td>Data</td>
+<td>Determine how stateful entities such as threads, messages, and runs created during usage along with files uploaded during Foundry Agent Service setup or as part of a message are managed</td>
+<td>Recommended to use standard setup of Agent service and store data in your own Azure resources, giving you full ownership and control.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/standard-agent-setup#leveraging-your-own-resources-for-storing-customer-data">Storing customer data</a></td>
+</tr>
+<tr>
+<td>D-R2</td>
+<td>Data</td>
+<td>Determine whether thread storage (conversation history, agent definitions), file storage (uploaded documents), vector search (embeddings and retrieval) will be shared by all project or separated by projects</td>
+<td>Considering a project represents a distinct application or use case, it's recommended to separate these storage components by project to ensure data isolation and better manageability.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/capability-hosts#recommended-setup">Project-based resource management</a></td>
+</tr>
+<tr>
+<td>D-R3</td>
+<td>Data</td>
+<td>In case you have Microsoft Fabric, determine how you would surface data from it into AI Foundry</td>
+<td>Recommended to leverage the Microsoft Fabric data agent for this purpose</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/fabric?pivots=portal">Use the Microsoft Fabric data agent</a></td>
+</tr>
+<tr>
+<td>G-R1</td>
+<td>Governance</td>
+<td>Consider using built-in AI related policies for governance of AI resources and AI apps</td>
+<td>Automate policy enforcement with Azure Policy to enforce policies automatically across AI deployments, reducing human error. Apply AI policies to each management group.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-services/policy-reference?context=%2Fazure%2Fai-studio%2Fcontext%2Fcontext">Azure AI Foundry Policies</a>, <a href="https://learn.microsoft.com/en-us/azure/machine-learning/policy-reference">Azure Machine Learning Policies</a>, <a href="https://learn.microsoft.com/en-us/azure/ai-services/policy-reference">Azure AI services Policies</a>, <a href="https://learn.microsoft.com/en-us/azure/search/policy-reference">Azure AI Search Policies</a>,</td>
+</tr>
+<tr>
+<td>G-R2</td>
+<td>Governance</td>
+<td>Review applicable industry standards such as the <a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf">NIST Artificial Intelligence Risk Management Framework (AI RMF)</a> and <a href="https://airc.nist.gov/AI_RMF_Knowledge_Base/Playbook">NIST AI RMF Playbook</a> and ensure alignment and compliance with them.</td>
+<td>Apply the regulatory compliance policy initiatives</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/governance/policy/samples/#regulatory-compliance">Regulatory compliance initiatives</a></td>
+</tr>
+<tr>
+<td>G-R3</td>
+<td>Governance</td>
+<td>Consider implementing <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/govern#assess-ai-organizational-risks">responsible AI standards</a></td>
+<td>Use the Responsible AI dashboard to generate reports around model outputs.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/machine-learning/concept-responsible-ai-dashboard">Responsible AI dashboard</a></td>
+</tr>
+<tr>
+<td>G-R4</td>
+<td>Governance</td>
+<td>Consider implementing Azure AI Content Safety APIs that can be called for testing to facilitate content safety testing.</td>
+<td>Use Azure AI Content Safety to define a baseline content filter for your approved AI models. This safety system runs both the prompt and completion for your model through a group of classification models. These classification models detect and help prevent the output of harmful content across a range of categories. Content Safety provides features like prompt shields, groundedness detection, and protected material text detection. It scans images and text.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview">Azure AI Content Safety</a></td>
+</tr>
+<tr>
+<td>G-R5</td>
+<td>Governance</td>
+<td>Govern model availability in your organization across applications and workload</td>
+<td>Use Azure Policy to manage which specific models your teams are allowed to deploy from the Azure AI Foundry model catalog. You have the option to use a built-in policy or create a custom policy. Since this approach uses an allowlist, begin with an <em>audit</em> effect. The <em>audit</em> effect allows you to monitor the models your teams are using without restricting deployments. Only switch to the <em>deny</em> effect once you understand the AI development and experimentation needs of workload teams, so you don't hinder their progress unnecessarily. If you switch a policy to <em>deny</em>, it doesn't automatically remove noncompliant models that teams have already deployed. You must remediate those models manually.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/built-in-policy-model-deployment">Built-in policy</a></td>
+</tr>
+<tr>
+<td>I-R1</td>
+<td>Identity</td>
+<td>Consider using managed identities with least privilege access.</td>
+<td>Use managed identity on all supported Azure services. Grant least privilege access to application resources that need to access AI model endpoints. Secure Azure service-to-service interactions. Use managed identity to allow Azure services to authenticate to each other without managing credentials.</td>
+<td><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview">Managed identity</a></td>
+</tr>
+<tr>
+<td>I-R2</td>
+<td>Identity</td>
+<td>Leverage MFA and PIM for sensitive accounts.</td>
+<td>Enable multifactor authentication (MFA) and prefer secondary administrative accounts or just-in-time access with Privileged Identity Management (PIM) for sensitive accounts. Limit control plane access using services like Azure Bastion as secure entry points into private networks.</td>
+<td><a href="https://learn.microsoft.com/entra/identity/authentication/tutorial-enable-azure-mfa">Multifactor authentication</a>, <a href="https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-configure">Privileged Identity Management</a></td>
+</tr>
+<tr>
+<td>I-R3</td>
+<td>Identity</td>
+<td>Use Microsoft Entra ID for authentication</td>
+<td>Wherever possible, eliminate static API keys in favor of Microsoft Entra ID for authentication. This step enhances security through centralized identity management and reduces secret management overhead. Also limit the distribution of API keys. Instead, prefer identities in Microsoft Entra ID over API keys for authentication. Audit the list of individuals with API key access to ensure it's current.</td>
+<td>For authentication guidance <br> <a href="https://learn.microsoft.com/azure/ai-studio/concepts/rbac-ai-studio">Azure AI Foundry</a>, <a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/managed-identity">Azure OpenAI</a>, <a href="https://learn.microsoft.com/azure/ai-services/authentication">Azure AI services</a>, <a href="https://learn.microsoft.com/azure/machine-learning/how-to-setup-authentication">Azure Machine Learning</a>.</td>
+</tr>
+<tr>
+<td>I-R4</td>
+<td>Identity</td>
+<td>Use Conditional Access policies</td>
+<td>Implement Conditional Access policies that respond to unusual sign-in activity or suspicious behavior. Use signals like user location, device state, and sign-in behavior to trigger extra verification steps. Require MFA for accessing critical AI resources to enhance security. Restrict access to AI infrastructure based on geographic locations or trusted IP ranges. Ensure that only compliant devices (those meeting security requirements) can access AI resources.</td>
+<td><a href="https://learn.microsoft.com/entra/id-protection/howto-identity-protection-configure-risk-policies">Conditional Access policies</a></td>
+</tr>
+<tr>
+<td>I-R5</td>
+<td>Identity</td>
+<td>Configure least privilege access</td>
+<td>Implement least privilege access by implementing role-based access control (RBAC) to provide minimal access to data and services. Assign roles to users and groups based on their responsibilities. Use Azure RBAC to fine-tune access control for specific resources such as virtual machines and storage accounts. Ensure users have only the minimum level of access necessary to perform their tasks. Regularly review and adjust permissions to prevent privilege creep.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/rbac-azure-ai-foundry">Role-based access control for Azure AI Foundry</a></td>
+</tr>
+<tr>
+<td>I-R6</td>
+<td>Identity</td>
+<td>Disable key based access and only have access to AI Model endpoints using Microsoft Entra ID.</td>
+<td>Secure external access to AI model endpoints. Require clients to authenticate using Microsoft Entra ID when accessing AI model endpoints.</td>
+<td></td>
+</tr>
+<tr>
+<td>M-R1</td>
+<td>Monitoring</td>
+<td>Monitor <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/management#manage-ai-models">AI models</a>, <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/management#manage-ai-operations">AI resources</a>, <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/management#manage-ai-data">AI data</a> of the workload</td>
+<td>Implement monitoring to ensure that it remain aligned with applications and workload KPIs</td>
+<td></td>
+</tr>
+<tr>
+<td>M-R2</td>
+<td>Monitoring</td>
+<td>Review recommended alerts for AI in Azure Monitor Baseline Alerts.</td>
+<td>Enable recommended alert rules to receive notifications of deviations that indicate a decline in workload health.</td>
+<td><a href="https://azure.github.io/azure-monitor-baseline-alerts/patterns/artificial-intelligence/">Azure Monitor Baseline Alerts</a></td>
+</tr>
+<tr>
+<td>M-R3</td>
+<td>Monitoring</td>
+<td>Monitor the performance of a generative AI application</td>
+<td>For generative AI workloads, use Azure AI Foundry's built-in <a href="https://learn.microsoft.com/en-us/azure/ai-studio/concepts/evaluation-metrics-built-in">evaluation</a> and <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/evaluate-prompts-playground">manual</a> monitoring capabilities. Also monitor latency in response times or the accuracy of vector search results to enhance user experiences. In Azure AI Foundry, <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/trace-local-sdk">enable tracing</a> to collect trace data for each request, aggregated metrics, and user feedback. Enable <a href="https://learn.microsoft.com/en-us/azure/ai-services/diagnostic-logging">diagnostic logging</a> for each Azure AI service.</td>
+<td></td>
+</tr>
+<tr>
+<td>M-R4</td>
+<td>Monitoring</td>
+<td>Have diagnostic settings configured to capture logs and metrics of all deployed resources to a log analytics workspace.</td>
+<td>Use diagnostic settings to capture logs and metrics for all key services, such as Azure AI Foundry and <a href="https://learn.microsoft.com/en-us/azure/ai-services/diagnostic-logging">Azure AI services</a>. Specific services should capture audit logs and relevant service-specific logs.</td>
+<td></td>
+</tr>
+<tr>
+<td>M-R5</td>
+<td>Monitoring</td>
+<td>Monitor model &amp; data drift.</td>
+<td>Track accuracy and data drift continuously in generative and nongenerative AI to ensure that models remain relevant. Monitoring can alert you when model predictions or large language model responses deviate from expected behavior. This deviation indicates a need for retraining or adjustment. Set up custom alerts to detect performance thresholds. This approach enables early intervention when problems arise. Use <a href="https://learn.microsoft.com/en-us/azure/ai-studio/concepts/evaluation-approach-gen-ai">evaluations in Azure AI Foundry</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td>M-R6</td>
+<td>Monitoring</td>
+<td>Leverage Azure Monitor insights and Azure network watcher for trouble shooting networking issues.</td>
+<td>Use services such as Azure Monitor Network Insights and Azure Network Watcher to gain visibility into network performance and health.</td>
+<td></td>
+</tr>
+<tr>
+<td>R-R1</td>
+<td>Reliability</td>
+<td><strong>Multi Region Disaster Recovery</strong>: Consider Multi Region in at least two regions to provide high availability and ensure for Disaster Recovery.</td>
+<td>Establish a policy for business continuity and disaster recovery for your AI endpoints and AI data. Configure baseline disaster recovery for resources that host your AI model endpoints. These resources include <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/disaster-recovery">Azure AI Foundry</a>, <a href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-high-availability-machine-learning">Azure Machine Learning</a>, <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/business-continuity-disaster-recovery">Azure OpenAI</a>, or Azure AI services. All Azure data stores, such as <a href="https://learn.microsoft.com/en-us/azure/storage/common/storage-disaster-recovery-guidance">Azure Blob Storage</a>, <a href="https://learn.microsoft.com/en-us/azure/cosmos-db/online-backup-and-restore">Azure Cosmos DB</a>, and <a href="https://learn.microsoft.com/en-us/azure/azure-sql/accelerated-database-recovery">Azure SQL Database</a>, provide reliability and disaster recovery guidance that you should follow. Implement multi-region deployments to ensure high availability and resiliency for both generative and nongenerative AI systems For more information, see multi-region deployment in <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/disaster-recovery#plan-for-multi-regional-deployment">Azure AI Foundry</a>, <a href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-high-availability-machine-learning#plan-for-multi-regional-deployment">Azure Machine Learning</a>, and <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/business-continuity-disaster-recovery">Azure OpenAI</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td>R-R1</td>
+<td>Resource Organization</td>
+<td>Select regions based on the combination of regional availability of Azure Services and their configuration.</td>
+<td>Before deployment, ensure that there's <a href="https://azure.microsoft.com/explore/global-infrastructure/products-by-region/#products-by-region_tab5">availability in the region</a> for the AI resources that you need. Certain regions might not provide specific AI services or might have limited features, which can affect the functionality of your solution. This limitation can also affect the scalability of your deployment. For example, Azure OpenAI service availability can vary based on your deployment model. These deployment models include global standard, global provisioned, regional standard, and regional provisioned. Check the AI service to confirm that you have access to the necessary resources.<ul><li>To capture and use completions data, you will need to make sure your resource region is included in: swedencentral, northcentralus, eastus2</li><li>Azure OpenAI Evaluation is only supported in the following regions: [eastus2, northcentralus, swedencentral, switzerlandwest, uaenorth], and your region is eastus. Change to a valid region to use Azure OpenAI Evaluation.</li><li>Real-time audio is only available in the following regions: eastus2swedencentral</li><li>Assistants are only available in the following regions: australiaeast, centraluseuap, eastus, eastus2, francecentral, japaneast, norwayeast, southindia, swedencentral, uksouth, westus, westus3</li></ul></td>
+<td></td>
+</tr>
+<tr>
+<td>R-R2</td>
+<td>Resource Organization</td>
+<td>Review quota required to deploy the resources.</td>
+<td>Consider the quota or subscription limits in your chosen region as your AI workloads grow. Azure services have regional subscription limits. These limits can affect large-scale AI model deployments, such as large inference workloads. To prevent disruptions, contact Azure support in advance if you foresee a need for extra capacity.</td>
+<td></td>
+</tr>
+<tr>
+<td>R-R3</td>
+<td>Resource Organization</td>
+<td>Consider Azure subscription and region quota limits</td>
+<td>Align the resource organization with <a href="https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/azure-subscription-service-limits">Azure’s subscription quota limitations</a> to avoid unexpected service disruptions.</td>
+<td></td>
+</tr>
+<tr>
+<td>R-R4</td>
+<td>Resource Organization</td>
+<td>Consider scaling through multi-account and multi-project deployment.</td>
+<td>Azure offers tools like Azure AI Foundry <a href="https://learn.microsoft.com/en-us/azure/ai-studio/concepts/ai-resources">Resource and projects</a> to enforce governance and security. Use an AI Foundry Resource per billing boundary to allocate costs across different teams. For more information, see <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/manage#manage-ai-deployment">Manage AI deployments</a>. Use distinct AI Foundry resoruces to organize and manage AI artifacts like datasets, models, and experiments. AI Foundry resoruces centralize resource management and simplify access control. For example, use <a href="https://learn.microsoft.com/en-us/azure/ai-studio/concepts/ai-resources#organize-work-in-projects-for-customization">projects</a> within Azure AI Foundry to manage resources and permissions efficiently, facilitating collaboration while maintaining security boundaries.</td>
+<td></td>
+</tr>
+<tr>
+<td>S-R1</td>
+<td>Security</td>
+<td>Review the Microsoft Defender for Cloud Recommendations for compliance.</td>
+<td>MDC can help <a href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/identify-ai-workload-model">discover generative AI workloads</a> and in <a href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/explore-ai-risk">predeployment generative AI artifacts.</a> Also <a href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-security-posture">AI security posture management</a> in Microsoft Defender for Cloud can be used to automate detection and remediation of generative AI risks. Defender for Cloud provides a cost-effective approach for detecting configurations in your deployed resources that aren't secure. You should also enable <a href="https://learn.microsoft.com/en-us/azure/defender-for-cloud/ai-threat-protection">AI threat protection.</a></td>
+<td></td>
+</tr>
+<tr>
+<td>S-R2</td>
+<td>Security</td>
+<td>Comply with Microsoft Cloud Security Baseline</td>
+<td>Leverage <a href="https://learn.microsoft.com/en-us/security/benchmark/azure/security-baselines-overview">Azure security baselines</a> and follow <a href="https://learn.microsoft.com/en-us/azure/well-architected/service-guides/?product=popular">Azure Service Guides</a> for security guidance.</td>
+<td></td>
+</tr>
+<tr>
+<td>S-R3</td>
+<td>Security</td>
+<td>Leverage Purview to secure data in an AI landing zone.</td>
+<td>Sensitive data in AI workflows increases the risk of insider threats, data leaks and data oversharing. Use tools like <a href="https://learn.microsoft.com/en-us/purview/insider-risk-management">Microsoft Purview Insider Risk Management</a>to assess enterprise-wide data risks and prioritize them based on data sensitivity.</td>
+<td></td>
+</tr>
+<tr>
+<td>S-R4</td>
+<td>Security</td>
+<td>Review Industry Security Standards for AI</td>
+<td>Leverage <a href="https://atlas.mitre.org/">MITRE ATLAS</a> and <a href="https://genai.owasp.org/">OWASP Generative AI risk</a> for identifying risks across the architecture.</td>
+<td></td>
+</tr>
+<tr>
+<td>S-R5</td>
+<td>Security</td>
+<td>Monitor outputs and apply prompt shielding using AI Content Safety.</td>
+<td>Regularly inspect the data returned by AI models to detect and mitigate risks associated with malicious or unpredictable user prompts. Implement <a href="https://learn.microsoft.com/en-us/azure/ai-services/content-safety/concepts/jailbreak-detection">Prompt Shields</a> to scan text for the risk of a user input attack on generative Al models.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R1</td>
+<td>Networking</td>
+<td>Leverrage DDoS in case the workload is public facing. In case of existing platform landing zone, the central DDoS service should be used instead.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ddos-protection/ddos-protection-overview">Azure DDoS Protection</a> should be enabled to safeguard AI services from potential disruptions and downtime caused by distributed denial of service attacks. Enable Azure DDoS protection at the virtual network level to defend against traffic floods targeting internet-facing applications.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R2</td>
+<td>Networking</td>
+<td>Use a jumpbox that can be accessed through bastion. In case of existing platform landing zone the central jump box and bastion service should be used instead.</td>
+<td>AI development access should use a jumpbox within the virtual network of the workload or through a connectivity hub virtual network. Use Azure Bastion to securely connect to virtual machines interacting with AI services. Azure Bastion provides secure RDP/SSH connectivity without exposing VMs to the public internet. Enable Azure Bastion to ensure encrypted session data and protect access through TLS-based RDP/SSH connections.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R3</td>
+<td>Networking</td>
+<td>Use Private endpoint for the AI resources and infact for all PaaS services.</td>
+<td>No PaaS services or AI model endpoints should be accessible from the public internet. Private endpoints to provide private connectivity to Azure services within a virtual network. Private endpoints provide secure, private access to PaaS portals like Azure AI Foundry. For Azure AI Foundry, Configure the <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/configure-managed-network">managed virtual network</a> and use <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/configure-private-link">private endpoints</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R4</td>
+<td>Networking</td>
+<td>Use Network Security Groups in the AI Landing Zone on all virtual networks implemented as part of the architecture.</td>
+<td>Utilize <a href="https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview">network security groups</a> (NSGs) to define and apply access policies that govern inbound and outbound traffic to and from AI workloads. These controls can be used to implement the principle of least privilege, ensuring that only essential communication is permitted.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R5</td>
+<td>Networking</td>
+<td>Use App Gateway or Azure Front Door with WAF in the AI Landing Zone for the application public front-end based on regional or global deployment.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/web-application-firewall/overview">Azure WAF</a> helps protect your AI workloads from common web vulnerabilities, including SQL injections and cross-site scripting attacks. Configure Azure WAF on <a href="https://learn.microsoft.com/en-us/azure/web-application-firewall/ag/ag-overview">Application Gateway</a> for workloads that require enhanced security against malicious web traffic. For Azure AI Services, Restrict access to select <a href="https://learn.microsoft.com/en-us/azure/ai-services/cognitive-services-virtual-networks#scenarios">virtual networks</a> or use <a href="https://learn.microsoft.com/en-us/azure/ai-services/cognitive-services-virtual-networks#use-private-endpoints">private endpoints</a></td>
+<td></td>
+</tr>
+<tr>
+<td>N-R6</td>
+<td>Networking</td>
+<td>Consider APIM as AI Gateway in the AI landing zone with AI Foundry.</td>
+<td>The AI Landing Zone should use <a href="https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities#backend-load-balancer-and-circuit-breaker">Azure API Management</a> for load balancing API requests to AI endpoints. Consider using Azure API Management (APIM) as a generative AI gateway within your virtual networks. A generative AI gateway sits between your front-end and the AI endpoints. Application Gateway, WAF policies, and APIM within the virtual network is an established <a href="https://github.com/Azure/apim-landing-zone-accelerator/blob/main/scenarios/workload-genai/README.md#scenario-3-azure-api-management---generative-ai-resources-as-backend">architecture</a> in generative AI solutions. For more information, see <a href="https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator#ai-hub-gateway-landing-zone-accelerator">AI Hub architecture</a> and <a href="https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-deploy-multi-region">Deploy Azure API Management instance to multiple Azure regions</a>. A <a href="https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities">generative AI gateway</a> allows you to track token usage, throttle token usage, apply circuit breakers, and route to different AI endpoints to control costs.<br><br> <em>Consider a generative AI gateway for monitoring.</em> A reverse proxy like Azure API Management allows you to implement logging and monitoring that aren't native to the platform. API Management allows you to collect source IPs, input text, and output text. For more information, see <a href="https://learn.microsoft.com/en-us/azure/architecture/ai-ml/openai/architecture/log-monitor-azure-openai">Implement logging and monitoring for Azure OpenAI Service language models</a>.<em>.</em> <a href="https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/azure-openai-gateway-guide">Azure API Management</a> (APIM) can help ensure consistent security across AI workloads. Use its built-in policies for traffic control and security enforcement. Integrate APIM with Microsoft Entra ID to centralize authentication and authorization and ensure only authorized users or applications interact with your AI models. Ensure you configure least privilege access on the <a href="https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-use-managed-service-identity">reverse proxy’s managed identity</a>. For more information, see <a href="https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/azure-openai-gateway-custom-authentication#general-recommendations">AI authentication with APIM</a></td>
+<td></td>
+</tr>
+<tr>
+<td>N-R7</td>
+<td>Networking</td>
+<td>Use Firewall either in the AI Landing Zone or from the platform landing zone (preferred) along with a UDR to the Azure or 3P Firewall.</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/firewall/overview">Azure Firewall</a> enforces security policies for outgoing traffic before it reaches the internet. Use it to control and monitor outgoing traffic and enable SNAT to conceal internal IP addresses by translating private IPs to the firewall's public IP. It ensures secure and identifiable outbound traffic for better monitoring and security.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R8</td>
+<td>Networking</td>
+<td>Use Private DNS Zones either in the AI Landing Zone or from the platform landing zone (preferred) for <a href="https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns-integration">integrated private endpoints with Private DNS Zones</a> for proper DNS resolution and successful private endpoint functionality.</td>
+<td>Private DNS zones centralize and secure DNS management for accessing PaaS services within your AI network. Set up Azure policies that enforce private DNS zones and require private endpoints to ensure secure, internal DNS resolutions. If you don't have central Private DNS Zones, the DNS forwarding doesn't work until you add conditional forwarding manually. For example, see <a href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-custom-dns">using custom DNS</a> with Azure AI Foundry hubs and Azure Machine Learning workspace. Custom DNS servers manage PaaS connectivity within the network, bypassing public DNS. Configure private DNS zones in Azure to resolve PaaS service names securely and route all traffic through private networking channels.</td>
+<td></td>
+</tr>
+<tr>
+<td>N-R9</td>
+<td>Networking</td>
+<td>Restrict Outbound by default in the AI Landing Zone should provide guidance and implementation restricting outbound access by default.</td>
+<td>Limiting outbound traffic from your AI model endpoints helps protect sensitive data and maintain the integrity of your AI models. For minimizing data exfiltration risks, restricting outbound traffic to approved services or fully qualified domain names (FQDNs) and maintain a list of trusted sources. You should only allow unrestricted internet outbound traffic if you need access to public machine learning resources but regularly monitor and update your systems. For more information, see <a href="https://learn.microsoft.com/en-us/azure/ai-services/cognitive-services-data-loss-prevention">Azure AI services</a>, <a href="https://learn.microsoft.com/en-us/azure/ai-studio/how-to/configure-managed-network">Azure AI Foundry</a>, and <a href="https://learn.microsoft.com/en-us/azure/machine-learning/how-to-network-isolation-planning#allow-only-approved-outbound-mode">Azure Machine Learning.</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

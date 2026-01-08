@@ -1,0 +1,1385 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for Azure AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../design-checklist/">
+      
+      
+        <link rel="next" href="../faq/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Cost Guide - Azure AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-networking-services" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Azure AI Landing Zones" class="md-header__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Azure AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cost Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    Azure AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-networking-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Networking Services
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-compute-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Compute Services
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ai-cognitive-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. AI &amp; Cognitive Services
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-data-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Data Services
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-monitoring-observability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Monitoring &amp; Observability
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-optional-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Optional Services
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Template
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep Template
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/how-to-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to use
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/parametrizing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parametrizing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Cost Guide</h1>
+
+<p><strong>AI Landing Zone - Cost Guide</strong></p>
+<p><strong>Template:</strong> AI Landing Zones - Standard Deployment</p>
+<p><strong>Region:</strong> East US (adjust for your target region)</p>
+<p><strong>Azure Pricing Calculator Link:</strong> <a href="https://azure.com/e/e92e102172054654a13cdc1cada6cecc">Azure Pricing Calculator Estimate</a></p>
+<hr />
+<p><strong>🔗 Quick Start</strong></p>
+<ol>
+<li>Open the <strong><a href="https://azure.microsoft.com/en-us/pricing/calculator/">Azure Pricing Calculator</a></strong></li>
+<li>Follow the service configurations below</li>
+<li>Add each service by clicking the "+" button</li>
+<li>Configure using the specifications provided</li>
+</ol>
+<hr />
+<p><strong>📋 Service Configuration Checklist</strong></p>
+<h2 id="1-networking-services"><strong>1. Networking Services</strong></h2>
+<p><strong>Application Gateway</strong></p>
+<ul>
+<li><strong>Service:</strong> Application Gateway</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Tier:</strong> WAF V2</li>
+<li><strong>Gateway hours:</strong> 730 hours/month (24/7)</li>
+<li><strong>Zone redundancy:</strong> Yes (3 zones)</li>
+<li><strong>Capacity Units:</strong> Auto-scaling (estimate 10 CU average)</li>
+<li><strong>Data processed:</strong> 100 GB/month (adjust based on traffic)</li>
+<li><strong>Outbound data transfers:</strong> 50 GB/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$350-450/month</p>
+<hr />
+<p><strong>Azure Firewall</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure Firewall</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>SKU:</strong> Standard</li>
+<li><strong>Deployment hours:</strong> 730 hours/month (24/7)</li>
+<li><strong>Zone redundancy:</strong> Yes (3 zones)</li>
+<li><strong>Data processed:</strong> 500 GB/month</li>
+<li><strong>Threat Intelligence:</strong> Standard (included)</li>
+<li><strong>Firewall Policy:</strong> 1 policy</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$400-500/month</p>
+<hr />
+<p><strong>Azure Bastion</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure Bastion</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Tier:</strong> Standard</li>
+<li><strong>Hours:</strong> 730 hours/month</li>
+<li><strong>Outbound data transfer:</strong> 10 GB/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$140/month</p>
+<hr />
+<p><strong>Public IP Addresses</strong></p>
+<ul>
+<li><strong>Service:</strong> IP Addresses</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Type:</strong> Standard Public IPv4</li>
+<li><strong>Zone redundancy:</strong> Yes</li>
+<li><strong>Quantity:</strong> 2 (Application Gateway + Firewall)</li>
+<li><strong>Hours per IP:</strong> 730 hours/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$7/month</p>
+<hr />
+<p><strong>Private Endpoints</strong></p>
+<ul>
+<li><strong>Service:</strong> Private Link / Private Endpoint</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Number of Private Endpoints:</strong> 10</li>
+<li>App Configuration: 1</li>
+<li>API Management: 1 (if deployed)</li>
+<li>Container Apps Environment: 1</li>
+<li>Container Registry: 1</li>
+<li>Storage (Blob): 1</li>
+<li>Cosmos DB: 1</li>
+<li>AI Search: 1</li>
+<li>Key Vault: 1</li>
+<li>AI Services: 1</li>
+<li>OpenAI: 1</li>
+<li><strong>Inbound data processed:</strong> 100 GB/month total</li>
+<li><strong>Outbound data processed:</strong> 50 GB/month total</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$73/month ($7.30 per endpoint)</p>
+<hr />
+<p><strong>Private DNS Zones</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure DNS (Private DNS)</li>
+<li><strong>Number of zones:</strong> 15 zones</li>
+<li>privatelink.azure-api.net</li>
+<li>privatelink.cognitiveservices.azure.com</li>
+<li>privatelink.openai.azure.com</li>
+<li>privatelink.services.ai.azure.com</li>
+<li>privatelink.search.windows.net</li>
+<li>privatelink.documents.azure.com</li>
+<li>privatelink.blob.core.windows.net</li>
+<li>privatelink.vaultcore.azure.net</li>
+<li>privatelink.azconfig.io</li>
+<li>privatelink.{region}.azurecontainerapps.io</li>
+<li>privatelink.azurecr.io</li>
+<li>privatelink.applicationinsights.azure.com</li>
+<li>(additional zones as needed)</li>
+<li><strong>DNS queries:</strong> 1 million queries/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$9/month</p>
+<hr />
+<p><strong>Virtual Network</strong></p>
+<ul>
+<li><strong>Service:</strong> Virtual Network</li>
+<li><strong>Address space:</strong> 192.168.0.0/22 (1024 IPs)</li>
+<li><strong>Subnets:</strong> 9 subnets</li>
+<li><strong>Peering:</strong> Hub-spoke peering (optional, if configured)</li>
+<li><strong>Data transfer (peering):</strong> 100 GB/month (if using peering)</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$0 (free) + peering costs if applicable (~$10/month)</p>
+<hr />
+<p><strong>Network Security Groups</strong></p>
+<ul>
+<li><strong>Service:</strong> Network Security Groups</li>
+<li><strong>Quantity:</strong> 8 NSGs</li>
+<li>Agent subnet NSG</li>
+<li>Private Endpoints subnet NSG</li>
+<li>Application Gateway subnet NSG</li>
+<li>API Management subnet NSG</li>
+<li>Container Apps Environment subnet NSG</li>
+<li>Jumpbox subnet NSG</li>
+<li>DevOps Build Agents subnet NSG</li>
+<li>Azure Bastion subnet NSG</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$0 (free)</p>
+<hr />
+<h2 id="2-compute-services"><strong>2. Compute Services</strong></h2>
+<p><strong>Virtual Machine - Build VM (Linux)</strong></p>
+<ul>
+<li><strong>Service:</strong> Virtual Machines</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Operating System:</strong> Linux (Ubuntu 22.04)</li>
+<li><strong>Type:</strong> Compute Optimized</li>
+<li><strong>Tier:</strong> Standard</li>
+<li><strong>Instance:</strong> F4s v2<ul>
+<li>4 vCPUs</li>
+<li>8 GB RAM</li>
+</ul>
+</li>
+<li><strong>Virtual Machines:</strong> 1</li>
+<li><strong>Hours:</strong> 730 hours/month (24/7) or less if auto-shutdown configured</li>
+<li><strong>Managed Disks:</strong><ul>
+<li>OS Disk: Standard SSD, 128 GB</li>
+<li>Delete with VM: Yes</li>
+</ul>
+</li>
+<li><strong>Availability Zone:</strong> Zone 1</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$120/month (24/7) or ~$60/month (12 hours/day)</p>
+<hr />
+<p><strong>Virtual Machine - Jump VM (Windows)</strong></p>
+<ul>
+<li><strong>Service:</strong> Virtual Machines</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Operating System:</strong> Windows Server 2022 Datacenter: Azure Edition</li>
+<li><strong>Type:</strong> General Purpose</li>
+<li><strong>Tier:</strong> Standard</li>
+<li><strong>Instance:</strong> D4as v5<ul>
+<li>4 vCPUs</li>
+<li>16 GB RAM</li>
+</ul>
+</li>
+<li><strong>Virtual Machines:</strong> 1</li>
+<li><strong>Hours:</strong> 730 hours/month (24/7) or less if auto-shutdown configured</li>
+<li><strong>Managed Disks:</strong><ul>
+<li>OS Disk: Standard SSD, 128 GB</li>
+</ul>
+</li>
+<li><strong>Availability Zone:</strong> Zone 1</li>
+<li><strong>License:</strong> Windows Server license included</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$180/month (24/7) or ~$90/month (12 hours/day)</p>
+<hr />
+<p><strong>Azure Container Apps</strong></p>
+<ul>
+<li><strong>Service:</strong> Container Apps</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Workload Profile:</strong> Dedicated (D4)</li>
+<li>4 vCPUs, 16 GB RAM per instance</li>
+<li>Minimum instances: 1</li>
+<li>Maximum instances: 3</li>
+<li><strong>Average instances running:</strong> 2</li>
+<li><strong>Hours:</strong> 730 hours/month per instance</li>
+<li><strong>Total vCore hours:</strong> 2 instances × 4 vCPUs × 730 = 5,840 vCore-hours</li>
+<li><strong>HTTP requests:</strong> 1 million requests/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$280-350/month (depends on scaling)</p>
+<hr />
+<p><strong>Azure Container Registry</strong></p>
+<ul>
+<li><strong>Service:</strong> Container Registry</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>SKU:</strong> Premium</li>
+<li><strong>Storage:</strong> 100 GB</li>
+<li><strong>Build vCPU minutes:</strong> 500 minutes/month</li>
+<li><strong>Geo-replication:</strong> None (1 region)</li>
+<li><strong>Data transfer out:</strong> 10 GB/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$40/month</p>
+<hr />
+<h2 id="3-ai-cognitive-services"><strong>3. AI &amp; Cognitive Services</strong></h2>
+<p><strong>Azure AI Foundry / AI Services</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure AI Services (multi-service account)</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>API Calls:</strong> Variable (usage-based)</li>
+<li><strong>Estimate baseline:</strong> 100,000 API calls/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$50-200/month (highly variable based on usage)</p>
+<hr />
+<p><strong>Azure OpenAI Service</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure OpenAI Service</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Model:</strong> GPT-4o (latest)</li>
+<li><strong>Input tokens:</strong> 1 million tokens/month</li>
+<li><strong>Output tokens:</strong> 500,000 tokens/month</li>
+<li><strong>Model:</strong> GPT-4o-mini (for lighter tasks)</li>
+<li><strong>Input tokens:</strong> 5 million tokens/month</li>
+<li><strong>Output tokens:</strong> 2 million tokens/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$100-500/month (depends on model and usage)</p>
+<blockquote>
+<p><strong>Note:</strong> Pricing varies significantly by model. Use Azure OpenAI pricing page for accurate estimates.</p>
+</blockquote>
+<hr />
+<p><strong>Azure AI Search</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure AI Search (formerly Cognitive Search)</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Tier:</strong> Standard (S1)<ul>
+<li>25 GB storage</li>
+<li>1 replica</li>
+</ul>
+</li>
+<li>1 partition</li>
+<li><strong>Hours:</strong> 730 hours/month</li>
+<li><strong>Search queries:</strong> 100,000 queries/month</li>
+<li><strong>Indexing:</strong> 10 GB indexed data</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$250/month</p>
+<p><strong>Alternative - Basic Tier:</strong> ~$75/month (for dev/test)</p>
+<hr />
+<h2 id="4-data-services"><strong>4. Data Services</strong></h2>
+<p><strong>Azure Cosmos DB</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure Cosmos DB</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>API:</strong> SQL (Core) API</li>
+<li><strong>Capacity mode:</strong> Provisioned throughput</li>
+<li><strong>Throughput:</strong> 1,000 RU/s (Request Units per second)</li>
+<li><strong>Storage:</strong> 50 GB</li>
+<li><strong>Backup:</strong> Continuous backup (7 days)</li>
+<li><strong>Multi-region writes:</strong> No</li>
+<li><strong>Availability zones:</strong> Yes</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$175/month</p>
+<p><strong>Alternative - Serverless:</strong> ~$25-100/month (for dev/test, usage-based)</p>
+<hr />
+<p><strong>Storage Account</strong></p>
+<ul>
+<li><strong>Service:</strong> Storage Accounts</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Performance:</strong> Standard</li>
+<li><strong>Redundancy:</strong> Locally-redundant storage (LRS)</li>
+<li><strong>Account kind:</strong> StorageV2 (general purpose v2)</li>
+<li><strong>Tier:</strong> Hot</li>
+<li><strong>Capacity:</strong> 100 GB<ul>
+<li>Blob storage: 80 GB</li>
+</ul>
+</li>
+<li>File storage: 20 GB</li>
+<li><strong>Write operations:</strong> 100,000 operations/month</li>
+<li><strong>Read operations:</strong> 200,000 operations/month</li>
+<li><strong>Data retrieval:</strong> 10 GB/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$5-10/month</p>
+<hr />
+<p><strong>Azure Key Vault</strong></p>
+<ul>
+<li><strong>Service:</strong> Key Vault</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Tier:</strong> Standard</li>
+<li><strong>Secrets:</strong> 50 secrets</li>
+<li><strong>Certificate operations:</strong> 100 operations/month</li>
+<li><strong>Key operations:</strong> 10,000 operations/month</li>
+<li><strong>Advanced threat protection:</strong> No</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$1-3/month</p>
+<hr />
+<p><strong>App Configuration</strong></p>
+<ul>
+<li><strong>Service:</strong> App Configuration</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Tier:</strong> Standard</li>
+<li><strong>Requests:</strong> 100,000 requests/month</li>
+<li><strong>Storage:</strong> 1 GB</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$1-2/month</p>
+<p><strong>Alternative - Free Tier:</strong> $0/month (limited to 1,000 requests/day)</p>
+<hr />
+<h2 id="5-monitoring-observability"><strong>5. Monitoring &amp; Observability</strong></h2>
+<p><strong>Log Analytics Workspace</strong></p>
+<ul>
+<li><strong>Service:</strong> Azure Monitor (Log Analytics)</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Data ingestion:</strong> 50 GB/month</li>
+<li><strong>Data retention:</strong> 30 days (default)</li>
+<li><strong>Commitment tier:</strong> Pay-as-you-go</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$125/month</p>
+<hr />
+<p><strong>Application Insights</strong></p>
+<ul>
+<li><strong>Service:</strong> Application Insights</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Data ingestion:</strong> 20 GB/month (included in Log Analytics above)</li>
+<li><strong>Web tests:</strong> 5 multi-step web tests</li>
+<li><strong>Availability tests runs:</strong> 10,000 runs/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$10/month (web tests, data covered by Log Analytics)</p>
+<hr />
+<h2 id="6-optional-services"><strong>6. Optional Services</strong></h2>
+<p><strong><em>*API Management</em>* (if enabled in deployToggles)</strong></p>
+<ul>
+<li><strong>Service:</strong> API Management</li>
+<li><strong>Region:</strong> East US</li>
+<li><strong>Tier:</strong> Premium</li>
+<li><strong>Units:</strong> 3 (for zone redundancy)</li>
+<li><strong>Hours:</strong> 730 hours/month</li>
+<li><strong>API calls:</strong> 1 million calls/month</li>
+<li><strong>Cache:</strong> 1 GB</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$2,700/month (Premium tier)</p>
+<p><strong>Alternative - Developer Tier:</strong> ~$50/month (for dev/test, no SLA)</p>
+<hr />
+<p><strong><em>*Bing Search</em>* (Grounding with Bing)</strong></p>
+<ul>
+<li><strong>Service:</strong> Bing Search API</li>
+<li><strong>Tier:</strong> S1</li>
+<li><strong>Transactions:</strong> 10,000 transactions/month</li>
+</ul>
+<p><strong>Estimated Cost:</strong> ~$7/month</p>
+<hr />
+<p><strong>💰 TOTAL COST SUMMARY</strong></p>
+<p><strong>Standard Deployment (All Services Enabled)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Monthly Cost (USD)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Networking</strong></td>
+<td>$980 - $1,180</td>
+</tr>
+<tr>
+<td>- Application Gateway</td>
+<td>$350 - $450</td>
+</tr>
+<tr>
+<td>- Azure Firewall</td>
+<td>$400 - $500</td>
+</tr>
+<tr>
+<td>- Azure Bastion</td>
+<td>$140</td>
+</tr>
+<tr>
+<td>- Public IPs</td>
+<td>$7</td>
+</tr>
+<tr>
+<td>- Private Endpoints</td>
+<td>$73</td>
+</tr>
+<tr>
+<td>- Private DNS Zones</td>
+<td>$9</td>
+</tr>
+<tr>
+<td><strong>Compute</strong></td>
+<td>$440 - $650</td>
+</tr>
+<tr>
+<td>- Build VM (Linux)</td>
+<td>$120</td>
+</tr>
+<tr>
+<td>- Jump VM (Windows)</td>
+<td>$180</td>
+</tr>
+<tr>
+<td>- Container Apps</td>
+<td>$100 - $300</td>
+</tr>
+<tr>
+<td>- Container Registry</td>
+<td>$40</td>
+</tr>
+<tr>
+<td><strong>AI Services</strong></td>
+<td>$400 - $950</td>
+</tr>
+<tr>
+<td>- Azure OpenAI</td>
+<td>$100 - $500</td>
+</tr>
+<tr>
+<td>- AI Search</td>
+<td>$250</td>
+</tr>
+<tr>
+<td>- AI Services</td>
+<td>$50 - $200</td>
+</tr>
+<tr>
+<td><strong>Data</strong></td>
+<td>$180 - $190</td>
+</tr>
+<tr>
+<td>- Cosmos DB</td>
+<td>$175</td>
+</tr>
+<tr>
+<td>- Storage Account</td>
+<td>$5 - $10</td>
+</tr>
+<tr>
+<td>- Key Vault</td>
+<td>$1 - $3</td>
+</tr>
+<tr>
+<td>- App Configuration</td>
+<td>$1 - $2</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>$135</td>
+</tr>
+<tr>
+<td>- Log Analytics</td>
+<td>$125</td>
+</tr>
+<tr>
+<td>- Application Insights</td>
+<td>$10</td>
+</tr>
+<tr>
+<td><strong>Optional</strong></td>
+<td>$0 - $2,707</td>
+</tr>
+<tr>
+<td>- API Management (if enabled)</td>
+<td>$0 - $2,700</td>
+</tr>
+<tr>
+<td>- Bing Search</td>
+<td>$7</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>TOTAL (without API Management)</strong></td>
+<td><strong>$2,135 - $3,105/month</strong></td>
+</tr>
+<tr>
+<td><strong>TOTAL (with API Management)</strong></td>
+<td><strong>$4,835 - $5,812/month</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>🎯 COST OPTIMIZATION SCENARIOS</strong></p>
+<p><strong>Scenario 1: Development/Test Environment</strong>
+Estimated savings: <strong>50-60% reduction</strong></p>
+<p><strong>Changes:</strong></p>
+<ul>
+<li>Disable Azure Firewall: <strong>-$400/month</strong></li>
+<li>Disable Azure Bastion: <strong>-$140/month</strong></li>
+<li>Disable Jump VM: <strong>-$180/month</strong></li>
+<li>Use AI Search Basic tier: <strong>-$175/month</strong></li>
+<li>Use Cosmos DB Serverless: <strong>-$100/month</strong></li>
+<li>Auto-shutdown Build VM (12h/day): <strong>-$60/month</strong></li>
+<li>Reduce Container Apps scaling: <strong>-$100/month</strong></li>
+</ul>
+<p><strong>New Total:</strong> ~$980 - $1,350/month</p>
+<hr />
+<p><strong>Scenario 2: Minimal Production (No App Gateway/Firewall)</strong>
+Estimated savings: <strong>40% reduction</strong></p>
+<p><strong>Changes:</strong></p>
+<ul>
+<li>Disable Application Gateway: <strong>-$400/month</strong></li>
+<li>Disable Azure Firewall: <strong>-$400/month</strong></li>
+<li>Use Azure Front Door instead (if needed for WAF)</li>
+</ul>
+<p><strong>New Total:</strong> ~$1,335 - $1,925/month</p>
+<hr />
+<p><strong>Scenario 3: Maximum Cost Optimization</strong></p>
+<p>Estimated savings: <strong>70% reduction</strong></p>
+<p><strong>Changes:</strong></p>
+<ul>
+<li>All from Scenario 1</li>
+<li>Disable Container Apps (use Azure Container Instances): <strong>-$200/month</strong></li>
+<li>Use consumption-based AI services only: <strong>-$200/month</strong></li>
+<li>Reduce monitoring data retention to 7 days: <strong>-$75/month</strong></li>
+</ul>
+<p><strong>New Total:</strong> ~$640 - $900/month</p>
+<hr />
+<p><strong>📊 VARIABLE COSTS TO MONITOR</strong></p>
+<p>These costs are <strong>usage-based</strong> and can vary significantly:</p>
+<ol>
+<li><strong>Azure OpenAI</strong>: Depends on tokens processed (can range from $10 to $5,000+/month)</li>
+<li><strong>AI Services API calls</strong>: Pay per transaction</li>
+<li><strong>Azure AI Search queries</strong>: Included in tier pricing, but indexing costs vary</li>
+<li><strong>Cosmos DB</strong>: RU/s consumption can spike with traffic</li>
+<li><strong>Data egress</strong>: Outbound data transfer charges (especially cross-region)</li>
+<li><strong>Log Analytics</strong>: Data ingestion over 5GB/day gets expensive</li>
+<li><strong>Container Apps scaling</strong>: Auto-scaling can increase costs during peak times</li>
+</ol>
+<hr />
+<p><strong>🛠️ HOW TO USE THIS GUIDE</strong></p>
+<p><strong>Step-by-Step:</strong></p>
+<ol>
+<li>
+<p><strong>Open Calculator</strong>: Go to https://azure.microsoft.com/en-us/pricing/calculator/</p>
+</li>
+<li>
+<p><strong>Select Region</strong>: Change to your target deployment region (prices vary by region)</p>
+</li>
+<li>
+<p><strong>Add Services</strong>: Use the search box to find each service and click "+"</p>
+</li>
+<li>
+<p><strong>Configure</strong>: For each service, use the specifications in this guide</p>
+</li>
+<li>
+<p><strong>Adjust</strong>: Modify quantities based on your specific needs</p>
+</li>
+<li>
+<p><strong>Export/Save</strong>: Click "Export" to save as Excel or click "Save" to generate a shareable link</p>
+</li>
+<li>
+<p><strong>Review Monthly</strong>: Update estimates as your usage patterns become clear</p>
+</li>
+</ol>
+<hr />
+<p><strong>📌 IMPORTANT NOTES</strong></p>
+<ul>
+<li><strong>Regional Pricing Varies</strong>: Costs shown are for East US. Some regions cost 10-30% more.</li>
+<li><strong>Currency</strong>: All prices in USD. Use Azure's currency converter for other currencies.</li>
+<li><strong>Reserved Instances</strong>: VMs and other compute can save 30-70% with 1-3 year reservations.</li>
+<li><strong>Azure Hybrid Benefit</strong>: Save up to 40% on Windows VMs if you have existing licenses.</li>
+<li><strong>Dev/Test Pricing</strong>: Special pricing for MSDN subscribers.</li>
+<li><strong>Free Services</strong>: Some services have free tiers (App Config, DNS queries, etc.).</li>
+<li><strong>Data Transfer</strong>: Within the same region is typically free; cross-region and outbound have costs.</li>
+</ul>
+<hr />
+<p><strong>🔗 USEFUL LINKS</strong></p>
+<ul>
+<li><strong>Azure Pricing Calculator</strong>: https://azure.microsoft.com/pricing/calculator/</li>
+<li><strong>Azure OpenAI Pricing</strong>: https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/</li>
+<li><strong>Azure AI Services Pricing</strong>: https://azure.microsoft.com/pricing/details/cognitive-services/</li>
+<li><strong>Azure Cost Management</strong>: https://portal.azure.com/#blade/Microsoft_Azure_CostManagement/Menu/overview</li>
+<li><strong>Azure TCO Calculator</strong>: https://azure.microsoft.com/pricing/tco/calculator/</li>
+<li><strong>Azure Architecture Center</strong>: https://learn.microsoft.com/azure/architecture/</li>
+</ul>
+<hr />
+<p><strong>📞 NEED HELP?</strong></p>
+<ul>
+<li>Review the Bicep template: <code>bicep/infra/sample.main.bicepparam</code> to see which services are enabled</li>
+<li>Adjust <code>deployToggles</code> to disable expensive services you don't need</li>
+<li>Contact Azure Support for EA/CSP pricing discussions</li>
+<li>Use Azure Cost Management after deployment for real-time cost tracking</li>
+</ul>
+<hr />
+<p><strong>Last Updated:</strong> November 5, 2025<br />
+<strong>Template Version:</strong> Based on Azure AI Landing Zones main.bicep v1.0</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
