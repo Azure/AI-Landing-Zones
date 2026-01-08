@@ -156,9 +156,9 @@ import {
   appConfigurationDefinitionType
   containerRegistryDefinitionType
   storageAccountDefinitionType
-  genAIAppCosmosDbDefinitionType
-  keyVaultDefinitionType
-  kSAISearchDefinitionType
+  genAIAppCosmosDbDefinitionInputType
+  keyVaultDefinitionInputType
+  kSAISearchDefinitionInputType
   apimDefinitionType
   aiFoundryDefinitionType
   kSGroundingWithBingDefinitionType
@@ -256,7 +256,7 @@ module defenderModule './components/defender/main.bicep' = if (enableDefenderFor
   scope: subscription()
   params: {
     enableDefenderForAI: enableDefenderForAI
-    enableDefenderForKeyVault: deployKeyVault
+    enableDefenderForKeyVault: varHasKv
   }
 }
  
@@ -790,7 +790,10 @@ var varSpokeVnetNameForPeering = !empty(resourceIds.?virtualNetworkResourceId)
       : existingVNetSubnetsDefinition!.existingVNetName)
     : '')
 
-var varDefaultSpokeSubnets = [
+// Default subnet set for standalone spoke deployments.
+// In Platform Landing Zone mode, hub-level subnets (Firewall/Bastion/Jumpbox) are expected to exist in the platform hub,
+// so they should not be created in the spoke.
+var varDefaultSpokeSubnetsFull = [
   {
     enabled: true
     name: 'agent-subnet'
@@ -873,6 +876,56 @@ var varDefaultSpokeSubnets = [
   }
 ]
 
+var varDefaultSpokeSubnetsPlatformLz = [
+  {
+    enabled: true
+    name: 'agent-subnet'
+    addressPrefix: '192.168.0.0/27'
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.CognitiveServices']
+    networkSecurityGroupResourceId: agentNsgResourceId
+  }
+  {
+    enabled: true
+    name: 'pe-subnet'
+    addressPrefix: '192.168.0.32/27'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+    privateEndpointNetworkPolicies: 'Disabled'
+    networkSecurityGroupResourceId: peNsgResourceId
+  }
+  {
+    enabled: true
+    name: 'appgw-subnet'
+    addressPrefix: '192.168.0.192/27'
+    networkSecurityGroupResourceId: applicationGatewayNsgResourceId
+  }
+  union(
+    {
+      enabled: true
+      name: 'apim-subnet'
+      addressPrefix: '192.168.0.224/27'
+      networkSecurityGroupResourceId: apiManagementNsgResourceId
+    },
+    !empty(varApimSubnetDelegationServiceName) ? { delegation: varApimSubnetDelegationServiceName } : {}
+  )
+  {
+    enabled: true
+    name: 'aca-env-subnet'
+    addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
+    delegation: 'Microsoft.App/environments'
+    serviceEndpoints: ['Microsoft.AzureCosmosDB']
+    networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
+  }
+  {
+    enabled: true
+    name: 'devops-agents-subnet'
+    addressPrefix: '192.168.1.32/27'
+    networkSecurityGroupResourceId: devopsBuildAgentsNsgResourceId
+  }
+]
+
+var varDefaultSpokeSubnets = flagPlatformLandingZone ? varDefaultSpokeSubnetsPlatformLz : varDefaultSpokeSubnetsFull
+
 // 3.1 Virtual Network and Subnets
 module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (varDeployVnet && !(hubVnetPeeringDefinition != null && !empty(hubVnetPeeringDefinition.?peerVnetResourceId))) {
   name: 'm-vnet'
@@ -902,6 +955,7 @@ var varApimSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
 module existingVNetSubnets './helpers/setup-subnets-for-vnet/main.bicep' = if (varDeploySubnetsToExistingVnet && !varIsCrossScope) {
   name: 'm-existing-vnet-subnets'
   params: {
+    flagPlatformLandingZone: flagPlatformLandingZone
     existingVNetSubnetsDefinition: existingVNetSubnetsDefinition!
     nsgResourceIds: {
       agentNsgResourceId: agentNsgResourceId!
@@ -922,6 +976,7 @@ module existingVNetSubnetsCrossScope './helpers/setup-subnets-for-vnet/main.bice
   name: 'm-existing-vnet-subnets-cross-scope'
   scope: resourceGroup(varExistingVNetSubscriptionId, varExistingVNetResourceGroupName)
   params: {
+    flagPlatformLandingZone: flagPlatformLandingZone
     existingVNetSubnetsDefinition: existingVNetSubnetsDefinition!
     nsgResourceIds: {
       agentNsgResourceId: agentNsgResourceId!
@@ -990,9 +1045,9 @@ var varHasApim = !empty(resourceIds.?apimServiceResourceId!) || varDeployApim
 var varHasContainerEnv = !empty(resourceIds.?containerEnvResourceId!) || varDeployContainerAppEnv
 var varHasAcr = !empty(resourceIds.?containerRegistryResourceId!) || varDeployAcr
 var varHasStorage = !empty(resourceIds.?storageAccountResourceId!) || varDeploySa
-var varHasCosmos = cosmosDbDefinition != null
-var varHasSearch = aiSearchDefinition != null
-var varHasKv = keyVaultDefinition != null
+var varHasCosmos = !empty(resourceIds.?dbAccountResourceId!) || varDeployCosmosDb
+var varHasSearch = !empty(resourceIds.?searchServiceResourceId!) || varDeployAiSearch
+var varHasKv = !empty(resourceIds.?keyVaultResourceId!) || varDeployKeyVault
 
 // 4.4 API Management Private DNS Zone
 @description('Optional. API Management Private DNS Zone configuration.')
@@ -1576,14 +1631,9 @@ output appInsightsPrivateDnsZoneResourceId string = varAppInsightsPrivateDnsZone
 // 7 NETWORKING - PRIVATE ENDPOINTS
 // -----------------------
 
-// The custom AI Foundry component creates private endpoints for:
-// - AI Services account
-// - AI Search
-// - Storage (blob)
-// - Cosmos DB (SQL)
-// Avoid duplicating those private endpoints here.
+// Note: AI Foundry dependencies are treated as separate resources from the GenAI App backing services.
+// This landing zone may deploy private endpoints for the GenAI App backing services independently.
 var varDeployAiFoundry = deployToggles.aiFoundry
-var varAiFoundryManagesCorePrivateEndpoints = varDeployPrivateEndpoints && varDeployAiFoundry
 
 // 7.1. App Configuration Private Endpoint
 @description('Optional. App Configuration Private Endpoint configuration.')
@@ -1779,7 +1829,7 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
 @description('Optional. Storage Account Private Endpoint configuration.')
 param storageBlobPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasStorage && !varAiFoundryManagesCorePrivateEndpoints) {
+module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasStorage) {
   name: 'blob-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1823,7 +1873,7 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
 @description('Optional. Cosmos DB Private Endpoint configuration.')
 param cosmosPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasCosmos && !varAiFoundryManagesCorePrivateEndpoints) {
+module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasCosmos) {
   name: 'cosmos-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1837,7 +1887,7 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
           {
             name: 'cosmosConnection'
             properties: {
-              privateLinkServiceId: deployCosmosDb ? cosmosDbModule!.outputs.resourceId : ''
+              privateLinkServiceId: varCosmosDbResourceId
               groupIds: ['Sql']
             }
           }
@@ -1857,6 +1907,8 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
   }
   dependsOn: [
     #disable-next-line BCP321
+    varDeployCosmosDb ? cosmosDbModule : null
+    #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
   ]
 }
@@ -1865,7 +1917,7 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
 @description('Optional. Azure AI Search Private Endpoint configuration.')
 param searchPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
-module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasSearch && !varAiFoundryManagesCorePrivateEndpoints) {
+module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasSearch) {
   name: 'search-private-endpoint-${varUniqueSuffix}'
   params: {
     privateEndpoint: union(
@@ -1879,7 +1931,7 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
           {
             name: 'searchConnection'
             properties: {
-              privateLinkServiceId: deployAiSearch ? aiSearchModule!.outputs.resourceId : ''
+              privateLinkServiceId: varAiSearchResourceId
               groupIds: ['searchService']
             }
           }
@@ -1899,7 +1951,7 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
   }
   dependsOn: [
     #disable-next-line BCP321
-    deployAiSearch ? aiSearchModule : null
+    varDeployAiSearch ? aiSearchModule : null
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
@@ -1927,7 +1979,7 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
           {
             name: 'kvConnection'
             properties: {
-              privateLinkServiceId: deployKeyVault ? keyVaultModule!.outputs.resourceId : ''
+              privateLinkServiceId: varKeyVaultResourceId
               groupIds: ['vault']
             }
           }
@@ -1946,6 +1998,8 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
     )
   }
   dependsOn: [
+    #disable-next-line BCP321
+    varDeployKeyVault ? keyVaultModule : null
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
   ]
@@ -2286,19 +2340,48 @@ module configurationStore 'wrappers/avm.res.app-configuration.configuration-stor
 // 12 COSMOS DB
 // -----------------------
 @description('Optional. Cosmos DB settings.')
-param cosmosDbDefinition genAIAppCosmosDbDefinitionType?
+param cosmosDbDefinition genAIAppCosmosDbDefinitionInputType?
 
-var deployCosmosDb = cosmosDbDefinition != null
+var varCosmosDbResourceIdInput = resourceIds.?dbAccountResourceId ?? ''
+var varDeployCosmosDb = empty(varCosmosDbResourceIdInput) && deployToggles.cosmosDb
 
-module cosmosDbModule 'wrappers/avm.res.document-db.database-account.bicep' = if (deployCosmosDb) {
+resource existingCosmosDb 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' existing = if (!empty(varCosmosDbResourceIdInput)) {
+  name: varExistingCosmosName
+  scope: resourceGroup(varExistingCosmosSub, varExistingCosmosRg)
+}
+
+// Naming
+var varCosmosIdSegments = empty(varCosmosDbResourceIdInput) ? [''] : split(varCosmosDbResourceIdInput, '/')
+var varExistingCosmosSub = length(varCosmosIdSegments) >= 3 ? varCosmosIdSegments[2] : ''
+var varExistingCosmosRg = length(varCosmosIdSegments) >= 5 ? varCosmosIdSegments[4] : ''
+var varExistingCosmosName = length(varCosmosIdSegments) >= 1 ? last(varCosmosIdSegments) : ''
+var varCosmosDbNameFromDefinition = cosmosDbDefinition.?name ?? ''
+var varCosmosDbName = !empty(varCosmosDbResourceIdInput)
+  ? varExistingCosmosName
+  : (empty(varCosmosDbNameFromDefinition) ? 'cosmos-${baseName}' : varCosmosDbNameFromDefinition)
+
+var varCosmosDbResourceId = !empty(varCosmosDbResourceIdInput)
+  ? existingCosmosDb.id
+  : (varDeployCosmosDb ? cosmosDbModule!.outputs.resourceId : '')
+
+module cosmosDbModule 'wrappers/avm.res.document-db.database-account.bicep' = if (varDeployCosmosDb) {
   name: 'cosmosDbModule'
   params: {
     cosmosDb: union(
+      union(
+        {
+          location: location
+          enableTelemetry: enableTelemetry
+          tags: tags
+          networkRestrictions: {
+            publicNetworkAccess: 'Disabled'
+          }
+        },
+        cosmosDbDefinition ?? {}
+      ),
       {
-        name: 'cosmos-${baseName}'
-        location: location
-      },
-      cosmosDbDefinition ?? {}
+        name: varCosmosDbName
+      }
     )
   }
 }
@@ -2307,19 +2390,46 @@ module cosmosDbModule 'wrappers/avm.res.document-db.database-account.bicep' = if
 // 13 KEY VAULT
 // -----------------------
 @description('Optional. Key Vault settings.')
-param keyVaultDefinition keyVaultDefinitionType?
+param keyVaultDefinition keyVaultDefinitionInputType?
 
-var deployKeyVault = keyVaultDefinition != null
+var varKeyVaultResourceIdInput = resourceIds.?keyVaultResourceId ?? ''
+var varDeployKeyVault = empty(varKeyVaultResourceIdInput) && deployToggles.keyVault
 
-module keyVaultModule 'wrappers/avm.res.key-vault.vault.bicep' = if (deployKeyVault) {
+resource existingKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (!empty(varKeyVaultResourceIdInput)) {
+  name: varExistingKvName
+  scope: resourceGroup(varExistingKvSub, varExistingKvRg)
+}
+
+// Naming
+var varKvIdSegments = empty(varKeyVaultResourceIdInput) ? [''] : split(varKeyVaultResourceIdInput, '/')
+var varExistingKvSub = length(varKvIdSegments) >= 3 ? varKvIdSegments[2] : ''
+var varExistingKvRg = length(varKvIdSegments) >= 5 ? varKvIdSegments[4] : ''
+var varExistingKvName = length(varKvIdSegments) >= 1 ? last(varKvIdSegments) : ''
+var varKeyVaultNameFromDefinition = keyVaultDefinition.?name ?? ''
+var varKeyVaultName = !empty(varKeyVaultResourceIdInput)
+  ? varExistingKvName
+  : (empty(varKeyVaultNameFromDefinition) ? 'kv-${baseName}' : varKeyVaultNameFromDefinition)
+
+var varKeyVaultResourceId = !empty(varKeyVaultResourceIdInput)
+  ? existingKeyVault.id
+  : (varDeployKeyVault ? keyVaultModule!.outputs.resourceId : '')
+
+module keyVaultModule 'wrappers/avm.res.key-vault.vault.bicep' = if (varDeployKeyVault) {
   name: 'keyVaultModule'
   params: {
     keyVault: union(
+      union(
+        {
+          location: location
+          enableTelemetry: enableTelemetry
+          tags: tags
+          publicNetworkAccess: 'Disabled'
+        },
+        keyVaultDefinition ?? {}
+      ),
       {
-        name: 'kv-${baseName}'
-        location: location
-      },
-      keyVaultDefinition ?? {}
+        name: varKeyVaultName
+      }
     )
   }
 }
@@ -2328,19 +2438,46 @@ module keyVaultModule 'wrappers/avm.res.key-vault.vault.bicep' = if (deployKeyVa
 // 14 AI SEARCH
 // -----------------------
 @description('Optional. AI Search settings.')
-param aiSearchDefinition kSAISearchDefinitionType?
+param aiSearchDefinition kSAISearchDefinitionInputType?
 
-var deployAiSearch = aiSearchDefinition != null
+var varAiSearchResourceIdInput = resourceIds.?searchServiceResourceId ?? ''
+var varDeployAiSearch = empty(varAiSearchResourceIdInput) && deployToggles.searchService
 
-module aiSearchModule 'wrappers/avm.res.search.search-service.bicep' = if (deployAiSearch) {
+resource existingAiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' existing = if (!empty(varAiSearchResourceIdInput)) {
+  name: varExistingSearchName
+  scope: resourceGroup(varExistingSearchSub, varExistingSearchRg)
+}
+
+// Naming
+var varSearchIdSegments = empty(varAiSearchResourceIdInput) ? [''] : split(varAiSearchResourceIdInput, '/')
+var varExistingSearchSub = length(varSearchIdSegments) >= 3 ? varSearchIdSegments[2] : ''
+var varExistingSearchRg = length(varSearchIdSegments) >= 5 ? varSearchIdSegments[4] : ''
+var varExistingSearchName = length(varSearchIdSegments) >= 1 ? last(varSearchIdSegments) : ''
+var varAiSearchNameFromDefinition = aiSearchDefinition.?name ?? ''
+var varAiSearchName = !empty(varAiSearchResourceIdInput)
+  ? varExistingSearchName
+  : (empty(varAiSearchNameFromDefinition) ? 'search-${baseName}' : varAiSearchNameFromDefinition)
+
+var varAiSearchResourceId = !empty(varAiSearchResourceIdInput)
+  ? existingAiSearch.id
+  : (varDeployAiSearch ? aiSearchModule!.outputs.resourceId : '')
+
+module aiSearchModule 'wrappers/avm.res.search.search-service.bicep' = if (varDeployAiSearch) {
   name: 'aiSearchModule'
   params: {
     aiSearch: union(
+      union(
+        {
+          location: location
+          enableTelemetry: enableTelemetry
+          tags: tags
+          publicNetworkAccess: 'Disabled'
+        },
+        aiSearchDefinition ?? {}
+      ),
       {
-        name: empty(aiSearchDefinition!.?name!) ? 'search-${baseName}' : aiSearchDefinition!.name!
-        location: aiSearchDefinition!.?location ?? location
-      },
-      aiSearchDefinition!
+        name: varAiSearchName
+      }
     )
   }
 }
@@ -2482,10 +2619,10 @@ var varAiFoundryModelDeploymentsMapped = [
 var varAiFoundryModelDeployments = empty(varAiFoundryModelDeploymentsMapped)
   ? [
       {
-        name: 'gpt-4o'
-        modelName: 'gpt-4o'
+        name: 'gpt-5-mini'
+        modelName: 'gpt-5-mini'
         modelFormat: 'OpenAI'
-        modelVersion: '2024-11-20'
+        modelVersion: '2025-08-07'
         modelSkuName: 'GlobalStandard'
         modelCapacity: 10
       }
@@ -2500,13 +2637,16 @@ var varAiFoundryModelDeployments = empty(varAiFoundryModelDeploymentsMapped)
     ]
   : varAiFoundryModelDeploymentsMapped
 
-var varAiFoundryAiSearchResourceId = !empty(resourceIds.?searchServiceResourceId!)
-  ? resourceIds.searchServiceResourceId!
-  : (deployAiSearch ? aiSearchModule!.outputs.resourceId : '')
+// Always separated: AI Foundry dependency resources must not reuse the GenAI App backing services.
+// Provide AI Foundry-specific resource IDs via resourceIds.aiFoundry* if you want Foundry to reuse existing resources;
+// otherwise leave them empty and the AI Foundry component will create its own dependencies when includeAssociatedResources=true.
+var varAiFoundryAiSearchResourceId = resourceIds.?aiFoundrySearchServiceResourceId ?? ''
 
-var varAiFoundryStorageResourceId = varSaResourceId
+var varAiFoundryStorageResourceId = resourceIds.?aiFoundryStorageAccountResourceId ?? ''
 
-var varAiFoundryCosmosResourceId = deployCosmosDb ? cosmosDbModule!.outputs.resourceId : ''
+var varAiFoundryCosmosResourceId = resourceIds.?aiFoundryCosmosDBAccountResourceId ?? ''
+
+var varAiFoundryKeyVaultResourceId = resourceIds.?aiFoundryKeyVaultResourceId ?? ''
 
 var varAiFoundryCurrentRgName = resourceGroup().name
 var varAiFoundryExistingDnsZones = {
@@ -2516,6 +2656,7 @@ var varAiFoundryExistingDnsZones = {
   'privatelink.search.windows.net': varDeployPrivateEndpoints ? (varUseExistingPdz.search ? split(privateDnsZonesDefinition.searchZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
   'privatelink.blob.${environment().suffixes.storage}': varDeployPrivateEndpoints ? (varUseExistingPdz.blob ? split(privateDnsZonesDefinition.blobZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
   'privatelink.documents.azure.com': varDeployPrivateEndpoints ? (varUseExistingPdz.cosmosSql ? split(privateDnsZonesDefinition.cosmosSqlZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
+  'privatelink.vaultcore.azure.net': varDeployPrivateEndpoints ? (varUseExistingPdz.keyVault ? split(privateDnsZonesDefinition.keyVaultZoneId!, '/')[4] : varAiFoundryCurrentRgName) : ''
 }
 
 module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
@@ -2537,10 +2678,21 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
     peSubnetName: 'pe-subnet'
     deployVnetAndSubnets: false
 
-    // Reuse resources created by this template when present; otherwise the custom component can create them.
+    // AI Foundry backing services (always separated from the GenAI App backing services).
     aiSearchResourceId: varAiFoundryAiSearchResourceId
     azureStorageAccountResourceId: varAiFoundryStorageResourceId
     azureCosmosDBAccountResourceId: varAiFoundryCosmosResourceId
+    keyVaultResourceId: varAiFoundryKeyVaultResourceId
+
+    // Public networking + IP allowlisting (applies only when Foundry creates these resources)
+    aiSearchPublicNetworkAccess: aiFoundryDefinition.?aiSearchConfiguration.?publicNetworkAccess ?? 'Disabled'
+    aiSearchNetworkRuleSet: aiFoundryDefinition.?aiSearchConfiguration.?networkRuleSet ?? {}
+    cosmosDbPublicNetworkAccess: aiFoundryDefinition.?cosmosDbConfiguration.?publicNetworkAccess ?? 'Disabled'
+    cosmosDbIpRules: aiFoundryDefinition.?cosmosDbConfiguration.?ipRules ?? []
+    storageAccountPublicNetworkAccess: aiFoundryDefinition.?storageAccountConfiguration.?publicNetworkAccess ?? 'Disabled'
+    storageAccountNetworkAcls: aiFoundryDefinition.?storageAccountConfiguration.?networkAcls ?? {}
+    keyVaultPublicNetworkAccess: aiFoundryDefinition.?keyVaultConfiguration.?publicNetworkAccess ?? 'Disabled'
+    keyVaultNetworkAcls: aiFoundryDefinition.?keyVaultConfiguration.?networkAcls ?? {}
 
     // Private networking integration
     deployPrivateEndpointsAndDns: varDeployPrivateEndpoints
@@ -2558,12 +2710,6 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
   }
   dependsOn: [
     #disable-next-line BCP321
-    deployAiSearch ? aiSearchModule : null
-    #disable-next-line BCP321
-    varDeploySa ? storageAccount : null
-    #disable-next-line BCP321
-    deployCosmosDb ? cosmosDbModule : null
-    #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
     (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
@@ -2571,6 +2717,8 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
     (varDeployPrivateDnsZones && !varUseExistingPdz.blob) ? privateDnsZoneBlob : null
     #disable-next-line BCP321
     (varDeployPrivateDnsZones && !varUseExistingPdz.cosmosSql) ? privateDnsZoneCosmos : null
+    #disable-next-line BCP321
+    (varDeployPrivateDnsZones && !varUseExistingPdz.keyVault) ? privateDnsZoneKeyVault : null
     #disable-next-line BCP321
     (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices) ? privateDnsZoneCogSvcs : null
     #disable-next-line BCP321
@@ -3325,6 +3473,20 @@ var jumpVmInstallFileUris = [
     : jumpVmInstallScriptUri)
 ]
 
+var varAssignJumpVmContributorRoleAtRg = varDeployJumpVm && (jumpVmDefinition.?assignContributorRoleAtResourceGroup ?? true)
+
+module jumpVmRgContributorRole './components/security/vm-role-assignment.bicep' = if (varAssignJumpVmContributorRoleAtRg) {
+  name: 'jumpVmRgContributorRole-${varUniqueSuffix}'
+  params: {
+    vmName: varJumpVmName
+    roleDefinitionGuid: 'b24988ac-6180-42a0-ab88-20f7382dd24c' // Contributor
+    principalType: 'ServicePrincipal'
+  }
+  dependsOn: [
+    jumpVm
+  ]
+}
+
 resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = if (varDeployJumpVm && (jumpVmDefinition.?enableAutoInstall ?? true)) {
   name: '${varJumpVmName}/cse'
   location: location
@@ -3344,20 +3506,6 @@ resource jumpVmCse 'Microsoft.Compute/virtualMachines/extensions@2024-11-01' = i
   dependsOn: [
     jumpVm
   ]
-}
-
-// Jump VM Role Assignment - Contributor at Resource Group scope
-resource jumpVmContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (varDeployJumpVm && (jumpVmDefinition.?assignContributorRoleAtResourceGroup ?? true)) {
-  name: guid(resourceGroup().id, varJumpVmName, 'b24988ac-6180-42a0-ab88-20f7382dd24c')
-  scope: resourceGroup()
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      'b24988ac-6180-42a0-ab88-20f7382dd24c'
-    ) // Contributor
-    principalId: jumpVm!.outputs.systemAssignedMIPrincipalId
-    principalType: 'ServicePrincipal'
-  }
 }
 
 // -----------------------
@@ -3432,24 +3580,24 @@ output appConfigResourceId string = !empty(resourceIds.?appConfigResourceId!)
 
 // Cosmos DB Outputs
 @description('Cosmos DB resource ID.')
-output cosmosDbResourceId string = deployCosmosDb ? cosmosDbModule!.outputs.resourceId : ''
+output cosmosDbResourceId string = varCosmosDbResourceId
 
 @description('Cosmos DB name.')
-output cosmosDbName string = deployCosmosDb ? cosmosDbModule!.outputs.name : ''
+output cosmosDbName string = varCosmosDbName
 
 // Key Vault Outputs
 @description('Key Vault resource ID.')
-output keyVaultResourceId string = deployKeyVault ? keyVaultModule!.outputs.resourceId : ''
+output keyVaultResourceId string = varKeyVaultResourceId
 
 @description('Key Vault name.')
-output keyVaultName string = deployKeyVault ? keyVaultModule!.outputs.name : ''
+output keyVaultName string = varKeyVaultName
 
 // AI Search Outputs
 @description('AI Search resource ID.')
-output aiSearchResourceId string = deployAiSearch ? aiSearchModule!.outputs.resourceId : ''
+output aiSearchResourceId string = varAiSearchResourceId
 
 @description('AI Search name.')
-output aiSearchName string = deployAiSearch ? aiSearchModule!.outputs.name : ''
+output aiSearchName string = varAiSearchName
 
 // API Management Outputs
 @description('API Management service resource ID.')
@@ -3477,7 +3625,7 @@ output aiFoundryAiServicesName string = varDeployAiFoundry ? aiFoundry!.outputs.
 output aiFoundryCosmosAccountName string = varDeployAiFoundry ? aiFoundry!.outputs.cosmosAccountName : ''
 
 @description('AI Foundry Key Vault name.')
-output aiFoundryKeyVaultName string = deployKeyVault ? keyVaultModule!.outputs.name : ''
+output aiFoundryKeyVaultName string = varDeployAiFoundry ? aiFoundry!.outputs.keyVaultName : ''
 
 @description('AI Foundry Storage Account name.')
 output aiFoundryStorageAccountName string = varDeployAiFoundry ? aiFoundry!.outputs.storageAccountName : ''
@@ -3532,9 +3680,6 @@ output jumpVmResourceId string = varDeployJumpVm ? jumpVm!.outputs.resourceId : 
 
 @description('Jump VM name (if deployed).')
 output jumpVmName string = varDeployJumpVm ? jumpVm!.outputs.name : ''
-
-@description('Jump VM managed identity principal ID (if deployed).')
-output jumpVmManagedIdentityPrincipalId string = varDeployJumpVm ? jumpVm!.outputs.systemAssignedMIPrincipalId : ''
 
 // Container Apps Outputs
 @description('Container Apps deployment count.')

@@ -15,6 +15,36 @@ param azureStorageName string
 @description('Name of the new Cosmos DB account')
 param cosmosDBName string
 
+@description('Optional. AI Search public network access. Default: disabled.')
+@allowed([
+  'enabled'
+  'disabled'
+])
+param aiSearchPublicNetworkAccess string = 'disabled'
+
+@description('Optional. AI Search network rules (used when aiSearchPublicNetworkAccess=enabled). Example: { bypass: "None", ipRules: [ { value: "1.2.3.4" } ] }.')
+param aiSearchNetworkRuleSet object = {}
+
+@description('Optional. Cosmos DB public network access. Default: Disabled.')
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param cosmosDbPublicNetworkAccess string = 'Disabled'
+
+@description('Optional. Cosmos DB IP allowlist (used when cosmosDbPublicNetworkAccess=Enabled). Example: ["1.2.3.4","5.6.7.0/24"]. Note: RFC1918 ranges (10/8, 172.16/12, 192.168/16, 100.64/10) are not enforceable by Cosmos IP firewall rules; use Private Endpoints and/or VNet rules instead.')
+param cosmosDbIpRules string[] = []
+
+@description('Optional. Storage Account public network access. Default: Disabled.')
+@allowed([
+  'Enabled'
+  'Disabled'
+])
+param storageAccountPublicNetworkAccess string = 'Disabled'
+
+@description('Optional. Storage Account network ACLs (used when storageAccountPublicNetworkAccess=Enabled). Example: { bypass: "AzureServices", defaultAction: "Deny", ipRules: [ { value: "1.2.3.4" } ] }.')
+param storageAccountNetworkAcls object = {}
+
 @description('The AI Search Service full ARM Resource ID. This is an optional field, and if not provided, the resource will be created.')
 param aiSearchResourceId string
 
@@ -40,6 +70,11 @@ resource existingCosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' exi
 
 var canaryRegions = ['eastus2euap', 'centraluseuap']
 var cosmosDbRegion = contains(canaryRegions, location) ? 'westus' : location
+var cosmosDbIpRulesMapped = [
+  for ip in cosmosDbIpRules: {
+    ipAddressOrRange: ip
+  }
+]
 resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = if(!cosmosDBExists) {
   name: cosmosDBName
   location: cosmosDbRegion
@@ -51,7 +86,9 @@ resource cosmosDB 'Microsoft.DocumentDB/databaseAccounts@2024-11-15' = if(!cosmo
     disableLocalAuth: true
     enableAutomaticFailover: false
     enableMultipleWriteLocations: false
-    publicNetworkAccess: 'Disabled'
+    publicNetworkAccess: cosmosDbPublicNetworkAccess
+    // Cosmos DB RP is strict about payload shapes; avoid sending null.
+    ipRules: cosmosDbPublicNetworkAccess == 'Enabled' ? cosmosDbIpRulesMapped : []
     enableFreeTier: false
     locations: [
       {
@@ -87,13 +124,10 @@ resource aiSearch 'Microsoft.Search/searchServices@2024-06-01-preview' = if(!aiS
     }
     hostingMode: 'default'
     partitionCount: 1
-    publicNetworkAccess: 'disabled'
+    publicNetworkAccess: aiSearchPublicNetworkAccess
     replicaCount: 1
     semanticSearch: 'disabled'
-    networkRuleSet: {
-      bypass: 'None'
-      ipRules: []
-    }
+    networkRuleSet: union({ bypass: 'None', ipRules: [] }, aiSearchNetworkRuleSet)
   }
   sku: {
     name: 'standard'
@@ -108,8 +142,8 @@ resource existingAzureStorageAccount 'Microsoft.Storage/storageAccounts@2023-05-
 }
 
 // Some regions doesn't support Standard Zone-Redundant storage, need to use Geo-redundant storage
-param noZRSRegions array = ['southindia', 'westus']
-param sku object = contains(noZRSRegions, location) ? { name: 'Standard_GRS' } : { name: 'Standard_ZRS' }
+var noZRSRegions = ['southindia', 'westus']
+var sku = contains(noZRSRegions, location) ? { name: 'Standard_GRS' } : { name: 'Standard_ZRS' }
 
 // Storage creation
 
@@ -121,12 +155,8 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = if(!azureStora
   properties: {
     minimumTlsVersion: 'TLS1_2'
     allowBlobPublicAccess: false
-    publicNetworkAccess: 'Disabled'
-    networkAcls: {
-      bypass: 'AzureServices'
-      defaultAction: 'Deny'
-      virtualNetworkRules: []
-    }
+    publicNetworkAccess: storageAccountPublicNetworkAccess
+    networkAcls: union({ bypass: 'AzureServices', defaultAction: 'Deny', virtualNetworkRules: [] }, storageAccountNetworkAcls)
     allowSharedKeyAccess: false
   }
 }
