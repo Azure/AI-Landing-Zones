@@ -303,17 +303,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#highlights" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Highlights
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#reference-architectures" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -599,7 +588,7 @@
   <span class="md-ellipsis">
     
   
-    Bicep Template
+    Bicep Implementation
   
 
     
@@ -615,11 +604,39 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Bicep Template
+    Bicep Implementation
   
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -726,7 +743,7 @@
   <span class="md-ellipsis">
     
   
-    Terraform Template
+    Terraform Implementation
   
 
     
@@ -789,8 +806,6 @@
 <h1 id="azure-ai-landing-zone">Azure AI Landing Zone</h1>
 <h2 id="overview">Overview</h2>
 <p>The AI Landing Zone provides an enterprise-scale, production-ready reference architecture with implementations in the Azure Portal, Bicep, and Terraform to deploy secure and resilient AI apps and agents on Azure.    </p>
-<p><img alt="image" src="architecture/media/AI-Landing-Zone-with-platform.png" /></p>
-<h2 id="highlights">Highlights</h2>
 <ul>
 <li>The AI Landing Zone is an <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones">application landing zone</a> that provides a foundation for multiple AI app and agent scenarios, with or without an existing <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones">platform landing zone</a>.</li>
 <li>The Infrastructure-as-Code (IaC) implementations (Bicep and Terraform) are based on <a href="https://aka.ms/AVM">Azure Verified Modules</a>.</li>
@@ -802,12 +817,10 @@
 </ul>
 <h2 id="reference-architectures">Reference Architectures</h2>
 <p><strong>AI LZ with Platform Landing Zone</strong></p>
-<p>This diagram shows the recommended reference architecture: the AI Landing Zone deployed alongside an existing Platform Landing Zone.</p>
-<p>Use this option when you already have shared platform capabilities in place (for example, centralized networking, DNS, security, and governance) and you want the AI Landing Zone to integrate with them.</p>
+<p>The recommended setup is to deploy the AI Landing Zone alongside an existing Platform Landing Zone so it can plug into your shared foundations. Choose this option when you already have centralized networking, DNS, security controls, and governance in place and you want the AI Landing Zone to reuse them.</p>
 <p><img alt="image" src="architecture/media/AI-Landing-Zone-with-platform.png" /></p>
 <p><strong>AI LZ without Platform Landing Zone</strong></p>
-<p>This diagram shows the AI Landing Zone as a standalone application landing zone, without a Platform Landing Zone.</p>
-<p>Use this option when you need a self-contained deployment for a new environment or a smaller footprint, and you do not need to integrate with shared platform services.</p>
+<p>This option deploys the AI Landing Zone as a standalone application landing zone, without relying on a Platform Landing Zone Choose it when you need a self-contained deployment for a new environment or a smaller footprint, and you do not need to integrate with shared platform services.</p>
 <p><img alt="image" src="architecture/media/AI-Landing-Zone-without-platform.png" /></p>
 <h2 id="extensible-implementations">Extensible Implementations</h2>
 <p>The table represents the various reference implementations of the AI Landing Zone based on the service inventory &amp; configuration</p>
