@@ -4,10 +4,6 @@
 
 The AI Landing Zone provides an enterprise-scale, production-ready reference architecture with implementations in the Azure Portal, Bicep, and Terraform to deploy secure and resilient AI apps and agents on Azure.    
 
-![image](architecture/media/AI-Landing-Zone-with-platform.png)
-
-## Highlights
-
 - The AI Landing Zone is an [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones) that provides a foundation for multiple AI app and agent scenarios, with or without an existing [platform landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones).
 - The Infrastructure-as-Code (IaC) implementations (Bicep and Terraform) are based on [Azure Verified Modules](https://aka.ms/AVM).
 - The current scope focuses on [AI on Azure Platform](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures); a future version will cover [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
@@ -20,17 +16,13 @@ The AI Landing Zone provides an enterprise-scale, production-ready reference arc
 
 **AI LZ with Platform Landing Zone**
 
-This diagram shows the recommended reference architecture: the AI Landing Zone deployed alongside an existing Platform Landing Zone.
-
-Use this option when you already have shared platform capabilities in place (for example, centralized networking, DNS, security, and governance) and you want the AI Landing Zone to integrate with them.
+The recommended setup is to deploy the AI Landing Zone alongside an existing Platform Landing Zone so it can plug into your shared foundations. Choose this option when you already have centralized networking, DNS, security controls, and governance in place and you want the AI Landing Zone to reuse them.
 
 ![image](architecture/media/AI-Landing-Zone-with-platform.png)
 
 **AI LZ without Platform Landing Zone**
 
-This diagram shows the AI Landing Zone as a standalone application landing zone, without a Platform Landing Zone.
-
-Use this option when you need a self-contained deployment for a new environment or a smaller footprint, and you do not need to integrate with shared platform services.
+This option deploys the AI Landing Zone as a standalone application landing zone, without relying on a Platform Landing Zone Choose it when you need a self-contained deployment for a new environment or a smaller footprint, and you do not need to integrate with shared platform services.
 
 ![image](architecture/media/AI-Landing-Zone-without-platform.png)
 

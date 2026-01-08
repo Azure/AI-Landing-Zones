@@ -35,11 +35,12 @@ nav:
       - "Design Checklist": architecture/design-checklist.md
       - "Cost Guide": architecture/cost-guide.md
       - "FAQ": architecture/faq.md
-  - Bicep Template:
+  - Bicep Implementation:
+      - "Overview": bicep/overview.md  
       - "How to use": bicep/how-to-use.md
       - "Parametrizing": bicep/parametrizing.md
       - "Examples": bicep/examples.md
-  - Terraform Template: terraform/index.md
+  - Terraform Implementation: terraform/index.md
   - Portal installation: portal/index.md  
 extra:
   generator: false
