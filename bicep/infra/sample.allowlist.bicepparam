@@ -2,7 +2,7 @@ using './main.bicep'
 
 // Standalone + AI Foundry dependencies with public networking enabled,
 // restricted to:
-// - The public IP: 187.13.147.119
+// - The public IP: 187.13.147.118
 
 
 param deployToggles = {
@@ -18,15 +18,12 @@ param deployToggles = {
   jumpboxNsg: true
   devopsBuildAgentsNsg: false
   bastionNsg: true
-
-  // Avoid deploying GenAI App storage account in this example.
-  // The AI Foundry component will create its own Storage Account as an associated resource.
-  storageAccount: false
-
+  
   // GenAI App backing services (Search/Cosmos/Key Vault) are deployed in this example
   // with public networking enabled and IP allowlists.
   // Note: the AI Foundry component will also create its own associated Search/Cosmos/Key Vault.
   // These are separate resources.
+  storageAccount: false
   keyVault: true
   cosmosDb: true
   searchService: true
@@ -261,7 +258,7 @@ param firewallPolicyDefinition = {
 }
 
 // AI Foundry: enable public networking but restrict to VNet CIDR + one public IP.
-// If you are using Azure Firewall for egress, make `187.13.147.119` the firewall's egress Public IP.
+// If you are using Azure Firewall for egress, make `187.13.147.118` the firewall's egress Public IP.
 // Note: Cosmos DB IP firewall rules do NOT support RFC1918 ranges (e.g., 192.168.0.0/22).
 // For Cosmos DB, keep private access via Private Endpoint and only allowlist public IPs here.
 param aiFoundryDefinition = {
@@ -276,7 +273,7 @@ param aiFoundryDefinition = {
       bypass: 'None'
       ipRules: [
         {
-          value: '187.13.147.119'
+          value: '187.13.147.118'
         }
       ]
     }
@@ -285,7 +282,7 @@ param aiFoundryDefinition = {
   cosmosDbConfiguration: {
     publicNetworkAccess: 'Enabled'
     ipRules: [
-      '187.13.147.119'
+      '187.13.147.118'
     ]
   }
 
@@ -296,7 +293,7 @@ param aiFoundryDefinition = {
       defaultAction: 'Deny'
       ipRules: [
         {
-          value: '187.13.147.119'
+          value: '187.13.147.118'
           action: 'Allow'
         }
       ]
@@ -311,7 +308,7 @@ param aiFoundryDefinition = {
       defaultAction: 'Deny'
       ipRules: [
         {
-          value: '187.13.147.119'
+          value: '187.13.147.118'
         }
       ]
       virtualNetworkRules: []
@@ -329,7 +326,7 @@ param aiSearchDefinition = {
     bypass: 'None'
     ipRules: [
       {
-        value: '187.13.147.119'
+        value: '187.13.147.118'
       }
     ]
   }
@@ -342,7 +339,7 @@ param cosmosDbDefinition = {
   networkRestrictions: {
     publicNetworkAccess: 'Enabled'
     ipRules: [
-      '187.13.147.119'
+      '187.13.147.118'
     ]
   }
 
@@ -363,7 +360,7 @@ param keyVaultDefinition = {
     defaultAction: 'Deny'
     ipRules: [
       {
-        value: '187.13.147.119'
+        value: '187.13.147.118'
       }
     ]
     virtualNetworkRules: []
