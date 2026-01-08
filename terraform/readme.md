@@ -371,7 +371,7 @@ az resource list --resource-group ai-lz-rg-01 --output table
 3. Click on `ai-lz-rg-01`
 4. Explore the deployed resources
 
-**Azure AI Foundry:**
+**Microsoft Foundry:**
 1. Go to [ai.azure.com](https://ai.azure.com)
 2. You should see your AI Hub and Project
 
@@ -486,7 +486,7 @@ terraform init
 
 3. **Deploy AI Models:**
    - The deployment includes GPT-4o model deployment
-   - You can deploy additional models through Azure AI Foundry
+   - You can deploy additional models through Microsoft Foundry
 
 4. **Set Up CI/CD:**
    - Integrate with Azure DevOps or GitHub Actions
@@ -496,7 +496,7 @@ terraform init
 
 ## Additional Resources
 
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/)
+- [Microsoft Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/)
 - [Terraform Azure Provider Documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
 - [Azure AI Landing Zone Pattern](https://github.com/Azure/AI-Landing-Zones)
 

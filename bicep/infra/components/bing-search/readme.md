@@ -1,6 +1,6 @@
 # bing-search `[AiMl/LandingZoneComponentsBingSearch]`
 
-Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry.
+Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Microsoft Foundry.
 
 ## Navigation
 
