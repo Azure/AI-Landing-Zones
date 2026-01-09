@@ -847,7 +847,7 @@ var varDefaultSpokeSubnetsFull = [
   {
     enabled: true
     name: 'aca-env-subnet'
-    addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
+    addressPrefix: '192.168.2.0/27' // ACA requires /27 minimum
     delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.AzureCosmosDB']
     networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
@@ -899,7 +899,7 @@ var varDefaultSpokeSubnetsPlatformLz = [
   {
     enabled: true
     name: 'aca-env-subnet'
-    addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
+    addressPrefix: '192.168.2.0/27' // ACA requires /23 minimum
     delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.AzureCosmosDB']
     networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
@@ -921,7 +921,7 @@ module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (va
     vnet: union(
       {
         name: 'vnet-${baseName}'
-        addressPrefixes: ['192.168.0.0/22']
+        addressPrefixes: ['192.168.0.0/24']
         location: location
         enableTelemetry: enableTelemetry
         subnets: vNetDefinition.?subnets ?? varDefaultSpokeSubnets
@@ -1550,7 +1550,7 @@ module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = i
     vnet: union(
       {
         name: 'vnet-${baseName}'
-        addressPrefixes: ['192.168.0.0/22']
+        addressPrefixes: ['192.168.0.0/24']
         location: location
         enableTelemetry: enableTelemetry
         subnets: vNetDefinition.?subnets ?? varDefaultSpokeSubnets
@@ -3131,7 +3131,7 @@ var varUdrSubnetDefinitions = [
   }
   {
     name: 'aca-env-subnet'
-    addressPrefix: '192.168.2.0/23'
+    addressPrefix: '192.168.2.0/27'
     delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.AzureCosmosDB']
     networkSecurityGroupResourceId: acaEnvironmentNsgResourceId

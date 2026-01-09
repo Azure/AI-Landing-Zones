@@ -23,7 +23,7 @@ using './main.bicep'
 // - apim-subnet (even if APIM is disabled; safe to keep for parity)
 
 // Addressing assumption (matches main.bicep defaults):
-// - VNet address space: 192.168.0.0/22
+// - VNet address space: 192.168.0.0/24
 // - Subnets:
 //   - agent-subnet:        192.168.0.0/27
 //   - pe-subnet:           192.168.0.32/27
@@ -31,7 +31,7 @@ using './main.bicep'
 //   - AzureFirewallSubnet: 192.168.0.128/26
 //   - jumpbox-subnet:      192.168.1.0/28
 //   - devops-agents-subnet:192.168.1.32/27
-//   - aca-env-subnet:      192.168.2.0/23
+//   - aca-env-subnet:      192.168.2.0/27
 //   - appgw-subnet:        192.168.0.192/27
 //   - apim-subnet:         192.168.0.224/27
 //
@@ -147,7 +147,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -164,7 +164,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -181,7 +181,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'AzureActiveDirectory'
@@ -198,7 +198,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 // Required for Azure CLI / AZD to call ARM after obtaining tokens.
@@ -216,7 +216,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 // Broad Azure public-cloud endpoints (helps avoid TLS failures caused by missing ancillary Azure endpoints).
@@ -234,7 +234,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'MicrosoftContainerRegistry'
@@ -252,7 +252,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '10.0.0.0/8'
@@ -279,7 +279,7 @@ param firewallPolicyDefinition = {
               ruleType: 'ApplicationRule'
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               protocols: [
                 {

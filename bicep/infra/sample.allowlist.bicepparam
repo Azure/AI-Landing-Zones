@@ -105,7 +105,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -122,7 +122,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -139,7 +139,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'AzureActiveDirectory'
@@ -156,7 +156,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'AzureResourceManager'
@@ -173,7 +173,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'AzureCloud'
@@ -190,7 +190,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'MicrosoftContainerRegistry'
@@ -208,7 +208,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '10.0.0.0/8'
@@ -235,7 +235,7 @@ param firewallPolicyDefinition = {
               ruleType: 'ApplicationRule'
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/23' // aca-env-subnet
+                '192.168.2.0/27' // aca-env-subnet
               ]
               protocols: [
                 {
@@ -259,7 +259,7 @@ param firewallPolicyDefinition = {
 
 // AI Foundry: enable public networking but restrict to VNet CIDR + one public IP.
 // If you are using Azure Firewall for egress, make `187.13.147.118` the firewall's egress Public IP.
-// Note: Cosmos DB IP firewall rules do NOT support RFC1918 ranges (e.g., 192.168.0.0/22).
+// Note: Cosmos DB IP firewall rules do NOT support RFC1918 ranges (e.g., 192.168.0.0/24).
 // For Cosmos DB, keep private access via Private Endpoint and only allowlist public IPs here.
 param aiFoundryDefinition = {
   includeAssociatedResources: true
