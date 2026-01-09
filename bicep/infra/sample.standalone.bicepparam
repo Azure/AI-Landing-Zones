@@ -255,5 +255,29 @@ param firewallPolicyDefinition = {
   ]
 }
 
+param containerAppEnvDefinition = {
+  name: 'cae-aca-minimal'
+
+  // Keep it minimal and avoid WAF-compliance conditional fields.
+  zoneRedundant: false
+
+  // Internal-only environment endpoints.
+  publicNetworkAccess: 'Disabled'
+  internal: true
+}
+
+param containerAppsList = [
+  {
+    name: 'ca-aca-helloworld'
+
+    activeRevisionsMode: 'Single'
+
+    // Internal-only ingress.
+    ingressExternal: false
+    ingressTargetPort: 80
+    ingressAllowInsecure: true
+  }
+]
+
 // Optional (subscription-scoped): enable Defender for AI pricing.
 // param enableDefenderForAI = true

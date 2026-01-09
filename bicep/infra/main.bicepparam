@@ -1,18 +1,11 @@
 using './main.bicep'
 
-// ACA minimal: deploys 1 Container Apps Managed Environment + 1 Container App using main.bicep.
-//
-// Notes:
-// - Keeps everything else disabled.
-// - Uses a new VNet (so the environment can use the default `aca-env-subnet`).
-// - Uses internal-only Container Apps (no public ingress / no public environment endpoints).
-// - Deploys Jump VM + Bastion for access/testing.
-// - Deploys Azure Firewall + UDRs to force egress through the firewall (forced tunneling).
+// Standalone: creates a new, isolated workload environment.
 
 param deployToggles = {
-  aiFoundry: false
-  logAnalytics: false
-  appInsights: false
+  aiFoundry: true
+  logAnalytics: true
+  appInsights: true
   virtualNetwork: true
   peNsg: true
   agentNsg: false
@@ -22,12 +15,12 @@ param deployToggles = {
   jumpboxNsg: true
   devopsBuildAgentsNsg: false
   bastionNsg: true
-  keyVault: false
-  storageAccount: false
-  cosmosDb: false
-  searchService: false
+  keyVault: true
+  storageAccount: true
+  cosmosDb: true
+  searchService: true
   groundingWithBingSearch: false
-  containerRegistry: false
+  containerRegistry: true
   containerEnv: true
   containerApps: true
   buildVm: false
@@ -42,9 +35,9 @@ param deployToggles = {
   userDefinedRoutes: true
 }
 
-param resourceIds = {}
+param resourceIds = {
+}
 
-// Treat as PLZ for DNS (no PDNS zones created by this template).
 param flagPlatformLandingZone = false
 
 // Required for forced tunneling: Azure Firewall private IP (next hop).
@@ -275,7 +268,7 @@ param containerAppEnvDefinition = {
 
 param containerAppsList = [
   {
-    name: 'ca-aca-minimal'
+    name: 'ca-aca-helloworld'
 
     activeRevisionsMode: 'Single'
 
@@ -285,3 +278,6 @@ param containerAppsList = [
     ingressAllowInsecure: true
   }
 ]
+
+// Optional (subscription-scoped): enable Defender for AI pricing.
+// param enableDefenderForAI = true

@@ -199,18 +199,6 @@ param tags object = {}
 param privateDnsZonesDefinition privateDnsZonesDefinitionType = {
   allowInternetResolutionFallback: false
   createNetworkLinks: true
-  cognitiveservicesZoneId: ''
-  apimZoneId: ''
-  openaiZoneId: ''
-  aiServicesZoneId: ''
-  searchZoneId: ''
-  cosmosSqlZoneId: ''
-  blobZoneId: ''
-  keyVaultZoneId: ''
-  appConfigZoneId: ''
-  containerAppsZoneId: ''
-  acrZoneId: ''
-  appInsightsZoneId: ''
   tags: {}
 }
 
@@ -1003,6 +991,23 @@ var virtualNetworkResourceId = resourceIds.?virtualNetworkResourceId ?? (varDepl
   : (varDeployVnet ? vNetworkWrapper!.outputs.resourceId : existingVNetResourceId))
 
 // -----------------------
+// 3.4 Subnet resource ID resolution (for outputs)
+// -----------------------
+// Note: Outputs are derived from conventional subnet names. If you override subnet names in vNetDefinition,
+// update these outputs accordingly.
+var varAgentSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/agent-subnet' : ''
+var varPrivateEndpointsSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/pe-subnet' : ''
+var varApplicationGatewaySubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/appgw-subnet' : ''
+var varApiManagementSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/apim-subnet' : ''
+var varAcaEnvironmentSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/aca-env-subnet' : ''
+var varDevopsAgentsSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/devops-agents-subnet' : ''
+
+// Hub-level subnets are expected in the platform hub when integrating with Platform Landing Zone.
+var varJumpboxSubnetResourceId = (!flagPlatformLandingZone && !empty(virtualNetworkResourceId)) ? '${virtualNetworkResourceId}/subnets/jumpbox-subnet' : ''
+var varBastionSubnetResourceId = (!flagPlatformLandingZone && !empty(virtualNetworkResourceId)) ? '${virtualNetworkResourceId}/subnets/AzureBastionSubnet' : ''
+var varFirewallSubnetResourceId = (!flagPlatformLandingZone && !empty(virtualNetworkResourceId)) ? '${virtualNetworkResourceId}/subnets/AzureFirewallSubnet' : ''
+
+// -----------------------
 // 4 NETWORKING - PRIVATE DNS ZONES
 // -----------------------
 
@@ -1387,42 +1392,66 @@ module privateDnsZoneInsights 'wrappers/avm.res.network.private-dns-zone.bicep' 
 
 // Resolve Private DNS Zone resource IDs (existing or newly created). In Platform LZ mode,
 // these will typically be provided via privateDnsZonesDefinition.*ZoneId.
-var varApimPrivateDnsZoneResourceId = privateDnsZonesDefinition.?apimZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.apim
-  ? privateDnsZoneApim!.outputs.resourceId
-  : '')
-var varCognitiveServicesPrivateDnsZoneResourceId = privateDnsZonesDefinition.?cognitiveservicesZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices
-  ? privateDnsZoneCogSvcs!.outputs.resourceId
-  : '')
-var varOpenAiPrivateDnsZoneResourceId = privateDnsZonesDefinition.?openaiZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.openai
-  ? privateDnsZoneOpenAi!.outputs.resourceId
-  : '')
-var varAiServicesPrivateDnsZoneResourceId = privateDnsZonesDefinition.?aiServicesZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.aiServices
-  ? privateDnsZoneAiService!.outputs.resourceId
-  : '')
-var varSearchPrivateDnsZoneResourceId = privateDnsZonesDefinition.?searchZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.search
-  ? privateDnsZoneSearch!.outputs.resourceId
-  : '')
-var varCosmosSqlPrivateDnsZoneResourceId = privateDnsZonesDefinition.?cosmosSqlZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.cosmosSql
-  ? privateDnsZoneCosmos!.outputs.resourceId
-  : '')
-var varBlobPrivateDnsZoneResourceId = privateDnsZonesDefinition.?blobZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.blob
-  ? privateDnsZoneBlob!.outputs.resourceId
-  : '')
-var varKeyVaultPrivateDnsZoneResourceId = privateDnsZonesDefinition.?keyVaultZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.keyVault
-  ? privateDnsZoneKeyVault!.outputs.resourceId
-  : '')
-var varAppConfigPrivateDnsZoneResourceId = privateDnsZonesDefinition.?appConfigZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.appConfig
-  ? privateDnsZoneAppConfig!.outputs.resourceId
-  : '')
-var varContainerAppsPrivateDnsZoneResourceId = privateDnsZonesDefinition.?containerAppsZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.containerApps
-  ? privateDnsZoneContainerApps!.outputs.resourceId
-  : '')
-var varAcrPrivateDnsZoneResourceId = privateDnsZonesDefinition.?acrZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.acr
-  ? privateDnsZoneAcr!.outputs.resourceId
-  : '')
-var varAppInsightsPrivateDnsZoneResourceId = privateDnsZonesDefinition.?appInsightsZoneId ?? (varDeployPrivateDnsZones && !varUseExistingPdz.appInsights
-  ? privateDnsZoneInsights!.outputs.resourceId
-  : '')
+var varApimPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?apimZoneId))
+  ? privateDnsZonesDefinition!.apimZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.apim
+      ? privateDnsZoneApim!.outputs.resourceId
+      : '')
+var varCognitiveServicesPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?cognitiveservicesZoneId))
+  ? privateDnsZonesDefinition!.cognitiveservicesZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices
+      ? privateDnsZoneCogSvcs!.outputs.resourceId
+      : '')
+var varOpenAiPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?openaiZoneId))
+  ? privateDnsZonesDefinition!.openaiZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.openai
+      ? privateDnsZoneOpenAi!.outputs.resourceId
+      : '')
+var varAiServicesPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?aiServicesZoneId))
+  ? privateDnsZonesDefinition!.aiServicesZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.aiServices
+      ? privateDnsZoneAiService!.outputs.resourceId
+      : '')
+var varSearchPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?searchZoneId))
+  ? privateDnsZonesDefinition!.searchZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.search
+      ? privateDnsZoneSearch!.outputs.resourceId
+      : '')
+var varCosmosSqlPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?cosmosSqlZoneId))
+  ? privateDnsZonesDefinition!.cosmosSqlZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.cosmosSql
+      ? privateDnsZoneCosmos!.outputs.resourceId
+      : '')
+var varBlobPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?blobZoneId))
+  ? privateDnsZonesDefinition!.blobZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.blob
+      ? privateDnsZoneBlob!.outputs.resourceId
+      : '')
+var varKeyVaultPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?keyVaultZoneId))
+  ? privateDnsZonesDefinition!.keyVaultZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.keyVault
+      ? privateDnsZoneKeyVault!.outputs.resourceId
+      : '')
+var varAppConfigPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?appConfigZoneId))
+  ? privateDnsZonesDefinition!.appConfigZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.appConfig
+      ? privateDnsZoneAppConfig!.outputs.resourceId
+      : '')
+var varContainerAppsPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?containerAppsZoneId))
+  ? privateDnsZonesDefinition!.containerAppsZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.containerApps
+      ? privateDnsZoneContainerApps!.outputs.resourceId
+      : '')
+var varAcrPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?acrZoneId))
+  ? privateDnsZonesDefinition!.acrZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.acr
+      ? privateDnsZoneAcr!.outputs.resourceId
+      : '')
+var varAppInsightsPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?appInsightsZoneId))
+  ? privateDnsZonesDefinition!.appInsightsZoneId!
+  : (varDeployPrivateDnsZones && !varUseExistingPdz.appInsights
+      ? privateDnsZoneInsights!.outputs.resourceId
+      : '')
 
 // -----------------------
 // 5 NETWORKING - PUBLIC IP ADDRESSES
@@ -1586,46 +1615,6 @@ module hubToSpokePeering './components/vnet-peering/main.bicep' = if (varDeployH
     useRemoteGateways: hubVnetPeeringDefinition!.?reverseUseRemoteGateways ?? false
   }
 }
-
-// -----------------------
-// Private DNS Zone Outputs
-// -----------------------
-
-@description('API Management Private DNS Zone resource ID (newly created or existing).')
-output apimPrivateDnsZoneResourceId string = varApimPrivateDnsZoneResourceId
-
-@description('Cognitive Services Private DNS Zone resource ID (newly created or existing).')
-output cognitiveServicesPrivateDnsZoneResourceId string = varCognitiveServicesPrivateDnsZoneResourceId
-
-@description('OpenAI Private DNS Zone resource ID (newly created or existing).')
-output openAiPrivateDnsZoneResourceId string = varOpenAiPrivateDnsZoneResourceId
-
-@description('AI Services Private DNS Zone resource ID (newly created or existing).')
-output aiServicesPrivateDnsZoneResourceId string = varAiServicesPrivateDnsZoneResourceId
-
-@description('Azure AI Search Private DNS Zone resource ID (newly created or existing).')
-output searchPrivateDnsZoneResourceId string = varSearchPrivateDnsZoneResourceId
-
-@description('Cosmos DB (SQL API) Private DNS Zone resource ID (newly created or existing).')
-output cosmosSqlPrivateDnsZoneResourceId string = varCosmosSqlPrivateDnsZoneResourceId
-
-@description('Blob Storage Private DNS Zone resource ID (newly created or existing).')
-output blobPrivateDnsZoneResourceId string = varBlobPrivateDnsZoneResourceId
-
-@description('Key Vault Private DNS Zone resource ID (newly created or existing).')
-output keyVaultPrivateDnsZoneResourceId string = varKeyVaultPrivateDnsZoneResourceId
-
-@description('App Configuration Private DNS Zone resource ID (newly created or existing).')
-output appConfigPrivateDnsZoneResourceId string = varAppConfigPrivateDnsZoneResourceId
-
-@description('Container Apps Private DNS Zone resource ID (newly created or existing).')
-output containerAppsPrivateDnsZoneResourceId string = varContainerAppsPrivateDnsZoneResourceId
-
-@description('Container Registry Private DNS Zone resource ID (newly created or existing).')
-output acrPrivateDnsZoneResourceId string = varAcrPrivateDnsZoneResourceId
-
-@description('Application Insights Private DNS Zone resource ID (newly created or existing).')
-output appInsightsPrivateDnsZoneResourceId string = varAppInsightsPrivateDnsZoneResourceId
 
 // -----------------------
 // 7 NETWORKING - PRIVATE ENDPOINTS
@@ -2138,6 +2127,9 @@ module containerEnv 'wrappers/avm.res.app.managed-environment.bicep' = if (varDe
         location: location
         enableTelemetry: enableTelemetry
         tags: tags
+
+        // Use a deterministic infra RG name to avoid conflicts with pre-existing ME_<envName> groups on redeploy.
+        infrastructureResourceGroupName: take('ME-${varContainerEnvName}-${substring(uniqueString(subscription().subscriptionId, resourceGroup().id, varContainerEnvName), 0, 8)}', 90)
 
         // Keep only the profile you actually use (or omit to inherit module default)
         workloadProfiles: [
@@ -3541,6 +3533,73 @@ output bastionNsgResourceId string = bastionNsgResourceId
 @description('Virtual Network resource ID (newly created or existing).')
 output virtualNetworkResourceId string = virtualNetworkResourceId
 
+@description('Agent subnet resource ID (agent-subnet) when configured.')
+output agentSubnetResourceId string = varAgentSubnetResourceId
+
+@description('Private Endpoints subnet resource ID (pe-subnet) when configured.')
+output privateEndpointsSubnetResourceId string = varPrivateEndpointsSubnetResourceId
+
+@description('Application Gateway subnet resource ID (appgw-subnet) when configured.')
+output applicationGatewaySubnetResourceId string = varApplicationGatewaySubnetResourceId
+
+@description('API Management subnet resource ID (apim-subnet) when configured.')
+output apiManagementSubnetResourceId string = varApiManagementSubnetResourceId
+
+@description('Azure Container Apps Environment subnet resource ID (aca-env-subnet) when configured.')
+output acaEnvironmentSubnetResourceId string = varAcaEnvironmentSubnetResourceId
+
+@description('DevOps agents subnet resource ID (devops-agents-subnet) when configured.')
+output devopsAgentsSubnetResourceId string = varDevopsAgentsSubnetResourceId
+
+@description('Jumpbox subnet resource ID (jumpbox-subnet) when configured.')
+output jumpboxSubnetResourceId string = varJumpboxSubnetResourceId
+
+@description('Azure Bastion subnet resource ID (AzureBastionSubnet) when configured.')
+output bastionSubnetResourceId string = varBastionSubnetResourceId
+
+@description('Azure Firewall subnet resource ID (AzureFirewallSubnet) when configured.')
+output firewallSubnetResourceId string = varFirewallSubnetResourceId
+
+@description('Azure Bastion host resource ID (existing), if provided.')
+output bastionHostResourceId string = resourceIds.?bastionHostResourceId ?? ''
+
+// Private DNS Zone Outputs
+@description('API Management Private DNS Zone resource ID (existing or newly created).')
+output apimPrivateDnsZoneResourceId string = varApimPrivateDnsZoneResourceId
+
+@description('Cognitive Services Private DNS Zone resource ID (existing or newly created).')
+output cognitiveServicesPrivateDnsZoneResourceId string = varCognitiveServicesPrivateDnsZoneResourceId
+
+@description('OpenAI Private DNS Zone resource ID (existing or newly created).')
+output openAiPrivateDnsZoneResourceId string = varOpenAiPrivateDnsZoneResourceId
+
+@description('AI Services Private DNS Zone resource ID (existing or newly created).')
+output aiServicesPrivateDnsZoneResourceId string = varAiServicesPrivateDnsZoneResourceId
+
+@description('AI Search Private DNS Zone resource ID (existing or newly created).')
+output searchPrivateDnsZoneResourceId string = varSearchPrivateDnsZoneResourceId
+
+@description('Cosmos DB (SQL) Private DNS Zone resource ID (existing or newly created).')
+output cosmosSqlPrivateDnsZoneResourceId string = varCosmosSqlPrivateDnsZoneResourceId
+
+@description('Blob Storage Private DNS Zone resource ID (existing or newly created).')
+output blobPrivateDnsZoneResourceId string = varBlobPrivateDnsZoneResourceId
+
+@description('Key Vault Private DNS Zone resource ID (existing or newly created).')
+output keyVaultPrivateDnsZoneResourceId string = varKeyVaultPrivateDnsZoneResourceId
+
+@description('App Configuration Private DNS Zone resource ID (existing or newly created).')
+output appConfigPrivateDnsZoneResourceId string = varAppConfigPrivateDnsZoneResourceId
+
+@description('Container Apps Private DNS Zone resource ID (existing or newly created).')
+output containerAppsPrivateDnsZoneResourceId string = varContainerAppsPrivateDnsZoneResourceId
+
+@description('Container Registry Private DNS Zone resource ID (existing or newly created).')
+output acrPrivateDnsZoneResourceId string = varAcrPrivateDnsZoneResourceId
+
+@description('Application Insights Private DNS Zone resource ID (existing or newly created).')
+output appInsightsPrivateDnsZoneResourceId string = varAppInsightsPrivateDnsZoneResourceId
+
 // Public IP Outputs
 @description('Application Gateway Public IP resource ID (newly created or existing).')
 output appGatewayPublicIpResourceId string = appGatewayPublicIpResourceId
@@ -3553,6 +3612,13 @@ output firewallPublicIpResourceId string = firewallPublicIpResourceId
 output hubToSpokePeeringResourceId string = varDeployHubToSpokePeering
   ? hubToSpokePeering!.outputs.peeringResourceId
   : ''
+
+// UDR Outputs
+@description('User Defined Route Table resource ID (if deployed).')
+output userDefinedRouteTableResourceId string = varUdrDefaultRouteTableId
+
+@description('User Defined Route Table (App Gateway exception) resource ID (if deployed).')
+output userDefinedRouteTableAppGatewayExceptionResourceId string = varUdrAppGwRouteTableId
 
 // Observability Outputs
 @description('Log Analytics workspace resource ID.')
@@ -3568,6 +3634,50 @@ output containerEnvResourceId string = varContainerEnvResourceId
 @description('Container Registry resource ID.')
 output containerRegistryResourceId string = varAcrResourceId
 
+var varContainerAppsPairs = [
+  for (app, i) in containerAppsList: {
+    name: app.name
+    id: resourceId('Microsoft.App/containerApps', app.name)
+  }
+]
+
+@description('Map of Container App name to resource ID (only populated when Container Apps are deployed).')
+output containerAppsResourceIdsByName object = varDeployContainerApps
+  ? reduce(varContainerAppsPairs, {}, (acc, p) => union(acc, {
+      '${p.name}': p.id
+    }))
+  : {}
+
+@description('Map of AI Foundry model deployment name to resource ID (only populated when AI Foundry is deployed).')
+output aiFoundryModelDeploymentsResourceIdsByName object = varDeployAiFoundry
+  ? aiFoundry!.outputs.modelDeploymentsResourceIdsByName
+  : {}
+
+// Private Endpoint Outputs
+@description('App Configuration Private Endpoint resource ID (if deployed).')
+output appConfigPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasAppConfig) ? privateEndpointAppConfig!.outputs.resourceId : ''
+
+@description('API Management Private Endpoint resource ID (if deployed).')
+output apimPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasApim && varApimWantsPrivateEndpoint && apimSupportsPe) ? privateEndpointApim!.outputs.resourceId : ''
+
+@description('Container Apps Environment Private Endpoint resource ID (if deployed).')
+output containerAppsEnvPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasContainerEnv) ? privateEndpointContainerAppsEnv!.outputs.resourceId : ''
+
+@description('Container Registry Private Endpoint resource ID (if deployed).')
+output acrPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasAcr) ? privateEndpointAcr!.outputs.resourceId : ''
+
+@description('Storage Account (Blob) Private Endpoint resource ID (if deployed).')
+output storageBlobPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasStorage) ? privateEndpointStorageBlob!.outputs.resourceId : ''
+
+@description('Cosmos DB (SQL) Private Endpoint resource ID (if deployed).')
+output cosmosPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasCosmos) ? privateEndpointCosmos!.outputs.resourceId : ''
+
+@description('AI Search Private Endpoint resource ID (if deployed).')
+output searchPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasSearch) ? privateEndpointSearch!.outputs.resourceId : ''
+
+@description('Key Vault Private Endpoint resource ID (if deployed).')
+output keyVaultPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasKv) ? privateEndpointKeyVault!.outputs.resourceId : ''
+
 // Storage Outputs
 @description('Storage Account resource ID.')
 output storageAccountResourceId string = varSaResourceId
@@ -3582,105 +3692,44 @@ output appConfigResourceId string = !empty(resourceIds.?appConfigResourceId!)
 @description('Cosmos DB resource ID.')
 output cosmosDbResourceId string = varCosmosDbResourceId
 
-@description('Cosmos DB name.')
-output cosmosDbName string = varCosmosDbName
-
 // Key Vault Outputs
 @description('Key Vault resource ID.')
 output keyVaultResourceId string = varKeyVaultResourceId
-
-@description('Key Vault name.')
-output keyVaultName string = varKeyVaultName
 
 // AI Search Outputs
 @description('AI Search resource ID.')
 output aiSearchResourceId string = varAiSearchResourceId
 
-@description('AI Search name.')
-output aiSearchName string = varAiSearchName
-
 // API Management Outputs
 @description('API Management service resource ID.')
 output apimServiceResourceId string = varApimServiceResourceId
 
-@description('API Management service name.')
-output apimServiceName string = varDeployApim
-  ? (varDeployApimNative ? apiManagementNative!.outputs.name : apiManagement!.outputs.name)
-  : ''
-
 // AI Foundry Outputs
-@description('AI Foundry resource group name.')
-output aiFoundryResourceGroupName string = varDeployAiFoundry ? aiFoundry!.outputs.resourceGroupName : ''
-
-@description('AI Foundry project name.')
-output aiFoundryProjectName string = varDeployAiFoundry ? aiFoundry!.outputs.aiProjectName : ''
-
-@description('AI Foundry AI Search service name.')
-output aiFoundrySearchServiceName string = varDeployAiFoundry ? aiFoundry!.outputs.aiSearchName : ''
-
-@description('AI Foundry AI Services name.')
-output aiFoundryAiServicesName string = varDeployAiFoundry ? aiFoundry!.outputs.aiServicesName : ''
-
-@description('AI Foundry Cosmos DB account name.')
-output aiFoundryCosmosAccountName string = varDeployAiFoundry ? aiFoundry!.outputs.cosmosAccountName : ''
-
-@description('AI Foundry Key Vault name.')
-output aiFoundryKeyVaultName string = varDeployAiFoundry ? aiFoundry!.outputs.keyVaultName : ''
-
-@description('AI Foundry Storage Account name.')
-output aiFoundryStorageAccountName string = varDeployAiFoundry ? aiFoundry!.outputs.storageAccountName : ''
+// (Names omitted to stay within Bicep 64-output limit; resource IDs are exposed elsewhere.)
 
 // Bing Grounding Outputs
 @description('Bing Search service resource ID (if deployed).')
 output bingSearchResourceId string = varInvokeBingModule ? bingSearch!.outputs.resourceId : ''
 
-@description('Bing Search connection ID (if deployed).')
-output bingConnectionId string = varInvokeBingModule ? bingSearch!.outputs.bingConnectionId : ''
-
-@description('Bing Search resource group name (if deployed).')
-output bingResourceGroupName string = varInvokeBingModule ? bingSearch!.outputs.resourceGroupName : ''
-
 // Gateways and Firewall Outputs
 @description('WAF Policy resource ID (if deployed).')
 output wafPolicyResourceId string = varDeployWafPolicy ? wafPolicy!.outputs.resourceId : ''
 
-@description('WAF Policy name (if deployed).')
-output wafPolicyName string = varDeployWafPolicy ? wafPolicy!.outputs.name : ''
-
 @description('Application Gateway resource ID (newly created or existing).')
 output applicationGatewayResourceId string = varAppGatewayResourceId
-
-@description('Application Gateway name.')
-output applicationGatewayName string = varAgwName
 
 @description('Azure Firewall Policy resource ID (if deployed).')
 output firewallPolicyResourceId string = firewallPolicyResourceId
 
-@description('Azure Firewall Policy name (if deployed).')
-output firewallPolicyName string = varDeployAfwPolicy ? fwPolicy!.outputs.name : ''
-
 @description('Azure Firewall resource ID (newly created or existing).')
 output firewallResourceId string = varFirewallResourceId
-
-@description('Azure Firewall name.')
-output firewallName string = varAfwName
-
-@description('Azure Firewall private IP address (if deployed).')
-output firewallPrivateIp string = (varDeployFirewall && varDeployAfwPolicy) ? azureFirewall!.outputs.privateIp : ''
 
 // Virtual Machines Outputs
 @description('Build VM resource ID (if deployed).')
 output buildVmResourceId string = varDeployBuildVm ? buildVm!.outputs.resourceId : ''
 
-@description('Build VM name (if deployed).')
-output buildVmName string = varDeployBuildVm ? buildVm!.outputs.name : ''
-
 @description('Jump VM resource ID (if deployed).')
 output jumpVmResourceId string = varDeployJumpVm ? jumpVm!.outputs.resourceId : ''
 
-@description('Jump VM name (if deployed).')
-output jumpVmName string = varDeployJumpVm ? jumpVm!.outputs.name : ''
-
 // Container Apps Outputs
-@description('Container Apps deployment count.')
-output containerAppsCount int = length(containerAppsList)
+

@@ -76,7 +76,19 @@ resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-
   }
 ]
 
+var modelDeploymentPairs = [
+  for (d, i) in effectiveModelDeployments: {
+    name: modelDeployment[i].name
+    id: modelDeployment[i].id
+  }
+]
+
 output accountName string = account.name
 output accountID string = account.id
 output accountTarget string = account.properties.endpoint
 output accountPrincipalId string = account.identity.principalId
+
+@description('Map of model deployment name to deployment resource ID.')
+output modelDeploymentResourceIdsByName object = reduce(modelDeploymentPairs, {}, (acc, p) => union(acc, {
+  '${p.name}': p.id
+}))
