@@ -1,4 +1,4 @@
-This repo includes a **Bicep-based implementation** of the AI Landing Zone to deploy a secure, modular baseline for AI apps and agents on Azure. Follow the steps below for prerequisites and deployment.
+The AI Landing Zone repo includes a **Bicep-based implementation** of the AI Landing Zone to deploy a secure, modular baseline for AI apps and agents on Azure. Follow the steps below for prerequisites and deployment.
 
 **1) Prerequisites**
 

@@ -1,6 +1,6 @@
 # Platform Landing Zone integration
 
-This repository supports two main deployment modes for the AI Landing Zone workload:
+The AI Landing Zone with Bicep implementation supports two main deployment modes for the AI Landing Zone workload:
 
 | Mode | What the workload deployment does | What the platform is expected to provide |
 |---|---|---|

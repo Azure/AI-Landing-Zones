@@ -51,7 +51,7 @@ See: [examples](example-standalone.md) and the existing-VNet runbook under `test
 
 Deployments typically run through `azd provision`.
 
-This repo uses **Template Specs** during provisioning to bypass the ARM template size limit. In general:
+The bicep implementation uses **Template Specs** during provisioning to bypass the ARM template size limit. In general:
 
 - Pre-provision scripts build/publish Template Specs
 - The deployment executes using those Template Specs
