@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../concepts-platform/">
+        <link rel="prev" href="../parameterization/">
       
       
-        <link rel="next" href="../parameterization/">
+        <link rel="next" href="../example-platform/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>How to use - Azure AI Landing Zones</title>
+        <title>Standalone - Azure AI Landing Zones</title>
       
     
     
@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#ai-lz-without-platform-landing-zone" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -108,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              How to use
+              Standalone
             
           </span>
         </div>
@@ -606,17 +611,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../how-to-use/" class="md-nav__link">
         
   
   
@@ -632,7 +630,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -670,18 +667,20 @@
                 
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" checked>
         
           
           <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
@@ -702,7 +701,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -717,10 +716,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../example-standalone/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -736,6 +744,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -886,87 +895,242 @@
   
 
 
-  <h1>How to use</h1>
-
-<p>This repo includes a <strong>Bicep-based implementation</strong> of the AI Landing Zone to deploy a secure, modular baseline for AI apps and agents on Azure. Follow the steps below for prerequisites and deployment.</p>
-<p><strong>1) Prerequisites</strong></p>
-<ul>
-<li><strong>Azure CLI</strong> and <strong>Azure Developer CLI</strong> installed and signed in  </li>
-<li>A <strong>resource group</strong> in your target subscription  </li>
-<li><strong>Owner</strong> or <strong>Contributor + User Access Administrator</strong> permissions on the subscription  </li>
-</ul>
-<p><strong>2) Quick start with azd</strong></p>
-<p><strong>Deployment steps</strong></p>
-<p>2.1.  <strong>Sign in to Azure</strong></p>
-<div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>auth<span class="w"> </span>login
-</code></pre></div>
+<h1 id="ai-lz-without-platform-landing-zone">AI LZ without Platform Landing Zone</h1>
+<p>Use this scenario when you want a clean, isolated deployment where the workload resource group owns the networking end to end.</p>
+<p><strong>Sample parameter file</strong></p>
+<p><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.standalone.bicepparam">bicep/infra/sample.standalone.bicepparam</a></p>
+<p><strong>What this walkthrough validates</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workload-owned networking</td>
+<td>Creates a new VNet and subnets in the workload resource group.</td>
+</tr>
+<tr>
+<td>Private connectivity</td>
+<td>Creates Private Endpoints, Private DNS Zones, and VNet links for enabled services.</td>
+</tr>
+<tr>
+<td>Forced tunneling</td>
+<td>Sends egress (<code>0.0.0.0/0</code>) through Azure Firewall via UDRs.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key settings (from the sample)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>flagPlatformLandingZone</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>deployToggles.virtualNetwork</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>deployToggles.firewall</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>deployToggles.userDefinedRoutes</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>deployToggles.jumpVm</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>deployToggles.bastionHost</code></td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<p>If you use a different parameter file (or modify <code>bicep/infra/main.bicepparam</code>), treat the validation steps as conditional. For example, disabling VNet creation changes the networking checks, and disabling specific services changes what you should expect in the private endpoint and DNS sections.</p>
 <blockquote>
-<p>Note: If you work with multiple tenants, you can specify the tenant explicitly. For Azure CLI, use <code>az login --tenant &lt;TENANT_ID_OR_DOMAIN&gt;</code>. For Azure Developer CLI, use <code>azd auth login --tenant-id &lt;TENANT_ID_OR_DOMAIN&gt;</code>. For more sign-in options (device code, service principal, managed identity), see the documentation for <code>az login</code> and <code>azd auth login</code>.</p>
+<p>Note: this walkthrough is intended for validation and learning. Adjust naming, IP ranges, and hardening before using it for production.</p>
 </blockquote>
-<p>2.2. <strong>Create the resource group</strong> where you will deploy the AI Landing Zone resources</p>
-<div class="highlight"><pre><span></span><code>az<span class="w"> </span>group<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;rg-ai-lz-RANDOM_SUFFIX&quot;</span><span class="w"> </span>--location<span class="w"> </span><span class="s2">&quot;eastus2&quot;</span>
+<p><strong>Prerequisites</strong></p>
+<p>You need permissions to create resources in the target subscription (for example, <code>Contributor</code>), and you must be signed in with Azure CLI (<code>az login</code>). You also need Azure Developer CLI installed (<code>azd</code>), because this walkthrough uses it to initialize the repository locally and to run the deployment.</p>
+<p><strong>Deployment</strong></p>
+<p>Create a local working directory and run the commands from there.</p>
+<div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="n">deploy</span>
+<span class="nb">cd </span><span class="n">deploy</span>
 </code></pre></div>
-<blockquote>
-<p>Note: Replace <code>RANDOM_SUFFIX</code> with a unique value (for example a timestamp or a short random number) to avoid name collisions.</p>
-</blockquote>
-<p>2.3. <strong>Initialize the project</strong></p>
-<p>In an empty folder (e.g., <code>deploy</code>), run:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>Azure/AI-Landing-Zones<span class="w"> </span>-e<span class="w"> </span>ai-lz-RANDOM_SUFFIX
+<p>Initialize the environment.</p>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">init</span> <span class="n">-e</span> <span class="n">ailz-standalone-RANDOM_SUFFIX</span>
 </code></pre></div>
-<p>2.4. <strong>Set environment variables</strong> <code>AZURE_LOCATION</code>, <code>AZURE_RESOURCE_GROUP</code>, <code>AZURE_SUBSCRIPTION_ID</code>.</p>
-<p><strong>Bash (Linux/macOS, WSL, Cloud Shell)</strong></p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_LOCATION</span><span class="o">=</span><span class="s2">&quot;eastus2&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_RESOURCE_GROUP</span><span class="o">=</span><span class="s2">&quot;rg-ai-lz-RANDOM_SUFFIX&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_SUBSCRIPTION_ID</span><span class="o">=</span><span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
-</code></pre></div>
-<p><strong>PowerShell (Windows/PowerShell Core)</strong></p>
+<p>Set environment variables.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$env:AZURE_LOCATION</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
-<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ai-lz-RANDOM_SUFFIX&quot;</span>
+<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-standalone-RANDOM_SUFFIX&quot;</span>
 <span class="nv">$env:AZURE_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
+
+<span class="c"># Convenience variable used by the commands below</span>
+<span class="nv">$rg</span> <span class="p">=</span> <span class="nv">$env:AZURE_RESOURCE_GROUP</span>
 </code></pre></div>
-<p>2.5. <strong>(Optional) Customize parameters</strong></p>
-<p>Edit <code>bicep/infra/main.bicepparam</code> if you want to adjust deployment options. The default configuration assumes a greenfield deployment scenario. For more deployment scenarios, see <a href="../parameterization/">Parameterization</a> and <a href="../example-standalone/">Examples</a>.</p>
-<p>2.6. <strong>Provision the infrastructure</strong></p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
+<p>Copy the sample into the active parameter file used by <code>azd</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">sample</span><span class="p">.</span><span class="n">standalone</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">-Force</span>
 </code></pre></div>
-<blockquote>
-<p>Note: Provisioning uses Template Specs to bypass the 4 MB ARM template size limit. Pre-provision scripts build and publish them, while post-provision scripts remove them after success.</p>
-<p>Tip: Alternative deployment with Azure CLI. Clone the repo, set environment variables manually (for example, <code>$env:VAR="value"</code>), run the pre-provision script, then use <code>az deployment group create</code> instead of <code>azd provision</code>. Remember to run the post-provision script after deployment.</p>
-</blockquote>
-<p><strong>3) Accessing VMs</strong></p>
-<blockquote>
-<p>Note: VM deployment is optional. This section applies only if you chose to deploy the Jump VM or Build VM during provisioning.</p>
-</blockquote>
-<p><strong>VM Credentials</strong></p>
-<p>The template uses auto-generated random passwords by default for security. You can optionally provide custom passwords (or SSH keys for the Linux Build VM) as parameters during deployment.</p>
-<p><strong>Default usernames:</strong></p>
-<ul>
-<li>Jump VM (Windows): <code>azureuser</code></li>
-<li>Build VM (Linux): <code>builduser</code></li>
-</ul>
-<p><strong>Resetting Passwords</strong></p>
-<p>If you used auto-generated passwords (default), reset them through the Azure Portal before connecting:</p>
-<ol>
-<li>Navigate to the VM resource</li>
-<li>Go to <strong>Help</strong> → <strong>Reset password</strong></li>
-<li>Enter the username and your new password</li>
-<li>Click <strong>Update</strong></li>
-</ol>
-<p><img alt="Reset Password in Azure Portal" src="../media/reset_password.png" /></p>
-<p><strong>Connecting to VMs</strong></p>
-<ul>
-<li><strong>Jump VM (Windows)</strong>: Azure Bastion or RDP</li>
-<li><strong>Build VM (Linux)</strong>: SSH</li>
-</ul>
-<p>Both VMs provide access to resources within the virtual network.</p>
-<p><strong>4) Reference docs</strong></p>
-<p>For detailed configuration and examples, see:</p>
-<ul>
-<li><strong><a href="../parameterization/">Parameterization</a></strong> — Learn how to parameterize the deployment</li>
-<li><strong><a href="../example-standalone/">Examples</a></strong> — Common deployment scenarios</li>
-</ul>
+<p>Optional edits in <code>bicep/infra/main.bicepparam</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>You change subnet CIDRs</td>
+<td>Update the firewall policy <code>sourceAddresses</code> entries to match.</td>
+</tr>
+<tr>
+<td>You do not want Jump VM auto-install</td>
+<td>Set <code>jumpVmDefinition.enableAutoInstall = false</code>.</td>
+</tr>
+<tr>
+<td>Your org manages RBAC outside the template</td>
+<td>If you hit <code>RoleAssignmentExists</code>, set <code>jumpVmDefinition.assignContributorRoleAtResourceGroup = false</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Provision.</p>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">provision</span>
+</code></pre></div>
+<p><strong>Validation: networking (VNet and subnets)</strong></p>
+<p>If you do not see a VNet in the workload resource group after provisioning, confirm that you are inspecting the correct resource group.</p>
+<p>Validate the VNet and subnets.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="c"># If you have only one VNet in this RG, capture it:</span>
+<span class="nv">$vnetName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Expected subnets (default template layout):</p>
+<table>
+<thead>
+<tr>
+<th>Subnet name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent-subnet</code></td>
+</tr>
+<tr>
+<td><code>pe-subnet</code></td>
+</tr>
+<tr>
+<td><code>AzureBastionSubnet</code></td>
+</tr>
+<tr>
+<td><code>AzureFirewallSubnet</code></td>
+</tr>
+<tr>
+<td><code>jumpbox-subnet</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation: forced tunneling (Firewall and UDR)</strong></p>
+<p>Validate the firewall and capture its private IP.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">firewall</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="nv">$afwName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">firewall</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+<span class="nv">$afwPrivateIp</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">firewall</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$afwName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;ipConfigurations[0].privateIPAddress&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+<span class="nv">$afwPrivateIp</span>
+</code></pre></div>
+<p>The sample sets <code>firewallPrivateIp</code> based on the default <code>AzureFirewallSubnet</code> prefix (<code>192.168.0.128/26</code>) and the first usable IP (<code>192.168.0.132</code>). If you changed the firewall subnet prefix, update <code>firewallPrivateIp</code> in your parameter file.</p>
+<p>Validate the route table and subnet association.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">route-table</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="c"># Check that jumpbox-subnet has a route table attached</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">jumpbox-subnet</span> <span class="p">-</span><span class="n">-query</span> <span class="n">routeTable</span><span class="p">.</span><span class="n">id</span> <span class="n">-o</span> <span class="n">tsv</span>
+</code></pre></div>
+<p><strong>Validation: private endpoints and private DNS</strong></p>
+<p>In standalone mode, the workload deployment creates and manages private DNS zones.</p>
+<p>Validate that private endpoints exist.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="c"># Helpful: show what each Private Endpoint targets + which FQDNs it expects to resolve</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">\</span>
+  <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].{name:name,target:privateLinkServiceConnections[0].privateLinkServiceId,groupIds:privateLinkServiceConnections[0].groupIds,fqdns:customDnsConfigs[].fqdn}&quot;</span> <span class="n">-o</span> <span class="n">jsonc</span>
+
+<span class="c"># Note: sometimes `customDnsConfigs` returns empty. In that case, query DNS zone groups per Private Endpoint:</span>
+<span class="c"># $peName = &#39;&lt;private-endpoint-name&gt;&#39;</span>
+<span class="c"># az network private-endpoint dns-zone-group list --resource-group $rg --endpoint-name $peName \</span>
+<span class="c">#   --query &quot;[].privateDnsZoneConfigs[].recordSets[].fqdn&quot; -o tsv</span>
+</code></pre></div>
+<p>With the shipped sample toggles, you should see Private Endpoints for Key Vault, Storage, and AI Foundry.
+If you changed toggles, validate based on what you actually enabled.</p>
+<p>Validate that private DNS zones exist and are linked.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">zone</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="c"># Example: check OpenAI private link zone exists and has a VNet link</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">link</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-zone-name</span> <span class="n">privatelink</span><span class="p">.</span><span class="n">openai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Validate that A records exist.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">record-set</span> <span class="n">a</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-zone-name</span> <span class="n">privatelink</span><span class="p">.</span><span class="n">openai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p><strong>Validation: access (Bastion and Jump VM)</strong></p>
+<p>Confirm that Bastion exists.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">bastion</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Connect to the Jump VM using Bastion. Because the VM password is auto-generated during deployment, reset it in the Azure portal before connecting. Open the workload resource group, select the jump VM (the <code>*-jmp</code> VM), choose Reset password, and set a strong password for <code>azureuser</code> (unless you changed <code>jumpVmDefinition.adminUsername</code>). Then connect using Bastion (RDP).</p>
+<p>Optional (inside the Jump VM): validate outbound connectivity under forced tunneling:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Resolve-DnsName</span> <span class="n">login</span><span class="p">.</span><span class="n">microsoftonline</span><span class="p">.</span><span class="n">com</span>
+<span class="nb">Test-NetConnection</span> <span class="n">login</span><span class="p">.</span><span class="n">microsoftonline</span><span class="p">.</span><span class="n">com</span> <span class="n">-Port</span> <span class="n">443</span>
+</code></pre></div>
+<p>Validate DNS resolution for the created services from inside the Jump VM. The goal is to confirm that service hostnames resolve to private IPs via the <code>privatelink.*</code> private DNS zones.</p>
+<p>From your local machine, capture the Private Endpoint FQDNs created by the deployment:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># List all Private Endpoints expect to resolve</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].{name:name}&quot;</span> <span class="n">-o</span> <span class="n">jsonc</span>
+
+<span class="c"># Extract FQDNs from the DNS zone groups:</span>
+<span class="nv">$peName</span> <span class="p">=</span> <span class="s1">&#39;&lt;private-endpoint-name&gt;&#39;</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">dns-zone-group</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-endpoint-name</span> <span class="nv">$peName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].privateDnsZoneConfigs[].recordSets[].fqdn&quot;</span> <span class="n">-o</span> <span class="n">tsv</span>
+</code></pre></div>
+<p>Then, inside the Jump VM (PowerShell), run <code>nslookup</code> for the exact FQDNs returned by the command above.</p>
+<p>Examples:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nslookup</span> <span class="p">&lt;</span><span class="n">fqdn-from-customDnsConfigs</span><span class="p">&gt;</span>
+
+<span class="c"># Optional: show the CNAME chain (useful for troubleshooting)</span>
+<span class="nb">Resolve-DnsName</span> <span class="p">&lt;</span><span class="n">fqdn-from-customDnsConfigs</span><span class="p">&gt;</span> <span class="p">|</span> <span class="nb">Format-List</span>
+</code></pre></div>
+<p>Expected outcome:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nslookup</code></td>
+<td>Returns a private IP address (typically within your VNet range).</td>
+</tr>
+<tr>
+<td><code>Resolve-DnsName</code></td>
+<td>Shows a CNAME into the matching <code>privatelink.*</code> zone.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cleanup</strong></p>
+<p>Delete the resource group.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="nb">group </span><span class="n">delete</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-yes</span> <span class="p">-</span><span class="n">-no-wait</span>
+</code></pre></div>
 
 
 
