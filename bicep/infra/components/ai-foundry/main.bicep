@@ -565,6 +565,9 @@ output resourceGroupName string = resourceGroup().name
 @description('AI Services account name.')
 output aiServicesName string = aiAccount.outputs.accountName
 
+@description('Map of model deployment name to deployment resource ID.')
+output modelDeploymentsResourceIdsByName object = aiAccount.outputs.modelDeploymentResourceIdsByName
+
 @description('AI Foundry project name.')
 output aiProjectName string = includeAssociatedResources
   ? aiProjectWithConnections!.outputs.projectName

@@ -3525,26 +3525,26 @@ type kSAISearchDefinitionInputType = {
   name: string?
 
   // All other properties match kSAISearchDefinitionType
-  authOptions: any?
+  authOptions: object?
   cmkEnforcement: 'Disabled' | 'Enabled' | 'Unspecified'?
-  diagnosticSettings: any[]?
+  diagnosticSettings: object[]?
   disableLocalAuth: bool?
   enableTelemetry: bool?
   hostingMode: 'default' | 'highDensity'?
   location: string?
-  lock: any?
-  managedIdentities: any?
-  networkRuleSet: any?
+  lock: object?
+  managedIdentities: object?
+  networkRuleSet: object?
   partitionCount: int?
-  privateEndpoints: any[]?
+  privateEndpoints: object[]?
   publicNetworkAccess: 'Enabled' | 'Disabled'?
   replicaCount: int?
-  roleAssignments: any[]?
-  secretsExportConfiguration: any?
+  roleAssignments: object[]?
+  secretsExportConfiguration: object?
   semanticSearch: 'disabled' | 'free' | 'standard'?
-  sharedPrivateLinkResources: any[]?
+  sharedPrivateLinkResources: object[]?
   sku: 'basic' | 'free' | 'standard' | 'standard2' | 'standard3' | 'storage_optimized_l1' | 'storage_optimized_l2'?
-  tags: any?
+  tags: object?
 }
 
 @export()
@@ -3729,9 +3729,9 @@ type keyVaultDefinitionInputType = {
   name: string?
 
   // All other properties match keyVaultDefinitionType
-  accessPolicies: any[]?
+  accessPolicies: object[]?
   createMode: 'default' | 'recover'?
-  diagnosticSettings: any[]?
+  diagnosticSettings: object[]?
   enablePurgeProtection: bool?
   enableRbacAuthorization: bool?
   enableSoftDelete: bool?
@@ -3739,17 +3739,17 @@ type keyVaultDefinitionInputType = {
   enableVaultForDeployment: bool?
   enableVaultForDiskEncryption: bool?
   enableVaultForTemplateDeployment: bool?
-  keys: any[]?
+  keys: object[]?
   location: string?
-  lock: any?
-  networkAcls: any?
-  privateEndpoints: any[]?
+  lock: object?
+  networkAcls: object?
+  privateEndpoints: object[]?
   publicNetworkAccess: 'Enabled' | 'Disabled'?
-  roleAssignments: any[]?
-  secrets: any[]?
-  sku: any?
+  roleAssignments: object[]?
+  secrets: object[]?
+  sku: object?
   softDeleteRetentionInDays: int?
-  tags: any?
+  tags: object?
 }
 
 @export()
