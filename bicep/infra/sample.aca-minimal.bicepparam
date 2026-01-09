@@ -75,7 +75,7 @@ param firewallPolicyDefinition = {
                 'Any'
               ]
               sourceAddresses: [
-                '192.168.1.0/28'
+                '192.168.1.64/28'
               ]
               destinationAddresses: [
                 '0.0.0.0/0'
@@ -108,7 +108,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -125,7 +125,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -142,7 +142,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'AzureActiveDirectory'
@@ -159,7 +159,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 // Required for Azure CLI / AZD to call ARM after obtaining tokens.
@@ -177,7 +177,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 // Broad Azure public-cloud endpoints (helps avoid TLS failures caused by missing ancillary Azure endpoints).
@@ -195,7 +195,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'MicrosoftContainerRegistry'
@@ -213,7 +213,7 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '10.0.0.0/8'
@@ -240,7 +240,7 @@ param firewallPolicyDefinition = {
               ruleType: 'ApplicationRule'
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.2.0/27' // aca-env-subnet
+                '192.168.1.0/27' // aca-env-subnet
               ]
               protocols: [
                 {

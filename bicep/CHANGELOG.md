@@ -7,7 +7,7 @@ The latest version of the changelog can be found [here](https://github.com/Azure
 ### Changed
 
 - Optimized default network architecture for improved capacity and scalability:
-  - VNet default address space increased to `/24` (256 addresses) to support larger deployments and future growth.
+  - VNet default address space increased to `/23` (512 addresses) to support larger deployments and future growth.
   - Azure Container Apps environment subnet default increased to `/27` (32 addresses) for workload profiles environments.
 
 ### Fixed
