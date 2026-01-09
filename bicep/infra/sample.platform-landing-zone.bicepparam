@@ -6,12 +6,12 @@ using './main.bicep'
 // - This sample keeps `resourceIds = {}` and sets `deployToggles.virtualNetwork = true`, so the workload deployment
 //   will CREATE the spoke VNet and its subnets.
 // - Because this sample does NOT set `vNetDefinition`, the template uses the main.bicep defaults:
-//   - VNet address space: 192.168.0.0/22
+//   - VNet address space: 192.168.0.0/23
 //   - Subnets:
 //     - agent-subnet:        192.168.0.0/27
 //     - pe-subnet:           192.168.0.32/27
 //     - devops-agents-subnet:192.168.1.32/27
-//     - aca-env-subnet:      192.168.2.0/23
+//     - aca-env-subnet:      192.168.1.0/27
 //     - appgw-subnet:        192.168.0.192/27
 //     - apim-subnet:         192.168.0.224/27
 

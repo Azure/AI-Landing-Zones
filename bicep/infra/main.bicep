@@ -839,7 +839,7 @@ var varDefaultSpokeSubnetsFull = [
   {
     enabled: true
     name: 'jumpbox-subnet'
-    addressPrefix: '192.168.1.0/28'
+    addressPrefix: '192.168.1.64/28'
     networkSecurityGroupResourceId: jumpboxNsgResourceId
     // Min: /29 (8 IPs) for 1–2 VMs
     // Recommended: /28 (16 IPs) to host a couple of VMs comfortably
@@ -847,12 +847,12 @@ var varDefaultSpokeSubnetsFull = [
   {
     enabled: true
     name: 'aca-env-subnet'
-    addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
+    addressPrefix: '192.168.1.0/27' // ACA (workload profiles) requires /27 minimum
     delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.AzureCosmosDB']
     networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
-    // Min (required by Azure): /23 (512 IPs)
-    // Recommended: /23 or /22 if expecting many apps & scale-out
+    // Min (workload profiles): /27 (32 IPs)
+    // Note: Consumption-only environment requires /23 (512 IPs)
   }
   {
     enabled: true
@@ -899,7 +899,7 @@ var varDefaultSpokeSubnetsPlatformLz = [
   {
     enabled: true
     name: 'aca-env-subnet'
-    addressPrefix: '192.168.2.0/23' // ACA requires /23 minimum
+    addressPrefix: '192.168.1.0/27' // ACA (workload profiles) requires /27 minimum
     delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.AzureCosmosDB']
     networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
@@ -921,7 +921,7 @@ module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (va
     vnet: union(
       {
         name: 'vnet-${baseName}'
-        addressPrefixes: ['192.168.0.0/22']
+        addressPrefixes: ['192.168.0.0/23']
         location: location
         enableTelemetry: enableTelemetry
         subnets: vNetDefinition.?subnets ?? varDefaultSpokeSubnets
@@ -1550,7 +1550,7 @@ module spokeVNetWithPeering 'wrappers/avm.res.network.virtual-network.bicep' = i
     vnet: union(
       {
         name: 'vnet-${baseName}'
-        addressPrefixes: ['192.168.0.0/22']
+        addressPrefixes: ['192.168.0.0/23']
         location: location
         enableTelemetry: enableTelemetry
         subnets: vNetDefinition.?subnets ?? varDefaultSpokeSubnets
@@ -3125,13 +3125,13 @@ var varUdrSubnetDefinitions = [
   }
   {
     name: 'jumpbox-subnet'
-    addressPrefix: '192.168.1.0/28'
+    addressPrefix: '192.168.1.64/28'
     networkSecurityGroupResourceId: jumpboxNsgResourceId
     routeTableResourceId: varUdrDefaultRouteTableId
   }
   {
     name: 'aca-env-subnet'
-    addressPrefix: '192.168.2.0/23'
+    addressPrefix: '192.168.1.0/27'
     delegation: 'Microsoft.App/environments'
     serviceEndpoints: ['Microsoft.AzureCosmosDB']
     networkSecurityGroupResourceId: acaEnvironmentNsgResourceId
