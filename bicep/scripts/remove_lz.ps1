@@ -366,6 +366,83 @@ function Test-AzureResource-Exists {
   }
 }
 
+function Get-CognitiveServices-NestedResources-UnderAccount {
+  param(
+    [Parameter(Mandatory=$true)] [string]$rg,
+    [Parameter(Mandatory=$true)] [string]$AccountResourceId
+  )
+
+  $acct = ($AccountResourceId ?? '').ToString().TrimEnd('/')
+  if ([string]::IsNullOrWhiteSpace($acct)) { return @() }
+
+  # List any resources whose id starts with "{accountId}/" (projects, connections, apps, capabilityHosts, etc).
+  # We sort deepest-first later to respect nested delete ordering.
+  $items = @()
+  try {
+    $q = "[?starts_with(id, '$acct/')].{id:id,type:type,name:name}"
+    $raw = az resource list -g $rg --query $q --output json 2>$null
+    if ($raw) { $items = $raw | ConvertFrom-Json }
+  } catch {
+    $items = @()
+  }
+
+  if (-not $items) { return @() }
+
+  $nested = @(
+    $items |
+      Where-Object { $_.id -and ($_.id.ToString().TrimEnd('/') -ne $acct) } |
+      Sort-Object @{ Expression = { $_.id.ToString().Length }; Descending = $true }
+  )
+  return $nested
+}
+
+function Remove-CognitiveServices-NestedResources-UnderAccount {
+  param(
+    [Parameter(Mandatory=$true)] [string]$rg,
+    [Parameter(Mandatory=$true)] [string]$AccountResourceId,
+    [int]$TimeoutMinutes = 15,
+    [int]$PollSeconds = 10
+  )
+
+  $nested = Get-CognitiveServices-NestedResources-UnderAccount -rg $rg -AccountResourceId $AccountResourceId
+  if (-not $nested -or $nested.Count -eq 0) {
+    return
+  }
+
+  $acctName = ($AccountResourceId.TrimEnd('/').Split('/')[-1])
+  Write-Host "     · Found $($nested.Count) nested resource(s) under account '$acctName'. Deleting deepest-first…" -ForegroundColor DarkCyan
+
+  foreach ($n in $nested) {
+    $id = ($n.id ?? '').ToString().Trim()
+    if ([string]::IsNullOrWhiteSpace($id)) { continue }
+    $nName = if ($n.name) { $n.name } else { $id.Split('/')[-1] }
+    $nType = if ($n.type) { $n.type } else { '' }
+    Write-Host "       - Deleting nested: $nName ($nType)" -ForegroundColor DarkCyan
+    try {
+      $out = (az resource delete --ids $id --no-wait 2>&1 | Out-String)
+      if ($LASTEXITCODE -ne 0) {
+        $msg = ($out ?? '').ToString().Trim()
+        Write-Host "         (warn) Nested delete failed (rc=$LASTEXITCODE): $msg" -ForegroundColor DarkYellow
+      }
+    } catch {
+      Write-Host "         (warn) Nested delete threw: $($_.Exception.Message)" -ForegroundColor DarkYellow
+    }
+  }
+
+  # Best-effort wait for nested resources to disappear (eventual consistency). We don't hard-fail here.
+  $sw = [System.Diagnostics.Stopwatch]::StartNew()
+  while ($sw.Elapsed.TotalMinutes -lt $TimeoutMinutes) {
+    Start-Sleep -Seconds $PollSeconds
+    $left = Get-CognitiveServices-NestedResources-UnderAccount -rg $rg -AccountResourceId $AccountResourceId
+    if (-not $left -or $left.Count -eq 0) {
+      Write-Host "     · Nested resources cleared." -ForegroundColor DarkGreen
+      return
+    }
+    Write-Host "     · Nested still present: $($left.Count) (elapsed $([int]$sw.Elapsed.TotalSeconds)s)" -ForegroundColor DarkYellow
+  }
+  Write-Host "     (warn) Nested resources still listed after timeout; parent delete may still fail until they disappear." -ForegroundColor DarkYellow
+}
+
 function Remove-CognitiveServices-Accounts-WithRetryInRg {
   param(
     [Parameter(Mandatory=$true)] [string]$rg,
@@ -390,6 +467,14 @@ function Remove-CognitiveServices-Accounts-WithRetryInRg {
     $rid = $id.Trim()
     $name = $rid.Split('/')[-1]
     Write-Host "   - Attempting to delete account: $name" -ForegroundColor Cyan
+
+    # Proactively delete nested resources (projects, connections, etc.) because ARM refuses to delete
+    # the parent account while nested resources exist.
+    try {
+      Remove-CognitiveServices-NestedResources-UnderAccount -rg $rg -AccountResourceId $rid -TimeoutMinutes ([Math]::Max(5,[int]($TimeoutMinutes/2))) -PollSeconds ([Math]::Max(5,$PollSeconds))
+    } catch {
+      Write-Host "     (warn) Nested resource cleanup pre-step failed: $($_.Exception.Message)" -ForegroundColor DarkYellow
+    }
 
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     $accepted = $false
@@ -418,6 +503,18 @@ function Remove-CognitiveServices-Accounts-WithRetryInRg {
 
       $msg = ($out ?? '').ToString().Trim()
       $linkage = ($msg -match '(?i)conflict|409|capability\s*host|linked|linkage|unlink|still\s*in\s*use|InUse|being\s*deleted|DeletionInProgress')
+      $nestedBlock = ($msg -match '(?i)CannotDeleteResource|nested\s+resources\s+exist|Please\s+delete\s+all\s+nested\s+resources')
+
+      if ($nestedBlock) {
+        Write-Host "     · Parent delete blocked by nested resources; attempting nested cleanup and retrying…" -ForegroundColor DarkYellow
+        try {
+          Remove-CognitiveServices-NestedResources-UnderAccount -rg $rg -AccountResourceId $rid -TimeoutMinutes ([Math]::Max(5,[int]($TimeoutMinutes/2))) -PollSeconds ([Math]::Max(5,$PollSeconds))
+        } catch {
+          Write-Host "       (warn) Nested cleanup attempt failed: $($_.Exception.Message)" -ForegroundColor DarkYellow
+        }
+        Start-Sleep -Seconds $PollSeconds
+        continue
+      }
       if ($linkage) {
         Write-Host "     · Still linked/unlinking; retrying in ${PollSeconds}s… (elapsed $([int]$sw.Elapsed.TotalSeconds)s)" -ForegroundColor DarkYellow
         Start-Sleep -Seconds $PollSeconds
