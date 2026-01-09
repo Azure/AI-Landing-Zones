@@ -1,13 +1,13 @@
 # Platform Landing Zone integration
 
-The AI Landing Zone with Bicep implementation supports two main deployment modes for the AI Landing Zone workload:
+The AI Landing Zone with Bicep implementation supports two primary deployment modes, though the template is flexible enough to support customized configurations:
 
 | Mode | What the workload deployment does | What the platform is expected to provide |
 |---|---|---|
 | Standalone | Creates the workload VNet (if enabled), private endpoints, and (optionally) private DNS zones. | Nothing required beyond standard subscription/RG permissions. |
 | Platform-integrated | Creates workload resources and private endpoints in the workload VNet. | Shared private DNS zones and the platform DNS pattern used for name resolution. |
 
-The mode is selected with `flagPlatformLandingZone` in the main template.
+The mode is primarily controlled by `flagPlatformLandingZone` in the main template, but you can selectively override individual behaviors by setting specific parameters.
 
 **Ownership model (hub-and-spoke)**
 
@@ -17,8 +17,8 @@ In a typical hub-and-spoke split, the platform owns shared DNS and central egres
 
 | Setting | Private Endpoints | Private DNS Zones | VNet links to zones | Zone groups |
 |---|---|---|---|---|
-| `flagPlatformLandingZone = false` | Created as needed | Created unless you provide zone IDs | Created unless disabled | Configured when zone IDs are available |
-| `flagPlatformLandingZone = true` | Created in the workload VNet | Not created by the workload template | Not created by the workload template | Not configured by the workload template |
+| Set as `false` | Created as needed | Created unless you provide zone IDs | Created unless disabled | Configured when zone IDs are available |
+| Set as `true` | Created in the workload VNet | Not created by the workload template | Not created by the workload template | Not configured by the workload template |
 
 **Platform-integrated notes (permissions and responsibilities)**
 
