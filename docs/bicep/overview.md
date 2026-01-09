@@ -38,7 +38,7 @@ A common example is reusing a VNet:
 - Provide the VNet resource id in `resourceIds`
 - Ensure required subnets exist with the expected names
 
-See: [examples.md](examples.md) and the existing-VNet runbook under `tests/`.
+See: [examples](example-standalone.md) and the existing-VNet runbook under `tests/`.
 
 ### Platform integration
 
@@ -61,6 +61,6 @@ Details and prerequisites: [how-to-use.md](how-to-use.md)
 
 ## Where to go next
 
-- Start with [how-to-use.md](how-to-use.md)
-- Understand all inputs in [parametrizing.md](parametrizing.md).
-- Pick a scenario from [examples.md](examples.md)
+- Start with [how-to-use.md](how-to-use.md).
+- Understand all inputs in [parameterization.md](parameterization.md).
+- Pick a scenario from [examples](example-standalone.md).

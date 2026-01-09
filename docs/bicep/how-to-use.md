@@ -58,7 +58,7 @@ $env:AZURE_SUBSCRIPTION_ID = "00000000-1111-2222-3333-444444444444"
 
 2.5. **(Optional) Customize parameters**
 
-   Edit `bicep/infra/main.bicepparam` if you want to adjust deployment options. The default configuration assumes a greenfield deployment scenario. For more deployment scenarios, see [Parametrizing](./parametrizing.md) and [Examples](./examples.md).
+   Edit `bicep/infra/main.bicepparam` if you want to adjust deployment options. The default configuration assumes a greenfield deployment scenario. For more deployment scenarios, see [Parameterization](./parameterization.md) and [Examples](./example-standalone.md).
 
 2.6. **Provision the infrastructure**
 
@@ -106,5 +106,5 @@ Both VMs provide access to resources within the virtual network.
 
 For detailed configuration and examples, see:
 
-* **[Parametrizing](./parametrizing.md)** — Learn how to parameterize the deployment
-* **[Examples](./examples.md)** — Common deployment scenarios
+* **[Parameterization](./parameterization.md)** — Learn how to parameterize the deployment
+* **[Examples](./example-standalone.md)** — Common deployment scenarios

@@ -39,9 +39,15 @@ nav:
       - "FAQ": architecture/faq.md
   - Bicep Implementation:
       - "Overview": bicep/overview.md  
+      - "Concepts":
+          - "Networking": bicep/concepts-networking.md  
+          - "Platform LZ Integration": bicep/concepts-platform.md      
       - "How to use": bicep/how-to-use.md
-      - "Parametrizing": bicep/parametrizing.md
-      - "Examples": bicep/examples.md
+      - "Parameterization": bicep/parameterization.md
+      - "Examples":
+          - "Standalone": bicep/example-standalone.md  
+          - "Platform LZ Integration": bicep/example-platform.md
+          - "With Existing VNet": bicep/example-existing-vnet.md
   - Terraform Implementation: terraform/index.md
   - Portal installation: portal/index.md  
 extra:
