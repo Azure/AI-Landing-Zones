@@ -750,6 +750,9 @@ Each parameter includes information about its type, requirements, default values
     Role to assign (display name, GUID, or full resource ID).
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for appGatewayPublicIp.roleAssignments
+
 - **`skuName`** (`string`) - Optional.
   SKU name for the Public IP Address. Default is Standard. Allowed values: Basic, Standard.
 
@@ -1036,6 +1039,9 @@ Each parameter includes information about its type, requirements, default values
     Storage account name.
 
 
+- **`storages[*]`** (`object`) - Optional.
+  Array item for containerAppEnvDefinition.storages
+
 - **`tags`** (`object`) - Optional.
   Tags to apply to the Managed Environment.
 
@@ -1296,6 +1302,9 @@ Each parameter includes information about its type, requirements, default values
           Protocol type. Allowed values: Http, Https, Mssql.
 
 
+      - **`protocols[*]`** (`object`) - Optional.
+        Array item for firewallDefinition.applicationRuleCollections[*].properties.rules[*].protocols
+
       - **`sourceAddresses`** (`array`) - Optional.
         List of source IP addresses for this rule.
 
@@ -1304,6 +1313,112 @@ Each parameter includes information about its type, requirements, default values
 
       - **`targetFqdns`** (`array`) - Optional.
         List of target FQDNs for this rule.
+
+
+    - **`rules[*]`** (`object`) - Optional.
+      Array item for firewallDefinition.applicationRuleCollections[*].properties.rules
+      - **`port`** (`int`) - Optional.
+        Port number for the protocol (≤64000).
+
+      - **`protocolType`** (`string`) - Required.
+        Protocol type. Allowed values: Http, Https, Mssql.
+
+
+
+
+- **`applicationRuleCollections[*]`** (`object`) - Optional.
+  Array item for firewallDefinition.applicationRuleCollections
+  - **`action`** (`object`) - Required.
+    Action of the rule collection.
+    - **`type`** (`string`) - Required.
+      Action type. Allowed values: Allow, Deny.
+
+
+  - **`priority`** (`int`) - Required.
+    Priority of the application rule collection (100-65000).
+
+  - **`rules`** (`array`) - Required.
+    Application rules in the collection.
+    - **`description`** (`string`) - Optional.
+      Description of the rule.
+
+    - **`fqdnTags`** (`array`) - Optional.
+      List of FQDN tags for this rule.
+
+    - **`name`** (`string`) - Required.
+      Name of the application rule.
+
+    - **`protocols`** (`array`) - Required.
+      Protocols for the application rule.
+      - **`port`** (`int`) - Optional.
+        Port number for the protocol (≤64000).
+
+      - **`protocolType`** (`string`) - Required.
+        Protocol type. Allowed values: Http, Https, Mssql.
+
+
+    - **`protocols[*]`** (`object`) - Optional.
+      Array item for firewallDefinition.applicationRuleCollections[*].properties.rules[*].protocols
+
+    - **`sourceAddresses`** (`array`) - Optional.
+      List of source IP addresses for this rule.
+
+    - **`sourceIpGroups`** (`array`) - Optional.
+      List of source IP groups for this rule.
+
+    - **`targetFqdns`** (`array`) - Optional.
+      List of target FQDNs for this rule.
+
+
+  - **`rules[*]`** (`object`) - Optional.
+    Array item for firewallDefinition.applicationRuleCollections[*].properties.rules
+    - **`port`** (`int`) - Optional.
+      Port number for the protocol (≤64000).
+
+    - **`protocolType`** (`string`) - Required.
+      Protocol type. Allowed values: Http, Https, Mssql.
+
+
+  - **`type`** (`string`) - Required.
+    Action type. Allowed values: Allow, Deny.
+
+  - **`description`** (`string`) - Optional.
+    Description of the rule.
+
+  - **`fqdnTags`** (`array`) - Optional.
+    List of FQDN tags for this rule.
+
+  - **`name`** (`string`) - Required.
+    Name of the application rule.
+
+  - **`protocols`** (`array`) - Required.
+    Protocols for the application rule.
+    - **`port`** (`int`) - Optional.
+      Port number for the protocol (≤64000).
+
+    - **`protocolType`** (`string`) - Required.
+      Protocol type. Allowed values: Http, Https, Mssql.
+
+  - **`sourceAddresses`** (`array`) - Optional.
+    List of source IP addresses for this rule.
+
+  - **`sourceIpGroups`** (`array`) - Optional.
+    List of source IP groups for this rule.
+
+  - **`targetFqdns`** (`array`) - Optional.
+    List of target FQDNs for this rule.
+
+  - **`port`** (`int`) - Optional.
+    Port number for the protocol (≤64000).
+
+  - **`protocolType`** (`string`) - Required.
+    Protocol type. Allowed values: Http, Https, Mssql.
+
+  - **`port`** (`int`) - Optional.
+    Port number for the protocol (≤64000).
+
+  - **`protocolType`** (`string`) - Required.
+    Protocol type. Allowed values: Http, Https, Mssql.
 
 
 - **`autoscaleMaxCapacity`** (`int`) - Optional.
@@ -1456,6 +1571,92 @@ Each parameter includes information about its type, requirements, default values
         Translated port for the NAT rule.
 
 
+    - **`rules[*]`** (`object`) - Optional.
+      Array item for firewallDefinition.natRuleCollections[*].properties.rules
+
+
+
+- **`natRuleCollections[*]`** (`object`) - Optional.
+  Array item for firewallDefinition.natRuleCollections
+  - **`action`** (`object`) - Required.
+    Action of the NAT rule collection.
+    - **`type`** (`string`) - Required.
+      Action type. Allowed values: Dnat, Snat.
+
+
+  - **`priority`** (`int`) - Required.
+    Priority of the NAT rule collection (100–65000).
+
+  - **`rules`** (`array`) - Required.
+    NAT rules in the collection.
+    - **`description`** (`string`) - Optional.
+      Description of the NAT rule.
+
+    - **`destinationAddresses`** (`array`) - Optional.
+      Destination addresses (IP ranges, prefixes, service tags).
+
+    - **`destinationPorts`** (`array`) - Optional.
+      Destination ports.
+
+    - **`name`** (`string`) - Required.
+      Name of the NAT rule.
+
+    - **`protocols`** (`array`) - Required.
+      Protocols for the NAT rule. Allowed values: Any, ICMP, TCP, UDP.
+
+    - **`sourceAddresses`** (`array`) - Optional.
+      Source addresses.
+
+    - **`sourceIpGroups`** (`array`) - Optional.
+      Source IP groups.
+
+    - **`translatedAddress`** (`string`) - Optional.
+      Translated address for the NAT rule.
+
+    - **`translatedFqdn`** (`string`) - Optional.
+      Translated FQDN for the NAT rule.
+
+    - **`translatedPort`** (`string`) - Optional.
+      Translated port for the NAT rule.
+
+
+  - **`rules[*]`** (`object`) - Optional.
+    Array item for firewallDefinition.natRuleCollections[*].properties.rules
+
+  - **`type`** (`string`) - Required.
+    Action type. Allowed values: Dnat, Snat.
+
+  - **`description`** (`string`) - Optional.
+    Description of the NAT rule.
+
+  - **`destinationAddresses`** (`array`) - Optional.
+    Destination addresses (IP ranges, prefixes, service tags).
+
+  - **`destinationPorts`** (`array`) - Optional.
+    Destination ports.
+
+  - **`name`** (`string`) - Required.
+    Name of the NAT rule.
+
+  - **`protocols`** (`array`) - Required.
+    Protocols for the NAT rule. Allowed values: Any, ICMP, TCP, UDP.
+
+  - **`sourceAddresses`** (`array`) - Optional.
+    Source addresses.
+
+  - **`sourceIpGroups`** (`array`) - Optional.
+    Source IP groups.
+
+  - **`translatedAddress`** (`string`) - Optional.
+    Translated address for the NAT rule.
+
+  - **`translatedFqdn`** (`string`) - Optional.
+    Translated FQDN for the NAT rule.
+
+  - **`translatedPort`** (`string`) - Optional.
+    Translated port for the NAT rule.
+
+
 - **`networkRuleCollections`** (`array`) - Optional.
   Network rule collections used by Azure Firewall.
   - **`name`** (`string`) - Required.
@@ -1500,6 +1701,86 @@ Each parameter includes information about its type, requirements, default values
 
       - **`sourceIpGroups`** (`array`) - Optional.
         Source IP groups.
+
+
+    - **`rules[*]`** (`object`) - Optional.
+      Array item for firewallDefinition.networkRuleCollections[*].properties.rules
+
+
+
+- **`networkRuleCollections[*]`** (`object`) - Optional.
+  Array item for firewallDefinition.networkRuleCollections
+  - **`action`** (`object`) - Required.
+    Action of the network rule collection.
+    - **`type`** (`string`) - Required.
+      Action type. Allowed values: Allow, Deny.
+
+
+  - **`priority`** (`int`) - Required.
+    Priority of the network rule collection (100–65000).
+
+  - **`rules`** (`array`) - Required.
+    Network rules in the collection.
+    - **`description`** (`string`) - Optional.
+      Description of the network rule.
+
+    - **`destinationAddresses`** (`array`) - Optional.
+      Destination addresses.
+
+    - **`destinationFqdns`** (`array`) - Optional.
+      Destination FQDNs.
+
+    - **`destinationIpGroups`** (`array`) - Optional.
+      Destination IP groups.
+
+    - **`destinationPorts`** (`array`) - Optional.
+      Destination ports.
+
+    - **`name`** (`string`) - Required.
+      Name of the network rule.
+
+    - **`protocols`** (`array`) - Required.
+      Protocols for the network rule. Allowed values: Any, ICMP, TCP, UDP.
+
+    - **`sourceAddresses`** (`array`) - Optional.
+      Source addresses.
+
+    - **`sourceIpGroups`** (`array`) - Optional.
+      Source IP groups.
+
+
+  - **`rules[*]`** (`object`) - Optional.
+    Array item for firewallDefinition.networkRuleCollections[*].properties.rules
+
+  - **`type`** (`string`) - Required.
+    Action type. Allowed values: Allow, Deny.
+
+  - **`description`** (`string`) - Optional.
+    Description of the network rule.
+
+  - **`destinationAddresses`** (`array`) - Optional.
+    Destination addresses.
+
+  - **`destinationFqdns`** (`array`) - Optional.
+    Destination FQDNs.
+
+  - **`destinationIpGroups`** (`array`) - Optional.
+    Destination IP groups.
+
+  - **`destinationPorts`** (`array`) - Optional.
+    Destination ports.
+
+  - **`name`** (`string`) - Required.
+    Name of the network rule.
+
+  - **`protocols`** (`array`) - Required.
+    Protocols for the network rule. Allowed values: Any, ICMP, TCP, UDP.
+
+  - **`sourceAddresses`** (`array`) - Optional.
+    Source addresses.
+
+  - **`sourceIpGroups`** (`array`) - Optional.
+    Source IP groups.
 
 
 - **`publicIPAddressObject`** (`object`) - Optional.
@@ -1578,6 +1859,9 @@ Each parameter includes information about its type, requirements, default values
         Source IP addresses or ranges.
       - **`sourceIpGroups`** (`array`) - Optional.
         Source IP groups.
+    - **`bypassTrafficSettings[*]`** (`object`) - Optional.
+      Array item for firewallPolicyDefinition.intrusionDetection.configuration.bypassTrafficSettings
+
     - **`privateRanges`** (`array`) - Optional.
       List of private IP ranges to consider as internal.
 
@@ -1588,6 +1872,8 @@ Each parameter includes information about its type, requirements, default values
         Signature ID.
       - **`mode`** (`string`) - Required.
         Signature state. Allowed values: Alert, Deny, Off.
+    - **`signatureOverrides[*]`** (`object`) - Optional.
+      Array item for firewallPolicyDefinition.intrusionDetection.configuration.signatureOverrides
   - **`mode`** (`string`) - Optional.
     Intrusion detection mode. Allowed values: Alert, Deny, Off.
   - **`profile`** (`string`) - Optional.
@@ -1746,6 +2032,9 @@ Each parameter includes information about its type, requirements, default values
     IP tag value.
 
 
+- **`ipTags[*]`** (`object`) - Optional.
+  Array item for firewallPublicIp.ipTags
+
 - **`location`** (`string`) - Optional.
   Location for the resource. Default is resourceGroup().location.
 
@@ -1799,6 +2088,9 @@ Each parameter includes information about its type, requirements, default values
   - **`roleDefinitionIdOrName`** (`string`) - Required.
     Role to assign (display name, GUID, or full resource ID).
 
+
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for firewallPublicIp.roleAssignments
 
 - **`skuName`** (`string`) - Optional.
   SKU name for the Public IP Address. Default is Standard. Allowed values: Basic, Standard.
@@ -1990,6 +2282,21 @@ Each parameter includes information about its type, requirements, default values
 
   - **`tableNames`** (`array`) - Required.
     Table names to export.
+
+
+- **`dataExports[*]`** (`object`) - Optional.
+  Array item for logAnalyticsDefinition.dataExports
+  - **`metaData`** (`object`) - Optional.
+    Destination metadata.
+    - **`eventHubName`** (`string`) - Optional.
+      Event Hub name (not applicable when destination is Storage Account).
+
+
+  - **`resourceId`** (`string`) - Required.
+    Destination resource ID.
+
+  - **`eventHubName`** (`string`) - Optional.
+    Event Hub name (not applicable when destination is Storage Account).
 
 
 - **`dataRetention`** (`int`) - Optional.
@@ -2209,6 +2516,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID, name, or GUID.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for logAnalyticsDefinition.roleAssignments
+
 - **`savedSearches`** (`array`) - Optional.
   Saved KQL searches.
   - **`category`** (`string`) - Required.
@@ -2239,6 +2549,9 @@ Each parameter includes information about its type, requirements, default values
     Version of the query language. Default is 2.
 
 
+- **`savedSearches[*]`** (`object`) - Optional.
+  Array item for logAnalyticsDefinition.savedSearches
+
 - **`skuCapacityReservationLevel`** (`int`) - Optional.
   Capacity reservation level in GB (100–5000 in increments of 100).
 
@@ -2256,6 +2569,9 @@ Each parameter includes information about its type, requirements, default values
   - **`tables`** (`array`) - Optional.
     Tables to read.
 
+
+- **`storageInsightsConfigs[*]`** (`object`) - Optional.
+  Array item for logAnalyticsDefinition.storageInsightsConfigs
 
 - **`tables`** (`array`) - Optional.
   Custom LAW tables to be deployed.
@@ -2536,6 +2852,9 @@ Each parameter includes information about its type, requirements, default values
       Enable or disable the category explicitly. Default is true.
 
 
+  - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+    Array item for vNetDefinition.diagnosticSettings[*].logCategoriesAndGroups
+
   - **`marketplacePartnerResourceId`** (`string`) - Optional.
     Marketplace resource ID to which diagnostic logs should be sent.
 
@@ -2633,6 +2952,9 @@ Each parameter includes information about its type, requirements, default values
     Use remote gateways on this Virtual Network for transit. Default is false.
 
 
+- **`peerings[*]`** (`object`) - Optional.
+  Array item for vNetDefinition.peerings
+
 - **`roleAssignments`** (`array`) - Optional.
   Role assignments to create on the Virtual Network.
   - **`condition`** (`string`) - Optional.
@@ -2659,6 +2981,9 @@ Each parameter includes information about its type, requirements, default values
   - **`roleDefinitionIdOrName`** (`string`) - Required.
     Role to assign. Accepts role name, role GUID, or fully qualified role definition ID.
 
+
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for vNetDefinition.roleAssignments
 
 - **`subnets`** (`array`) - Optional.
   Array of subnets to deploy in the Virtual Network.
@@ -2722,6 +3047,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign. Accepts role name, role GUID, or fully qualified role definition ID.
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for vNetDefinition.subnets[*].roleAssignments
+
   - **`routeTableResourceId`** (`string`) - Optional.
     Route table resource ID for the subnet.
 
@@ -2733,6 +3061,33 @@ Each parameter includes information about its type, requirements, default values
 
   - **`sharingScope`** (`string`) - Optional.
     Sharing scope for the subnet. Allowed values: DelegatedServices, Tenant.
+
+
+- **`subnets[*]`** (`object`) - Optional.
+  Array item for vNetDefinition.subnets
+  - **`condition`** (`string`) - Optional.
+    Condition applied to the role assignment.
+
+  - **`conditionVersion`** (`string`) - Optional.
+    Condition version. Allowed value: 2.0.
+
+  - **`delegatedManagedIdentityResourceId`** (`string`) - Optional.
+    Resource ID of delegated managed identity.
+
+  - **`description`** (`string`) - Optional.
+    Description of the role assignment.
+
+  - **`name`** (`string`) - Optional.
+    Name of the role assignment. If not provided, a GUID will be generated.
+
+  - **`principalId`** (`string`) - Required.
+    Principal ID of the user/group/identity to assign the role to.
+
+  - **`principalType`** (`string`) - Optional.
+    Principal type. Allowed values: Device, ForeignGroup, Group, ServicePrincipal, User.
+
+  - **`roleDefinitionIdOrName`** (`string`) - Required.
+    Role to assign. Accepts role name, role GUID, or fully qualified role definition ID.
 
 
 - **`tags`** (`object`) - Optional.
@@ -2790,6 +3145,18 @@ Each parameter includes information about its type, requirements, default values
       Selector match operator (e.g., Equals, Contains).
 
 
+  - **`exclusions[*]`** (`object`) - Optional.
+    Array item for wafPolicyDefinition.managedRules.exclusions
+    - **`ruleGroup`** (`array`) - Optional.
+      Rule groups to exclude.
+
+    - **`ruleSetType`** (`string`) - Required.
+      Rule set type (e.g., OWASP).
+
+    - **`ruleSetVersion`** (`string`) - Required.
+      Rule set version (e.g., 3.2).
+
+
   - **`managedRuleSets`** (`array`) - Required.
     Managed rule sets to apply.
     - **`ruleGroupOverrides`** (`array`) - Optional.
@@ -2806,8 +3173,23 @@ Each parameter includes information about its type, requirements, default values
           Rule ID.
 
 
+      - **`rule[*]`** (`object`) - Optional.
+        Array item for wafPolicyDefinition.managedRules.managedRuleSets[*].ruleGroupOverrides[*].rule
+
       - **`ruleGroupName`** (`string`) - Required.
         Name of the rule group.
+
+
+    - **`ruleGroupOverrides[*]`** (`object`) - Optional.
+      Array item for wafPolicyDefinition.managedRules.managedRuleSets[*].ruleGroupOverrides
+      - **`action`** (`string`) - Required.
+        Action to take (e.g., Allow, Block, Log).
+
+      - **`enabled`** (`bool`) - Required.
+        Whether the rule is enabled.
+
+      - **`id`** (`string`) - Required.
+        Rule ID.
 
 
     - **`ruleSetType`** (`string`) - Required.
@@ -2815,6 +3197,46 @@ Each parameter includes information about its type, requirements, default values
 
     - **`ruleSetVersion`** (`string`) - Required.
       Rule set version.
+
+
+  - **`managedRuleSets[*]`** (`object`) - Optional.
+    Array item for wafPolicyDefinition.managedRules.managedRuleSets
+    - **`rule`** (`array`) - Required.
+      Rule overrides within the group.
+      - **`action`** (`string`) - Required.
+        Action to take (e.g., Allow, Block, Log).
+
+      - **`enabled`** (`bool`) - Required.
+        Whether the rule is enabled.
+
+      - **`id`** (`string`) - Required.
+        Rule ID.
+
+
+    - **`rule[*]`** (`object`) - Optional.
+      Array item for wafPolicyDefinition.managedRules.managedRuleSets[*].ruleGroupOverrides[*].rule
+
+    - **`ruleGroupName`** (`string`) - Required.
+      Name of the rule group.
+
+    - **`action`** (`string`) - Required.
+      Action to take (e.g., Allow, Block, Log).
+
+    - **`enabled`** (`bool`) - Required.
+      Whether the rule is enabled.
+
+    - **`id`** (`string`) - Required.
+      Rule ID.
+
+    - **`action`** (`string`) - Required.
+      Action to take (e.g., Allow, Block, Log).
+
+    - **`enabled`** (`bool`) - Required.
+      Whether the rule is enabled.
+
+    - **`id`** (`string`) - Required.
+      Rule ID.
+
 
 
 - **`name`** (`string`) - Required.
@@ -2866,6 +3288,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for acrPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -2905,6 +3330,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for acrPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -2922,6 +3350,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for acrPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `acrPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `acrPrivateEndpointDefinition` | `object` | Optional | Azure Container Registry Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -2938,6 +3377,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for acrPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -2977,6 +3419,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for acrPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -2994,6 +3439,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for acrPrivateEndpointDefinition.virtualNetworkLinks
+
+### `aiFoundryDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `aiFoundryDefinition` | `object` | Optional | AI Foundry project configuration (account/project, networking, associated resources, and deployments). |
+
+**Properties:**
 
 - **`aiFoundryConfiguration`** (`object`) - Optional.
   Custom configuration for the AI Foundry account.
@@ -3086,6 +3542,33 @@ Each parameter includes information about its type, requirements, default values
 
   - **`versionUpgradeOption`** (`string`) - Optional.
     Version upgrade option.
+
+
+- **`aiModelDeployments[*]`** (`object`) - Optional.
+  Array item for aiFoundryDefinition.aiModelDeployments
+  - **`format`** (`string`) - Required.
+    Format of the deployment model.
+
+  - **`name`** (`string`) - Required.
+    Name of the deployment model.
+
+  - **`version`** (`string`) - Required.
+    Version of the deployment model.
+
+  - **`capacity`** (`int`) - Optional.
+    SKU capacity.
+
+  - **`family`** (`string`) - Optional.
+    SKU family.
+
+  - **`name`** (`string`) - Required.
+    SKU name.
+
+  - **`size`** (`string`) - Optional.
+    SKU size.
+
+  - **`tier`** (`string`) - Optional.
+    SKU tier.
 
 
 - **`aiSearchConfiguration`** (`object`) - Optional.
@@ -3392,6 +3875,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for aiServicesPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3409,6 +3895,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for aiServicesPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `apimDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `apimDefinition` | `object` | Optional | API Management configuration. |
+
+**Properties:**
 
 - **`additionalLocations`** (`array`) - Optional.
   Additional locations for the API Management service.
@@ -3568,6 +4065,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for apimPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -3607,6 +4107,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for apimPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3624,6 +4127,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for apimPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `apimPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `apimPrivateEndpointDefinition` | `object` | Optional | API Management Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -3640,6 +4154,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for apimPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -3679,6 +4196,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for apimPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3696,6 +4216,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for apimPrivateEndpointDefinition.virtualNetworkLinks
+
+### `appConfigPrivateDnsZoneDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `appConfigPrivateDnsZoneDefinition` | `object` | Optional | App Configuration Private DNS Zone configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -3712,6 +4243,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for appConfigPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -3751,6 +4285,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for appConfigPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3768,6 +4305,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for appConfigPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `appConfigPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `appConfigPrivateEndpointDefinition` | `object` | Optional | App Configuration Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -3784,6 +4332,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for appConfigPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -3823,6 +4374,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for appConfigPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3840,6 +4394,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for appConfigPrivateEndpointDefinition.virtualNetworkLinks
+
+### `appInsightsPrivateDnsZoneDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `appInsightsPrivateDnsZoneDefinition` | `object` | Optional | Application Insights Private DNS Zone configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -3856,6 +4421,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for appInsightsPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -3895,6 +4463,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for appInsightsPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3912,6 +4483,23 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for appInsightsPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `baseName`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `baseName` | `string` | Optional | Base name to seed resource names; defaults to a 12-char token. |
+
+### `blobPrivateDnsZoneDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `blobPrivateDnsZoneDefinition` | `object` | Optional | Blob Storage Private DNS Zone configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -3928,6 +4516,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for blobPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -3967,6 +4558,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for blobPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -3984,6 +4578,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for blobPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `buildVmMaintenanceDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `buildVmMaintenanceDefinition` | `object` | Optional | Build VM Maintenance Definition. Used when deploy.buildVm is true. |
+
+**Properties:**
 
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable or disable usage telemetry for the module. Default is true.
@@ -4048,6 +4653,9 @@ Each parameter includes information about its type, requirements, default values
     Role to assign (display name, GUID, or full resource ID).
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for buildVmMaintenanceDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags to apply to the Maintenance Configuration resource.
 
@@ -4077,6 +4685,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for cognitiveServicesPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -4116,6 +4727,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for cognitiveServicesPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -4133,6 +4747,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for cognitiveServicesPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `containerAppEnvPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `containerAppEnvPrivateEndpointDefinition` | `object` | Optional | Container Apps Environment Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -4149,6 +4774,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for containerAppEnvPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -4188,6 +4816,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for containerAppEnvPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -4205,6 +4836,23 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for containerAppEnvPrivateEndpointDefinition.virtualNetworkLinks
+
+### `containerAppsList`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `containerAppsList` | `array` | Optional | List of Container Apps to create. |
+
+### `containerAppsPrivateDnsZoneDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `containerAppsPrivateDnsZoneDefinition` | `object` | Optional | Container Apps Private DNS Zone configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -4221,6 +4869,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for containerAppsPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -4260,6 +4911,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for containerAppsPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -4277,6 +4931,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for containerAppsPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `cosmosDbDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `cosmosDbDefinition` | `object` | Optional | Cosmos DB settings. |
+
+**Properties:**
 
 - **`automaticFailover`** (`bool`) - Optional.
   Enable automatic failover for regions. Defaults to true.
@@ -4314,6 +4979,9 @@ Each parameter includes information about its type, requirements, default values
     The unique identifier of the NoSQL native role definition.
 
 
+- **`dataPlaneRoleAssignments[*]`** (`object`) - Optional.
+  Array item for cosmosDbDefinition.dataPlaneRoleAssignments
+
 - **`dataPlaneRoleDefinitions`** (`array`) - Optional.
   Cosmos DB for NoSQL native role-based access control definitions.
   - **`assignableScopes`** (`array`) - Optional.
@@ -4328,6 +4996,9 @@ Each parameter includes information about its type, requirements, default values
       The Microsoft Entra principal ID granted access by this role assignment.
 
 
+  - **`assignments[*]`** (`object`) - Optional.
+    Array item for cosmosDbDefinition.dataPlaneRoleDefinitions[*].assignments
+
   - **`dataActions`** (`array`) - Optional.
     Array of allowed data actions.
 
@@ -4336,6 +5007,15 @@ Each parameter includes information about its type, requirements, default values
 
   - **`roleName`** (`string`) - Required.
     A user-friendly unique name for the role definition.
+
+
+- **`dataPlaneRoleDefinitions[*]`** (`object`) - Optional.
+  Array item for cosmosDbDefinition.dataPlaneRoleDefinitions
+  - **`name`** (`string`) - Optional.
+    Unique identifier name for the role assignment.
+
+  - **`principalId`** (`string`) - Required.
+    The Microsoft Entra principal ID granted access by this role assignment.
 
 
 - **`defaultConsistencyLevel`** (`string`) - Optional.
@@ -4373,6 +5053,9 @@ Each parameter includes information about its type, requirements, default values
   - **`locationName`** (`string`) - Required.
     Region name.
 
+
+- **`failoverLocations[*]`** (`object`) - Optional.
+  Array item for cosmosDbDefinition.failoverLocations
 
 - **`gremlinDatabases`** (`array`) - Optional.
   Gremlin database configurations.
@@ -4466,6 +5149,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for cosmosPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -4505,6 +5191,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for cosmosPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -4522,6 +5211,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for cosmosPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `cosmosPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `cosmosPrivateEndpointDefinition` | `object` | Optional | Cosmos DB Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -4538,6 +5238,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for cosmosPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -4577,6 +5280,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for cosmosPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -4594,6 +5300,29 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for cosmosPrivateEndpointDefinition.virtualNetworkLinks
+
+### `enableTelemetry`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `enableTelemetry` | `bool` | Optional | Enable/Disable usage telemetry for module. |
+
+### `enableDefenderForAI`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `enableDefenderForAI` | `bool` | Optional | Enable Microsoft Defender for AI by configuring Defender for Cloud pricing at subscription scope (`Microsoft.Security/pricings`). Requires subscription-level permissions. Default is false. |
+
+### `existingVNetSubnetsDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `existingVNetSubnetsDefinition` | `object` | Optional | Configuration for adding subnets to an existing VNet. Use this when you want to deploy subnets to an existing VNet instead of creating a new one. |
+
+**Properties:**
 
 - **`existingVNetName`** (`string`) - Required.
   Name or Resource ID of the existing Virtual Network. For cross-subscription/resource group scenarios, use the full Resource ID format: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Network/virtualNetworks/{vnet-name}
@@ -4642,6 +5371,9 @@ Each parameter includes information about its type, requirements, default values
   - **`sharingScope`** (`string`) - Optional.
     Sharing scope for the subnet.
 
+
+- **`subnets[*]`** (`object`) - Optional.
+  Array item for existingVNetSubnetsDefinition.subnets
 
 - **`useDefaultSubnets`** (`bool`) - Optional.
   Use default AI Landing Zone subnets with 192.168.x.x addressing. Default: true.
@@ -4729,6 +5461,9 @@ Each parameter includes information about its type, requirements, default values
     Role to assign (display name, GUID, or full resource ID).
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for jumpVmMaintenanceDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags to apply to the Maintenance Configuration resource.
 
@@ -4768,6 +5503,21 @@ Each parameter includes information about its type, requirements, default values
 
   - **`tenantId`** (`string`) - Optional.
     The tenant ID that is used for authenticating requests to the key vault.
+
+
+- **`accessPolicies[*]`** (`object`) - Optional.
+  Array item for keyVaultDefinition.accessPolicies
+  - **`certificates`** (`array`) - Optional.
+    Permissions to certificates.
+
+  - **`keys`** (`array`) - Optional.
+    Permissions to keys.
+
+  - **`secrets`** (`array`) - Optional.
+    Permissions to secrets.
+
+  - **`storage`** (`array`) - Optional.
+    Permissions to storage accounts.
 
 
 - **`createMode`** (`string`) - Optional.
@@ -4835,6 +5585,9 @@ Each parameter includes information about its type, requirements, default values
       A list of private IP addresses of the private endpoint.
 
 
+  - **`customDnsConfigs[*]`** (`object`) - Optional.
+    Array item for keyVaultDefinition.privateEndpoints[*].customDnsConfigs
+
   - **`customNetworkInterfaceName`** (`string`) - Optional.
     The custom name of the network interface attached to the Private Endpoint.
 
@@ -4857,6 +5610,18 @@ Each parameter includes information about its type, requirements, default values
       - **`privateIPAddress`** (`string`) - Required.
         A private IP address obtained from the private endpoint's subnet.
 
+
+
+  - **`ipConfigurations[*]`** (`object`) - Optional.
+    Array item for keyVaultDefinition.privateEndpoints[*].ipConfigurations
+    - **`groupId`** (`string`) - Required.
+      The ID of a group obtained from the remote resource to connect to.
+
+    - **`memberName`** (`string`) - Required.
+      The member name of a group obtained from the remote resource.
+
+    - **`privateIPAddress`** (`string`) - Required.
+      A private IP address obtained from the private endpoint's subnet.
 
 
   - **`isManualConnection`** (`bool`) - Optional.
@@ -4897,6 +5662,10 @@ Each parameter includes information about its type, requirements, default values
         The resource ID of the private DNS zone.
 
 
+    - **`privateDnsZoneGroupConfigs[*]`** (`object`) - Optional.
+      Array item for keyVaultDefinition.privateEndpoints[*].privateDnsZoneGroup.privateDnsZoneGroupConfigs
+
+
   - **`privateLinkServiceConnectionName`** (`string`) - Optional.
     The name of the private link connection to create.
 
@@ -4914,6 +5683,78 @@ Each parameter includes information about its type, requirements, default values
 
   - **`tags`** (`object`) - Optional.
     Tags for the Private Endpoint.
+
+
+- **`privateEndpoints[*]`** (`object`) - Optional.
+  Array item for keyVaultDefinition.privateEndpoints
+  - **`fqdn`** (`string`) - Optional.
+    FQDN that resolves to private endpoint IP address.
+
+  - **`ipAddresses`** (`array`) - Required.
+    A list of private IP addresses of the private endpoint.
+
+  - **`name`** (`string`) - Required.
+    The name of the resource that is unique within a resource group.
+
+  - **`properties`** (`object`) - Required.
+    Properties of private endpoint IP configurations.
+    - **`groupId`** (`string`) - Required.
+      The ID of a group obtained from the remote resource to connect to.
+
+    - **`memberName`** (`string`) - Required.
+      The member name of a group obtained from the remote resource.
+
+    - **`privateIPAddress`** (`string`) - Required.
+      A private IP address obtained from the private endpoint's subnet.
+
+
+  - **`groupId`** (`string`) - Required.
+    The ID of a group obtained from the remote resource to connect to.
+
+  - **`memberName`** (`string`) - Required.
+    The member name of a group obtained from the remote resource.
+
+  - **`privateIPAddress`** (`string`) - Required.
+    A private IP address obtained from the private endpoint's subnet.
+
+  - **`groupId`** (`string`) - Required.
+    The ID of a group obtained from the remote resource to connect to.
+
+  - **`memberName`** (`string`) - Required.
+    The member name of a group obtained from the remote resource.
+
+  - **`privateIPAddress`** (`string`) - Required.
+    A private IP address obtained from the private endpoint's subnet.
+
+  - **`kind`** (`string`) - Optional.
+    Specify the type of lock.
+
+  - **`name`** (`string`) - Optional.
+    Specify the name of the lock.
+
+  - **`notes`** (`string`) - Optional.
+    Specify the notes of the lock.
+
+  - **`name`** (`string`) - Optional.
+    The name of the Private DNS Zone Group.
+
+  - **`privateDnsZoneGroupConfigs`** (`array`) - Required.
+    The private DNS Zone Groups to associate the Private Endpoint.
+    - **`name`** (`string`) - Optional.
+      The name of the private DNS Zone Group config.
+
+    - **`privateDnsZoneResourceId`** (`string`) - Required.
+      The resource ID of the private DNS zone.
+
+
+  - **`privateDnsZoneGroupConfigs[*]`** (`object`) - Optional.
+    Array item for keyVaultDefinition.privateEndpoints[*].privateDnsZoneGroup.privateDnsZoneGroupConfigs
+
+  - **`name`** (`string`) - Optional.
+    The name of the private DNS Zone Group config.
+
+  - **`privateDnsZoneResourceId`** (`string`) - Required.
+    The resource ID of the private DNS zone.
 
 
 - **`publicNetworkAccess`** (`string`) - Optional.
@@ -4952,6 +5793,18 @@ Each parameter includes information about its type, requirements, default values
     The value of the secret.
 
 
+- **`secrets[*]`** (`object`) - Optional.
+  Array item for keyVaultDefinition.secrets
+  - **`enabled`** (`bool`) - Optional.
+    Defines whether the secret is enabled or disabled.
+
+  - **`exp`** (`int`) - Optional.
+    Expiration time of the secret, in epoch seconds.
+
+  - **`nbf`** (`int`) - Optional.
+    Not-before time of the secret, in epoch seconds.
+
+
 - **`sku`** (`string`) - Optional.
   Specifies the SKU for the vault.
 
@@ -4984,6 +5837,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for keyVaultPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -5023,6 +5879,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for keyVaultPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -5040,6 +5899,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for keyVaultPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `keyVaultPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `keyVaultPrivateEndpointDefinition` | `object` | Optional | Key Vault Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -5056,6 +5926,9 @@ Each parameter includes information about its type, requirements, default values
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for keyVaultPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -5095,6 +5968,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for keyVaultPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -5112,6 +5988,23 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for keyVaultPrivateEndpointDefinition.virtualNetworkLinks
+
+### `location`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `location` | `string` | Optional | Azure region for AI LZ resources. Defaults to the resource group location. |
+
+### `nsgDefinitions`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `nsgDefinitions` | `object` | Optional | NSG definitions per subnet role; each entry deploys an NSG for that subnet when a non-empty NSG definition is provided. |
+
+**Properties:**
 
 - **`acaEnvironment`** (`object`) - Optional.
   NSG definition applied to the Azure Container Apps environment (infrastructure) subnet.
@@ -5138,6 +6031,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.acaEnvironment.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -5149,6 +6045,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.acaEnvironment.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -5202,6 +6110,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.acaEnvironment.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -5254,6 +6165,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.acaEnvironment.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -5285,6 +6244,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.agent.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -5296,6 +6258,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.agent.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -5349,6 +6323,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.agent.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -5401,6 +6378,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.agent.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -5432,6 +6457,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.apiManagement.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -5443,6 +6471,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.apiManagement.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -5496,6 +6536,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.apiManagement.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -5548,6 +6591,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.apiManagement.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -5579,6 +6670,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.applicationGateway.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -5590,6 +6684,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.applicationGateway.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -5643,6 +6749,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.applicationGateway.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -5695,6 +6804,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.applicationGateway.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -5726,6 +6883,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.bastion.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -5737,6 +6897,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.bastion.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -5790,6 +6962,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.bastion.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -5842,6 +7017,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.bastion.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -5873,6 +7096,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.devopsBuildAgents.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -5884,6 +7110,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.devopsBuildAgents.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -5937,6 +7175,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.devopsBuildAgents.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -5989,6 +7230,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.devopsBuildAgents.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -6020,6 +7309,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.jumpbox.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -6031,6 +7323,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.jumpbox.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -6084,6 +7388,9 @@ Each parameter includes information about its type, requirements, default values
       Role to assign (name, GUID, or fully qualified role definition ID).
 
 
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.jumpbox.roleAssignments
+
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
     - **`name`** (`string`) - Required.
@@ -6136,6 +7443,54 @@ Each parameter includes information about its type, requirements, default values
       - **`sourcePortRanges`** (`array`) - Optional.
         Multiple source ports or port ranges.
 
+
+
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.jumpbox.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
 
 
   - **`tags`** (`object`) - Optional.
@@ -6167,6 +7522,9 @@ Each parameter includes information about its type, requirements, default values
         Whether this category/category group is enabled.
 
 
+    - **`logCategoriesAndGroups[*]`** (`object`) - Optional.
+      Array item for nsgDefinitions.pe.diagnosticSettings[*].logCategoriesAndGroups
+
     - **`marketplacePartnerResourceId`** (`string`) - Optional.
       Marketplace partner destination resource ID (if applicable).
 
@@ -6178,6 +7536,18 @@ Each parameter includes information about its type, requirements, default values
 
     - **`workspaceResourceId`** (`string`) - Optional.
       Destination Log Analytics workspace resource ID.
+
+
+  - **`diagnosticSettings[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.pe.diagnosticSettings
+    - **`category`** (`string`) - Optional.
+      Single diagnostic log category to enable.
+
+    - **`categoryGroup`** (`string`) - Optional.
+      Category group (e.g., AllMetrics) to enable.
+
+    - **`enabled`** (`bool`) - Optional.
+      Whether this category/category group is enabled.
 
 
   - **`enableTelemetry`** (`bool`) - Optional.
@@ -6230,6 +7600,9 @@ Each parameter includes information about its type, requirements, default values
     - **`roleDefinitionIdOrName`** (`string`) - Required.
       Role to assign (name, GUID, or fully qualified role definition ID).
 
+
+  - **`roleAssignments[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.pe.roleAssignments
 
   - **`securityRules`** (`array`) - Optional.
     Security rules to apply to the NSG. If omitted, only default rules are present.
@@ -6285,6 +7658,54 @@ Each parameter includes information about its type, requirements, default values
 
 
 
+  - **`securityRules[*]`** (`object`) - Optional.
+    Array item for nsgDefinitions.pe.securityRules
+    - **`access`** (`string`) - Required.
+      Whether matching traffic is allowed or denied.
+
+    - **`description`** (`string`) - Optional.
+      Free-form description for the rule.
+
+    - **`destinationAddressPrefix`** (`string`) - Optional.
+      Single destination address prefix (e.g., 10.0.0.0/24, VirtualNetwork).
+
+    - **`destinationAddressPrefixes`** (`array`) - Optional.
+      Multiple destination address prefixes.
+
+    - **`destinationApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Destination Application Security Group (ASG) resource IDs.
+
+    - **`destinationPortRange`** (`string`) - Optional.
+      Single destination port or port range (e.g., 443, 1000-2000).
+
+    - **`destinationPortRanges`** (`array`) - Optional.
+      Multiple destination ports or port ranges.
+
+    - **`direction`** (`string`) - Required.
+      Direction of the rule (Inbound or Outbound).
+
+    - **`priority`** (`int`) - Required.
+      Priority of the rule (100–4096). Must be unique per rule in the NSG.
+
+    - **`protocol`** (`string`) - Required.
+      Network protocol to match.
+
+    - **`sourceAddressPrefix`** (`string`) - Optional.
+      Single source address prefix (e.g., Internet, 10.0.0.0/24).
+
+    - **`sourceAddressPrefixes`** (`array`) - Optional.
+      Multiple source address prefixes.
+
+    - **`sourceApplicationSecurityGroupResourceIds`** (`array`) - Optional.
+      Source Application Security Group (ASG) resource IDs.
+
+    - **`sourcePortRange`** (`string`) - Optional.
+      Single source port or port range.
+
+    - **`sourcePortRanges`** (`array`) - Optional.
+      Multiple source ports or port ranges.
+
+
   - **`tags`** (`object`) - Optional.
     Tags to apply to the NSG.
 
@@ -6311,6 +7732,9 @@ Each parameter includes information about its type, requirements, default values
   - **`ttl`** (`int`) - Optional.
     Time-to-live for the record.
 
+
+- **`a[*]`** (`object`) - Optional.
+  Array item for openAiPrivateDnsZoneDefinition.a
 
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
@@ -6351,6 +7775,9 @@ Each parameter includes information about its type, requirements, default values
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for openAiPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -6368,6 +7795,17 @@ Each parameter includes information about its type, requirements, default values
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for openAiPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `privateDnsZonesDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `privateDnsZonesDefinition` | `object` | Optional | Private DNS Zone configuration for private endpoints. Used when not in platform landing zone mode. |
+
+**Properties:**
 
 - **`acrZoneId`** (`string`) - Optional.
   Existing Private DNS Zone resource ID for Azure Container Registry.
@@ -6545,6 +7983,9 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for searchPrivateDnsZoneDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -6584,6 +8025,9 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for searchPrivateDnsZoneDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -6601,6 +8045,17 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for searchPrivateDnsZoneDefinition.virtualNetworkLinks
+
+### `searchPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `searchPrivateEndpointDefinition` | `object` | Optional | Azure AI Search Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -6617,6 +8072,9 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for searchPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -6656,6 +8114,9 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for searchPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -6673,6 +8134,17 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for searchPrivateEndpointDefinition.virtualNetworkLinks
+
+### `storageBlobPrivateEndpointDefinition`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `storageBlobPrivateEndpointDefinition` | `object` | Optional | Storage Account Private Endpoint configuration. |
+
+**Properties:**
 
 - **`a`** (`array`) - Optional.
   A list of DNS zone records to create.
@@ -6689,6 +8161,9 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
     Time-to-live for the record.
 
 
+- **`a[*]`** (`object`) - Optional.
+  Array item for storageBlobPrivateEndpointDefinition.a
+
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable/Disable usage telemetry for the module.
 
@@ -6728,6 +8203,9 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
     Role definition ID or name.
 
 
+- **`roleAssignments[*]`** (`object`) - Optional.
+  Array item for storageBlobPrivateEndpointDefinition.roleAssignments
+
 - **`tags`** (`object`) - Optional.
   Tags for the Private DNS Zone.
 
@@ -6745,4 +8223,165 @@ Otherwise, leave them empty and the AI Foundry component will create its own dep
   - **`virtualNetworkResourceId`** (`string`) - Required.
     Resource ID of the virtual network to link.
 
+
+- **`virtualNetworkLinks[*]`** (`object`) - Optional.
+  Array item for storageBlobPrivateEndpointDefinition.virtualNetworkLinks
+
+### `tags`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `tags` | `object` | Optional | Tags to apply to all resources. |
+
+## Outputs
+
+| Output Name | Type | Description |
+| :-- | :-- | :-- |
+| `acaEnvironmentNsgResourceId` | string | Azure Container Apps Environment subnet Network Security Group resource ID (newly created or existing). |
+| `acrPrivateDnsZoneResourceId` | string | Container Registry Private DNS Zone resource ID (newly created or existing). |
+| `agentNsgResourceId` | string | Agent subnet Network Security Group resource ID (newly created or existing). |
+| `aiFoundryAiServicesName` | string | AI Foundry AI Services name. |
+| `aiFoundryCosmosAccountName` | string | AI Foundry Cosmos DB account name. |
+| `aiFoundryKeyVaultName` | string | AI Foundry Key Vault name. |
+| `aiFoundryProjectName` | string | AI Foundry project name. |
+| `aiFoundryResourceGroupName` | string | AI Foundry resource group name. |
+| `aiFoundrySearchServiceName` | string | AI Foundry AI Search service name. |
+| `aiFoundryStorageAccountName` | string | AI Foundry Storage Account name. |
+| `aiSearchName` | string | AI Search name. |
+| `aiSearchResourceId` | string | AI Search resource ID. |
+| `aiServicesPrivateDnsZoneResourceId` | string | AI Services Private DNS Zone resource ID (newly created or existing). |
+| `apiManagementNsgResourceId` | string | API Management subnet Network Security Group resource ID (newly created or existing). |
+| `apimPrivateDnsZoneResourceId` | string | API Management Private DNS Zone resource ID (newly created or existing). |
+| `apimServiceName` | string | API Management service name. |
+| `apimServiceResourceId` | string | API Management service resource ID. |
+| `appConfigPrivateDnsZoneResourceId` | string | App Configuration Private DNS Zone resource ID (newly created or existing). |
+| `appConfigResourceId` | string | App Configuration Store resource ID. |
+| `appGatewayPublicIpResourceId` | string | Application Gateway Public IP resource ID (newly created or existing). |
+| `appInsightsPrivateDnsZoneResourceId` | string | Application Insights Private DNS Zone resource ID (newly created or existing). |
+| `appInsightsResourceId` | string | Application Insights resource ID. |
+| `applicationGatewayName` | string | Application Gateway name. |
+| `applicationGatewayNsgResourceId` | string | Application Gateway subnet Network Security Group resource ID (newly created or existing). |
+| `applicationGatewayResourceId` | string | Application Gateway resource ID (newly created or existing). |
+| `bingConnectionId` | string | Bing Search connection ID (if deployed). |
+| `bingResourceGroupName` | string | Bing Search resource group name (if deployed). |
+| `bingSearchResourceId` | string | Bing Search service resource ID (if deployed). |
+| `blobPrivateDnsZoneResourceId` | string | Blob Storage Private DNS Zone resource ID (newly created or existing). |
+| `buildVmName` | string | Build VM name (if deployed). |
+| `buildVmResourceId` | string | Build VM resource ID (if deployed). |
+| `cognitiveServicesPrivateDnsZoneResourceId` | string | Cognitive Services Private DNS Zone resource ID (newly created or existing). |
+| `containerAppsCount` | int | Container Apps deployment count. |
+| `containerAppsPrivateDnsZoneResourceId` | string | Container Apps Private DNS Zone resource ID (newly created or existing). |
+| `containerEnvResourceId` | string | Container App Environment resource ID. |
+| `containerRegistryResourceId` | string | Container Registry resource ID. |
+| `cosmosDbName` | string | Cosmos DB name. |
+| `cosmosDbResourceId` | string | Cosmos DB resource ID. |
+| `cosmosSqlPrivateDnsZoneResourceId` | string | Cosmos DB (SQL API) Private DNS Zone resource ID (newly created or existing). |
+| `devopsBuildAgentsNsgResourceId` | string | DevOps Build Agents subnet Network Security Group resource ID (newly created or existing). |
+| `firewallName` | string | Azure Firewall name. |
+| `firewallPolicyName` | string | Azure Firewall Policy name (if deployed). |
+| `firewallPolicyResourceId` | string | Azure Firewall Policy resource ID (if deployed). |
+| `firewallPrivateIp` | string | Azure Firewall private IP address (if deployed). |
+| `firewallPublicIpResourceId` | string | Firewall Public IP resource ID (newly created or existing). |
+| `firewallResourceId` | string | Azure Firewall resource ID (newly created or existing). |
+| `hubToSpokePeeringResourceId` | string | Hub to Spoke peering resource ID (if hub peering is enabled). |
+| `jumpboxNsgResourceId` | string | Jumpbox subnet Network Security Group resource ID (newly created or existing). |
+| `jumpVmName` | string | Jump VM name (if deployed). |
+| `jumpVmResourceId` | string | Jump VM resource ID (if deployed). |
+| `keyVaultName` | string | Key Vault name. |
+| `keyVaultPrivateDnsZoneResourceId` | string | Key Vault Private DNS Zone resource ID (newly created or existing). |
+| `keyVaultResourceId` | string | Key Vault resource ID. |
+| `logAnalyticsWorkspaceResourceId` | string | Log Analytics workspace resource ID. |
+| `openAiPrivateDnsZoneResourceId` | string | OpenAI Private DNS Zone resource ID (newly created or existing). |
+| `peNsgResourceId` | string | Private Endpoints subnet Network Security Group resource ID (newly created or existing). |
+| `searchPrivateDnsZoneResourceId` | string | Azure AI Search Private DNS Zone resource ID (newly created or existing). |
+| `storageAccountResourceId` | string | Storage Account resource ID. |
+| `virtualNetworkResourceId` | string | Virtual Network resource ID (newly created or existing). |
+| `wafPolicyName` | string | WAF Policy name (if deployed). |
+| `wafPolicyResourceId` | string | WAF Policy resource ID (if deployed). |
+
+
+
+
+
+## AVM Modules
+
+| Module | Version |
+| :-- | :-- |
+| `avm/res/api-management/service` | 0.13.0 |
+| `avm/res/app-configuration/configuration-store` | 0.9.2 |
+| `avm/res/app/container-app` | 0.18.1 |
+| `avm/res/app/managed-environment` | 0.11.3 |
+| `avm/res/compute/virtual-machine` | 0.20.0 |
+| `avm/res/container-registry/registry` | 0.9.3 |
+| `avm/res/document-db/database-account` | 0.16.0 |
+| `avm/res/insights/component` | 0.6.0 |
+| `avm/res/key-vault/vault` | 0.13.3 |
+| `avm/res/maintenance/maintenance-configuration` | 0.3.1 |
+| `avm/res/network/application-gateway` | 0.7.2 |
+| `avm/res/network/azure-firewall` | 0.8.0 |
+| `avm/res/network/firewall-policy` | 0.3.1 |
+| `avm/res/network/network-security-group` | 0.5.1 |
+| `avm/res/network/private-dns-zone` | 0.8.0 |
+| `avm/res/network/private-endpoint` | 0.11.0 |
+| `avm/res/network/public-ip-address` | 0.9.0 |
+| `avm/res/network/virtual-network` | 0.7.0 |
+| `avm/res/operational-insights/workspace` | 0.12.0 |
+| `avm/res/search/search-service` | 0.11.1 |
+| `avm/res/storage/storage-account` | 0.27.0 |
+
+## Resource Types
+
+This table lists resource types that are declared directly in the Bicep files under `bicep/infra` (including helper/component modules). Note that AVM modules referenced above will deploy additional resource types that are not declared in this repo.
+
+| Resource Type | API Version |
+| :-- | :-- |
+| `connections` | 2025-04-01-preview |
+| `Microsoft.ApiManagement/service` | 2024-06-01-preview |
+| `Microsoft.App/managedEnvironments` | 2025-02-02-preview |
+| `Microsoft.AppConfiguration/configurationStores` | 2024-06-01 |
+| `Microsoft.Authorization/roleAssignments` | 2022-04-01 |
+| `Microsoft.Authorization/roleDefinitions` | 2022-04-01 |
+| `Microsoft.Authorization/roleDefinitions` | 2022-05-01-preview |
+| `Microsoft.Bing/accounts` | 2025-05-01-preview |
+| `Microsoft.CognitiveServices/accounts/capabilityHosts` | 2025-06-01 |
+| `Microsoft.CognitiveServices/accounts/connections` | 2025-06-01 |
+| `Microsoft.CognitiveServices/accounts/deployments` | 2025-04-01-preview |
+| `Microsoft.CognitiveServices/accounts/projects/capabilityHosts` | 2025-06-01 |
+| `Microsoft.CognitiveServices/accounts/projects` | 2025-04-01-preview |
+| `Microsoft.CognitiveServices/accounts/projects` | 2025-06-01 |
+| `Microsoft.CognitiveServices/accounts` | 2023-05-01 |
+| `Microsoft.CognitiveServices/accounts` | 2025-04-01-preview |
+| `Microsoft.CognitiveServices/accounts` | 2025-06-01 |
+| `Microsoft.Compute/virtualMachines/extensions` | 2024-11-01 |
+| `Microsoft.Compute/virtualMachines` | 2024-11-01 |
+| `Microsoft.ContainerRegistry/registries` | 2025-04-01 |
+| `Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments` | 2022-05-15 |
+| `Microsoft.DocumentDB/databaseAccounts` | 2024-11-15 |
+| `Microsoft.DocumentDB/databaseAccounts` | 2024-12-01-preview |
+| `Microsoft.Insights/components` | 2020-02-02 |
+| `Microsoft.KeyVault/vaults` | 2023-07-01 |
+| `Microsoft.Network/applicationGateways` | 2024-07-01 |
+| `Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies` | 2024-01-01 |
+| `Microsoft.Network/azureFirewalls` | 2024-07-01 |
+| `Microsoft.Network/privateDnsZones/virtualNetworkLinks` | 2024-06-01 |
+| `Microsoft.Network/privateDnsZones` | 2020-06-01 |
+| `Microsoft.Network/privateEndpoints/privateDnsZoneGroups` | 2024-05-01 |
+| `Microsoft.Network/privateEndpoints` | 2024-05-01 |
+| `Microsoft.Network/routeTables/routes` | 2023-11-01 |
+| `Microsoft.Network/routeTables` | 2023-11-01 |
+| `Microsoft.Network/virtualNetworks/subnets` | 2023-11-01 |
+| `Microsoft.Network/virtualNetworks/subnets` | 2024-05-01 |
+| `Microsoft.Network/virtualNetworks/virtualNetworkPeerings` | 2024-03-01 |
+| `Microsoft.Network/virtualNetworks` | 2023-11-01 |
+| `Microsoft.Network/virtualNetworks` | 2024-05-01 |
+| `Microsoft.OperationalInsights/workspaces` | 2025-02-01 |
+| `Microsoft.Resources/deploymentScripts` | 2023-08-01 |
+| `Microsoft.Resources/deployments` | 2024-03-01 |
+| `Microsoft.Search/searchServices` | 2023-11-01 |
+| `Microsoft.Search/searchServices` | 2024-06-01-preview |
+| `Microsoft.Security/pricings` | 2024-01-01 |
+| `Microsoft.Storage/storageAccounts` | 2022-05-01 |
+| `Microsoft.Storage/storageAccounts` | 2023-05-01 |
+| `Microsoft.Storage/storageAccounts` | 2024-01-01 |
+| `Microsoft.Storage/storageAccounts` | 2025-01-01 |
 
