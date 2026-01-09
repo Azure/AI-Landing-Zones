@@ -896,7 +896,7 @@
 
 
 <h1 id="platform-landing-zone-integration">Platform Landing Zone integration</h1>
-<p>The AI Landing Zone with Bicep implementation supports two main deployment modes for the AI Landing Zone workload:</p>
+<p>The AI Landing Zone with Bicep implementation supports two primary deployment modes, though the template is flexible enough to support customized configurations:</p>
 <table>
 <thead>
 <tr>
@@ -918,7 +918,7 @@
 </tr>
 </tbody>
 </table>
-<p>The mode is selected with <code>flagPlatformLandingZone</code> in the main template.</p>
+<p>The mode is primarily controlled by <code>flagPlatformLandingZone</code> in the main template, but you can selectively override individual behaviors by setting specific parameters.</p>
 <p><strong>Ownership model (hub-and-spoke)</strong></p>
 <p>In a typical hub-and-spoke split, the platform owns shared DNS and central egress. The workload owns its private endpoints inside the spoke VNet.</p>
 <p><strong>Behavior of <code>flagPlatformLandingZone</code></strong></p>
@@ -934,14 +934,14 @@
 </thead>
 <tbody>
 <tr>
-<td><code>flagPlatformLandingZone = false</code></td>
+<td>Set as <code>false</code></td>
 <td>Created as needed</td>
 <td>Created unless you provide zone IDs</td>
 <td>Created unless disabled</td>
 <td>Configured when zone IDs are available</td>
 </tr>
 <tr>
-<td><code>flagPlatformLandingZone = true</code></td>
+<td>Set as <code>true</code></td>
 <td>Created in the workload VNet</td>
 <td>Not created by the workload template</td>
 <td>Not created by the workload template</td>
