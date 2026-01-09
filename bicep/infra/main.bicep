@@ -1016,8 +1016,10 @@ var varIsPlatformLz = flagPlatformLandingZone
 // Platform Landing Zone integration model in this repo:
 // - Private Endpoints are created in the workload (spoke) VNet in both modes.
 // - Private DNS Zones are created by this template only when NOT integrating with a Platform Landing Zone.
-var varDeployPrivateDnsZones = !varIsPlatformLz
-var varDeployPrivateEndpoints = true
+// IMPORTANT: This must be start-of-deployment evaluable (BCP178-safe). Do not reference module outputs here.
+var varHasVnet = deployToggles.virtualNetwork || !empty(resourceIds.?virtualNetworkResourceId) || (existingVNetSubnetsDefinition != null)
+var varDeployPrivateDnsZones = !varIsPlatformLz && varHasVnet
+var varDeployPrivateEndpoints = varHasVnet
 
 // 4.2 DNS Zone Configuration Variables
 var varUseExistingPdz = {
@@ -1036,13 +1038,12 @@ var varUseExistingPdz = {
 }
 
 // Common variables for VNet name and resource ID (used in DNS zone VNet links)
-var varVnetName = split(virtualNetworkResourceId, '/')[8]
-var varVnetResourceId = virtualNetworkResourceId
+var varVnetIdSegments = varHasVnet ? split(virtualNetworkResourceId, '/') : array([])
+var varVnetName = (varHasVnet && length(varVnetIdSegments) >= 9) ? varVnetIdSegments[8] : ''
+var varVnetResourceId = varHasVnet ? virtualNetworkResourceId : ''
 
 // 4.3 Private Endpoint Variables
-var varPeSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
-  ? '${virtualNetworkResourceId}/subnets/pe-subnet'
-  : '${resourceIds.virtualNetworkResourceId!}/subnets/pe-subnet'
+var varPeSubnetId = varHasVnet ? '${virtualNetworkResourceId}/subnets/pe-subnet' : ''
 
 // Service availability checks for private endpoints
 var varHasAppConfig = !empty(resourceIds.?appConfigResourceId!) || varDeployAppConfig
@@ -1067,7 +1068,7 @@ module privateDnsZoneApim 'wrappers/avm.res.network.private-dns-zone.bicep' = if
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-apim-link'
@@ -1095,7 +1096,7 @@ module privateDnsZoneCogSvcs 'wrappers/avm.res.network.private-dns-zone.bicep' =
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-cogsvcs-link'
@@ -1123,7 +1124,7 @@ module privateDnsZoneOpenAi 'wrappers/avm.res.network.private-dns-zone.bicep' = 
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-openai-link'
@@ -1151,7 +1152,7 @@ module privateDnsZoneAiService 'wrappers/avm.res.network.private-dns-zone.bicep'
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-aiservices-link'
@@ -1179,7 +1180,7 @@ module privateDnsZoneSearch 'wrappers/avm.res.network.private-dns-zone.bicep' = 
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-search-std-link'
@@ -1207,7 +1208,7 @@ module privateDnsZoneCosmos 'wrappers/avm.res.network.private-dns-zone.bicep' = 
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-cosmos-std-link'
@@ -1235,7 +1236,7 @@ module privateDnsZoneBlob 'wrappers/avm.res.network.private-dns-zone.bicep' = if
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-blob-std-link'
@@ -1263,7 +1264,7 @@ module privateDnsZoneKeyVault 'wrappers/avm.res.network.private-dns-zone.bicep' 
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-kv-link'
@@ -1291,7 +1292,7 @@ module privateDnsZoneAppConfig 'wrappers/avm.res.network.private-dns-zone.bicep'
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-appcfg-link'
@@ -1319,7 +1320,7 @@ module privateDnsZoneContainerApps 'wrappers/avm.res.network.private-dns-zone.bi
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-containerapps-link'
@@ -1347,7 +1348,7 @@ module privateDnsZoneAcr 'wrappers/avm.res.network.private-dns-zone.bicep' = if 
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-acr-link'
@@ -1375,7 +1376,7 @@ module privateDnsZoneInsights 'wrappers/avm.res.network.private-dns-zone.bicep' 
         location: 'global'
         tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
         enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (privateDnsZonesDefinition.?createNetworkLinks ?? true)
+        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
           ? [
               {
                 name: '${varVnetName}-ai-link'

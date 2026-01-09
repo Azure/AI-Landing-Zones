@@ -83,11 +83,17 @@ param(
   [switch]$SkipCapabilityHostCleanup,
   [string]$CapabilityHostApiVersion = '2025-04-01-preview',
   # Optional wait time after capability host deletion (service may take time to unlink resources)
-  [int]$CapabilityHostSettleMinutes = 0,
+  [int]$CapabilityHostSettleMinutes = 20,
   # After capability hosts are gone, optionally try deleting Cognitive Services accounts and retry on linkage/409
   [switch]$SkipCognitiveServicesAccountDelete,
   [int]$AccountDeleteRetryTimeoutMinutes = 25,
   [int]$AccountDeleteRetryPollSeconds = 15,
+  # After deleting Cognitive Services accounts, optionally purge deleted accounts to force back-end cleanup/unlink.
+  [switch]$SkipCognitiveServicesAccountPurge,
+  [int]$AccountPurgeWaitMinutes = 20,
+  [int]$AccountPurgeSettleMinutes = 20,
+  [string]$AccountPurgeApiVersion = '2025-04-01-preview',
+  [string[]]$AccountPurgeApiVersionFallbacks = @('2025-06-01','2024-10-01-preview','2023-05-01','2022-12-01'),
   [string]$TenantId,
   # Optional service principal (workaround for Conditional Access blocking public client ID 04b07795-8ddb-461a-bbee-02f9e1bf7b46)
   [string]$SpClientId,
@@ -441,6 +447,145 @@ function Remove-CognitiveServices-Accounts-WithRetryInRg {
     } else {
       Write-Host "     (warn) Account still present after timeout; service may still be deleting in background." -ForegroundColor DarkYellow
     }
+  }
+}
+
+function Get-CognitiveServices-Accounts-InRg {
+  param([Parameter(Mandatory=$true)][string]$rg)
+
+  $accts = @()
+  try {
+    $raw = az resource list -g $rg --resource-type Microsoft.CognitiveServices/accounts --query "[].{id:id,name:name,location:location}" --output json 2>$null
+    if ($raw) { $accts = $raw | ConvertFrom-Json }
+  } catch { $accts = @() }
+
+  if (-not $accts) { return @() }
+  return @($accts | Where-Object { $_.id -and $_.name })
+}
+
+function Test-CognitiveServices-DeletedAccount-Exists {
+  param(
+    [Parameter(Mandatory=$true)][string]$SubscriptionId,
+    [Parameter(Mandatory=$true)][string]$Location,
+    [Parameter(Mandatory=$true)][string]$AccountName,
+    [Parameter(Mandatory=$true)][string]$ApiVersion
+  )
+
+  $url = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.CognitiveServices/locations/$Location/deletedAccounts/$AccountName?api-version=$ApiVersion"
+  try {
+    $resp = Invoke-AzureMgmt-WebRequest -Method GET -Url $url
+    $code = $null
+    try { $code = [int]$resp.StatusCode } catch { }
+    return ($code -ge 200 -and $code -lt 300)
+  } catch {
+    return $false
+  }
+}
+
+function Invoke-CognitiveServices-DeletedAccount-Purge {
+  param(
+    [Parameter(Mandatory=$true)][string]$SubscriptionId,
+    [Parameter(Mandatory=$true)][string]$Location,
+    [Parameter(Mandatory=$true)][string]$AccountName,
+    [Parameter(Mandatory=$true)][string]$ApiVersion,
+    [int]$TimeoutMinutes = 20,
+    [int]$PollSeconds = 10
+  )
+
+  $url = "https://management.azure.com/subscriptions/$SubscriptionId/providers/Microsoft.CognitiveServices/locations/$Location/deletedAccounts/$AccountName?api-version=$ApiVersion"
+  $resp = Invoke-AzureMgmt-WebRequest -Method DELETE -Url $url
+
+  $code = $null
+  try { $code = [int]$resp.StatusCode } catch { }
+  if ($code -eq 404) { return @{ ok = $true; code = 404; message = 'NotFound' } }
+  if ($code -eq 200 -or $code -eq 204) { return @{ ok = $true; code = $code; message = 'Deleted' } }
+
+  $opUrl = $null
+  try { $opUrl = $resp.Headers['Azure-AsyncOperation'] } catch { $opUrl = $null }
+  if ([string]::IsNullOrWhiteSpace($opUrl)) {
+    try { $opUrl = $resp.Headers['Location'] } catch { $opUrl = $null }
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($opUrl)) {
+    $ok = Wait-AzureAsyncOperation -OperationUrl $opUrl -TimeoutMinutes $TimeoutMinutes -PollSeconds $PollSeconds
+    return @{ ok = $ok; code = $code; message = 'Async' }
+  }
+
+  return @{ ok = ($code -ge 200 -and $code -lt 300); code = $code; message = 'NoAsyncHeader' }
+}
+
+function Purge-CognitiveServices-DeletedAccounts {
+  param(
+    [Parameter(Mandatory=$true)][string]$SubscriptionId,
+    [Parameter(Mandatory=$true)][object[]]$Accounts,
+    [int]$WaitMinutes = 20,
+    [int]$SettleMinutes = 20,
+    [string]$ApiVersion = '2025-04-01-preview',
+    [string[]]$ApiVersionFallbacks = @('2025-06-01','2024-10-01-preview','2023-05-01','2022-12-01'),
+    [int]$TimeoutMinutes = 20,
+    [int]$PollSeconds = 10
+  )
+
+  if (-not $Accounts -or $Accounts.Count -eq 0) {
+    Write-Host "   - No Cognitive Services accounts captured for purge." -ForegroundColor DarkYellow
+    return
+  }
+
+  $allApis = @($ApiVersion) + @($ApiVersionFallbacks | Where-Object { $_ -and $_ -ne $ApiVersion })
+
+  foreach ($a in $Accounts) {
+    $name = if ($null -ne $a.name) { [string]$a.name } else { '' }
+    $loc = if ($null -ne $a.location) { [string]$a.location } else { '' }
+    if ([string]::IsNullOrWhiteSpace($name) -or [string]::IsNullOrWhiteSpace($loc)) {
+      Write-Host "   (warn) Skipping purge for account with missing name/location." -ForegroundColor DarkYellow
+      continue
+    }
+
+    Write-Host "   - [Foundry] Purge deleted account record: $name (location: $loc)" -ForegroundColor Cyan
+
+    # Wait until the deleted account record becomes visible (eventual consistency)
+    $visible = $false
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
+    while ($sw.Elapsed.TotalMinutes -lt $WaitMinutes) {
+      foreach ($api in $allApis) {
+        if (Test-CognitiveServices-DeletedAccount-Exists -SubscriptionId $SubscriptionId -Location $loc -AccountName $name -ApiVersion $api) {
+          $visible = $true
+          break
+        }
+      }
+      if ($visible) { break }
+      Start-Sleep -Seconds $PollSeconds
+      Write-Host "     · waiting for deleted record to appear… (elapsed $([int]$sw.Elapsed.TotalSeconds)s)" -ForegroundColor DarkYellow
+    }
+
+    if (-not $visible) {
+      Write-Host "     (warn) Deleted account record not visible yet; purge may fail. Continuing…" -ForegroundColor DarkYellow
+    }
+
+    $purged = $false
+    foreach ($api in $allApis) {
+      try {
+        $r = Invoke-CognitiveServices-DeletedAccount-Purge -SubscriptionId $SubscriptionId -Location $loc -AccountName $name -ApiVersion $api -TimeoutMinutes $TimeoutMinutes -PollSeconds $PollSeconds
+        if ($r.ok) {
+          Write-Host "     · Purge request succeeded (api=$api, http=$($r.code))." -ForegroundColor DarkGreen
+          $purged = $true
+          break
+        }
+
+        Write-Host "     · Purge attempt failed (api=$api, http=$($r.code)); trying fallback…" -ForegroundColor DarkYellow
+      } catch {
+        Write-Host "     · Purge attempt threw (api=$api): $($_.Exception.Message)" -ForegroundColor DarkYellow
+      }
+    }
+
+    if (-not $purged) {
+      Write-Host "     (warn) Could not purge deleted account '$name'. It may already be purged or the API version may differ." -ForegroundColor DarkYellow
+    }
+  }
+
+  if ($SettleMinutes -gt 0) {
+    Write-Host "   - Waiting ${SettleMinutes} minute(s) for back-end unlink after purge…" -ForegroundColor Cyan
+    Start-Sleep -Seconds ($SettleMinutes * 60)
   }
 }
 
@@ -1572,7 +1717,15 @@ function Main {
   if (-not $SkipCognitiveServicesAccountDelete) {
     Write-Host ">> [Foundry] Trying to delete Cognitive Services accounts (retry on linkage)…" -ForegroundColor Cyan
     try {
+      $capturedAccounts = Get-CognitiveServices-Accounts-InRg -rg $script:RG
       Remove-CognitiveServices-Accounts-WithRetryInRg -rg $script:RG -TimeoutMinutes $AccountDeleteRetryTimeoutMinutes -PollSeconds $AccountDeleteRetryPollSeconds
+
+      if (-not $SkipCognitiveServicesAccountPurge) {
+        Write-Host ">> [Foundry] Purging deleted Cognitive Services accounts (best-effort)…" -ForegroundColor Cyan
+        Purge-CognitiveServices-DeletedAccounts -SubscriptionId $script:SUB -Accounts $capturedAccounts -WaitMinutes $AccountPurgeWaitMinutes -SettleMinutes $AccountPurgeSettleMinutes -ApiVersion $AccountPurgeApiVersion -ApiVersionFallbacks $AccountPurgeApiVersionFallbacks
+      } else {
+        Write-Host ">> [Foundry] Skipping Cognitive Services account purge (per -SkipCognitiveServicesAccountPurge)." -ForegroundColor DarkYellow
+      }
     } catch {
       Write-Host "   (warn) Cognitive Services account delete step failed: $($_.Exception.Message)" -ForegroundColor DarkYellow
       Write-Host "   (warn) Continuing with RG cleanup; RG deletion may still work and finish later." -ForegroundColor DarkYellow

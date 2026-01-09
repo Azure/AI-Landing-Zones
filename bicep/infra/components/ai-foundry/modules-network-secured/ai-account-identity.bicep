@@ -10,6 +10,8 @@ param modelDeployments array = []
 param agentSubnetId string
 param networkInjection string = 'true'
 
+var varIsNetworkInjected = networkInjection == 'true'
+
 var effectiveModelDeployments = !empty(modelDeployments)
   ? modelDeployments
   : [
@@ -36,14 +38,19 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   properties: {
     allowProjectManagement: true
     customSubDomainName: accountName
-    networkAcls: {
+    networkAcls: varIsNetworkInjected ? {
       defaultAction: 'Deny'
       virtualNetworkRules: []
       ipRules: []
-      bypass:'AzureServices'
+      bypass: 'AzureServices'
+    } : {
+      defaultAction: 'Allow'
+      virtualNetworkRules: []
+      ipRules: []
+      bypass: 'AzureServices'
     }
-    publicNetworkAccess: 'Disabled'
-    networkInjections: (networkInjection == 'true')
+    publicNetworkAccess: varIsNetworkInjected ? 'Disabled' : 'Enabled'
+    networkInjections: varIsNetworkInjected
       ? any([
           {
             scenario: 'agent'
