@@ -2,6 +2,17 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.10
+
+### Changed
+
+- Externalized landing zone outputs (resource IDs only) so workload teams can reference deployed dependencies directly ([issue #29](https://github.com/Azure/AI-Landing-Zones/issues/29)).
+  - Added/standardized `*ResourceId` outputs for key deployed resources (including Spoke VNet + subnets, with explicit Private Endpoints subnet ID).
+  - Added name-keyed output maps for variable-cardinality resources:
+    - `containerAppsResourceIdsByName` for multiple Container Apps.
+    - `aiFoundryModelDeploymentsResourceIdsByName` for multiple AI Foundry model deployments.
+  - Hardened Private DNS Zone output resolution by treating empty strings as “not provided”, ensuring outputs populate correctly when zones are created by this template.
+
 ## 0.1.9
 
 ### Changed
