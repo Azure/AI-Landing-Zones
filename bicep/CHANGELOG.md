@@ -2,6 +2,12 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.11
+
+### Changed
+
+- Adjusted AI Foundry wiring to support deployments without a workload VNet (skip VNet/PE-dependent configuration when running the “no VNet” scenario).
+
 ## 0.1.10
 
 ### Changed

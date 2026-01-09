@@ -166,6 +166,19 @@ var cosmosPassedIn = azureCosmosDBAccountResourceId != ''
 var keyVaultPassedIn = keyVaultResourceId != ''
 var existingVnetPassedIn = existingVnetResourceId != ''
 
+// When no VNet is available (neither created nor provided), the component must run in "public mode":
+// - No network injection (agent subnet not required)
+// - No private endpoints / private DNS
+// - Public network access enabled for created dependencies
+var varHasVnet = deployVnetAndSubnets || existingVnetPassedIn
+var effectiveDeployPrivateEndpointsAndDns = deployPrivateEndpointsAndDns && varHasVnet
+var effectiveConfigurePrivateDns = configurePrivateDns && varHasVnet
+
+var effectiveAiSearchPublicNetworkAccess = varHasVnet ? aiSearchPublicNetworkAccess : 'Enabled'
+var effectiveCosmosDbPublicNetworkAccess = varHasVnet ? cosmosDbPublicNetworkAccess : 'Enabled'
+var effectiveStorageAccountPublicNetworkAccess = varHasVnet ? storageAccountPublicNetworkAccess : 'Enabled'
+var effectiveKeyVaultPublicNetworkAccess = varHasVnet ? keyVaultPublicNetworkAccess : 'Enabled'
+
 
 var acsParts = split(aiSearchResourceId, '/')
 var aiSearchServiceSubscriptionId = searchPassedIn ? acsParts[2] : subscription().subscriptionId
@@ -187,6 +200,9 @@ var trimVnetName = trim(existingVnetName)
 
 @description('The name of the project capability host to be created')
 param projectCapHost string = 'caphostproj'
+
+@description('Optional. Account capability host name to create (standard/public mode). When empty, the module assumes the service auto-created accountName@aml_aiagentservice.')
+param accountCapHost string = ''
 
 @description('If false, skips creation of private endpoints and private DNS configuration (useful for Platform Landing Zone scenarios).')
 param deployPrivateEndpointsAndDns bool = true
@@ -247,7 +263,11 @@ param enableCapabilityHostDelayScript bool = true
 param capabilityHostWaitSeconds int = 600
 
 var effectiveCreateCapabilityHosts = createCapabilityHosts && includeAssociatedResources
-var aiSearchPublicNetworkAccessLower = aiSearchPublicNetworkAccess == 'Enabled' ? 'enabled' : 'disabled'
+var aiSearchPublicNetworkAccessLower = effectiveAiSearchPublicNetworkAccess == 'Enabled' ? 'enabled' : 'disabled'
+
+// In public/no-vnet mode, the service may not auto-provision the account-level capability host.
+// Default to creating one explicitly, unless the caller provided a specific name.
+var effectiveAccountCapHost = (!varHasVnet && empty(accountCapHost)) ? 'caphostacc' : accountCapHost
 
 // Create Virtual Network and Subnets
 module vnet 'modules-network-secured/network-agent-vnet.bicep' = if (deployVnetAndSubnets) {
@@ -270,7 +290,7 @@ var resolvedVnetName = (deployVnetAndSubnets ? vnet.?outputs.virtualNetworkName 
 var resolvedVnetResourceGroupName = (deployVnetAndSubnets ? vnet.?outputs.virtualNetworkResourceGroup : vnetResourceGroupName) ?? vnetResourceGroupName
 var resolvedVnetSubscriptionId = (deployVnetAndSubnets ? vnet.?outputs.virtualNetworkSubscriptionId : vnetSubscriptionId) ?? vnetSubscriptionId
 
-var resolvedAgentSubnetId = (deployVnetAndSubnets ? vnet.?outputs.agentSubnetId : null) ?? '${existingVnetResourceId}/subnets/${agentSubnetName}'
+var resolvedAgentSubnetId = (deployVnetAndSubnets ? vnet.?outputs.agentSubnetId : null) ?? (!empty(existingVnetResourceId) ? '${existingVnetResourceId}/subnets/${agentSubnetName}' : '')
 
 var resolvedPeSubnetName = (deployVnetAndSubnets ? vnet.?outputs.peSubnetName : peSubnetName) ?? peSubnetName
 
@@ -289,7 +309,8 @@ module aiAccount 'modules-network-secured/ai-account-identity.bicep' = {
     modelSkuName: modelSkuName
     modelCapacity: modelCapacity
     modelDeployments: modelDeployments
-    agentSubnetId: resolvedAgentSubnetId
+    agentSubnetId: varHasVnet ? resolvedAgentSubnetId : ''
+    networkInjection: varHasVnet ? 'true' : 'false'
   }
 }
 
@@ -323,7 +344,7 @@ module keyVault '../../wrappers/avm.res.key-vault.vault.bicep' = if (includeAsso
       name: keyVaultName
       location: location
       enableRbacAuthorization: true
-      publicNetworkAccess: keyVaultPublicNetworkAccess
+      publicNetworkAccess: effectiveKeyVaultPublicNetworkAccess
       networkAcls: empty(keyVaultNetworkAcls) ? null : keyVaultNetworkAcls
     }
   }
@@ -342,9 +363,9 @@ module aiDependencies 'modules-network-secured/standard-dependent-resources.bice
     // Network ACLs / Public Access
     aiSearchPublicNetworkAccess: aiSearchPublicNetworkAccessLower
     aiSearchNetworkRuleSet: aiSearchNetworkRuleSet
-    cosmosDbPublicNetworkAccess: cosmosDbPublicNetworkAccess
+    cosmosDbPublicNetworkAccess: effectiveCosmosDbPublicNetworkAccess
     cosmosDbIpRules: cosmosDbIpRules
-    storageAccountPublicNetworkAccess: storageAccountPublicNetworkAccess
+    storageAccountPublicNetworkAccess: effectiveStorageAccountPublicNetworkAccess
     storageAccountNetworkAcls: storageAccountNetworkAcls
 
     // AI Search Service parameters
@@ -372,7 +393,7 @@ resource keyVaultExisting 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (
 // 2. Sets up private DNS zones for each service
 // 3. Links private DNS zones to the VNet for name resolution
 // 4. Configures network policies to restrict access to private endpoints only
-module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.bicep' = if (deployPrivateEndpointsAndDns) {
+module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.bicep' = if (effectiveDeployPrivateEndpointsAndDns) {
   name: '${deploymentSuffix}-private-endpoint'
   params: {
     aiAccountName: aiAccount.outputs.accountName // AI Services to secure
@@ -397,7 +418,7 @@ module privateEndpointAndDNS 'modules-network-secured/private-endpoint-and-dns.b
       ? resolvedKeyVaultResourceGroupName
       : resourceGroup().name
     existingDnsZones: existingDnsZones
-    configurePrivateDns: configurePrivateDns
+    configurePrivateDns: effectiveConfigurePrivateDns
   }
   dependsOn: [
     #disable-next-line BCP321
@@ -437,7 +458,7 @@ module aiProjectWithConnections 'modules-network-secured/ai-project-identity.bic
       #disable-next-line BCP321
       (includeAssociatedResources && !keyVaultPassedIn) ? keyVault : null
       #disable-next-line BCP321
-      deployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
+      effectiveDeployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
   ]
 }
 
@@ -475,7 +496,7 @@ module storageAccountRoleAssignment 'modules-network-secured/azure-storage-accou
   }
   dependsOn: [
    #disable-next-line BCP321
-   deployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
+   effectiveDeployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
   ]
 }
 
@@ -489,7 +510,7 @@ module cosmosAccountRoleAssignments 'modules-network-secured/cosmosdb-account-ro
   }
   dependsOn: [
     #disable-next-line BCP321
-    deployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
+    effectiveDeployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
   ]
 }
 
@@ -503,7 +524,7 @@ module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignmen
   }
   dependsOn: [
     #disable-next-line BCP321
-    deployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
+    effectiveDeployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
   ]
 }
 
@@ -517,12 +538,13 @@ module addProjectCapabilityHost 'modules-network-secured/add-project-capability-
     azureStorageConnection: aiProjectWithConnections!.outputs.azureStorageConnection
     aiSearchConnection: aiProjectWithConnections!.outputs.aiSearchConnection
     projectCapHost: projectCapHost
+    accountCapHost: effectiveAccountCapHost
     enableCapabilityHostDelayScript: enableCapabilityHostDelayScript
     capabilityHostWaitSeconds: capabilityHostWaitSeconds
   }
   dependsOn: [
       #disable-next-line BCP321
-      deployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
+      effectiveDeployPrivateEndpointsAndDns ? privateEndpointAndDNS : null
      cosmosAccountRoleAssignments
      storageAccountRoleAssignment
      aiSearchRoleAssignments

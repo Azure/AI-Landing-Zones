@@ -121,6 +121,21 @@ if [ -n "$CURRENT_ACCOUNT" ]; then
     printf "${GRAY}  [i] Current account: %s (%s)${NC}\n" "$ACCOUNT_NAME" "$ACCOUNT_ID"
 fi
 
+# Validate that we can actually acquire an ARM token.
+# This is required for `bicep restore` when using Template Specs (`ts:` references).
+print_gray "Checking ARM token acquisition..."
+if ! az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv > /dev/null 2>&1; then
+    echo ""
+    print_error "Azure CLI token acquisition failed (ARM). This will break Template Spec restore/build."
+    print_warning "Fix suggestions:"
+    print_warning "    1) Run: az login --use-device-code"
+    print_warning "    2) Run: az account set --subscription <subscription-id>"
+    print_warning "    3) Or disable Template Specs for local tests: azd env set AZURE_DEPLOY_TS false"
+    echo ""
+    exit 1
+fi
+print_success "ARM token acquired"
+
 # Check Azure Developer CLI authentication (optional but recommended)
 print_gray "Checking Azure Developer CLI authentication..."
 if azd auth login --check-status > /dev/null 2>&1; then

@@ -63,6 +63,22 @@ try {
   $currentAccount = az account show --query "{name:name, id:id}" -o json | ConvertFrom-Json
   Write-Host "  [+] Azure CLI authenticated" -ForegroundColor Green
   Write-Host "  [i] Current account: $($currentAccount.name) ($($currentAccount.id))" -ForegroundColor DarkGray
+
+  # Validate that we can actually acquire an ARM token.
+  # This is required for `bicep restore` when using Template Specs (`ts:` references).
+  Write-Host "  Checking ARM token acquisition..." -ForegroundColor Gray
+  $armToken = az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv 2>&1
+  if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($armToken)) {
+    Write-Host "" 
+    Write-Host "  [X] Azure CLI token acquisition failed (ARM). This will break Template Spec restore/build." -ForegroundColor Red
+    Write-Host "  [!] Fix suggestions:" -ForegroundColor Yellow
+    Write-Host "      1) Run: az login --use-device-code" -ForegroundColor White
+    Write-Host "      2) Run: az account set --subscription <subscription-id>" -ForegroundColor White
+    Write-Host "      3) Or disable Template Specs for local tests: azd env set AZURE_DEPLOY_TS false" -ForegroundColor White
+    Write-Host "" 
+    exit 1
+  }
+  Write-Host "  [+] ARM token acquired" -ForegroundColor Green
 } catch {
   Write-Host ""
   Write-Host "  [X] Not authenticated with Azure CLI" -ForegroundColor Red
@@ -707,10 +723,13 @@ if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
   Write-Host "[6] Step 6: Restoring Template Spec artifacts..." -ForegroundColor Cyan
 
   # Warm up token (helps avoid intermittent Azure CLI auth timeouts during restore)
-  try {
-    $null = az account get-access-token --resource https://management.azure.com/ --query expiresOn -o tsv 2>$null
-  } catch {
-    # non-fatal
+  $tokenWarmup = az account get-access-token --resource https://management.azure.com/ --query expiresOn -o tsv 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "  [!] ARM token warm-up failed (non-fatal). Restore may still work." -ForegroundColor Yellow
+    $msg = ($tokenWarmup | Out-String).Trim()
+    if (-not [string]::IsNullOrWhiteSpace($msg)) {
+      Write-Host "      $msg" -ForegroundColor DarkYellow
+    }
   }
 
   $maxRestoreAttempts = 5
@@ -718,9 +737,15 @@ if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
     Write-Host "  [i] bicep restore attempt $attempt/$maxRestoreAttempts" -ForegroundColor Gray
     try {
       if (Get-Command bicep -ErrorAction SilentlyContinue) {
-        bicep restore $mainBicepPath 2>$null | Out-Null
+        $restoreOutput = & bicep restore $mainBicepPath 2>&1
+        if ($LASTEXITCODE -ne 0) {
+          throw "bicep restore failed (exit $LASTEXITCODE):`n$($restoreOutput | Out-String)"
+        }
       } else {
-        az bicep restore --file $mainBicepPath 2>$null | Out-Null
+        $restoreOutput = & az bicep restore --file $mainBicepPath 2>&1
+        if ($LASTEXITCODE -ne 0) {
+          throw "az bicep restore failed (exit $LASTEXITCODE):`n$($restoreOutput | Out-String)"
+        }
       }
       Write-Host "  [+] Artifact restore completed" -ForegroundColor Green
       break
