@@ -1056,7 +1056,7 @@
 </ul>
 <h2 id="how-deployments-run-azd-template-specs">How deployments run (azd + Template Specs)</h2>
 <p>Deployments typically run through <code>azd provision</code>.</p>
-<p>This repo uses <strong>Template Specs</strong> during provisioning to bypass the ARM template size limit. In general:</p>
+<p>The bicep implementation uses <strong>Template Specs</strong> during provisioning to bypass the ARM template size limit. In general:</p>
 <ul>
 <li>Pre-provision scripts build/publish Template Specs</li>
 <li>The deployment executes using those Template Specs</li>
