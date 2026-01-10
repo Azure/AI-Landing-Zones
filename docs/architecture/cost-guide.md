@@ -124,7 +124,7 @@
 **Virtual Network**
 
 - **Service:** Virtual Network
-- **Address space:** 192.168.0.0/24 (256 IPs)
+- **Address space:** 192.168.0.0/23 (512 IPs)
 - **Subnets:** 9 subnets
 - **Peering:** Hub-spoke peering (optional, if configured)
 - **Data transfer (peering):** 100 GB/month (if using peering)

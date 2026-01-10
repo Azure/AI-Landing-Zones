@@ -19,7 +19,7 @@ Depending on your parameters, the deployment can create or reuse a workload (spo
 
 **Workload VNet and default subnets**
 
-When the deployment creates the workload VNet (instead of reusing an existing one), the default name is `vnet-${baseName}` and the default address space is `192.168.0.0/24`. If you do not provide `vNetDefinition.subnets`, the template applies a default subnet set.
+When the deployment creates the workload VNet (instead of reusing an existing one), the default name is `vnet-${baseName}` and the default address space is `192.168.0.0/23`. If you do not provide `vNetDefinition.subnets`, the template applies a default subnet set.
 
 The default subnet set differs by mode. Standalone mode uses the full set (including Bastion/Firewall/Jumpbox subnets). Platform-integrated mode uses a reduced set, because those components are expected to live in the platform hub.
 
@@ -37,13 +37,14 @@ Minimum is the smallest supported subnet prefix for the component (a hard requir
 | `AzureFirewallSubnet` | `192.168.0.128/26` | 64 | `/26` | `/26`; `/25` for headroom | [Firewall subnet size FAQ](https://learn.microsoft.com/en-us/azure/firewall/firewall-faq#why-does-azure-firewall-need-a--26-subnet-size) |
 | `appgw-subnet` | `192.168.0.192/27` | 32 | `/29` | `/27` or larger | [Application Gateway subnet sizing](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#size-of-the-subnet) |
 | `apim-subnet` | `192.168.0.224/27` | 32 | `/28` | `/27` or larger | [API Management subnet sizing](https://learn.microsoft.com/en-us/azure/api-management/virtual-network-injection-resources#subnet-size) |
-| `jumpbox-subnet` | `192.168.1.0/28` | 16 | `/29` | `/28` | - |
-| `aca-env-subnet` | `192.168.2.0/27` | 32 | `/27` | `/23`; `/22` for scale-out | [Container Apps subnet requirements](https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks#subnet) |
+| `jumpbox-subnet` | `192.168.1.64/28` | 16 | `/29` | `/28` | - |
+| `aca-env-subnet` | `192.168.1.0/27` | 32 | `/27` | `/27` or larger | [Container Apps subnet requirements](https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks#subnet) |
 | `devops-agents-subnet` | `192.168.1.32/27` | 32 | `/28` | `/27` | - |
 
 > Notes:
 > - `agent-subnet` and `aca-env-subnet` are delegated to `Microsoft.App/environments`.
 > - `pe-subnet` disables private endpoint network policies and is intended to host private endpoints.
+> - Container Apps consumption-only environments require a `/23` subnet; workload profiles environments can use `/27` or larger.
 > - In platform-integrated mode, the template typically creates or uses `agent-subnet`, `pe-subnet`, `appgw-subnet`, `apim-subnet`, `aca-env-subnet`, and `devops-agents-subnet`.
 > - You can override defaults by setting `vNetDefinition.addressPrefixes` and/or `vNetDefinition.subnets`.
 > - Azure reserves 5 IP addresses in each subnet; usable IPs are fewer than the total: https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-faq#are-there-any-restrictions-on-using-ip-addresses-within-these-subnets.
@@ -58,7 +59,7 @@ In platform-integrated mode, the template avoids creating hub-owned subnets (Bas
 | `pe-subnet` | `192.168.0.32/27` | 32 | `/28` | `/27` or larger | [Private Endpoint properties](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview#private-endpoint-properties) |
 | `appgw-subnet` | `192.168.0.192/27` | 32 | `/29` | `/27` or larger | [Application Gateway subnet sizing](https://learn.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#size-of-the-subnet) |
 | `apim-subnet` | `192.168.0.224/27` | 32 | `/28` | `/27` or larger | [API Management subnet sizing](https://learn.microsoft.com/en-us/azure/api-management/virtual-network-injection-resources#subnet-size) |
-| `aca-env-subnet` | `192.168.2.0/27` | 32 | `/23` | `/23`; `/22` for scale-out | [Container Apps subnet requirements](https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks#subnet) |
+| `aca-env-subnet` | `192.168.1.0/27` | 32 | `/27` | `/27` or larger | [Container Apps subnet requirements](https://learn.microsoft.com/en-us/azure/container-apps/custom-virtual-networks#subnet) |
 | `devops-agents-subnet` | `192.168.1.32/27` | 32 | `/28` | `/27` | - |
 
 **Private endpoints and DNS**
