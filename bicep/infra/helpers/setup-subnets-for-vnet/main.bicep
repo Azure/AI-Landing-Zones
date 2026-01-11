@@ -4,6 +4,9 @@ targetScope = 'resourceGroup'
 @description('Required. Configuration for adding subnets to an existing VNet.')
 param existingVNetSubnetsDefinition object
 
+@description('Required. Resource ID of the existing Virtual Network where subnets will be created/updated.')
+param virtualNetworkResourceId string
+
 @description('Required. NSG resource IDs for automatic association with subnets.')
 param nsgResourceIds object
 
@@ -138,7 +141,7 @@ var subnetsForExistingVnet = existingVNetSubnetsDefinition.?useDefaultSubnets !=
 module existingVNetSubnetsDeployment '../deploy-subnets-to-vnet/main.bicep' = {
   name: 'm-deploy-subnets'
   params: {
-    existingVNetName: existingVNetSubnetsDefinition.existingVNetName
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: subnetsForExistingVnet
     apimSubnetDelegationServiceName: apimSubnetDelegationServiceName
   }

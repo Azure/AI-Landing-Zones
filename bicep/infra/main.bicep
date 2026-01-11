@@ -731,27 +731,14 @@ param vNetDefinition vNetDefinitionType?
 param existingVNetSubnetsDefinition existingVNetSubnetsDefinitionType?
 
 var varDeployVnet = deployToggles.virtualNetwork && empty(resourceIds.?virtualNetworkResourceId)
-var varDeploySubnetsToExistingVnet = existingVNetSubnetsDefinition != null
-
-// Parse existing VNet Resource ID for cross-subscription/resource group support
-var varExistingVNetIdSegments = varDeploySubnetsToExistingVnet
-  ? split(existingVNetSubnetsDefinition!.existingVNetName, '/')
-  : array([])
-var varIsExistingVNetResourceId = varDeploySubnetsToExistingVnet && length(varExistingVNetIdSegments) > 1
-var varExistingVNetSubscriptionId = varDeploySubnetsToExistingVnet && varIsExistingVNetResourceId && length(varExistingVNetIdSegments) >= 3
-  ? varExistingVNetIdSegments[2]
-  : ''
-var varExistingVNetResourceGroupName = varDeploySubnetsToExistingVnet && varIsExistingVNetResourceId && length(varExistingVNetIdSegments) >= 5
-  ? varExistingVNetIdSegments[4]
-  : ''
-var varIsCrossScope = varIsExistingVNetResourceId && !empty(varExistingVNetSubscriptionId) && !empty(varExistingVNetResourceGroupName)
+// Subnet deployment to an existing VNet requires the VNet Resource ID as the single source of truth.
+var varHasSpokeVnetResourceId = !empty(resourceIds.?virtualNetworkResourceId)
+var varDeploySubnetsToExistingVnet = (existingVNetSubnetsDefinition != null) && varHasSpokeVnetResourceId
 
 // Determine the Resource Group scope where the VNet lives.
 // This must be start-of-deployment evaluable (BCP177-safe), so we ONLY derive it from inputs:
-// - resourceIds.virtualNetworkResourceId (preferred when reusing an existing VNet)
-// - existingVNetSubnetsDefinition.existingVNetName (only when it is a full resource ID)
+// - resourceIds.virtualNetworkResourceId (single source of truth when reusing an existing VNet)
 // When neither is provided, the VNet is created in the current resource group.
-var varHasSpokeVnetResourceId = !empty(resourceIds.?virtualNetworkResourceId)
 var varSpokeVnetIdSegments = varHasSpokeVnetResourceId ? split(resourceIds.virtualNetworkResourceId!, '/') : array([])
 var varSpokeVnetSubscriptionId = varHasSpokeVnetResourceId && length(varSpokeVnetIdSegments) >= 3
   ? varSpokeVnetIdSegments[2]
@@ -760,23 +747,21 @@ var varSpokeVnetResourceGroupName = varHasSpokeVnetResourceId && length(varSpoke
   ? varSpokeVnetIdSegments[4]
   : ''
 
+var varIsCrossScope = varHasSpokeVnetResourceId && !empty(varSpokeVnetSubscriptionId) && !empty(varSpokeVnetResourceGroupName) && (varSpokeVnetSubscriptionId != subscription().subscriptionId || varSpokeVnetResourceGroupName != resourceGroup().name)
+
 var varVnetScopeSubscriptionId = varHasSpokeVnetResourceId
   ? varSpokeVnetSubscriptionId
-  : (varIsCrossScope ? varExistingVNetSubscriptionId : subscription().subscriptionId)
+  : subscription().subscriptionId
 var varVnetScopeResourceGroupName = varHasSpokeVnetResourceId
   ? varSpokeVnetResourceGroupName
-  : (varIsCrossScope ? varExistingVNetResourceGroupName : resourceGroup().name)
+  : resourceGroup().name
 var varVnetResourceGroupScope = resourceGroup(varVnetScopeSubscriptionId, varVnetScopeResourceGroupName)
 
 // When reusing an existing spoke VNet, we may still want to create the spoke->hub peering.
 // To keep peering deployment conditions start-of-deployment evaluable (BCP177), derive the local VNet name only from inputs.
 var varSpokeVnetNameForPeering = !empty(resourceIds.?virtualNetworkResourceId)
   ? split(resourceIds.virtualNetworkResourceId!, '/')[8]
-  : (varDeploySubnetsToExistingVnet
-    ? (varIsExistingVNetResourceId
-      ? varExistingVNetIdSegments[8]
-      : existingVNetSubnetsDefinition!.existingVNetName)
-    : '')
+  : (varDeployVnet ? (vNetDefinition.?name ?? 'vnet-${baseName}') : '')
 
 // Default subnet set for standalone spoke deployments.
 // In Platform Landing Zone mode, hub-level subnets (Firewall/Bastion/Jumpbox) are expected to exist in the platform hub,
@@ -945,6 +930,7 @@ module existingVNetSubnets './helpers/setup-subnets-for-vnet/main.bicep' = if (v
   params: {
     flagPlatformLandingZone: flagPlatformLandingZone
     existingVNetSubnetsDefinition: existingVNetSubnetsDefinition!
+    virtualNetworkResourceId: resourceIds.virtualNetworkResourceId!
     nsgResourceIds: {
       agentNsgResourceId: agentNsgResourceId!
       peNsgResourceId: peNsgResourceId!
@@ -962,10 +948,11 @@ module existingVNetSubnets './helpers/setup-subnets-for-vnet/main.bicep' = if (v
 // Deploy subnets to existing VNet (cross-scope)
 module existingVNetSubnetsCrossScope './helpers/setup-subnets-for-vnet/main.bicep' = if (varDeploySubnetsToExistingVnet && varIsCrossScope) {
   name: 'm-existing-vnet-subnets-cross-scope'
-  scope: resourceGroup(varExistingVNetSubscriptionId, varExistingVNetResourceGroupName)
+  scope: resourceGroup(varSpokeVnetSubscriptionId, varSpokeVnetResourceGroupName)
   params: {
     flagPlatformLandingZone: flagPlatformLandingZone
     existingVNetSubnetsDefinition: existingVNetSubnetsDefinition!
+    virtualNetworkResourceId: resourceIds.virtualNetworkResourceId!
     nsgResourceIds: {
       agentNsgResourceId: agentNsgResourceId!
       peNsgResourceId: peNsgResourceId!
@@ -974,16 +961,13 @@ module existingVNetSubnetsCrossScope './helpers/setup-subnets-for-vnet/main.bice
       jumpboxNsgResourceId: jumpboxNsgResourceId!
       acaEnvironmentNsgResourceId: acaEnvironmentNsgResourceId!
       devopsBuildAgentsNsgResourceId: devopsBuildAgentsNsgResourceId!
+      bastionNsgResourceId: bastionNsgResourceId!
     }
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
 }
 
-var existingVNetResourceId = varDeploySubnetsToExistingVnet
-  ? (varIsCrossScope
-      ? existingVNetSubnetsCrossScope!.outputs.virtualNetworkResourceId
-      : existingVNetSubnets!.outputs.virtualNetworkResourceId)
-  : ''
+var existingVNetResourceId = varDeploySubnetsToExistingVnet ? resourceIds.virtualNetworkResourceId! : ''
 
 // 3.3 VNet Resource ID Resolution
 var virtualNetworkResourceId = resourceIds.?virtualNetworkResourceId ?? (varDeploySpokeToHubPeering && varDeployVnet
@@ -1017,7 +1001,7 @@ var varIsPlatformLz = flagPlatformLandingZone
 // - Private Endpoints are created in the workload (spoke) VNet in both modes.
 // - Private DNS Zones are created by this template only when NOT integrating with a Platform Landing Zone.
 // IMPORTANT: This must be start-of-deployment evaluable (BCP178-safe). Do not reference module outputs here.
-var varHasVnet = deployToggles.virtualNetwork || !empty(resourceIds.?virtualNetworkResourceId) || (existingVNetSubnetsDefinition != null)
+var varHasVnet = deployToggles.virtualNetwork || !empty(resourceIds.?virtualNetworkResourceId) || varDeploySubnetsToExistingVnet
 var varDeployPrivateDnsZones = !varIsPlatformLz && varHasVnet
 var varDeployPrivateEndpoints = varHasVnet
 
@@ -1590,7 +1574,7 @@ module spokeToHubPeering './components/vnet-peering/main.bicep' = if (varDeployS
 
 module spokeToHubPeeringCrossScope './components/vnet-peering/main.bicep' = if (varDeploySpokeToHubPeering && !varDeployVnet && varIsCrossScope && !empty(varSpokeVnetNameForPeering)) {
   name: 'm-spoke-to-hub-peering-cross-scope'
-  scope: resourceGroup(varExistingVNetSubscriptionId, varExistingVNetResourceGroupName)
+  scope: resourceGroup(varSpokeVnetSubscriptionId, varSpokeVnetResourceGroupName)
   params: {
     localVnetName: varSpokeVnetNameForPeering
     remotePeeringName: hubVnetPeeringDefinition!.?name ?? 'to-hub'
@@ -1666,6 +1650,10 @@ module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep
   dependsOn: [
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -1721,6 +1709,10 @@ module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = i
   dependsOn: [
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -1767,6 +1759,10 @@ module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoin
     varDeployContainerAppEnv ? containerEnv : null
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 
 }
@@ -1812,6 +1808,10 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
     (varDeployAcr) ? containerRegistry : null
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -1856,6 +1856,10 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
   dependsOn: [
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -1900,6 +1904,10 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
     varDeployCosmosDb ? cosmosDbModule : null
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -1948,6 +1956,10 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
     (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -1992,6 +2004,10 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
     varDeployKeyVault ? keyVaultModule : null
     #disable-next-line BCP321
     varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -2158,6 +2174,12 @@ module containerEnv 'wrappers/avm.res.app.managed-environment.bicep' = if (varDe
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
     (empty(resourceIds.?logAnalyticsWorkspaceResourceId!)) ? logAnalytics : null
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -2535,6 +2557,14 @@ module apiManagementNative 'components/apim/main.bicep' = if (varDeployApimNativ
       apimDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
+  ]
 }
 
 #disable-next-line BCP081
@@ -2571,6 +2601,14 @@ module apiManagement 'wrappers/avm.res.api-management.service.bicep' = if (varDe
       apimDefinition ?? {}
     )
   }
+  dependsOn: [
+    #disable-next-line BCP321
+    (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
+  ]
 }
 
 // -----------------------
@@ -2704,6 +2742,12 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
   dependsOn: [
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
     #disable-next-line BCP321
     (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
     #disable-next-line BCP321
@@ -2955,6 +2999,10 @@ module applicationGateway 'wrappers/avm.res.network.application-gateway.bicep' =
     (varDeployApGatewayPip) ? appGatewayPipWrapper : null
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -3049,6 +3097,10 @@ module azureFirewall 'wrappers/avm.res.network.azure-firewall.bicep' = if (varDe
     // Virtual Network dependency
     #disable-next-line BCP321
     empty(resourceIds.?virtualNetworkResourceId!) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -3161,7 +3213,7 @@ module udrSubnetAssociation01 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   name: 'm-udr-subnet-association-01'
   scope: varVnetResourceGroupScope
   params: {
-    existingVNetName: virtualNetworkResourceId
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[0]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
@@ -3179,7 +3231,7 @@ module udrSubnetAssociation02 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   name: 'm-udr-subnet-association-02'
   scope: varVnetResourceGroupScope
   params: {
-    existingVNetName: virtualNetworkResourceId
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[1]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
@@ -3192,7 +3244,7 @@ module udrSubnetAssociation03 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   name: 'm-udr-subnet-association-03'
   scope: varVnetResourceGroupScope
   params: {
-    existingVNetName: virtualNetworkResourceId
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[2]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
@@ -3205,7 +3257,7 @@ module udrSubnetAssociation04 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   name: 'm-udr-subnet-association-04'
   scope: varVnetResourceGroupScope
   params: {
-    existingVNetName: virtualNetworkResourceId
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[3]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
@@ -3218,7 +3270,7 @@ module udrSubnetAssociation05 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   name: 'm-udr-subnet-association-05'
   scope: varVnetResourceGroupScope
   params: {
-    existingVNetName: virtualNetworkResourceId
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[4]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
@@ -3231,7 +3283,7 @@ module udrSubnetAssociation06 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   name: 'm-udr-subnet-association-06'
   scope: varVnetResourceGroupScope
   params: {
-    existingVNetName: virtualNetworkResourceId
+    virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[5]]
     apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
@@ -3332,6 +3384,10 @@ module buildVm 'wrappers/avm.res.compute.build-vm.bicep' = if (varDeployBuildVm)
   dependsOn: [
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
@@ -3457,6 +3513,10 @@ module jumpVm 'wrappers/avm.res.compute.jump-vm.bicep' = if (varDeployJumpVm) {
   dependsOn: [
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
+    #disable-next-line BCP321
+    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
   ]
 }
 
