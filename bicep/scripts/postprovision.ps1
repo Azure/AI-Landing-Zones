@@ -169,11 +169,55 @@ if ($TemplateSpecRG -and ($TemplateSpecRG -ne $ResourceGroup)) {
 Write-Host ""
 
 #===============================================================================
-# STEP 3: DIRECTORY CLEANUP
+# STEP 3: CLEAN UP AI FOUNDRY WAIT DEPLOYMENT SCRIPTS
 #===============================================================================
 
-# Step 3: Clean up deploy directory
-Write-Host "[3] Step 3: Cleaning up deploy directory..." -ForegroundColor Cyan
+Write-Host "[3] Step 3: Removing AI Foundry capability-host wait deployment scripts..." -ForegroundColor Cyan
+
+try {
+  # Best-effort cleanup: these scripts are a transient workaround and should not be left behind.
+  # If the resource type is not registered, the CLI isn't available, or the scripts don't exist,
+  # we log and continue.
+  $waitScripts = az resource list -g $ResourceGroup --resource-type Microsoft.Resources/deploymentScripts --query "[?ends_with(name, '-wait-capabilityhost')].name" -o tsv 2>$null
+
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to list deploymentScripts in Resource Group: $ResourceGroup"
+  }
+
+  if ($waitScripts -and $waitScripts.Trim() -ne '') {
+    $waitScriptsArray = $waitScripts -split "`n" | Where-Object { $_.Trim() -ne '' }
+    Write-Host "  [i] Found $($waitScriptsArray.Count) deployment script(s) to remove" -ForegroundColor Yellow
+
+    foreach ($scriptName in $waitScriptsArray) {
+      $scriptName = $scriptName.Trim()
+      if ($scriptName) {
+        Write-Host "    [X] Removing: $scriptName" -ForegroundColor Gray
+        try {
+          az resource delete -g $ResourceGroup --resource-type Microsoft.Resources/deploymentScripts -n $scriptName --only-show-errors 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            throw "az resource delete failed"
+          }
+          Write-Host "    [+] Removed: $scriptName" -ForegroundColor Green
+        } catch {
+          Write-Host "    [!] Failed to remove: $scriptName" -ForegroundColor Yellow
+        }
+      }
+    }
+  } else {
+    Write-Host "  [i] No AI Foundry wait deployment scripts found" -ForegroundColor Gray
+  }
+} catch {
+  Write-Host "  [!] Error during deployment script cleanup: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+Write-Host ""
+
+#===============================================================================
+# STEP 4: DIRECTORY CLEANUP
+#===============================================================================
+
+# Step 4: Clean up deploy directory
+Write-Host "[4] Step 4: Cleaning up deploy directory..." -ForegroundColor Cyan
 if (Test-Path $deployDir) {
   Remove-Item -Path $deployDir -Recurse -Force
   Write-Host "  [+] Removed deploy directory: ./deploy/" -ForegroundColor Green

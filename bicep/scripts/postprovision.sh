@@ -204,11 +204,40 @@ fi
 echo ""
 
 #===============================================================================
-# STEP 3: DIRECTORY CLEANUP
+# STEP 3: REMOVE AI FOUNDRY WAIT DEPLOYMENT SCRIPTS
 #===============================================================================
 
-# Step 3: Clean up deploy directory
-print_step "3" "Step 3: Cleaning up deploy directory..."
+print_step "3" "Step 3: Removing AI Foundry capability-host wait deployment scripts..."
+
+wait_scripts="$(az resource list -g "$RESOURCE_GROUP" --resource-type Microsoft.Resources/deploymentScripts --query "[?ends_with(name, '-wait-capabilityhost')].name" -o tsv 2>/dev/null || true)"
+
+if [ -n "$wait_scripts" ]; then
+    count=$(echo "$wait_scripts" | wc -l | tr -d ' ')
+    print_info "Found $count deployment script(s) to remove"
+
+    echo "$wait_scripts" | while IFS= read -r script_name; do
+        script_name=$(echo "$script_name" | tr -d '\r\n' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+        if [ -n "$script_name" ]; then
+            printf "${GRAY}    [X] Removing: %s${NC}\n" "$script_name"
+            if az resource delete -g "$RESOURCE_GROUP" --resource-type Microsoft.Resources/deploymentScripts -n "$script_name" --only-show-errors > /dev/null 2>&1; then
+                printf "${GREEN}    [+] Removed: %s${NC}\n" "$script_name"
+            else
+                printf "${YELLOW}    [!] Failed to remove: %s${NC}\n" "$script_name"
+            fi
+        fi
+    done
+else
+    print_gray "No AI Foundry wait deployment scripts found"
+fi
+
+echo ""
+
+#===============================================================================
+# STEP 4: DIRECTORY CLEANUP
+#===============================================================================
+
+# Step 4: Clean up deploy directory
+print_step "4" "Step 4: Cleaning up deploy directory..."
 if [ -d "$deploy_dir" ]; then
     rm -rf "$deploy_dir"
     print_success "Removed deploy directory: ./deploy/"
