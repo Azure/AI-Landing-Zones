@@ -2,6 +2,20 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.13
+
+### Changed
+
+- Improved support for reusing an existing VNet (including cross-resource-group VNets) by standardizing VNet identity on `resourceIds.virtualNetworkResourceId`.
+  - Removed `existingVNetName` from the `existingVNetSubnetsDefinition` shape and updated helper modules to accept the VNet resource ID.
+  - Scoped subnet/VNet-bound operations to the VNet’s resource group derived from the provided VNet resource ID.
+- Hardened deployment ordering for “existing VNet + create/update subnets” scenarios by adding explicit dependencies so subnet consumers wait for subnet deployment to complete.
+- Added/updated deployment sample for “Existing VNet (create/update subnets)” to reflect the single-source-of-truth VNet resource ID approach.
+
+### Fixed
+
+- Reduced intermittent subnet update failures (`AnotherOperationInProgress`) by serializing subnet deployments/updates to the existing VNet.
+
 ## 0.1.12
 
 ### Changed

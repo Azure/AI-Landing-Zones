@@ -1560,9 +1560,6 @@ type subnetNamesDefinitionType = {
 @export()
 @description('Configuration object for adding subnets to an existing Virtual Network.')
 type existingVNetSubnetsDefinitionType = {
-  @description('Required. Name or Resource ID of the existing Virtual Network. For cross-subscription/resource group scenarios, use the full Resource ID format: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Network/virtualNetworks/{vnet-name}')
-  existingVNetName: string
-
   @description('Optional. Use default AI Landing Zone subnets with 192.168.x.x addressing. Default: true.')
   useDefaultSubnets: bool?
 
