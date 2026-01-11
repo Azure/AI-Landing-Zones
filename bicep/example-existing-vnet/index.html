@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#existing-vnet-example" class="md-skip">
+        <a href="#ai-lz-using-an-existing-vnet" class="md-skip">
           Skip to content
         </a>
       
@@ -781,24 +781,8 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    With Existing VNet
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -816,34 +800,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#existing-vnet-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Existing VNet Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -939,46 +895,304 @@
   
 
 
-  <h1>With Existing VNet</h1>
-
-<h2 id="existing-vnet-example">Existing VNet Example</h2>
-<p>Choose Existing VNet when you need the landing zone to deploy into networking that already exists. In this mode the template reuses your VNet and subnets rather than creating new networking resources.</p>
-<p>Start from <a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.existing-vnet.bicepparam">bicep/infra/sample.existing-vnet.bicepparam</a>. This setup reuses an existing VNet, expects the required subnets to already exist (by name), and may still update subnet associations based on your selected toggles.</p>
-<p>Key parameters in this sample:</p>
+<h1 id="ai-lz-using-an-existing-vnet">AI LZ using an existing VNet</h1>
+<p>This walkthrough validates deploying the AI Landing Zone into a VNet that already exists. It is intended for learning and validation, and it follows the same expectations described in the networking and platform guidance.</p>
+<p><strong>Sample parameter files</strong></p>
 <table>
 <thead>
 <tr>
-<th>Setting</th>
-<th>Typical value</th>
+<th>File</th>
+<th>Scenario</th>
+<th>What happens to the VNet and subnets</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>deployToggles.virtualNetwork</code></td>
-<td><code>false</code></td>
+<td><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.existing-vnet.bicepparam">bicep/infra/sample.existing-vnet.bicepparam</a></td>
+<td>Scenario A</td>
+<td>Reuses an existing VNet and expects the required subnets to already exist.</td>
 </tr>
 <tr>
-<td><code>resourceIds.virtualNetworkResourceId</code></td>
-<td>Existing VNet resource ID (required)</td>
-</tr>
-<tr>
-<td><code>deployToggles.userDefinedRoutes</code></td>
-<td>Optional; associates route tables when enabled</td>
-</tr>
-<tr>
-<td><code>firewallPolicyDefinition</code></td>
-<td>Optional; allowlist policy for forced tunneling</td>
-</tr>
-<tr>
-<td><code>firewallPrivateIp</code></td>
-<td>Optional; firewall private IP when forced tunneling is used</td>
+<td><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.existing-vnet-create-subnets.bicepparam">bicep/infra/sample.existing-vnet-create-subnets.bicepparam</a></td>
+<td>Scenario B</td>
+<td>Reuses an existing VNet and creates or updates the required subnets in that VNet.</td>
 </tr>
 </tbody>
 </table>
-<p>Addressing note: the sample uses <code>192.168.0.24</code> in some allowlist <code>sourceAddresses</code>. If your VNet uses different CIDRs, update those entries accordingly.</p>
-<blockquote>
-<p>Note: Walkthrough comming soon</p>
-</blockquote>
+<p><strong>What this walkthrough validates</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Existing VNet reuse</td>
+<td>Uses <code>resourceIds.virtualNetworkResourceId</code> and does not create a new VNet.</td>
+</tr>
+<tr>
+<td>Workload-owned private connectivity</td>
+<td>Creates Private Endpoints and, in this scenario, also creates Private DNS zones and VNet links.</td>
+</tr>
+<tr>
+<td>Forced tunneling validation</td>
+<td>When enabled by toggles, deploys UDRs and routes egress through Azure Firewall.</td>
+</tr>
+<tr>
+<td>Split resource groups</td>
+<td>Keeps the VNet in a dedicated networking resource group and deploys workload resources to a separate workload resource group.</td>
+</tr>
+</tbody>
+</table>
+<p>This walkthrough assumes standalone behavior for platform integration, with <code>flagPlatformLandingZone</code> set to <code>false</code>.</p>
+<p><strong>Key settings (from the samples)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>flagPlatformLandingZone</code></td>
+<td><code>false</code></td>
+<td>The workload deployment owns private DNS zones and links for this walkthrough.</td>
+</tr>
+<tr>
+<td><code>deployToggles.virtualNetwork</code></td>
+<td><code>false</code></td>
+<td>The deployment reuses an existing VNet.</td>
+</tr>
+<tr>
+<td><code>resourceIds.virtualNetworkResourceId</code></td>
+<td>Required</td>
+<td>Must be the full resource ID of the existing VNet.</td>
+</tr>
+<tr>
+<td><code>existingVNetSubnetsDefinition</code></td>
+<td>Optional</td>
+<td>Use only for Scenario B, when the deployment should create or update subnets.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scope and assumptions</strong></p>
+<p>The existing VNet must be in the same subscription used by the environment. Resources that attach to subnets, such as Private Endpoints, NICs, Bastion, and route table associations, must be deployed in the same subscription as the VNet.</p>
+<p><strong>Prerequisites</strong></p>
+<p>You need permissions to create resources in the target subscription, and you must be signed in with Azure CLI. This walkthrough uses Azure Developer CLI, so install <code>azd</code> and run the commands from the repository root.</p>
+<p><strong>Step 1: Prepare the existing VNet</strong></p>
+<p>Use one of the scenarios below. Both scenarios use the same default VNet address space and subnet layout.</p>
+<p>Scenario A expects the required subnets to already exist. Scenario B creates or updates the subnets as part of the deployment.</p>
+<p><strong>Default addressing used by the samples</strong></p>
+<p>VNet address space is <code>192.168.0.0/23</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Subnet name</th>
+<th>CIDR</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent-subnet</code></td>
+<td><code>192.168.0.0/27</code></td>
+<td>Delegated to <code>Microsoft.App/environments</code>.</td>
+</tr>
+<tr>
+<td><code>pe-subnet</code></td>
+<td><code>192.168.0.32/27</code></td>
+<td>Private endpoint network policies must be disabled.</td>
+</tr>
+<tr>
+<td><code>AzureBastionSubnet</code></td>
+<td><code>192.168.0.64/26</code></td>
+<td>Required minimum size for Bastion.</td>
+</tr>
+<tr>
+<td><code>AzureFirewallSubnet</code></td>
+<td><code>192.168.0.128/26</code></td>
+<td>Required minimum size for Azure Firewall.</td>
+</tr>
+<tr>
+<td><code>appgw-subnet</code></td>
+<td><code>192.168.0.192/27</code></td>
+<td>Optional depending on toggles.</td>
+</tr>
+<tr>
+<td><code>apim-subnet</code></td>
+<td><code>192.168.0.224/27</code></td>
+<td>Optional depending on toggles.</td>
+</tr>
+<tr>
+<td><code>aca-env-subnet</code></td>
+<td><code>192.168.1.0/27</code></td>
+<td>Delegated to <code>Microsoft.App/environments</code>.</td>
+</tr>
+<tr>
+<td><code>devops-agents-subnet</code></td>
+<td><code>192.168.1.32/27</code></td>
+<td>Build agents subnet.</td>
+</tr>
+<tr>
+<td><code>jumpbox-subnet</code></td>
+<td><code>192.168.1.64/28</code></td>
+<td>Jump VM subnet.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scenario A: create the VNet and subnets up front</strong></p>
+<p>Choose a location and names that you will reuse across commands.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$location</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
+<span class="nv">$netRg</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-vnet-RANDOM_SUFFIX&quot;</span>
+<span class="nv">$vnetName</span> <span class="p">=</span> <span class="s2">&quot;vnet-existing-RANDOM_SUFFIX&quot;</span>
+</code></pre></div>
+<p>Create the networking resource group and VNet.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="nb">group </span><span class="n">create</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-location</span> <span class="nv">$location</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">23</span>
+</code></pre></div>
+<p>Create the required subnets.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">agent-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">27</span> <span class="p">-</span><span class="n">-delegations</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">App</span><span class="p">/</span><span class="n">environments</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">pe-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">32</span><span class="p">/</span><span class="n">27</span> <span class="p">-</span><span class="n">-disable-private-endpoint-network-policies</span> <span class="n">true</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">AzureBastionSubnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">64</span><span class="p">/</span><span class="n">26</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">AzureFirewallSubnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">128</span><span class="p">/</span><span class="n">26</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">appgw-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">192</span><span class="p">/</span><span class="n">27</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">apim-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">224</span><span class="p">/</span><span class="n">27</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">aca-env-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">27</span> <span class="p">-</span><span class="n">-delegations</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">App</span><span class="p">/</span><span class="n">environments</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">devops-agents-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">32</span><span class="p">/</span><span class="n">27</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">jumpbox-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">64</span><span class="p">/</span><span class="n">28</span>
+</code></pre></div>
+<p>Verify subnets and capture the VNet resource ID.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="nv">$vnetId</span> <span class="p">=</span> <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-query</span> <span class="n">id</span> <span class="n">-o</span> <span class="n">tsv</span>
+<span class="nv">$vnetId</span>
+</code></pre></div>
+<p><strong>Scenario B: create only the VNet and let the template create or update subnets</strong></p>
+<p>Create the networking resource group and VNet.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$location</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
+<span class="nv">$netRg</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-vnet-RANDOM_SUFFIX&quot;</span>
+<span class="nv">$vnetName</span> <span class="p">=</span> <span class="s2">&quot;vnet-existing-RANDOM_SUFFIX&quot;</span>
+
+<span class="n">az</span> <span class="nb">group </span><span class="n">create</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-location</span> <span class="nv">$location</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">23</span>
+
+<span class="nv">$vnetId</span> <span class="p">=</span> <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-query</span> <span class="n">id</span> <span class="n">-o</span> <span class="n">tsv</span>
+<span class="nv">$vnetId</span>
+</code></pre></div>
+<p>If you already have a VNet that matches the expected layout, skip the creation commands and only capture the VNet resource ID.</p>
+<p><strong>Step 2: Deploy the workload with azd</strong></p>
+<p>Initialize an azd environment.</p>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">init</span> <span class="n">-e</span> <span class="n">ailz-existing-vnet-RANDOM_SUFFIX</span>
+</code></pre></div>
+<p>Set environment variables.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$env:AZURE_LOCATION</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
+<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-RANDOM_SUFFIX&quot;</span>
+<span class="nv">$env:AZURE_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
+
+<span class="nv">$workloadRg</span> <span class="p">=</span> <span class="nv">$env:AZURE_RESOURCE_GROUP</span>
+</code></pre></div>
+<p>Copy the sample parameter file into the active parameter file used by <code>azd</code>.</p>
+<p>Scenario A uses the reuse-as-is sample.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">sample</span><span class="p">.</span><span class="n">existing-vnet</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">-Force</span>
+</code></pre></div>
+<p>Scenario B uses the create-update-subnets sample.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">sample</span><span class="p">.</span><span class="n">existing-vnet-create-subnets</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">-Force</span>
+</code></pre></div>
+<p>Edit <code>bicep/infra/main.bicepparam</code> and set <code>resourceIds.virtualNetworkResourceId</code> to <code>$vnetId</code>.</p>
+<p>For Scenario A, do not set <code>existingVNetSubnetsDefinition</code>.</p>
+<p>For Scenario B, provide an <code>existingVNetSubnetsDefinition</code> block with the subnet layout you want the deployment to create or update.</p>
+<div class="highlight"><pre><span></span><code>param existingVNetSubnetsDefinition = {
+  useDefaultSubnets: false
+  subnets: [
+    {
+      name: &#39;agent-subnet&#39;
+      addressPrefix: &#39;192.168.0.0/27&#39;
+      delegation: &#39;Microsoft.App/environments&#39;
+      serviceEndpoints: [&#39;Microsoft.CognitiveServices&#39;]
+    }
+    {
+      name: &#39;pe-subnet&#39;
+      addressPrefix: &#39;192.168.0.32/27&#39;
+      privateEndpointNetworkPolicies: &#39;Disabled&#39;
+      serviceEndpoints: [&#39;Microsoft.AzureCosmosDB&#39;]
+    }
+    {
+      name: &#39;AzureBastionSubnet&#39;
+      addressPrefix: &#39;192.168.0.64/26&#39;
+    }
+    {
+      name: &#39;AzureFirewallSubnet&#39;
+      addressPrefix: &#39;192.168.0.128/26&#39;
+    }
+    {
+      name: &#39;appgw-subnet&#39;
+      addressPrefix: &#39;192.168.0.192/27&#39;
+    }
+    {
+      name: &#39;apim-subnet&#39;
+      addressPrefix: &#39;192.168.0.224/27&#39;
+    }
+    {
+      name: &#39;aca-env-subnet&#39;
+      addressPrefix: &#39;192.168.1.0/27&#39;
+      delegation: &#39;Microsoft.App/environments&#39;
+      serviceEndpoints: [&#39;Microsoft.AzureCosmosDB&#39;]
+    }
+    {
+      name: &#39;devops-agents-subnet&#39;
+      addressPrefix: &#39;192.168.1.32/27&#39;
+    }
+    {
+      name: &#39;jumpbox-subnet&#39;
+      addressPrefix: &#39;192.168.1.64/28&#39;
+    }
+  ]
+}
+</code></pre></div>
+<p>Provision.</p>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">provision</span>
+</code></pre></div>
+<p>If forced tunneling is enabled, ensure <code>firewallPrivateIp</code> matches the private IP assigned to Azure Firewall. With the default <code>AzureFirewallSubnet</code> prefix, the common value is <code>192.168.0.132</code>, but you should always confirm the actual IP in your environment.</p>
+<p><strong>Validation</strong></p>
+<p>Validate that private endpoints were created in the workload resource group.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$workloadRg</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Because this walkthrough uses <code>flagPlatformLandingZone</code> set to <code>false</code>, validate that private DNS zones exist and are linked.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">zone</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$workloadRg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">link</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$workloadRg</span> <span class="p">-</span><span class="n">-zone-name</span> <span class="n">privatelink</span><span class="p">.</span><span class="n">openai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Validate that A records exist.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">record-set</span> <span class="n">a</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$workloadRg</span> <span class="p">-</span><span class="n">-zone-name</span> <span class="n">privatelink</span><span class="p">.</span><span class="n">openai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>If forced tunneling is enabled, validate that route tables exist and are associated with the expected subnets.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">route-table</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$workloadRg</span> <span class="n">-o</span> <span class="n">table</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">jumpbox-subnet</span> <span class="p">-</span><span class="n">-query</span> <span class="n">routeTable</span><span class="p">.</span><span class="n">id</span> <span class="n">-o</span> <span class="n">tsv</span>
+</code></pre></div>
+<p>Validate access through Bastion and the Jump VM.</p>
+<p>Reset the Jump VM password in the Azure portal and connect using Bastion. Then, from inside the Jump VM, validate DNS resolution for your created services.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Resolve-DnsName</span> <span class="n">login</span><span class="p">.</span><span class="n">microsoftonline</span><span class="p">.</span><span class="n">com</span>
+<span class="nb">Test-NetConnection</span> <span class="n">login</span><span class="p">.</span><span class="n">microsoftonline</span><span class="p">.</span><span class="n">com</span> <span class="n">-Port</span> <span class="n">443</span>
+</code></pre></div>
+<p>To validate private DNS resolution for specific Private Endpoints, list the FQDNs associated with a Private Endpoint and test resolution inside the Jump VM.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$peName</span> <span class="p">=</span> <span class="s2">&quot;&lt;private-endpoint-name&gt;&quot;</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">dns-zone-group</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$workloadRg</span> <span class="p">-</span><span class="n">-endpoint-name</span> <span class="nv">$peName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].privateDnsZoneConfigs[].recordSets[].fqdn&quot;</span> <span class="n">-o</span> <span class="n">tsv</span>
+</code></pre></div>
+<p><strong>Cleanup</strong></p>
+<p>Delete the workload resource group.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="nb">group </span><span class="n">delete</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$workloadRg</span> <span class="p">-</span><span class="n">-yes</span> <span class="p">-</span><span class="n">-no-wait</span>
+</code></pre></div>
+<p>If the VNet was created only for this walkthrough, delete the networking resource group.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="nb">group </span><span class="n">delete</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-yes</span> <span class="p">-</span><span class="n">-no-wait</span>
+</code></pre></div>
 
 
 
