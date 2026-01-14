@@ -47,6 +47,65 @@ Write-Host "[*] AI/ML Landing Zone - Template Spec Preprovision" -ForegroundColo
 Write-Host ("=" * 50) -ForegroundColor DarkGray
 Write-Host ""
 
+#===============================================================================
+# AUTHENTICATION CHECK
+#===============================================================================
+
+Write-Host "[0] Step 0: Checking Azure authentication..." -ForegroundColor Cyan
+
+# Check Azure CLI authentication
+Write-Host "  Checking Azure CLI authentication..." -ForegroundColor Gray
+try {
+  $null = az account show 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    throw "Not authenticated"
+  }
+  $currentAccount = az account show --query "{name:name, id:id}" -o json | ConvertFrom-Json
+  Write-Host "  [+] Azure CLI authenticated" -ForegroundColor Green
+  Write-Host "  [i] Current account: $($currentAccount.name) ($($currentAccount.id))" -ForegroundColor DarkGray
+
+  # Validate that we can actually acquire an ARM token.
+  # This is required for `bicep restore` when using Template Specs (`ts:` references).
+  Write-Host "  Checking ARM token acquisition..." -ForegroundColor Gray
+  $armToken = az account get-access-token --resource https://management.azure.com/ --query accessToken -o tsv 2>&1
+  if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($armToken)) {
+    Write-Host "" 
+    Write-Host "  [X] Azure CLI token acquisition failed (ARM). This will break Template Spec restore/build." -ForegroundColor Red
+    Write-Host "  [!] Fix suggestions:" -ForegroundColor Yellow
+    Write-Host "      1) Run: az login --use-device-code" -ForegroundColor White
+    Write-Host "      2) Run: az account set --subscription <subscription-id>" -ForegroundColor White
+    Write-Host "      3) Or disable Template Specs for local tests: azd env set AZURE_DEPLOY_TS false" -ForegroundColor White
+    Write-Host "" 
+    exit 1
+  }
+  Write-Host "  [+] ARM token acquired" -ForegroundColor Green
+} catch {
+  Write-Host ""
+  Write-Host "  [X] Not authenticated with Azure CLI" -ForegroundColor Red
+  Write-Host "  [!] Please authenticate before running this script:" -ForegroundColor Yellow
+  Write-Host "      1. Run: az login" -ForegroundColor Yellow
+  Write-Host "      2. Set subscription: az account set --subscription <subscription-id>" -ForegroundColor Yellow
+  Write-Host ""
+  exit 1
+}
+
+# Check Azure Developer CLI authentication (optional but recommended)
+Write-Host "  Checking Azure Developer CLI authentication..." -ForegroundColor Gray
+try {
+  $azdAuthStatus = azd auth login --check-status 2>&1
+  if ($LASTEXITCODE -eq 0) {
+    Write-Host "  [+] Azure Developer CLI authenticated" -ForegroundColor Green
+  } else {
+    Write-Host "  [!] Azure Developer CLI not authenticated (optional)" -ForegroundColor Yellow
+    Write-Host "  [i] You can authenticate with: azd auth login" -ForegroundColor DarkGray
+  }
+} catch {
+  Write-Host "  [!] Azure Developer CLI not found or not authenticated (optional)" -ForegroundColor Yellow
+  Write-Host "  [i] You can authenticate with: azd auth login" -ForegroundColor DarkGray
+}
+
+Write-Host ""
+
 # Force interactive mode for console input
 if (-not [Console]::IsInputRedirected) {
   # Enable console input for interactive prompts
@@ -169,6 +228,20 @@ if ($missingVars.Count -gt 0) {
   
   Write-Host ""
 }
+  #===============================================================================
+  # TEMPLATE SPEC TOGGLE
+  #===============================================================================
+
+  # By default, this script uses Template Specs for wrapper modules. You can disable
+  # this behavior for local/dev provisioning (avoids ts: restore/auth issues) by setting:
+  #   AZURE_DEPLOY_TS=false
+
+  $deployTemplateSpecs = $true
+  if (-not [string]::IsNullOrWhiteSpace($env:AZURE_DEPLOY_TS)) {
+    $raw = $env:AZURE_DEPLOY_TS.Trim().ToLowerInvariant()
+    $deployTemplateSpecs = -not ($raw -in @('0', 'false', 'no', 'off'))
+  }
+
 
 # Determine behavior based on AZURE_TS_RG
 $useExistingTemplateSpecs = -not [string]::IsNullOrWhiteSpace($TemplateSpecRG)
@@ -182,6 +255,7 @@ Write-Host "  Subscription ID: $SubscriptionId" -ForegroundColor White
 Write-Host "  Location: $Location" -ForegroundColor White  
 Write-Host "  Resource Group: $ResourceGroup" -ForegroundColor White
 Write-Host "  Template Spec RG: $TemplateSpecRG" -ForegroundColor White
+Write-Host "  Deploy Template Specs (AZURE_DEPLOY_TS): $deployTemplateSpecs" -ForegroundColor White
 Write-Host "  Use Existing Template Specs: $useExistingTemplateSpecs" -ForegroundColor White
 Write-Host ""
 
@@ -275,8 +349,21 @@ if ($TemplateSpecRG -ne $ResourceGroup -and -not $useExistingTemplateSpecs) {
   }
 }
 
+if (-not $deployTemplateSpecs) {
+  Write-Host "[3] Step 3: Skipping Template Specs (AZURE_DEPLOY_TS=false)" -ForegroundColor Yellow
+  Write-Host "  [i] Deploy will use local wrapper modules from ./bicep/deploy/wrappers" -ForegroundColor Gray
+  $templateSpecs = @{}
+
+  Write-Host ""
+  Write-Host "[OK] Preprovision complete!" -ForegroundColor Green
+  Write-Host "  Template Specs: disabled" -ForegroundColor White
+  Write-Host "  Deploy directory ready: ./bicep/deploy/" -ForegroundColor White
+  Write-Host ""
+  exit 0
+}
+
 #===============================================================================
-# STEP 3: TEMPLATE SPEC CREATION & PUBLISHING
+# STEP 3: TEMPLATE SPEC CREATION & PUBLISHING (PARALLEL)
 #===============================================================================
 
 # Initialize templateSpecs dictionary
@@ -285,24 +372,33 @@ $templateSpecs = @{}
 # Step 3: Template Specs processing
 Write-Host ""
 if ($useExistingTemplateSpecs) {
-  Write-Host "[3] Step 3: Getting existing Template Spec IDs..." -ForegroundColor Cyan
+  Write-Host "[3] Step 3: Getting existing Template Spec IDs (parallel)..." -ForegroundColor Cyan
 } else {
-  Write-Host "[3] Step 3: Building Template Specs..." -ForegroundColor Cyan
+  Write-Host "[3] Step 3: Building Template Specs (parallel)..." -ForegroundColor Cyan
 }
 
 $wrapperFiles = Get-ChildItem -Path $deployWrappersDir -Filter "*.bicep"
 
-foreach ($wrapperFile in $wrapperFiles) {
-  $wrapperName = $wrapperFile.BaseName
-  # Extract environment name from TemplateSpecRG (assumes rg-<envname> pattern, fallback to 'main')
-  $envPrefix = if ($TemplateSpecRG -match '^rg-(.+)$') { $matches[1] } else { 'main' }
+# Determine max parallel jobs (default: min of processor count or 10)
+$maxParallelJobs = [Math]::Min([Environment]::ProcessorCount, 10)
+if ($env:AZURE_PARALLEL_JOBS) {
+  $maxParallelJobs = [int]$env:AZURE_PARALLEL_JOBS
+}
+
+Write-Host "  [i] Processing $($wrapperFiles.Count) wrappers with up to $maxParallelJobs parallel jobs" -ForegroundColor Gray
+Write-Host ""
+
+# Extract environment name once (used by all jobs)
+$envPrefix = if ($TemplateSpecRG -match '^rg-(.+)$') { $matches[1] } else { 'main' }
+
+# ScriptBlock for parallel job execution
+$jobScriptBlock = {
+  param($wrapperFilePath, $wrapperFileName, $wrapperName, $envPrefix, $TemplateSpecRG, $Location, $useExistingTemplateSpecs)
   
   # Truncate long wrapper names to avoid Template Spec name limits (64 chars max)
   $shortWrapperName = if ($wrapperName.Length -gt 40) {
-    # For long names, create meaningful abbreviations
     $parts = $wrapperName -split '\.'
     if ($parts.Count -ge 3) {
-      # Take first letter of each part except the last, plus full last part
       $abbreviated = ($parts[0..($parts.Count-2)] | ForEach-Object { $_.Substring(0, 1) }) -join '.'
       "$abbreviated.$($parts[-1])"
     } else {
@@ -315,118 +411,227 @@ foreach ($wrapperFile in $wrapperFiles) {
   $tsName = "ts-$envPrefix-wrp-$shortWrapperName"
   $version = "current"
   
-  Write-Host "  Processing: $wrapperName" -ForegroundColor Yellow
-  
   # Build bicep to JSON only if we're creating new Template Specs
   $jsonPath = $null
   if (-not $useExistingTemplateSpecs) {
-    $jsonPath = Join-Path $wrapperFile.Directory "$($wrapperName).json"
+    $jsonPath = [System.IO.Path]::ChangeExtension($wrapperFilePath, '.json')
     try {
       if (Get-Command bicep -ErrorAction SilentlyContinue) {
-        bicep build $wrapperFile.FullName --outfile $jsonPath
+        bicep build $wrapperFilePath --outfile $jsonPath 2>$null | Out-Null
       } else {
-        az bicep build --file $wrapperFile.FullName --outfile $jsonPath
+        az bicep build --file $wrapperFilePath --outfile $jsonPath 2>$null | Out-Null
       }
-      Write-Host "    [+] Built JSON: $wrapperName.json" -ForegroundColor Green
     } catch {
-      Write-Host "    [X] Failed to build: $wrapperName" -ForegroundColor Red
-      continue
+      return @{
+        Success = $false
+        WrapperName = $wrapperName
+        WrapperFileName = $wrapperFileName
+        Error = "Failed to build Bicep: $($_.Exception.Message)"
+      }
     }
   }
   
   # Check for existing Template Spec or create new one
   try {
+    $tsId = $null
+    
     if ($useExistingTemplateSpecs) {
       # Use existing Template Specs from specified resource group
-      Write-Host "    [?] Looking for existing Template Spec..." -ForegroundColor Gray
       $tsId = az ts show -g $TemplateSpecRG -n $tsName -v $version --query id -o tsv 2>$null
       if (-not $tsId) {
-        # If version doesn't exist, get the latest version ID
         $tsId = az ts show -g $TemplateSpecRG -n $tsName --query id -o tsv 2>$null
       }
       
       if ($tsId) {
-        $templateSpecs[$wrapperFile.Name] = $tsId
-        Write-Host "    [+] Found existing Template Spec: $tsName" -ForegroundColor Green
+        return @{
+          Success = $true
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          TemplateSpecId = $tsId
+          TemplateSpecName = $tsName
+          Action = 'Found'
+        }
       } else {
-        Write-Host "    [!] Template Spec not found: $tsName" -ForegroundColor Yellow
+        return @{
+          Success = $false
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          Error = "Template Spec not found: $tsName"
+        }
       }
     } else {
-      Write-Host "    [?] Checking if Template Spec exists..." -ForegroundColor Gray
-
-      # Check if Template Spec exists by listing all in resource group and filtering
+      # Check if Template Spec exists
       $existingTemplateSpecs = az ts list -g $TemplateSpecRG --query "[?name=='$tsName'].name" -o tsv 2>$null
       $templateSpecExists = $existingTemplateSpecs -and $existingTemplateSpecs.Trim() -ne ''
-
+      
       if ($templateSpecExists) {
-        Write-Host "    [i] Template Spec already exists, skipping..." -ForegroundColor Cyan
-
-        # Get existing Template Spec ID (specific version when available)
+        # Get existing Template Spec ID
         $tsId = az ts show -g $TemplateSpecRG -n $tsName -v $version --query id -o tsv 2>$null
         if (-not $tsId) {
           $tsId = az ts show -g $TemplateSpecRG -n $tsName --query id -o tsv 2>$null
         }
-
-        $templateSpecs[$wrapperFile.Name] = $tsId
-        Write-Host "    [+] Using existing Template Spec: $tsName" -ForegroundColor Green
+        
+        return @{
+          Success = $true
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          TemplateSpecId = $tsId
+          TemplateSpecName = $tsName
+          Action = 'Reused'
+        }
       } else {
-        Write-Host "    [+] Creating new Template Spec..." -ForegroundColor Gray -NoNewline
-        # Create new template spec with version
-        $job = Start-Job -ScriptBlock {
-          param($TemplateSpecRG, $tsName, $version, $Location, $jsonPath, $wrapperName)
-          az ts create -g $TemplateSpecRG -n $tsName -v $version -l $Location --template-file $jsonPath --display-name "Wrapper: $wrapperName" --description "Auto-generated Template Spec for $wrapperName wrapper" --only-show-errors 2>$null
-        } -ArgumentList $TemplateSpecRG, $tsName, $version, $Location, $jsonPath, $wrapperName
-
-        # Wait with progress indicator (max 5 minutes)
-        $timeout = 300 # 5 minutes
-        $elapsed = 0
-        while ($job.State -eq 'Running' -and $elapsed -lt $timeout) {
-          Start-Sleep 2
-          Write-Host "." -ForegroundColor Gray -NoNewline
-          $elapsed += 2
-
-          # Show elapsed time every 20 seconds
-          if ($elapsed % 20 -eq 0) {
-            Write-Host " ($($elapsed)s)" -ForegroundColor DarkGray -NoNewline
-          }
-        }
-
-        if ($job.State -eq 'Running') {
-          Stop-Job $job
-          Remove-Job $job -Force
-          Write-Host ""
-          throw "Template Spec operation timed out after $timeout seconds"
-        }
-
-        $result = Receive-Job $job -Wait
-        Remove-Job $job
-        Write-Host "" # New line after progress dots
-
-        Write-Host "    [i] Getting Template Spec ID..." -ForegroundColor Gray
+        # Create new template spec
+        az ts create -g $TemplateSpecRG -n $tsName -v $version -l $Location `
+          --template-file $jsonPath `
+          --display-name "Wrapper: $wrapperName" `
+          --description "Auto-generated Template Spec for $wrapperName wrapper" `
+          --only-show-errors 2>$null | Out-Null
+        
         # Get Template Spec ID
         $tsId = az ts show -g $TemplateSpecRG -n $tsName -v $version --query id -o tsv 2>$null
-
+        
         if ([string]::IsNullOrWhiteSpace($tsId)) {
-          Write-Host "    [X] Failed to get Template Spec ID for: $tsName" -ForegroundColor Red
-          # Don't add to templateSpecs dictionary if creation failed
-        } else {
-          $templateSpecs[$wrapperFile.Name] = $tsId
-          Write-Host "    [+] Published Template Spec:" -ForegroundColor Green
-          Write-Host "      $tsName" -ForegroundColor White
+          return @{
+            Success = $false
+            WrapperName = $wrapperName
+            WrapperFileName = $wrapperFileName
+            Error = "Failed to get Template Spec ID after creation"
+          }
+        }
+        
+        return @{
+          Success = $true
+          WrapperName = $wrapperName
+          WrapperFileName = $wrapperFileName
+          TemplateSpecId = $tsId
+          TemplateSpecName = $tsName
+          Action = 'Created'
         }
       }
     }
   }
   catch {
-    Write-Host "    [X] Failed to process Template Spec:" -ForegroundColor Red
-    Write-Host "      $wrapperName" -ForegroundColor White
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Red
+    return @{
+      Success = $false
+      WrapperName = $wrapperName
+      WrapperFileName = $wrapperFileName
+      Error = $_.Exception.Message
+    }
   }
+  finally {
+    # Clean up JSON file
+    if ($jsonPath -and (Test-Path $jsonPath)) {
+      Remove-Item $jsonPath -Force -ErrorAction SilentlyContinue
+    }
+  }
+}
 
-  # Clean up JSON file only if it was created
-  if (-not $useExistingTemplateSpecs -and $jsonPath -and (Test-Path $jsonPath)) {
-    Remove-Item $jsonPath -Force
+# SPAWN PHASE: Create parallel jobs
+$jobs = @()
+$startTime = Get-Date
+
+foreach ($wrapperFile in $wrapperFiles) {
+  # Start background job
+  $job = Start-Job -ScriptBlock $jobScriptBlock -ArgumentList @(
+    $wrapperFile.FullName,
+    $wrapperFile.Name,
+    $wrapperFile.BaseName,
+    $envPrefix,
+    $TemplateSpecRG,
+    $Location,
+    $useExistingTemplateSpecs
+  )
+  
+  $jobs += @{
+    Job = $job
+    WrapperName = $wrapperFile.BaseName
   }
+  
+  # THROTTLE: Wait if too many jobs running
+  while ((Get-Job -State Running).Count -ge $maxParallelJobs) {
+    Start-Sleep -Milliseconds 100
+  }
+}
+
+Write-Host "  [⚡] All $($jobs.Count) jobs spawned, monitoring completion..." -ForegroundColor Cyan
+Write-Host ""
+
+# MONITOR PHASE: Collect results as jobs complete
+$completed = 0
+$failed = 0
+$actions = @{ Created = 0; Reused = 0; Found = 0 }
+
+while ($jobs.Count -gt 0) {
+  $remainingJobs = @()
+  
+  foreach ($jobInfo in $jobs) {
+    $job = $jobInfo.Job
+    
+    if ($job.State -eq 'Completed') {
+      $result = Receive-Job -Job $job
+      Remove-Job -Job $job
+      
+      $completed++
+      $progressPercent = [Math]::Round(($completed / $wrapperFiles.Count) * 100)
+      
+      if ($result.Success) {
+        $templateSpecs[$result.WrapperFileName] = $result.TemplateSpecId
+        $actions[$result.Action]++
+        
+        $actionSymbol = switch ($result.Action) {
+          'Created' { '✓' }
+          'Reused' { '↻' }
+          'Found' { '→' }
+        }
+        
+        Write-Host "  [$actionSymbol] ($completed/$($wrapperFiles.Count) | $progressPercent%) $($result.WrapperName)" -ForegroundColor Green
+      } else {
+        $failed++
+        Write-Host "  [✗] ($completed/$($wrapperFiles.Count) | $progressPercent%) $($jobInfo.WrapperName) - $($result.Error)" -ForegroundColor Red
+      }
+    }
+    elseif ($job.State -eq 'Failed') {
+      $completed++
+      $failed++
+      $progressPercent = [Math]::Round(($completed / $wrapperFiles.Count) * 100)
+      Write-Host "  [✗] ($completed/$($wrapperFiles.Count) | $progressPercent%) $($jobInfo.WrapperName) - job failed" -ForegroundColor Red
+      Remove-Job -Job $job
+    }
+    else {
+      # Job still running
+      $remainingJobs += $jobInfo
+    }
+  }
+  
+  $jobs = $remainingJobs
+  
+  # Show progress indicator
+  if ($jobs.Count -gt 0) {
+    $runningCount = ($jobs.Job | Where-Object { $_.State -eq 'Running' }).Count
+    Write-Progress -Activity "Building Template Specs" `
+      -Status "$completed/$($wrapperFiles.Count) completed, $runningCount running" `
+      -PercentComplete (($completed / $wrapperFiles.Count) * 100)
+    
+    Start-Sleep -Milliseconds 200
+  }
+}
+
+Write-Progress -Activity "Building Template Specs" -Completed
+
+# Calculate duration and speedup
+$duration = [Math]::Round(((Get-Date) - $startTime).TotalSeconds, 1)
+$estimatedSequentialTime = $wrapperFiles.Count * 8  # Assume ~8s per wrapper sequentially
+$speedup = if ($duration -gt 0) { [Math]::Round($estimatedSequentialTime / $duration, 1) } else { 1 }
+
+# Summary
+Write-Host ""
+Write-Host "  [✓] Template Specs processing completed in $duration seconds!" -ForegroundColor Green
+Write-Host "      Success: $($completed - $failed) | Failed: $failed" -ForegroundColor Cyan
+if ($actions.Created -gt 0) { Write-Host "      Created: $($actions.Created)" -ForegroundColor White }
+if ($actions.Reused -gt 0) { Write-Host "      Reused: $($actions.Reused)" -ForegroundColor White }
+if ($actions.Found -gt 0) { Write-Host "      Found: $($actions.Found)" -ForegroundColor White }
+if ($speedup -gt 1) {
+  Write-Host "  [⚡] Speedup: ${speedup}x faster than sequential processing!" -ForegroundColor Yellow
 }
 
 #===============================================================================
@@ -489,35 +694,77 @@ if ((Test-Path $mainBicepPath) -and ($templateSpecs.Count -gt 0)) {
   Set-Content -Path $mainBicepPath -Value $content -Encoding UTF8
   Write-Host ""
   Write-Host "  [+] Updated deploy/main.bicep ($replacementCount references replaced)" -ForegroundColor Green
-}
 
-#===============================================================================
-# STEP 5: APPLY TAGS
-#===============================================================================
+  #===============================================================================
+  # STEP 5: APPLY TAGS
+  #===============================================================================
 
-# Step 5: Apply tags to resource groups
-Write-Host ""
-Write-Host "[5] Step 5: Applying tags..." -ForegroundColor Cyan
+  Write-Host ""
+  Write-Host "[5] Step 5: Applying Resource Group tags..." -ForegroundColor Cyan
+  Write-Host "[i] Temporarily applying Resource Group tags to ignore controls..." -ForegroundColor Yellow
 
-# Apply tag to main resource group
-try {
-  Write-Host "  Applying tags to resource group: $ResourceGroup" -ForegroundColor Gray
-  az group update --name $ResourceGroup --tags "SecurityControl=Ignore" --only-show-errors | Out-Null
-  Write-Host "  [+] Applied tags to: $ResourceGroup" -ForegroundColor Green
-} catch {
-  Write-Host "  [!] Warning: Failed to apply tags to resource group: $ResourceGroup" -ForegroundColor Yellow
-  Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-}
+  az group update --name $ResourceGroup --tags "SecurityControl=Ignore" | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to apply tags to Resource Group: $ResourceGroup"
+  }
+  Write-Host "[+] Added tags to Resource Group: $ResourceGroup" -ForegroundColor Green
 
-# Apply tag to Template Spec resource group if different
-if ($TemplateSpecRG -ne $ResourceGroup) {
-  try {
-    Write-Host "  Applying tags to Template Spec resource group: $TemplateSpecRG" -ForegroundColor Gray
-    az group update --name $TemplateSpecRG --tags "SecurityControl=Ignore" --only-show-errors | Out-Null
-    Write-Host "  [+] Applied tags to: $TemplateSpecRG" -ForegroundColor Green
-  } catch {
-    Write-Host "  [!] Warning: Failed to apply tags to Template Spec resource group: $TemplateSpecRG" -ForegroundColor Yellow
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
+  if ($TemplateSpecRG -and ($TemplateSpecRG -ne $ResourceGroup)) {
+    az group update --name $TemplateSpecRG --tags "SecurityControl=Ignore" | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to apply tags to Template Spec Resource Group: $TemplateSpecRG"
+    }
+    Write-Host "[+] Added tags to Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Green
+  }
+
+  # Proactively restore Template Spec artifacts so subsequent `bicep build` / `azd provision`
+  # does not fail due to auth/restore timing issues.
+  Write-Host "" 
+  Write-Host "[6] Step 6: Restoring Template Spec artifacts..." -ForegroundColor Cyan
+
+  # Warm up token (helps avoid intermittent Azure CLI auth timeouts during restore)
+  $tokenWarmup = az account get-access-token --resource https://management.azure.com/ --query expiresOn -o tsv 2>&1
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "  [!] ARM token warm-up failed (non-fatal). Restore may still work." -ForegroundColor Yellow
+    $msg = ($tokenWarmup | Out-String).Trim()
+    if (-not [string]::IsNullOrWhiteSpace($msg)) {
+      Write-Host "      $msg" -ForegroundColor DarkYellow
+    }
+  }
+
+  $maxRestoreAttempts = 5
+  for ($attempt = 1; $attempt -le $maxRestoreAttempts; $attempt++) {
+    Write-Host "  [i] bicep restore attempt $attempt/$maxRestoreAttempts" -ForegroundColor Gray
+    try {
+      if (Get-Command bicep -ErrorAction SilentlyContinue) {
+        $restoreOutput = & bicep restore $mainBicepPath 2>&1
+        if ($LASTEXITCODE -ne 0) {
+          throw "bicep restore failed (exit $LASTEXITCODE):`n$($restoreOutput | Out-String)"
+        }
+      } else {
+        $restoreOutput = & az bicep restore --file $mainBicepPath 2>&1
+        if ($LASTEXITCODE -ne 0) {
+          throw "az bicep restore failed (exit $LASTEXITCODE):`n$($restoreOutput | Out-String)"
+        }
+      }
+      Write-Host "  [+] Artifact restore completed" -ForegroundColor Green
+      break
+    } catch {
+      if ($attempt -eq $maxRestoreAttempts) {
+        Write-Host "  [X] Artifact restore failed after $maxRestoreAttempts attempts" -ForegroundColor Red
+        Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "" 
+        Write-Host "  [!] Fix suggestions:" -ForegroundColor Yellow
+        Write-Host "      1) Run: az login" -ForegroundColor White
+        Write-Host "      2) Run: az account set --subscription $SubscriptionId" -ForegroundColor White
+        Write-Host "      3) Re-run: azd provision" -ForegroundColor White
+        Write-Host "" 
+        throw
+      }
+      $sleepSeconds = [Math]::Min(30, 2 * $attempt)
+      Write-Host "  [!] Restore attempt failed; retrying in ${sleepSeconds}s..." -ForegroundColor Yellow
+      Start-Sleep -Seconds $sleepSeconds
+    }
   }
 }
 

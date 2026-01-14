@@ -25,7 +25,7 @@ type aiFoundryDefinitionType = {
   @description('Optional. Enable/Disable usage telemetry for the module. Default is true.')
   enableTelemetry: bool?
 
-  @description('Optional. Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to false.')
+  @description('Optional. Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to true.')
   includeAssociatedResources: bool?
 
   @description('Optional. Location for all resources. Defaults to the resource group location.')
@@ -57,7 +57,7 @@ type aiFoundryDefinitionType = {
     accountName: string?
     @description('Optional. Whether to allow project management in the account. Defaults to true.')
     allowProjectManagement: bool?
-    @description('Optional. Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to false.')
+    @description('Optional. Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to true.')
     createCapabilityHosts: bool?
     @description('Optional. Disables local authentication methods so that the account requires Microsoft Entra ID identities exclusively for authentication. Defaults to false for backward compatibility.')
     disableLocalAuth: bool?
@@ -131,6 +131,18 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for AI Search. Required if private endpoints are used.')
     privateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use networkRuleSet.ipRules to restrict access by IP.')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. Network rules applied when publicNetworkAccess=Enabled.')
+    networkRuleSet: {
+      @description('Optional. Bypass rules. Allowed values: AzurePortal, None.')
+      bypass: 'AzurePortal' | 'None'?
+      @description('Optional. IP allowlist rules.')
+      ipRules: {
+        @description('Required. IPv4 address or CIDR range to allow.')
+        value: string
+      }[]?
+    }?
     @description('Optional. Role assignments for the AI Search resource.')
     roleAssignments: object[]?
   }?
@@ -143,6 +155,10 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for Cosmos DB. Required if private endpoints are used.')
     privateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use ipRules to restrict access by IP.')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. IP allowlist rules applied when publicNetworkAccess=Enabled.')
+    ipRules: string[]?
     @description('Optional. Role assignments for the Cosmos DB resource.')
     roleAssignments: object[]?
   }?
@@ -155,6 +171,10 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for Key Vault. Required if private endpoints are used.')
     privateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use networkAcls to restrict access (e.g., IP allowlist).')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. Network ACL rules (shape matches AVM Key Vault networkAcls).')
+    networkAcls: object?
     @description('Optional. Role assignments for the Key Vault resource.')
     roleAssignments: object[]?
   }?
@@ -167,6 +187,10 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for blob endpoint. Required if private endpoints are used.')
     blobPrivateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use networkAcls to restrict access (e.g., IP allowlist).')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. Network ACL rules (shape matches AVM Storage Account networkAcls).')
+    networkAcls: object?
     @description('Optional. Role assignments for the Storage Account.')
     roleAssignments: object[]?
   }?
@@ -680,8 +704,8 @@ type apimDefinitionType = {
   @description('Optional. Role assignments for the API Management service.')
   roleAssignments: array?
 
-  @description('Optional. SKU of the API Management service. Allowed values: Basic, BasicV2, Consumption, Developer, Premium, Standard, StandardV2.')
-  sku: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'Standard' | 'StandardV2'?
+  @description('Optional. SKU of the API Management service. Allowed values: Basic, BasicV2, Consumption, Developer, Premium, PremiumV2, Standard, StandardV2.')
+  sku: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'PremiumV2' | 'Standard' | 'StandardV2'?
 
 
   @description('Optional. Subnet resource ID for VNet integration.')
@@ -753,6 +777,9 @@ type vmDefinitionType = {
   osType: ('Linux' | 'Windows')?
   @description('Optional. Marketplace image reference for the VM.')
   imageReference: vmImageReferenceType?
+
+  @description('Optional. Enable/disable EncryptionAtHost for the VM.')
+  encryptionAtHost: bool?
   @description('Optional. Admin password for the VM.')
   @secure()
   adminPassword: string?
@@ -762,7 +789,9 @@ type vmDefinitionType = {
   lock: object?
   @description('Optional. Managed identities.')
   managedIdentities: object?
-  @description('Optional. Role assignments.')
+  @description('Optional. Enable system-assigned managed identity for the VM. Default is true.')
+  enableSystemAssignedManagedIdentity: bool?
+  @description('Optional. Role assignments for the VM managed identity. Each assignment can specify roleDefinitionIdOrName and principalType. Scope defaults to resource group if resourceGroupName is specified, otherwise uses the VM resource scope.')
   roleAssignments: array?
   @description('Optional. Force password reset on first login.')
   requireGuestProvisionSignal: bool?
@@ -805,6 +834,10 @@ type vmDefinitionType = {
   publicKeys: array?
   
   // Jump VM specific properties
+  @description('Optional. When true (default), runs the Jump VM Custom Script Extension to download and execute bicep/infra/install.ps1 (Jump VM only).')
+  enableAutoInstall: bool?
+  @description('Optional. When true (default), creates a Contributor role assignment for the Jump VM managed identity at the deployment resource group scope (Jump VM only).')
+  assignContributorRoleAtResourceGroup: bool?
   @description('Optional. Resource ID of the maintenance configuration (Jump VM only).')
   maintenanceConfigurationResourceId: string?
   @description('Optional. Patch mode for the VM (Jump VM only).')
@@ -982,8 +1015,8 @@ type containerAppDefinitionType = {
   @description('Required. The name of the Container App.')
   name: string
 
-  @description('Required. Resource ID of the Container App Environment.')
-  environmentResourceId: string
+  @description('Optional. Resource ID of the Container App Environment. When omitted, the caller (e.g., main.bicep) must set it.')
+  environmentResourceId: string?
 
   @description('Optional. Workload profile name to pin for container app execution.')
   workloadProfileName: string?
@@ -1020,6 +1053,24 @@ type containerAppDefinitionType = {
 
   @description('Optional. Init containers which run before the app container.')
   initContainersTemplate: object[]?
+
+  @description('Optional. Bool to disable all ingress traffic for the container app.')
+  disableIngress: bool?
+
+  @description('Optional. Bool indicating if the App exposes an external HTTP endpoint.')
+  ingressExternal: bool?
+
+  @description('Optional. Ingress transport protocol.')
+  ingressTransport: ('auto' | 'http' | 'http2' | 'tcp')?
+
+  @description('Optional. Bool indicating if HTTP connections are allowed. If set to false HTTP connections are redirected to HTTPS connections.')
+  ingressAllowInsecure: bool?
+
+  @description('Optional. Target Port in containers for traffic from ingress.')
+  ingressTargetPort: int?
+
+  @description('Optional. Exposed Port in containers for TCP traffic from ingress.')
+  exposedPort: int?
 
   @description('Optional. Rules to restrict incoming IP address.')
   ipSecurityRestrictions: object[]?
@@ -1317,6 +1368,9 @@ type deployTogglesType = {
   @description('Required. Toggle to deploy Storage Account (true) or not (false).')
   storageAccount: bool
 
+  @description('Required. Toggle to deploy AI Foundry (true) or not (false).')
+  aiFoundry: bool
+
   @description('Required. Toggle to deploy Azure AI Search (true) or not (false).')
   searchService: bool
 
@@ -1337,6 +1391,9 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy Azure Firewall (true) or not (false).')
   firewall: bool
+
+  @description('Required. Toggle to deploy User Defined Routes (UDR) (Route Table + association).')
+  userDefinedRoutes: bool
 
   @description('Required. Toggle to deploy Container Apps (true) or not (false).')
   containerApps: bool
@@ -1405,11 +1462,23 @@ type resourceIdsType = {
   @description('Optional. Existing Storage Account resource ID to reuse.')
   storageAccountResourceId: string?
 
+  @description('Optional. Existing AI Foundry Key Vault resource ID to reuse. If not provided (or empty), AI Foundry will create its own Key Vault when includeAssociatedResources=true.')
+  aiFoundryKeyVaultResourceId: string?
+
+  @description('Optional. Existing AI Foundry Storage Account resource ID to reuse. If not provided (or empty), AI Foundry will create its own Storage Account when includeAssociatedResources=true.')
+  aiFoundryStorageAccountResourceId: string?
+
   @description('Optional. Existing Cosmos DB account resource ID to reuse.')
   dbAccountResourceId: string?
 
+  @description('Optional. Existing AI Foundry Cosmos DB account resource ID to reuse. If not provided (or empty), AI Foundry will create its own Cosmos DB account when includeAssociatedResources=true.')
+  aiFoundryCosmosDBAccountResourceId: string?
+
   @description('Optional. Existing Azure AI Search service resource ID to reuse.')
   searchServiceResourceId: string?
+
+  @description('Optional. Existing AI Foundry Azure AI Search service resource ID to reuse. If not provided (or empty), AI Foundry will create its own Search service when includeAssociatedResources=true.')
+  aiFoundrySearchServiceResourceId: string?
 
   @description('Optional. Existing Grounding service resource ID to reuse.')
   groundingServiceResourceId: string?
@@ -1491,9 +1560,6 @@ type subnetNamesDefinitionType = {
 @export()
 @description('Configuration object for adding subnets to an existing Virtual Network.')
 type existingVNetSubnetsDefinitionType = {
-  @description('Required. Name or Resource ID of the existing Virtual Network. For cross-subscription/resource group scenarios, use the full Resource ID format: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Network/virtualNetworks/{vnet-name}')
-  existingVNetName: string
-
   @description('Optional. Use default AI Landing Zone subnets with 192.168.x.x addressing. Default: true.')
   useDefaultSubnets: bool?
 
@@ -1536,7 +1602,7 @@ type existingVNetSubnetsDefinitionType = {
     serviceEndpointPolicies: array?
 
     @description('Optional. Service endpoints enabled on the subnet.')
-    serviceEndpoints: array?
+    serviceEndpoints: string[]?
 
     @description('Optional. Sharing scope for the subnet.')
     sharingScope: 'DelegatedServices' | 'Tenant'?
@@ -1771,7 +1837,7 @@ type vNetDefinitionType = {
     serviceEndpointPolicies: array?
 
     @description('Optional. Service endpoints enabled on the subnet.')
-    serviceEndpoints: array?
+    serviceEndpoints: string[]?
 
     @description('Optional. Sharing scope for the subnet. Allowed values: DelegatedServices, Tenant.')
     sharingScope: 'DelegatedServices' | 'Tenant'?
@@ -3131,6 +3197,129 @@ type firewallPolicyRuleType = object
 // ---------------------------------------------
 // Cosmos DB (GenAI App flavor)
 // ---------------------------------------------
+
+@export()
+@description('Input type for the GenAI App Cosmos DB account. Allows omitting name in parameter files; main.bicep will apply default naming.')
+type genAIAppCosmosDbDefinitionInputType = {
+  @description('Optional. The name of the account. If omitted, main.bicep default naming is used.')
+  name: string?
+
+  @description('Optional. Enable automatic failover for regions. Defaults to true.')
+  automaticFailover: bool?
+
+  @description('Optional. Interval in minutes between two backups (periodic only). Defaults to 240. Range: 60–1440.')
+  backupIntervalInMinutes: int?
+
+  @description('Optional. Retention period for continuous mode backup. Default is Continuous30Days. Allowed values: Continuous30Days, Continuous7Days.')
+  backupPolicyContinuousTier: 'Continuous30Days' | 'Continuous7Days'?
+
+  @description('Optional. Backup mode. Periodic must be used if multiple write locations are enabled. Default is Continuous. Allowed values: Continuous, Periodic.')
+  backupPolicyType: 'Continuous' | 'Periodic'?
+
+  @description('Optional. Time (hours) each backup is retained (periodic only). Default is 8. Range: 2–720.')
+  backupRetentionIntervalInHours: int?
+
+  @description('Optional. Type of backup residency (periodic only). Default is Local. Allowed values: Geo, Local, Zone.')
+  backupStorageRedundancy: 'Geo' | 'Local' | 'Zone'?
+
+  @description('Optional. List of Cosmos DB specific capabilities to enable.')
+  capabilitiesToAdd: (
+    | 'DeleteAllItemsByPartitionKey'
+    | 'DisableRateLimitingResponses'
+    | 'EnableCassandra'
+    | 'EnableGremlin'
+    | 'EnableMaterializedViews'
+    | 'EnableMongo'
+    | 'EnableNoSQLFullTextSearch'
+    | 'EnableNoSQLVectorSearch'
+    | 'EnableServerless'
+    | 'EnableTable')[]?
+
+  @description('Optional. The offer type for the account. Default is Standard. Allowed value: Standard.')
+  databaseAccountOfferType: 'Standard'?
+
+  @description('Optional. Cosmos DB for NoSQL native role-based access control assignments.')
+  dataPlaneRoleAssignments: object[]?
+
+  @description('Optional. Cosmos DB for NoSQL native role-based access control definitions.')
+  dataPlaneRoleDefinitions: object[]?
+
+  @description('Optional. Default consistency level. Default is Session.')
+  defaultConsistencyLevel: 'BoundedStaleness' | 'ConsistentPrefix' | 'Eventual' | 'Session' | 'Strong'?
+
+  @description('Optional. Diagnostic settings for the account.')
+  diagnosticSettings: object[]?
+
+  @description('Optional. Disable key-based metadata write access.')
+  disableKeyBasedMetadataWriteAccess: bool?
+
+  @description('Optional. Disable local authentication.')
+  disableLocalAuthentication: bool?
+
+  @description('Optional. Enable analytical storage.')
+  enableAnalyticalStorage: bool?
+
+  @description('Optional. Enable free tier.')
+  enableFreeTier: bool?
+
+  @description('Optional. Enable multiple write locations.')
+  enableMultipleWriteLocations: bool?
+
+  @description('Optional. Enable/disable usage telemetry for the module. Default is true.')
+  enableTelemetry: bool?
+
+  @description('Optional. Failover locations.')
+  failoverLocations: object[]?
+
+  @description('Optional. Gremlin databases.')
+  gremlinDatabases: object[]?
+
+  @description('Optional. Lock configuration.')
+  lock: object?
+
+  @description('Optional. Managed identities.')
+  managedIdentities: object?
+
+  @description('Optional. Bounded staleness: max interval in seconds.')
+  maxIntervalInSeconds: int?
+
+  @description('Optional. Bounded staleness: max staleness prefix.')
+  maxStalenessPrefix: int?
+
+  @description('Optional. Minimum TLS version.')
+  minimumTlsVersion: string?
+
+  @description('Optional. MongoDB databases.')
+  mongodbDatabases: object[]?
+
+  @description('Optional. Network configuration for the account.')
+  networkRestrictions: object?
+
+  @description('Optional. Private endpoints configuration.')
+  privateEndpoints: object[]?
+
+  @description('Optional. Role assignments.')
+  roleAssignments: object[]?
+
+  @description('Optional. Cosmos DB server version.')
+  serverVersion: string?
+
+  @description('Optional. SQL databases.')
+  sqlDatabases: object[]?
+
+  @description('Optional. Tables.')
+  tables: object[]?
+
+  @description('Optional. Tags for categorizing resources.')
+  tags: object?
+
+  @description('Optional. Total throughput limit.')
+  totalThroughputLimit: int?
+
+  @description('Optional. Zone redundancy setting.')
+  zoneRedundant: bool?
+}
+
 @export()
 @description('Configuration object for the GenAI App Cosmos DB account.')
 type genAIAppCosmosDbDefinitionType = {
@@ -3325,6 +3514,36 @@ type hubVnetPeeringDefinitionType = object
 // ---------------------------------------------
 // Azure Cognitive Search
 // ---------------------------------------------
+
+@export()
+@description('Input type for the Azure Cognitive Search service. Allows omitting name in parameter files; main.bicep will apply default naming.')
+type kSAISearchDefinitionInputType = {
+  @description('Optional. The name of the Azure Cognitive Search service. If omitted, main.bicep default naming is used.')
+  name: string?
+
+  // All other properties match kSAISearchDefinitionType
+  authOptions: object?
+  cmkEnforcement: 'Disabled' | 'Enabled' | 'Unspecified'?
+  diagnosticSettings: object[]?
+  disableLocalAuth: bool?
+  enableTelemetry: bool?
+  hostingMode: 'default' | 'highDensity'?
+  location: string?
+  lock: object?
+  managedIdentities: object?
+  networkRuleSet: object?
+  partitionCount: int?
+  privateEndpoints: object[]?
+  publicNetworkAccess: 'Enabled' | 'Disabled'?
+  replicaCount: int?
+  roleAssignments: object[]?
+  secretsExportConfiguration: object?
+  semanticSearch: 'disabled' | 'free' | 'standard'?
+  sharedPrivateLinkResources: object[]?
+  sku: 'basic' | 'free' | 'standard' | 'standard2' | 'standard3' | 'storage_optimized_l1' | 'storage_optimized_l2'?
+  tags: object?
+}
+
 @export()
 @description('Configuration object for the Azure Cognitive Search service.')
 type kSAISearchDefinitionType = {
@@ -3499,6 +3718,37 @@ type kSGroundingWithBingDefinitionType = {
 // ---------------------------------------------
 // Key Vault
 // ---------------------------------------------
+
+@export()
+@description('Input type for Azure Key Vault. Allows omitting name in parameter files; main.bicep will apply default naming.')
+type keyVaultDefinitionInputType = {
+  @description('Optional. Name of the Key Vault. If omitted, main.bicep default naming is used.')
+  name: string?
+
+  // All other properties match keyVaultDefinitionType
+  accessPolicies: object[]?
+  createMode: 'default' | 'recover'?
+  diagnosticSettings: object[]?
+  enablePurgeProtection: bool?
+  enableRbacAuthorization: bool?
+  enableSoftDelete: bool?
+  enableTelemetry: bool?
+  enableVaultForDeployment: bool?
+  enableVaultForDiskEncryption: bool?
+  enableVaultForTemplateDeployment: bool?
+  keys: object[]?
+  location: string?
+  lock: object?
+  networkAcls: object?
+  privateEndpoints: object[]?
+  publicNetworkAccess: 'Enabled' | 'Disabled'?
+  roleAssignments: object[]?
+  secrets: object[]?
+  sku: object?
+  softDeleteRetentionInDays: int?
+  tags: object?
+}
+
 @export()
 @description('Configuration object for the Azure Key Vault to be deployed.')
 type keyVaultDefinitionType = {

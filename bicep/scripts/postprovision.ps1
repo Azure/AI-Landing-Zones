@@ -128,50 +128,101 @@ if ($TemplateSpecRG -eq $ResourceGroup) {
 Write-Host ""
 
 #===============================================================================
-# STEP 2: DIRECTORY CLEANUP
+# STEP 2: REMOVE TEMPORARY TAGS
 #===============================================================================
 
-# Step 2: Clean up deploy directory
-Write-Host "[2] Step 2: Cleaning up deploy directory..." -ForegroundColor Cyan
+Write-Host "[2] Step 2: Removing temporary Resource Group tags..." -ForegroundColor Cyan
+Write-Host "[i] Removing temporary Resource Group tags..." -ForegroundColor Yellow
+
+try {
+  $rgId = az group show --name $ResourceGroup --query id -o tsv
+  if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($rgId)) {
+    throw "Failed to resolve resource ID for Resource Group: $ResourceGroup"
+  }
+  az tag update --resource-id $rgId --operation Delete --tags SecurityControl | Out-Null
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to remove tags from Resource Group: $ResourceGroup"
+  }
+  Write-Host "[+] Removed tags from Resource Group: $ResourceGroup" -ForegroundColor Green
+} catch {
+  Write-Host "[!] Failed to remove tags from Resource Group: $ResourceGroup" -ForegroundColor Yellow
+  Write-Host "    $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+if ($TemplateSpecRG -and ($TemplateSpecRG -ne $ResourceGroup)) {
+  try {
+    $tsRgId = az group show --name $TemplateSpecRG --query id -o tsv
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($tsRgId)) {
+      throw "Failed to resolve resource ID for Template Spec Resource Group: $TemplateSpecRG"
+    }
+    az tag update --resource-id $tsRgId --operation Delete --tags SecurityControl | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to remove tags from Template Spec Resource Group: $TemplateSpecRG"
+    }
+    Write-Host "[+] Removed tags from Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Green
+  } catch {
+    Write-Host "[!] Failed to remove tags from Template Spec Resource Group: $TemplateSpecRG" -ForegroundColor Yellow
+    Write-Host "    $($_.Exception.Message)" -ForegroundColor Yellow
+  }
+}
+
+Write-Host ""
+
+#===============================================================================
+# STEP 3: CLEAN UP AI FOUNDRY WAIT DEPLOYMENT SCRIPTS
+#===============================================================================
+
+Write-Host "[3] Step 3: Removing AI Foundry capability-host wait deployment scripts..." -ForegroundColor Cyan
+
+try {
+  # Best-effort cleanup: these scripts are a transient workaround and should not be left behind.
+  # If the resource type is not registered, the CLI isn't available, or the scripts don't exist,
+  # we log and continue.
+  $waitScripts = az resource list -g $ResourceGroup --resource-type Microsoft.Resources/deploymentScripts --query "[?ends_with(name, '-wait-capabilityhost')].name" -o tsv 2>$null
+
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to list deploymentScripts in Resource Group: $ResourceGroup"
+  }
+
+  if ($waitScripts -and $waitScripts.Trim() -ne '') {
+    $waitScriptsArray = $waitScripts -split "`n" | Where-Object { $_.Trim() -ne '' }
+    Write-Host "  [i] Found $($waitScriptsArray.Count) deployment script(s) to remove" -ForegroundColor Yellow
+
+    foreach ($scriptName in $waitScriptsArray) {
+      $scriptName = $scriptName.Trim()
+      if ($scriptName) {
+        Write-Host "    [X] Removing: $scriptName" -ForegroundColor Gray
+        try {
+          az resource delete -g $ResourceGroup --resource-type Microsoft.Resources/deploymentScripts -n $scriptName --only-show-errors 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            throw "az resource delete failed"
+          }
+          Write-Host "    [+] Removed: $scriptName" -ForegroundColor Green
+        } catch {
+          Write-Host "    [!] Failed to remove: $scriptName" -ForegroundColor Yellow
+        }
+      }
+    }
+  } else {
+    Write-Host "  [i] No AI Foundry wait deployment scripts found" -ForegroundColor Gray
+  }
+} catch {
+  Write-Host "  [!] Error during deployment script cleanup: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+Write-Host ""
+
+#===============================================================================
+# STEP 4: DIRECTORY CLEANUP
+#===============================================================================
+
+# Step 4: Clean up deploy directory
+Write-Host "[4] Step 4: Cleaning up deploy directory..." -ForegroundColor Cyan
 if (Test-Path $deployDir) {
   Remove-Item -Path $deployDir -Recurse -Force
   Write-Host "  [+] Removed deploy directory: ./deploy/" -ForegroundColor Green
 } else {
   Write-Host "  [i] No deploy directory found to remove" -ForegroundColor Gray
-}
-
-#===============================================================================
-# STEP 3: REMOVE TAGS
-#===============================================================================
-
-# Step 3: Remove temporary tags from resource groups
-Write-Host ""
-Write-Host "[3] Step 3: Removing temporary tags..." -ForegroundColor Cyan
-
-# Remove tag from main resource group
-if ($ResourceGroup) {
-  try {
-    Write-Host "  Removing temporary tags from resource group: $ResourceGroup" -ForegroundColor Gray
-    $resourceId = "/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroup"
-    az tag update --resource-id $resourceId --operation Delete --tags SecurityControl --only-show-errors | Out-Null
-    Write-Host "  [+] Removed temporary tags from: $ResourceGroup" -ForegroundColor Green
-  } catch {
-    Write-Host "  [!] Warning: Failed to remove temporary tags from resource group: $ResourceGroup" -ForegroundColor Yellow
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-  }
-}
-
-# Remove tag from Template Spec resource group if different
-if ($TemplateSpecRG -and $TemplateSpecRG -ne $ResourceGroup) {
-  try {
-    Write-Host "  Removing temporary tags from Template Spec resource group: $TemplateSpecRG" -ForegroundColor Gray
-    $resourceId = "/subscriptions/$SubscriptionId/resourceGroups/$TemplateSpecRG"
-    az tag update --resource-id $resourceId --operation Delete --tags SecurityControl --only-show-errors | Out-Null
-    Write-Host "  [+] Removed temporary tags from: $TemplateSpecRG" -ForegroundColor Green
-  } catch {
-    Write-Host "  [!] Warning: Failed to remove temporary tags from Template Spec resource group: $TemplateSpecRG" -ForegroundColor Yellow
-    Write-Host "      Error: $($_.Exception.Message)" -ForegroundColor Yellow
-  }
 }
 
 #===============================================================================

@@ -15,6 +15,7 @@ module inner 'br/public:avm/res/compute/virtual-machine:0.20.0' = {
     vmSize: buildVm.sku!
     imageReference: buildVm.imageReference!
     osType: buildVm.osType!
+    encryptionAtHost: buildVm.?encryptionAtHost
     
     // Optional    
     location: buildVm.?location

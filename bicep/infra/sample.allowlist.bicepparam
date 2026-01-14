@@ -1,6 +1,9 @@
 using './main.bicep'
 
-// Standalone: creates a new, isolated workload environment.
+// Standalone + AI Foundry dependencies with public networking enabled,
+// restricted to:
+// - The public IP: 187.13.147.118
+
 
 param deployToggles = {
   aiFoundry: true
@@ -15,14 +18,20 @@ param deployToggles = {
   jumpboxNsg: true
   devopsBuildAgentsNsg: false
   bastionNsg: true
+  
+  // GenAI App backing services (Search/Cosmos/Key Vault) are deployed in this example
+  // with public networking enabled and IP allowlists.
+  // Note: the AI Foundry component will also create its own associated Search/Cosmos/Key Vault.
+  // These are separate resources.
+  storageAccount: false
   keyVault: true
-  storageAccount: true
   cosmosDb: true
   searchService: true
+
   groundingWithBingSearch: false
-  containerRegistry: true
-  containerEnv: true
-  containerApps: true
+  containerRegistry: false
+  containerEnv: false
+  containerApps: false
   buildVm: false
   jumpVm: true
   bastionHost: true
@@ -35,17 +44,12 @@ param deployToggles = {
   userDefinedRoutes: true
 }
 
-param resourceIds = {
-}
+param resourceIds = {}
 
 param flagPlatformLandingZone = false
 
-// Required for forced tunneling: Azure Firewall private IP (next hop).
-// With the default subnet layout, Azure Firewall is assigned the first usable IP in AzureFirewallSubnet (192.168.0.128/26) => 192.168.0.132.
 param firewallPrivateIp = '192.168.0.132'
 
-// Default egress for Jump VM (jumpbox-subnet) via Azure Firewall Policy.
-// This is a strict allowlist designed to keep bootstrap tooling working under forced tunneling.
 param firewallPolicyDefinition = {
   name: 'afwp-sample'
   ruleCollectionGroups: [
@@ -155,7 +159,6 @@ param firewallPolicyDefinition = {
                 '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
-                // Required for Azure CLI / AZD to call ARM after obtaining tokens.
                 'AzureResourceManager'
               ]
               destinationPorts: [
@@ -173,7 +176,6 @@ param firewallPolicyDefinition = {
                 '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
-                // Broad Azure public-cloud endpoints (helps avoid TLS failures caused by missing ancillary Azure endpoints).
                 'AzureCloud'
               ]
               destinationPorts: [
@@ -255,29 +257,112 @@ param firewallPolicyDefinition = {
   ]
 }
 
-param containerAppEnvDefinition = {
-  name: 'cae-aca-minimal'
+// AI Foundry: enable public networking but restrict to VNet CIDR + one public IP.
+// If you are using Azure Firewall for egress, make `187.13.147.118` the firewall's egress Public IP.
+// Note: Cosmos DB IP firewall rules do NOT support RFC1918 ranges (e.g., 192.168.0.0/23).
+// For Cosmos DB, keep private access via Private Endpoint and only allowlist public IPs here.
+param aiFoundryDefinition = {
+  includeAssociatedResources: true
+  aiFoundryConfiguration: {
+    createCapabilityHosts: true
+  }
 
-  // Keep it minimal and avoid WAF-compliance conditional fields.
-  zoneRedundant: false
+  aiSearchConfiguration: {
+    publicNetworkAccess: 'Enabled'
+    networkRuleSet: {
+      bypass: 'None'
+      ipRules: [
+        {
+          value: '187.13.147.118'
+        }
+      ]
+    }
+  }
 
-  // Internal-only environment endpoints.
-  publicNetworkAccess: 'Disabled'
-  internal: true
+  cosmosDbConfiguration: {
+    publicNetworkAccess: 'Enabled'
+    ipRules: [
+      '187.13.147.118'
+    ]
+  }
+
+  storageAccountConfiguration: {
+    publicNetworkAccess: 'Enabled'
+    networkAcls: {
+      bypass: 'None'
+      defaultAction: 'Deny'
+      ipRules: [
+        {
+          value: '187.13.147.118'
+          action: 'Allow'
+        }
+      ]
+      virtualNetworkRules: []
+    }
+  }
+
+  keyVaultConfiguration: {
+    publicNetworkAccess: 'Enabled'
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+      ipRules: [
+        {
+          value: '187.13.147.118'
+        }
+      ]
+      virtualNetworkRules: []
+    }
+  }
 }
 
-param containerAppsList = [
-  {
-    name: 'ca-aca-helloworld'
-
-    activeRevisionsMode: 'Single'
-
-    // Internal-only ingress.
-    ingressExternal: false
-    ingressTargetPort: 80
-    ingressAllowInsecure: true
+// GenAI App (workload) backing services
+// - Public networking enabled
+// - Restricted to allowlisted public IP(s)
+param aiSearchDefinition = {
+  publicNetworkAccess: 'Enabled'
+  sku: 'basic'
+  networkRuleSet: {
+    bypass: 'None'
+    ipRules: [
+      {
+        value: '187.13.147.118'
+      }
+    ]
   }
-]
+}
 
-// Optional (subscription-scoped): enable Defender for AI pricing.
-// param enableDefenderForAI = true
+param cosmosDbDefinition = {
+  // Avoid zonal redundant account creation in regions/subscriptions with constrained AZ capacity.
+  zoneRedundant: false
+
+  networkRestrictions: {
+    publicNetworkAccess: 'Enabled'
+    ipRules: [
+      '187.13.147.118'
+    ]
+  }
+
+  // NOTE: The Cosmos DB AVM wrapper applies ipRules/virtualNetworkRules
+  // only when at least one API resource (e.g., sqlDatabases) is declared.
+  sqlDatabases: [
+    {
+      name: 'appdb'
+      throughput: 400
+    }
+  ]
+}
+
+param keyVaultDefinition = {
+  publicNetworkAccess: 'Enabled'
+  networkAcls: {
+    bypass: 'AzureServices'
+    defaultAction: 'Deny'
+    ipRules: [
+      {
+        value: '187.13.147.118'
+      }
+    ]
+    virtualNetworkRules: []
+  }
+}

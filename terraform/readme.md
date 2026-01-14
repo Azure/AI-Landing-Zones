@@ -40,6 +40,8 @@ az provider register --namespace Microsoft.DocumentDB
 az provider register --namespace Microsoft.Search
 az provider register --namespace Microsoft.ContainerRegistry
 az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.Compute
+az feature register --name EncryptionAtHost --namespace Microsoft.Compute
 ```
 
 **Note:** Provider registration can take 5-10 minutes. Check status with:
@@ -98,10 +100,12 @@ az account show --query id --output tsv
 ```powershell
 # Replace <SUBSCRIPTION_ID> with your actual subscription ID
 # Replace <SP_NAME> with a descriptive name (e.g., "terraform-ai-landing-zone-sp")
+# The below command creates a Service Principal and assigns contributor role to the subscription
 az ad sp create-for-rbac --name "<SP_NAME>" --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
 ```
 
 **Example output:**
+
 ```json
 {
   "appId": "12345678-1234-1234-1234-123456789abc",
@@ -113,6 +117,15 @@ az ad sp create-for-rbac --name "<SP_NAME>" --role="Contributor" --scopes="/subs
 
 **Save these values securely!** You won't be able to see the password again.
 
+**Add role assignment to Service Principal**
+
+```powershell
+# To grant Key Vault permissions, the Service Principal must have either "Owner" or "User Access Administrator". 
+# Following least privilege principle, assign "User Access Administrator". 
+# Replace <SP_AppId> with the Application ID from the output above. 
+# Assign the role:
+az role assignment create --assignee "<SP_AppID>" --role="User Access Administrator" --scope="/subscriptions/<SUBSCRIPTION_ID>"
+```
 **Step 3: Set Environment Variables**
 
 In PowerShell, set these environment variables (they must be named exactly as shown):
@@ -275,6 +288,11 @@ See what Terraform will create without actually creating it:
 terraform plan
 ```
 
+**Tip: To capture the full output for easier review, redirect it to a file:**
+```powershell
+terraform plan > plan_output.txt
+```
+
 **Expected output:**
 - A long list of resources to be created (50+ resources)
 - At the end: `Plan: XX to add, 0 to change, 0 to destroy.`
@@ -317,6 +335,9 @@ Apply complete! Resources: XX added, 0 changed, 0 destroyed.
   - Region capacity (try a different region)
   - Permission issues (ensure you have Contributor role)
   - Provider not registered (see Prerequisites Step 3)
+  - Key Vault public access is disabled.  
+    - In production, GitHub workflows run within the network so this is not an issue.  
+    - For local runs, set access to “Allow public access from specific virtual networks and IP addresses” and whitelist workstation’s public IP.  
 
 ---
 

@@ -115,7 +115,7 @@
 
 #### **Virtual Network**
 - **Service:** Virtual Network
-- **Address space:** 192.168.0.0/22 (1024 IPs)
+- **Address space:** 192.168.0.0/23 (512 IPs)
 - **Subnets:** 9 subnets
 - **Peering:** Hub-spoke peering (optional, if configured)
 - **Data transfer (peering):** 100 GB/month (if using peering)
@@ -510,7 +510,7 @@ These costs are **usage-based** and can vary significantly:
 
 ## 📞 NEED HELP?
 
-- Review the Bicep template: `main.bicepparam` to see which services are enabled
+- Review the Bicep template: `bicep/infra/sample.main.bicepparam` to see which services are enabled
 - Adjust `deployToggles` to disable expensive services you don't need
 - Contact Azure Support for EA/CSP pricing discussions
 - Use Azure Cost Management after deployment for real-time cost tracking

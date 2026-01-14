@@ -30,6 +30,11 @@ param vNetDefinition = {
 ### Scenario 2: Add Default Subnets to Existing VNet
 
 ```bicep
+param resourceIds = {
+  // Full resource ID of the existing VNet (single source of truth)
+  virtualNetworkResourceId: '/subscriptions/.../resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/corp-hub-vnet-001'
+}
+
 param deploy = {
   virtualNetwork: false  // Don't create new VNet
   // ... NSG deploy toggles can still be true to create NSGs
@@ -39,7 +44,6 @@ param deploy = {
 }
 
 param existingVNetSubnetsDefinition = {
-  existingVNetName: 'corp-hub-vnet-001'
   useDefaultSubnets: true  // Use default AI Landing Zone subnets with 192.168.x.x addressing
   // subnets: []  // Empty or omitted = use defaults
 }
@@ -48,6 +52,11 @@ param existingVNetSubnetsDefinition = {
 ### Scenario 3: Add Custom Subnets to Existing VNet
 
 ```bicep
+param resourceIds = {
+  // Full resource ID of the existing VNet (single source of truth)
+  virtualNetworkResourceId: '/subscriptions/.../resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/corp-production-vnet'
+}
+
 param deploy = {
   virtualNetwork: false  // Don't create new VNet
   // ... NSG deploy toggles can still be true to create NSGs  
@@ -58,7 +67,6 @@ param deploy = {
 }
 
 param existingVNetSubnetsDefinition = {
-  existingVNetName: 'corp-production-vnet'
   useDefaultSubnets: false  // Use custom subnet definitions
   subnets: [
     {
@@ -95,8 +103,12 @@ param existingVNetSubnetsDefinition = {
 
 ```bicep
 // Example: Adding AI Landing Zone to existing hub-spoke with 10.x.x.x addressing
+param resourceIds = {
+  // Full resource ID of the existing spoke VNet (single source of truth)
+  virtualNetworkResourceId: '/subscriptions/.../resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/spoke-workloads-vnet-001'
+}
+
 param existingVNetSubnetsDefinition = {
-  existingVNetName: 'spoke-workloads-vnet-001'  // Existing spoke in hub-spoke topology
   useDefaultSubnets: false
   subnets: [
     {
@@ -167,7 +179,7 @@ The component deploys the following subnets to your existing VNet:
 
 ## Prerequisites
 
-- The existing VNet must be in the same resource group as the deployment
+- The module deployment must run at the VNet's resource group scope (and the deploying identity must have permissions in that RG)
 - The VNet must have sufficient address space to accommodate the subnets (requires at least a /23 or 512 IP addresses)
 - Ensure the subnet address ranges don't conflict with existing subnets in the VNet
 
