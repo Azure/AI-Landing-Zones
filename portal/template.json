@@ -1783,7 +1783,7 @@
         "privatelink.vaultcore.azure.net": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
         "privatelink.search.windows.net": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
         "privatelink.documents.azure.com": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
-        "concat('privatelink.blob.', environment().suffixes.storage)"  : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]"
+        "[concat('privatelink.blob.', environment().suffixes.storage)]"  : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]"
       }
     },
     "includeAssociatedResources": {
