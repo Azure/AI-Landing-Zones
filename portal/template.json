@@ -1701,7 +1701,7 @@
 {
   "type": "Microsoft.Resources/deployments",
   "apiVersion": "2025-04-01",
-  "name": "aiFoundryDeployment-[variables('uniqueSuffix')]",
+  "name": "[concat('aiFoundryDeployment-', variables('uniqueSuffix'))]",
   "properties": {
     "mode": "Incremental",
     "templateLink": {
