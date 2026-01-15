@@ -1731,10 +1731,10 @@
       "value": "[variables('vnetName')]"
     },
     "agentSubnetName": {
-      "value": "[if(parameters('existingSubnets').agentSubnet != '', parameters('existingSubnets').agentSubnet, 'agent-subnet')]"
+      "value": "[if(not(empty(parameters('existingSubnets').agentSubnet)), parameters('existingSubnets').agentSubnet, 'agent-subnet')]"
     },
     "peSubnetName": {
-      "value": "[if(parameters('existingSubnets').peSubnet != '', parameters('existingSubnets').peSubnet, 'pe-subnet')]"
+      "value": "[if(not(empty(parameters('existingSubnets').peSubnet)), parameters('existingSubnets').peSubnet, 'pe-subnet')]"
     },
     "deployVnetAndSubnets": {
       "value": "false"
