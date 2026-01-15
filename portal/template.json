@@ -323,7 +323,7 @@
     "keyVaultTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.key-vault.vault.json', variables('artifactsLocationSasToken')))]",
     "aiSearchTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.search.search-service.json', variables('artifactsLocationSasToken')))]",
     "apimTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.api-management.service.json', variables('artifactsLocationSasToken')))]",
-    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('res.ai-foundry.json', variables('artifactsLocationSasToken')))]",
+    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.ai-foundry.json', variables('artifactsLocationSasToken')))]",
     "wafPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.waf-policy.json', variables('artifactsLocationSasToken')))]",
     "applicationGatewayTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.application-gateway.json', variables('artifactsLocationSasToken')))]",
     "firewallPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.firewall-policy.json', variables('artifactsLocationSasToken')))]",
