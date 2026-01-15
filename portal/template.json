@@ -1707,8 +1707,7 @@
     "templateLink": {
       "uri": "[variables('aiFoundryTemplateUri')]",
       "contentVersion": "1.0.0.0"
-    }
-  },
+    },
   "parameters": {
     "location": {
       "value": "[parameters('location')]"
@@ -1814,6 +1813,7 @@
     "[resourceId('Microsoft.Resources/deployments', 'dep-blob-std-private-dns-zone')]",
     "[resourceId('Microsoft.Resources/deployments', 'kv-private-dns-zone')]"
   ]
+}
 },
 {
   "condition" : "[variables('deployBingGrounding')]",
