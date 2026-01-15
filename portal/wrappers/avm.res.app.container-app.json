@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "6392896579590366148"
+      "templateHash": "16282332133368752930"
     }
   },
   "definitions": {
@@ -21,8 +21,9 @@
         },
         "environmentResourceId": {
           "type": "string",
+          "nullable": true,
           "metadata": {
-            "description": "Required. Resource ID of the Container App Environment."
+            "description": "Optional. Resource ID of the Container App Environment. When omitted, the caller (e.g., main.bicep) must set it."
           }
         },
         "workloadProfileName": {
@@ -128,6 +129,54 @@
           "nullable": true,
           "metadata": {
             "description": "Optional. Init containers which run before the app container."
+          }
+        },
+        "disableIngress": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Bool to disable all ingress traffic for the container app."
+          }
+        },
+        "ingressExternal": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Bool indicating if the App exposes an external HTTP endpoint."
+          }
+        },
+        "ingressTransport": {
+          "type": "string",
+          "allowedValues": [
+            "auto",
+            "http",
+            "http2",
+            "tcp"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Ingress transport protocol."
+          }
+        },
+        "ingressAllowInsecure": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Bool indicating if HTTP connections are allowed. If set to false HTTP connections are redirected to HTTPS connections."
+          }
+        },
+        "ingressTargetPort": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Target Port in containers for traffic from ingress."
+          }
+        },
+        "exposedPort": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Exposed Port in containers for TCP traffic from ingress."
           }
         },
         "ipSecurityRestrictions": {
@@ -339,6 +388,27 @@
           },
           "activeRevisionsMode": {
             "value": "[tryGet(parameters('containerApp'), 'activeRevisionsMode')]"
+          },
+          "disableIngress": {
+            "value": "[tryGet(parameters('containerApp'), 'disableIngress')]"
+          },
+          "ingressExternal": {
+            "value": "[tryGet(parameters('containerApp'), 'ingressExternal')]"
+          },
+          "ingressTransport": {
+            "value": "[tryGet(parameters('containerApp'), 'ingressTransport')]"
+          },
+          "ingressAllowInsecure": {
+            "value": "[tryGet(parameters('containerApp'), 'ingressAllowInsecure')]"
+          },
+          "ingressTargetPort": {
+            "value": "[tryGet(parameters('containerApp'), 'ingressTargetPort')]"
+          },
+          "exposedPort": {
+            "value": "[tryGet(parameters('containerApp'), 'exposedPort')]"
+          },
+          "ipSecurityRestrictions": {
+            "value": "[tryGet(parameters('containerApp'), 'ipSecurityRestrictions')]"
           },
           "clientCertificateMode": {
             "value": "[tryGet(parameters('containerApp'), 'clientCertificateMode')]"

@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "4951076479321255364"
+      "templateHash": "17869816000898713439"
     }
   },
   "definitions": {
@@ -140,6 +140,13 @@
             "description": "Optional. Marketplace image reference for the VM."
           }
         },
+        "encryptionAtHost": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable/disable EncryptionAtHost for the VM."
+          }
+        },
         "adminPassword": {
           "type": "securestring",
           "nullable": true,
@@ -168,11 +175,18 @@
             "description": "Optional. Managed identities."
           }
         },
+        "enableSystemAssignedManagedIdentity": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable system-assigned managed identity for the VM. Default is true."
+          }
+        },
         "roleAssignments": {
           "type": "array",
           "nullable": true,
           "metadata": {
-            "description": "Optional. Role assignments."
+            "description": "Optional. Role assignments for the VM managed identity. Each assignment can specify roleDefinitionIdOrName and principalType. Scope defaults to resource group if resourceGroupName is specified, otherwise uses the VM resource scope."
           }
         },
         "requireGuestProvisionSignal": {
@@ -298,6 +312,20 @@
             "description": "Optional. SSH public keys (Build VM only)."
           }
         },
+        "enableAutoInstall": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. When true (default), runs the Jump VM Custom Script Extension to download and execute bicep/infra/install.ps1 (Jump VM only)."
+          }
+        },
+        "assignContributorRoleAtResourceGroup": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. When true (default), creates a Contributor role assignment for the Jump VM managed identity at the deployment resource group scope (Jump VM only)."
+          }
+        },
         "maintenanceConfigurationResourceId": {
           "type": "string",
           "nullable": true,
@@ -368,6 +396,9 @@
           },
           "osType": {
             "value": "[parameters('virtualMachine').osType]"
+          },
+          "encryptionAtHost": {
+            "value": "[tryGet(parameters('virtualMachine'), 'encryptionAtHost')]"
           },
           "location": {
             "value": "[coalesce(tryGet(parameters('virtualMachine'), 'location'), resourceGroup().location)]"

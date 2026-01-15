@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "13727838163282578346"
+      "templateHash": "1246084264060477234"
     }
   },
   "definitions": {
@@ -600,6 +600,9 @@
               },
               "serviceEndpoints": {
                 "type": "array",
+                "items": {
+                  "type": "string"
+                },
                 "nullable": true,
                 "metadata": {
                   "description": "Optional. Service endpoints enabled on the subnet."

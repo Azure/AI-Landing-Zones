@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "2842481208658824494"
+      "templateHash": "1566448261506059758"
     }
   },
   "definitions": {
@@ -597,6 +597,9 @@
           },
           "mongodbDatabases": {
             "value": "[tryGet(parameters('cosmosDb'), 'mongodbDatabases')]"
+          },
+          "networkRestrictions": {
+            "value": "[tryGet(parameters('cosmosDb'), 'networkRestrictions')]"
           },
           "privateEndpoints": {
             "value": "[tryGet(parameters('cosmosDb'), 'privateEndpoints')]"

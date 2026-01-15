@@ -230,6 +230,24 @@
                                     }
                                   }
               ],
+    "varAiFoundryModelDeployments" : [
+      {
+        "name": "gpt-5-mini",
+        "modelName": "gpt-5-mini",
+        "modelFormat": "OpenAI",
+        "modelVersion": "2025-08-07",
+        "modelSkuName": "GlobalStandard",
+        "modelCapacity": 10
+      },
+      {
+        "name": "text-embedding-3-large",
+        "modelName": "text-embedding-3-large",
+        "modelFormat": "OpenAI",
+        "modelVersion": "1",
+        "modelSkuName": "Standard",
+        "modelCapacity": 1
+      }
+    ],
     "deployAgentNsg": "[coalesce(parameters('deployToggles').agentNsg, true())]",
     "deployPeNsg": "[coalesce(parameters('deployToggles').peNsg, true())]",
     "deployApplicationGatewayNsg": "[coalesce(parameters('deployToggles').applicationGatewayNsg, true())]",
@@ -305,7 +323,7 @@
     "keyVaultTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.key-vault.vault.json', variables('artifactsLocationSasToken')))]",
     "aiSearchTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.search.search-service.json', variables('artifactsLocationSasToken')))]",
     "apimTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.api-management.service.json', variables('artifactsLocationSasToken')))]",
-    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.ptn.ai-ml.ai-foundry.json', variables('artifactsLocationSasToken')))]",
+    "aiFoundryTemplateUri": "[uri(variables('baseTemplateUri'), concat('res.ai-foundry.json', variables('artifactsLocationSasToken')))]",
     "wafPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.waf-policy.json', variables('artifactsLocationSasToken')))]",
     "applicationGatewayTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.application-gateway.json', variables('artifactsLocationSasToken')))]",
     "firewallPolicyTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.firewall-policy.json', variables('artifactsLocationSasToken')))]",
@@ -313,7 +331,7 @@
     "buildVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.build-vm.json', variables('artifactsLocationSasToken')))]",
     "jumpVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.jump-vm.json', variables('artifactsLocationSasToken')))]",
     "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', variables('artifactsLocationSasToken')))]",
-    "bingGroundingTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.cogs.bing.json', variables('artifactsLocationSasToken')))]"
+    "bingGroundingTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.bing-search.json', variables('artifactsLocationSasToken')))]"
   },
   "resources": [
     {
@@ -486,6 +504,7 @@
               "name": "agent-subnet",
               "addressPrefix": "[concat(parameters('vnetBaseAddress'), '/27')]",
               "delegation": "Microsoft.App/environments",
+              "serviceEndpoints": ["Microsoft.CognitiveServices"],
               "networkSecurityGroupResourceId": "[if(variables('deployAgentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-agent-', parameters('baseName'))), null())]"
             },
             {
@@ -1082,8 +1101,10 @@
           "name": "[variables('acrName')]",
           "location": "[parameters('location')]",
           "enableTelemetry": "[parameters('enableTelemetry')]",
+          "acrSku": "Premium",
           "tags": "[parameters('tags')]",
-          "publicNetworkAccess": "Disabled"        }
+          "publicNetworkAccess": "Disabled"        
+        }
       }
     }
   }
@@ -1195,7 +1216,10 @@
       "cosmosDb": {
         "value": {
           "name": "[concat('cosmos-', parameters('baseName'))]",
-          "location": "[parameters('location')]"
+          "location": "[parameters('location')]",
+          "networkRestrictions": {
+            "publicNetworkAccess": "Disabled"
+          }
         }
       }
     }
@@ -1216,7 +1240,8 @@
       "keyVault": {
         "value": {
           "name": "[concat('kv-', parameters('baseName'))]",
-          "location": "[parameters('location')]"
+          "location": "[parameters('location')]",
+          "publicNetworkAccess": "Disabled"
         }
       }
     }
@@ -1238,7 +1263,8 @@
       "aiSearch": {
         "value": {
           "name": "[concat('search-', parameters('baseName'))]",
-          "location": "[parameters('location')]"
+          "location": "[parameters('location')]",
+          "publicNetworkAccess": "Disabled"
         }
       }
     }
@@ -1675,96 +1701,119 @@
 {
   "type": "Microsoft.Resources/deployments",
   "apiVersion": "2025-04-01",
-  "name": "[concat('aiFoundryDeployment-', variables('uniqueSuffix'))]",
+  "name": "aiFoundryDeployment-[variables('uniqueSuffix')]",
   "properties": {
     "mode": "Incremental",
-    "templateLink": { 
+    "templateLink": {
       "uri": "[variables('aiFoundryTemplateUri')]",
       "contentVersion": "1.0.0.0"
-    },
-    "parameters": {
-      "enableTelemetry": {
-        "value": "[parameters('enableTelemetry')]"
-      },
-      "aiFoundry": {
-        "value": {
-          "baseName": "[parameters('baseName')]",
-          "location": "[parameters('location')]",
-          "includeAssociatedResources": true,
-          "tags": "[parameters('tags')]",
-          "privateEndpointSubnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
-          "aiFoundryConfiguration": {
-            "accountName": "[concat('ai', parameters('baseName'))]",
-            "allowProjectManagement": true,
-            "createCapabilityHosts" : false,
-            "disableLocalAuth" : false,
-            "location": "[parameters('location')]",
-            "networking": {
-              "cognitiveServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsCogSvcs'), reference('dep-cognitiveservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').cognitiveservicesZoneId, ''))]",
-              "openaiPrivateDnsZoneResourceId": "[if(variables('deployPdnsOpenAI'), reference('dep-openai-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').openaiZoneId, ''))]",
-              "aiServicesPrivateDnsZoneResourceId": "[if(variables('deployPdnsAiServices'), reference('dep-aiservices-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').aiServicesZoneId, ''))]",
-              "agentServiceSubnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
-            },
-            "project" : {
-              "name": "aifoundry-default-project",
-              "displayName": "Default AI Foundry Project.",
-              "description": "This is the default project for AI Foundry."
-
-            }
-          },
-          "aiModelDeployments" : [
-            {
-              "model": {
-                    "format": "OpenAI",
-                    "name": "gpt-4o",
-                    "version": "2024-11-20"
-                },
-              "name": "gpt-4o",
-              "sku": {
-                    "capacity": 10,
-                    "name": "GlobalStandard"
-                }
-            },
-            {
-              "model": {
-                  "format": "OpenAI",
-                  "name": "text-embedding-3-large",
-                  "version": "1"
-                },
-              "name": "text-embedding-3-large",
-              "sku": {
-                  "capacity": 1,
-                  "name": "Standard"
-              }
-            }           
-          ],
-          "aiSearchConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsSearch'), reference('dep-search-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').searchZoneId, ''))]"
-          },
-          "cosmosDbConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsCosmosSql'), reference('dep-cosmos-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').cosmosSqlZoneId, ''))]"
-          }, 
-          "keyVaultConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').keyVaultZoneId, ''))]"
-          },
-          "storageAccountConfiguration": {
-            "privateDnsZoneResourceId": "[if(variables('deployPdnsBlob'), reference('dep-blob-std-private-dns-zone').outputs.resourceId.value, coalesce(parameters('existingDNSZones').blobZoneId, ''))]"
-          }
-        }
-      }
+    }
   },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dep-cognitiveservices-private-dns-zone')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dep-openai-private-dns-zone')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dep-aiservices-private-dns-zone')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dep-search-std-private-dns-zone')]",
-        "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dep-cosmos-std-private-dns-zone')]",
-        "[resourceId('Microsoft.Resources/deployments', 'kv-private-dns-zone')]",
-        "[resourceId('Microsoft.Resources/deployments', 'dep-blob-std-private-dns-zone')]"
-      ]
-  }
+  "parameters": {
+    "location": {
+      "value": "[parameters('location')]"
+    },
+    "aiServices": {
+      "value": "[concat('ai', parameters('baseName'))]"
+    },
+    "firstProjectName": {
+      "value": "aifoundry-default-project"
+    },
+    "projectDescription": {
+      "value": "Default AI Foundry Project"
+    },
+    "displayName": {
+      "value": "AI Foundry Default Project"
+    },
+    "existingVnetResourceId": {
+      "value": "[if(variables('deployVnet'), reference('m-vnet').outputs.resourceId.value, parameters('existingVnetId'))]"
+    },
+    "vnetName": {
+      "value": "[variables('vnetName')]"
+    },
+    "agentSubnetName": {
+      "value": "[if(parameters('existingSubnets').agentSubnet != '', parameters('existingSubnets').agentSubnet, 'agent-subnet')]"
+    },
+    "peSubnetName": {
+      "value": "[if(parameters('existingSubnets').peSubnet != '', parameters('existingSubnets').peSubnet, 'pe-subnet')]"
+    },
+    "deployVnetAndSubnets": {
+      "value": "false"
+    },
+    "aiSearchResourceId": {
+      "value": ""
+    },
+    "azureStorageAccountResourceId": {
+      "value": ""
+    },
+    "azureCosmosDBAccountResourceId": {
+      "value": ""
+    },
+    "aiSearchPublicNetworkAccess": {
+      "value": "Disabled"
+    },
+    "aiSearchNetworkRuleSet": {
+      "value": {}
+    },
+    "cosmosDbPublicNetworkAccess": {
+      "value": "Disabled"
+    },
+    "cosmosDbIpRules": {
+      "value": []
+    },
+    "storageAccountPublicNetworkAccess": {
+      "value": "Disabled"
+    },
+    "keyVaultPublicNetworkAccess": {
+      "value": "Disabled"
+    },
+    "keyVaultNetworkAcls": {
+      "value": {}
+    },
+    "deployPrivateEndpointsAndDns": {
+      "value": "true"
+    },
+    "configurePrivateDns": {
+      "value": "[variables('deployPdnsAndPe')]"
+    },
+    "existingDNSZones": {
+      "value": {
+        "privatelink.services.ai.azure.com" : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "privatelink.openai.azure.com" : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "privatelink.cognitiveservices.azure.com" : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "privatelink.vaultcore.azure.net": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "privatelink.search.windows.net": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "privatelink.documents.azure.com": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "concat('privatelink.blob.', environment().suffixes.storage)"  : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]"
+      }
+    },
+    "includeAssociatedResources": {
+      "value": true
+    },
+    "createCapabilityHosts": {
+      "value": true
+    },
+    "enableCapabilityHostDelayScript": {
+      "value": "true"
+    },
+    "capabilityHostWaitSeconds": {
+      "value": "600"
+    },
+    "modelDeployments": {
+      "value": "[variables('varAiFoundryModelDeployments')]"
+    }
+
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]",
+    "[resourceId('Microsoft.Resources/deployments', 'dep-aiservices-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'dep-openai-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'dep-cognitiveservices-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'dep-search-std-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'dep-cosmos-std-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'dep-blob-std-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'kv-private-dns-zone')]"
+  ]
 },
 {
   "condition" : "[variables('deployBingGrounding')]",
@@ -1786,6 +1835,9 @@
       },
       "bingSearchName": {
         "value": "[variables('bingGroundingName')]"
+      },
+      "existingResourceId": {
+        "value": ""
       }
     },
     "dependsOn": [
