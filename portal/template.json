@@ -1737,7 +1737,7 @@
       "value": "[if(not(empty(parameters('existingSubnets').peSubnet)), parameters('existingSubnets').peSubnet, 'pe-subnet')]"
     },
     "deployVnetAndSubnets": {
-      "value": "false"
+      "value": false
     },
     "aiSearchResourceId": {
       "value": ""
@@ -1770,7 +1770,7 @@
       "value": {}
     },
     "deployPrivateEndpointsAndDns": {
-      "value": "true"
+      "value": true
     },
     "configurePrivateDns": {
       "value": "[variables('deployPdnsAndPe')]"
@@ -1793,10 +1793,10 @@
       "value": true
     },
     "enableCapabilityHostDelayScript": {
-      "value": "true"
+      "value": true
     },
     "capabilityHostWaitSeconds": {
-      "value": "600"
+      "value": 600
     },
     "modelDeployments": {
       "value": "[variables('varAiFoundryModelDeployments')]"
