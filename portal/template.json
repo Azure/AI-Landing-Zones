@@ -248,6 +248,7 @@
         "modelCapacity": 1
       }
     ],
+    "varDeployBastionNsg": "[coalesce(parameters('deployToggles').bastionNsg, true())]",
     "deployAgentNsg": "[coalesce(parameters('deployToggles').agentNsg, true())]",
     "deployPeNsg": "[coalesce(parameters('deployToggles').peNsg, true())]",
     "deployApplicationGatewayNsg": "[coalesce(parameters('deployToggles').applicationGatewayNsg, true())]",
@@ -421,7 +422,125 @@
         },
         "parameters": {
           "nsg": {
-            "value": "[createObject('name', concat('nsg-apim-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+            "value": {
+              "name": "[concat('nsg-apim-', parameters('baseName'))]",
+              "location": "[parameters('location')]",
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "securityRules": [
+                {
+                  "name": "Allow-APIM-Management-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 100,
+                    "protocol": "Tcp",
+                    "description": "Azure API Management control plane traffic",
+                    "sourceAddressPrefix": "ApiManagement",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "3443"
+                  }
+                },
+                {
+                  "name": "Allow-AzureLoadBalancer-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 110,
+                    "protocol": "Tcp",
+                    "description": "Azure Infrastructure Load Balancer health probes",
+                    "sourceAddressPrefix": "AzureLoadBalancer",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "6390"
+                  }
+                },
+                {
+                  "name": "Allow-VNet-to-APIM-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 120,
+                    "protocol": "Tcp",
+                    "description": "Internal VNet clients to APIM gateway",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "443"
+                  }
+                },
+                {
+                  "name": "Allow-APIM-to-SQL-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 110,
+                    "protocol": "Tcp",
+                    "description": "APIM to Azure SQL for dependencies",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "Sql",
+                    "destinationPortRange": "1433"
+                  }
+                },
+                {
+                  "name": "Allow-APIM-to-KeyVault-Outbound", 
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 120,
+                    "protocol": "Tcp",
+                    "description": "APIM to Key Vault for certificates and secrets",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "KeyVault",
+                    "destinationPortRange": "443"
+                  }
+                },
+                {
+                  "name": "Allow-APIM-to-EventHub-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 130,
+                    "protocol": "Tcp",
+                    "description": "'APIM to Event Hub for logging",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "EventHub",
+                    "destinationPortRange": ["5671", "5672", "443"]
+                  }
+                },
+                {
+                  "name": "Allow-APIM-to-InternalBackends-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 140,
+                    "protocol": "Tcp",
+                    "description": "APIM to internal backends (OpenAI, AI Services, etc)",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "443"
+                  }
+                },
+                {
+                  "name": "Allow-APIM-to-AzureMonitor-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 150,
+                    "protocol": "Tcp",
+                    "description": "APIM to Azure Monitor for telemetry",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "AzureMonitor",
+                    "destinationPortRange": ["1886", "443"]
+                  }
+                }
+              ]
+            }
           }
         }
       }
@@ -475,7 +594,143 @@
         },
         "parameters": {
           "nsg": {
-            "value": "[createObject('name', concat('nsg-devops-build-agents-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+            "value": "[createObject('name', concat('nsg-devops-agents-', parameters('baseName')), 'location', parameters('location'), 'enableTelemetry', parameters('enableTelemetry'))]"
+          }
+        }
+      }
+    },
+    {
+      "condition": "[variables('varDeployBastionNsg')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "m-nsg-bastion",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('networkSecurityGroupTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsg": {
+            "value": {
+              "name": "[concat('nsg-bastion-', parameters('baseName'))]",
+              "location": "[parameters('location')]",
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "securityRules": [
+                {
+                  "name": "Allow-GatewayManager-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 100,
+                    "protocol": "Tcp",
+                    "description": "Allow Azure Bastion control plane traffic",
+                    "sourceAddressPrefix": "GatewayManager",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRanges": "443"
+                  }
+                },
+                {
+                  "name": "Allow-Internet-HTTPS-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 110,
+                    "protocol": "Tcp",
+                    "description": "Allow HTTPS traffic from Internet",
+                    "sourceAddressPrefix": "Internet",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRanges": "443"
+                  }
+                },
+                {
+                  "name": "Allow-Internet-HTTPS-Alt-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 120,
+                    "protocol": "Tcp",
+                    "description": "Allow alternate HTTPS traffic from Internet",
+                    "sourceAddressPrefix": "Internet",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRanges": "4443"
+                  }
+                },
+                {
+                  "name": "Allow-BastionHost-Communication-Inbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Inbound",
+                    "priority": 130,
+                    "protocol": "Tcp",
+                    "description": "Allow Bastion host-to-host communication",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRanges": ["8080", "5701"]
+                  }
+                },
+                {
+                  "name": "Allow-SSH-RDP-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 100,
+                    "protocol": "*",
+                    "description": "Allow SSH and RDP to target VMs",
+                    "sourceAddressPrefix": "*",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRanges": ["22", "3389"]
+                  }
+                },
+                {
+                  "name": "Allow-AzureCloud-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 110,
+                    "protocol": "Tcp",
+                    "description": "Allow Azure Cloud communication",
+                    "sourceAddressPrefix": "*",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "AzureCloud",
+                    "destinationPortRanges": "443"
+                  }
+                },
+                {
+                  "name": "Allow-BastionHost-Communication-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 120,
+                    "protocol": "Tcp",
+                    "description": "Allow Bastion host-to-host communication",
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRanges": ["8080", "5701"]
+                  }
+                },
+                {
+                  "name": "Allow-GetSessionInformation-Outbound",
+                  "properties": {
+                    "access": "Allow",
+                    "direction": "Outbound",
+                    "priority": 130,
+                    "protocol": "*",
+                    "description": "Allow session and certificate validation",
+                    "sourceAddressPrefix": "*",
+                    "sourcePortRange": "*",
+                    "destinationAddressPrefix": "Internet",
+                    "destinationPortRanges": "80"
+                  }
+                }
+              ]
+            }
           }
         }
       }
@@ -518,7 +773,8 @@
             {
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "AzureBastionSubnet",
-              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.64/26')]"
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.64/26')]",
+              "networkSecurityGroupResourceId": "[if(variables('varDeployBastionNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-bastion-', parameters('baseName'))), null())]"
             },
             {
               "enabled": ["variables('deployPdnsAndPe')"],
@@ -535,7 +791,8 @@
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "apim-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.224/27')]",
-              "networkSecurityGroupResourceId": "[if(variables('deployApiManagementNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-apim-', parameters('baseName'))), null())]"
+              "networkSecurityGroupResourceId": "[if(variables('deployApiManagementNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-apim-', parameters('baseName'))), null())]",
+              "delegation": "[if(variables('deployApiManagementNsg'), 'Microsoft.Web/hostingEnvironments', null())]"
             },
             {
               "enabled": ["variables('deployPdnsAndPe')"],
@@ -553,9 +810,9 @@
             },
             {
               "enabled": ["variables('deployPdnsAndPe')"],
-              "name": "devops-build-agents-subnet",
+              "name": "devops-agents-subnet",
               "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.1.32/27')]",
-              "networkSecurityGroupResourceId": "[if(variables('deployDevopsBuildAgentsNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-devops-build-agents-', parameters('baseName'))), null())]"
+              "networkSecurityGroupResourceId": "[if(variables('deployDevopsBuildAgentsNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-devops-agents-', parameters('baseName'))), null())]"
             }
           ]
           }
@@ -586,7 +843,7 @@
         "parameters": {
           "privateDnsZone": {
             "value": {
-              "name": "privatelink.apimanagement.azure.net",
+              "name": "privatelink.azure-api.net",
               "location": "global",
               "tags": {},
               "enableTelemetry": "[parameters('enableTelemetry')]",
