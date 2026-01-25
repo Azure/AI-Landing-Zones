@@ -2,6 +2,13 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.14
+
+### Changed
+- Improved Application Gateway support (forced tunneling compatibility, public IP DNS label defaults, and cleaner configuration via `appGatewayDefinition`).
+- Added optional HTTPS on Application Gateway with HTTP->HTTPS redirect, supporting Key Vault certificates and a self-signed lab path.
+- Added a minimal sample to expose a private Container Apps app through a public Application Gateway.
+
 ## 0.1.13
 
 ### Changed
