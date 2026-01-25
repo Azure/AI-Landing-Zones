@@ -108,7 +108,6 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -125,7 +124,6 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '168.63.129.16'
@@ -142,7 +140,6 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'AzureActiveDirectory'
@@ -159,7 +156,6 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 // Required for Azure CLI / AZD to call ARM after obtaining tokens.
@@ -177,7 +173,6 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 // Broad Azure public-cloud endpoints (helps avoid TLS failures caused by missing ancillary Azure endpoints).
@@ -195,10 +190,10 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 'MicrosoftContainerRegistry'
+                'AzureContainerRegistry'
                 'AzureFrontDoorFirstParty'
               ]
               destinationPorts: [
@@ -213,7 +208,6 @@ param firewallPolicyDefinition = {
               ]
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
-                '192.168.1.0/27' // aca-env-subnet
               ]
               destinationAddresses: [
                 '10.0.0.0/8'
@@ -236,10 +230,178 @@ param firewallPolicyDefinition = {
           }
           rules: [
             {
-              name: 'allow-aca-platform-fqdns'
+              name: 'allow-agent-platform-fqdns'
               ruleType: 'ApplicationRule'
               sourceAddresses: [
                 '192.168.0.0/27' // agent-subnet
+              ]
+              protocols: [
+                {
+                  protocolType: 'Https'
+                  port: 443
+                }
+              ]
+              targetFqdns: [
+                'mcr.microsoft.com'
+                '*.data.mcr.microsoft.com'
+                'packages.aks.azure.com'
+                'acs-mirror.azureedge.net'
+                '*.identity.azure.net'
+                'login.microsoftonline.com'
+                '*.login.microsoftonline.com'
+                '*.login.microsoft.com'
+                'login.microsoft.com'
+                '*.azurecr.io'
+                '*.blob.core.windows.net'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    {
+      name: 'rcg-aca-egress'
+      priority: 120
+      ruleCollections: [
+        {
+          name: 'rc-allow-aca-network'
+          priority: 100
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-aca-azure-dns-udp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'UDP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-aca-azure-dns-tcp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-aca-azuread-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureActiveDirectory'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-azure-resource-manager-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureResourceManager'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-azure-cloud-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureCloud'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-mcr-and-afd-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'MicrosoftContainerRegistry'
+                'AzureContainerRegistry'
+                'AzureFrontDoorFirstParty'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-infra-private'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'Any'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '10.0.0.0/8'
+                '172.16.0.0/12'
+                '192.168.0.0/16'
+                '100.64.0.0/10'
+              ]
+              destinationPorts: [
+                '*'
+              ]
+            }
+          ]
+        }
+        {
+          name: 'rc-allow-aca-app'
+          priority: 110
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-aca-platform-fqdns'
+              ruleType: 'ApplicationRule'
+              sourceAddresses: [
                 '192.168.1.0/27' // aca-env-subnet
               ]
               protocols: [
@@ -253,6 +415,13 @@ param firewallPolicyDefinition = {
                 '*.data.mcr.microsoft.com'
                 'packages.aks.azure.com'
                 'acs-mirror.azureedge.net'
+                '*.identity.azure.net'
+                'login.microsoftonline.com'
+                '*.login.microsoftonline.com'
+                '*.login.microsoft.com'
+                'login.microsoft.com'
+                '*.azurecr.io'
+                '*.blob.core.windows.net'
               ]
             }
           ]

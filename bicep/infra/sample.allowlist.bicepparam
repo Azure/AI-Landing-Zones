@@ -2,7 +2,7 @@ using './main.bicep'
 
 // Standalone + AI Foundry dependencies with public networking enabled,
 // restricted to:
-// - The public IP: 187.13.147.118
+// - The public IP: 187.13.147.117
 
 
 param deployToggles = {
@@ -258,7 +258,7 @@ param firewallPolicyDefinition = {
 }
 
 // AI Foundry: enable public networking but restrict to VNet CIDR + one public IP.
-// If you are using Azure Firewall for egress, make `187.13.147.118` the firewall's egress Public IP.
+// If you are using Azure Firewall for egress, make `187.13.147.117` the firewall's egress Public IP.
 // Note: Cosmos DB IP firewall rules do NOT support RFC1918 ranges (e.g., 192.168.0.0/23).
 // For Cosmos DB, keep private access via Private Endpoint and only allowlist public IPs here.
 param aiFoundryDefinition = {
@@ -273,7 +273,7 @@ param aiFoundryDefinition = {
       bypass: 'None'
       ipRules: [
         {
-          value: '187.13.147.118'
+          value: '187.13.147.117'
         }
       ]
     }
@@ -282,7 +282,7 @@ param aiFoundryDefinition = {
   cosmosDbConfiguration: {
     publicNetworkAccess: 'Enabled'
     ipRules: [
-      '187.13.147.118'
+      '187.13.147.117'
     ]
   }
 
@@ -293,7 +293,7 @@ param aiFoundryDefinition = {
       defaultAction: 'Deny'
       ipRules: [
         {
-          value: '187.13.147.118'
+          value: '187.13.147.117'
           action: 'Allow'
         }
       ]
@@ -308,7 +308,7 @@ param aiFoundryDefinition = {
       defaultAction: 'Deny'
       ipRules: [
         {
-          value: '187.13.147.118'
+          value: '187.13.147.117'
         }
       ]
       virtualNetworkRules: []
@@ -326,7 +326,7 @@ param aiSearchDefinition = {
     bypass: 'None'
     ipRules: [
       {
-        value: '187.13.147.118'
+        value: '187.13.147.117'
       }
     ]
   }
@@ -339,7 +339,7 @@ param cosmosDbDefinition = {
   networkRestrictions: {
     publicNetworkAccess: 'Enabled'
     ipRules: [
-      '187.13.147.118'
+      '187.13.147.117'
     ]
   }
 
@@ -360,7 +360,7 @@ param keyVaultDefinition = {
     defaultAction: 'Deny'
     ipRules: [
       {
-        value: '187.13.147.118'
+        value: '187.13.147.117'
       }
     ]
     virtualNetworkRules: []

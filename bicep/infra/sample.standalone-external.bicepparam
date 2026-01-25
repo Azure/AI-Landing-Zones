@@ -1,6 +1,11 @@
 using './main.bicep'
 
-// Standalone: creates a new, isolated workload environment.
+// Standalone (external entry via Application Gateway):
+// - Creates a new, isolated workload environment (new VNet + subnets)
+// - Deploys an INTERNAL Container Apps Environment
+// - Deploys a hello-world Container App that is reachable from the VNet
+// - Deploys an Application Gateway v2 with a Public IP to expose the app externally
+// - Uses an auto-generated self-signed certificate for HTTPS on App Gateway (lab-friendly)
 
 param deployToggles = {
   aiFoundry: true
@@ -9,9 +14,15 @@ param deployToggles = {
   virtualNetwork: true
   peNsg: true
   agentNsg: false
-  acaEnvironmentNsg: false
+
+  // Recommended for this scenario: apply an NSG to the ACA environment subnet
+  acaEnvironmentNsg: true
+
   apiManagementNsg: false
-  applicationGatewayNsg: false
+
+  // Required for this scenario: apply an NSG to the App Gateway subnet
+  applicationGatewayNsg: true
+
   jumpboxNsg: true
   devopsBuildAgentsNsg: false
   bastionNsg: true
@@ -28,9 +39,15 @@ param deployToggles = {
   bastionHost: true
   appConfig: false
   apiManagement: false
-  applicationGateway: false
-  applicationGatewayPublicIp: false
+
+  // Enable Application Gateway + Public IP
+  applicationGateway: true
+  applicationGatewayPublicIp: true
+
+  // Keep it simple: no WAF policy in this sample
   wafPolicy: false
+
+  // Forced tunneling through Azure Firewall
   firewall: true
   userDefinedRoutes: true
 }
@@ -43,6 +60,19 @@ param flagPlatformLandingZone = false
 // Required for forced tunneling: Azure Firewall private IP (next hop).
 // With the default subnet layout, Azure Firewall is assigned the first usable IP in AzureFirewallSubnet (192.168.0.128/26) => 192.168.0.132.
 param firewallPrivateIp = '192.168.0.132'
+
+// Application Gateway configuration:
+// - Standard_v2 (simpler than WAF_v2 for a sample)
+// - HTTPS listener (443) with a self-signed cert generated during deployment
+// - Required exception when UDR forced tunneling is enabled (AppGW v2 management traffic)
+param appGatewayDefinition = {
+  sku: 'Standard_v2'
+
+  enableHttps: true
+  createSelfSignedCertificate: true
+
+  appGatewayInternetRoutingException: true
+}
 
 // Default egress for Jump VM (jumpbox-subnet) via Azure Firewall Policy.
 // This is a strict allowlist designed to keep bootstrap tooling working under forced tunneling.
@@ -439,9 +469,12 @@ param containerAppsList = [
   {
     name: 'ca-aca-helloworld'
 
+    // Only apps explicitly flagged are added to the App Gateway backend pool.
+    exposeViaAppGateway: true
+
     activeRevisionsMode: 'Single'
 
-    // VNet-reachable ingress (required for Application Gateway / VMs in the VNet).
+    // VNet-reachable ingress (Application Gateway / VMs in the VNet can reach it).
     // Note: because the Container Apps Environment is internal + publicNetworkAccess is Disabled,
     // this does NOT expose the app to the public internet.
     ingressExternal: true
