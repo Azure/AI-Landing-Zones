@@ -1448,12 +1448,31 @@ param appGatewayPublicIp publicIpDefinitionType?
 
 var varDeployApGatewayPip = deployToggles.applicationGatewayPublicIp && empty(resourceIds.?appGatewayPublicIpResourceId)
 
+// Default PIP naming convention (also used for default DNS label)
+var varAppGatewayPipName = appGatewayPublicIp.?name ?? 'pip-agw-${baseName}'
+
+// Optional Public IP DNS label (domainNameLabel)
+// - If appGatewayDefinition.publicIpDnsLabel is null/undefined => default to PIP name
+// - If it is empty string => disable DNS label
+// - User can still override via appGatewayPublicIp.dnsSettings (takes precedence via union)
+var varAgwPublicIpDnsLabelDefault = appGatewayDefinition.?publicIpDnsLabel ?? varAppGatewayPipName
+var varAgwPublicIpDnsSettingsDefault = empty(varAgwPublicIpDnsLabelDefault)
+  ? {}
+  : {
+      dnsSettings: {
+        domainNameLabel: varAgwPublicIpDnsLabelDefault
+      }
+    }
+
+// Default hostname for public access via Azure-managed cloudapp FQDN
+var varAgwPublicIpFqdnDefault = empty(varAgwPublicIpDnsLabelDefault) ? '' : '${varAgwPublicIpDnsLabelDefault}.${toLower(location)}.cloudapp.azure.com'
+
 module appGatewayPipWrapper 'wrappers/avm.res.network.public-ip-address.bicep' = if (varDeployApGatewayPip) {
   name: 'm-appgw-pip'
   params: {
     pip: union(
       {
-        name: 'pip-agw-${baseName}'
+        name: varAppGatewayPipName
         skuName: 'Standard'
         skuTier: 'Regional'
         publicIPAllocationMethod: 'Static'
@@ -1462,6 +1481,7 @@ module appGatewayPipWrapper 'wrappers/avm.res.network.public-ip-address.bicep' =
         location: location
         enableTelemetry: enableTelemetry
       },
+      varAgwPublicIpDnsSettingsDefault,
       appGatewayPublicIp ?? {}
     )
   }
@@ -2234,7 +2254,7 @@ var varDeployContainerApps = !empty(containerAppsList) && (varDeployContainerApp
 
 @batchSize(4)
 module containerApps 'wrappers/avm.res.app.container-app.bicep' = [
-  for (app, index) in containerAppsList: if (varDeployContainerApps) {
+  for (app, index) in (varDeployContainerApps ? containerAppsList : []): {
     name: 'ca-${app.name}-${varUniqueSuffix}'
     params: {
       containerApp: union(
@@ -2862,7 +2882,7 @@ var varAgwRg = length(varAgwIdSegments) >= 5 ? varAgwIdSegments[4] : ''
 var varAgwNameExisting = length(varAgwIdSegments) >= 1 ? last(varAgwIdSegments) : ''
 var varAgwName = !empty(resourceIds.?applicationGatewayResourceId!)
   ? varAgwNameExisting
-  : (empty(appGatewayDefinition.?name ?? '') ? 'agw-${baseName}' : appGatewayDefinition!.name)
+  : (appGatewayDefinition.?name ?? 'agw-${baseName}')
 
 // Determine if we need to create a WAF policy
 var varAppGatewaySKU = appGatewayDefinition.?sku ?? 'WAF_v2'
@@ -2874,86 +2894,288 @@ var varAgwSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
   ? '${virtualNetworkResourceId}/subnets/appgw-subnet'
   : '${resourceIds.virtualNetworkResourceId!}/subnets/appgw-subnet'
 
+// Option 2: Populate App Gateway backend pool from selected Container Apps.
+// Note: We can only use Container App *module outputs* (fqdn) directly in resource/module properties.
+// Do not flow module outputs through variables (ARM template variables must be known at deployment start).
+var varAgwBackendSourceCount = varDeployContainerApps ? length(containerAppsList) : 0
+var varAgwBackendIndexes = reduce(
+  range(0, varAgwBackendSourceCount),
+  [],
+  (acc, i) => (containerAppsList[i].?exposeViaAppGateway ?? false) ? concat(acc, [i]) : acc
+)
+var varAgwHasBackends = !empty(varAgwBackendIndexes)
+
+// Default backend protocol/port
+// For Container Apps ingress, App Gateway should use HTTP/80 to the backend.
+// (Frontend HTTPS termination on AppGW does not imply HTTPS to backend.)
+var varAgwDefaultBackendProtocol = varAgwHasBackends ? 'Http' : (varAppGatewayHttpsEnabled ? 'Https' : 'Http')
+var varAgwDefaultBackendPort = varAgwHasBackends ? 80 : (varAppGatewayHttpsEnabled ? 443 : 80)
+
+// HTTPS defaults
+// This repo supports two HTTPS certificate paths:
+//  1) Key Vault (recommended): provide appGatewayDefinition.httpsKeyVaultSecretId (pre-created)
+//  2) Self-signed lab path: set createSelfSignedCertificate=true and provide a PFX to upload directly to AppGW
+var varAgwHttpsRequested = (appGatewayDefinition.?enableHttps ?? false) || (appGatewayDefinition.?createSelfSignedCertificate ?? false) || !empty(appGatewayDefinition.?httpsKeyVaultSecretId ?? '')
+var varAgwHasKeyVaultSecretId = !empty(appGatewayDefinition.?httpsKeyVaultSecretId ?? '')
+
+var varAgwHasPfxUploadMaterial = !empty(appGatewayDefinition.?sslCertificatePfxBase64 ?? '') && !empty(appGatewayDefinition.?sslCertificatePassword ?? '')
+var varAgwUsePfxUpload = (appGatewayDefinition.?createSelfSignedCertificate ?? false) && !varAgwHasKeyVaultSecretId
+var varAgwNeedsGeneratedPfx = varAgwUsePfxUpload && !varAgwHasPfxUploadMaterial
+var varAgwSslReady = varAgwHasKeyVaultSecretId || (varAgwUsePfxUpload && (varAgwHasPfxUploadMaterial || varAgwNeedsGeneratedPfx))
+
+// If HTTPS is requested but cert material is missing, we fall back to HTTP only.
+// (Some Bicep CLI versions used in CI/consumers do not support an error()/assert() style hard-fail here.)
+var varAppGatewayHttpsEnabled = varAgwHttpsRequested && varAgwSslReady
+
+var varAppGatewayHttpsHostName = appGatewayDefinition.?httpsHostName ?? varAgwPublicIpFqdnDefault
+var varAppGatewaySslCertName = appGatewayDefinition.?selfSignedCertificateName ?? 'agw-tls'
+
+// Lab path: generate a self-signed PFX in-template (no Key Vault, no local env vars).
+// NOTE: The generated password is persisted in deployment state/history. Use only for labs.
+resource agwSelfSignedPfx 'Microsoft.Resources/deploymentScripts@2023-08-01' = if (varDeployAppGateway && varAgwNeedsGeneratedPfx) {
+  name: 'agw-selfsigned-pfx-${baseName}'
+  location: resourceGroup().location
+  kind: 'AzurePowerShell'
+  properties: {
+    azPowerShellVersion: '11.0'
+    forceUpdateTag: varAppGatewayHttpsHostName
+    timeout: 'PT30M'
+    cleanupPreference: 'OnSuccess'
+    retentionInterval: 'P1D'
+    scriptContent: '''
+$ErrorActionPreference = 'Stop'
+
+$dnsName = '${varAppGatewayHttpsHostName}'
+
+# Random password (lab-only)
+$password = ([System.Guid]::NewGuid().ToString('N') + '!' + [System.Guid]::NewGuid().ToString('N'))
+
+$rsa = [System.Security.Cryptography.RSA]::Create(2048)
+$hash = [System.Security.Cryptography.HashAlgorithmName]::SHA256
+$padding = [System.Security.Cryptography.RSASignaturePadding]::Pkcs1
+
+$req = [System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$dnsName", $rsa, $hash, $padding)
+
+$sanBuilder = [System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder]::new()
+$sanBuilder.AddDnsName($dnsName)
+$req.CertificateExtensions.Add($sanBuilder.Build())
+
+$req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false, $false, 0, $false))
+$req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new(
+  [System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature -bor [System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::KeyEncipherment,
+  $false
+))
+
+$oids = [System.Security.Cryptography.OidCollection]::new()
+$oids.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.1')) | Out-Null # Server Authentication
+$req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($oids, $false))
+
+$notBefore = [DateTimeOffset]::UtcNow.AddDays(-1)
+$notAfter = $notBefore.AddYears(1)
+$cert = $req.CreateSelfSigned($notBefore, $notAfter)
+
+$pfxBytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx, $password)
+$pfxBase64 = [System.Convert]::ToBase64String($pfxBytes)
+
+# Azure PowerShell deploymentScripts expose outputs via this reserved variable.
+$DeploymentScriptOutputs = @{
+  pfxBase64 = $pfxBase64
+  pfxPassword = $password
+}
+'''
+  }
+}
+
+var varAgwPfxBase64 = varAgwUsePfxUpload
+  ? (varAgwHasPfxUploadMaterial
+      ? (appGatewayDefinition.?sslCertificatePfxBase64 ?? '')
+      : (varAgwNeedsGeneratedPfx ? (reference(agwSelfSignedPfx!.id, '2023-08-01').outputs.pfxBase64 ?? '') : ''))
+  : ''
+
+var varAgwPfxPassword = varAgwUsePfxUpload
+  ? (varAgwHasPfxUploadMaterial
+      ? (appGatewayDefinition.?sslCertificatePassword ?? '')
+      : (varAgwNeedsGeneratedPfx ? (reference(agwSelfSignedPfx!.id, '2023-08-01').outputs.pfxPassword ?? '') : ''))
+  : ''
+
+// App Gateway Key Vault SSL cert access:
+// Avoid system-assigned identity + post-create Key Vault grants (can race).
+// When we deploy Key Vault in this template and the user did not supply managedIdentities,
+// we create a user-assigned identity first, grant it access to Key Vault, then attach it to AppGW.
+var varAgwManagedIdentitiesInput = appGatewayDefinition.?managedIdentities
+var varAgwHasManagedIdentityOverride = varAgwManagedIdentitiesInput != null
+var varAgwNeedsKeyVaultIdentity = varAppGatewayHttpsEnabled && varAgwHasKeyVaultSecretId
+var varDeployAgwKeyVaultUai = varDeployAppGateway && varAgwNeedsKeyVaultIdentity && varDeployKeyVault && !varAgwHasManagedIdentityOverride
+
+resource agwKeyVaultIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = if (varDeployAgwKeyVaultUai) {
+  name: 'id-agw-${baseName}'
+  location: location
+  tags: tags
+}
+
 module applicationGateway 'wrappers/avm.res.network.application-gateway.bicep' = if (varDeployAppGateway) {
   name: 'applicationGatewayDeployment'
   params: {
-    applicationGateway: union(
-      {
-        // Required parameters with defaults
-        name: varAgwName
-        sku: varAppGatewaySKU
+    applicationGateway: {
+      // Required parameters with defaults
+      name: varAgwName
+      sku: varAppGatewaySKU
 
-        // Gateway IP configurations - required for Application Gateway
-        gatewayIPConfigurations: [
-          {
-            name: 'appGatewayIpConfig'
-            properties: {
-              subnet: {
-                id: varAgwSubnetId
+      // Allow user overrides for most properties via appGatewayDefinition.*.
+      // Important: keep FQDN backend wiring outside of a top-level union(), because
+      // it references module outputs (containerApps[i].outputs.fqdn).
+
+      // Gateway IP configurations - required for Application Gateway
+      gatewayIPConfigurations: appGatewayDefinition.?gatewayIPConfigurations ?? [
+        {
+          name: 'appGatewayIpConfig'
+          properties: {
+            subnet: {
+              id: varAgwSubnetId
+            }
+          }
+        }
+      ]
+
+      // WAF policy wiring
+      firewallPolicyResourceId: appGatewayDefinition.?firewallPolicyResourceId ?? (!empty(varAppGatewayFirewallPolicyId) ? varAppGatewayFirewallPolicyId : null)
+
+      // Location and tags
+      location: appGatewayDefinition.?location ?? location
+      tags: appGatewayDefinition.?tags ?? tags
+
+      // Identity (needed for Key Vault SSL cert integration)
+      managedIdentities: appGatewayDefinition.?managedIdentities ?? (varAgwNeedsKeyVaultIdentity
+        ? (varDeployAgwKeyVaultUai
+            ? {
+                userAssignedResourceIds: [
+                  agwKeyVaultIdentity!.id
+                ]
               }
+            : {
+                systemAssigned: true
+              })
+        : null)
+
+      // Frontend IP configurations
+      frontendIPConfigurations: appGatewayDefinition.?frontendIPConfigurations ?? concat(
+        varDeployApGatewayPip
+          ? [
+              {
+                name: 'publicFrontend'
+                properties: { publicIPAddress: { id: appGatewayPipWrapper!.outputs.resourceId } }
+              }
+            ]
+          : [],
+        [
+          {
+            name: 'privateFrontend'
+            properties: {
+              privateIPAllocationMethod: 'Static'
+              privateIPAddress: '192.168.0.200'
+              subnet: { id: varAgwSubnetId }
             }
           }
         ]
+      )
 
-        // WAF policy wiring
-        firewallPolicyResourceId: varAppGatewayFirewallPolicyId
-
-        // Location and tags
-        location: location
-        tags: tags
-
-        // Frontend IP configurations - default configuration
-        frontendIPConfigurations: concat(
-          varDeployApGatewayPip
-            ? [
-                {
-                  name: 'publicFrontend'
-                  properties: { publicIPAddress: { id: appGatewayPipWrapper!.outputs.resourceId } }
-                }
-              ]
-            : [],
-          [
-            {
-              name: 'privateFrontend'
-              properties: {
-                privateIPAllocationMethod: 'Static'
-                privateIPAddress: '192.168.0.200'
-                subnet: { id: varAgwSubnetId }
-              }
-            }
-          ]
-        )
-
-        // Frontend ports - required for Application Gateway
-        frontendPorts: [
+      // Frontend ports
+      frontendPorts: appGatewayDefinition.?frontendPorts ?? concat(
+        [
           {
             name: 'port80'
             properties: { port: 80 }
           }
-        ]
+        ],
+        varAppGatewayHttpsEnabled
+          ? [
+              {
+                name: 'port443'
+                properties: { port: 443 }
+              }
+            ]
+          : []
+      )
 
-        // Backend address pools - required for Application Gateway
-        backendAddressPools: [
-          {
-            name: 'defaultBackendPool'
+      // Backend address pools
+      // Auto-generated backend pool: wired to selected Container Apps (by FQDN).
+      // Note: cannot be safely wrapped in union()/??/concat() due to Bicep/ARM evaluation rules for module outputs.
+      backendAddressPools: [
+        {
+          name: 'defaultBackendPool'
+          properties: {
+            backendAddresses: [
+              for i in varAgwBackendIndexes: {
+                fqdn: containerApps[i].outputs.fqdn
+              }
+            ]
           }
-        ]
+        }
+      ]
 
-        // Backend HTTP settings - required for Application Gateway
-        backendHttpSettingsCollection: [
-          {
-            name: 'defaultHttpSettings'
-            properties: {
-              cookieBasedAffinity: 'Disabled'
-              port: 80
-              protocol: 'Http'
-              requestTimeout: 20
+      // Probes (useful when the backend is an FQDN)
+      probes: appGatewayDefinition.?probes ?? (varAgwHasBackends
+        ? [
+            {
+              name: 'defaultProbe'
+              properties: {
+                protocol: varAgwDefaultBackendProtocol
+                host: containerApps[varAgwBackendIndexes[0]].outputs.fqdn
+                path: '/'
+                interval: 30
+                timeout: 30
+                unhealthyThreshold: 3
+                pickHostNameFromBackendHttpSettings: false
+              }
             }
-          }
-        ]
+          ]
+        : [])
 
-        // HTTP listeners - required for Application Gateway
-        httpListeners: [
+      // Backend HTTP settings
+      backendHttpSettingsCollection: appGatewayDefinition.?backendHttpSettingsCollection ?? [
+        {
+          name: 'defaultHttpSettings'
+          properties: union(
+            {
+              cookieBasedAffinity: 'Disabled'
+              port: varAgwDefaultBackendPort
+              protocol: varAgwDefaultBackendProtocol
+              requestTimeout: 20
+            },
+            varAgwHasBackends
+              ? {
+                  pickHostNameFromBackendAddress: true
+                  probe: {
+                    id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/probes/defaultProbe'
+                  }
+                }
+              : {}
+          )
+        }
+      ]
+
+      // SSL certificates
+      // - Key Vault path (recommended for production): provide httpsKeyVaultSecretId
+      // - Lab path: upload PFX directly when createSelfSignedCertificate=true
+      sslCertificates: appGatewayDefinition.?sslCertificates ?? (varAppGatewayHttpsEnabled
+        ? [
+            {
+              name: varAppGatewaySslCertName
+              properties: varAgwHasKeyVaultSecretId
+                ? {
+                    keyVaultSecretId: appGatewayDefinition.?httpsKeyVaultSecretId
+                  }
+                : {
+                    data: varAgwPfxBase64
+                    password: varAgwPfxPassword
+                  }
+            }
+          ]
+        : [])
+
+      // HTTP listeners
+      httpListeners: appGatewayDefinition.?httpListeners ?? concat(
+        [
           {
             name: 'httpListener'
             properties: {
@@ -2966,30 +3188,105 @@ module applicationGateway 'wrappers/avm.res.network.application-gateway.bicep' =
               protocol: 'Http'
             }
           }
-        ]
+        ],
+        varAppGatewayHttpsEnabled
+          ? [
+              {
+                name: 'httpsListener'
+                properties: union(
+                  {
+                    frontendIPConfiguration: {
+                      id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/frontendIPConfigurations/${varDeployApGatewayPip ? 'publicFrontend' : 'privateFrontend'}'
+                    }
+                    frontendPort: {
+                      id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/frontendPorts/port443'
+                    }
+                    protocol: 'Https'
+                    sslCertificate: {
+                      id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/sslCertificates/${varAppGatewaySslCertName}'
+                    }
+                  },
+                  empty(varAppGatewayHttpsHostName)
+                    ? {}
+                    : {
+                        hostName: varAppGatewayHttpsHostName
+                        requireServerNameIndication: true
+                      }
+                )
+              }
+            ]
+          : []
+      )
 
-        // Request routing rules - required for Application Gateway
-        requestRoutingRules: [
-          {
-            name: 'httpRoutingRule'
-            properties: {
-              backendAddressPool: {
-                id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/backendAddressPools/defaultBackendPool'
+      // Redirect HTTP to HTTPS (edge)
+      redirectConfigurations: appGatewayDefinition.?redirectConfigurations ?? (varAppGatewayHttpsEnabled
+        ? [
+            {
+              name: 'httpToHttps'
+              properties: {
+                redirectType: 'Permanent'
+                targetListener: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/httpListeners/httpsListener'
+                }
+                includePath: true
+                includeQueryString: true
               }
-              backendHttpSettings: {
-                id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/backendHttpSettingsCollection/defaultHttpSettings'
-              }
-              httpListener: {
-                id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/httpListeners/httpListener'
-              }
-              priority: 100
-              ruleType: 'Basic'
             }
-          }
-        ]
-      },
-      appGatewayDefinition ?? {}
-    )
+          ]
+        : [])
+
+      // Request routing rules
+      requestRoutingRules: appGatewayDefinition.?requestRoutingRules ?? (varAppGatewayHttpsEnabled
+        ? [
+            {
+              name: 'httpsRoutingRule'
+              properties: {
+                backendAddressPool: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/backendAddressPools/defaultBackendPool'
+                }
+                backendHttpSettings: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/backendHttpSettingsCollection/defaultHttpSettings'
+                }
+                httpListener: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/httpListeners/httpsListener'
+                }
+                priority: 100
+                ruleType: 'Basic'
+              }
+            }
+            {
+              name: 'httpRedirectRule'
+              properties: {
+                httpListener: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/httpListeners/httpListener'
+                }
+                redirectConfiguration: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/redirectConfigurations/httpToHttps'
+                }
+                priority: 110
+                ruleType: 'Basic'
+              }
+            }
+          ]
+        : [
+            {
+              name: 'httpRoutingRule'
+              properties: {
+                backendAddressPool: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/backendAddressPools/defaultBackendPool'
+                }
+                backendHttpSettings: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/backendHttpSettingsCollection/defaultHttpSettings'
+                }
+                httpListener: {
+                  id: '${resourceId('Microsoft.Network/applicationGateways', varAgwName)}/httpListeners/httpListener'
+                }
+                priority: 100
+                ruleType: 'Basic'
+              }
+            }
+          ])
+    }
     enableTelemetry: enableTelemetry
   }
   dependsOn: [
@@ -2998,11 +3295,67 @@ module applicationGateway 'wrappers/avm.res.network.application-gateway.bicep' =
     #disable-next-line BCP321
     (varDeployApGatewayPip) ? appGatewayPipWrapper : null
     #disable-next-line BCP321
+    (varAgwNeedsGeneratedPfx) ? agwSelfSignedPfx : null
+    #disable-next-line BCP321
+    (varDeployAgwKeyVaultUai && !(keyVaultDefinition.?enableRbacAuthorization ?? false)) ? kvAccessPolicyForAgw : null
+    #disable-next-line BCP321
+    (varDeployAgwKeyVaultUai && (keyVaultDefinition.?enableRbacAuthorization ?? false)) ? kvSecretsUserRoleForAgw : null
+    #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
+  ]
+}
+
+// Key Vault access for Application Gateway (SSL certificates)
+// Note: To keep scope deterministic (and avoid cross-scope deployments), we only auto-grant
+// permissions when the Key Vault is deployed by this template in the current resource group.
+resource deployedKeyVaultForScope 'Microsoft.KeyVault/vaults@2023-07-01' existing = if (varDeployKeyVault) {
+  name: varKeyVaultName
+}
+
+// Access policy mode (default Key Vault behavior unless enableRbacAuthorization=true)
+resource kvAccessPolicyForAgw 'Microsoft.KeyVault/vaults/accessPolicies@2023-07-01' = if (varDeployAgwKeyVaultUai && varAgwNeedsKeyVaultIdentity && !(keyVaultDefinition.?enableRbacAuthorization ?? false)) {
+  name: 'add'
+  parent: deployedKeyVaultForScope
+  properties: {
+    accessPolicies: [
+      {
+        tenantId: subscription().tenantId
+        objectId: agwKeyVaultIdentity!.properties.principalId
+        permissions: {
+          secrets: [
+            'get'
+            'list'
+          ]
+          certificates: [
+            'get'
+            'list'
+          ]
+        }
+      }
+    ]
+  }
+  dependsOn: [
+    #disable-next-line BCP321
+    keyVaultModule
+  ]
+}
+
+// RBAC mode (when enableRbacAuthorization=true)
+resource kvSecretsUserRoleForAgw 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (varDeployAgwKeyVaultUai && varAgwNeedsKeyVaultIdentity && (keyVaultDefinition.?enableRbacAuthorization ?? false)) {
+  name: guid(varKeyVaultName, varAgwName, 'kv-secrets-user')
+  scope: deployedKeyVaultForScope
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
+    principalId: agwKeyVaultIdentity!.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+  dependsOn: [
+    #disable-next-line BCP321
+    keyVaultModule
   ]
 }
 
@@ -3120,6 +3473,9 @@ param firewallPrivateIp string = ''
 @description('Optional. When true, creates an App Gateway subnet routing exception: appgw-subnet gets 0.0.0.0/0 -> Internet instead of 0.0.0.0/0 -> VirtualAppliance. Mirrors Terraform use_internet_routing behavior for App Gateway v2.')
 param appGatewayInternetRoutingException bool = false
 
+// Prefer the value inside appGatewayDefinition (keeps AppGW knobs together), but remain backward-compatible.
+var varAppGatewayInternetRoutingException = appGatewayDefinition.?appGatewayInternetRoutingException ?? appGatewayInternetRoutingException
+
 // Note: next hop must be known at the start of the deployment.
 var varUdrNextHopIp = firewallPrivateIp
 
@@ -3148,13 +3504,13 @@ resource udrDefaultRoute 'Microsoft.Network/routeTables/routes@2023-11-01' = if 
   }
 }
 
-resource udrAppGwRouteTable 'Microsoft.Network/routeTables@2023-11-01' = if (varDeployUdrEffective && appGatewayInternetRoutingException) {
+resource udrAppGwRouteTable 'Microsoft.Network/routeTables@2023-11-01' = if (varDeployUdrEffective && varAppGatewayInternetRoutingException) {
   name: 'rt-appgw-${baseName}'
   location: location
   tags: tags
 }
 
-resource udrAppGwDefaultRoute 'Microsoft.Network/routeTables/routes@2023-11-01' = if (varDeployUdrEffective && appGatewayInternetRoutingException) {
+resource udrAppGwDefaultRoute 'Microsoft.Network/routeTables/routes@2023-11-01' = if (varDeployUdrEffective && varAppGatewayInternetRoutingException) {
   name: 'default-route'
   parent: udrAppGwRouteTable
   properties: {
@@ -3164,7 +3520,7 @@ resource udrAppGwDefaultRoute 'Microsoft.Network/routeTables/routes@2023-11-01' 
 }
 
 var varUdrDefaultRouteTableId = varDeployUdrEffective ? udrRouteTable.id : ''
-var varUdrAppGwRouteTableId = (varDeployUdrEffective && appGatewayInternetRoutingException) ? udrAppGwRouteTable.id : ''
+var varUdrAppGwRouteTableId = (varDeployUdrEffective && varAppGatewayInternetRoutingException) ? udrAppGwRouteTable.id : ''
 
 var varUdrSubnetDefinitions = [
   {
@@ -3199,7 +3555,7 @@ var varUdrSubnetDefinitions = [
     name: 'appgw-subnet'
     addressPrefix: '192.168.0.192/27'
     networkSecurityGroupResourceId: applicationGatewayNsgResourceId
-    routeTableResourceId: appGatewayInternetRoutingException ? varUdrAppGwRouteTableId : varUdrDefaultRouteTableId
+    routeTableResourceId: varAppGatewayInternetRoutingException ? varUdrAppGwRouteTableId : varUdrDefaultRouteTableId
   }
   {
     name: 'apim-subnet'

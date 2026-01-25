@@ -428,8 +428,35 @@ type appConfigurationDefinitionType = {
 @export()
 @description('Configuration object for an Application Gateway resource.')
 type appGatewayDefinitionType = {
-  @description('Required. Name of the Application Gateway.')
-  name: string
+  @description('Optional. Name of the Application Gateway. If omitted, the template uses a default name.')
+  name: string?
+
+  @description('Optional. DNS label to assign to the Application Gateway Public IP (domainNameLabel). If omitted, defaults to the Public IP resource name (pip-agw-<baseName>). Set to empty string to disable DNS label.')
+  publicIpDnsLabel: string?
+
+  @description('Optional. Enables default HTTPS listener on Application Gateway and redirects HTTP(80) to HTTPS(443). Default: false.')
+  enableHttps: bool?
+
+  @description('Optional. When true, enables the "self-signed" lab path by uploading a PFX directly to Application Gateway (no Key Vault). Requires sslCertificatePfxBase64 + sslCertificatePassword. Default: false.')
+  createSelfSignedCertificate: bool?
+
+  @description('Optional. Name for the default SSL certificate on Application Gateway. Default: agw-tls.')
+  selfSignedCertificateName: string?
+
+  @description('Optional. Base64-encoded PFX content to upload to Application Gateway when createSelfSignedCertificate=true. Recommend sourcing from environment variables in .bicepparam (do not commit secrets).')
+  sslCertificatePfxBase64: string?
+
+  @description('Optional. Password for the uploaded PFX when createSelfSignedCertificate=true. Recommend sourcing from environment variables in .bicepparam (do not commit secrets).')
+  sslCertificatePassword: string?
+
+  @description('Optional. Key Vault Secret ID (PFX) to use for the default HTTPS listener (keyVaultSecretId). Use this only when you already have a certificate created in Key Vault (template will not generate it). When provided, it takes precedence over createSelfSignedCertificate.')
+  httpsKeyVaultSecretId: string?
+
+  @description('Optional. Hostname used by the default HTTPS listener. If omitted, defaults to <publicIpDnsLabel>.<region>.cloudapp.azure.com.')
+  httpsHostName: string?
+
+  @description('Optional. When true and UDR forced-tunneling is enabled, deploys an App Gateway subnet route-table exception so App Gateway v2 keeps required internet routing for management traffic. If omitted, falls back to the top-level appGatewayInternetRoutingException parameter. Default: false.')
+  appGatewayInternetRoutingException: bool?
 
   @description('Conditional. Resource ID of the associated firewall policy. Required if SKU is WAF_v2.')
   firewallPolicyResourceId: string?
@@ -489,6 +516,9 @@ type appGatewayDefinitionType = {
   }?
   @description('Optional. Managed identities for the Application Gateway.')
   managedIdentities: {
+    @description('Optional. Enable system-assigned managed identity.')
+    systemAssigned: bool?
+
     @description('Optional. User-assigned managed identity resource IDs.')
     userAssignedResourceIds: string[]?
   }?
@@ -1014,6 +1044,9 @@ type containerAppEnvDefinitionType = {
 type containerAppDefinitionType = {
   @description('Required. The name of the Container App.')
   name: string
+
+  @description('Optional. When true, this app\'s FQDN will be added to the Application Gateway backend pool configuration. Defaults to false when omitted.')
+  exposeViaAppGateway: bool?
 
   @description('Optional. Resource ID of the Container App Environment. When omitted, the caller (e.g., main.bicep) must set it.')
   environmentResourceId: string?
