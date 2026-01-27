@@ -1,6 +1,6 @@
 # Standalone External (App Gateway in front of internal Container Apps)
 
-Use this scenario when you want the standalone (new VNet) topology, but still expose a Container App externally via Application Gateway v2.
+Use this scenario when you want the standalone topology and wants to expose a Container App externally via Application Gateway.
 
 **Sample parameter file**
 
@@ -148,15 +148,21 @@ In your `.bicepparam`, set:
 For a real custom domain, use a publicly trusted certificate (CN/SAN includes `app.example.com`). Supported options:
 
 - **Recommended (production): Key Vault**
+
 	- Set `appGatewayDefinition.httpsKeyVaultSecretId` to the Key Vault secret ID (PFX).
+
 	- Set `appGatewayDefinition.createSelfSignedCertificate = false`.
 
 - **Direct PFX upload (no Key Vault)**
+
 	- Set `appGatewayDefinition.sslCertificatePfxBase64` and `appGatewayDefinition.sslCertificatePassword`.
+
 	- Set `appGatewayDefinition.createSelfSignedCertificate = false`.
 
 - **Self-signed (lab only)**
+
 	- Keep `appGatewayDefinition.createSelfSignedCertificate = true`.
+
 	- Browsers will show warnings unless the cert is trusted on the client.
 
 After changing DNS / hostname / certificate settings, re-run `azd provision` to apply.

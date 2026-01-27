@@ -451,13 +451,22 @@ Each parameter includes information about its type, requirements, default values
 - **`tags`** (`object`) - Optional.
   Tags for the resource.
 
+### `appGatewayInternetRoutingException`
+
+| Parameter | Type | Required | Description |
+| :-- | :-- | :-- | :-- |
+| `appGatewayInternetRoutingException` | `bool` | Optional | When true, creates an App Gateway subnet routing exception: appgw-subnet gets 0.0.0.0/0 -> Internet instead of 0.0.0.0/0 -> VirtualAppliance. Mirrors Terraform use_internet_routing behavior for App Gateway v2. Default: false. |
+
 ### `appGatewayDefinition`
 
 | Parameter | Type | Required | Description |
 | :-- | :-- | :-- | :-- |
-| `appGatewayDefinition` | `object` | Conditional | Application Gateway configuration. Required if deploy.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty. |
+| `appGatewayDefinition` | `object` | Conditional | Application Gateway configuration. Required if deployToggles.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty. |
 
 **Properties:**
+
+- **`appGatewayInternetRoutingException`** (`bool`) - Optional.
+  When true and UDR forced-tunneling is enabled, deploys an App Gateway subnet route-table exception so App Gateway v2 keeps required internet routing for management traffic. If omitted, falls back to the top-level `appGatewayInternetRoutingException` parameter. Default: false.
 
 - **`authenticationCertificates`** (`array`) - Optional.
   Authentication certificates of the Application Gateway.
@@ -489,6 +498,9 @@ Each parameter includes information about its type, requirements, default values
 - **`diagnosticSettings`** (`array`) - Optional.
   Diagnostic settings for the Application Gateway.
 
+- **`enableHttps`** (`bool`) - Optional.
+  Enables default HTTPS listener on Application Gateway and redirects HTTP(80) to HTTPS(443). Default: false.
+
 - **`enableFips`** (`bool`) - Optional.
   Whether FIPS is enabled.
 
@@ -503,6 +515,9 @@ Each parameter includes information about its type, requirements, default values
 
 - **`enableTelemetry`** (`bool`) - Optional.
   Enable or disable telemetry (default true).
+
+- **`createSelfSignedCertificate`** (`bool`) - Optional.
+  When true, enables the "self-signed" lab path by uploading a PFX directly to Application Gateway (no Key Vault). Requires `sslCertificatePfxBase64` + `sslCertificatePassword`. Default: false.
 
 - **`firewallPolicyResourceId`** (`string`) - Conditional.
   Resource ID of the associated firewall policy. Required if SKU is WAF_v2.
@@ -542,12 +557,17 @@ Each parameter includes information about its type, requirements, default values
 
 - **`managedIdentities`** (`object`) - Optional.
   Managed identities for the Application Gateway.
+  - **`systemAssigned`** (`bool`) - Optional.
+    Enable system-assigned managed identity.
   - **`userAssignedResourceIds`** (`array`) - Optional.
     User-assigned managed identity resource IDs.
 
 
-- **`name`** (`string`) - Required.
-  Name of the Application Gateway.
+- **`name`** (`string`) - Optional.
+  Name of the Application Gateway. If omitted, the template uses a default name.
+
+- **`publicIpDnsLabel`** (`string`) - Optional.
+  DNS label to assign to the Application Gateway Public IP (`domainNameLabel`). If omitted, defaults to the Public IP resource name (`pip-agw-<baseName>`). Set to empty string to disable DNS label.
 
 - **`privateEndpoints`** (`array`) - Optional.
   Private endpoints configuration.
@@ -575,6 +595,21 @@ Each parameter includes information about its type, requirements, default values
 
 - **`sku`** (`string`) - Optional.
   SKU of the Application Gateway. Default is WAF_v2.
+
+- **`httpsKeyVaultSecretId`** (`string`) - Optional.
+  Key Vault Secret ID (PFX) to use for the default HTTPS listener (`keyVaultSecretId`). Use this only when you already have a certificate created in Key Vault (template will not generate it). When provided, it takes precedence over `createSelfSignedCertificate`.
+
+- **`httpsHostName`** (`string`) - Optional.
+  Hostname used by the default HTTPS listener. If omitted, defaults to `<publicIpDnsLabel>.<region>.cloudapp.azure.com`.
+
+- **`selfSignedCertificateName`** (`string`) - Optional.
+  Name for the default SSL certificate on Application Gateway. Default: `agw-tls`.
+
+- **`sslCertificatePfxBase64`** (`string`) - Optional.
+  Base64-encoded PFX content to upload to Application Gateway when `createSelfSignedCertificate=true`. Recommend sourcing from environment variables in `.bicepparam` (do not commit secrets).
+
+- **`sslCertificatePassword`** (`string`) - Optional.
+  Password for the uploaded PFX when `createSelfSignedCertificate=true`. Recommend sourcing from environment variables in `.bicepparam` (do not commit secrets).
 
 - **`sslCertificates`** (`array`) - Optional.
   SSL certificates.
@@ -610,7 +645,7 @@ Each parameter includes information about its type, requirements, default values
 
 | Parameter | Type | Required | Description |
 | :-- | :-- | :-- | :-- |
-| `appGatewayPublicIp` | `object` | Conditional | Conditional Public IP for Application Gateway. Requred when deploy applicationGatewayPublicIp is true and no existing ID is provided. |
+| `appGatewayPublicIp` | `object` | Conditional | Conditional Public IP for Application Gateway. Required when deployToggles.applicationGatewayPublicIp is true and no existing ID is provided. |
 
 **Properties:**
 
@@ -2751,7 +2786,7 @@ Each parameter includes information about its type, requirements, default values
 
 | Parameter | Type | Required | Description |
 | :-- | :-- | :-- | :-- |
-| `wafPolicyDefinition` | `object` | Conditional | Web Application Firewall (WAF) policy configuration. Required if deploy.wafPolicy is true and you are deploying Application Gateway via this template. |
+| `wafPolicyDefinition` | `object` | Conditional | Web Application Firewall (WAF) policy configuration. Required if deployToggles.wafPolicy is true and you are deploying Application Gateway via this template. |
 
 **Properties:**
 
