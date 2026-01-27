@@ -45,9 +45,11 @@ nav:
       - "How to use": bicep/how-to-use.md
       - "Parameterization": bicep/parameterization.md
       - "Examples":
-          - "Standalone": bicep/example-standalone.md  
+          - "Standalone":
+              - "Default (Internal Only)": bicep/example-standalone.md 
+              - "External (AppGW)": bicep/example-standalone-external.md
+              - "Using Existing VNet": bicep/example-existing-vnet.md                        
           - "Platform LZ Integration": bicep/example-platform.md
-          - "With Existing VNet": bicep/example-existing-vnet.md
   - Terraform Implementation: terraform/index.md
   - Portal installation: portal/index.md  
 extra:

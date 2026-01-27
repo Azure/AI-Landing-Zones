@@ -102,6 +102,10 @@ Expected subnets (default template layout):
 | `pe-subnet` |
 | `AzureBastionSubnet` |
 | `AzureFirewallSubnet` |
+| `appgw-subnet` |
+| `apim-subnet` |
+| `aca-env-subnet` |
+| `devops-agents-subnet` |
 | `jumpbox-subnet` |
 
 **Validation: forced tunneling (Firewall and UDR)**
