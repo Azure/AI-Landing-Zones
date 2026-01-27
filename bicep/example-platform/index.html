@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../example-standalone/">
+        <link rel="prev" href="../example-existing-vnet/">
       
       
-        <link rel="next" href="../example-existing-vnet/">
+        <link rel="next" href="../../terraform/">
       
       
         
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ai-lz-with-platform-landing-zone-example" class="md-skip">
+        <a href="#ai-lz-with-platform-landing-zone" class="md-skip">
           Skip to content
         </a>
       
@@ -718,9 +718,20 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../example-standalone/" class="md-nav__link">
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_5_1" id="__nav_4_5_1_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -734,7 +745,107 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Standalone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example-standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Default (Internal Only)
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example-standalone-external/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External (AppGW)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example-existing-vnet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using Existing VNet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -773,34 +884,6 @@
 
       </a>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-existing-vnet/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    With Existing VNet
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -895,15 +978,43 @@
   
 
 
-<h1 id="ai-lz-with-platform-landing-zone-example">AI LZ with Platform Landing Zone Example</h1>
-<p>Choose to deploy with platform landing zone when you already have a hub environment and want the workload deployment to integrate with platform-provided networking, routing, and governance.</p>
-<p>Start from <a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.platform-landing-zone.bicepparam">bicep/infra/sample.platform-landing-zone.bicepparam</a>. This mode enables platform integration and connects the spoke to the hub. Egress is typically handled by the hub, so the spoke usually does not deploy its own firewall and relies on UDR-based forced tunneling to the hub firewall.</p>
-<p>Key parameters in this sample:</p>
+<h1 id="ai-lz-with-platform-landing-zone">AI LZ with Platform Landing Zone</h1>
+<p>Use this scenario when you already have a platform hub (networking + egress) and want the workload deployment to integrate as a spoke.</p>
+<p><strong>Sample parameter file</strong></p>
+<p><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.platform-landing-zone.bicepparam">bicep/infra/sample.platform-landing-zone.bicepparam</a></p>
+<p><strong>What this walkthrough validates</strong></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hub-spoke integration</td>
+<td>Creates spoke-side VNet peering to the platform hub VNet. Hub-side reverse peering is expected to be created by the platform team (or separately).</td>
+</tr>
+<tr>
+<td>Forced tunneling to hub</td>
+<td>Creates UDRs in the spoke that send egress (<code>0.0.0.0/0</code>) to the hub firewall/NVA next hop IP you provide.</td>
+</tr>
+<tr>
+<td>Private connectivity in the spoke</td>
+<td>Creates Private Endpoints in the workload VNet when the corresponding services are enabled.</td>
+</tr>
+<tr>
+<td>Platform-managed private DNS</td>
+<td>In platform mode, this template does not create Private DNS Zones or link them; DNS is expected to be provided by the platform landing zone.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key settings (from the sample)</strong></p>
 <table>
 <thead>
 <tr>
 <th>Setting</th>
-<th>Typical value</th>
+<th>Value</th>
 </tr>
 </thead>
 <tbody>
@@ -917,7 +1028,7 @@
 </tr>
 <tr>
 <td><code>deployToggles.firewall</code></td>
-<td><code>false</code></td>
+<td><code>false</code> (hub firewall is used)</td>
 </tr>
 <tr>
 <td><code>deployToggles.userDefinedRoutes</code></td>
@@ -925,14 +1036,203 @@
 </tr>
 <tr>
 <td><code>firewallPrivateIp</code></td>
-<td>Hub firewall private IP</td>
+<td>Hub firewall private IP (UDR next hop)</td>
 </tr>
 </tbody>
 </table>
-<p>Depending on the toggles you select, the spoke footprint can be smaller because some services may be intentionally disabled.</p>
+<p>If you use a different parameter file (or modify <code>bicep/infra/main.bicepparam</code>), treat the validation steps as conditional. For example, disabling VNet creation changes the networking checks, and disabling specific services changes what you should expect in the private endpoint checks.</p>
 <blockquote>
-<p>Note: Walkthrough comming soon</p>
+<p>Note: in Platform Landing Zone mode, this repo intentionally creates only the spoke-side peering. If the hub does not have a corresponding peering back to the spoke, traffic will not flow.</p>
 </blockquote>
+<p><strong>Prerequisites</strong></p>
+<ul>
+<li>Permissions to create resources in the target subscription (for example, <code>Contributor</code>) and you must be signed in with Azure CLI (<code>az login</code>).</li>
+<li>Azure Developer CLI installed (<code>azd</code>).</li>
+<li>A platform hub already exists with:
+    - A hub VNet (resource ID)
+    - A firewall/NVA private IP to use as the UDR next hop
+    - Private DNS (and DNS forwarding/resolution) configured so spoke workloads can resolve <code>privatelink.*</code> zones.</li>
+</ul>
+<p><strong>Deployment</strong></p>
+<p>Create a local working directory and run the commands from there.</p>
+<div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="n">deploy</span>
+<span class="nb">cd </span><span class="n">deploy</span>
+</code></pre></div>
+<p>Initialize the environment.</p>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">init</span> <span class="n">-e</span> <span class="n">ailz-platform-RANDOM_SUFFIX</span>
+</code></pre></div>
+<p>Set environment variables.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$env:AZURE_LOCATION</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
+<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-platform-RANDOM_SUFFIX&quot;</span>
+<span class="nv">$env:AZURE_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
+
+<span class="c"># Convenience variable used by the commands below</span>
+<span class="nv">$rg</span> <span class="p">=</span> <span class="nv">$env:AZURE_RESOURCE_GROUP</span>
+</code></pre></div>
+<p>Copy the sample into the active parameter file used by <code>azd</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">sample</span><span class="p">.</span><span class="n">platform-landing-zone</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">-Force</span>
+</code></pre></div>
+<p>Update <code>bicep/infra/main.bicepparam</code> with your platform hub values.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>What you must set</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hubVnetPeeringDefinition.peerVnetResourceId</code></td>
+<td>Hub VNet resource ID (full ARM ID)</td>
+</tr>
+<tr>
+<td><code>firewallPrivateIp</code></td>
+<td>Hub firewall private IP used as next hop for <code>0.0.0.0/0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Provision.</p>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">provision</span>
+</code></pre></div>
+<p><strong>Validation: networking (spoke VNet and subnets)</strong></p>
+<p>Validate the VNet and subnets in the workload resource group.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="c"># If you have only one VNet in this RG, capture it:</span>
+<span class="nv">$vnetName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Expected subnets (default platform sample layout):</p>
+<table>
+<thead>
+<tr>
+<th>Subnet name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agent-subnet</code></td>
+</tr>
+<tr>
+<td><code>pe-subnet</code></td>
+</tr>
+<tr>
+<td><code>appgw-subnet</code></td>
+</tr>
+<tr>
+<td><code>apim-subnet</code></td>
+</tr>
+<tr>
+<td><code>aca-env-subnet</code></td>
+</tr>
+<tr>
+<td><code>devops-agents-subnet</code></td>
+</tr>
+</tbody>
+</table>
+<p>In platform mode, hub-level subnets like <code>AzureFirewallSubnet</code> and <code>AzureBastionSubnet</code> are expected to exist in the hub (not in the workload RG).</p>
+<p><strong>Validation: hub-spoke peering</strong></p>
+<p>Validate that the spoke has a peering to the hub.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">peering</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Expected outcome:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Spoke peering exists</td>
+<td>A peering (often named <code>to-hub</code>) with <code>remoteVirtualNetwork</code> set to your hub VNet resource ID</td>
+</tr>
+<tr>
+<td>Spoke peering state</td>
+<td><code>Connected</code> (if hub-side peering exists) or <code>Initiated/Disconnected</code> (if hub-side peering is missing)</td>
+</tr>
+</tbody>
+</table>
+<p>If you have access to the hub resource group, also validate that the hub has a peering back to the spoke VNet.</p>
+<p><strong>Validation: forced tunneling (UDR to hub firewall)</strong></p>
+<p>In platform mode, the spoke typically does not deploy its own firewall. Instead, you provide <code>firewallPrivateIp</code> (the hub firewall/NVA next hop) and the template creates route tables in the workload resource group.</p>
+<p>Validate the route table and default route.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">route-table</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="nv">$rtName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">route-table</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+
+<span class="n">az</span> <span class="n">network</span> <span class="n">route-table</span> <span class="n">route</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-route-table-name</span> <span class="nv">$rtName</span> <span class="n">-o</span> <span class="n">table</span>
+</code></pre></div>
+<p>Confirm that workload subnets have the route table attached (example: <code>agent-subnet</code>).</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">agent-subnet</span> <span class="p">-</span><span class="n">-query</span> <span class="n">routeTable</span><span class="p">.</span><span class="n">id</span> <span class="n">-o</span> <span class="n">tsv</span>
+</code></pre></div>
+<p>Expected outcome:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Default route exists</td>
+<td>Route <code>0.0.0.0/0</code> with next hop type <code>VirtualAppliance</code> and next hop IP = your <code>firewallPrivateIp</code></td>
+</tr>
+<tr>
+<td>Subnet association</td>
+<td><code>routeTable.id</code> is non-empty for subnets where forced tunneling is intended</td>
+</tr>
+</tbody>
+</table>
+<p>If you do not see any route tables, confirm:</p>
+<ul>
+<li><code>deployToggles.userDefinedRoutes = true</code></li>
+<li><code>firewallPrivateIp</code> is set and non-empty</li>
+</ul>
+<p><strong>Validation: private endpoints (spoke)</strong></p>
+<p>Validate that private endpoints exist in the workload resource group for enabled services.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+
+<span class="c"># Helpful: show what each Private Endpoint targets</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].{name:name,target:privateLinkServiceConnections[0].privateLinkServiceId,groupIds:privateLinkServiceConnections[0].groupIds,subnet:subnet.id}&quot;</span> <span class="n">-o</span> <span class="n">jsonc</span>
+</code></pre></div>
+<p>Because this is Platform Landing Zone mode, the template does not create Private DNS Zones or DNS zone groups for the private endpoints. DNS validation must be done via the platform DNS solution.</p>
+<p><strong>Validation: private DNS (platform-provided)</strong></p>
+<p>From a machine that uses the platform DNS (for example, a hub jumpbox VM, on-premises via VPN/ExpressRoute, or another approved network path), validate that service hostnames resolve to private IPs.</p>
+<p>Examples:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nslookup</span> <span class="p">&lt;</span><span class="n">your-service-hostname</span><span class="p">&gt;</span>
+
+<span class="c"># Optional: show the CNAME chain (useful for troubleshooting)</span>
+<span class="nb">Resolve-DnsName</span> <span class="p">&lt;</span><span class="n">your-service-hostname</span><span class="p">&gt;</span> <span class="p">|</span> <span class="nb">Format-List</span>
+</code></pre></div>
+<p>Expected outcome:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Expected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DNS resolution</td>
+<td>Returns a private IP (typically within the PE subnet range)</td>
+</tr>
+<tr>
+<td>CNAME chain</td>
+<td>Shows a CNAME into the matching <code>privatelink.*</code> zone</td>
+</tr>
+</tbody>
+</table>
+<p>If DNS resolution returns public IPs, the platform landing zone likely is not linking the needed private DNS zones to the hub/spoke DNS resolution path.</p>
+<p><strong>Cleanup</strong></p>
+<p>Delete the workload resource group.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="nb">group </span><span class="n">delete</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-yes</span> <span class="p">-</span><span class="n">-no-wait</span>
+</code></pre></div>
 
 
 

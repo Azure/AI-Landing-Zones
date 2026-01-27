@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../parameterization/">
+        <link rel="prev" href="../example-standalone/">
       
       
-        <link rel="next" href="../example-standalone-external/">
+        <link rel="next" href="../example-existing-vnet/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Default (Internal Only) - Azure AI Landing Zones</title>
+        <title>External (AppGW) - Azure AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ai-lz-without-platform-landing-zone" class="md-skip">
+        <a href="#standalone-external-app-gateway-in-front-of-internal-container-apps" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Default (Internal Only)
+              External (AppGW)
             
           </span>
         </div>
@@ -765,6 +765,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../example-standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Default (Internal Only)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -784,35 +812,6 @@
   <span class="md-ellipsis">
     
   
-    Default (Internal Only)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-standalone-external/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
     External (AppGW)
   
 
@@ -822,6 +821,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -980,10 +980,10 @@
   
 
 
-<h1 id="ai-lz-without-platform-landing-zone">AI LZ without Platform Landing Zone</h1>
-<p>Use this scenario when you want a clean, isolated deployment where the workload resource group owns the networking end to end.</p>
+<h1 id="standalone-external-app-gateway-in-front-of-internal-container-apps">Standalone External (App Gateway in front of internal Container Apps)</h1>
+<p>Use this scenario when you want the standalone (new VNet) topology, but still expose a Container App externally via Application Gateway v2.</p>
 <p><strong>Sample parameter file</strong></p>
-<p><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.standalone.bicepparam">bicep/infra/sample.standalone.bicepparam</a></p>
+<p><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.standalone-external.bicepparam">bicep/infra/sample.standalone-external.bicepparam</a></p>
 <p><strong>What this walkthrough validates</strong></p>
 <table>
 <thead>
@@ -994,240 +994,160 @@
 </thead>
 <tbody>
 <tr>
-<td>Workload-owned networking</td>
-<td>Creates a new VNet and subnets in the workload resource group.</td>
+<td>Internal Container Apps Environment</td>
+<td>Deploys an internal CAE with <code>publicNetworkAccess: Disabled</code>.</td>
 </tr>
 <tr>
-<td>Private connectivity</td>
-<td>Creates Private Endpoints, Private DNS Zones, and VNet links for enabled services.</td>
+<td>External entrypoint</td>
+<td>Deploys App Gateway v2 with a Public IP to provide inbound access.</td>
 </tr>
 <tr>
-<td>Forced tunneling</td>
-<td>Sends egress (<code>0.0.0.0/0</code>) through Azure Firewall via UDRs.</td>
+<td>VNet-reachable backend</td>
+<td>Ensures the backend Container App is reachable from inside the VNet so App Gateway probes + forwarding work.</td>
+</tr>
+<tr>
+<td>HTTPS for labs</td>
+<td>Generates a self-signed PFX at deployment time (no Key Vault required).</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p>If you already have a real certificate, use the Key Vault path (production) instead of auto-generating a self-signed cert.</p>
+</blockquote>
 <p><strong>Key settings (from the sample)</strong></p>
 <table>
 <thead>
 <tr>
 <th>Setting</th>
-<th>Value</th>
+<th>Typical value</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>flagPlatformLandingZone</code></td>
-<td><code>false</code></td>
+<td><code>deployToggles.applicationGateway</code></td>
+<td><code>true</code></td>
+<td>Deploys Application Gateway.</td>
 </tr>
 <tr>
-<td><code>deployToggles.virtualNetwork</code></td>
+<td><code>deployToggles.applicationGatewayPublicIp</code></td>
 <td><code>true</code></td>
+<td>Creates a public frontend IP.</td>
 </tr>
 <tr>
-<td><code>deployToggles.firewall</code></td>
+<td><code>appGatewayDefinition.enableHttps</code></td>
 <td><code>true</code></td>
+<td>HTTPS listener (443) + HTTP redirect (80 → 443).</td>
 </tr>
 <tr>
-<td><code>deployToggles.userDefinedRoutes</code></td>
+<td><code>appGatewayDefinition.createSelfSignedCertificate</code></td>
 <td><code>true</code></td>
+<td>Lab-friendly certificate path using deployment scripts.</td>
 </tr>
 <tr>
-<td><code>deployToggles.jumpVm</code></td>
-<td><code>true</code></td>
-</tr>
-<tr>
-<td><code>deployToggles.bastionHost</code></td>
-<td><code>true</code></td>
+<td><code>containerAppsList[*].ingressExternal</code></td>
+<td><code>true</code> for the backend app</td>
+<td>Required for <strong>VNet-reachable ingress</strong> (even though the CAE is internal).</td>
 </tr>
 </tbody>
 </table>
-<p>If you use a different parameter file (or modify <code>bicep/infra/main.bicepparam</code>), treat the validation steps as conditional. For example, disabling VNet creation changes the networking checks, and disabling specific services changes what you should expect in the private endpoint and DNS sections.</p>
-<blockquote>
-<p>Note: this walkthrough is intended for validation and learning. Adjust naming, IP ranges, and hardening before using it for production.</p>
-</blockquote>
 <p><strong>Prerequisites</strong></p>
-<p>You need permissions to create resources in the target subscription (for example, <code>Contributor</code>), and you must be signed in with Azure CLI (<code>az login</code>). You also need Azure Developer CLI installed (<code>azd</code>), because this walkthrough uses it to initialize the repository locally and to run the deployment.</p>
+<p>You need permissions to create resources in the target subscription, and you must be signed in with Azure CLI. This walkthrough uses Azure Developer CLI (<code>azd</code>), so run the commands from the repository root.</p>
 <p><strong>Deployment</strong></p>
 <p>Create a local working directory and run the commands from there.</p>
 <div class="highlight"><pre><span></span><code><span class="n">mkdir</span> <span class="n">deploy</span>
 <span class="nb">cd </span><span class="n">deploy</span>
 </code></pre></div>
 <p>Initialize the environment.</p>
-<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">init</span> <span class="n">-e</span> <span class="n">ailz-standalone-RANDOM_SUFFIX</span>
+<div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">init</span> <span class="n">-e</span> <span class="n">ailz-standalone-external-RANDOM_SUFFIX</span>
 </code></pre></div>
 <p>Set environment variables.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$env:AZURE_LOCATION</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
-<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-standalone-RANDOM_SUFFIX&quot;</span>
+<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ailz-standalone-external-RANDOM_SUFFIX&quot;</span>
 <span class="nv">$env:AZURE_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
 
 <span class="c"># Convenience variable used by the commands below</span>
 <span class="nv">$rg</span> <span class="p">=</span> <span class="nv">$env:AZURE_RESOURCE_GROUP</span>
 </code></pre></div>
 <p>Copy the sample into the active parameter file used by <code>azd</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">sample</span><span class="p">.</span><span class="n">standalone</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">-Force</span>
+<div class="highlight"><pre><span></span><code><span class="nb">Copy-Item</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">sample</span><span class="p">.</span><span class="n">standalone-external</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">bicep</span><span class="p">/</span><span class="n">infra</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">bicepparam</span> <span class="n">-Force</span>
 </code></pre></div>
-<p>Optional edits in <code>bicep/infra/main.bicepparam</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Scenario</th>
-<th>Change</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>You change subnet CIDRs</td>
-<td>Update the firewall policy <code>sourceAddresses</code> entries to match.</td>
-</tr>
-<tr>
-<td>You do not want Jump VM auto-install</td>
-<td>Set <code>jumpVmDefinition.enableAutoInstall = false</code>.</td>
-</tr>
-<tr>
-<td>Your org manages RBAC outside the template</td>
-<td>If you hit <code>RoleAssignmentExists</code>, set <code>jumpVmDefinition.assignContributorRoleAtResourceGroup = false</code>.</td>
-</tr>
-</tbody>
-</table>
 <p>Provision.</p>
 <div class="highlight"><pre><span></span><code><span class="n">azd</span> <span class="n">provision</span>
 </code></pre></div>
-<p><strong>Validation: networking (VNet and subnets)</strong></p>
-<p>If you do not see a VNet in the workload resource group after provisioning, confirm that you are inspecting the correct resource group.</p>
-<p>Validate the VNet and subnets.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
+<p><strong>Validation</strong></p>
+<p>Confirm the backend Container App ingress is VNet-reachable.</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">containerapp</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="n">ca-aca-helloworld</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;properties.configuration.ingress&quot;</span> <span class="n">-o</span> <span class="n">jsonc</span>
+</code></pre></div>
+<p>Expected:
+- <code>external</code> should be <code>true</code> (VNet-reachable)
+- <code>targetPort</code> should be <code>80</code> (matches the hello-world container)</p>
+<p>Optional (recommended): validate in-VNet connectivity from the Jump VM.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$vm</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">vm</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[?contains(name, &#39;-jmp&#39;)].name | [0]&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+<span class="nv">$fqdn</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">containerapp</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="n">ca-aca-helloworld</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;properties.configuration.ingress.fqdn&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
 
-<span class="c"># If you have only one VNet in this RG, capture it:</span>
-<span class="nv">$vnetName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
-
-<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="n">-o</span> <span class="n">table</span>
+<span class="n">az</span> <span class="n">vm</span> <span class="n">run-command</span> <span class="n">invoke</span> <span class="n">-g</span> <span class="nv">$rg</span> <span class="n">-n</span> <span class="nv">$vm</span> <span class="p">-</span><span class="n">-command-id</span> <span class="n">RunPowerShellScript</span> <span class="p">\</span>
+    <span class="p">-</span><span class="n">-scripts</span> <span class="s2">&quot;Resolve-DnsName -Name &#39;$fqdn&#39; | Out-String&quot;</span> <span class="p">\</span>
+                     <span class="s2">&quot;try { (Invoke-WebRequest -UseBasicParsing -TimeoutSec 20 -Uri &#39;http://$fqdn/&#39;).StatusCode } catch { if ($_.Exception.Response) { [int]$_.Exception.Response.StatusCode } else { $_.Exception.Message } }&quot;</span> <span class="p">\</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;value[0].message&quot;</span> <span class="n">-o</span> <span class="n">tsv</span>
 </code></pre></div>
-<p>Expected subnets (default template layout):</p>
-<table>
-<thead>
-<tr>
-<th>Subnet name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>agent-subnet</code></td>
-</tr>
-<tr>
-<td><code>pe-subnet</code></td>
-</tr>
-<tr>
-<td><code>AzureBastionSubnet</code></td>
-</tr>
-<tr>
-<td><code>AzureFirewallSubnet</code></td>
-</tr>
-<tr>
-<td><code>appgw-subnet</code></td>
-</tr>
-<tr>
-<td><code>apim-subnet</code></td>
-</tr>
-<tr>
-<td><code>aca-env-subnet</code></td>
-</tr>
-<tr>
-<td><code>devops-agents-subnet</code></td>
-</tr>
-<tr>
-<td><code>jumpbox-subnet</code></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Validation: forced tunneling (Firewall and UDR)</strong></p>
-<p>Validate the firewall and capture its private IP.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">firewall</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
-
-<span class="nv">$afwName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">firewall</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
-<span class="nv">$afwPrivateIp</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">firewall</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$afwName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;ipConfigurations[0].privateIPAddress&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
-<span class="nv">$afwPrivateIp</span>
+<p>Expected:
+- DNS output includes a <code>privatelink.*</code> CNAME and a private <code>IP4Address</code>
+- Final line prints <code>200</code></p>
+<p>Check Application Gateway backend health.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$agwName</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">application-gateway</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[0].name&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+<span class="n">az</span> <span class="n">network</span> <span class="n">application-gateway</span> <span class="nb">show-backend</span><span class="n">-health</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$agwName</span> <span class="n">-o</span> <span class="n">jsonc</span>
 </code></pre></div>
-<p>The sample sets <code>firewallPrivateIp</code> based on the default <code>AzureFirewallSubnet</code> prefix (<code>192.168.0.128/26</code>) and the first usable IP (<code>192.168.0.132</code>). If you changed the firewall subnet prefix, update <code>firewallPrivateIp</code> in your parameter file.</p>
-<p>Validate the route table and subnet association.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">route-table</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
-
-<span class="c"># Check that jumpbox-subnet has a route table attached</span>
-<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">jumpbox-subnet</span> <span class="p">-</span><span class="n">-query</span> <span class="n">routeTable</span><span class="p">.</span><span class="n">id</span> <span class="n">-o</span> <span class="n">tsv</span>
+<p>Expected: backend members show <code>Healthy</code>.</p>
+<p>Get the App Gateway public DNS name (cloudapp FQDN).</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$pipId</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">application-gateway</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$agwName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;frontendIPConfigurations[?publicIPAddress.id!=null][0].publicIPAddress.id&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+<span class="nv">$pipName</span> <span class="p">=</span> <span class="nv">$pipId</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[-</span><span class="n">1</span><span class="p">]</span>
+<span class="nv">$appGwFqdn</span> <span class="p">=</span> <span class="p">(</span><span class="n">az</span> <span class="n">network</span> <span class="n">public-ip</span> <span class="n">show</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$pipName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;dnsSettings.fqdn&quot;</span> <span class="n">-o</span> <span class="n">tsv</span><span class="p">)</span>
+<span class="nv">$appGwFqdn</span>
 </code></pre></div>
-<p><strong>Validation: private endpoints and private DNS</strong></p>
-<p>In standalone mode, the workload deployment creates and manages private DNS zones.</p>
-<p>Validate that private endpoints exist.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
-
-<span class="c"># Helpful: show what each Private Endpoint targets + which FQDNs it expects to resolve</span>
-<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">\</span>
-  <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].{name:name,target:privateLinkServiceConnections[0].privateLinkServiceId,groupIds:privateLinkServiceConnections[0].groupIds,fqdns:customDnsConfigs[].fqdn}&quot;</span> <span class="n">-o</span> <span class="n">jsonc</span>
-
-<span class="c"># Note: sometimes `customDnsConfigs` returns empty. In that case, query DNS zone groups per Private Endpoint:</span>
-<span class="c"># $peName = &#39;&lt;private-endpoint-name&gt;&#39;</span>
-<span class="c"># az network private-endpoint dns-zone-group list --resource-group $rg --endpoint-name $peName \</span>
-<span class="c">#   --query &quot;[].privateDnsZoneConfigs[].recordSets[].fqdn&quot; -o tsv</span>
+<p>Test HTTPS end-to-end.</p>
+<div class="highlight"><pre><span></span><code><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-k</span> <span class="s2">&quot;https://$appGwFqdn/&quot;</span>
 </code></pre></div>
-<p>With the shipped sample toggles, you should see Private Endpoints for Key Vault, Storage, and AI Foundry.
-If you changed toggles, validate based on what you actually enabled.</p>
-<p>Validate that private DNS zones exist and are linked.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">zone</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
-
-<span class="c"># Example: check OpenAI private link zone exists and has a VNet link</span>
-<span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">link</span> <span class="n">vnet</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-zone-name</span> <span class="n">privatelink</span><span class="p">.</span><span class="n">openai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="n">-o</span> <span class="n">table</span>
-</code></pre></div>
-<p>Validate that A records exist.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">private-dns</span> <span class="n">record-set</span> <span class="n">a</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-zone-name</span> <span class="n">privatelink</span><span class="p">.</span><span class="n">openai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="n">-o</span> <span class="n">table</span>
-</code></pre></div>
-<p><strong>Validation: access (Bastion and Jump VM)</strong></p>
-<p>Confirm that Bastion exists.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">network</span> <span class="n">bastion</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="n">-o</span> <span class="n">table</span>
-</code></pre></div>
-<p>Connect to the Jump VM using Bastion. Because the VM password is auto-generated during deployment, reset it in the Azure portal before connecting. Open the workload resource group, select the jump VM (the <code>*-jmp</code> VM), choose Reset password, and set a strong password for <code>azureuser</code> (unless you changed <code>jumpVmDefinition.adminUsername</code>). Then connect using Bastion (RDP).</p>
-<p>Optional (inside the Jump VM): validate outbound connectivity under forced tunneling:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">Resolve-DnsName</span> <span class="n">login</span><span class="p">.</span><span class="n">microsoftonline</span><span class="p">.</span><span class="n">com</span>
-<span class="nb">Test-NetConnection</span> <span class="n">login</span><span class="p">.</span><span class="n">microsoftonline</span><span class="p">.</span><span class="n">com</span> <span class="n">-Port</span> <span class="n">443</span>
-</code></pre></div>
-<p>Validate DNS resolution for the created services from inside the Jump VM. The goal is to confirm that service hostnames resolve to private IPs via the <code>privatelink.*</code> private DNS zones.</p>
-<p>From your local machine, capture the Private Endpoint FQDNs created by the deployment:</p>
-<div class="highlight"><pre><span></span><code><span class="c"># List all Private Endpoints expect to resolve</span>
-<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].{name:name}&quot;</span> <span class="n">-o</span> <span class="n">jsonc</span>
-
-<span class="c"># Extract FQDNs from the DNS zone groups:</span>
-<span class="nv">$peName</span> <span class="p">=</span> <span class="s1">&#39;&lt;private-endpoint-name&gt;&#39;</span>
-<span class="n">az</span> <span class="n">network</span> <span class="n">private-endpoint</span> <span class="n">dns-zone-group</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-endpoint-name</span> <span class="nv">$peName</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;[].privateDnsZoneConfigs[].recordSets[].fqdn&quot;</span> <span class="n">-o</span> <span class="n">tsv</span>
-</code></pre></div>
-<p>Then, inside the Jump VM (PowerShell), run <code>nslookup</code> for the exact FQDNs returned by the command above.</p>
-<p>Examples:</p>
-<div class="highlight"><pre><span></span><code><span class="n">nslookup</span> <span class="p">&lt;</span><span class="n">fqdn-from-customDnsConfigs</span><span class="p">&gt;</span>
-
-<span class="c"># Optional: show the CNAME chain (useful for troubleshooting)</span>
-<span class="nb">Resolve-DnsName</span> <span class="p">&lt;</span><span class="n">fqdn-from-customDnsConfigs</span><span class="p">&gt;</span> <span class="p">|</span> <span class="nb">Format-List</span>
-</code></pre></div>
-<p>Expected outcome:</p>
-<table>
-<thead>
-<tr>
-<th>Check</th>
-<th>Expected</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>nslookup</code></td>
-<td>Returns a private IP address (typically within your VNet range).</td>
-</tr>
-<tr>
-<td><code>Resolve-DnsName</code></td>
-<td>Shows a CNAME into the matching <code>privatelink.*</code> zone.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Cleanup</strong></p>
-<p>Delete the resource group.</p>
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="nb">group </span><span class="n">delete</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$rg</span> <span class="p">-</span><span class="n">-yes</span> <span class="p">-</span><span class="n">-no-wait</span>
-</code></pre></div>
+<p>Expected: <code>200 OK</code> and the hello-world response body.</p>
+<p><strong>Optional: use your own custom domain + trusted certificate</strong></p>
+<p>This walkthrough validates the scenario using the Azure Public IP <code>cloudapp.azure.com</code> hostname and a self-signed certificate.
+If you want to test (or later move to) a real custom domain like <code>app.example.com</code>, you only need to change the <strong>frontend</strong> (DNS + HTTPS listener/cert).</p>
+<p><strong>1) Create a DNS record for your domain</strong></p>
+<p>Point your DNS name to the App Gateway public frontend using one of these:</p>
+<ul>
+<li><strong>CNAME</strong>: <code>app.example.com</code> → <code>&lt;appgw-public-fqdn&gt;.&lt;region&gt;.cloudapp.azure.com</code></li>
+<li><strong>A record</strong>: <code>app.example.com</code> → <code>&lt;App Gateway Public IP address&gt;</code></li>
+</ul>
+<p>You can retrieve the Public IP resource and its FQDN/IP using the validation commands above.</p>
+<p><strong>2) Set the HTTPS hostname (SNI)</strong></p>
+<p>In your <code>.bicepparam</code>, set:</p>
+<ul>
+<li><code>appGatewayDefinition.httpsHostName = 'app.example.com'</code></li>
+</ul>
+<p><strong>3) Use a certificate that matches your domain</strong></p>
+<p>For a real custom domain, use a publicly trusted certificate (CN/SAN includes <code>app.example.com</code>). Supported options:</p>
+<ul>
+<li><strong>Recommended (production): Key Vault</strong>
+    - Set <code>appGatewayDefinition.httpsKeyVaultSecretId</code> to the Key Vault secret ID (PFX).
+    - Set <code>appGatewayDefinition.createSelfSignedCertificate = false</code>.</li>
+</ul>
+<ul>
+<li><strong>Direct PFX upload (no Key Vault)</strong>
+    - Set <code>appGatewayDefinition.sslCertificatePfxBase64</code> and <code>appGatewayDefinition.sslCertificatePassword</code>.
+    - Set <code>appGatewayDefinition.createSelfSignedCertificate = false</code>.</li>
+</ul>
+<ul>
+<li><strong>Self-signed (lab only)</strong>
+    - Keep <code>appGatewayDefinition.createSelfSignedCertificate = true</code>.
+    - Browsers will show warnings unless the cert is trusted on the client.</li>
+</ul>
+<p>After changing DNS / hostname / certificate settings, re-run <code>azd provision</code> to apply.</p>
+<p><strong>Troubleshooting notes</strong></p>
+<ul>
+<li>If backend health shows <code>Unhealthy</code> with <code>404</code>, the Container App ingress is usually not VNet-reachable.</li>
+<li>If you changed subnet address spaces, ensure <code>firewallPrivateIp</code> matches the actual Azure Firewall private IP.</li>
+<li>If <code>userDefinedRoutes=true</code> (forced tunneling), keep <code>appGatewayDefinition.appGatewayInternetRoutingException=true</code> (AppGW v2 requirement).</li>
+</ul>
 
 
 
