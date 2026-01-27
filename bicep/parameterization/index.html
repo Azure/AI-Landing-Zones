@@ -780,6 +780,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#appgatewayinternetroutingexception" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        appGatewayInternetRoutingException
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#appgatewaydefinition" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2035,6 +2046,25 @@ Disable all non-AAD authentication methods.</li>
 <li><strong><code>tags</code></strong> (<code>object</code>) - Optional.
   Tags for the resource.</li>
 </ul>
+<h3 id="appgatewayinternetroutingexception"><code>appGatewayInternetRoutingException</code></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Required</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>appGatewayInternetRoutingException</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">Optional</td>
+<td style="text-align: left;">When true, creates an App Gateway subnet routing exception: appgw-subnet gets 0.0.0.0/0 -&gt; Internet instead of 0.0.0.0/0 -&gt; VirtualAppliance. Mirrors Terraform use_internet_routing behavior for App Gateway v2. Default: false.</td>
+</tr>
+</tbody>
+</table>
 <h3 id="appgatewaydefinition"><code>appGatewayDefinition</code></h3>
 <table>
 <thead>
@@ -2050,11 +2080,15 @@ Disable all non-AAD authentication methods.</li>
 <td style="text-align: left;"><code>appGatewayDefinition</code></td>
 <td style="text-align: left;"><code>object</code></td>
 <td style="text-align: left;">Conditional</td>
-<td style="text-align: left;">Application Gateway configuration. Required if deploy.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty.</td>
+<td style="text-align: left;">Application Gateway configuration. Required if deployToggles.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty.</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Properties:</strong></p>
+<ul>
+<li><strong><code>appGatewayInternetRoutingException</code></strong> (<code>bool</code>) - Optional.
+  When true and UDR forced-tunneling is enabled, deploys an App Gateway subnet route-table exception so App Gateway v2 keeps required internet routing for management traffic. If omitted, falls back to the top-level <code>appGatewayInternetRoutingException</code> parameter. Default: false.</li>
+</ul>
 <ul>
 <li><strong><code>authenticationCertificates</code></strong> (<code>array</code>) - Optional.
   Authentication certificates of the Application Gateway.</li>
@@ -2096,6 +2130,10 @@ Disable all non-AAD authentication methods.</li>
   Diagnostic settings for the Application Gateway.</li>
 </ul>
 <ul>
+<li><strong><code>enableHttps</code></strong> (<code>bool</code>) - Optional.
+  Enables default HTTPS listener on Application Gateway and redirects HTTP(80) to HTTPS(443). Default: false.</li>
+</ul>
+<ul>
 <li><strong><code>enableFips</code></strong> (<code>bool</code>) - Optional.
   Whether FIPS is enabled.</li>
 </ul>
@@ -2114,6 +2152,10 @@ Disable all non-AAD authentication methods.</li>
 <ul>
 <li><strong><code>enableTelemetry</code></strong> (<code>bool</code>) - Optional.
   Enable or disable telemetry (default true).</li>
+</ul>
+<ul>
+<li><strong><code>createSelfSignedCertificate</code></strong> (<code>bool</code>) - Optional.
+  When true, enables the "self-signed" lab path by uploading a PFX directly to Application Gateway (no Key Vault). Requires <code>sslCertificatePfxBase64</code> + <code>sslCertificatePassword</code>. Default: false.</li>
 </ul>
 <ul>
 <li><strong><code>firewallPolicyResourceId</code></strong> (<code>string</code>) - Conditional.
@@ -2168,14 +2210,20 @@ Disable all non-AAD authentication methods.</li>
 <ul>
 <li><strong><code>managedIdentities</code></strong> (<code>object</code>) - Optional.
   Managed identities for the Application Gateway.<ul>
+<li><strong><code>systemAssigned</code></strong> (<code>bool</code>) - Optional.
+  Enable system-assigned managed identity.</li>
 <li><strong><code>userAssignedResourceIds</code></strong> (<code>array</code>) - Optional.
   User-assigned managed identity resource IDs.</li>
 </ul>
 </li>
 </ul>
 <ul>
-<li><strong><code>name</code></strong> (<code>string</code>) - Required.
-  Name of the Application Gateway.</li>
+<li><strong><code>name</code></strong> (<code>string</code>) - Optional.
+  Name of the Application Gateway. If omitted, the template uses a default name.</li>
+</ul>
+<ul>
+<li><strong><code>publicIpDnsLabel</code></strong> (<code>string</code>) - Optional.
+  DNS label to assign to the Application Gateway Public IP (<code>domainNameLabel</code>). If omitted, defaults to the Public IP resource name (<code>pip-agw-&lt;baseName&gt;</code>). Set to empty string to disable DNS label.</li>
 </ul>
 <ul>
 <li><strong><code>privateEndpoints</code></strong> (<code>array</code>) - Optional.
@@ -2212,6 +2260,26 @@ Disable all non-AAD authentication methods.</li>
 <ul>
 <li><strong><code>sku</code></strong> (<code>string</code>) - Optional.
   SKU of the Application Gateway. Default is WAF_v2.</li>
+</ul>
+<ul>
+<li><strong><code>httpsKeyVaultSecretId</code></strong> (<code>string</code>) - Optional.
+  Key Vault Secret ID (PFX) to use for the default HTTPS listener (<code>keyVaultSecretId</code>). Use this only when you already have a certificate created in Key Vault (template will not generate it). When provided, it takes precedence over <code>createSelfSignedCertificate</code>.</li>
+</ul>
+<ul>
+<li><strong><code>httpsHostName</code></strong> (<code>string</code>) - Optional.
+  Hostname used by the default HTTPS listener. If omitted, defaults to <code>&lt;publicIpDnsLabel&gt;.&lt;region&gt;.cloudapp.azure.com</code>.</li>
+</ul>
+<ul>
+<li><strong><code>selfSignedCertificateName</code></strong> (<code>string</code>) - Optional.
+  Name for the default SSL certificate on Application Gateway. Default: <code>agw-tls</code>.</li>
+</ul>
+<ul>
+<li><strong><code>sslCertificatePfxBase64</code></strong> (<code>string</code>) - Optional.
+  Base64-encoded PFX content to upload to Application Gateway when <code>createSelfSignedCertificate=true</code>. Recommend sourcing from environment variables in <code>.bicepparam</code> (do not commit secrets).</li>
+</ul>
+<ul>
+<li><strong><code>sslCertificatePassword</code></strong> (<code>string</code>) - Optional.
+  Password for the uploaded PFX when <code>createSelfSignedCertificate=true</code>. Recommend sourcing from environment variables in <code>.bicepparam</code> (do not commit secrets).</li>
 </ul>
 <ul>
 <li><strong><code>sslCertificates</code></strong> (<code>array</code>) - Optional.
@@ -2268,7 +2336,7 @@ Disable all non-AAD authentication methods.</li>
 <td style="text-align: left;"><code>appGatewayPublicIp</code></td>
 <td style="text-align: left;"><code>object</code></td>
 <td style="text-align: left;">Conditional</td>
-<td style="text-align: left;">Conditional Public IP for Application Gateway. Requred when deploy applicationGatewayPublicIp is true and no existing ID is provided.</td>
+<td style="text-align: left;">Conditional Public IP for Application Gateway. Required when deployToggles.applicationGatewayPublicIp is true and no existing ID is provided.</td>
 </tr>
 </tbody>
 </table>
@@ -5447,7 +5515,7 @@ DNS servers associated with the Virtual Network.</li>
 <td style="text-align: left;"><code>wafPolicyDefinition</code></td>
 <td style="text-align: left;"><code>object</code></td>
 <td style="text-align: left;">Conditional</td>
-<td style="text-align: left;">Web Application Firewall (WAF) policy configuration. Required if deploy.wafPolicy is true and you are deploying Application Gateway via this template.</td>
+<td style="text-align: left;">Web Application Firewall (WAF) policy configuration. Required if deployToggles.wafPolicy is true and you are deploying Application Gateway via this template.</td>
 </tr>
 </tbody>
 </table>

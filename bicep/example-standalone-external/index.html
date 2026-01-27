@@ -981,7 +981,7 @@
 
 
 <h1 id="standalone-external-app-gateway-in-front-of-internal-container-apps">Standalone External (App Gateway in front of internal Container Apps)</h1>
-<p>Use this scenario when you want the standalone (new VNet) topology, but still expose a Container App externally via Application Gateway v2.</p>
+<p>Use this scenario when you want the standalone topology and wants to expose a Container App externally via Application Gateway.</p>
 <p><strong>Sample parameter file</strong></p>
 <p><a href="https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/infra/sample.standalone-external.bicepparam">bicep/infra/sample.standalone-external.bicepparam</a></p>
 <p><strong>What this walkthrough validates</strong></p>
@@ -1127,19 +1127,19 @@ If you want to test (or later move to) a real custom domain like <code>app.examp
 <p><strong>3) Use a certificate that matches your domain</strong></p>
 <p>For a real custom domain, use a publicly trusted certificate (CN/SAN includes <code>app.example.com</code>). Supported options:</p>
 <ul>
-<li><strong>Recommended (production): Key Vault</strong>
-    - Set <code>appGatewayDefinition.httpsKeyVaultSecretId</code> to the Key Vault secret ID (PFX).
-    - Set <code>appGatewayDefinition.createSelfSignedCertificate = false</code>.</li>
+<li><strong>Recommended (production): Key Vault</strong><p>- Set <code>appGatewayDefinition.httpsKeyVaultSecretId</code> to the Key Vault secret ID (PFX).</p>
+<p>- Set <code>appGatewayDefinition.createSelfSignedCertificate = false</code>.</p>
+</li>
 </ul>
 <ul>
-<li><strong>Direct PFX upload (no Key Vault)</strong>
-    - Set <code>appGatewayDefinition.sslCertificatePfxBase64</code> and <code>appGatewayDefinition.sslCertificatePassword</code>.
-    - Set <code>appGatewayDefinition.createSelfSignedCertificate = false</code>.</li>
+<li><strong>Direct PFX upload (no Key Vault)</strong><p>- Set <code>appGatewayDefinition.sslCertificatePfxBase64</code> and <code>appGatewayDefinition.sslCertificatePassword</code>.</p>
+<p>- Set <code>appGatewayDefinition.createSelfSignedCertificate = false</code>.</p>
+</li>
 </ul>
 <ul>
-<li><strong>Self-signed (lab only)</strong>
-    - Keep <code>appGatewayDefinition.createSelfSignedCertificate = true</code>.
-    - Browsers will show warnings unless the cert is trusted on the client.</li>
+<li><strong>Self-signed (lab only)</strong><p>- Keep <code>appGatewayDefinition.createSelfSignedCertificate = true</code>.</p>
+<p>- Browsers will show warnings unless the cert is trusted on the client.</p>
+</li>
 </ul>
 <p>After changing DNS / hostname / certificate settings, re-run <code>azd provision</code> to apply.</p>
 <p><strong>Troubleshooting notes</strong></p>
