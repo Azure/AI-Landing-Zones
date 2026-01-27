@@ -451,12 +451,6 @@ Each parameter includes information about its type, requirements, default values
 - **`tags`** (`object`) - Optional.
   Tags for the resource.
 
-### `appGatewayInternetRoutingException`
-
-| Parameter | Type | Required | Description |
-| :-- | :-- | :-- | :-- |
-| `appGatewayInternetRoutingException` | `bool` | Optional | When true, creates an App Gateway subnet routing exception: appgw-subnet gets 0.0.0.0/0 -> Internet instead of 0.0.0.0/0 -> VirtualAppliance. Mirrors Terraform use_internet_routing behavior for App Gateway v2. Default: false. |
-
 ### `appGatewayDefinition`
 
 | Parameter | Type | Required | Description |
