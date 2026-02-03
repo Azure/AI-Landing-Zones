@@ -26,6 +26,8 @@ This option deploys the AI Landing Zone as a standalone application landing zone
 
 ![image](architecture/media/AI-Landing-Zone-without-platform.png)
 
+[Download Visio Diagram](architecture/media/AI%20Landing%20Zones%20-%20Diagram.vsdx)
+
 ## Extensible Implementations
 
 The table represents the various reference implementations of the AI Landing Zone based on the service inventory & configuration
