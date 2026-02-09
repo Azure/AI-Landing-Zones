@@ -1108,11 +1108,6 @@
 <td>Optional depending on toggles.</td>
 </tr>
 <tr>
-<td><code>apim-subnet</code></td>
-<td><code>192.168.0.224/27</code></td>
-<td>Optional depending on toggles.</td>
-</tr>
-<tr>
 <td><code>aca-env-subnet</code></td>
 <td><code>192.168.1.0/27</code></td>
 <td>Delegated to <code>Microsoft.App/environments</code>.</td>
@@ -1145,13 +1140,15 @@
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">pe-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">32</span><span class="p">/</span><span class="n">27</span> <span class="p">-</span><span class="n">-disable-private-endpoint-network-policies</span> <span class="n">true</span>
 
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">AzureBastionSubnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">64</span><span class="p">/</span><span class="n">26</span>
+
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">AzureFirewallSubnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">128</span><span class="p">/</span><span class="n">26</span>
 
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">appgw-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">192</span><span class="p">/</span><span class="n">27</span>
-<span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">apim-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">224</span><span class="p">/</span><span class="n">27</span>
 
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">aca-env-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">0</span><span class="p">/</span><span class="n">27</span> <span class="p">-</span><span class="n">-delegations</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">App</span><span class="p">/</span><span class="n">environments</span>
+
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">devops-agents-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">32</span><span class="p">/</span><span class="n">27</span>
+
 <span class="n">az</span> <span class="n">network</span> <span class="n">vnet</span> <span class="n">subnet</span> <span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$netRg</span> <span class="p">-</span><span class="n">-vnet-name</span> <span class="nv">$vnetName</span> <span class="p">-</span><span class="n">-name</span> <span class="n">jumpbox-subnet</span> <span class="p">-</span><span class="n">-address-prefixes</span> <span class="n">192</span><span class="p">.</span><span class="n">168</span><span class="p">.</span><span class="n">1</span><span class="p">.</span><span class="n">64</span><span class="p">/</span><span class="n">28</span>
 </code></pre></div>
 <p>Verify subnets and capture the VNet resource ID.</p>
@@ -1220,10 +1217,6 @@
     {
       name: &#39;appgw-subnet&#39;
       addressPrefix: &#39;192.168.0.192/27&#39;
-    }
-    {
-      name: &#39;apim-subnet&#39;
-      addressPrefix: &#39;192.168.0.224/27&#39;
     }
     {
       name: &#39;aca-env-subnet&#39;

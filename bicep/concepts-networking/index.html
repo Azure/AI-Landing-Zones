@@ -1068,14 +1068,6 @@
 <td><a href="https://learn.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#size-of-the-subnet">Application Gateway subnet sizing</a></td>
 </tr>
 <tr>
-<td><code>apim-subnet</code></td>
-<td style="text-align: right;"><code>192.168.0.224/27</code></td>
-<td style="text-align: right;">32</td>
-<td style="text-align: right;"><code>/28</code></td>
-<td style="text-align: right;"><code>/27</code> or larger</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/api-management/virtual-network-injection-resources#subnet-size">API Management subnet sizing</a></td>
-</tr>
-<tr>
 <td><code>jumpbox-subnet</code></td>
 <td style="text-align: right;"><code>192.168.1.64/28</code></td>
 <td style="text-align: right;">16</td>
@@ -1106,7 +1098,7 @@
 - <code>agent-subnet</code> and <code>aca-env-subnet</code> are delegated to <code>Microsoft.App/environments</code>.
 - <code>pe-subnet</code> disables private endpoint network policies and is intended to host private endpoints.
 - Container Apps consumption-only environments require a <code>/23</code> subnet; workload profiles environments can use <code>/27</code> or larger.
-- In platform-integrated mode, the template typically creates or uses <code>agent-subnet</code>, <code>pe-subnet</code>, <code>appgw-subnet</code>, <code>apim-subnet</code>, <code>aca-env-subnet</code>, and <code>devops-agents-subnet</code>.
+- In platform-integrated mode, the template typically creates or uses <code>agent-subnet</code>, <code>pe-subnet</code>, <code>appgw-subnet</code>, <code>aca-env-subnet</code>, and <code>devops-agents-subnet</code>.
 - You can override defaults by setting <code>vNetDefinition.addressPrefixes</code> and/or <code>vNetDefinition.subnets</code>.
 - Azure reserves 5 IP addresses in each subnet; usable IPs are fewer than the total: https://learn.microsoft.com/en-us/azure/virtual-network/virtual-networks-faq#are-there-any-restrictions-on-using-ip-addresses-within-these-subnets.</p>
 </blockquote>
@@ -1147,14 +1139,6 @@
 <td style="text-align: right;"><code>/29</code></td>
 <td style="text-align: right;"><code>/27</code> or larger</td>
 <td><a href="https://learn.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#size-of-the-subnet">Application Gateway subnet sizing</a></td>
-</tr>
-<tr>
-<td><code>apim-subnet</code></td>
-<td style="text-align: right;"><code>192.168.0.224/27</code></td>
-<td style="text-align: right;">32</td>
-<td style="text-align: right;"><code>/28</code></td>
-<td style="text-align: right;"><code>/27</code> or larger</td>
-<td><a href="https://learn.microsoft.com/en-us/azure/api-management/virtual-network-injection-resources#subnet-size">API Management subnet sizing</a></td>
 </tr>
 <tr>
 <td><code>aca-env-subnet</code></td>

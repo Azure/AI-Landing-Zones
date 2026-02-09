@@ -1085,10 +1085,6 @@
 <td><code>privateDnsZonesDefinition.containerAppsZoneId</code></td>
 <td><code>privatelink.&lt;region&gt;.azurecontainerapps.io</code></td>
 </tr>
-<tr>
-<td><code>privateDnsZonesDefinition.apimZoneId</code></td>
-<td><code>privatelink.azure-api.net</code></td>
-</tr>
 </tbody>
 </table>
 <p>In standalone mode, private endpoints can still be created even when a zone ID is not provided, but DNS integration for that endpoint is skipped. In platform-integrated mode, DNS integration is always handled by the platform DNS pattern.</p>
@@ -1118,7 +1114,7 @@
 </tr>
 </tbody>
 </table>
-<p>Default subnet associations (when the corresponding subnets exist): <code>agent-subnet</code>, <code>jumpbox-subnet</code>, <code>aca-env-subnet</code>, <code>devops-agents-subnet</code>, <code>appgw-subnet</code>, <code>apim-subnet</code>.</p>
+<p>Default subnet associations (when the corresponding subnets exist): <code>agent-subnet</code>, <code>jumpbox-subnet</code>, <code>aca-env-subnet</code>, <code>devops-agents-subnet</code>, <code>appgw-subnet</code>.</p>
 <p>The template applies defensive gating: if UDR is enabled but a consistent next hop is not provided, it skips route table deployment to avoid breaking egress.</p>
 <p><strong>Example: Platform-integrated deployment</strong></p>
 <div class="highlight"><pre><span></span><code>param flagPlatformLandingZone = true
