@@ -13,9 +13,6 @@ param peNsgResourceId string = ''
 @description('Optional. Application Gateway NSG Resource ID.')
 param applicationGatewayNsgResourceId string = ''
 
-@description('Optional. API Management NSG Resource ID.')
-param apiManagementNsgResourceId string = ''
-
 @description('Optional. Jumpbox NSG Resource ID.')
 param jumpboxNsgResourceId string = ''
 
@@ -33,7 +30,6 @@ var enrichedSubnets = [for subnet in userSubnets: union(subnet, {
   networkSecurityGroupResourceId: subnet.name == 'agent-subnet' && !empty(agentNsgResourceId) ? agentNsgResourceId
     : subnet.name == 'pe-subnet' && !empty(peNsgResourceId) ? peNsgResourceId  
     : subnet.name == 'appgw-subnet' && !empty(applicationGatewayNsgResourceId) ? applicationGatewayNsgResourceId
-    : subnet.name == 'apim-subnet' && !empty(apiManagementNsgResourceId) ? apiManagementNsgResourceId
     : subnet.name == 'jumpbox-subnet' && !empty(jumpboxNsgResourceId) ? jumpboxNsgResourceId
     : subnet.name == 'aca-env-subnet' && !empty(acaEnvironmentNsgResourceId) ? acaEnvironmentNsgResourceId
     : subnet.name == 'devops-agents-subnet' && !empty(devopsBuildAgentsNsgResourceId) ? devopsBuildAgentsNsgResourceId

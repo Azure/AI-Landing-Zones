@@ -604,154 +604,6 @@ type appGatewayDefinitionType = {
 type appInsightsDefinitionType = object
 
 @export()
-@description('APIM additional location item (open).')
-type apimAdditionalLocationType = object
-
-@export()
-@description('APIM hostname configuration item (open).')
-type apimHostnameConfigurationItemType = object
-
-@export()
-@description('Configuration object for the Azure API Management service to be deployed.')
-type apimDefinitionType = {
-  // Required
-  @description('Required. Name of the API Management service.')
-  name: string
-  @description('Required. Publisher email address.')
-  publisherEmail: string
-
-  @description('Required. Publisher display name.')
-  publisherName: string
-  // Conditional
-  @description('Conditional. SKU capacity. Required if SKU is not Consumption.')
-  skuCapacity: int?
-  // Optional
-  @description('Optional. Additional locations for the API Management service.')
-  additionalLocations: array?
-
-  @description('Optional. API diagnostics for APIs.')
-  apiDiagnostics: array?
-
-  @description('Optional. APIs to create in the API Management service.')
-  apis: array?
-
-  @description('Optional. API version sets to configure.')
-  apiVersionSets: array?
-
-  @description('Optional. Authorization servers to configure.')
-  authorizationServers: array?
-
-  @description('Optional. Availability Zones for HA deployment.')
-  availabilityZones: int[]?
-
-  @description('Optional. Backends to configure.')
-  backends: array?
-
-  @description('Optional. Caches to configure.')
-  caches: array?
-
-  @description('Optional. Certificates to configure for API Management. Maximum of 10 certificates.')
-  certificates: array?
-
-  @description('Optional. Custom properties to configure.')
-  customProperties: object?
-
-  @description('Optional. Diagnostic settings for the API Management service.')
-  diagnosticSettings: array?
-
-  @description('Optional. Disable gateway in a region (for multi-region setup).')
-  disableGateway: bool?
-
-  @description('Optional. Enable client certificate for requests (Consumption SKU only).')
-  enableClientCertificate: bool?
-
-  @description('Optional. Enable developer portal for the service.')
-  enableDeveloperPortal: bool?
-
-  @description('Optional. Enable/disable usage telemetry for module. Default is true.')
-  enableTelemetry: bool?
-
-  @description('Optional. Hostname configurations for the API Management service.')
-  hostnameConfigurations: array?
-
-  @description('Optional. Identity providers to configure.')
-  identityProviders: array?
-
-  @description('Optional. Location for the API Management service. Default is resourceGroup().location.')
-  location: string?
-
-  @description('Optional. Lock settings for the API Management service.')
-  lock: {
-    @description('Optional. Type of lock. Allowed values: CanNotDelete, None, ReadOnly.')
-    kind: 'CanNotDelete' | 'None' | 'ReadOnly'?
-
-    @description('Optional. Name of the lock.')
-    name: string?
-
-    @description('Optional. Notes for the lock.')
-    notes: string?
-  }?
-
-  @description('Optional. Loggers to configure.')
-  loggers: array?
-
-  @description('Optional. Managed identity settings for the API Management service.')
-  managedIdentities: {
-    @description('Optional. Enables system-assigned managed identity.')
-    systemAssigned: bool?
-
-    @description('Optional. User-assigned identity resource IDs.')
-    userAssignedResourceIds: string[]?
-  }?
-
-  @description('Optional. Minimum ARM API version to use for control-plane operations.')
-  minApiVersion: string?
-
-  @description('Optional. Named values to configure.')
-  namedValues: array?
-
-  @description('Optional. Notification sender email address.')
-  notificationSenderEmail: string?
-
-  @description('Optional. Helper for generating new GUID values.')
-  newGuidValue: string?
-
-  @description('Optional. Policies to configure.')
-  policies: array?
-
-  @description('Optional. Portal settings for the developer portal.')
-  portalsettings: array?
-
-  @description('Optional. Products to configure.')
-  products: array?
-
-  @description('Optional. Public IP address resource ID for API Management.')
-  publicIpAddressResourceId: string?
-
-  @description('Optional. Restore configuration for undeleting API Management services.')
-  restore: bool?
-
-  @description('Optional. Role assignments for the API Management service.')
-  roleAssignments: array?
-
-  @description('Optional. SKU of the API Management service. Allowed values: Basic, BasicV2, Consumption, Developer, Premium, PremiumV2, Standard, StandardV2.')
-  sku: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'PremiumV2' | 'Standard' | 'StandardV2'?
-
-
-  @description('Optional. Subnet resource ID for VNet integration.')
-  subnetResourceId: string?
-
-  @description('Optional. Subscriptions to configure.')
-  subscriptions: array?
-
-  @description('Optional. Tags to apply to the API Management service.')
-  tags: object?
-
-  @description('Optional. Virtual network type. Allowed values: None, External, Internal.')
-  virtualNetworkType: 'None' | 'External' | 'Internal'?
-}
-
-@export()
 @description('Configuration object for the Azure Bastion service to be deployed.')
 type bastionDefinitionType = {
   @description('Optional. Bastion host name.')
@@ -1413,9 +1265,6 @@ type deployTogglesType = {
   @description('Required. Toggle to deploy App Configuration (true) or not (false).')
   appConfig: bool
 
-  @description('Required. Toggle to deploy API Management (true) or not (false).')
-  apiManagement: bool
-
   @description('Required. Toggle to deploy Application Gateway (true) or not (false).')
   applicationGateway: bool
 
@@ -1454,9 +1303,6 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy NSG for Application Gateway subnet (true) or not (false).')
   applicationGatewayNsg: bool
-
-  @description('Required. Toggle to deploy NSG for API Management subnet (true) or not (false).')
-  apiManagementNsg: bool
 
   @description('Required. Toggle to deploy NSG for Azure Container Apps environment subnet (true) or not (false).')
   acaEnvironmentNsg: bool
@@ -1522,9 +1368,6 @@ type resourceIdsType = {
   @description('Optional. Existing Azure Container Registry resource ID to reuse.')
   containerRegistryResourceId: string?
 
-  @description('Optional. Existing API Management service resource ID to reuse.')
-  apimServiceResourceId: string?
-
   @description('Optional. Existing Application Gateway resource ID to reuse.')
   applicationGatewayResourceId: string?
 
@@ -1548,9 +1391,6 @@ type resourceIdsType = {
 
   @description('Optional. Existing NSG resource ID to reuse for the Application Gateway subnet.')
   applicationGatewayNsgResourceId: string?
-
-  @description('Optional. Existing NSG resource ID to reuse for the API Management subnet.')
-  apiManagementNsgResourceId: string?
 
   @description('Optional. Existing NSG resource ID to reuse for the Azure Container Apps environment subnet.')
   acaEnvironmentNsgResourceId: string?
@@ -1576,9 +1416,6 @@ type subnetNamesDefinitionType = {
 
   @description('Optional. Subnet name for Application Gateway. Default: app-gateway-subnet.')
   applicationGateway: string?
-
-  @description('Optional. Subnet name for API Management. Default: api-management-subnet.')
-  apiManagement: string?
 
   @description('Optional. Subnet name for Container Apps environment. Default: aca-environment-subnet.')
   acaEnvironment: string?
@@ -1904,9 +1741,6 @@ type nsgPerSubnetDefinitionsType = {
   @description('Optional. NSG definition applied to the Application Gateway subnet.')
   applicationGateway: nsgDefinitionType?
 
-  @description('Optional. NSG definition applied to the API Management subnet.')
-  apiManagement: nsgDefinitionType?
-
   @description('Optional. NSG definition applied to the Azure Container Apps environment (infrastructure) subnet.')
   acaEnvironment: nsgDefinitionType?
 
@@ -2056,9 +1890,6 @@ type privateDnsZonesDefinitionType = {
   // --- Per-service existing zone IDs ---
   @description('Optional. Existing Private DNS Zone resource ID for Cognitive Services.')
   cognitiveservicesZoneId: string?
-
-  @description('Optional. Existing Private DNS Zone resource ID for Azure API Management.')
-  apimZoneId: string?
 
   @description('Optional. Existing Private DNS Zone resource ID for Azure OpenAI.')
   openaiZoneId: string?

@@ -10,9 +10,6 @@ param virtualNetworkResourceId string
 @description('Required. NSG resource IDs for automatic association with subnets.')
 param nsgResourceIds object
 
-@description('Optional. If set, ensures the apim-subnet has this delegation (used for APIM VNet injection requirements).')
-param apimSubnetDelegationServiceName string = ''
-
 @description('Optional. When true, omit hub-level subnets (AzureFirewallSubnet, AzureBastionSubnet, jumpbox-subnet) from the default subnet set. These are expected to be created in the platform hub landing zone.')
 param flagPlatformLandingZone bool = false
 
@@ -46,12 +43,6 @@ var defaultExistingVnetSubnetsFull = [
   {
     name: 'AzureFirewallSubnet'
     addressPrefix: '192.168.1.0/26'
-  }
-  {
-    name: 'apim-subnet'
-    addressPrefix: '192.168.1.160/27'
-    delegation: !empty(apimSubnetDelegationServiceName) ? apimSubnetDelegationServiceName : null
-    networkSecurityGroupResourceId: !empty(nsgResourceIds.apiManagementNsgResourceId) ? nsgResourceIds.apiManagementNsgResourceId : null
   }
   {
     name: 'jumpbox-subnet'
@@ -93,12 +84,6 @@ var defaultExistingVnetSubnetsPlatformLz = [
     networkSecurityGroupResourceId: !empty(nsgResourceIds.applicationGatewayNsgResourceId) ? nsgResourceIds.applicationGatewayNsgResourceId : null
   }
   {
-    name: 'apim-subnet'
-    addressPrefix: '192.168.1.160/27'
-    delegation: !empty(apimSubnetDelegationServiceName) ? apimSubnetDelegationServiceName : null
-    networkSecurityGroupResourceId: !empty(nsgResourceIds.apiManagementNsgResourceId) ? nsgResourceIds.apiManagementNsgResourceId : null
-  }
-  {
     name: 'aca-env-subnet'
     addressPrefix: '192.168.1.112/28'
     delegation: 'Microsoft.App/environments'
@@ -122,7 +107,6 @@ module enrichSubnetsWithNsgs '../enrich-subnets-with-nsgs/main.bicep' = if (exis
     agentNsgResourceId: nsgResourceIds.agentNsgResourceId
     peNsgResourceId: nsgResourceIds.peNsgResourceId
     applicationGatewayNsgResourceId: nsgResourceIds.applicationGatewayNsgResourceId
-    apiManagementNsgResourceId: nsgResourceIds.apiManagementNsgResourceId
     jumpboxNsgResourceId: nsgResourceIds.jumpboxNsgResourceId
     acaEnvironmentNsgResourceId: nsgResourceIds.acaEnvironmentNsgResourceId
     devopsBuildAgentsNsgResourceId: nsgResourceIds.devopsBuildAgentsNsgResourceId
@@ -143,7 +127,6 @@ module existingVNetSubnetsDeployment '../deploy-subnets-to-vnet/main.bicep' = {
   params: {
     virtualNetworkResourceId: virtualNetworkResourceId
     subnets: subnetsForExistingVnet
-    apimSubnetDelegationServiceName: apimSubnetDelegationServiceName
   }
 }
 

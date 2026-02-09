@@ -20,7 +20,6 @@ using './main.bicep'
 // - AzureFirewallSubnet
 // - devops-agents-subnet
 // - appgw-subnet (even if Application Gateway is disabled; safe to keep for parity)
-// - apim-subnet (even if APIM is disabled; safe to keep for parity)
 
 // Addressing assumption (matches main.bicep defaults):
 // - VNet address space: 192.168.0.0/23
@@ -33,7 +32,6 @@ using './main.bicep'
 //   - devops-agents-subnet:192.168.1.32/27
 //   - aca-env-subnet:      192.168.1.0/27
 //   - appgw-subnet:        192.168.0.192/27
-//   - apim-subnet:         192.168.0.224/27
 //
 // Why this matters: the `firewallPolicyDefinition` below contains `sourceAddresses` examples that are
 // intentionally aligned to these subnet ranges (for example, jumpbox-subnet = 192.168.1.64/28).
@@ -50,7 +48,6 @@ param deployToggles = {
   keyVault: true
   storageAccount: true
   appConfig: true
-  apiManagement: false
   applicationGateway: false
   applicationGatewayPublicIp: false
   firewall: true
@@ -61,7 +58,6 @@ param deployToggles = {
   agentNsg: true
   peNsg: true
   applicationGatewayNsg: false
-  apiManagementNsg: false
   acaEnvironmentNsg: true
   jumpboxNsg: true
   devopsBuildAgentsNsg: true

@@ -73,9 +73,8 @@
 #### **Private Endpoints**
 - **Service:** Private Link / Private Endpoint
 - **Region:** East US
-- **Number of Private Endpoints:** 10
+- **Number of Private Endpoints:** 9
   - App Configuration: 1
-  - API Management: 1 (if deployed)
   - Container Apps Environment: 1
   - Container Registry: 1
   - Storage (Blob): 1
@@ -87,14 +86,13 @@
 - **Inbound data processed:** 100 GB/month total
 - **Outbound data processed:** 50 GB/month total
 
-**Estimated Cost:** ~$73/month ($7.30 per endpoint)
+**Estimated Cost:** ~$66/month ($7.30 per endpoint)
 
 ---
 
 #### **Private DNS Zones**
 - **Service:** Azure DNS (Private DNS)
-- **Number of zones:** 15 zones
-  - privatelink.azure-api.net
+- **Number of zones:** 14 zones
   - privatelink.cognitiveservices.azure.com
   - privatelink.openai.azure.com
   - privatelink.services.ai.azure.com
@@ -126,11 +124,10 @@
 
 #### **Network Security Groups**
 - **Service:** Network Security Groups
-- **Quantity:** 8 NSGs
+- **Quantity:** 7 NSGs
   - Agent subnet NSG
   - Private Endpoints subnet NSG
   - Application Gateway subnet NSG
-  - API Management subnet NSG
   - Container Apps Environment subnet NSG
   - Jumpbox subnet NSG
   - DevOps Build Agents subnet NSG
@@ -345,21 +342,6 @@
 
 ### **6. OPTIONAL SERVICES**
 
-#### **API Management** (if enabled in deployToggles)
-- **Service:** API Management
-- **Region:** East US
-- **Tier:** Premium
-- **Units:** 3 (for zone redundancy)
-- **Hours:** 730 hours/month
-- **API calls:** 1 million calls/month
-- **Cache:** 1 GB
-
-**Estimated Cost:** ~$2,700/month (Premium tier)
-
-**Alternative - Developer Tier:** ~$50/month (for dev/test, no SLA)
-
----
-
 #### **Bing Search** (Grounding with Bing)
 - **Service:** Bing Search API
 - **Tier:** S1
@@ -375,12 +357,12 @@
 
 | Category | Monthly Cost (USD) |
 |----------|-------------------|
-| **Networking** | $980 - $1,180 |
+| **Networking** | $973 - $1,173 |
 | - Application Gateway | $350 - $450 |
 | - Azure Firewall | $400 - $500 |
 | - Azure Bastion | $140 |
 | - Public IPs | $7 |
-| - Private Endpoints | $73 |
+| - Private Endpoints | $66 |
 | - Private DNS Zones | $9 |
 | **Compute** | $440 - $650 |
 | - Build VM (Linux) | $120 |
@@ -399,12 +381,9 @@
 | **Monitoring** | $135 |
 | - Log Analytics | $125 |
 | - Application Insights | $10 |
-| **Optional** | $0 - $2,707 |
-| - API Management (if enabled) | $0 - $2,700 |
+| **Optional** | $7 |
 | - Bing Search | $7 |
-| | |
-| **TOTAL (without API Management)** | **$2,135 - $3,105/month** |
-| **TOTAL (with API Management)** | **$4,835 - $5,812/month** |
+| **TOTAL** | **$2,128 - $3,098/month** |
 
 ---
 

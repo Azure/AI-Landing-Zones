@@ -10,7 +10,6 @@ param deployToggles = {
   peNsg: true
   agentNsg: false
   acaEnvironmentNsg: false
-  apiManagementNsg: false
   applicationGatewayNsg: false
   jumpboxNsg: true
   devopsBuildAgentsNsg: false
@@ -27,7 +26,6 @@ param deployToggles = {
   jumpVm: true
   bastionHost: true
   appConfig: false
-  apiManagement: false
   applicationGateway: false
   applicationGatewayPublicIp: false
   wafPolicy: false
