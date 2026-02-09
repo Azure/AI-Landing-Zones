@@ -103,7 +103,6 @@ Expected subnets (default template layout):
 | `AzureBastionSubnet` |
 | `AzureFirewallSubnet` |
 | `appgw-subnet` |
-| `apim-subnet` |
 | `aca-env-subnet` |
 | `devops-agents-subnet` |
 | `jumpbox-subnet` |

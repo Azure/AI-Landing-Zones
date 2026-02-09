@@ -103,7 +103,6 @@ Expected subnets (default platform sample layout):
 | `agent-subnet` |
 | `pe-subnet` |
 | `appgw-subnet` |
-| `apim-subnet` |
 | `aca-env-subnet` |
 | `devops-agents-subnet` |
 

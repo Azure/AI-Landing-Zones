@@ -42,7 +42,6 @@ When integrating with a Platform Landing Zone, you typically pass shared private
 | `privateDnsZonesDefinition.appConfigZoneId` | `privatelink.azconfig.io` |
 | `privateDnsZonesDefinition.acrZoneId` | `privatelink.azurecr.io` |
 | `privateDnsZonesDefinition.containerAppsZoneId` | `privatelink.<region>.azurecontainerapps.io` |
-| `privateDnsZonesDefinition.apimZoneId` | `privatelink.azure-api.net` |
 
 In standalone mode, private endpoints can still be created even when a zone ID is not provided, but DNS integration for that endpoint is skipped. In platform-integrated mode, DNS integration is always handled by the platform DNS pattern.
 
@@ -60,7 +59,7 @@ The deployment can optionally create a route table with a default route and asso
 | `firewallPrivateIp` | Next hop IP used for the default route. |
 | `appGatewayInternetRoutingException` | Uses a dedicated route table for `appgw-subnet` with internet routing (App Gateway v2 exception). |
 
-Default subnet associations (when the corresponding subnets exist): `agent-subnet`, `jumpbox-subnet`, `aca-env-subnet`, `devops-agents-subnet`, `appgw-subnet`, `apim-subnet`.
+Default subnet associations (when the corresponding subnets exist): `agent-subnet`, `jumpbox-subnet`, `aca-env-subnet`, `devops-agents-subnet`, `appgw-subnet`.
 
 The template applies defensive gating: if UDR is enabled but a consistent next hop is not provided, it skips route table deployment to avoid breaking egress.
 

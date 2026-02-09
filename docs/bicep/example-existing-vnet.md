@@ -54,7 +54,6 @@ VNet address space is `192.168.0.0/23`.
 | `AzureBastionSubnet` | `192.168.0.64/26` | Required minimum size for Bastion. |
 | `AzureFirewallSubnet` | `192.168.0.128/26` | Required minimum size for Azure Firewall. |
 | `appgw-subnet` | `192.168.0.192/27` | Optional depending on toggles. |
-| `apim-subnet` | `192.168.0.224/27` | Optional depending on toggles. |
 | `aca-env-subnet` | `192.168.1.0/27` | Delegated to `Microsoft.App/environments`. |
 | `devops-agents-subnet` | `192.168.1.32/27` | Build agents subnet. |
 | `jumpbox-subnet` | `192.168.1.64/28` | Jump VM subnet. |
@@ -84,13 +83,15 @@ az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --na
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name pe-subnet --address-prefixes 192.168.0.32/27 --disable-private-endpoint-network-policies true
 
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name AzureBastionSubnet --address-prefixes 192.168.0.64/26
+
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name AzureFirewallSubnet --address-prefixes 192.168.0.128/26
 
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name appgw-subnet --address-prefixes 192.168.0.192/27
-az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name apim-subnet --address-prefixes 192.168.0.224/27
 
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name aca-env-subnet --address-prefixes 192.168.1.0/27 --delegations Microsoft.App/environments
+
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name devops-agents-subnet --address-prefixes 192.168.1.32/27
+
 az network vnet subnet create --resource-group $netRg --vnet-name $vnetName --name jumpbox-subnet --address-prefixes 192.168.1.64/28
 ```
 
@@ -186,10 +187,6 @@ param existingVNetSubnetsDefinition = {
     {
       name: 'appgw-subnet'
       addressPrefix: '192.168.0.192/27'
-    }
-    {
-      name: 'apim-subnet'
-      addressPrefix: '192.168.0.224/27'
     }
     {
       name: 'aca-env-subnet'
