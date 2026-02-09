@@ -49,7 +49,6 @@ metadata description = 'Deploys a secure AI/ML landing zone (resource groups, ne
 //       2.1 Agent Subnet NSG
 //       2.2 Private Endpoints Subnet NSG
 //       2.3 Application Gateway Subnet NSG
-//       2.4 API Management Subnet NSG
 //       2.5 Azure Container Apps Environment Subnet NSG
 //       2.6 Jumpbox Subnet NSG
 //       2.7 DevOps Build Agents Subnet NSG
@@ -61,7 +60,6 @@ metadata description = 'Deploys a secure AI/ML landing zone (resource groups, ne
 //   4  NETWORKING - PRIVATE DNS ZONES
 //       4.1 Platform Landing Zone Integration Logic
 //       4.2 DNS Zone Configuration Variables
-//       4.3 API Management Private DNS Zone
 //       4.4 Cognitive Services Private DNS Zone
 //       4.5 OpenAI Private DNS Zone
 //       4.6 AI Services Private DNS Zone
@@ -82,7 +80,6 @@ metadata description = 'Deploys a secure AI/ML landing zone (resource groups, ne
 //       6.3 Hub-to-Spoke Reverse Peering
 //   7  NETWORKING - PRIVATE ENDPOINTS
 //       7.1 App Configuration Private Endpoint
-//       7.2 API Management Private Endpoint
 //       7.3 Container Apps Environment Private Endpoint
 //       7.4 Azure Container Registry Private Endpoint
 //       7.5 Storage Account (Blob) Private Endpoint
@@ -105,8 +102,6 @@ metadata description = 'Deploys a secure AI/ML landing zone (resource groups, ne
 //       13.1 Key Vault
 //   14 AI SEARCH
 //       14.1 AI Search Service
-//   15 API MANAGEMENT
-//       15.1 API Management Service
 //   16 AI FOUNDRY
 //       16.1 AI Foundry Configuration
 //   17 BING GROUNDING
@@ -132,10 +127,9 @@ metadata description = 'Deploys a secure AI/ML landing zone (resource groups, ne
 //       20.10 Cosmos DB Outputs
 //       20.11 Key Vault Outputs
 //       20.12 AI Search Outputs
-//       20.13 API Management Outputs
-//       20.14 AI Foundry Outputs
-//       20.15 Bing Grounding Outputs
-//       20.16 Gateways and Firewall Outputs
+//       20.13 AI Foundry Outputs
+//       20.14 Bing Grounding Outputs
+//       20.15 Gateways and Firewall Outputs
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 targetScope = 'resourceGroup'
@@ -159,7 +153,6 @@ import {
   genAIAppCosmosDbDefinitionInputType
   keyVaultDefinitionInputType
   kSAISearchDefinitionInputType
-  apimDefinitionType
   aiFoundryDefinitionType
   kSGroundingWithBingDefinitionType
   wafPolicyDefinitionsType
@@ -359,165 +352,6 @@ module applicationGatewayNsgWrapper 'wrappers/avm.res.network.network-security-g
 
 var applicationGatewayNsgResourceId = resourceIds.?applicationGatewayNsgResourceId ?? (varDeployApplicationGatewayNsg
   ? applicationGatewayNsgWrapper!.outputs.resourceId
-  : '')
-
-// APIM Internal/External VNet injection requires an NSG on the APIM subnet.
-// Force NSG deployment when APIM is enabled and virtualNetworkType is not 'None', even if the toggle is off.
-var varApimRequiresSubnetNsg = deployToggles.apiManagement && ((apimDefinition.?virtualNetworkType ?? 'Internal') != 'None')
-var varDeployApiManagementNsg = (deployToggles.apiManagementNsg || varApimRequiresSubnetNsg) && empty(resourceIds.?apiManagementNsgResourceId)
-
-// APIM VNet injection also requires the APIM subnet to be delegated.
-// See: https://aka.ms/apim-vnet-outbound
-var varApimSubnetDelegationServiceName = varApimRequiresSubnetNsg ? 'Microsoft.Web/hostingEnvironments' : ''
-
-// 2.4 API Management Subnet NSG
-module apiManagementNsgWrapper 'wrappers/avm.res.network.network-security-group.bicep' = if (varDeployApiManagementNsg) {
-  name: 'm-nsg-apim'
-  params: {
-    nsg: union(
-      {
-        name: 'nsg-apim-${baseName}'
-        location: location
-        enableTelemetry: enableTelemetry
-        // Required security rules for API Management Internal VNet mode
-        securityRules: [
-          // ========== INBOUND RULES ==========
-          {
-            name: 'Allow-APIM-Management-Inbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Inbound'
-              priority: 100
-              protocol: 'Tcp'
-              description: 'Azure API Management control plane traffic'
-              sourceAddressPrefix: 'ApiManagement'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'VirtualNetwork'
-              destinationPortRange: '3443'
-            }
-          }
-          {
-            name: 'Allow-AzureLoadBalancer-Inbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Inbound'
-              priority: 110
-              protocol: 'Tcp'
-              description: 'Azure Infrastructure Load Balancer health probes'
-              sourceAddressPrefix: 'AzureLoadBalancer'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'VirtualNetwork'
-              destinationPortRange: '6390'
-            }
-          }
-          {
-            name: 'Allow-VNet-to-APIM-Inbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Inbound'
-              priority: 120
-              protocol: 'Tcp'
-              description: 'Internal VNet clients to APIM gateway'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'VirtualNetwork'
-              destinationPortRange: '443'
-            }
-          }
-          // ========== OUTBOUND RULES ==========
-          {
-            name: 'Allow-APIM-to-Storage-Outbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Outbound'
-              priority: 100
-              protocol: 'Tcp'
-              description: 'APIM to Azure Storage for dependencies'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'Storage'
-              destinationPortRange: '443'
-            }
-          }
-          {
-            name: 'Allow-APIM-to-SQL-Outbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Outbound'
-              priority: 110
-              protocol: 'Tcp'
-              description: 'APIM to Azure SQL for dependencies'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'Sql'
-              destinationPortRange: '1433'
-            }
-          }
-          {
-            name: 'Allow-APIM-to-KeyVault-Outbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Outbound'
-              priority: 120
-              protocol: 'Tcp'
-              description: 'APIM to Key Vault for certificates and secrets'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'AzureKeyVault'
-              destinationPortRange: '443'
-            }
-          }
-          {
-            name: 'Allow-APIM-to-EventHub-Outbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Outbound'
-              priority: 130
-              protocol: 'Tcp'
-              description: 'APIM to Event Hub for logging'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'EventHub'
-              destinationPortRanges: ['5671', '5672', '443']
-            }
-          }
-          {
-            name: 'Allow-APIM-to-InternalBackends-Outbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Outbound'
-              priority: 140
-              protocol: 'Tcp'
-              description: 'APIM to internal backends (OpenAI, AI Services, etc)'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'VirtualNetwork'
-              destinationPortRange: '443'
-            }
-          }
-          {
-            name: 'Allow-APIM-to-AzureMonitor-Outbound'
-            properties: {
-              access: 'Allow'
-              direction: 'Outbound'
-              priority: 150
-              protocol: 'Tcp'
-              description: 'APIM to Azure Monitor for telemetry'
-              sourceAddressPrefix: 'VirtualNetwork'
-              sourcePortRange: '*'
-              destinationAddressPrefix: 'AzureMonitor'
-              destinationPortRanges: ['1886', '443']
-            }
-          }
-        ]
-      },
-      nsgDefinitions!.?apiManagement ?? {}
-    )
-  }
-}
-
-var apiManagementNsgResourceId = resourceIds.?apiManagementNsgResourceId ?? (varDeployApiManagementNsg
-  ? apiManagementNsgWrapper!.outputs.resourceId
   : '')
 
 var varDeployAcaEnvironmentNsg = deployToggles.acaEnvironmentNsg && empty(resourceIds.?acaEnvironmentNsgResourceId)
@@ -810,17 +644,6 @@ var varDefaultSpokeSubnetsFull = [
     // Min: /29 (8 IPs) if very small, but not practical
     // Recommended: /27 (32 IPs) or larger for production App Gateway
   }
-  union(
-    {
-      enabled: true
-      name: 'apim-subnet'
-      addressPrefix: '192.168.0.224/27'
-      networkSecurityGroupResourceId: apiManagementNsgResourceId
-      // Min: /28 (16 IPs) for dev/test SKUs
-      // Recommended: /27 or larger for production multi-zone APIM
-    },
-    !empty(varApimSubnetDelegationServiceName) ? { delegation: varApimSubnetDelegationServiceName } : {}
-  )
   {
     enabled: true
     name: 'jumpbox-subnet'
@@ -872,15 +695,6 @@ var varDefaultSpokeSubnetsPlatformLz = [
     addressPrefix: '192.168.0.192/27'
     networkSecurityGroupResourceId: applicationGatewayNsgResourceId
   }
-  union(
-    {
-      enabled: true
-      name: 'apim-subnet'
-      addressPrefix: '192.168.0.224/27'
-      networkSecurityGroupResourceId: apiManagementNsgResourceId
-    },
-    !empty(varApimSubnetDelegationServiceName) ? { delegation: varApimSubnetDelegationServiceName } : {}
-  )
   {
     enabled: true
     name: 'aca-env-subnet'
@@ -916,10 +730,6 @@ module vNetworkWrapper 'wrappers/avm.res.network.virtual-network.bicep' = if (va
   }
 }
 
-var varApimSubnetId = empty(resourceIds.?virtualNetworkResourceId!)
-  ? '${virtualNetworkResourceId}/subnets/apim-subnet'
-  : '${resourceIds.virtualNetworkResourceId!}/subnets/apim-subnet'
-
 // Note: We need two module declarations because Bicep requires compile-time scope resolution.
 // The scope parameter cannot be conditionally determined at runtime, so we use two modules
 // with different scopes but the same template to handle both same-scope and cross-scope scenarios.
@@ -935,13 +745,11 @@ module existingVNetSubnets './helpers/setup-subnets-for-vnet/main.bicep' = if (v
       agentNsgResourceId: agentNsgResourceId!
       peNsgResourceId: peNsgResourceId!
       applicationGatewayNsgResourceId: applicationGatewayNsgResourceId!
-      apiManagementNsgResourceId: apiManagementNsgResourceId!
       jumpboxNsgResourceId: jumpboxNsgResourceId!
       acaEnvironmentNsgResourceId: acaEnvironmentNsgResourceId!
       devopsBuildAgentsNsgResourceId: devopsBuildAgentsNsgResourceId!
       bastionNsgResourceId: bastionNsgResourceId!
     }
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
 }
 
@@ -957,13 +765,11 @@ module existingVNetSubnetsCrossScope './helpers/setup-subnets-for-vnet/main.bice
       agentNsgResourceId: agentNsgResourceId!
       peNsgResourceId: peNsgResourceId!
       applicationGatewayNsgResourceId: applicationGatewayNsgResourceId!
-      apiManagementNsgResourceId: apiManagementNsgResourceId!
       jumpboxNsgResourceId: jumpboxNsgResourceId!
       acaEnvironmentNsgResourceId: acaEnvironmentNsgResourceId!
       devopsBuildAgentsNsgResourceId: devopsBuildAgentsNsgResourceId!
       bastionNsgResourceId: bastionNsgResourceId!
     }
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
 }
 
@@ -982,7 +788,6 @@ var virtualNetworkResourceId = resourceIds.?virtualNetworkResourceId ?? (varDepl
 var varAgentSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/agent-subnet' : ''
 var varPrivateEndpointsSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/pe-subnet' : ''
 var varApplicationGatewaySubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/appgw-subnet' : ''
-var varApiManagementSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/apim-subnet' : ''
 var varAcaEnvironmentSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/aca-env-subnet' : ''
 var varDevopsAgentsSubnetResourceId = !empty(virtualNetworkResourceId) ? '${virtualNetworkResourceId}/subnets/devops-agents-subnet' : ''
 
@@ -1008,7 +813,6 @@ var varDeployPrivateEndpoints = varHasVnet
 // 4.2 DNS Zone Configuration Variables
 var varUseExistingPdz = {
   cognitiveservices: !empty(privateDnsZonesDefinition.?cognitiveservicesZoneId)
-  apim: !empty(privateDnsZonesDefinition.?apimZoneId)
   openai: !empty(privateDnsZonesDefinition.?openaiZoneId)
   aiServices: !empty(privateDnsZonesDefinition.?aiServicesZoneId)
   search: !empty(privateDnsZonesDefinition.?searchZoneId)
@@ -1031,7 +835,6 @@ var varPeSubnetId = varHasVnet ? '${virtualNetworkResourceId}/subnets/pe-subnet'
 
 // Service availability checks for private endpoints
 var varHasAppConfig = !empty(resourceIds.?appConfigResourceId!) || varDeployAppConfig
-var varHasApim = !empty(resourceIds.?apimServiceResourceId!) || varDeployApim
 var varHasContainerEnv = !empty(resourceIds.?containerEnvResourceId!) || varDeployContainerAppEnv
 var varHasAcr = !empty(resourceIds.?containerRegistryResourceId!) || varDeployAcr
 var varHasStorage = !empty(resourceIds.?storageAccountResourceId!) || varDeploySa
@@ -1039,35 +842,7 @@ var varHasCosmos = !empty(resourceIds.?dbAccountResourceId!) || varDeployCosmosD
 var varHasSearch = !empty(resourceIds.?searchServiceResourceId!) || varDeployAiSearch
 var varHasKv = !empty(resourceIds.?keyVaultResourceId!) || varDeployKeyVault
 
-// 4.4 API Management Private DNS Zone
-@description('Optional. API Management Private DNS Zone configuration.')
-param apimPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
-
-module privateDnsZoneApim 'wrappers/avm.res.network.private-dns-zone.bicep' = if (varDeployPrivateDnsZones && !varUseExistingPdz.apim) {
-  name: 'dep-apim-private-dns-zone'
-  params: {
-    privateDnsZone: union(
-      {
-        name: 'privatelink.azure-api.net'
-        location: 'global'
-        tags: !empty(privateDnsZonesDefinition.?tags) ? privateDnsZonesDefinition!.tags! : {}
-        enableTelemetry: enableTelemetry
-        virtualNetworkLinks: (varHasVnet && (privateDnsZonesDefinition.?createNetworkLinks ?? true))
-          ? [
-              {
-                name: '${varVnetName}-apim-link'
-                registrationEnabled: false
-                virtualNetworkResourceId: varVnetResourceId
-              }
-            ]
-          : []
-      },
-      apimPrivateDnsZoneDefinition ?? {}
-    )
-  }
-}
-
-// 4.5 Cognitive Services Private DNS Zone
+// 4.4 Cognitive Services Private DNS Zone
 @description('Optional. Cognitive Services Private DNS Zone configuration.')
 param cognitiveServicesPrivateDnsZoneDefinition privateDnsZoneDefinitionType?
 
@@ -1377,11 +1152,6 @@ module privateDnsZoneInsights 'wrappers/avm.res.network.private-dns-zone.bicep' 
 
 // Resolve Private DNS Zone resource IDs (existing or newly created). In Platform LZ mode,
 // these will typically be provided via privateDnsZonesDefinition.*ZoneId.
-var varApimPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?apimZoneId))
-  ? privateDnsZonesDefinition!.apimZoneId!
-  : (varDeployPrivateDnsZones && !varUseExistingPdz.apim
-      ? privateDnsZoneApim!.outputs.resourceId
-      : '')
 var varCognitiveServicesPrivateDnsZoneResourceId = (!empty(privateDnsZonesDefinition.?cognitiveservicesZoneId))
   ? privateDnsZonesDefinition!.cognitiveservicesZoneId!
   : (varDeployPrivateDnsZones && !varUseExistingPdz.cognitiveservices
@@ -1669,7 +1439,7 @@ module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep
   }
   dependsOn: [
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -1677,66 +1447,7 @@ module privateEndpointAppConfig 'wrappers/avm.res.network.private-endpoint.bicep
   ]
 }
 
-// 7.2. API Management Private Endpoint
-@description('Optional. API Management Private Endpoint configuration.')
-param apimPrivateEndpointDefinition privateDnsZoneDefinitionType?
-
-// StandardV2 and Premium SKUs support Private Endpoints with gateway groupId
-// Basic and Developer SKUs do not support Private Endpoints
-// IMPORTANT: APIM default in this template is Premium + Internal VNet.
-// Private Endpoint is not supported for APIM when virtualNetworkType is Internal.
-// Only create the APIM private endpoint when the user explicitly sets virtualNetworkType to 'None'.
-var varApimSkuEffectiveForPe = apimDefinition.?sku ?? 'PremiumV2'
-var apimSupportsPe = contains(['StandardV2', 'Premium', 'PremiumV2'], varApimSkuEffectiveForPe)
-var varApimWantsPrivateEndpoint = (apimDefinition != null) && ((apimDefinition.?virtualNetworkType ?? 'Internal') == 'None')
-
-module privateEndpointApim 'wrappers/avm.res.network.private-endpoint.bicep' = if (varDeployPrivateEndpoints && varHasApim && varApimWantsPrivateEndpoint && apimSupportsPe) {
-  name: 'apim-private-endpoint-${varUniqueSuffix}'
-  params: {
-    privateEndpoint: union(
-      {
-        name: 'pe-apim-${baseName}'
-        location: location
-        tags: tags
-        subnetResourceId: varPeSubnetId
-        enableTelemetry: enableTelemetry
-        privateLinkServiceConnections: [
-          {
-            name: 'apimGatewayConnection'
-            properties: {
-              privateLinkServiceId: empty(resourceIds.?apimServiceResourceId!)
-                ? (varDeployApimNative ? apiManagementNative!.outputs.resourceId : apiManagement!.outputs.resourceId)
-                : existingApim.id
-              groupIds: [
-                'Gateway'
-              ]
-            }
-          }
-        ]
-        privateDnsZoneGroup: (!varIsPlatformLz && !empty(varApimPrivateDnsZoneResourceId)) ? {
-          name: 'apimDnsZoneGroup'
-          privateDnsZoneGroupConfigs: [
-            {
-              name: 'apimARecord'
-              privateDnsZoneResourceId: varApimPrivateDnsZoneResourceId
-            }
-          ]
-        } : null
-      },
-      apimPrivateEndpointDefinition ?? {}
-    )
-  }
-  dependsOn: [
-    #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
-    #disable-next-line BCP321
-    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
-    #disable-next-line BCP321
-    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
-  ]
-}
-
-// 7.3. Container Apps Environment Private Endpoint
+// 7.2. Container Apps Environment Private Endpoint
 @description('Optional. Container Apps Environment Private Endpoint configuration.')
 param containerAppEnvPrivateEndpointDefinition privateDnsZoneDefinitionType?
 
@@ -1778,7 +1489,7 @@ module privateEndpointContainerAppsEnv 'wrappers/avm.res.network.private-endpoin
     #disable-next-line BCP321
     varDeployContainerAppEnv ? containerEnv : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -1827,7 +1538,7 @@ module privateEndpointAcr 'wrappers/avm.res.network.private-endpoint.bicep' = if
     #disable-next-line BCP321
     (varDeployAcr) ? containerRegistry : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -1875,7 +1586,7 @@ module privateEndpointStorageBlob 'wrappers/avm.res.network.private-endpoint.bic
   }
   dependsOn: [
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -1923,7 +1634,7 @@ module privateEndpointCosmos 'wrappers/avm.res.network.private-endpoint.bicep' =
     #disable-next-line BCP321
     varDeployCosmosDb ? cosmosDbModule : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -1975,7 +1686,7 @@ module privateEndpointSearch 'wrappers/avm.res.network.private-endpoint.bicep' =
     #disable-next-line BCP321
     (varDeployPrivateDnsZones && !varUseExistingPdz.search) ? privateDnsZoneSearch : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -2023,7 +1734,7 @@ module privateEndpointKeyVault 'wrappers/avm.res.network.private-endpoint.bicep'
     #disable-next-line BCP321
     varDeployKeyVault ? keyVaultModule : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -2195,7 +1906,7 @@ module containerEnv 'wrappers/avm.res.app.managed-environment.bicep' = if (varDe
     #disable-next-line BCP321
     (empty(resourceIds.?logAnalyticsWorkspaceResourceId!)) ? logAnalytics : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -2518,120 +2229,6 @@ module aiSearchModule 'wrappers/avm.res.search.search-service.bicep' = if (varDe
 }
 
 // -----------------------
-// 15 API MANAGEMENT
-// -----------------------
-
-@description('Optional. API Management configuration.')
-param apimDefinition apimDefinitionType?
-
-// 15.1. API Management Service
-var varDeployApim = empty(resourceIds.?apimServiceResourceId!) && deployToggles.apiManagement
-
-// PremiumV2 is not yet supported by the AVM APIM module used by this repo.
-// When the user selects PremiumV2, we deploy APIM using a native resource module.
-var varApimSkuEffective = apimDefinition.?sku ?? 'PremiumV2'
-var varDeployApimNative = varDeployApim && (varApimSkuEffective == 'PremiumV2')
-
-// Naming
-var varApimIdSegments = empty(resourceIds.?apimServiceResourceId!)
-  ? ['']
-  : split(resourceIds.apimServiceResourceId!, '/')
-var varApimSub = length(varApimIdSegments) >= 3 ? varApimIdSegments[2] : ''
-var varApimRg = length(varApimIdSegments) >= 5 ? varApimIdSegments[4] : ''
-var varApimNameExisting = length(varApimIdSegments) >= 1 ? last(varApimIdSegments) : ''
-
-resource existingApim 'Microsoft.ApiManagement/service@2024-06-01-preview' existing = if (!empty(resourceIds.?apimServiceResourceId!)) {
-  name: varApimNameExisting
-  scope: resourceGroup(varApimSub, varApimRg)
-}
-
-var varApimServiceResourceId = !empty(resourceIds.?apimServiceResourceId!)
-  ? existingApim.id
-  : (varDeployApim ? (varDeployApimNative ? apiManagementNative!.outputs.resourceId : apiManagement!.outputs.resourceId) : '')
-
-module apiManagementNative 'components/apim/main.bicep' = if (varDeployApimNative) {
-  name: 'apimDeploymentNative'
-  params: {
-    apiManagement: union(
-      {
-        // Required properties
-        name: 'apim-${baseName}'
-        publisherEmail: 'admin@contoso.com'
-        publisherName: 'Contoso'
-
-        // PremiumV2 SKU configuration for Internal VNet injection (private gateway)
-        sku: 'PremiumV2'
-        skuCapacity: 3
-
-        // Network configuration - Internal VNet injection
-        virtualNetworkType: 'Internal'
-        subnetResourceId: varApimSubnetId
-
-        // Basic configuration
-        location: location
-        tags: tags
-
-        // API Management configuration
-        minApiVersion: '2022-08-01'
-      },
-      apimDefinition ?? {}
-    )
-  }
-  dependsOn: [
-    #disable-next-line BCP321
-    (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
-    #disable-next-line BCP321
-    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
-    #disable-next-line BCP321
-    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
-  ]
-}
-
-#disable-next-line BCP081
-module apiManagement 'wrappers/avm.res.api-management.service.bicep' = if (varDeployApim && !varDeployApimNative) {
-  name: 'apimDeployment'
-  params: {
-    apiManagement: union(
-      {
-        // Required properties
-        name: 'apim-${baseName}'
-        publisherEmail: 'admin@contoso.com'
-        publisherName: 'Contoso'
-
-        // Premium SKU configuration for Internal VNet mode
-        // Premium supports full VNet injection with Internal mode
-        // Allows complete network isolation without exposing public endpoints
-        sku: 'Premium'
-        skuCapacity: 3
-
-        // Network Configuration - Internal VNet mode
-        // Internal mode: APIM accessible only from within VNet via private IP
-        // Requires Premium SKU (StandardV2 does NOT support Internal mode)
-        virtualNetworkType: 'Internal'
-        subnetResourceId: varApimSubnetId 
-
-        // Basic Configuration
-        location: location
-        tags: tags
-        enableTelemetry: enableTelemetry
-
-        // API Management Configuration
-        minApiVersion: '2022-08-01'
-      },
-      apimDefinition ?? {}
-    )
-  }
-  dependsOn: [
-    #disable-next-line BCP321
-    (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
-    #disable-next-line BCP321
-    (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
-    #disable-next-line BCP321
-    (varDeploySubnetsToExistingVnet && varIsCrossScope) ? existingVNetSubnetsCrossScope : null
-  ]
-}
-
-// -----------------------
 // 16 AI FOUNDRY
 // -----------------------
 
@@ -2763,7 +2360,7 @@ module aiFoundry 'components/ai-foundry/main.bicep' = if (varDeployAiFoundry) {
     #disable-next-line BCP321
     (empty(resourceIds.?virtualNetworkResourceId!)) ? vNetworkWrapper : null
     #disable-next-line BCP321
-    varDeployUdrEffective ? udrSubnetAssociation06 : null
+    varDeployUdrEffective ? udrSubnetAssociation05 : null
     #disable-next-line BCP321
     (varDeploySubnetsToExistingVnet && !varIsCrossScope) ? existingVNetSubnets : null
     #disable-next-line BCP321
@@ -3557,12 +3154,6 @@ var varUdrSubnetDefinitions = [
     networkSecurityGroupResourceId: applicationGatewayNsgResourceId
     routeTableResourceId: varAppGatewayInternetRoutingException ? varUdrAppGwRouteTableId : varUdrDefaultRouteTableId
   }
-  {
-    name: 'apim-subnet'
-    addressPrefix: '192.168.0.224/27'
-    networkSecurityGroupResourceId: apiManagementNsgResourceId
-    routeTableResourceId: varUdrDefaultRouteTableId
-  }
 ]
 
 module udrSubnetAssociation01 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
@@ -3571,7 +3162,6 @@ module udrSubnetAssociation01 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   params: {
     virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[0]]
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
   dependsOn: [
     #disable-next-line BCP321
@@ -3589,7 +3179,6 @@ module udrSubnetAssociation02 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   params: {
     virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[1]]
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
   dependsOn: [
     udrSubnetAssociation01
@@ -3602,7 +3191,6 @@ module udrSubnetAssociation03 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   params: {
     virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[2]]
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
   dependsOn: [
     udrSubnetAssociation02
@@ -3615,7 +3203,6 @@ module udrSubnetAssociation04 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   params: {
     virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[3]]
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
   dependsOn: [
     udrSubnetAssociation03
@@ -3628,23 +3215,9 @@ module udrSubnetAssociation05 './helpers/deploy-subnets-to-vnet/main.bicep' = if
   params: {
     virtualNetworkResourceId: virtualNetworkResourceId
     subnets: [varUdrSubnetDefinitions[4]]
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
   }
   dependsOn: [
     udrSubnetAssociation04
-  ]
-}
-
-module udrSubnetAssociation06 './helpers/deploy-subnets-to-vnet/main.bicep' = if (varDeployUdrEffective) {
-  name: 'm-udr-subnet-association-06'
-  scope: varVnetResourceGroupScope
-  params: {
-    virtualNetworkResourceId: virtualNetworkResourceId
-    subnets: [varUdrSubnetDefinitions[5]]
-    apimSubnetDelegationServiceName: varApimSubnetDelegationServiceName
-  }
-  dependsOn: [
-    udrSubnetAssociation05
   ]
 }
 
@@ -3931,9 +3504,6 @@ output peNsgResourceId string = peNsgResourceId ?? ''
 @description('Application Gateway subnet Network Security Group resource ID (newly created or existing).')
 output applicationGatewayNsgResourceId string = applicationGatewayNsgResourceId
 
-@description('API Management subnet Network Security Group resource ID (newly created or existing).')
-output apiManagementNsgResourceId string = apiManagementNsgResourceId
-
 @description('Azure Container Apps Environment subnet Network Security Group resource ID (newly created or existing).')
 output acaEnvironmentNsgResourceId string = acaEnvironmentNsgResourceId
 
@@ -3959,9 +3529,6 @@ output privateEndpointsSubnetResourceId string = varPrivateEndpointsSubnetResour
 @description('Application Gateway subnet resource ID (appgw-subnet) when configured.')
 output applicationGatewaySubnetResourceId string = varApplicationGatewaySubnetResourceId
 
-@description('API Management subnet resource ID (apim-subnet) when configured.')
-output apiManagementSubnetResourceId string = varApiManagementSubnetResourceId
-
 @description('Azure Container Apps Environment subnet resource ID (aca-env-subnet) when configured.')
 output acaEnvironmentSubnetResourceId string = varAcaEnvironmentSubnetResourceId
 
@@ -3981,9 +3548,6 @@ output firewallSubnetResourceId string = varFirewallSubnetResourceId
 output bastionHostResourceId string = resourceIds.?bastionHostResourceId ?? ''
 
 // Private DNS Zone Outputs
-@description('API Management Private DNS Zone resource ID (existing or newly created).')
-output apimPrivateDnsZoneResourceId string = varApimPrivateDnsZoneResourceId
-
 @description('Cognitive Services Private DNS Zone resource ID (existing or newly created).')
 output cognitiveServicesPrivateDnsZoneResourceId string = varCognitiveServicesPrivateDnsZoneResourceId
 
@@ -4074,9 +3638,6 @@ output aiFoundryModelDeploymentsResourceIdsByName object = varDeployAiFoundry
 @description('App Configuration Private Endpoint resource ID (if deployed).')
 output appConfigPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasAppConfig) ? privateEndpointAppConfig!.outputs.resourceId : ''
 
-@description('API Management Private Endpoint resource ID (if deployed).')
-output apimPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasApim && varApimWantsPrivateEndpoint && apimSupportsPe) ? privateEndpointApim!.outputs.resourceId : ''
-
 @description('Container Apps Environment Private Endpoint resource ID (if deployed).')
 output containerAppsEnvPrivateEndpointResourceId string = (varDeployPrivateEndpoints && varHasContainerEnv) ? privateEndpointContainerAppsEnv!.outputs.resourceId : ''
 
@@ -4116,10 +3677,6 @@ output keyVaultResourceId string = varKeyVaultResourceId
 // AI Search Outputs
 @description('AI Search resource ID.')
 output aiSearchResourceId string = varAiSearchResourceId
-
-// API Management Outputs
-@description('API Management service resource ID.')
-output apimServiceResourceId string = varApimServiceResourceId
 
 // AI Foundry Outputs
 // (Names omitted to stay within Bicep 64-output limit; resource IDs are exposed elsewhere.)

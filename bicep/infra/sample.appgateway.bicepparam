@@ -37,10 +37,8 @@ param deployToggles = {
   applicationGateway: true
   applicationGatewayPublicIp: true
 
-  // Keep simple: no WAF policy, no APIM
+  // Keep simple: no WAF policy
   wafPolicy: false
-  apiManagement: false
-  apiManagementNsg: false
   
   // Test VM access (via Bastion)
   jumpVm: true

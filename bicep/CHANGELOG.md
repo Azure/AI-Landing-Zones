@@ -2,6 +2,16 @@
 
 The latest version of the changelog can be found [here](https://github.com/Azure/AI-Landing-Zones/blob/main/bicep/CHANGELOG.md).
 
+## 0.1.15
+
+### Changed
+- Removed Azure API Management (APIM) support across the landing zone (types, deploy toggles/resource IDs, modules, and outputs).
+- Removed APIM-related networking wiring, including `apim-subnet` defaults, delegation/NSG auto-assignment, Private DNS/Private Endpoint integration, and UDR subnet association entries.
+- Deleted APIM deployment artifacts (native component + AVM wrapper) and the APIM minimal sample entrypoint.
+- Updated sample `.bicepparam` files and helper documentation to remove APIM-related options and references.
+- Updated documentation to remove APIM cost/design/FAQ guidance.
+- Validated Bicep compilation after APIM removal.
+
 ## 0.1.14
 
 ### Changed
@@ -67,7 +77,6 @@ The latest version of the changelog can be found [here](https://github.com/Azure
 ### Added
 - Added/updated deployment samples:
   - Minimal Azure Container Apps (ACA) sample.
-  - Minimal API Management (APIM) sample.
   
 ## 0.1.8
 
@@ -101,12 +110,6 @@ The latest version of the changelog can be found [here](https://github.com/Azure
 ## 0.1.6
 
 ### Changed
-- Fixed API Management deployment failure by preventing APIM Private Endpoint creation when APIM is deployed with `virtualNetworkType: Internal` (Private Endpoint is only created when explicitly requested with `apimDefinition.virtualNetworkType: None`).
-- Updated documentation to reflect APIM defaults (Premium + Internal VNet) and clarify APIM Private Endpoint behavior.
-- Fixed API Management NSG SQL outbound port (1433).
-- Changed default API Management deployment to `PremiumV2` with `virtualNetworkType: Internal` (VNet injection).
-- Added a native APIM deployment path to support `PremiumV2` (the AVM APIM module currently used by this repo does not expose `PremiumV2` as an allowed SKU).
-- Added APIM documentation covering networking options and parameterization.
 - Added `deployToggles.aiFoundry` to allow disabling AI Foundry (and prevent deployment of its internally-managed dependencies such as Search/Storage/Cosmos when not desired).
 - Added support for deploying AI Foundry **account + project + model deployments** without the Foundry Agent Service (Capability Hosts) and without associated resources, controlled via `aiFoundryDefinition.includeAssociatedResources` and `aiFoundryDefinition.aiFoundryConfiguration.createCapabilityHosts`.
 - Added AI Foundry documentation covering modes and parameterization.
@@ -135,7 +138,6 @@ The latest version of the changelog can be found [here](https://github.com/Azure
 
 ### Changed
 
-- [APIM connectivity should be intenal Vnet instead of using private endpoint](https://github.com/Azure/AI-Landing-Zones/issues/21)
 - [Azure Defender for AI needs to be enabled during the deployment and configuration - Bicep](https://github.com/Azure/AI-Landing-Zones/issues/27)
 
 ## 0.1.3

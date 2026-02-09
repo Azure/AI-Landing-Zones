@@ -13,7 +13,6 @@ using './main.bicep'
 //     - devops-agents-subnet:192.168.1.32/27
 //     - aca-env-subnet:      192.168.1.0/27
 //     - appgw-subnet:        192.168.0.192/27
-//     - apim-subnet:         192.168.0.224/27
 
 param deployToggles = {
   aiFoundry: true
@@ -23,7 +22,6 @@ param deployToggles = {
   peNsg: true
   agentNsg: false
   acaEnvironmentNsg: false
-  apiManagementNsg: false
   applicationGatewayNsg: false
   jumpboxNsg: true
   devopsBuildAgentsNsg: false
@@ -40,7 +38,6 @@ param deployToggles = {
   jumpVm: true
   bastionHost: true
   appConfig: false
-  apiManagement: false
   applicationGateway: false
   applicationGatewayPublicIp: false
   wafPolicy: false

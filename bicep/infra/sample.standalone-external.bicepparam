@@ -18,8 +18,6 @@ param deployToggles = {
   // Recommended for this scenario: apply an NSG to the ACA environment subnet
   acaEnvironmentNsg: true
 
-  apiManagementNsg: false
-
   // Required for this scenario: apply an NSG to the App Gateway subnet
   applicationGatewayNsg: true
 
@@ -38,7 +36,6 @@ param deployToggles = {
   jumpVm: true
   bastionHost: true
   appConfig: false
-  apiManagement: false
 
   // Enable Application Gateway + Public IP
   applicationGateway: true

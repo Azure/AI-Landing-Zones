@@ -154,7 +154,6 @@ When using custom subnets, NSGs are automatically assigned based on subnet names
 | `agent-subnet` | Agent NSG (if created) |
 | `pe-subnet` | Private Endpoints NSG (if created) |
 | `appgw-subnet` | Application Gateway NSG (if created) |
-| `apim-subnet` | API Management NSG (if created) |  
 | `jumpbox-subnet` | Jumpbox NSG (if created) |
 | `aca-env-subnet` | ACA Environment NSG (if created) |
 | `devops-agents-subnet` | DevOps Build Agents NSG (if created) |
@@ -172,7 +171,6 @@ The component deploys the following subnets to your existing VNet:
 | appgw-subnet | 192.168.0.128/26 | Application Gateway | - |
 | AzureBastionSubnet | 192.168.0.192/26 | Azure Bastion | - |
 | AzureFirewallSubnet | 192.168.1.0/26 | Azure Firewall | - |
-| apim-subnet | 192.168.1.160/27 | API Management | - |
 | jumpbox-subnet | 192.168.1.96/28 | Jump box VMs | - |
 | aca-env-subnet | 192.168.1.112/28 | Container Apps environment | Microsoft.App/environments delegation, AzureCosmosDB endpoint |
 | devops-agents-subnet | 192.168.1.128/28 | DevOps build agents | - |

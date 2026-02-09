@@ -20,7 +20,6 @@ using './main.bicep'
 //   - AzureBastionSubnet:  192.168.0.64/26
 //   - AzureFirewallSubnet: 192.168.0.128/26
 //   - appgw-subnet:        192.168.0.192/27
-//   - apim-subnet:         192.168.0.224/27
 //   - aca-env-subnet:      192.168.1.0/27
 //   - devops-agents-subnet:192.168.1.32/27
 //   - jumpbox-subnet:      192.168.1.64/28
@@ -36,7 +35,6 @@ param deployToggles = {
   keyVault: true
   storageAccount: true
   appConfig: true
-  apiManagement: false
   applicationGateway: false
   applicationGatewayPublicIp: false
   firewall: true
@@ -47,7 +45,6 @@ param deployToggles = {
   agentNsg: true
   peNsg: true
   applicationGatewayNsg: false
-  apiManagementNsg: false
   acaEnvironmentNsg: true
   jumpboxNsg: true
   devopsBuildAgentsNsg: true
@@ -94,10 +91,6 @@ param existingVNetSubnetsDefinition = {
     {
       name: 'appgw-subnet'
       addressPrefix: '192.168.0.192/27'
-    }
-    {
-      name: 'apim-subnet'
-      addressPrefix: '192.168.0.224/27'
     }
     {
       name: 'aca-env-subnet'
