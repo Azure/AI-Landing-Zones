@@ -508,7 +508,7 @@
                     "sourceAddressPrefix": "VirtualNetwork",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "EventHub",
-                    "destinationPortRange": ["5671", "5672", "443"]
+                    "destinationPortRanges": ["5671", "5672", "443"]
                   }
                 },
                 {
@@ -536,7 +536,7 @@
                     "sourceAddressPrefix": "VirtualNetwork",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "AzureMonitor",
-                    "destinationPortRange": ["1886", "443"]
+                    "destinationPortRanges": ["1886", "443"]
                   }
                 }
               ]
@@ -616,8 +616,7 @@
               "name": "[concat('nsg-bastion-', parameters('baseName'))]",
               "location": "[parameters('location')]",
               "enableTelemetry": "[parameters('enableTelemetry')]",
-              "securityRules": {
-                "value": [
+              "securityRules": [
                 {
                   "name": "Allow-GatewayManager-Inbound",
                   "properties": {
@@ -730,9 +729,7 @@
                     "destinationPortRanges": "80"
                   }
                 }
-              ]
- 
-              }            
+              ]            
             }
           }
         }
