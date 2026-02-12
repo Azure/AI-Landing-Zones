@@ -616,7 +616,8 @@
               "name": "[concat('nsg-bastion-', parameters('baseName'))]",
               "location": "[parameters('location')]",
               "enableTelemetry": "[parameters('enableTelemetry')]",
-              "securityRules": [
+              "securityRules": {
+                "value": [
                 {
                   "name": "Allow-GatewayManager-Inbound",
                   "properties": {
@@ -730,6 +731,8 @@
                   }
                 }
               ]
+ 
+              }            
             }
           }
         }
