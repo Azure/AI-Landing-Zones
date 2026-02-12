@@ -628,7 +628,7 @@
                     "sourceAddressPrefix": "GatewayManager",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "*",
-                    "destinationPortRanges": "443"
+                    "destinationPortRange": "443"
                   }
                 },
                 {
@@ -642,7 +642,7 @@
                     "sourceAddressPrefix": "Internet",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "*",
-                    "destinationPortRanges": "443"
+                    "destinationPortRange": "443"
                   }
                 },
                 {
@@ -656,7 +656,7 @@
                     "sourceAddressPrefix": "Internet",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "*",
-                    "destinationPortRanges": "4443"
+                    "destinationPortRange": "4443"
                   }
                 },
                 {
@@ -698,7 +698,7 @@
                     "sourceAddressPrefix": "*",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "AzureCloud",
-                    "destinationPortRanges": "443"
+                    "destinationPortRange": "443"
                   }
                 },
                 {
@@ -726,7 +726,7 @@
                     "sourceAddressPrefix": "*",
                     "sourcePortRange": "*",
                     "destinationAddressPrefix": "Internet",
-                    "destinationPortRanges": "80"
+                    "destinationPortRange": "80"
                   }
                 }
               ]            
