@@ -493,7 +493,7 @@
                     "description": "APIM to Key Vault for certificates and secrets",
                     "sourceAddressPrefix": "VirtualNetwork",
                     "sourcePortRange": "*",
-                    "destinationAddressPrefix": "KeyVault",
+                    "destinationAddressPrefix": "AzureKeyVault",
                     "destinationPortRange": "443"
                   }
                 },
