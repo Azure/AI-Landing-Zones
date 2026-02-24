@@ -57,7 +57,7 @@ The AI Landing Zone is currently in preview. The roadmap for the project is avai
 The latest updates to the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-Whats-New.md).
 
 ## Frequently Asked Questions
-The frequently asked questions about the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-FAQ.md).
+The frequently asked questions about the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-FAQs.md).
 
 ## Cloud Adoption Framework
 
