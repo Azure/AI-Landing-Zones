@@ -23,6 +23,7 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
+  - tables
   - md_in_html
   - sane_lists
   - mdx_truly_sane_lists

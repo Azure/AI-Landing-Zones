@@ -1,42 +1,52 @@
-# Azure AI Landing Zone
+# AI Landing Zones
 
-## Overview
+The AI Landing Zone provides an enterprise-scale production ready reference architecture with implementation (Portal, Bicep & Terraform) to deploy secure and resilient AI Apps & Agents workloads in Azure.
 
-The AI Landing Zone provides an enterprise-scale, production-ready reference architecture with implementations in the Azure Portal, Bicep, and Terraform to deploy secure and resilient AI apps and agents on Azure.    
-
-- The AI Landing Zone is an [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones) that provides a foundation for multiple AI app and agent scenarios, with or without an existing [platform landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones).
-- The Infrastructure-as-Code (IaC) implementations (Bicep and Terraform) are based on [Azure Verified Modules](https://aka.ms/AVM).
-- The current scope focuses on [AI on Azure Platform](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures); a future version will cover [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
-- The AI Landing Zone targets Azure public cloud and can be extended to Azure Government and sovereign clouds.
-- It supports both generative and non-generative scenarios, aligned with the [CAF AI resource selection guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
-- It uses [Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/) as the orchestration framework.
-- To keep up with rapid AI innovation, it may use preview services to enable the latest capabilities.
+- The AI Landing Zone is an [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones) meant to act as a foundation for various use cases, scenarios and patterns of AI Apps & Agents based workloads which can be deployed with or without [platform landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones).
+- The IaC implementations of the AI Landing Zone i.e. Bicep and Terraform are based on [Azure Verified Modules](https://aka.ms/AVM).
+- The AI Landing Zone focuses on [AI on Azure Platform](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures). A future version of it will cover [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
+- The AI Landing Zone has been tested for Azure Public Cloud but can be leveraged in Azure Government and Sovereign Cloud.
+- The AI Landing Zone is able to cover generative and non-generative scenario per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
+- Given change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.
 
 ## Reference Architectures
 
-**AI LZ with Platform Landing Zone**
+The AI Landing Zones comprises of a landing zone for Foundry and a landing zone for AI Gateway, both of them can be deployed together or independently based on the needs of the organization and the use case.
+![image](architecture/media/AI-Landing-Zone.png)
 
-The recommended setup is to deploy the AI Landing Zone alongside an existing Platform Landing Zone so it can plug into your shared foundations. Choose this option when you already have centralized networking, DNS, security controls, and governance in place and you want the AI Landing Zone to reuse them.
+**AI Landing Zone for Foundry**
 
-![image](architecture/media/AI-Landing-Zone-with-platform.png)
+The below diagram represents the reference architecture of the AI Landing Zone for Foundry which leverages the Foundry for AI Apps & Agents workloads.
+![image](architecture/media/AI-Landing-Zone-Foundry.png)
 
-**AI LZ without Platform Landing Zone**
+**AI Landing Zone for APIM**
 
-This option deploys the AI Landing Zone as a standalone application landing zone, without relying on a Platform Landing Zone Choose it when you need a self-contained deployment for a new environment or a smaller footprint, and you do not need to integrate with shared platform services.
-
-![image](architecture/media/AI-Landing-Zone-without-platform.png)
-
-[Download Visio Diagram](architecture/media/AI%20Landing%20Zones%20-%20Diagram.vsdx)
+The below diagram represents the reference architecture of the AI Landing Zone for APIM which leverages APIM as AI Gateway for centrally managing and serving Foundry models.
+![image](architecture/media/AI-Landing-Zones-APIM.png)
 
 ## Extensible Implementations
 
 The table represents the various reference implementations of the AI Landing Zone based on the service inventory & configuration
 
+**AI Landing Zone for Foundry**
+
 | Type | Description |
 | ----------- | ----------- |
 | Terraform | [Repo](https://aka.ms/ailz/terraform) |
 | Bicep | [Repo](https://aka.ms/ailz/bicep) |
-| Portal | Coming Soon |
+| Portal | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
+
+**AI Landing Zone for APIM**
+
+| Type | Description |
+| ----------- | ----------- |
+| Bicep | [Repo](https://aka.ms/ai-hub-gateway) |
+
+## Design Checklist
+
+The AI Landing Zone cover the following design areas which are across the Cloud Adoption Framework and the Well-Architected Framework. In each design area there are design considertion and design recommendations to help you design a greenfield environment and assess a brown field environment using the [AI Landing Zone Checklist](AI-Landing-Zones-Design-Checklist.md).
+
+![image](architecture/media/AI-Landing-Zone-design-area-checklist.png)
 
 ## Use cases & Scenarios
 The AI Landing Zone act as a foundation architecture which can be leveraged to deploy a particular AI usecase & scenario on Azure, such as the below, either with its default architecture or by extending it with additional Azure services as needed.
@@ -50,6 +60,15 @@ The AI Landing Zone act as a foundation architecture which can be leveraged to d
 - Conversation knowledge mining
 - Modernize your code
 
+## Roadmap
+The AI Landing Zone is currently in preview. The roadmap for the project is available [here](https://aka.ms/ailz/roadmap).
+
+## What's New
+The latest updates to the AI Landing Zone are documented [here](AI-Landing-Zones-Whats-New.md).
+
+## Frequently Asked Questions
+The frequently asked questions about the AI Landing Zone are documented [here](architecture/faq.md).
+
 ## Cloud Adoption Framework
 
 The AI landing Zone aligns with the guidance in the [CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/). For a holistic implementation of the AI Landing Zone, we recommend to review the [AI Checklist](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/#ai-checklists). To understand how to leverage the AI Landing Zone as part of a wider strategy, review the guidance on [AI Strategy](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy). AI Landing Zone is part of the AI Ready stage in particular the [AI on Azure platforms (PaaS)](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures).
@@ -60,9 +79,6 @@ The AI landing Zone aligns with the guidance in the [CAF AI Scenario](https://le
 
 The AI landing Zone aligns with the guidance in the WAF AI workload. For a holistic implementation of the AI Landing Zone, we recommend to review the design methodology, principles and areas of [AI workloads on Azure](https://learn.microsoft.com/en-us/azure/well-architected/ai/).
 ![image](https://learn.microsoft.com/en-us/azure/well-architected/ai/images/ai-architecture-pattern.png)
-
-## Roadmap
-The AI Landing Zone is currently in preview. The roadmap for the project is available [here](https://aka.ms/ailz/roadmap).
 
 ## Contributing
 
