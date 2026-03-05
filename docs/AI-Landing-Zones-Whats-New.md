@@ -1,5 +1,9 @@
 # What's New
 
+## 17th November 2025
+- AI Landing Zones goes from preview to GA
+- AI Landing Zones [Terraform guide](https://github.com/Azure/AI-Landing-Zones/blob/main/terraform/readme.md) published
+
 ## 6th November 2025
 - AI Landing Zones Cost Guide added to documentation
 

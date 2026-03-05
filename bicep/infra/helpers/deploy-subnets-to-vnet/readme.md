@@ -30,6 +30,11 @@ param vNetDefinition = {
 ### Scenario 2: Add Default Subnets to Existing VNet
 
 ```bicep
+param resourceIds = {
+  // Full resource ID of the existing VNet (single source of truth)
+  virtualNetworkResourceId: '/subscriptions/.../resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/corp-hub-vnet-001'
+}
+
 param deploy = {
   virtualNetwork: false  // Don't create new VNet
   // ... NSG deploy toggles can still be true to create NSGs
@@ -39,7 +44,6 @@ param deploy = {
 }
 
 param existingVNetSubnetsDefinition = {
-  existingVNetName: 'corp-hub-vnet-001'
   useDefaultSubnets: true  // Use default AI Landing Zone subnets with 192.168.x.x addressing
   // subnets: []  // Empty or omitted = use defaults
 }
@@ -48,6 +52,11 @@ param existingVNetSubnetsDefinition = {
 ### Scenario 3: Add Custom Subnets to Existing VNet
 
 ```bicep
+param resourceIds = {
+  // Full resource ID of the existing VNet (single source of truth)
+  virtualNetworkResourceId: '/subscriptions/.../resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/corp-production-vnet'
+}
+
 param deploy = {
   virtualNetwork: false  // Don't create new VNet
   // ... NSG deploy toggles can still be true to create NSGs  
@@ -58,7 +67,6 @@ param deploy = {
 }
 
 param existingVNetSubnetsDefinition = {
-  existingVNetName: 'corp-production-vnet'
   useDefaultSubnets: false  // Use custom subnet definitions
   subnets: [
     {
@@ -95,8 +103,12 @@ param existingVNetSubnetsDefinition = {
 
 ```bicep
 // Example: Adding AI Landing Zone to existing hub-spoke with 10.x.x.x addressing
+param resourceIds = {
+  // Full resource ID of the existing spoke VNet (single source of truth)
+  virtualNetworkResourceId: '/subscriptions/.../resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/spoke-workloads-vnet-001'
+}
+
 param existingVNetSubnetsDefinition = {
-  existingVNetName: 'spoke-workloads-vnet-001'  // Existing spoke in hub-spoke topology
   useDefaultSubnets: false
   subnets: [
     {
@@ -142,7 +154,6 @@ When using custom subnets, NSGs are automatically assigned based on subnet names
 | `agent-subnet` | Agent NSG (if created) |
 | `pe-subnet` | Private Endpoints NSG (if created) |
 | `appgw-subnet` | Application Gateway NSG (if created) |
-| `apim-subnet` | API Management NSG (if created) |  
 | `jumpbox-subnet` | Jumpbox NSG (if created) |
 | `aca-env-subnet` | ACA Environment NSG (if created) |
 | `devops-agents-subnet` | DevOps Build Agents NSG (if created) |
@@ -160,14 +171,13 @@ The component deploys the following subnets to your existing VNet:
 | appgw-subnet | 192.168.0.128/26 | Application Gateway | - |
 | AzureBastionSubnet | 192.168.0.192/26 | Azure Bastion | - |
 | AzureFirewallSubnet | 192.168.1.0/26 | Azure Firewall | - |
-| apim-subnet | 192.168.1.160/27 | API Management | - |
 | jumpbox-subnet | 192.168.1.96/28 | Jump box VMs | - |
 | aca-env-subnet | 192.168.1.112/28 | Container Apps environment | Microsoft.App/environments delegation, AzureCosmosDB endpoint |
 | devops-agents-subnet | 192.168.1.128/28 | DevOps build agents | - |
 
 ## Prerequisites
 
-- The existing VNet must be in the same resource group as the deployment
+- The module deployment must run at the VNet's resource group scope (and the deploying identity must have permissions in that RG)
 - The VNet must have sufficient address space to accommodate the subnets (requires at least a /23 or 512 IP addresses)
 - Ensure the subnet address ranges don't conflict with existing subnets in the VNet
 

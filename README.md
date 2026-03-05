@@ -1,4 +1,4 @@
-# AI Landing Zone - Preview
+# AI Landing Zones
 
 The AI Landing Zone provides an enterprise-scale production ready reference architecture with implementation (Portal, Bicep & Terraform) to deploy secure and resilient AI Apps & Agents workloads in Azure.
 
@@ -32,16 +32,12 @@ The table represents the various reference implementations of the AI Landing Zon
 | ----------- | ----------- |
 | Terraform | [Repo](https://aka.ms/ailz/terraform) |
 | Bicep | [Repo](https://aka.ms/ailz/bicep) |
-<<<<<<< Updated upstream
-| Portal | Coming Soon |
-=======
 | Portal | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
 
 ### AI Landing Zone for APIM
 | Type | Description |
 | ----------- | ----------- |
 | Bicep | [Repo](https://aka.ms/ai-hub-gateway) |
->>>>>>> Stashed changes
 
 ## Design Checklist
 
@@ -68,7 +64,7 @@ The AI Landing Zone is currently in preview. The roadmap for the project is avai
 The latest updates to the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-Whats-New.md).
 
 ## Frequently Asked Questions
-The frequently asked questions about the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-FAQ.md).
+The frequently asked questions about the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-FAQs.md).
 
 ## Cloud Adoption Framework
 

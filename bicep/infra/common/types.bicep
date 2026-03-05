@@ -25,7 +25,7 @@ type aiFoundryDefinitionType = {
   @description('Optional. Enable/Disable usage telemetry for the module. Default is true.')
   enableTelemetry: bool?
 
-  @description('Optional. Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to false.')
+  @description('Optional. Whether to include associated resources (Key Vault, AI Search, Storage Account, Cosmos DB). Defaults to true.')
   includeAssociatedResources: bool?
 
   @description('Optional. Location for all resources. Defaults to the resource group location.')
@@ -57,7 +57,7 @@ type aiFoundryDefinitionType = {
     accountName: string?
     @description('Optional. Whether to allow project management in the account. Defaults to true.')
     allowProjectManagement: bool?
-    @description('Optional. Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to false.')
+    @description('Optional. Whether to create capability hosts for the AI Agent Service. Requires includeAssociatedResources = true. Defaults to true.')
     createCapabilityHosts: bool?
     @description('Optional. Disables local authentication methods so that the account requires Microsoft Entra ID identities exclusively for authentication. Defaults to false for backward compatibility.')
     disableLocalAuth: bool?
@@ -131,6 +131,18 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for AI Search. Required if private endpoints are used.')
     privateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use networkRuleSet.ipRules to restrict access by IP.')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. Network rules applied when publicNetworkAccess=Enabled.')
+    networkRuleSet: {
+      @description('Optional. Bypass rules. Allowed values: AzurePortal, None.')
+      bypass: 'AzurePortal' | 'None'?
+      @description('Optional. IP allowlist rules.')
+      ipRules: {
+        @description('Required. IPv4 address or CIDR range to allow.')
+        value: string
+      }[]?
+    }?
     @description('Optional. Role assignments for the AI Search resource.')
     roleAssignments: object[]?
   }?
@@ -143,6 +155,10 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for Cosmos DB. Required if private endpoints are used.')
     privateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use ipRules to restrict access by IP.')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. IP allowlist rules applied when publicNetworkAccess=Enabled.')
+    ipRules: string[]?
     @description('Optional. Role assignments for the Cosmos DB resource.')
     roleAssignments: object[]?
   }?
@@ -155,6 +171,10 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for Key Vault. Required if private endpoints are used.')
     privateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use networkAcls to restrict access (e.g., IP allowlist).')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. Network ACL rules (shape matches AVM Key Vault networkAcls).')
+    networkAcls: object?
     @description('Optional. Role assignments for the Key Vault resource.')
     roleAssignments: object[]?
   }?
@@ -167,6 +187,10 @@ type aiFoundryDefinitionType = {
     name: string?
     @description('Optional. Private DNS Zone Resource ID for blob endpoint. Required if private endpoints are used.')
     blobPrivateDnsZoneResourceId: string?
+    @description('Optional. Public network access setting. When Enabled, use networkAcls to restrict access (e.g., IP allowlist).')
+    publicNetworkAccess: 'Enabled' | 'Disabled'?
+    @description('Optional. Network ACL rules (shape matches AVM Storage Account networkAcls).')
+    networkAcls: object?
     @description('Optional. Role assignments for the Storage Account.')
     roleAssignments: object[]?
   }?
@@ -404,8 +428,35 @@ type appConfigurationDefinitionType = {
 @export()
 @description('Configuration object for an Application Gateway resource.')
 type appGatewayDefinitionType = {
-  @description('Required. Name of the Application Gateway.')
-  name: string
+  @description('Optional. Name of the Application Gateway. If omitted, the template uses a default name.')
+  name: string?
+
+  @description('Optional. DNS label to assign to the Application Gateway Public IP (domainNameLabel). If omitted, defaults to the Public IP resource name (pip-agw-<baseName>). Set to empty string to disable DNS label.')
+  publicIpDnsLabel: string?
+
+  @description('Optional. Enables default HTTPS listener on Application Gateway and redirects HTTP(80) to HTTPS(443). Default: false.')
+  enableHttps: bool?
+
+  @description('Optional. When true, enables the "self-signed" lab path by uploading a PFX directly to Application Gateway (no Key Vault). Requires sslCertificatePfxBase64 + sslCertificatePassword. Default: false.')
+  createSelfSignedCertificate: bool?
+
+  @description('Optional. Name for the default SSL certificate on Application Gateway. Default: agw-tls.')
+  selfSignedCertificateName: string?
+
+  @description('Optional. Base64-encoded PFX content to upload to Application Gateway when createSelfSignedCertificate=true. Recommend sourcing from environment variables in .bicepparam (do not commit secrets).')
+  sslCertificatePfxBase64: string?
+
+  @description('Optional. Password for the uploaded PFX when createSelfSignedCertificate=true. Recommend sourcing from environment variables in .bicepparam (do not commit secrets).')
+  sslCertificatePassword: string?
+
+  @description('Optional. Key Vault Secret ID (PFX) to use for the default HTTPS listener (keyVaultSecretId). Use this only when you already have a certificate created in Key Vault (template will not generate it). When provided, it takes precedence over createSelfSignedCertificate.')
+  httpsKeyVaultSecretId: string?
+
+  @description('Optional. Hostname used by the default HTTPS listener. If omitted, defaults to <publicIpDnsLabel>.<region>.cloudapp.azure.com.')
+  httpsHostName: string?
+
+  @description('Optional. When true and UDR forced-tunneling is enabled, deploys an App Gateway subnet route-table exception so App Gateway v2 keeps required internet routing for management traffic. If omitted, falls back to the top-level appGatewayInternetRoutingException parameter. Default: false.')
+  appGatewayInternetRoutingException: bool?
 
   @description('Conditional. Resource ID of the associated firewall policy. Required if SKU is WAF_v2.')
   firewallPolicyResourceId: string?
@@ -465,6 +516,9 @@ type appGatewayDefinitionType = {
   }?
   @description('Optional. Managed identities for the Application Gateway.')
   managedIdentities: {
+    @description('Optional. Enable system-assigned managed identity.')
+    systemAssigned: bool?
+
     @description('Optional. User-assigned managed identity resource IDs.')
     userAssignedResourceIds: string[]?
   }?
@@ -550,154 +604,6 @@ type appGatewayDefinitionType = {
 type appInsightsDefinitionType = object
 
 @export()
-@description('APIM additional location item (open).')
-type apimAdditionalLocationType = object
-
-@export()
-@description('APIM hostname configuration item (open).')
-type apimHostnameConfigurationItemType = object
-
-@export()
-@description('Configuration object for the Azure API Management service to be deployed.')
-type apimDefinitionType = {
-  // Required
-  @description('Required. Name of the API Management service.')
-  name: string
-  @description('Required. Publisher email address.')
-  publisherEmail: string
-
-  @description('Required. Publisher display name.')
-  publisherName: string
-  // Conditional
-  @description('Conditional. SKU capacity. Required if SKU is not Consumption.')
-  skuCapacity: int?
-  // Optional
-  @description('Optional. Additional locations for the API Management service.')
-  additionalLocations: array?
-
-  @description('Optional. API diagnostics for APIs.')
-  apiDiagnostics: array?
-
-  @description('Optional. APIs to create in the API Management service.')
-  apis: array?
-
-  @description('Optional. API version sets to configure.')
-  apiVersionSets: array?
-
-  @description('Optional. Authorization servers to configure.')
-  authorizationServers: array?
-
-  @description('Optional. Availability Zones for HA deployment.')
-  availabilityZones: int[]?
-
-  @description('Optional. Backends to configure.')
-  backends: array?
-
-  @description('Optional. Caches to configure.')
-  caches: array?
-
-  @description('Optional. Certificates to configure for API Management. Maximum of 10 certificates.')
-  certificates: array?
-
-  @description('Optional. Custom properties to configure.')
-  customProperties: object?
-
-  @description('Optional. Diagnostic settings for the API Management service.')
-  diagnosticSettings: array?
-
-  @description('Optional. Disable gateway in a region (for multi-region setup).')
-  disableGateway: bool?
-
-  @description('Optional. Enable client certificate for requests (Consumption SKU only).')
-  enableClientCertificate: bool?
-
-  @description('Optional. Enable developer portal for the service.')
-  enableDeveloperPortal: bool?
-
-  @description('Optional. Enable/disable usage telemetry for module. Default is true.')
-  enableTelemetry: bool?
-
-  @description('Optional. Hostname configurations for the API Management service.')
-  hostnameConfigurations: array?
-
-  @description('Optional. Identity providers to configure.')
-  identityProviders: array?
-
-  @description('Optional. Location for the API Management service. Default is resourceGroup().location.')
-  location: string?
-
-  @description('Optional. Lock settings for the API Management service.')
-  lock: {
-    @description('Optional. Type of lock. Allowed values: CanNotDelete, None, ReadOnly.')
-    kind: 'CanNotDelete' | 'None' | 'ReadOnly'?
-
-    @description('Optional. Name of the lock.')
-    name: string?
-
-    @description('Optional. Notes for the lock.')
-    notes: string?
-  }?
-
-  @description('Optional. Loggers to configure.')
-  loggers: array?
-
-  @description('Optional. Managed identity settings for the API Management service.')
-  managedIdentities: {
-    @description('Optional. Enables system-assigned managed identity.')
-    systemAssigned: bool?
-
-    @description('Optional. User-assigned identity resource IDs.')
-    userAssignedResourceIds: string[]?
-  }?
-
-  @description('Optional. Minimum ARM API version to use for control-plane operations.')
-  minApiVersion: string?
-
-  @description('Optional. Named values to configure.')
-  namedValues: array?
-
-  @description('Optional. Notification sender email address.')
-  notificationSenderEmail: string?
-
-  @description('Optional. Helper for generating new GUID values.')
-  newGuidValue: string?
-
-  @description('Optional. Policies to configure.')
-  policies: array?
-
-  @description('Optional. Portal settings for the developer portal.')
-  portalsettings: array?
-
-  @description('Optional. Products to configure.')
-  products: array?
-
-  @description('Optional. Public IP address resource ID for API Management.')
-  publicIpAddressResourceId: string?
-
-  @description('Optional. Restore configuration for undeleting API Management services.')
-  restore: bool?
-
-  @description('Optional. Role assignments for the API Management service.')
-  roleAssignments: array?
-
-  @description('Optional. SKU of the API Management service. Allowed values: Basic, BasicV2, Consumption, Developer, Premium, Standard, StandardV2.')
-  sku: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'Standard' | 'StandardV2'?
-
-
-  @description('Optional. Subnet resource ID for VNet integration.')
-  subnetResourceId: string?
-
-  @description('Optional. Subscriptions to configure.')
-  subscriptions: array?
-
-  @description('Optional. Tags to apply to the API Management service.')
-  tags: object?
-
-  @description('Optional. Virtual network type. Allowed values: None, External, Internal.')
-  virtualNetworkType: 'None' | 'External' | 'Internal'?
-}
-
-@export()
 @description('Configuration object for the Azure Bastion service to be deployed.')
 type bastionDefinitionType = {
   @description('Optional. Bastion host name.')
@@ -753,6 +659,9 @@ type vmDefinitionType = {
   osType: ('Linux' | 'Windows')?
   @description('Optional. Marketplace image reference for the VM.')
   imageReference: vmImageReferenceType?
+
+  @description('Optional. Enable/disable EncryptionAtHost for the VM.')
+  encryptionAtHost: bool?
   @description('Optional. Admin password for the VM.')
   @secure()
   adminPassword: string?
@@ -762,7 +671,9 @@ type vmDefinitionType = {
   lock: object?
   @description('Optional. Managed identities.')
   managedIdentities: object?
-  @description('Optional. Role assignments.')
+  @description('Optional. Enable system-assigned managed identity for the VM. Default is true.')
+  enableSystemAssignedManagedIdentity: bool?
+  @description('Optional. Role assignments for the VM managed identity. Each assignment can specify roleDefinitionIdOrName and principalType. Scope defaults to resource group if resourceGroupName is specified, otherwise uses the VM resource scope.')
   roleAssignments: array?
   @description('Optional. Force password reset on first login.')
   requireGuestProvisionSignal: bool?
@@ -805,6 +716,10 @@ type vmDefinitionType = {
   publicKeys: array?
   
   // Jump VM specific properties
+  @description('Optional. When true (default), runs the Jump VM Custom Script Extension to download and execute bicep/infra/install.ps1 (Jump VM only).')
+  enableAutoInstall: bool?
+  @description('Optional. When true (default), creates a Contributor role assignment for the Jump VM managed identity at the deployment resource group scope (Jump VM only).')
+  assignContributorRoleAtResourceGroup: bool?
   @description('Optional. Resource ID of the maintenance configuration (Jump VM only).')
   maintenanceConfigurationResourceId: string?
   @description('Optional. Patch mode for the VM (Jump VM only).')
@@ -982,8 +897,11 @@ type containerAppDefinitionType = {
   @description('Required. The name of the Container App.')
   name: string
 
-  @description('Required. Resource ID of the Container App Environment.')
-  environmentResourceId: string
+  @description('Optional. When true, this app\'s FQDN will be added to the Application Gateway backend pool configuration. Defaults to false when omitted.')
+  exposeViaAppGateway: bool?
+
+  @description('Optional. Resource ID of the Container App Environment. When omitted, the caller (e.g., main.bicep) must set it.')
+  environmentResourceId: string?
 
   @description('Optional. Workload profile name to pin for container app execution.')
   workloadProfileName: string?
@@ -1020,6 +938,24 @@ type containerAppDefinitionType = {
 
   @description('Optional. Init containers which run before the app container.')
   initContainersTemplate: object[]?
+
+  @description('Optional. Bool to disable all ingress traffic for the container app.')
+  disableIngress: bool?
+
+  @description('Optional. Bool indicating if the App exposes an external HTTP endpoint.')
+  ingressExternal: bool?
+
+  @description('Optional. Ingress transport protocol.')
+  ingressTransport: ('auto' | 'http' | 'http2' | 'tcp')?
+
+  @description('Optional. Bool indicating if HTTP connections are allowed. If set to false HTTP connections are redirected to HTTPS connections.')
+  ingressAllowInsecure: bool?
+
+  @description('Optional. Target Port in containers for traffic from ingress.')
+  ingressTargetPort: int?
+
+  @description('Optional. Exposed Port in containers for TCP traffic from ingress.')
+  exposedPort: int?
 
   @description('Optional. Rules to restrict incoming IP address.')
   ipSecurityRestrictions: object[]?
@@ -1317,6 +1253,9 @@ type deployTogglesType = {
   @description('Required. Toggle to deploy Storage Account (true) or not (false).')
   storageAccount: bool
 
+  @description('Required. Toggle to deploy AI Foundry (true) or not (false).')
+  aiFoundry: bool
+
   @description('Required. Toggle to deploy Azure AI Search (true) or not (false).')
   searchService: bool
 
@@ -1326,9 +1265,6 @@ type deployTogglesType = {
   @description('Required. Toggle to deploy App Configuration (true) or not (false).')
   appConfig: bool
 
-  @description('Required. Toggle to deploy API Management (true) or not (false).')
-  apiManagement: bool
-
   @description('Required. Toggle to deploy Application Gateway (true) or not (false).')
   applicationGateway: bool
 
@@ -1337,6 +1273,9 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy Azure Firewall (true) or not (false).')
   firewall: bool
+
+  @description('Required. Toggle to deploy User Defined Routes (UDR) (Route Table + association).')
+  userDefinedRoutes: bool
 
   @description('Required. Toggle to deploy Container Apps (true) or not (false).')
   containerApps: bool
@@ -1364,9 +1303,6 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy NSG for Application Gateway subnet (true) or not (false).')
   applicationGatewayNsg: bool
-
-  @description('Required. Toggle to deploy NSG for API Management subnet (true) or not (false).')
-  apiManagementNsg: bool
 
   @description('Required. Toggle to deploy NSG for Azure Container Apps environment subnet (true) or not (false).')
   acaEnvironmentNsg: bool
@@ -1405,11 +1341,23 @@ type resourceIdsType = {
   @description('Optional. Existing Storage Account resource ID to reuse.')
   storageAccountResourceId: string?
 
+  @description('Optional. Existing AI Foundry Key Vault resource ID to reuse. If not provided (or empty), AI Foundry will create its own Key Vault when includeAssociatedResources=true.')
+  aiFoundryKeyVaultResourceId: string?
+
+  @description('Optional. Existing AI Foundry Storage Account resource ID to reuse. If not provided (or empty), AI Foundry will create its own Storage Account when includeAssociatedResources=true.')
+  aiFoundryStorageAccountResourceId: string?
+
   @description('Optional. Existing Cosmos DB account resource ID to reuse.')
   dbAccountResourceId: string?
 
+  @description('Optional. Existing AI Foundry Cosmos DB account resource ID to reuse. If not provided (or empty), AI Foundry will create its own Cosmos DB account when includeAssociatedResources=true.')
+  aiFoundryCosmosDBAccountResourceId: string?
+
   @description('Optional. Existing Azure AI Search service resource ID to reuse.')
   searchServiceResourceId: string?
+
+  @description('Optional. Existing AI Foundry Azure AI Search service resource ID to reuse. If not provided (or empty), AI Foundry will create its own Search service when includeAssociatedResources=true.')
+  aiFoundrySearchServiceResourceId: string?
 
   @description('Optional. Existing Grounding service resource ID to reuse.')
   groundingServiceResourceId: string?
@@ -1419,9 +1367,6 @@ type resourceIdsType = {
 
   @description('Optional. Existing Azure Container Registry resource ID to reuse.')
   containerRegistryResourceId: string?
-
-  @description('Optional. Existing API Management service resource ID to reuse.')
-  apimServiceResourceId: string?
 
   @description('Optional. Existing Application Gateway resource ID to reuse.')
   applicationGatewayResourceId: string?
@@ -1446,9 +1391,6 @@ type resourceIdsType = {
 
   @description('Optional. Existing NSG resource ID to reuse for the Application Gateway subnet.')
   applicationGatewayNsgResourceId: string?
-
-  @description('Optional. Existing NSG resource ID to reuse for the API Management subnet.')
-  apiManagementNsgResourceId: string?
 
   @description('Optional. Existing NSG resource ID to reuse for the Azure Container Apps environment subnet.')
   acaEnvironmentNsgResourceId: string?
@@ -1475,9 +1417,6 @@ type subnetNamesDefinitionType = {
   @description('Optional. Subnet name for Application Gateway. Default: app-gateway-subnet.')
   applicationGateway: string?
 
-  @description('Optional. Subnet name for API Management. Default: api-management-subnet.')
-  apiManagement: string?
-
   @description('Optional. Subnet name for Container Apps environment. Default: aca-environment-subnet.')
   acaEnvironment: string?
 
@@ -1491,9 +1430,6 @@ type subnetNamesDefinitionType = {
 @export()
 @description('Configuration object for adding subnets to an existing Virtual Network.')
 type existingVNetSubnetsDefinitionType = {
-  @description('Required. Name or Resource ID of the existing Virtual Network. For cross-subscription/resource group scenarios, use the full Resource ID format: /subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Network/virtualNetworks/{vnet-name}')
-  existingVNetName: string
-
   @description('Optional. Use default AI Landing Zone subnets with 192.168.x.x addressing. Default: true.')
   useDefaultSubnets: bool?
 
@@ -1536,7 +1472,7 @@ type existingVNetSubnetsDefinitionType = {
     serviceEndpointPolicies: array?
 
     @description('Optional. Service endpoints enabled on the subnet.')
-    serviceEndpoints: array?
+    serviceEndpoints: string[]?
 
     @description('Optional. Sharing scope for the subnet.')
     sharingScope: 'DelegatedServices' | 'Tenant'?
@@ -1771,7 +1707,7 @@ type vNetDefinitionType = {
     serviceEndpointPolicies: array?
 
     @description('Optional. Service endpoints enabled on the subnet.')
-    serviceEndpoints: array?
+    serviceEndpoints: string[]?
 
     @description('Optional. Sharing scope for the subnet. Allowed values: DelegatedServices, Tenant.')
     sharingScope: 'DelegatedServices' | 'Tenant'?
@@ -1804,9 +1740,6 @@ type nsgPerSubnetDefinitionsType = {
 
   @description('Optional. NSG definition applied to the Application Gateway subnet.')
   applicationGateway: nsgDefinitionType?
-
-  @description('Optional. NSG definition applied to the API Management subnet.')
-  apiManagement: nsgDefinitionType?
 
   @description('Optional. NSG definition applied to the Azure Container Apps environment (infrastructure) subnet.')
   acaEnvironment: nsgDefinitionType?
@@ -1957,9 +1890,6 @@ type privateDnsZonesDefinitionType = {
   // --- Per-service existing zone IDs ---
   @description('Optional. Existing Private DNS Zone resource ID for Cognitive Services.')
   cognitiveservicesZoneId: string?
-
-  @description('Optional. Existing Private DNS Zone resource ID for Azure API Management.')
-  apimZoneId: string?
 
   @description('Optional. Existing Private DNS Zone resource ID for Azure OpenAI.')
   openaiZoneId: string?
@@ -3131,6 +3061,129 @@ type firewallPolicyRuleType = object
 // ---------------------------------------------
 // Cosmos DB (GenAI App flavor)
 // ---------------------------------------------
+
+@export()
+@description('Input type for the GenAI App Cosmos DB account. Allows omitting name in parameter files; main.bicep will apply default naming.')
+type genAIAppCosmosDbDefinitionInputType = {
+  @description('Optional. The name of the account. If omitted, main.bicep default naming is used.')
+  name: string?
+
+  @description('Optional. Enable automatic failover for regions. Defaults to true.')
+  automaticFailover: bool?
+
+  @description('Optional. Interval in minutes between two backups (periodic only). Defaults to 240. Range: 60–1440.')
+  backupIntervalInMinutes: int?
+
+  @description('Optional. Retention period for continuous mode backup. Default is Continuous30Days. Allowed values: Continuous30Days, Continuous7Days.')
+  backupPolicyContinuousTier: 'Continuous30Days' | 'Continuous7Days'?
+
+  @description('Optional. Backup mode. Periodic must be used if multiple write locations are enabled. Default is Continuous. Allowed values: Continuous, Periodic.')
+  backupPolicyType: 'Continuous' | 'Periodic'?
+
+  @description('Optional. Time (hours) each backup is retained (periodic only). Default is 8. Range: 2–720.')
+  backupRetentionIntervalInHours: int?
+
+  @description('Optional. Type of backup residency (periodic only). Default is Local. Allowed values: Geo, Local, Zone.')
+  backupStorageRedundancy: 'Geo' | 'Local' | 'Zone'?
+
+  @description('Optional. List of Cosmos DB specific capabilities to enable.')
+  capabilitiesToAdd: (
+    | 'DeleteAllItemsByPartitionKey'
+    | 'DisableRateLimitingResponses'
+    | 'EnableCassandra'
+    | 'EnableGremlin'
+    | 'EnableMaterializedViews'
+    | 'EnableMongo'
+    | 'EnableNoSQLFullTextSearch'
+    | 'EnableNoSQLVectorSearch'
+    | 'EnableServerless'
+    | 'EnableTable')[]?
+
+  @description('Optional. The offer type for the account. Default is Standard. Allowed value: Standard.')
+  databaseAccountOfferType: 'Standard'?
+
+  @description('Optional. Cosmos DB for NoSQL native role-based access control assignments.')
+  dataPlaneRoleAssignments: object[]?
+
+  @description('Optional. Cosmos DB for NoSQL native role-based access control definitions.')
+  dataPlaneRoleDefinitions: object[]?
+
+  @description('Optional. Default consistency level. Default is Session.')
+  defaultConsistencyLevel: 'BoundedStaleness' | 'ConsistentPrefix' | 'Eventual' | 'Session' | 'Strong'?
+
+  @description('Optional. Diagnostic settings for the account.')
+  diagnosticSettings: object[]?
+
+  @description('Optional. Disable key-based metadata write access.')
+  disableKeyBasedMetadataWriteAccess: bool?
+
+  @description('Optional. Disable local authentication.')
+  disableLocalAuthentication: bool?
+
+  @description('Optional. Enable analytical storage.')
+  enableAnalyticalStorage: bool?
+
+  @description('Optional. Enable free tier.')
+  enableFreeTier: bool?
+
+  @description('Optional. Enable multiple write locations.')
+  enableMultipleWriteLocations: bool?
+
+  @description('Optional. Enable/disable usage telemetry for the module. Default is true.')
+  enableTelemetry: bool?
+
+  @description('Optional. Failover locations.')
+  failoverLocations: object[]?
+
+  @description('Optional. Gremlin databases.')
+  gremlinDatabases: object[]?
+
+  @description('Optional. Lock configuration.')
+  lock: object?
+
+  @description('Optional. Managed identities.')
+  managedIdentities: object?
+
+  @description('Optional. Bounded staleness: max interval in seconds.')
+  maxIntervalInSeconds: int?
+
+  @description('Optional. Bounded staleness: max staleness prefix.')
+  maxStalenessPrefix: int?
+
+  @description('Optional. Minimum TLS version.')
+  minimumTlsVersion: string?
+
+  @description('Optional. MongoDB databases.')
+  mongodbDatabases: object[]?
+
+  @description('Optional. Network configuration for the account.')
+  networkRestrictions: object?
+
+  @description('Optional. Private endpoints configuration.')
+  privateEndpoints: object[]?
+
+  @description('Optional. Role assignments.')
+  roleAssignments: object[]?
+
+  @description('Optional. Cosmos DB server version.')
+  serverVersion: string?
+
+  @description('Optional. SQL databases.')
+  sqlDatabases: object[]?
+
+  @description('Optional. Tables.')
+  tables: object[]?
+
+  @description('Optional. Tags for categorizing resources.')
+  tags: object?
+
+  @description('Optional. Total throughput limit.')
+  totalThroughputLimit: int?
+
+  @description('Optional. Zone redundancy setting.')
+  zoneRedundant: bool?
+}
+
 @export()
 @description('Configuration object for the GenAI App Cosmos DB account.')
 type genAIAppCosmosDbDefinitionType = {
@@ -3325,6 +3378,36 @@ type hubVnetPeeringDefinitionType = object
 // ---------------------------------------------
 // Azure Cognitive Search
 // ---------------------------------------------
+
+@export()
+@description('Input type for the Azure Cognitive Search service. Allows omitting name in parameter files; main.bicep will apply default naming.')
+type kSAISearchDefinitionInputType = {
+  @description('Optional. The name of the Azure Cognitive Search service. If omitted, main.bicep default naming is used.')
+  name: string?
+
+  // All other properties match kSAISearchDefinitionType
+  authOptions: object?
+  cmkEnforcement: 'Disabled' | 'Enabled' | 'Unspecified'?
+  diagnosticSettings: object[]?
+  disableLocalAuth: bool?
+  enableTelemetry: bool?
+  hostingMode: 'default' | 'highDensity'?
+  location: string?
+  lock: object?
+  managedIdentities: object?
+  networkRuleSet: object?
+  partitionCount: int?
+  privateEndpoints: object[]?
+  publicNetworkAccess: 'Enabled' | 'Disabled'?
+  replicaCount: int?
+  roleAssignments: object[]?
+  secretsExportConfiguration: object?
+  semanticSearch: 'disabled' | 'free' | 'standard'?
+  sharedPrivateLinkResources: object[]?
+  sku: 'basic' | 'free' | 'standard' | 'standard2' | 'standard3' | 'storage_optimized_l1' | 'storage_optimized_l2'?
+  tags: object?
+}
+
 @export()
 @description('Configuration object for the Azure Cognitive Search service.')
 type kSAISearchDefinitionType = {
@@ -3499,6 +3582,37 @@ type kSGroundingWithBingDefinitionType = {
 // ---------------------------------------------
 // Key Vault
 // ---------------------------------------------
+
+@export()
+@description('Input type for Azure Key Vault. Allows omitting name in parameter files; main.bicep will apply default naming.')
+type keyVaultDefinitionInputType = {
+  @description('Optional. Name of the Key Vault. If omitted, main.bicep default naming is used.')
+  name: string?
+
+  // All other properties match keyVaultDefinitionType
+  accessPolicies: object[]?
+  createMode: 'default' | 'recover'?
+  diagnosticSettings: object[]?
+  enablePurgeProtection: bool?
+  enableRbacAuthorization: bool?
+  enableSoftDelete: bool?
+  enableTelemetry: bool?
+  enableVaultForDeployment: bool?
+  enableVaultForDiskEncryption: bool?
+  enableVaultForTemplateDeployment: bool?
+  keys: object[]?
+  location: string?
+  lock: object?
+  networkAcls: object?
+  privateEndpoints: object[]?
+  publicNetworkAccess: 'Enabled' | 'Disabled'?
+  roleAssignments: object[]?
+  secrets: object[]?
+  sku: object?
+  softDeleteRetentionInDays: int?
+  tags: object?
+}
+
 @export()
 @description('Configuration object for the Azure Key Vault to be deployed.')
 type keyVaultDefinitionType = {

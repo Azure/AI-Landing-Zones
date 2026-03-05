@@ -1,0 +1,484 @@
+using './main.bicep'
+
+// Standalone (external entry via Application Gateway):
+// - Creates a new, isolated workload environment (new VNet + subnets)
+// - Deploys an INTERNAL Container Apps Environment
+// - Deploys a hello-world Container App that is reachable from the VNet
+// - Deploys an Application Gateway v2 with a Public IP to expose the app externally
+// - Uses an auto-generated self-signed certificate for HTTPS on App Gateway (lab-friendly)
+
+param deployToggles = {
+  aiFoundry: true
+  logAnalytics: true
+  appInsights: true
+  virtualNetwork: true
+  peNsg: true
+  agentNsg: false
+
+  // Recommended for this scenario: apply an NSG to the ACA environment subnet
+  acaEnvironmentNsg: true
+
+  // Required for this scenario: apply an NSG to the App Gateway subnet
+  applicationGatewayNsg: true
+
+  jumpboxNsg: true
+  devopsBuildAgentsNsg: false
+  bastionNsg: true
+  keyVault: true
+  storageAccount: true
+  cosmosDb: true
+  searchService: true
+  groundingWithBingSearch: false
+  containerRegistry: true
+  containerEnv: true
+  containerApps: true
+  buildVm: false
+  jumpVm: true
+  bastionHost: true
+  appConfig: false
+
+  // Enable Application Gateway + Public IP
+  applicationGateway: true
+  applicationGatewayPublicIp: true
+
+  // Keep it simple: no WAF policy in this sample
+  wafPolicy: false
+
+  // Forced tunneling through Azure Firewall
+  firewall: true
+  userDefinedRoutes: true
+}
+
+param resourceIds = {
+}
+
+param flagPlatformLandingZone = false
+
+// Required for forced tunneling: Azure Firewall private IP (next hop).
+// With the default subnet layout, Azure Firewall is assigned the first usable IP in AzureFirewallSubnet (192.168.0.128/26) => 192.168.0.132.
+param firewallPrivateIp = '192.168.0.132'
+
+// Application Gateway configuration:
+// - Standard_v2 (simpler than WAF_v2 for a sample)
+// - HTTPS listener (443) with a self-signed cert generated during deployment
+// - Required exception when UDR forced tunneling is enabled (AppGW v2 management traffic)
+param appGatewayDefinition = {
+  sku: 'Standard_v2'
+
+  enableHttps: true
+  createSelfSignedCertificate: true
+
+  appGatewayInternetRoutingException: true
+}
+
+// Default egress for Jump VM (jumpbox-subnet) via Azure Firewall Policy.
+// This is a strict allowlist designed to keep bootstrap tooling working under forced tunneling.
+param firewallPolicyDefinition = {
+  name: 'afwp-sample'
+  ruleCollectionGroups: [
+    {
+      name: 'rcg-jumpbox-egress'
+      priority: 100
+      ruleCollections: [
+        {
+          name: 'rc-allow-jumpbox-network'
+          priority: 100
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-jumpbox-all-egress'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'Any'
+              ]
+              sourceAddresses: [
+                '192.168.1.64/28'
+              ]
+              destinationAddresses: [
+                '0.0.0.0/0'
+              ]
+              destinationPorts: [
+                '*'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    {
+      name: 'rcg-foundry-agent-egress'
+      priority: 110
+      ruleCollections: [
+        {
+          name: 'rc-allow-foundry-agent-network'
+          priority: 100
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-azure-dns-udp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'UDP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-azure-dns-tcp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-azuread-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                'AzureActiveDirectory'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-azure-resource-manager-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                // Required for Azure CLI / AZD to call ARM after obtaining tokens.
+                'AzureResourceManager'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-azure-cloud-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                // Broad Azure public-cloud endpoints (helps avoid TLS failures caused by missing ancillary Azure endpoints).
+                'AzureCloud'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-mcr-and-afd-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                'MicrosoftContainerRegistry'
+                'AzureContainerRegistry'
+                'AzureFrontDoorFirstParty'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-foundry-agent-infra-private'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'Any'
+              ]
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              destinationAddresses: [
+                '10.0.0.0/8'
+                '172.16.0.0/12'
+                '192.168.0.0/16'
+                '100.64.0.0/10'
+              ]
+              destinationPorts: [
+                '*'
+              ]
+            }
+          ]
+        }
+        {
+          name: 'rc-allow-foundry-agent-app'
+          priority: 110
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-agent-platform-fqdns'
+              ruleType: 'ApplicationRule'
+              sourceAddresses: [
+                '192.168.0.0/27' // agent-subnet
+              ]
+              protocols: [
+                {
+                  protocolType: 'Https'
+                  port: 443
+                }
+              ]
+              targetFqdns: [
+                'mcr.microsoft.com'
+                '*.data.mcr.microsoft.com'
+                'packages.aks.azure.com'
+                'acs-mirror.azureedge.net'
+                '*.identity.azure.net'
+                'login.microsoftonline.com'
+                '*.login.microsoftonline.com'
+                '*.login.microsoft.com'
+                'login.microsoft.com'
+                '*.azurecr.io'
+                '*.blob.core.windows.net'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    {
+      name: 'rcg-aca-egress'
+      priority: 120
+      ruleCollections: [
+        {
+          name: 'rc-allow-aca-network'
+          priority: 100
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-aca-azure-dns-udp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'UDP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-aca-azure-dns-tcp'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '168.63.129.16'
+              ]
+              destinationPorts: [
+                '53'
+              ]
+            }
+            {
+              name: 'allow-aca-azuread-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureActiveDirectory'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-azure-resource-manager-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureResourceManager'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-azure-cloud-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'AzureCloud'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-mcr-and-afd-https'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'TCP'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                'MicrosoftContainerRegistry'
+                'AzureContainerRegistry'
+                'AzureFrontDoorFirstParty'
+              ]
+              destinationPorts: [
+                '443'
+              ]
+            }
+            {
+              name: 'allow-aca-infra-private'
+              ruleType: 'NetworkRule'
+              ipProtocols: [
+                'Any'
+              ]
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              destinationAddresses: [
+                '10.0.0.0/8'
+                '172.16.0.0/12'
+                '192.168.0.0/16'
+                '100.64.0.0/10'
+              ]
+              destinationPorts: [
+                '*'
+              ]
+            }
+          ]
+        }
+        {
+          name: 'rc-allow-aca-app'
+          priority: 110
+          ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+          action: {
+            type: 'Allow'
+          }
+          rules: [
+            {
+              name: 'allow-aca-platform-fqdns'
+              ruleType: 'ApplicationRule'
+              sourceAddresses: [
+                '192.168.1.0/27' // aca-env-subnet
+              ]
+              protocols: [
+                {
+                  protocolType: 'Https'
+                  port: 443
+                }
+              ]
+              targetFqdns: [
+                'mcr.microsoft.com'
+                '*.data.mcr.microsoft.com'
+                'packages.aks.azure.com'
+                'acs-mirror.azureedge.net'
+                '*.identity.azure.net'
+                'login.microsoftonline.com'
+                '*.login.microsoftonline.com'
+                '*.login.microsoft.com'
+                'login.microsoft.com'
+                '*.azurecr.io'
+                '*.blob.core.windows.net'
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+param containerAppEnvDefinition = {
+  name: 'cae-aca-minimal'
+
+  // Keep it minimal and avoid WAF-compliance conditional fields.
+  zoneRedundant: false
+
+  // Internal-only environment endpoints.
+  publicNetworkAccess: 'Disabled'
+  internal: true
+}
+
+param containerAppsList = [
+  {
+    name: 'ca-aca-helloworld'
+
+    // Only apps explicitly flagged are added to the App Gateway backend pool.
+    exposeViaAppGateway: true
+
+    activeRevisionsMode: 'Single'
+
+    // VNet-reachable ingress (Application Gateway / VMs in the VNet can reach it).
+    // Note: because the Container Apps Environment is internal + publicNetworkAccess is Disabled,
+    // this does NOT expose the app to the public internet.
+    ingressExternal: true
+    ingressTargetPort: 80
+    ingressAllowInsecure: true
+  }
+]
+
+// Optional (subscription-scoped): enable Defender for AI pricing.
+// param enableDefenderForAI = true

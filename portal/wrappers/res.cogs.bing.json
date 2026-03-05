@@ -1,0 +1,113 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "4618341942277557255"
+    },
+    "name": "bing-search",
+    "description": "Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry."
+  },
+  "parameters": {
+    "accountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Conditional. The name of the Azure Cognitive Services account to be used for the Bing Search tool. Required if `enableBingSearchConnection` is true."
+      }
+    },
+    "projectName": {
+      "type": "string",
+      "metadata": {
+        "description": "Conditional. The name of the Azure Cognitive Services Project. Required if `enableBingSearchConnection` is true."
+      }
+    },
+    "bingSearchName": {
+      "type": "string",
+      "metadata": {
+        "description": "Conditional. The name to assign to the Bing Search resource instance (used when creating a new account). Required if `enableBingSearchConnection` is true."
+      }
+    },
+    "bingConnectionName": {
+      "type": "string",
+      "defaultValue": "[format('{0}-connection', parameters('bingSearchName'))]",
+      "metadata": {
+        "description": "Conditional. The name to assign to the Bing Search connection in the project. Required if `enableBingSearchConnection` is true."
+      }
+    },
+    "existingResourceId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Existing Bing Grounding account resource ID to reuse instead of creating a new one."
+      }
+    }
+  },
+  "variables": {
+    "varIsReuse": "[not(empty(parameters('existingResourceId')))]",
+    "varIdSegs": "[split(parameters('existingResourceId'), '/')]",
+    "varExSub": "[if(greaterOrEquals(length(variables('varIdSegs')), 3), variables('varIdSegs')[2], '')]",
+    "varExRg": "[if(greaterOrEquals(length(variables('varIdSegs')), 5), variables('varIdSegs')[4], '')]",
+    "varExName": "[if(greaterOrEquals(length(variables('varIdSegs')), 1), last(variables('varIdSegs')), '')]",
+    "varBingId": "[if(variables('varIsReuse'), parameters('existingResourceId'), resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')))]"
+  },
+  "resources": [
+    {
+      "condition": "[not(variables('varIsReuse'))]",
+      "type": "Microsoft.Bing/accounts",
+      "apiVersion": "2025-05-01-preview",
+      "name": "[parameters('bingSearchName')]",
+      "location": "global",
+      "kind": "Bing.Grounding",
+      "sku": {
+        "name": "G1"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/connections",
+      "apiVersion": "2025-06-01",
+      "name": "[format('{0}/{1}', parameters('accountName'), parameters('bingConnectionName'))]",
+      "properties": {
+        "category": "GroundingWithBingSearch",
+        "target": "[if(variables('varIsReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExSub'), variables('varExRg')), 'Microsoft.Bing/accounts', variables('varExName')), '2025-05-01-preview').endpoint, reference(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').endpoint)]",
+        "authType": "ApiKey",
+        "credentials": {
+          "key": "[if(variables('varIsReuse'), listKeys(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExSub'), variables('varExRg')), 'Microsoft.Bing/accounts', variables('varExName')), '2025-05-01-preview').key1, listKeys(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').key1)]"
+        },
+        "isSharedToAll": true,
+        "metadata": {
+          "ApiType": "Azure",
+          "Location": "[if(variables('varIsReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExSub'), variables('varExRg')), 'Microsoft.Bing/accounts', variables('varExName')), '2025-05-01-preview', 'full').location, 'global')]",
+          "ResourceId": "[variables('varBingId')]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Bing/accounts', parameters('bingSearchName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID of the Bing Grounding account (created or reused)."
+      },
+      "value": "[variables('varBingId')]"
+    },
+    "bingConnectionId": {
+      "type": "string",
+      "metadata": {
+        "description": "Connection ID path under the AI services project."
+      },
+      "value": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.CognitiveServices/accounts/{2}/projects/{3}/connections/{4}', subscription().subscriptionId, resourceGroup().name, parameters('accountName'), parameters('projectName'), parameters('bingConnectionName'))]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resource group where the Bing Grounding account is deployed (same as the deployment resource group when creating a new account, or the existing account resource group when reusing)."
+      },
+      "value": "[resourceGroup().name]"
+    }
+  }
+}

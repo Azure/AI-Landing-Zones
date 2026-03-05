@@ -15,6 +15,7 @@ module inner 'br/public:avm/res/network/public-ip-address:0.9.0' = {
     publicIPAddressVersion: pip.?publicIPAddressVersion
     skuName: pip.?skuName
     skuTier: pip.?skuTier
+    dnsSettings: pip.?dnsSettings
     availabilityZones: pip.?zones
     tags: pip.?tags
     lock: pip.?lock

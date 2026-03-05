@@ -171,46 +171,78 @@ fi
 echo ""
 
 #===============================================================================
-# STEP 2: DIRECTORY CLEANUP
+# STEP 2: REMOVE TEMPORARY TAGS
 #===============================================================================
 
-# Step 2: Clean up deploy directory
-print_step "2" "Step 2: Cleaning up deploy directory..."
+print_step "2" "Step 2: Removing temporary Resource Group tags..."
+print_info "Removing temporary Resource Group tags..."
+
+rg_id="$(az group show --name "$RESOURCE_GROUP" --query id -o tsv 2>/dev/null || echo "")"
+if [ -n "$rg_id" ]; then
+    if az tag update --resource-id "$rg_id" --operation Delete --tags SecurityControl > /dev/null 2>&1; then
+        print_success "Removed tags from Resource Group: $RESOURCE_GROUP"
+    else
+        print_warning "Failed to remove tags from Resource Group: $RESOURCE_GROUP"
+    fi
+else
+    print_warning "Failed to resolve resource ID for Resource Group: $RESOURCE_GROUP"
+fi
+
+if [ -n "$TEMPLATE_SPEC_RG" ] && [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
+    ts_rg_id="$(az group show --name "$TEMPLATE_SPEC_RG" --query id -o tsv 2>/dev/null || echo "")"
+    if [ -n "$ts_rg_id" ]; then
+        if az tag update --resource-id "$ts_rg_id" --operation Delete --tags SecurityControl > /dev/null 2>&1; then
+            print_success "Removed tags from Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+        else
+            print_warning "Failed to remove tags from Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+        fi
+    else
+        print_warning "Failed to resolve resource ID for Template Spec Resource Group: $TEMPLATE_SPEC_RG"
+    fi
+fi
+
+echo ""
+
+#===============================================================================
+# STEP 3: REMOVE AI FOUNDRY WAIT DEPLOYMENT SCRIPTS
+#===============================================================================
+
+print_step "3" "Step 3: Removing AI Foundry capability-host wait deployment scripts..."
+
+wait_scripts="$(az resource list -g "$RESOURCE_GROUP" --resource-type Microsoft.Resources/deploymentScripts --query "[?ends_with(name, '-wait-capabilityhost')].name" -o tsv 2>/dev/null || true)"
+
+if [ -n "$wait_scripts" ]; then
+    count=$(echo "$wait_scripts" | wc -l | tr -d ' ')
+    print_info "Found $count deployment script(s) to remove"
+
+    echo "$wait_scripts" | while IFS= read -r script_name; do
+        script_name=$(echo "$script_name" | tr -d '\r\n' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+        if [ -n "$script_name" ]; then
+            printf "${GRAY}    [X] Removing: %s${NC}\n" "$script_name"
+            if az resource delete -g "$RESOURCE_GROUP" --resource-type Microsoft.Resources/deploymentScripts -n "$script_name" --only-show-errors > /dev/null 2>&1; then
+                printf "${GREEN}    [+] Removed: %s${NC}\n" "$script_name"
+            else
+                printf "${YELLOW}    [!] Failed to remove: %s${NC}\n" "$script_name"
+            fi
+        fi
+    done
+else
+    print_gray "No AI Foundry wait deployment scripts found"
+fi
+
+echo ""
+
+#===============================================================================
+# STEP 4: DIRECTORY CLEANUP
+#===============================================================================
+
+# Step 4: Clean up deploy directory
+print_step "4" "Step 4: Cleaning up deploy directory..."
 if [ -d "$deploy_dir" ]; then
     rm -rf "$deploy_dir"
     print_success "Removed deploy directory: ./deploy/"
 else
     print_gray "No deploy directory found to remove"
-fi
-
-#===============================================================================
-# STEP 3: REMOVE TEMPORARY TAGS
-#===============================================================================
-
-# Step 3: Remove temporary tags from resource groups
-echo ""
-print_step "3" "Step 3: Removing temporary tags..."
-
-# Remove tag from main resource group
-if [ -n "$RESOURCE_GROUP" ]; then
-    print_gray "Removing temporary tags from resource group: $RESOURCE_GROUP"
-    resource_id="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RESOURCE_GROUP"
-    if az tag update --resource-id "$resource_id" --operation Delete --tags SecurityControl --only-show-errors >/dev/null 2>&1; then
-        print_success "Removed temporary tags from: $RESOURCE_GROUP"
-    else
-        print_warning "Warning: Failed to remove temporary tags from resource group: $RESOURCE_GROUP"
-    fi
-fi
-
-# Remove tag from Template Spec resource group if different
-if [ -n "$TEMPLATE_SPEC_RG" ] && [ "$TEMPLATE_SPEC_RG" != "$RESOURCE_GROUP" ]; then
-    print_gray "Removing temporary tags from Template Spec resource group: $TEMPLATE_SPEC_RG"
-    resource_id="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$TEMPLATE_SPEC_RG"
-    if az tag update --resource-id "$resource_id" --operation Delete --tags SecurityControl --only-show-errors >/dev/null 2>&1; then
-        print_success "Removed temporary tags from: $TEMPLATE_SPEC_RG"
-    else
-        print_warning "Warning: Failed to remove temporary tags from Template Spec resource group: $TEMPLATE_SPEC_RG"
-    fi
 fi
 
 #===============================================================================
