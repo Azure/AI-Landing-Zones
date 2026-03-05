@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#terraform-implementation" class="md-skip">
+        <a href="#terraform-deployment-guide-for-ai-landing-zones" class="md-skip">
           Skip to content
         </a>
       
@@ -906,6 +906,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Implementation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -922,6 +940,174 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-this-deployment-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Deployment Does
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-deployment-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Deployment Instructions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step Deployment Instructions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-interactive-login-easiest-for-getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Interactive Login (Easiest for Getting Started)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-service-principal-authentication-for-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: Service Principal Authentication (For Automation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Making Changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean-up-destroy-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clean Up / Destroy Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Common Issues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-terraform-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Terraform Files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps-after-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps After Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Help
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -974,8 +1160,411 @@
   
 
 
-<h1 id="terraform-implementation">Terraform Implementation</h1>
-<p><a href="https://aka.ms/ailz/terraform">https://aka.ms/ailz/terraform</a></p>
+<h1 id="terraform-deployment-guide-for-ai-landing-zones">Terraform Deployment Guide for AI Landing Zones</h1>
+<h2 id="what-this-deployment-does">What This Deployment Does</h2>
+<p>This Terraform configuration deploys an <strong>AI Landing Zone</strong> which is a complete AI/ML platform environment ready for development and deployment of AI applications.</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<p><strong>1. Install Required Tools</strong></p>
+<p><strong>Terraform (version 1.9 or higher, but less than 2.0):</strong>
+- Download from <a href="https://www.terraform.io/downloads.html">terraform.io</a>
+- After installation, verify by running: <code>terraform --version</code>
+- You should see output like: <code>Terraform v1.9.x</code></p>
+<p><strong>Azure CLI:</strong>
+- Download from <a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli">docs.microsoft.com/en-us/cli/azure/install-azure-cli</a>
+- After installation, verify by running: <code>az --version</code>
+- You should see Azure CLI version information</p>
+<p><strong>2. Azure Subscription Requirements</strong></p>
+<ul>
+<li>An active Azure subscription</li>
+<li><strong>Owner</strong> or <strong>Contributor</strong> role on the subscription (required to create resources)</li>
+<li>Sufficient quota for the resources being deployed (VMs, networking, AI services)</li>
+</ul>
+<p><strong>3. Register Required Resource Providers</strong></p>
+<p>Before deploying, ensure these Azure resource providers are registered.  If not, terraform will register the providers during deployment, which may cause delays:</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">CognitiveServices</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">MachineLearningServices</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Storage</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">KeyVault</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Network</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">DocumentDB</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Search</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">ContainerRegistry</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">App</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Compute</span>
+<span class="n">az</span> <span class="n">feature</span> <span class="n">register</span> <span class="p">-</span><span class="n">-name</span> <span class="n">EncryptionAtHost</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Compute</span>
+</code></pre></div>
+<p><strong>Note:</strong> Provider registration can take 5-10 minutes. Check status with:
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">provider</span> <span class="n">show</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">CognitiveServices</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;registrationState&quot;</span>
+</code></pre></div></p>
+<hr />
+<h2 id="step-by-step-deployment-instructions">Step-by-Step Deployment Instructions</h2>
+<p><strong>Step 1: Authenticate to Azure</strong></p>
+<p>There are two methods to authenticate: <strong>Interactive Login</strong> (recommended for personal use) or <strong>Service Principal</strong> (recommended for automation/CI/CD).</p>
+<h4 id="option-a-interactive-login-easiest-for-getting-started">Option A: Interactive Login (Easiest for Getting Started)</h4>
+<p>Open PowerShell and log in to Azure:</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">login</span>
+</code></pre></div>
+<p><strong>What happens:</strong>
+- A browser window will open
+- Sign in with your Azure account
+- The CLI will display your available subscriptions</p>
+<p><strong>Set the correct subscription (if you have multiple):</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># List all subscriptions</span>
+<span class="n">az</span> <span class="n">account</span> <span class="n">list</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
+
+<span class="c"># Set the subscription you want to use</span>
+<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="s2">&quot;&lt;YOUR_SUBSCRIPTION_ID_OR_NAME&gt;&quot;</span>
+
+<span class="c"># Verify the correct subscription is selected</span>
+<span class="n">az</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
+</code></pre></div></p>
+<h4 id="option-b-service-principal-authentication-for-automation">Option B: Service Principal Authentication (For Automation)</h4>
+<p><strong>When to use Service Principals:</strong>
+- Running Terraform in CI/CD pipelines (Azure DevOps, GitHub Actions)
+- Automated deployments without interactive login
+- Shared environments where multiple people deploy
+- When you need specific permission boundaries</p>
+<p><strong>Step 1: Get Your Subscription ID</strong>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">login</span>  <span class="c"># Log in first to create the service principal</span>
+<span class="n">az</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-query</span> <span class="n">id</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+</code></pre></div></p>
+<p><strong>Step 2: Create the Service Principal</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Replace &lt;SUBSCRIPTION_ID&gt; with your actual subscription ID</span>
+<span class="c"># Replace &lt;SP_NAME&gt; with a descriptive name (e.g., &quot;terraform-ai-landing-zone-sp&quot;)</span>
+<span class="c"># The below command creates a Service Principal and assigns contributor role to the subscription</span>
+<span class="n">az</span> <span class="n">ad</span> <span class="nb">sp </span><span class="n">create-for-rbac</span> <span class="p">-</span><span class="n">-name</span> <span class="s2">&quot;&lt;SP_NAME&gt;&quot;</span> <span class="p">-</span><span class="n">-role</span><span class="p">=</span><span class="s2">&quot;Contributor&quot;</span> <span class="p">-</span><span class="n">-scopes</span><span class="p">=</span><span class="s2">&quot;/subscriptions/&lt;SUBSCRIPTION_ID&gt;&quot;</span>
+</code></pre></div></p>
+<p><strong>Example output:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;appId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;12345678-1234-1234-1234-123456789abc&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;displayName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;terraform-ai-landing-zone-sp&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abcdefgh-1234-5678-90ab-cdefghijklmn&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tenant&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;87654321-4321-4321-4321-210987654321&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Save these values securely!</strong> You won't be able to see the password again.</p>
+<p><strong>Add role assignment to Service Principal</strong></p>
+<p><div class="highlight"><pre><span></span><code><span class="c"># To grant Key Vault permissions, the Service Principal must have either &quot;Owner&quot; or &quot;User Access Administrator&quot;. </span>
+<span class="c"># Following least privilege principle, assign &quot;User Access Administrator&quot;. </span>
+<span class="c"># Replace &lt;SP_AppId&gt; with the Application ID from the output above. </span>
+<span class="c"># Assign the role:</span>
+<span class="n">az</span> <span class="n">role</span> <span class="n">assignment</span> <span class="n">create</span> <span class="p">-</span><span class="n">-assignee</span> <span class="s2">&quot;&lt;SP_AppID&gt;&quot;</span> <span class="p">-</span><span class="n">-role</span><span class="p">=</span><span class="s2">&quot;User Access Administrator&quot;</span> <span class="p">-</span><span class="n">-scope</span><span class="p">=</span><span class="s2">&quot;/subscriptions/&lt;SUBSCRIPTION_ID&gt;&quot;</span>
+</code></pre></div>
+<strong>Step 3: Set Environment Variables</strong></p>
+<p>In PowerShell, set these environment variables (they must be named exactly as shown):</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Set environment variables for the current session</span>
+<span class="nv">$env:ARM_CLIENT_ID</span><span class="p">=</span><span class="s2">&quot;&lt;appId from output&gt;&quot;</span>
+<span class="nv">$env:ARM_CLIENT_SECRET</span><span class="p">=</span><span class="s2">&quot;&lt;password from output&gt;&quot;</span>
+<span class="nv">$env:ARM_TENANT_ID</span><span class="p">=</span><span class="s2">&quot;&lt;tenant from output&gt;&quot;</span>
+<span class="nv">$env:ARM_SUBSCRIPTION_ID</span><span class="p">=</span><span class="s2">&quot;&lt;your subscription ID&gt;&quot;</span>
+<span class="nv">$env:ARM_USE_AZUREAD</span><span class="p">=</span><span class="n">true</span>
+
+<span class="c"># Verify they&#39;re set</span>
+<span class="nb">echo </span><span class="s2">&quot;Client ID: $env:ARM_CLIENT_ID&quot;</span>
+<span class="nb">echo </span><span class="s2">&quot;Tenant ID: $env:ARM_TENANT_ID&quot;</span>
+<span class="nb">echo </span><span class="s2">&quot;Subscription ID: $env:ARM_SUBSCRIPTION_ID&quot;</span>
+<span class="nb">echo </span><span class="s2">&quot;Client Secret is set: </span><span class="p">$(</span><span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="o">-ne</span> <span class="nv">$null</span><span class="p">)</span><span class="s2">&quot;</span>
+<span class="nb">echo </span><span class="s2">&quot;Use Azure AD: $env:ARM_USE_AZUREAD&quot;</span>
+</code></pre></div>
+<p><strong>To make these permanent (persist across PowerShell sessions):</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Set user environment variables (permanent)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;appId&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_SECRET&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;password&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_TENANT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;tenant&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_SUBSCRIPTION_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;subscription_id&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_USE_AZUREAD&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+
+<span class="c"># Refresh your current session to load the variables</span>
+<span class="nv">$env:ARM_CLIENT_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_SECRET&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="nv">$env:ARM_TENANT_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_TENANT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="nv">$env:ARM_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_SUBSCRIPTION_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="nv">$env:ARM_USE_AZUREAD</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_USE_AZUREAD&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+</code></pre></div></p>
+<p><strong>Step 4: Test the Service Principal</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Login using the service principal</span>
+<span class="n">az</span> <span class="n">login</span> <span class="p">-</span><span class="n">-service-principal</span> <span class="p">-</span><span class="n">-username</span> <span class="nv">$env:ARM_CLIENT_ID</span> <span class="p">-</span><span class="n">-password</span> <span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="p">-</span><span class="n">-tenant</span> <span class="nv">$env:ARM_TENANT_ID</span>
+
+<span class="c"># Verify access</span>
+<span class="n">az</span> <span class="n">account</span> <span class="n">show</span>
+</code></pre></div></p>
+<p><strong>Important Notes:</strong>
+- When these environment variables are set, Terraform automatically uses them
+- You don't need to run <code>az login</code> when using service principal environment variables
+- Keep the client secret secure - treat it like a password
+- Service principals can have specific permissions (Contributor role in this case)</p>
+<p><strong>For CI/CD Pipelines:</strong>
+Store these as secrets in your pipeline:
+- <strong>Azure DevOps:</strong> Pipeline &gt; Edit &gt; Variables &gt; Add (select "Keep this value secret")
+- <strong>GitHub Actions:</strong> Repository &gt; Settings &gt; Secrets and variables &gt; Actions &gt; New repository secret</p>
+<hr />
+<p><strong>Step 2: Navigate to the Terraform Directory</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd </span><span class="n">C</span><span class="p">:\</span><span class="n">Git</span><span class="p">\</span><span class="n">AI-Landing-Zones</span><span class="p">\</span><span class="n">terraform</span>
+</code></pre></div>
+<hr />
+<p><strong>Step 3: (Optional) Set Up Remote Backend</strong></p>
+<p><strong>What is a backend?</strong>
+Terraform stores information about your infrastructure in a "state file". By default, this is stored locally. For production or team environments, you should store it in Azure Storage.</p>
+<p><strong>Option A: Use Local Backend (Recommended for Testing)</strong></p>
+<p>No action needed. Terraform will create a <code>terraform.tfstate</code> file locally.</p>
+<p><strong>Option B: Use Azure Storage Backend (Recommended for Production)</strong></p>
+<p>First, create the backend resources:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Set variables (customize these)</span>
+<span class="nv">$RESOURCE_GROUP_NAME</span><span class="p">=</span><span class="s2">&quot;tfstate-rg&quot;</span>
+<span class="nv">$STORAGE_ACCOUNT_NAME</span><span class="p">=</span><span class="s2">&quot;tfstate</span><span class="p">$(</span><span class="nb">Get-Random</span> <span class="n">-Minimum</span> <span class="n">10000</span> <span class="n">-Maximum</span> <span class="n">99999</span><span class="p">)</span><span class="s2">&quot;</span>  <span class="c"># Must be globally unique</span>
+<span class="nv">$CONTAINER_NAME</span><span class="p">=</span><span class="s2">&quot;tfstate&quot;</span>
+<span class="nv">$LOCATION</span><span class="p">=</span><span class="s2">&quot;eastus&quot;</span>
+
+<span class="c"># Create resource group</span>
+<span class="n">az</span> <span class="nb">group </span><span class="n">create</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$RESOURCE_GROUP_NAME</span> <span class="p">-</span><span class="n">-location</span> <span class="nv">$LOCATION</span>
+
+<span class="c"># Create storage account</span>
+<span class="n">az</span> <span class="n">storage</span> <span class="n">account</span> <span class="n">create</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$STORAGE_ACCOUNT_NAME</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$RESOURCE_GROUP_NAME</span> <span class="p">-</span><span class="n">-location</span> <span class="nv">$LOCATION</span> <span class="p">-</span><span class="n">-sku</span> <span class="n">Standard_LRS</span>
+
+<span class="c"># Create blob container</span>
+<span class="n">az</span> <span class="n">storage</span> <span class="n">container</span> <span class="n">create</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$CONTAINER_NAME</span> <span class="p">-</span><span class="n">-account-name</span> <span class="nv">$STORAGE_ACCOUNT_NAME</span> <span class="p">-</span><span class="n">-auth-mode</span> <span class="n">login</span>
+</code></pre></div>
+<p><strong>Then create a file named <code>backend.tf</code> in the terraform directory:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">terraform</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kr">backend</span><span class="w"> </span><span class="nv">&quot;azurerm&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">resource_group_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tfstate-rg&quot;</span>
+<span class="w">    </span><span class="na">storage_account_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tfstate12345&quot;</span><span class="c1">  # Use the name from above</span>
+<span class="w">    </span><span class="na">container_name</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tfstate&quot;</span>
+<span class="w">    </span><span class="na">key</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ai-landing-zone.tfstate&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<p><strong>Step 4: Configure Variables (Optional)</strong></p>
+<p>The code has default values, but you can customize them by creating a <code>terraform.tfvars</code> file:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># terraform.tfvars</span>
+<span class="na">enable_telemetry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="c1">  # Set to false if you don&#39;t want to send telemetry to Microsoft</span>
+</code></pre></div>
+<p><strong>Note:</strong> The location and resource names are hardcoded in <code>main.tf</code>. If you want to change them, edit <code>main.tf</code> directly:
+- Look for <code>location = "swedencentral"</code> (line ~17)
+- Look for <code>resource_group_name = "ai-lz-rg-01"</code> (line ~19)</p>
+<hr />
+<p><strong>Step 5: Initialize Terraform</strong></p>
+<p>This downloads the required providers and modules:</p>
+<div class="highlight"><pre><span></span><code><span class="n">terraform</span> <span class="n">init</span>
+</code></pre></div>
+<p><strong>Expected output:</strong>
+<div class="highlight"><pre><span></span><code>Initializing the backend...
+Initializing provider plugins...
+- Finding hashicorp/azurerm versions matching &quot;~&gt; 4.21&quot;...
+- Finding hashicorp/http versions matching &quot;~&gt; 3.4&quot;...
+- Installing hashicorp/azurerm v4.21.x...
+- Installed hashicorp/azurerm v4.21.x
+
+Terraform has been successfully initialized!
+</code></pre></div></p>
+<p><strong>If you see errors:</strong>
+- Check your internet connection
+- Ensure you have Terraform 1.9+ installed
+- Try running <code>terraform init -upgrade</code></p>
+<hr />
+<p><strong>Step 6: Review the Deployment Plan</strong></p>
+<p>See what Terraform will create without actually creating it:</p>
+<div class="highlight"><pre><span></span><code><span class="n">terraform</span> <span class="n">plan</span>
+</code></pre></div>
+<p><strong>Tip: To capture the full output for easier review, redirect it to a file:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">terraform</span> <span class="n">plan</span> <span class="p">&gt;</span> <span class="n">plan_output</span><span class="p">.</span><span class="n">txt</span>
+</code></pre></div></p>
+<p><strong>Expected output:</strong>
+- A long list of resources to be created (50+ resources)
+- At the end: <code>Plan: XX to add, 0 to change, 0 to destroy.</code></p>
+<p><strong>Review the output carefully:</strong>
+- Check that the location is correct
+- Check that resource names make sense
+- Ensure no unexpected resources are being created</p>
+<hr />
+<p><strong>Step 7: Deploy the Infrastructure</strong></p>
+<p>Apply the configuration to create the resources:</p>
+<div class="highlight"><pre><span></span><code><span class="n">terraform</span> <span class="n">apply</span>
+</code></pre></div>
+<p><strong>What happens:</strong>
+1. Terraform will show the plan again
+2. You'll be prompted: <code>Do you want to perform these actions?</code>
+3. Type <code>yes</code> and press Enter</p>
+<p><strong>Expected duration:</strong> 15-30 minutes</p>
+<p><strong>You'll see progress output like:</strong>
+<div class="highlight"><pre><span></span><code>module.test.azurerm_resource_group.this: Creating...
+module.test.azurerm_virtual_network.this: Creating...
+module.test.azurerm_resource_group.this: Creation complete after 2s
+...
+Apply complete! Resources: XX added, 0 changed, 0 destroyed.
+</code></pre></div></p>
+<p><strong>If deployment fails:</strong>
+- Read the error message carefully
+- Common issues:
+  - Quota limits (request quota increase in Azure Portal)
+  - Region capacity (try a different region)
+  - Permission issues (ensure you have Contributor role)
+  - Provider not registered (see Prerequisites Step 3)
+  - Key Vault public access is disabled.<br />
+    - In production, GitHub workflows run within the network so this is not an issue.<br />
+    - For local runs, set access to “Allow public access from specific virtual networks and IP addresses” and whitelist workstation’s public IP.  </p>
+<hr />
+<p><strong>Step 8: Verify the Deployment</strong></p>
+<p>Check that resources were created:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># List resource groups</span>
+<span class="n">az</span> <span class="nb">group </span><span class="n">list</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
+
+<span class="c"># List resources in the AI Landing Zone resource group</span>
+<span class="n">az</span> <span class="n">resource</span> <span class="n">list</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="n">ai-lz-rg</span><span class="p">-</span><span class="n">01</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
+</code></pre></div>
+<p><strong>You should see resources like:</strong>
+- Virtual Network (ai-lz-vnet-01)
+- AI Hub
+- Storage accounts
+- Key Vault
+- Container Registry
+- And more...</p>
+<hr />
+<p><strong>Step 9: Access Your Resources</strong></p>
+<p><strong>Azure Portal:</strong>
+1. Go to <a href="https://portal.azure.com">portal.azure.com</a>
+2. Navigate to Resource Groups
+3. Click on <code>ai-lz-rg-01</code>
+4. Explore the deployed resources</p>
+<p><strong>Azure AI Foundry:</strong>
+1. Go to <a href="https://ai.azure.com">ai.azure.com</a>
+2. You should see your AI Hub and Project</p>
+<hr />
+<h2 id="making-changes">Making Changes</h2>
+<p>If you need to modify the configuration:</p>
+<ol>
+<li>Edit the relevant <code>.tf</code> files (usually <code>main.tf</code>)</li>
+<li>Run <code>terraform plan</code> to preview changes</li>
+<li>Run <code>terraform apply</code> to apply changes</li>
+</ol>
+<p><strong>Example:</strong> To change the location:
+- Open <code>main.tf</code>
+- Find <code>location = "swedencentral"</code>
+- Change to your desired region (e.g., <code>location = "eastus"</code>)
+- Run <code>terraform plan</code> and <code>terraform apply</code></p>
+<hr />
+<h2 id="clean-up-destroy-resources">Clean Up / Destroy Resources</h2>
+<p><strong>WARNING:</strong> This will delete ALL resources created by this Terraform configuration!</p>
+<div class="highlight"><pre><span></span><code><span class="n">terraform</span> <span class="n">destroy</span>
+</code></pre></div>
+<p><strong>What happens:</strong>
+1. Terraform shows what will be destroyed
+2. You'll be prompted: <code>Do you really want to destroy all resources?</code>
+3. Type <code>yes</code> and press Enter
+4. All resources will be deleted (takes 10-15 minutes)</p>
+<p><strong>Note:</strong> If destroy fails due to lingering dependencies, wait a few minutes and try again.</p>
+<hr />
+<h2 id="troubleshooting-common-issues">Troubleshooting Common Issues</h2>
+<p><strong>Issue: "Error: building account" or authentication errors</strong></p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Re-authenticate</span>
+<span class="n">az</span> <span class="n">login</span>
+<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="s2">&quot;&lt;YOUR_SUBSCRIPTION_ID&gt;&quot;</span>
+</code></pre></div></p>
+<p><strong>Issue: "Error: insufficient quota"</strong></p>
+<p><strong>Solution:</strong>
+- Go to Azure Portal → Subscriptions → Usage + quotas
+- Request a quota increase for the required resource
+- Or try deploying to a different region</p>
+<p><strong>Issue: "Error: Resource provider not registered"</strong></p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Register the provider mentioned in the error</span>
+<span class="n">az</span> <span class="n">provider</span> <span class="n">register</span> <span class="p">-</span><span class="n">-namespace</span> <span class="p">&lt;</span><span class="n">NAMESPACE_FROM_ERROR</span><span class="p">&gt;</span>
+<span class="c"># Wait a few minutes and try again</span>
+</code></pre></div></p>
+<p><strong>Issue: "Error: A resource with the ID already exists"</strong></p>
+<p><strong>Solution:</strong>
+- Another resource with the same name exists
+- Either delete the existing resource or change the name in <code>main.tf</code></p>
+<p><strong>Issue: Terraform init fails with module download errors</strong></p>
+<p><strong>Solution:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Clear the cache and re-initialize</span>
+<span class="nb">Remove-Item</span> <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="p">.</span><span class="n">terraform</span>
+<span class="n">terraform</span> <span class="n">init</span>
+</code></pre></div></p>
+<p><strong>Issue: "Error: storage account name is not available"</strong></p>
+<p><strong>Solution:</strong>
+- Storage account names must be globally unique
+- The code tries to generate a unique name, but if it fails, edit <code>main.tf</code> to use a different storage account name</p>
+<hr />
+<h2 id="understanding-the-terraform-files">Understanding the Terraform Files</h2>
+<ul>
+<li><strong><code>terraform.tf</code></strong>: Defines Terraform version and required providers (azurerm, http, random)</li>
+<li><strong><code>variables.tf</code></strong>: Defines input variables (only <code>enable_telemetry</code> in this case)</li>
+<li><strong><code>main.tf</code></strong>: The main configuration that defines all Azure resources</li>
+<li><strong><code>terraform.tfstate</code></strong>: Created after deployment, stores current infrastructure state (DO NOT manually edit)</li>
+<li><strong><code>terraform.tfvars</code></strong>: (Optional) Your custom variable values</li>
+<li><strong><code>backend.tf</code></strong>: (Optional) Remote backend configuration for state storage</li>
+</ul>
+<hr />
+<h2 id="next-steps-after-deployment">Next Steps After Deployment</h2>
+<ol>
+<li>
+<p><strong>Explore AI Foundry:</strong></p>
+<ul>
+<li>Go to <a href="https://ai.azure.com">ai.azure.com</a></li>
+<li>Open your project: "Project 1 Display Name"</li>
+<li>Start building AI applications</li>
+</ul>
+</li>
+<li>
+<p><strong>Connect to Resources:</strong></p>
+<ul>
+<li>Use Azure Bastion to securely connect to VMs</li>
+<li>Access Container Registry to push/pull container images</li>
+<li>Use Key Vault to manage secrets</li>
+</ul>
+</li>
+<li>
+<p><strong>Deploy AI Models:</strong></p>
+<ul>
+<li>The deployment includes GPT-4o model deployment</li>
+<li>You can deploy additional models through Azure AI Foundry</li>
+</ul>
+</li>
+<li>
+<p><strong>Set Up CI/CD:</strong></p>
+<ul>
+<li>Integrate with Azure DevOps or GitHub Actions</li>
+<li>Automate model deployment and application updates</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/azure/ai-studio/">Azure AI Foundry Documentation</a></li>
+<li><a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs">Terraform Azure Provider Documentation</a></li>
+<li><a href="https://github.com/Azure/AI-Landing-Zones">Azure AI Landing Zone Pattern</a></li>
+</ul>
+<hr />
+<h2 id="getting-help">Getting Help</h2>
+<p>If you encounter issues:
+1. Check the error message carefully
+2. Review the Troubleshooting section above
+3. Check Azure Portal for resource status
+4. Review Terraform state: <code>terraform show</code>
+5. Open an issue on the GitHub repository</p>
+<hr />
+<h2 id="summary-checklist">Summary Checklist</h2>
+<ul>
+<li>[ ] Install Terraform (1.9+)</li>
+<li>[ ] Install Azure CLI</li>
+<li>[ ] Run <code>az login</code> and set correct subscription</li>
+<li>[ ] Register required Azure resource providers</li>
+<li>[ ] Navigate to terraform directory</li>
+<li>[ ] (Optional) Create backend storage and <code>backend.tf</code></li>
+<li>[ ] (Optional) Create <code>terraform.tfvars</code> with custom values</li>
+<li>[ ] Run <code>terraform init</code></li>
+<li>[ ] Run <code>terraform plan</code> and review</li>
+<li>[ ] Run <code>terraform apply</code> and type <code>yes</code></li>
+<li>[ ] Wait 15-30 minutes for deployment</li>
+<li>[ ] Verify resources in Azure Portal</li>
+<li>[ ] Access AI Foundry at ai.azure.com</li>
+</ul>
+<p>You're now ready to build AI applications on your new AI Landing Zone!</p>
 
 
 
