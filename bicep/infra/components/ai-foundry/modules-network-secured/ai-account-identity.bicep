@@ -74,7 +74,7 @@ resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@
   name: defaultRaiPolicyName
   properties: {
     mode: 'Blocking'
-    basePolicyName: 'Microsoft.DefaultV2'
+    basePolicyName: 'Microsoft.Default'
     contentFilters: [
       { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
       { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
@@ -82,8 +82,8 @@ resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@
       { name: 'Sexual',    blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
       { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
       { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
-      { name: 'SelfHarm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
-      { name: 'SelfHarm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Selfharm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Selfharm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
       // Prompt shield (jailbreak detection) - prompts only
       { name: 'Jailbreak', blocking: true, enabled: true, source: 'Prompt' }
     ]
