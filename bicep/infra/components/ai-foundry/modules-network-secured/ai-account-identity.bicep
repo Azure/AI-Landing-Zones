@@ -75,14 +75,14 @@ resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@
   properties: {
     mode: 'Default'
     contentFilters: [
-      { name: 'Hate',      blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Prompt'     }
-      { name: 'Hate',      blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Completion' }
-      { name: 'Sexual',    blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Prompt'     }
-      { name: 'Sexual',    blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Completion' }
-      { name: 'Violence',  blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Prompt'     }
-      { name: 'Violence',  blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Completion' }
-      { name: 'SelfHarm',  blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Prompt'     }
-      { name: 'SelfHarm',  blocking: true, enabled: true, allowedContentLevel: 'Medium', source: 'Completion' }
+      { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Sexual',    blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Sexual',    blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'SelfHarm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'SelfHarm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
       // Prompt shield (jailbreak detection) - prompts only
       { name: 'Jailbreak', blocking: true, enabled: true, source: 'Prompt' }
     ]
