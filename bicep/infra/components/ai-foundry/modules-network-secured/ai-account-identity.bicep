@@ -74,6 +74,7 @@ resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@
   name: defaultRaiPolicyName
   properties: {
     mode: 'Blocking'
+    basePolicyName: 'Microsoft.DefaultV2'
     contentFilters: [
       { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
       { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
