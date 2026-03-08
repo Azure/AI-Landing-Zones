@@ -10,8 +10,8 @@ param modelDeployments array = []
 param agentSubnetId string
 param networkInjection string = 'true'
 
-@description('Optional. Name of the built-in RAI policy applied to all model deployments. Defaults to "Microsoft.DefaultV2".')
-param defaultRaiPolicyName string = 'Microsoft.DefaultV2'
+@description('Optional. Name for the default content filter RAI policy applied to all model deployments. Defaults to "default-content-filter".')
+param defaultRaiPolicyName string = 'default-content-filter'
 
 var varIsNetworkInjected = networkInjection == 'true'
 
@@ -66,6 +66,30 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   }
 }
 
+// Default content filter policy: blocks harmful content at Medium severity across all categories.
+// Applied to every model deployment unless overridden per-deployment via raiPolicyName.
+#disable-next-line BCP081
+resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@2025-04-01-preview' = {
+  parent: account
+  name: defaultRaiPolicyName
+  properties: {
+    mode: 'Asynchronous_filter'
+    basePolicyName: 'Microsoft.Default'
+    contentFilters: [
+      { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Hate',      blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Sexual',    blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Sexual',    blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Self-Harm', blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Self-Harm', blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      // Prompt shield (jailbreak detection) - prompts only
+      { name: 'Jailbreak', blocking: true, enabled: true, source: 'Prompt' }
+    ]
+  }
+}
+
 @batchSize(1)
 #disable-next-line BCP081
 resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-04-01-preview' = [
@@ -84,6 +108,7 @@ resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-
       }
       raiPolicyName: !empty(d.?raiPolicyName ?? '') ? string(d.raiPolicyName) : defaultRaiPolicyName
     }
+    dependsOn: [defaultContentFilter]
   }
 ]
 
@@ -99,8 +124,8 @@ output accountID string = account.id
 output accountTarget string = account.properties.endpoint
 output accountPrincipalId string = account.identity.principalId
 
-@description('Name of the RAI content filter policy applied to model deployments.')
-output defaultRaiPolicyName string = defaultRaiPolicyName
+@description('Name of the default RAI content filter policy created on the account.')
+output defaultRaiPolicyName string = defaultContentFilter.name
 
 @description('Map of model deployment name to deployment resource ID.')
 output modelDeploymentResourceIdsByName object = reduce(modelDeploymentPairs, {}, (acc, p) => union(acc, {
