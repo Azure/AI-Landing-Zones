@@ -31,6 +31,7 @@ param deployToggles = {
   cosmosDb: false
   searchService: false
   groundingWithBingSearch: false
+  contentSafety: false
   containerRegistry: false
   containerEnv: false
   containerApps: false

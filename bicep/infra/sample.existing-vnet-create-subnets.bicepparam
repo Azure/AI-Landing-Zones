@@ -52,6 +52,7 @@ param deployToggles = {
   virtualNetwork: false
   containerApps: false
   groundingWithBingSearch: false
+  contentSafety: false
   userDefinedRoutes: true
 }
 

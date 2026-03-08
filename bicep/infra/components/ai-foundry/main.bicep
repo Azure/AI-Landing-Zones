@@ -259,6 +259,9 @@ param createCapabilityHosts bool = false
 @description('Optional. When false, skips the best-effort deployment script delay used before creating the project capability host (useful when deploymentScripts are blocked by policy).')
 param enableCapabilityHostDelayScript bool = true
 
+@description('Optional. Name for the default RAI content filter policy. Defaults to "default-content-filter".')
+param defaultRaiPolicyName string = 'default-content-filter'
+
 @description('Optional. How long to wait (in seconds) before creating the project capability host, to give the service time to finish provisioning the account-level capability host. Default: 600 (10 minutes).')
 param capabilityHostWaitSeconds int = 600
 
@@ -311,6 +314,7 @@ module aiAccount 'modules-network-secured/ai-account-identity.bicep' = {
     modelDeployments: modelDeployments
     agentSubnetId: varHasVnet ? resolvedAgentSubnetId : ''
     networkInjection: varHasVnet ? 'true' : 'false'
+    defaultRaiPolicyName: defaultRaiPolicyName
   }
 }
 

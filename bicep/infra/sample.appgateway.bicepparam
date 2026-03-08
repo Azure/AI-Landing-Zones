@@ -53,6 +53,7 @@ param deployToggles = {
   searchService: false
   containerRegistry: false
   groundingWithBingSearch: false
+  contentSafety: false
   aiFoundry: false
   
   // Egress controls (forced tunneling via Azure Firewall)

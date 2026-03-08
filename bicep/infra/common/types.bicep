@@ -1315,6 +1315,9 @@ type deployTogglesType = {
 
   @description('Required. Toggle to deploy NSG for Bastion host subnet (true) or not (false).')
   bastionNsg: bool
+
+  @description('Optional. Toggle to deploy Azure AI Content Safety (true) or not (false). Defaults to false when omitted.')
+  contentSafety: bool?
 }
 
 @export()
@@ -1403,6 +1406,9 @@ type resourceIdsType = {
 
   @description('Optional. Existing NSG resource ID to reuse for the Bastion host subnet.')
   bastionNsgResourceId: string?
+
+  @description('Optional. Existing Azure AI Content Safety resource ID to reuse.')
+  contentSafetyResourceId: string?
 }
 
 @export()
@@ -3577,6 +3583,25 @@ type kSGroundingWithBingDefinitionType = {
     @description('Required. Arbitrary key for each tag.')
     *: string
   }
+}
+
+// ---------------------------------------------
+// Content Safety
+// ---------------------------------------------
+@export()
+@description('Configuration object for Azure AI Content Safety.')
+type contentSafetyDefinitionType = {
+  @description('Optional. Name for the Content Safety resource.')
+  name: string?
+
+  @description('Optional. Azure region. Defaults to the landing zone location.')
+  location: string?
+
+  @description('Optional. Tags to apply to the Content Safety resource.')
+  tags: { *: string }?
+
+  @description('Optional. SKU. F0 is free tier (limited); S0 for production. Default: S0.')
+  sku: 'F0' | 'S0'?
 }
 
 // ---------------------------------------------

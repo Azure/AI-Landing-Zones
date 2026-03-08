@@ -155,6 +155,7 @@ import {
   kSAISearchDefinitionInputType
   aiFoundryDefinitionType
   kSGroundingWithBingDefinitionType
+  contentSafetyDefinitionType
   wafPolicyDefinitionsType
   appGatewayDefinitionType
   firewallPolicyDefinitionType
@@ -2261,6 +2262,7 @@ var varAiFoundryModelDeploymentsMapped = [
     modelVersion: string(d.model.version)
     modelSkuName: string(d.sku.name)
     modelCapacity: int(d.sku.capacity ?? 1)
+    raiPolicyName: d.?raiPolicyName ?? ''
   }
 ]
 
@@ -2417,6 +2419,31 @@ module bingSearch 'components/bing-search/main.bicep' = if (varInvokeBingModule)
   dependsOn: [
     aiFoundry!
   ]
+}
+
+// -----------------------
+// 17.5 CONTENT SAFETY
+// -----------------------
+
+@description('Optional. Azure AI Content Safety configuration.')
+param contentSafetyDefinition contentSafetyDefinitionType?
+
+var varDeployContentSafety = (deployToggles.?contentSafety ?? false) && empty(resourceIds.?contentSafetyResourceId ?? '')
+var varInvokeContentSafetyModule = varDeployAiFoundry && (varDeployContentSafety || !empty(resourceIds.?contentSafetyResourceId ?? ''))
+
+var varContentSafetyName = contentSafetyDefinition.?name ?? 'cs-${baseName}'
+
+module contentSafety 'components/content-safety/main.bicep' = if (varInvokeContentSafetyModule) {
+  name: 'contentSafetyDeployment-${varUniqueSuffix}'
+  params: {
+    accountName:        aiFoundry!.outputs.aiServicesName
+    contentSafetyName:  varContentSafetyName
+    location:           contentSafetyDefinition.?location ?? location
+    tags:               contentSafetyDefinition.?tags ?? tags
+    sku:                contentSafetyDefinition.?sku ?? 'S0'
+    existingResourceId: resourceIds.?contentSafetyResourceId ?? ''
+  }
+  dependsOn: [aiFoundry!]
 }
 
 // -----------------------
@@ -3684,6 +3711,10 @@ output aiSearchResourceId string = varAiSearchResourceId
 // Bing Grounding Outputs
 @description('Bing Search service resource ID (if deployed).')
 output bingSearchResourceId string = varInvokeBingModule ? bingSearch!.outputs.resourceId : ''
+
+// Content Safety Outputs
+@description('Content Safety resource ID (if deployed or reused).')
+output contentSafetyResourceId string = varInvokeContentSafetyModule ? contentSafety!.outputs.resourceId : ''
 
 // Gateways and Firewall Outputs
 @description('WAF Policy resource ID (if deployed).')
