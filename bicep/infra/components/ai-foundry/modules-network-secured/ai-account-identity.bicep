@@ -82,10 +82,15 @@ resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@
       { name: 'Sexual',    blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
       { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
       { name: 'Violence',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
-      { name: 'Self-Harm', blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
-      { name: 'Self-Harm', blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
+      { name: 'Selfharm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Prompt'     }
+      { name: 'Selfharm',  blocking: true, enabled: true, severityThreshold: 'Medium', source: 'Completion' }
       // Prompt shield (jailbreak detection) - prompts only
       { name: 'Jailbreak', blocking: true, enabled: true, source: 'Prompt' }
+      // Protected material detection
+      { name: 'Protected Material Text', blocking: true, enabled: true, source: 'Completion' }
+      { name: 'Protected Material Code', blocking: true, enabled: true, source: 'Completion' }
+      // Profanity filter
+      { name: 'Profanity', blocking: true, enabled: true, source: 'Prompt' }
     ]
   }
 }

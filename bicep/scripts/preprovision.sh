@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Preprovision script for AI/ML Landing Zone with Template Specs
 #
