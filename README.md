@@ -9,10 +9,10 @@ The AI Landing Zone provides an enterprise-scale production ready reference arch
 - The AI Landing Zone is able to cover both generative and non-generative scenario per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
 - Given the pace of innovation and change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.
 
-## Reference Architectures
-
 The AI Landing Zones comprises of a landing zone for Foundry and a landing zone for AI Gateway, both of them can be deployed together or independently based on the needs of the organization and the use case.
 ![image](/media/AI-Landing-Zone.png)
+
+## Reference Architectures
 
 ### AI Landing Zone for Foundry
 
