@@ -16,14 +16,14 @@
         <link rel="prev" href="../../architecture/faq/">
       
       
-        <link rel="next" href="../concepts-networking/">
+        <link rel="next" href="../how-to-deploy/">
       
       
         
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bicep-implementation" class="md-skip">
+        <a href="#overview" class="md-skip">
           Skip to content
         </a>
       
@@ -535,10 +535,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#how-the-bicep-is-organized" class="md-nav__link">
+  <a href="#deployment-modes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How the Bicep is organized
+        Deployment modes
       
     </span>
   </a>
@@ -546,60 +546,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-switches-and-deployment-patterns" class="md-nav__link">
+  <a href="#what-gets-deployed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key switches and deployment patterns
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key switches and deployment patterns">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#deploy-toggles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Deploy toggles
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resource-reuse" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resource reuse
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#platform-integration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform integration
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-deployments-run-azd-template-specs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How deployments run (azd + Template Specs)
+        What gets deployed
       
     </span>
   </a>
@@ -607,10 +557,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#where-to-go-next" class="md-nav__link">
+  <a href="#role-assignments" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Where to go next
+        Role assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
       
     </span>
   </a>
@@ -632,62 +593,15 @@
   
   
   
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Concepts
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Concepts
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../concepts-networking/" class="md-nav__link">
+      <a href="../how-to-deploy/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Networking
+    How to Deploy
   
 
     
@@ -708,50 +622,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../concepts-platform/" class="md-nav__link">
+      <a href="../permissions/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Platform LZ Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-to-use/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How to use
+    Permissions
   
 
     
@@ -788,228 +666,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Examples
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5_1" id="__nav_4_5_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Standalone
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_5_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Standalone
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-standalone/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Default (Internal Only)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-standalone-external/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    External (AppGW)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-existing-vnet/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Using Existing VNet
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Platform LZ Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -1096,61 +752,67 @@
   
 
 
-<h1 id="bicep-implementation">Bicep implementation</h1>
-<p>AI Landing Zones repo includes a <strong>Bicep-based implementation</strong> of the AI Landing Zone, built to deploy a secure, modular baseline for AI apps and agents on Azure. It is designed to work in multiple enterprise patterns:</p>
+<h1 id="overview">Overview</h1>
+<p>The Azure AI Landing Zone is an enterprise-scale, production-ready reference architecture designed to deploy secure and resilient AI applications and agents on Azure. The Bicep implementation is maintained in a dedicated repository.</p>
+<p><strong>Source repository:</strong> <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/">Azure/bicep-ptn-aiml-landing-zone</a></p>
+<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/Azure/bicep-ptn-aiml-landing-zone/main/media/Architecture%20Diagram.png" /></p>
+<h2 id="deployment-modes">Deployment modes</h2>
+<p>The template supports two deployment modes that you can choose based on your security requirements:</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Network isolation</th>
+<th>Jumpbox VM</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Basic</strong></td>
+<td>No</td>
+<td>Optional</td>
+<td>Quick demos and development environments</td>
+</tr>
+<tr>
+<td><strong>Zero Trust</strong></td>
+<td>Yes</td>
+<td>Yes (via Bastion)</td>
+<td>Production workloads requiring full network isolation</td>
+</tr>
+</tbody>
+</table>
+<p>Both modes are deployed using the <a href="https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd">Azure Developer CLI (<code>azd</code>)</a>. See <a href="../how-to-deploy/">How to Deploy</a> for step-by-step instructions.</p>
+<h2 id="what-gets-deployed">What gets deployed</h2>
+<p>The template provisions a complete AI application environment with the following core services:</p>
 <ul>
-<li><strong>Standalone workload (default)</strong>: the deployment creates networking and (optionally) private DNS.</li>
-<li><strong>Platform-integrated workload</strong>: the workload deploys resources and Private Endpoints, while the <strong>platform</strong> owns shared DNS/networking patterns.</li>
-<li><strong>Reuse existing resources</strong>: you can reuse an existing VNet (and other resources) and deploy into it.</li>
+<li><strong>Microsoft Foundry</strong> — AI Foundry account and project with model deployments</li>
+<li><strong>Azure AI Search</strong> — Search service for retrieval-augmented generation (RAG)</li>
+<li><strong>Azure Cosmos DB</strong> — Database for conversation history and application data</li>
+<li><strong>Azure Container Apps</strong> — Container runtime with managed environment and workload profiles</li>
+<li><strong>Azure Container Registry</strong> — Private registry for container images</li>
+<li><strong>Azure Key Vault</strong> — Secrets and certificate management</li>
+<li><strong>Azure App Configuration</strong> — Centralized application configuration</li>
+<li><strong>Azure Storage Account</strong> — Blob storage for documents and data</li>
+<li><strong>Azure Application Insights</strong> — Application monitoring and diagnostics</li>
+<li><strong>Azure Log Analytics</strong> — Centralized logging</li>
 </ul>
-<h2 id="how-the-bicep-is-organized">How the Bicep is organized</h2>
-<p>The main orchestrator template is:</p>
+<p>When network isolation is enabled, the deployment additionally provisions:</p>
 <ul>
-<li><code>bicep/infra/main.bicep</code></li>
+<li>Virtual network with private endpoints for all services</li>
+<li>Network Security Groups (NSGs)</li>
+<li>Azure Bastion for secure VM access</li>
+<li>Jumpbox VM with pre-installed development tools</li>
+<li>Private DNS zones for name resolution</li>
 </ul>
-<p>Supporting folders (source-of-truth lives under <code>bicep/infra/</code>):</p>
+<p>Every service can be individually toggled on or off via deploy parameters. See <a href="../parameterization/">Parameterization</a> for the full reference.</p>
+<h2 id="role-assignments">Role assignments</h2>
+<p>The deployment configures role-based access control (RBAC) for service-to-service communication using managed identities. See <a href="../permissions/">Permissions</a> for the complete list of role assignments.</p>
+<h2 id="next-steps">Next steps</h2>
 <ul>
-<li><code>components/</code>: repo-specific components and orchestration glue</li>
-<li><code>wrappers/</code>: wrappers around Azure Verified Modules (AVM) used by this repo</li>
-<li><code>common/</code>: shared types/helpers (including strongly typed parameter objects)</li>
-<li><code>helpers/</code>: helper modules for subnet setup and related operations</li>
-<li><code>sample.*.bicepparam</code>: scenario-focused parameter files you can copy</li>
-</ul>
-<blockquote>
-<p>Note: The recommended way to deploy is via <code>azd</code> (see <a href="../how-to-use/">how-to-use.md</a>).</p>
-</blockquote>
-<h2 id="key-switches-and-deployment-patterns">Key switches and deployment patterns</h2>
-<h3 id="deploy-toggles">Deploy toggles</h3>
-<p>The template uses a <code>deployToggles</code> object to turn features on/off. This is the quickest way to customize what gets deployed.</p>
-<h3 id="resource-reuse">Resource reuse</h3>
-<p>The template supports “create new” and “reuse existing” patterns via a <code>resourceIds</code> object.</p>
-<p>A common example is reusing a VNet:</p>
-<ul>
-<li>Set the VNet toggle off (so the template doesn’t try to create it)</li>
-<li>Provide the VNet resource id in <code>resourceIds</code></li>
-<li>Ensure required subnets exist with the expected names</li>
-</ul>
-<p>See: <a href="../example-standalone/">examples</a> and the existing-VNet runbook under <code>tests/</code>.</p>
-<h3 id="platform-integration">Platform integration</h3>
-<p><code>flagPlatformLandingZone</code> controls the split between workload-owned and platform-owned responsibilities.</p>
-<ul>
-<li><code>false</code> (standalone): workload deployment can create Private DNS zones + VNet links</li>
-<li><code>true</code> (platform-integrated): workload expects platform-managed DNS (and often hub networking)</li>
-</ul>
-<h2 id="how-deployments-run-azd-template-specs">How deployments run (azd + Template Specs)</h2>
-<p>Deployments typically run through <code>azd provision</code>.</p>
-<p>The bicep implementation uses <strong>Template Specs</strong> during provisioning to bypass the ARM template size limit. In general:</p>
-<ul>
-<li>Pre-provision scripts build/publish Template Specs</li>
-<li>The deployment executes using those Template Specs</li>
-<li>Post-provision scripts remove the temporary Template Specs after success</li>
-</ul>
-<p>Details and prerequisites: <a href="../how-to-use/">how-to-use.md</a></p>
-<h2 id="where-to-go-next">Where to go next</h2>
-<ul>
-<li>Start with <a href="../how-to-use/">how-to-use.md</a>.</li>
-<li>Understand all inputs in <a href="../parameterization/">parameterization.md</a>.</li>
-<li>Pick a scenario from <a href="../example-standalone/">examples</a>.</li>
+<li><a href="../how-to-deploy/">How to Deploy</a> — Prerequisites and deployment instructions</li>
+<li><a href="../parameterization/">Parameterization</a> — Full parameter reference</li>
+<li><a href="../permissions/">Permissions</a> — Role assignments provisioned by the template</li>
 </ul>
 
 

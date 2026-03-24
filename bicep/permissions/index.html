@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../concepts-platform/">
+        <link rel="prev" href="../how-to-deploy/">
       
       
         <link rel="next" href="../parameterization/">
@@ -23,11 +23,11 @@
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>How to use - Azure AI Landing Zones</title>
+        <title>Permissions - Azure AI Landing Zones</title>
       
     
     
@@ -77,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#permissions" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -108,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              How to use
+              Permissions
             
           </span>
         </div>
@@ -497,62 +502,15 @@
   
   
   
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Concepts
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Concepts
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../concepts-networking/" class="md-nav__link">
+      <a href="../how-to-deploy/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Networking
+    How to Deploy
   
 
     
@@ -561,42 +519,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../concepts-platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Platform LZ Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -615,6 +537,26 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -623,7 +565,7 @@
   <span class="md-ellipsis">
     
   
-    How to use
+    Permissions
   
 
     
@@ -632,6 +574,69 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-foundry-and-ai-search-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Foundry and AI Search Assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#container-app-role-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container App Role Assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executor-role-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executor Role Assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jumpbox-vm-role-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jumpbox VM Role Assignments
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -661,228 +666,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Examples
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Examples
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5_1" id="__nav_4_5_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Standalone
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_5_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Standalone
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-standalone/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Default (Internal Only)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-standalone-external/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    External (AppGW)
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-existing-vnet/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Using Existing VNet
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../example-platform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Platform LZ Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -969,87 +752,305 @@
   
 
 
-  <h1>How to use</h1>
-
-<p>The AI Landing Zone repo includes a <strong>Bicep-based implementation</strong> of the AI Landing Zone to deploy a secure, modular baseline for AI apps and agents on Azure. Follow the steps below for prerequisites and deployment.</p>
-<p><strong>1) Prerequisites</strong></p>
-<ul>
-<li><strong>Azure CLI</strong> and <strong>Azure Developer CLI</strong> installed and signed in  </li>
-<li>A <strong>resource group</strong> in your target subscription  </li>
-<li><strong>Owner</strong> or <strong>Contributor + User Access Administrator</strong> permissions on the subscription  </li>
-</ul>
-<p><strong>2) Quick start with azd</strong></p>
-<p><strong>Deployment steps</strong></p>
-<p>2.1.  <strong>Sign in to Azure</strong></p>
-<div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
-</code></pre></div>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>auth<span class="w"> </span>login
-</code></pre></div>
-<blockquote>
-<p>Note: If you work with multiple tenants, you can specify the tenant explicitly. For Azure CLI, use <code>az login --tenant &lt;TENANT_ID_OR_DOMAIN&gt;</code>. For Azure Developer CLI, use <code>azd auth login --tenant-id &lt;TENANT_ID_OR_DOMAIN&gt;</code>. For more sign-in options (device code, service principal, managed identity), see the documentation for <code>az login</code> and <code>azd auth login</code>.</p>
-</blockquote>
-<p>2.2. <strong>Create the resource group</strong> where you will deploy the AI Landing Zone resources</p>
-<div class="highlight"><pre><span></span><code>az<span class="w"> </span>group<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span><span class="s2">&quot;rg-ai-lz-RANDOM_SUFFIX&quot;</span><span class="w"> </span>--location<span class="w"> </span><span class="s2">&quot;eastus2&quot;</span>
-</code></pre></div>
-<blockquote>
-<p>Note: Replace <code>RANDOM_SUFFIX</code> with a unique value (for example a timestamp or a short random number) to avoid name collisions.</p>
-</blockquote>
-<p>2.3. <strong>Initialize the project</strong></p>
-<p>In an empty folder (e.g., <code>deploy</code>), run:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>Azure/AI-Landing-Zones<span class="w"> </span>-e<span class="w"> </span>ai-lz-RANDOM_SUFFIX
-</code></pre></div>
-<p>2.4. <strong>Set environment variables</strong> <code>AZURE_LOCATION</code>, <code>AZURE_RESOURCE_GROUP</code>, <code>AZURE_SUBSCRIPTION_ID</code>.</p>
-<p><strong>Bash (Linux/macOS, WSL, Cloud Shell)</strong></p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_LOCATION</span><span class="o">=</span><span class="s2">&quot;eastus2&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_RESOURCE_GROUP</span><span class="o">=</span><span class="s2">&quot;rg-ai-lz-RANDOM_SUFFIX&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">AZURE_SUBSCRIPTION_ID</span><span class="o">=</span><span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
-</code></pre></div>
-<p><strong>PowerShell (Windows/PowerShell Core)</strong></p>
-<div class="highlight"><pre><span></span><code><span class="nv">$env:AZURE_LOCATION</span> <span class="p">=</span> <span class="s2">&quot;eastus2&quot;</span>
-<span class="nv">$env:AZURE_RESOURCE_GROUP</span> <span class="p">=</span> <span class="s2">&quot;rg-ai-lz-RANDOM_SUFFIX&quot;</span>
-<span class="nv">$env:AZURE_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="s2">&quot;00000000-1111-2222-3333-444444444444&quot;</span>
-</code></pre></div>
-<p>2.5. <strong>(Optional) Customize parameters</strong></p>
-<p>Edit <code>bicep/infra/main.bicepparam</code> if you want to adjust deployment options. The default configuration assumes a greenfield deployment scenario. For more deployment scenarios, see <a href="../parameterization/">Parameterization</a> and <a href="../example-standalone/">Examples</a>.</p>
-<p>2.6. <strong>Provision the infrastructure</strong></p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
-</code></pre></div>
-<blockquote>
-<p>Note: Provisioning uses Template Specs to bypass the 4 MB ARM template size limit. Pre-provision scripts build and publish them, while post-provision scripts remove them after success.</p>
-<p>Tip: Alternative deployment with Azure CLI. Clone the repo, set environment variables manually (for example, <code>$env:VAR="value"</code>), run the pre-provision script, then use <code>az deployment group create</code> instead of <code>azd provision</code>. Remember to run the post-provision script after deployment.</p>
-</blockquote>
-<p><strong>3) Accessing VMs</strong></p>
-<blockquote>
-<p>Note: VM deployment is optional. This section applies only if you chose to deploy the Jump VM or Build VM during provisioning.</p>
-</blockquote>
-<p><strong>VM Credentials</strong></p>
-<p>The template uses auto-generated random passwords by default for security. You can optionally provide custom passwords (or SSH keys for the Linux Build VM) as parameters during deployment.</p>
-<p><strong>Default usernames:</strong></p>
-<ul>
-<li>Jump VM (Windows): <code>azureuser</code></li>
-<li>Build VM (Linux): <code>builduser</code></li>
-</ul>
-<p><strong>Resetting Passwords</strong></p>
-<p>If you used auto-generated passwords (default), reset them through the Azure Portal before connecting:</p>
-<ol>
-<li>Navigate to the VM resource</li>
-<li>Go to <strong>Help</strong> → <strong>Reset password</strong></li>
-<li>Enter the username and your new password</li>
-<li>Click <strong>Update</strong></li>
-</ol>
-<p><img alt="Reset Password in Azure Portal" src="../media/reset_password.png" /></p>
-<p><strong>Connecting to VMs</strong></p>
-<ul>
-<li><strong>Jump VM (Windows)</strong>: Azure Bastion or RDP</li>
-<li><strong>Build VM (Linux)</strong>: SSH</li>
-</ul>
-<p>Both VMs provide access to resources within the virtual network.</p>
-<p><strong>4) Reference docs</strong></p>
-<p>For detailed configuration and examples, see:</p>
-<ul>
-<li><strong><a href="../parameterization/">Parameterization</a></strong> — Learn how to parameterize the deployment</li>
-<li><strong><a href="../example-standalone/">Examples</a></strong> — Common deployment scenarios</li>
-</ul>
+<h1 id="permissions">Permissions</h1>
+<p>The following role assignments are provisioned by the template based on the <strong>default configuration</strong> in <code>main.parameters.json</code>. This includes the default set of container apps, their associated roles, and the services they interact with.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you customize the parameters before provisioning — such as adding or removing container apps or changing role mappings — the actual assignments will vary accordingly.</p>
+</div>
+<h2 id="microsoft-foundry-and-ai-search-assignments">Microsoft Foundry and AI Search Assignments</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services User</td>
+<td>Search Service</td>
+<td>Allow Search Service to access vectorizers</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Reader</td>
+<td>Microsoft Foundry Project</td>
+<td>Read index data</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Service Contributor</td>
+<td>Microsoft Foundry Project</td>
+<td>Create AI Search connection</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Reader</td>
+<td>Microsoft Foundry Project</td>
+<td>Read blob data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Reader</td>
+<td>Search Service</td>
+<td>Read blob data for indexing</td>
+</tr>
+</tbody>
+</table>
+<h2 id="container-app-role-assignments">Container App Role Assignments</h2>
+<p>Current default configuration provisions a single Hello World container app (<code>orchestrator</code>), so only the assignments below are expected by default.</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GenAI App Configuration Store</td>
+<td>App Configuration Data Reader</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read configuration data</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPull</td>
+<td>ContainerApp: orchestrator</td>
+<td>Pull container images</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Secrets User</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read secrets</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Reader</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read index data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Reader</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read blob data</td>
+</tr>
+<tr>
+<td>GenAI App Cosmos DB</td>
+<td>Cosmos DB Built-in Data Contributor</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read/write Cosmos DB data</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services User</td>
+<td>ContainerApp: orchestrator</td>
+<td>Access Cognitive Services</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services OpenAI User</td>
+<td>ContainerApp: orchestrator</td>
+<td>Use OpenAI APIs</td>
+</tr>
+</tbody>
+</table>
+<h2 id="executor-role-assignments">Executor Role Assignments</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GenAI App Configuration Store</td>
+<td>App Configuration Data Owner</td>
+<td>Executor</td>
+<td>Full control over configuration settings</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPush</td>
+<td>Executor</td>
+<td>Push container images</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPull</td>
+<td>Executor</td>
+<td>Pull container images</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Contributor</td>
+<td>Executor</td>
+<td>Manage Key Vault settings</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Secrets Officer</td>
+<td>Executor</td>
+<td>Create Key Vault secrets</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Service Contributor</td>
+<td>Executor</td>
+<td>Create/update search service elements</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Contributor</td>
+<td>Executor</td>
+<td>Read/write search index data</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Reader</td>
+<td>Executor</td>
+<td>Read index data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Contributor</td>
+<td>Executor</td>
+<td>Read/write blob data</td>
+</tr>
+<tr>
+<td>GenAI App Cosmos DB</td>
+<td>Cosmos DB Built-in Data Contributor</td>
+<td>Executor</td>
+<td>Read/write Cosmos DB data</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services OpenAI User</td>
+<td>Executor</td>
+<td>Use OpenAI APIs</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services User</td>
+<td>Executor</td>
+<td>Access Cognitive Services</td>
+</tr>
+</tbody>
+</table>
+<h2 id="jumpbox-vm-role-assignments">Jumpbox VM Role Assignments</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GenAI App Container Apps</td>
+<td>Container Apps Contributor</td>
+<td>Jumpbox VM</td>
+<td>Full control over Container Apps</td>
+</tr>
+<tr>
+<td>Azure Managed Identity</td>
+<td>Managed Identity Operator</td>
+<td>Jumpbox VM</td>
+<td>Assign and manage user-assigned identities</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>Container Registry Repository Writer</td>
+<td>Jumpbox VM</td>
+<td>Write to ACR repositories</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>Container Registry Tasks Contributor</td>
+<td>Jumpbox VM</td>
+<td>Manage ACR tasks</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>Container Registry Data Access Configuration Administrator</td>
+<td>Jumpbox VM</td>
+<td>Manage ACR data access configuration</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPush</td>
+<td>Jumpbox VM</td>
+<td>Push container images</td>
+</tr>
+<tr>
+<td>GenAI App Configuration Store</td>
+<td>App Configuration Data Owner</td>
+<td>Jumpbox VM</td>
+<td>Full control over configuration settings</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Contributor</td>
+<td>Jumpbox VM</td>
+<td>Manage Key Vault settings</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Secrets Officer</td>
+<td>Jumpbox VM</td>
+<td>Create Key Vault secrets</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Service Contributor</td>
+<td>Jumpbox VM</td>
+<td>Create/update search service elements</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Contributor</td>
+<td>Jumpbox VM</td>
+<td>Read/write search index data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Contributor</td>
+<td>Jumpbox VM</td>
+<td>Read/write blob data</td>
+</tr>
+<tr>
+<td>GenAI App Cosmos DB</td>
+<td>Cosmos DB Built-in Data Contributor</td>
+<td>Jumpbox VM</td>
+<td>Read/write Cosmos DB data</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services Contributor</td>
+<td>Jumpbox VM</td>
+<td>Manage Cognitive Services resources</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services OpenAI User</td>
+<td>Jumpbox VM</td>
+<td>Use OpenAI APIs</td>
+</tr>
+</tbody>
+</table>
 
 
 
