@@ -1,66 +1,53 @@
-# Bicep implementation
+# Overview
 
-AI Landing Zones repo includes a **Bicep-based implementation** of the AI Landing Zone, built to deploy a secure, modular baseline for AI apps and agents on Azure. It is designed to work in multiple enterprise patterns:
+The Azure AI Landing Zone is an enterprise-scale, production-ready reference architecture designed to deploy secure and resilient AI applications and agents on Azure. The Bicep implementation is maintained in a dedicated repository.
 
-- **Standalone workload (default)**: the deployment creates networking and (optionally) private DNS.
-- **Platform-integrated workload**: the workload deploys resources and Private Endpoints, while the **platform** owns shared DNS/networking patterns.
-- **Reuse existing resources**: you can reuse an existing VNet (and other resources) and deploy into it.
+**Source repository:** [Azure/bicep-ptn-aiml-landing-zone](https://github.com/Azure/bicep-ptn-aiml-landing-zone/)
 
-## How the Bicep is organized
+![Architecture Diagram](https://raw.githubusercontent.com/Azure/bicep-ptn-aiml-landing-zone/main/media/Architecture%20Diagram.png)
 
-The main orchestrator template is:
+## Deployment modes
 
-- `bicep/infra/main.bicep`
+The template supports two deployment modes that you can choose based on your security requirements:
 
-Supporting folders (source-of-truth lives under `bicep/infra/`):
+| Mode | Network isolation | Jumpbox VM | Use case |
+|---|---|---|---|
+| **Basic** | No | Optional | Quick demos and development environments |
+| **Zero Trust** | Yes | Yes (via Bastion) | Production workloads requiring full network isolation |
 
-- `components/`: repo-specific components and orchestration glue
-- `wrappers/`: wrappers around Azure Verified Modules (AVM) used by this repo
-- `common/`: shared types/helpers (including strongly typed parameter objects)
-- `helpers/`: helper modules for subnet setup and related operations
-- `sample.*.bicepparam`: scenario-focused parameter files you can copy
+Both modes are deployed using the [Azure Developer CLI (`azd`)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd). See [How to Deploy](how-to-deploy.md) for step-by-step instructions.
 
-> Note: The recommended way to deploy is via `azd` (see [how-to-use.md](how-to-use.md)).
+## What gets deployed
 
-## Key switches and deployment patterns
+The template provisions a complete AI application environment with the following core services:
 
-### Deploy toggles
+- **Microsoft Foundry** — AI Foundry account and project with model deployments
+- **Azure AI Search** — Search service for retrieval-augmented generation (RAG)
+- **Azure Cosmos DB** — Database for conversation history and application data
+- **Azure Container Apps** — Container runtime with managed environment and workload profiles
+- **Azure Container Registry** — Private registry for container images
+- **Azure Key Vault** — Secrets and certificate management
+- **Azure App Configuration** — Centralized application configuration
+- **Azure Storage Account** — Blob storage for documents and data
+- **Azure Application Insights** — Application monitoring and diagnostics
+- **Azure Log Analytics** — Centralized logging
 
-The template uses a `deployToggles` object to turn features on/off. This is the quickest way to customize what gets deployed.
+When network isolation is enabled, the deployment additionally provisions:
 
-### Resource reuse
+- Virtual network with private endpoints for all services
+- Network Security Groups (NSGs)
+- Azure Bastion for secure VM access
+- Jumpbox VM with pre-installed development tools
+- Private DNS zones for name resolution
 
-The template supports “create new” and “reuse existing” patterns via a `resourceIds` object.
+Every service can be individually toggled on or off via deploy parameters. See [Parameterization](parameterization.md) for the full reference.
 
-A common example is reusing a VNet:
+## Role assignments
 
-- Set the VNet toggle off (so the template doesn’t try to create it)
-- Provide the VNet resource id in `resourceIds`
-- Ensure required subnets exist with the expected names
+The deployment configures role-based access control (RBAC) for service-to-service communication using managed identities. See [Permissions](permissions.md) for the complete list of role assignments.
 
-See: [examples](example-standalone.md) and the existing-VNet runbook under `tests/`.
+## Next steps
 
-### Platform integration
-
-`flagPlatformLandingZone` controls the split between workload-owned and platform-owned responsibilities.
-
-- `false` (standalone): workload deployment can create Private DNS zones + VNet links
-- `true` (platform-integrated): workload expects platform-managed DNS (and often hub networking)
-
-## How deployments run (azd + Template Specs)
-
-Deployments typically run through `azd provision`.
-
-The bicep implementation uses **Template Specs** during provisioning to bypass the ARM template size limit. In general:
-
-- Pre-provision scripts build/publish Template Specs
-- The deployment executes using those Template Specs
-- Post-provision scripts remove the temporary Template Specs after success
-
-Details and prerequisites: [how-to-use.md](how-to-use.md)
-
-## Where to go next
-
-- Start with [how-to-use.md](how-to-use.md).
-- Understand all inputs in [parameterization.md](parameterization.md).
-- Pick a scenario from [examples](example-standalone.md).
+- [How to Deploy](how-to-deploy.md) — Prerequisites and deployment instructions
+- [Parameterization](parameterization.md) — Full parameter reference
+- [Permissions](permissions.md) — Role assignments provisioned by the template
