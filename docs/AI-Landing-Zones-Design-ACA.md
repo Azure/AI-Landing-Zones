@@ -75,7 +75,7 @@ Loading multi-gigabyte models (Foundry or open-source) into memory can lead to s
 
 #### AI Agents & Orchestration
 
-Deploy AI agents as individual container apps within the Apps workload profile. Each agent runs as an independent, scalable microservice that can be updated and versioned separately. Use open-source agent orchestration frameworks to build and manage agent workflows, such as Microsoft Agent Framrwork, LangGraph and others.
+Deploy AI agents as individual container apps within the Apps workload profile. Each agent runs as an independent, scalable microservice that can be updated and versioned separately. Use open-source agent orchestration frameworks to build and manage agent workflows, such as Microsoft Agent Framework, LangGraph, and others.
 
 Agents communicate with model endpoints via the AI Gateway, and leverage MCP servers for tool access and external data retrieval.
 
