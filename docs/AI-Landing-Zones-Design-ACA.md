@@ -22,14 +22,15 @@ The Container App Environment serves as the administrative and security boundary
   - [Serverless GPUs](https://learn.microsoft.com/azure/container-apps/gpu-serverless-overview): Ideal for bursty inference where you only pay for the duration of the request.
   - [Dedicated GPUs](https://learn.microsoft.com/azure/container-apps/plans#dedicated): Necessary for long-running training, fine-tuning, or high-throughput production inference requiring guaranteed availability.
 
-The architecture organizes workloads into four distinct workload profiles:
+The architecture organizes workloads into five distinct workload profiles:
 
 | Workload Profile | Resource Type | GPU Strategy | Typical Workloads |
 |---|---|---|---|
 | **Latency-sensitive inferencing** | Container Apps | Dedicated GPUs | Real-time inference with Ollama, Foundry Models, or similar open-source inference runtimes requiring guaranteed low-latency responses |
 | **Cost-sensitive inferencing** | Container Apps | Serverless GPUs | Bursty inference workloads using Ollama, Foundry Models, or similar open-source inference runtimes where pay-per-request is more economical |
 | **ML and training** | Container App Jobs | Serverless GPUs | Batch training jobs, fine-tuning, embedding generation, and periodic model retraining as run-to-completion tasks. Use dedicated GPUs when latency is critical. Design jobs to be idempotent with checkpointing so that retries or restarts resume safely without reprocessing completed work or corrupting artifacts |
-| **Apps** | Container Apps | Consumption (CPU) | Front-end UIs, MCP servers, AI agents, and AI Gateway for routing and load balancing across model endpoints |
+| **Apps** | Container Apps | Consumption (CPU) | Front-end UIs, MCP servers, and AI agents |
+| **AI Gateway** | Container Apps | Dedicated (CPU) | AI Gateway for routing and load balancing across model endpoints. Runs on a dedicated profile with minimum replicas to avoid cold starts and ensure consistent latency on the critical inference path |
 
 ### Networking & Security
 
