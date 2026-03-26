@@ -10,6 +10,8 @@ This article defines a production-ready landing zone architecture for deploying 
 
 ### Infrastructure & Compute
 
+This section covers the recommendations for the infrastructure and compute design area for the landing zone.
+
 #### Environments & Workload Profiles
 
 The Container App Environment serves as the administrative and security boundary. To cater for different workload performance and cost requirements, we utilize multiple workload profiles within a single environment:
@@ -26,10 +28,12 @@ The architecture organizes workloads into four distinct workload profiles:
 |---|---|---|---|
 | **Latency-sensitive inferencing** | Container Apps | Dedicated GPUs | Real-time inference with Ollama, Foundry Models, or similar open-source inference runtimes requiring guaranteed low-latency responses |
 | **Cost-sensitive inferencing** | Container Apps | Serverless GPUs | Bursty inference workloads using Ollama, Foundry Models, or similar open-source inference runtimes where pay-per-request is more economical |
-| **ML and training** | Container App Jobs | Serverless GPUs | Batch training jobs, fine-tuning, embedding generation, and periodic model retraining as run-to-completion tasks. Use dedicated GPUs when latency is critical |
+| **ML and training** | Container App Jobs | Serverless GPUs | Batch training jobs, fine-tuning, embedding generation, and periodic model retraining as run-to-completion tasks. Use dedicated GPUs when latency is critical. Design jobs to be idempotent with checkpointing so that retries or restarts resume safely without reprocessing completed work or corrupting artifacts |
 | **Apps** | Container Apps | Consumption (CPU) | Front-end UIs, MCP servers, AI agents, and AI Gateway for routing and load balancing across model endpoints |
 
 ### Networking & Security
+
+This section covers the recommendations for the networking and security design area for the landing zone.
 
 #### VNet Integration & Egress Control
 For enterprise security, we implement "Bring Your Own VNet" to apply custom security controls:
@@ -48,15 +52,18 @@ For enterprise security, we implement "Bring Your Own VNet" to apply custom secu
 
 #### GenAI Application Dependencies
 
-The architecture relies on a set of shared Azure services that support the AI workloads:
+The architecture relies on a set of Azure services that support the AI workloads:
 
 - **Azure Cosmos DB:** Persistent storage for conversation history, agent state, session metadata, and application data.
 - **Azure Key Vault:** Centralized secret management for API keys, model access tokens, and certificates.
 - **Azure Storage Account:** Durable storage for model weights (via Azure Files mounts), training datasets, and artifacts.
 - **Azure Container Registry (ACR):** Private registry for container images. Deploy in the same region as the Azure Container Apps environment for minimal pull latency.
 - **Managed Identities:** User-Assigned Managed Identities for all service-to-service authentication, eliminating hardcoded credentials.
+- **Azure App Configuration:** Centrally manage applications' configuration.
 
 ### AI Workload Optimization
+
+This section covers the recommendations for optimizing the AI workloads to be deployed in the landing zone.
 
 #### Model Serving & Deployment
 
@@ -81,6 +88,8 @@ Agents communicate with model endpoints via the AI Gateway, and leverage MCP ser
 
 ### Resiliency & Global Availability
 
+This section covers the recommendations for resiliency and availabilitys for the workloads to be deployed in the landing zone.
+
 #### Availability Zones
 
 Enable zone redundancy on the Container App Environment to distribute replicas across multiple physical availability zones within a region. This protects against datacenter-level failures.
@@ -91,14 +100,14 @@ Enable zone redundancy on the Container App Environment to distribute replicas a
 
 #### Service Resiliency & Health
 
-- **[Health Probes](https://learn.microsoft.com/azure/container-apps/health-probes?tabs=arm-template):** Define liveness, readiness, and startup probes to ensure high availability.
-- **[Resiliency Policies (Preview)](https://learn.microsoft.com/azure/container-apps/service-discovery-resiliency?tabs=bicep):** Implement retries, timeouts, and circuit breakers for service-to-service communication to handle transient GPU or network failures.
+- **[Health Probes](https://learn.microsoft.com/azure/container-apps/health-probes?tabs=arm-template):** Define liveness, readiness, and startup probes to detect unhealthy instances and enable automatic recovery.
+- **[Resiliency Policies (Preview)](https://learn.microsoft.com/azure/container-apps/service-discovery-resiliency?tabs=bicep):** Configure retries, timeouts, and circuit breakers for service-to-service communication. Ensure services (inference endpoints, databases, MCP tool,..etc) are idempotent so that retried requests do not cause duplicate side effects.
 
 #### Multi-Region Architecture
 
 For business continuity against full regional outages, deploy across two or more Azure regions:
 
-- **Active-Active:** Both regions serve production traffic simultaneously via Azure Front Door. Provides near-instant failover (seconds) but requires globally replicated data stores and synchronized deployments. Best for mission-critical AI workloads.
+- **Active-Active:** Both regions serve production traffic simultaneously via Azure Front Door. Provides near-instant failover (seconds) but requires globally replicated data stores and synchronized deployments. Best for mission-critical serving workloads (inference endpoints, front-end apps, AI agents, AI Gateway). Training and batch jobs should remain single-region due to data locality requirements and run in the secondary region only during failover.
 - **Active-Passive:** The secondary region remains on warm standby, activated during failover. Lower cost and complexity, with failover measured in minutes. Suitable for most production workloads. However, cost savings depend on the workload profile types deployed in the standby region. Pre-deploy the environment with consumption-based and serverless GPU profiles in the standby region. Use Infrastructure as Code (Bicep/Terraform) to rapidly provision dedicated GPU profiles only during failover, balancing cost efficiency against recovery time.
 
 **Key design considerations:**
