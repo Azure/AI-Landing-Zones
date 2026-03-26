@@ -153,7 +153,7 @@ This section covers the recommendations for monitoring, logging, and observabili
 #### Logging & Diagnostics
 
 - **[Log Analytics Integration](https://learn.microsoft.com/azure/container-apps/log-monitoring):** Configure a Log Analytics workspace as the default log destination for the Container App Environment. Use KQL queries to analyze system logs, container console output, and scaling events.
-- **[Diagnostic Settings](https://learn.microsoft.com/azure/container-apps/log-options):** Configure Azure Monitor diagnostic settings to stream logs and metrics to additional destinations — storage accounts for long-term archival, Event Hubs for SIEM integration, or partner solutions (e.g., Datadog, Elastic).
+- **[Diagnostic Settings](https://learn.microsoft.com/azure/container-apps/log-options):** Configure Azure Monitor diagnostic settings to stream logs and metrics.
 - **[Azure Monitor Alerts](https://learn.microsoft.com/azure/container-apps/alerts):** Set up alerts for critical conditions: failed health probes, high error rates, replica restarts, GPU utilization thresholds, and scaling failures. Use action groups to trigger automated incident response.
 
 #### Distributed Tracing & Metrics
