@@ -44,7 +44,7 @@ The table represents the various reference implementations of the AI Landing Zon
 
 ## Design Checklist
 
-The AI Landing Zone cover the following design areas which are across the Cloud Adoption Framework and the Well-Architected Framework. In each design area there are design considertion and design recommendations to help you design a greenfield environment and assess a brown field environment using the [AI Landing Zone Checklist](/docs/AI-Landing-Zones-Design-Checklist.md).
+The AI Landing Zone cover the following design areas which are across the Cloud Adoption Framework and the Well-Architected Framework. In each design area there are design considertion and design recommendations to help you design a greenfield environment and assess a brown field environment using the [AI Landing Zone Checklist](https://azure.github.io/AI-Landing-Zones/architecture/design-checklist/).
 
 ![image](/media/AI-Landing-Zone-design-area-checklist.png)
 
@@ -64,10 +64,10 @@ The AI Landing Zone act as a foundation architecture which can be leveraged to d
 The AI Landing Zone is currently in preview. The roadmap for the project is available [here](https://aka.ms/ailz/roadmap).
 
 ## What's New
-The latest updates to the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-Whats-New.md).
+The latest updates to the AI Landing Zone are documented [here](https://azure.github.io/AI-Landing-Zones/whatisnew/).
 
 ## Frequently Asked Questions
-The frequently asked questions about the AI Landing Zone are documented [here](./docs/AI-Landing-Zones-FAQs.md).
+The frequently asked questions about the AI Landing Zone are documented [here](https://azure.github.io/AI-Landing-Zones/architecture/faq/).
 
 ## Cloud Adoption Framework
 
