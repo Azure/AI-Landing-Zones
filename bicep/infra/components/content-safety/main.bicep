@@ -4,7 +4,7 @@ metadata description = 'Deploy an Azure AI Content Safety account and register i
 @description('Required. Name of the AI Services account (used as the parent for the connection resource).')
 param accountName string
 
-@description('Required. Name for the Content Safety resource.')
+@description('Required. Name to use for the Content Safety account when creating a new one, and as the base name for the AI Foundry connection when reusing an existing account (does not need to match the existing resource name).')
 param contentSafetyName string
 
 @description('Required. Azure region for the Content Safety resource.')
@@ -18,6 +18,10 @@ param sku string = 'S0'
 
 @description('Optional. Existing Content Safety resource ID to reuse instead of creating a new one.')
 param existingResourceId string = ''
+
+@description('Optional. Whether public network access is enabled. Set to Disabled for secure-by-default deployments. Default: Disabled.')
+@allowed(['Enabled', 'Disabled'])
+param publicNetworkAccess string = 'Disabled'
 
 var varIsReuse = !empty(existingResourceId)
 var varIdSegs  = split(existingResourceId, '/')
@@ -49,16 +53,16 @@ resource contentSafetyAccount 'Microsoft.CognitiveServices/accounts@2025-04-01-p
   identity: { type: 'SystemAssigned' }
   properties: {
     customSubDomainName: contentSafetyName
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess: publicNetworkAccess
   }
 }
 
 var varCsId       = varIsReuse ? existingResourceId                   : contentSafetyAccount.id
 var varCsEndpoint = varIsReuse ? existingCs!.properties.endpoint      : contentSafetyAccount!.properties.endpoint
-var varCsKey      = varIsReuse ? existingCs!.listKeys().key1          : contentSafetyAccount!.listKeys().key1
 var varCsLocation = varIsReuse ? existingCs!.location                 : location
 
-// Register as a connection on the AI Foundry account so it is discoverable in AI Foundry portal
+// Register as a connection on the AI Foundry account so it is discoverable in AI Foundry portal.
+// Uses AAD auth (managed identity) to avoid dependency on listKeys / local auth.
 #disable-next-line BCP081
 resource csConnection 'Microsoft.CognitiveServices/accounts/connections@2025-06-01' = {
   name: '${contentSafetyName}-connection'
@@ -66,8 +70,7 @@ resource csConnection 'Microsoft.CognitiveServices/accounts/connections@2025-06-
   properties: {
     category: 'AzureAIContentSafety'
     target: varCsEndpoint
-    authType: 'ApiKey'
-    credentials: { key: varCsKey }
+    authType: 'AAD'
     isSharedToAll: true
     metadata: {
       ApiType: 'Azure'
@@ -81,7 +84,7 @@ resource csConnection 'Microsoft.CognitiveServices/accounts/connections@2025-06-
 output resourceId string = varCsId
 
 @description('Name of the resource group where the Content Safety account is deployed.')
-output resourceGroupName string = resourceGroup().name
+output resourceGroupName string = varIsReuse ? varExRg : resourceGroup().name
 
 @description('Name of the connection registered on the AI Foundry account.')
 output connectionName string = csConnection.name

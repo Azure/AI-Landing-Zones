@@ -2431,7 +2431,7 @@ param contentSafetyDefinition contentSafetyDefinitionType?
 var varDeployContentSafety = (deployToggles.?contentSafety ?? false) && empty(resourceIds.?contentSafetyResourceId ?? '')
 var varInvokeContentSafetyModule = varDeployAiFoundry && (varDeployContentSafety || !empty(resourceIds.?contentSafetyResourceId ?? ''))
 
-var varContentSafetyName = contentSafetyDefinition.?name ?? 'cs-${baseName}'
+var varContentSafetyName = contentSafetyDefinition.?name ?? 'cs${baseName}'
 
 module contentSafety 'components/content-safety/main.bicep' = if (varInvokeContentSafetyModule) {
   name: 'contentSafetyDeployment-${varUniqueSuffix}'

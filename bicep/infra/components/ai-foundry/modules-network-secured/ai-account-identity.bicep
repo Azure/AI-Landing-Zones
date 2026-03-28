@@ -66,7 +66,9 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-04-01-preview' = {
   }
 }
 
-// Default content filter policy: blocks harmful content at Medium severity across all categories.
+// Default content filter policy: blocks harmful content at Medium severity for severity-based
+// categories (Hate, Sexual, Violence, Selfharm). Binary filters (Jailbreak, Protected Material,
+// Profanity) do not support severity thresholds and are simply enabled/blocked.
 // Applied to every model deployment unless overridden per-deployment via raiPolicyName.
 #disable-next-line BCP081
 resource defaultContentFilter 'Microsoft.CognitiveServices/accounts/raiPolicies@2025-04-01-preview' = {
