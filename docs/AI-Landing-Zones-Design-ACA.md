@@ -30,7 +30,7 @@ The architecture organizes workloads into five distinct workload profiles:
 | **Cost-sensitive inferencing** | Container Apps | Serverless GPUs | Bursty inference workloads using Ollama, Foundry Models, or similar open-source inference runtimes where pay-per-request is more economical |
 | **ML and training** | Container App Jobs | Serverless GPUs | Batch training jobs, fine-tuning, embedding generation, and periodic model retraining as run-to-completion tasks. Use dedicated GPUs when latency is critical. Design jobs to be idempotent with checkpointing so that retries or restarts resume safely without reprocessing completed work or corrupting artifacts |
 | **Apps** | Container Apps | Consumption (CPU) | Front-end UIs, MCP servers, and AI agents |
-| **AI Gateway** | Container Apps | Dedicated (CPU) | AI Gateway for routing and load balancing across model endpoints. Runs on a dedicated profile with minimum replicas to avoid cold starts and ensure consistent latency on the critical inference path |
+| **AI Gateway** | Container Apps | Dedicated (CPU) | AI Gateway for routing and load balancing across model endpoints, agents and MCP servers. Runs on a dedicated profile with minimum replicas to avoid cold starts and ensure consistent latency on the critical inference path |
 
 ### Networking & Security
 
@@ -76,7 +76,7 @@ This section covers the recommendations for optimizing the AI workloads to be de
 
 - **Foundry Models:** Leverage built-in integrations for turnkey deployment of Microsoft-managed [foundry models](https://learn.microsoft.com/azure/container-apps/gpu-serverless-overview#deploy-foundry-models-to-serverless-gpus-preview).
 - **Open-Source Model Serving:** Deploy open-source model serving runtimes such as Ollama, vLLM, or Hugging Face Text Generation Inference (TGI) as container apps on GPU-enabled workload profiles. These runtimes provide flexible, self-hosted inference for open-weight models (e.g., Llama, Mistral, Phi) and can be paired with either dedicated or serverless GPUs depending on latency and cost requirements.
-- **AI Gateway:** Deploy an AI Gateway (e.g., Azure API Management, Envoy-based proxies, or custom routing middleware) to centralize traffic management across model endpoints. The gateway enables load balancing, rate limiting, request routing, and failover across multiple backend model deployments.
+- **AI Gateway:** Deploy an AI Gateway (e.g., Azure API Management, Envoy-based proxies, or custom routing middleware) to centralize traffic management across model endpoints. The gateway enables load balancing, rate limiting, request routing, and failover across multiple backend model deployments, agents and MCP servers.
 - **[Dynamic Sessions](https://learn.microsoft.com/azure/container-apps/sessions):** Provide secure, isolated sandboxes (Hyper-V based) for executing AI-generated code safely.
 - **MCP (Model Context Protocol) Servers:** Host MCP servers within Azure Container Apps to allow AI agents to securely query internal databases or execute tools via a standardized interface.
 
