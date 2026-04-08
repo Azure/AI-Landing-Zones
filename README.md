@@ -63,7 +63,7 @@ The AI Landing Zone act as a foundation architecture which can be leveraged to d
 - Modernize your code
 
 ## Roadmap
-The AI Landing Zone is currently in preview. The roadmap for the project is available [here](https://aka.ms/ailz/roadmap).
+The AI Landing Zone is currently in preview. The roadmap for the project is available [here](https://github.com/orgs/Azure/projects/899).
 
 ## What's New
 The latest updates to the AI Landing Zone are documented [here](https://azure.github.io/AI-Landing-Zones/whatisnew/).
