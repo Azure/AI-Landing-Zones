@@ -62,6 +62,30 @@ The AI Landing Zone act as a foundation architecture which can be leveraged to d
 - Conversation knowledge mining
 - Modernize your code
 
+## Observability
+
+### AZ AIOps Dashboard
+
+The **AZ AIOps Dashboard** is an optional Azure Monitor Workbook that provides a single-pane-of-glass view of your entire Azure AI/Cognitive Services estate — request volumes, error rates, throttling, model usage, availability, and resource inventory — with no agents, no code, and no external dependencies.
+
+It consumes the Log Analytics Workspace already provisioned by the AI Landing Zone.
+
+| Parameter | Default |
+|---|---|
+| Subscription | All |
+| Resource Group | All |
+| Cognitive Services Resource | All |
+| Log Analytics Workspace | All |
+| Time Range | Last 24 hours |
+
+**Deploy the workbook:**
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrishna-sunkavalli%2Faz-aiops-dashboard%2Fmain%2Fworkbook%2Fazuredeploy.json)
+
+Or deploy manually using the ARM template in [`observability/aiops-dashboard/azuredeploy.json`](./observability/aiops-dashboard/azuredeploy.json).
+
+For details see the [AZ AIOps Dashboard repo](https://github.com/krishna-sunkavalli/az-aiops-dashboard).
+
 ## Roadmap
 The AI Landing Zone is currently in preview. The roadmap for the project is available [here](https://aka.ms/ailz/roadmap).
 
