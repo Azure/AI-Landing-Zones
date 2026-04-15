@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "ai-foundry-connection-app-insights",
+    "description": "Creates an Application Insights connection in Azure AI Foundry. Mirrors modules/ai-foundry/connection-application-insights.bicep from bicep-ptn-aiml-landing-zone."
+  },
+  "parameters": {
+    "aiFoundryName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Azure AI Foundry (Cognitive Services) account."
+      }
+    },
+    "connectedResourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Application Insights resource to connect."
+      }
+    },
+    "connectionName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('aiFoundryName'), '-appinsights-connection')]",
+      "metadata": {
+        "description": "Optional. The name to assign to the App Insights connection."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts/connections",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(parameters('aiFoundryName'), '/', parameters('connectionName'))]",
+      "properties": {
+        "category": "AppInsights",
+        "target": "[resourceId('Microsoft.Insights/components', parameters('connectedResourceName'))]",
+        "authType": "ApiKey",
+        "isSharedToAll": true,
+        "credentials": {
+          "key": "[reference(resourceId('Microsoft.Insights/components', parameters('connectedResourceName')), '2020-02-02').ConnectionString]"
+        },
+        "metadata": {
+          "ApiType": "Azure",
+          "ResourceId": "[resourceId('Microsoft.Insights/components', parameters('connectedResourceName'))]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "connectionName": {
+      "type": "string",
+      "value": "[parameters('connectionName')]"
+    }
+  }
+}

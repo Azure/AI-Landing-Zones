@@ -332,7 +332,26 @@
     "buildVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.build-vm.json', variables('artifactsLocationSasToken')))]",
     "jumpVmTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.compute.jump-vm.json', variables('artifactsLocationSasToken')))]",
     "maintenanceConfigTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.maintenance.maintenance-configuration.json', variables('artifactsLocationSasToken')))]",
-    "bingGroundingTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.bing-search.json', variables('artifactsLocationSasToken')))]"
+    "bingGroundingTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.bing-search.json', variables('artifactsLocationSasToken')))]",
+
+    "roleAssignmentTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.role-assignment.json', variables('artifactsLocationSasToken')))]",
+    "cosmosRoleAssignmentTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.cosmos-role-assignment.json', variables('artifactsLocationSasToken')))]",
+    "appConfigPopulateTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.app-configuration-populate.json', variables('artifactsLocationSasToken')))]",
+    "bastionHostTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.bastion-host.json', variables('artifactsLocationSasToken')))]",
+    "natGatewayTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.nat-gateway.json', variables('artifactsLocationSasToken')))]",
+    "managedIdentityTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.managed-identity.json', variables('artifactsLocationSasToken')))]",
+    "privateLinkScopeTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.private-link-scope.json', variables('artifactsLocationSasToken')))]",
+    "aiFoundryConnectionSearchTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.ai-foundry-connection-search.json', variables('artifactsLocationSasToken')))]",
+    "aiFoundryConnectionInsightsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.ai-foundry-connection-insights.json', variables('artifactsLocationSasToken')))]",
+    "aiFoundryConnectionStorageTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.ai-foundry-connection-storage.json', variables('artifactsLocationSasToken')))]",
+    "vmCseTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.vm-custom-script-extension.json', variables('artifactsLocationSasToken')))]",
+
+    "deployBastionHost": "[coalesce(parameters('deployToggles').bastionHost, true())]",
+    "deployContainerApps": "[coalesce(parameters('deployToggles').containerApps, true())]",
+
+    "bastionName": "[concat('bas-', parameters('baseName'))]",
+    "natGatewayName": "[concat('ng-', parameters('baseName'))]",
+    "privateLinkScopeName": "[concat('pls-', parameters('baseName'))]"
   },
   "resources": [
     {
@@ -1521,7 +1540,10 @@
         "value": {
           "name": "[concat('search-', parameters('baseName'))]",
           "location": "[parameters('location')]",
-          "publicNetworkAccess": "Disabled"
+          "publicNetworkAccess": "Disabled",
+          "managedIdentities": {
+            "systemAssigned": true
+          }
         }
       }
     }
@@ -2254,6 +2276,9 @@
           "name": "[variables('jumpVMName')]",
           "sku": "[parameters('vmSize')]",
           "adminUsername": "[parameters('vmadmin')]",
+          "managedIdentities": {
+            "systemAssigned": true
+          },
           "osType": "Windows",
           "imageReference": {
             "publisher": "MicrosoftWindowsServer",
@@ -2311,6 +2336,9 @@
           "name": "[variables('buildVMName')]",
           "sku": "[parameters('vmSize')]",
           "adminUsername": "[parameters('vmadmin')]",
+          "managedIdentities": {
+            "systemAssigned": true
+          },
           "osType": "Linux",
           "imageReference": {
             "publisher": "Canonical",
@@ -2356,6 +2384,433 @@
     ]
   }
 },
+{
+  "condition": "[and(variables('deployBastionHost'), not(parameters('flagPlatformLandingZone')))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "bastionHostDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('bastionHostTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "name": {
+        "value": "[variables('bastionName')]"
+      },
+      "location": {
+        "value": "[parameters('location')]"
+      },
+      "virtualNetworkResourceId": {
+        "value": "[if(variables('deployVnet'), reference('m-vnet').outputs.resourceId.value, parameters('existingVnetId'))]"
+      },
+      "skuName": {
+        "value": "Standard"
+      },
+      "tags": {
+        "value": "[parameters('tags')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+  ]
+},
+{
+  "condition": "[and(variables('deployBastionHost'), not(parameters('flagPlatformLandingZone')))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "natGatewayDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('natGatewayTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "name": {
+        "value": "[variables('natGatewayName')]"
+      },
+      "location": {
+        "value": "[parameters('location')]"
+      },
+      "tags": {
+        "value": "[parameters('tags')]"
+      }
+    }
+  }
+},
+{
+  "condition": "[and(variables('deployAppInsights'), variables('deployLogAnalytics'), not(parameters('flagPlatformLandingZone')))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "privateLinkScopeDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateLinkScopeTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "name": {
+        "value": "[variables('privateLinkScopeName')]"
+      },
+      "queryAccessMode": {
+        "value": "Open"
+      },
+      "ingestionAccessMode": {
+        "value": "Open"
+      },
+      "scopedResources": {
+        "value": [
+          {
+            "name": "[variables('lawName')]",
+            "linkedResourceId": "[reference('deployLogAnalytics').outputs.resourceId.value]"
+          },
+          {
+            "name": "[variables('appiName')]",
+            "linkedResourceId": "[reference('deployAppInsights').outputs.resourceId.value]"
+          }
+        ]
+      },
+      "tags": {
+        "value": "[parameters('tags')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'deployLogAnalytics')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployAppInsights')]"
+  ]
+},
+{
+  "condition": "[variables('deployAiSearch')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "aiFoundryConnectionSearchDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('aiFoundryConnectionSearchTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "aiFoundryName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]"
+      },
+      "aiProjectName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiProjectName.value]"
+      },
+      "connectedResourceName": {
+        "value": "[reference('aiSearchModule').outputs.name.value]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]"
+  ]
+},
+{
+  "condition": "[and(variables('deployAppInsights'), variables('deployLogAnalytics'))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "aiFoundryConnectionInsightsDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('aiFoundryConnectionInsightsTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "aiFoundryName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]"
+      },
+      "connectedResourceName": {
+        "value": "[variables('appiName')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployAppInsights')]"
+  ]
+},
+{
+  "condition": "[variables('deploySa')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "aiFoundryConnectionStorageDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('aiFoundryConnectionStorageTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "aiFoundryName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]"
+      },
+      "connectedResourceName": {
+        "value": "[variables('storageAccountName')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]"
+  ]
+},
+
+{
+  "condition": "[variables('deployAiSearch')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "crossServiceRoleAssignments-SearchIdentity",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('roleAssignmentTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "roleAssignments": {
+        "value": [
+          {
+            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
+            "principalId": "[reference('aiSearchModule').outputs.systemAssignedMIPrincipalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
+            "principalId": "[reference('aiSearchModule').outputs.systemAssignedMIPrincipalId.value]",
+            "principalType": "ServicePrincipal"
+          }
+        ]
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]"
+  ]
+},
+
+{
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "resolveAiProjectIdentity",
+  "properties": {
+    "mode": "Incremental",
+    "expressionEvaluationOptions": {
+      "scope": "inner"
+    },
+    "template": {
+      "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "projectName": { "type": "string" }
+      },
+      "resources": [],
+      "outputs": {
+        "principalId": {
+          "type": "string",
+          "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('projectName')), '2024-10-01', 'Full').identity.principalId]"
+        }
+      }
+    },
+    "parameters": {
+      "projectName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiProjectName.value]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]"
+  ]
+},
+
+{
+  "condition": "[variables('deployAiSearch')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "crossServiceRoleAssignments-ProjectIdentity",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('roleAssignmentTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "roleAssignments": {
+        "value": [
+          {
+            "resourceId": "[reference('aiSearchModule').outputs.resourceId.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '1407120a-92aa-4202-b7e9-c0e197c71c8f')]",
+            "principalId": "[reference('resolveAiProjectIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[reference('aiSearchModule').outputs.resourceId.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7ca78c08-252a-4471-8644-bb5ff32d4ba0')]",
+            "principalId": "[reference('resolveAiProjectIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
+            "principalId": "[reference('resolveAiProjectIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          }
+        ]
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'resolveAiProjectIdentity')]",
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]"
+  ]
+},
+
+{
+  "condition": "[variables('deployJumpVm')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "vmRoleAssignments-JumpVm",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('roleAssignmentTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "roleAssignments": {
+        "value": [
+          {
+            "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a1e307c-b015-4ebd-883e-5b7698a07328')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '3bc748fc-213d-45c1-8d91-9da5725539b9')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'fb382eab-e894-4461-af04-94435c366c3f')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f25e0fa2-a7c8-4377-a976-54943a77a395')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7ca78c08-252a-4471-8644-bb5ff32d4ba0')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAppConfig'), reference('configurationStoreDeploymentFixed').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')]",
+            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalType": "ServicePrincipal"
+          }
+        ]
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('jumpVmDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]",
+    "[resourceId('Microsoft.Resources/deployments', 'keyVaultModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]",
+    "[resourceId('Microsoft.Resources/deployments', 'configurationStoreDeploymentFixed')]"
+  ]
+},
+
+{
+  "condition": "[and(variables('deployJumpVm'), variables('deployCosmosDb'))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "vmCosmosRoleAssignment-JumpVm",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('cosmosRoleAssignmentTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "cosmosDbAccountName": {
+        "value": "[concat('cosmos-', parameters('baseName'))]"
+      },
+      "principalId": {
+        "value": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]"
+      },
+      "roleDefinitionGuid": {
+        "value": "00000000-0000-0000-0000-000000000002"
+      },
+      "scopePath": {
+        "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts', concat('cosmos-', parameters('baseName')))]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('jumpVmDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
+  ]
+},
+
 {
   "condition": "[parameters('deployPeering')]",
   "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
