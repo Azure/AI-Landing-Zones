@@ -307,7 +307,7 @@
     "jumpVMConcat": "[concat('vm-', parameters('baseName'), '-jmp')]",
     "jumpVMName": "[if(greater(length(variables('jumpVMConcat')), 15), toLower(substring(variables('jumpVMConcat'), 0, 15)), toLower(variables('jumpVMConcat')))]",
 
-    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/portal/portal/",
+    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/portalbicepalignment/portal/",
     "artifactsLocationSasToken": "",
     "networkSecurityGroupTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.network-security-group.json', variables('artifactsLocationSasToken')))]",
     "virtualNetworkTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.virtual-network.json', variables('artifactsLocationSasToken')))]",
@@ -2682,6 +2682,41 @@
   "condition": "[variables('deployJumpVm')]",
   "type": "Microsoft.Resources/deployments",
   "apiVersion": "2025-04-01",
+  "name": "resolveJumpVmIdentity",
+  "properties": {
+    "mode": "Incremental",
+    "expressionEvaluationOptions": {
+      "scope": "inner"
+    },
+    "template": {
+      "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "vmName": { "type": "string" }
+      },
+      "resources": [],
+      "outputs": {
+        "principalId": {
+          "type": "string",
+          "value": "[reference(resourceId('Microsoft.Compute/virtualMachines', parameters('vmName')), '2024-07-01', 'Full').identity.principalId]"
+        }
+      }
+    },
+    "parameters": {
+      "vmName": {
+        "value": "[variables('jumpVMName')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('jumpVmDeployment-', variables('uniqueSuffix')))]"
+  ]
+},
+
+{
+  "condition": "[variables('deployJumpVm')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
   "name": "vmRoleAssignments-JumpVm",
   "properties": {
     "mode": "Incremental",
@@ -2695,73 +2730,73 @@
           {
             "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8311e382-0749-4cb8-b61a-304f252e45ec')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a1e307c-b015-4ebd-883e-5b7698a07328')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '3bc748fc-213d-45c1-8d91-9da5725539b9')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'fb382eab-e894-4461-af04-94435c366c3f')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f25e0fa2-a7c8-4377-a976-54943a77a395')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7ca78c08-252a-4471-8644-bb5ff32d4ba0')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
             "resourceId": "[if(variables('deployAppConfig'), reference('configurationStoreDeploymentFixed').outputs.resourceId.value, '')]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b')]",
-            "principalId": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]",
+            "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           }
         ]
@@ -2769,7 +2804,7 @@
     }
   },
   "dependsOn": [
-    "[resourceId('Microsoft.Resources/deployments', concat('jumpVmDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'resolveJumpVmIdentity')]",
     "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
     "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]",
     "[resourceId('Microsoft.Resources/deployments', 'keyVaultModule')]",
@@ -2795,7 +2830,7 @@
         "value": "[concat('cosmos-', parameters('baseName'))]"
       },
       "principalId": {
-        "value": "[reference(resourceId('Microsoft.Compute/virtualMachines', variables('jumpVMName')), '2024-07-01', 'Full').identity.principalId]"
+        "value": "[reference('resolveJumpVmIdentity').outputs.principalId.value]"
       },
       "roleDefinitionGuid": {
         "value": "00000000-0000-0000-0000-000000000002"
@@ -2806,7 +2841,7 @@
     }
   },
   "dependsOn": [
-    "[resourceId('Microsoft.Resources/deployments', concat('jumpVmDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'resolveJumpVmIdentity')]",
     "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
   ]
 },
