@@ -777,7 +777,6 @@
               "enabled": true,
               "name": "agent-subnet",
               "addressPrefix": "[concat(parameters('vnetBaseAddress'), '/27')]",
-              "delegation": "Microsoft.App/environments",
               "serviceEndpoints": ["Microsoft.CognitiveServices"],
               "networkSecurityGroupResourceId": "[if(variables('deployAgentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-agent-', parameters('baseName'))), null())]"
             },
@@ -2292,7 +2291,7 @@
               "ipConfigurations": [
                 {
                   "name": "ipconfig01",
-                  "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
+                  "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/devops-agents-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').devopsAgentsSubnet))]"
                 }
               ]
             }
@@ -2357,7 +2356,7 @@
               "ipConfigurations": [
                 {
                   "name": "ipconfig01",
-                  "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/agent-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').agentSubnet))]"
+                  "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/devops-agents-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').devopsAgentsSubnet))]"
                 }
               ]
             }
