@@ -778,6 +778,7 @@
               "name": "agent-subnet",
               "addressPrefix": "[concat(parameters('vnetBaseAddress'), '/27')]",
               "serviceEndpoints": ["Microsoft.CognitiveServices"],
+              "delegation": "Microsoft.App/environments",
               "networkSecurityGroupResourceId": "[if(variables('deployAgentNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-agent-', parameters('baseName'))), null())]"
             },
             {
