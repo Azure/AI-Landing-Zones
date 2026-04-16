@@ -2072,7 +2072,7 @@
       "value": true
     },
     "enableCapabilityHostDelayScript": {
-      "value": true
+      "value": false
     },
     "capabilityHostWaitSeconds": {
       "value": 600
