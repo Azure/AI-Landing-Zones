@@ -5901,7 +5901,7 @@
                 "allowBlobPublicAccess": false,
                 "publicNetworkAccess": "[parameters('storageAccountPublicNetworkAccess')]",
                 "networkAcls": "[union(createObject('bypass', 'AzureServices', 'defaultAction', 'Deny', 'virtualNetworkRules', createArray()), parameters('storageAccountNetworkAcls'))]",
-                "allowSharedKeyAccess": false
+                "allowSharedKeyAccess": true
               }
             }
           },
