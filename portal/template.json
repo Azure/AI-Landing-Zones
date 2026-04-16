@@ -2613,17 +2613,21 @@
       "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
       "contentVersion": "1.0.0.0",
       "parameters": {
+        "accountName": { "type": "string" },
         "projectName": { "type": "string" }
       },
       "resources": [],
       "outputs": {
         "principalId": {
           "type": "string",
-          "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('projectName')), '2024-10-01', 'Full').identity.principalId]"
+          "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/projects', parameters('accountName'), parameters('projectName')), '2025-06-01', 'Full').identity.principalId]"
         }
       }
     },
     "parameters": {
+      "accountName": {
+        "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]"
+      },
       "projectName": {
         "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiProjectName.value]"
       }
