@@ -60,7 +60,14 @@
       "type": "string",
       "defaultValue": "Standard_D4as_v5",
       "metadata": {
-        "description": "Optional. VM size for the jumpbox VM."
+        "description": "Optional. VM size for the Jump VM (Windows)."
+      }
+    },
+    "buildVmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4as_v5",
+      "metadata": {
+        "description": "Optional. VM size for the Build VM (Linux)."
       }
     },
     "flagPlatformLandingZone": {
@@ -2586,7 +2593,7 @@
       "buildVm": {
         "value": {
           "name": "[variables('buildVMName')]",
-          "sku": "[parameters('vmSize')]",
+          "sku": "[parameters('buildVmSize')]",
           "adminUsername": "[parameters('vmadmin')]",
           "managedIdentities": {
             "systemAssigned": true

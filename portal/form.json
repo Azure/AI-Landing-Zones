@@ -234,6 +234,27 @@
               "visible": "true"
             },
             {
+              "name": "deployContainerApps",
+              "type": "Microsoft.Common.OptionsGroup",
+              "label": "Deploy Container App (Orchestrator)",
+              "defaultValue": "Yes",
+              "toolTip": "Deploy the orchestrator Container App into the Container Apps Environment",
+              "constraints": {
+                "allowedValues": [
+                  {
+                    "label": "Yes",
+                    "value": "true"
+                  },
+                  {
+                    "label": "No",
+                    "value": "false"
+                  }
+                ],
+                "required": "true"
+              },
+              "visible": "[equals(steps('applications').deployContainerAppEnv, 'true')]"
+            },
+            {
               "name": "deployAppConfig",
               "type": "Microsoft.Common.OptionsGroup",
               "label": "Deploy Azure App Configuration",
@@ -397,10 +418,10 @@
                 "visible": "[or(equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
             },
             {
-                "name": "vmSkuSize",
+                "name": "jumpVmSkuSize",
                 "type": "Microsoft.Compute.SizeSelector",
-                "label": "Size",
-                "toolTip": "",
+                "label": "Jump VM Size",
+                "toolTip": "Select the VM size for the Windows Jump VM (RDP workstation)",
                 "recommendedSizes": [
                     "Standard_D4as_v5",
                     "Standard_F4s_v2"
@@ -419,7 +440,32 @@
                     "sku": "2022-datacenter-azure-edition"
                 },
                 "count": 1,
-                "visible": "[or(equals(steps('devops').deployBuildVm, 'true'), equals(steps('devops').deployJumpVm, 'true'))]"
+                "visible": "[equals(steps('devops').deployJumpVm, 'true')]"
+            },
+            {
+                "name": "buildVmSkuSize",
+                "type": "Microsoft.Compute.SizeSelector",
+                "label": "Build VM Size",
+                "toolTip": "Select the VM size for the Linux Build VM (CI/CD runner)",
+                "recommendedSizes": [
+                    "Standard_D4as_v5",
+                    "Standard_F4s_v2"
+                ],
+                "constraints": {
+                  "numAvailabilityZonesRequired": 1,
+                  "zone": "1"
+                },
+                "options": {
+                    "hideDiskTypeFilter": false
+                },
+                "osPlatform": "Linux",
+                "imageReference": {
+                    "publisher": "Canonical",
+                    "offer": "0001-com-ubuntu-server-jammy",
+                    "sku": "22_04-lts"
+                },
+                "count": 1,
+                "visible": "[equals(steps('devops').deployBuildVm, 'true')]"
             }
           ]
         },
@@ -893,10 +939,10 @@
           "applicationGateway": "[and(equals(steps('applications').deployAppGateway, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
           "applicationGatewayNsg": "[and( or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true')) , and(equals(steps('applications').deployAppGateway, 'true'), equals(steps('basics').platformLandingZone, 'false')))]",
           "applicationGatewayPublicIp": "[and(equals(steps('applications').deployAppGatewayPip, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
-          "bastionHost": "[equals(steps('basics').platformLandingZone, 'false')]",
+          "bastionHost": "[and(equals(steps('basics').platformLandingZone, 'false'), equals(steps('networking').deployVnet, 'true'))]",
           "wafPolicy": "[and(equals(steps('applications').deployAppGateway, 'true'), equals(steps('basics').platformLandingZone, 'false'))]",
           "buildVm": "[equals(steps('devops').deployBuildVm, 'true')]",
-          "containerApps": "[equals(steps('applications').deployContainerAppEnv, 'true')]",
+          "containerApps": "[and(equals(steps('applications').deployContainerAppEnv, 'true'), equals(steps('applications').deployContainerApps, 'true'))]",
           "containerEnv": "[equals(steps('applications').deployContainerAppEnv, 'true')]",
           "containerRegistry": "[equals(steps('applications').deployAcr, 'true')]",
           "cosmosDb": "[equals(steps('aiServices').deployCosmos, 'true')]",
@@ -912,7 +958,7 @@
           "searchService": "[equals(steps('aiServices').deployAiSearch, 'true')]",
           "storageAccount": "[equals(steps('aiServices').deployStorageAccount, 'true')]",
           "virtualNetwork": "[equals(steps('networking').deployVnet, 'true')]",
-          "bastionNsg": "[equals(steps('basics').platformLandingZone, 'false')]"
+          "bastionNsg": "[and(equals(steps('basics').platformLandingZone, 'false'), equals(steps('networking').deployVnet, 'true'))]"
         },
         "flagPlatformLandingZone": "[equals(steps('basics').platformLandingZone, 'true')]",
         "deployPeering": "[equals(steps('networking').deployPeering, 'true')]",
@@ -932,7 +978,8 @@
         },
         "vmadmin": "[coalesce(steps('devops').adminUsername, '')]",
         "vmPassword": "[coalesce(steps('devops').adminPassword, '')]",
-        "vmSize": "[coalesce(steps('devops').vmSkuSize, 'Standard_D4as_v5')]",
+        "vmSize": "[coalesce(steps('devops').jumpVmSkuSize, 'Standard_D4as_v5')]",
+        "buildVmSize": "[coalesce(steps('devops').buildVmSkuSize, 'Standard_D4as_v5')]",
         "existingVnetName": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.name, '')]",
         "existingVnetId": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.id, '')]",
         "appGwPrivateIp" : "[coalesce(steps('networking').appGwPrivateIp, '')]",
