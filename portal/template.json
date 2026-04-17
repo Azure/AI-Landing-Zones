@@ -291,6 +291,7 @@
     "deployPdnsContainerApps": "[and(variables('deployPdnsAndPe'), variables('deployContainerAppEnv'))]",
     "deployPdnsAcr": "[and(variables('deployPdnsAndPe'), variables('deployAcr'))]",
     "deployPdnsAppInsights": "[and(variables('deployPdnsAndPe'), variables('deployAppInsights'))]",
+    "deployPdnsMonitor": "[and(variables('deployPdnsAndPe'), variables('deployAppInsights'), variables('deployLogAnalytics'))]",
 
 
     "vnetName": "[if(variables('deployVnet'), concat('vnet-', parameters('baseName')), parameters('existingVnetName'))]",
@@ -1254,6 +1255,138 @@
       ]
     }
 },
+    {
+      "condition": "[variables('deployPdnsMonitor')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "azure-monitor-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "privateDnsZone": {
+            "value": {
+              "name": "privatelink.monitor.azure.com",
+              "location": "global",
+              "tags": {},
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "virtualNetworkLinks": [
+                {
+                  "name": "[concat(variables('vnetName'), '-azure-monitor-link')]",
+                  "registrationEnabled": false,
+                  "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+                }
+              ]
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+        ]
+      }
+    },
+    {
+      "condition": "[variables('deployPdnsMonitor')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "oms-opinsights-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "privateDnsZone": {
+            "value": {
+              "name": "privatelink.oms.opinsights.azure.com",
+              "location": "global",
+              "tags": {},
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "virtualNetworkLinks": [
+                {
+                  "name": "[concat(variables('vnetName'), '-oms-opinsights-link')]",
+                  "registrationEnabled": false,
+                  "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+                }
+              ]
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+        ]
+      }
+    },
+    {
+      "condition": "[variables('deployPdnsMonitor')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "ods-opinsights-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "privateDnsZone": {
+            "value": {
+              "name": "privatelink.ods.opinsights.azure.com",
+              "location": "global",
+              "tags": {},
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "virtualNetworkLinks": [
+                {
+                  "name": "[concat(variables('vnetName'), '-ods-opinsights-link')]",
+                  "registrationEnabled": false,
+                  "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+                }
+              ]
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+        ]
+      }
+    },
+    {
+      "condition": "[variables('deployPdnsMonitor')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "azure-automation-private-dns-zone",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('privateDnsZoneTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "privateDnsZone": {
+            "value": {
+              "name": "privatelink.agentsvc.azure-automation.net",
+              "location": "global",
+              "tags": {},
+              "enableTelemetry": "[parameters('enableTelemetry')]",
+              "virtualNetworkLinks": [
+                {
+                  "name": "[concat(variables('vnetName'), '-azure-automation-link')]",
+                  "registrationEnabled": false,
+                  "virtualNetworkResourceId": "[if(variables('deployVnet'), resourceId('Microsoft.Network/virtualNetworks', variables('vnetName')), parameters('existingVnetId'))]"
+                }
+              ]
+            }
+          }
+        },
+        "dependsOn": [
+          "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+        ]
+      }
+    },
 {
   "condition": "[variables('deployAppGatewayPip')]",
   "type": "Microsoft.Resources/deployments",
@@ -1977,6 +2110,70 @@
     ]
   }
 },
+
+{
+  "condition": "[variables('deployPdnsMonitor')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "privatelink-scope-private-endpoint",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('privateEndpointTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "privateEndpoint": {
+        "value": {
+          "name": "[concat('pe-pls-', parameters('baseName'))]",
+          "location": "[parameters('location')]",
+          "tags": "[parameters('tags')]",
+          "enableTelemetry": "[parameters('enableTelemetry')]",
+          "subnetResourceId": "[if(variables('deployVnet'), concat(reference('m-vnet').outputs.resourceId.value, '/subnets/pe-subnet'), concat(parameters('existingVnetId'), '/subnets/',  parameters('existingSubnets').peSubnet))]",
+          "privateLinkServiceConnections": [
+            {
+              "name": "privateLinkScopeConnection",
+              "properties": {
+                "privateLinkServiceId": "[reference('privateLinkScopeDeployment').outputs.resourceId.value]",
+                "groupIds": ["azuremonitor"]
+              }
+            }
+          ],
+          "privateDnsZoneGroup": {
+            "name": "privateLinkDnsZoneGroup",
+            "privateDnsZoneGroupConfigs": [
+              {
+                "name": "azuremonitorARecord",
+                "privateDnsZoneResourceId": "[reference('azure-monitor-private-dns-zone').outputs.resourceId.value]"
+              },
+              {
+                "name": "omsinsightsARecord",
+                "privateDnsZoneResourceId": "[reference('oms-opinsights-private-dns-zone').outputs.resourceId.value]"
+              },
+              {
+                "name": "odsinsightsARecord",
+                "privateDnsZoneResourceId": "[reference('ods-opinsights-private-dns-zone').outputs.resourceId.value]"
+              },
+              {
+                "name": "automationARecord",
+                "privateDnsZoneResourceId": "[reference('azure-automation-private-dns-zone').outputs.resourceId.value]"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'privateLinkScopeDeployment')]",
+    "[resourceId('Microsoft.Resources/deployments', 'azure-monitor-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'oms-opinsights-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'ods-opinsights-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'azure-automation-private-dns-zone')]",
+    "[resourceId('Microsoft.Resources/deployments', 'm-vnet')]"
+  ]
+},
+
 {
   "type": "Microsoft.Resources/deployments",
   "apiVersion": "2025-04-01",
