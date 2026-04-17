@@ -3216,6 +3216,320 @@
 },
 
 {
+  "condition": "[and(variables('deployCosmosDb'), variables('deployAppConfig'))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "cosmosConfigPopulate",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('appConfigPopulateTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "storeName": {
+        "value": "[variables('appConfigName')]"
+      },
+      "keyValues": {
+        "value": [
+          {
+            "name": "COSMOS_DB_ACCOUNT_RESOURCE_ID",
+            "value": "[reference('cosmosDbModule').outputs.resourceId.value]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "COSMOS_DB_ENDPOINT",
+            "value": "[concat('https://', reference('cosmosDbModule').outputs.name.value, '.documents.azure.com:443/')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          }
+        ]
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'configurationStoreDeploymentFixed')]",
+    "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
+  ]
+},
+
+{
+  "condition": "[variables('deployAppConfig')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "appConfigPopulate",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('appConfigPopulateTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "storeName": {
+        "value": "[variables('appConfigName')]"
+      },
+      "keyValues": {
+        "value": [
+          {
+            "name": "AZURE_TENANT_ID",
+            "value": "[tenant().tenantId]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "SUBSCRIPTION_ID",
+            "value": "[subscription().subscriptionId]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "AZURE_RESOURCE_GROUP",
+            "value": "[resourceGroup().name]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "LOCATION",
+            "value": "[parameters('location')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOYMENT_NAME",
+            "value": "[deployment().name]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "RESOURCE_TOKEN",
+            "value": "[variables('uniqueSuffix')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "NETWORK_ISOLATION",
+            "value": "[toLower(string(not(parameters('flagPlatformLandingZone'))))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "LOG_LEVEL",
+            "value": "INFO",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "ENABLE_CONSOLE_LOGGING",
+            "value": "true",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+            "value": "[if(variables('deployAppInsights'), reference('deployAppInsights').outputs.connectionString.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "APPLICATIONINSIGHTS__INSTRUMENTATIONKEY",
+            "value": "[if(variables('deployAppInsights'), reference('deployAppInsights').outputs.instrumentationKey.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "KEY_VAULT_RESOURCE_ID",
+            "value": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "KEY_VAULT_URI",
+            "value": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.uri.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "STORAGE_ACCOUNT_RESOURCE_ID",
+            "value": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "STORAGE_ACCOUNT_NAME",
+            "value": "[if(variables('deploySa'), variables('storageAccountName'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "STORAGE_BLOB_ENDPOINT",
+            "value": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.serviceEndpoints.value.blob, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "APP_INSIGHTS_RESOURCE_ID",
+            "value": "[if(variables('deployAppInsights'), reference('deployAppInsights').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "APP_INSIGHTS_NAME",
+            "value": "[if(variables('deployAppInsights'), variables('appiName'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "LOG_ANALYTICS_RESOURCE_ID",
+            "value": "[if(variables('deployLogAnalytics'), reference('deployLogAnalytics').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "CONTAINER_ENV_RESOURCE_ID",
+            "value": "[if(variables('deployContainerAppEnv'), reference('deployContainerEnv').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "CONTAINER_ENV_NAME",
+            "value": "[if(variables('deployContainerAppEnv'), variables('containerEnvName'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "CONTAINER_REGISTRY_NAME",
+            "value": "[if(variables('deployAcr'), variables('acrName'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "CONTAINER_REGISTRY_LOGIN_SERVER",
+            "value": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.loginServer.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DATABASE_ACCOUNT_NAME",
+            "value": "[if(variables('deployCosmosDb'), concat('cosmos-', parameters('baseName')), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "SEARCH_SERVICE_NAME",
+            "value": "[if(variables('deployAiSearch'), concat('srch-', parameters('baseName')), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "SEARCH_SERVICE_RESOURCE_ID",
+            "value": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "SEARCH_SERVICE_QUERY_ENDPOINT",
+            "value": "[if(variables('deployAiSearch'), concat('https://srch-', parameters('baseName'), '.search.windows.net'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "AI_FOUNDRY_ACCOUNT_NAME",
+            "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "AI_FOUNDRY_PROJECT_NAME",
+            "value": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiProjectName.value]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "APP_CONFIG_NAME",
+            "value": "[variables('appConfigName')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_APP_CONFIG",
+            "value": "[string(variables('deployAppConfig'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_KEY_VAULT",
+            "value": "[string(variables('deployKeyVault'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_LOG_ANALYTICS",
+            "value": "[string(variables('deployLogAnalytics'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_APP_INSIGHTS",
+            "value": "[string(variables('deployAppInsights'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_SEARCH_SERVICE",
+            "value": "[string(variables('deployAiSearch'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_STORAGE_ACCOUNT",
+            "value": "[string(variables('deploySa'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_COSMOS_DB",
+            "value": "[string(variables('deployCosmosDb'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_CONTAINER_APPS",
+            "value": "[string(variables('deployContainerApps'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_CONTAINER_REGISTRY",
+            "value": "[string(variables('deployAcr'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DEPLOY_CONTAINER_ENV",
+            "value": "[string(variables('deployContainerAppEnv'))]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          }
+        ]
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'configurationStoreDeploymentFixed')]",
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployAppInsights')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployLogAnalytics')]",
+    "[resourceId('Microsoft.Resources/deployments', 'keyVaultModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerEnv')]",
+    "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
+  ]
+},
+
+{
   "condition": "[parameters('deployPeering')]",
   "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
   "apiVersion": "2024-05-01",
