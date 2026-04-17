@@ -349,6 +349,8 @@
 
     "deployBastionHost": "[coalesce(parameters('deployToggles').bastionHost, true())]",
     "deployContainerApps": "[coalesce(parameters('deployToggles').containerApps, true())]",
+    "deploySoftware": true,
+    "releaseTag": "v1.0.7",
 
     "bastionName": "[concat('bas-', parameters('baseName'))]",
     "natGatewayName": "[concat('ng-', parameters('baseName'))]",
@@ -3212,6 +3214,80 @@
   "dependsOn": [
     "[resourceId('Microsoft.Resources/deployments', 'resolveBuildVmIdentity')]",
     "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
+  ]
+},
+
+{
+  "condition": "[and(variables('deployJumpVm'), variables('deploySoftware'), not(parameters('flagPlatformLandingZone')))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "jumpVmCseDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('vmCseTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "vmName": {
+        "value": "[variables('jumpVMName')]"
+      },
+      "location": {
+        "value": "[parameters('location')]"
+      },
+      "fileUris": {
+        "value": ["[concat('https://raw.githubusercontent.com/Azure/bicep-ptn-aiml-landing-zone/refs/tags/', variables('releaseTag'), '/install.ps1')]"]
+      },
+      "commandToExecute": {
+        "value": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release ', variables('releaseTag'), ' -UseUAI false -ResourceToken ', variables('uniqueSuffix'), ' -AzureTenantId ', tenant().tenantId, ' -AzureLocation ', parameters('location'), ' -AzureSubscriptionId ', subscription().subscriptionId, ' -AzureResourceGroupName ', resourceGroup().name, ' -AzdEnvName ', parameters('baseName'))]"
+      },
+      "tags": {
+        "value": "[parameters('tags')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('jumpVmDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'vmRoleAssignments-JumpVm')]",
+    "[resourceId('Microsoft.Resources/deployments', 'vmCosmosRoleAssignment-JumpVm')]",
+    "[resourceId('Microsoft.Resources/deployments', 'appConfigPopulate')]"
+  ]
+},
+
+{
+  "condition": "[and(variables('deployBuildVm'), variables('deploySoftware'), not(parameters('flagPlatformLandingZone')))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "buildVmCseDeployment",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('vmCseTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "vmName": {
+        "value": "[variables('buildVMName')]"
+      },
+      "location": {
+        "value": "[parameters('location')]"
+      },
+      "fileUris": {
+        "value": ["[concat('https://raw.githubusercontent.com/Azure/bicep-ptn-aiml-landing-zone/refs/tags/', variables('releaseTag'), '/install.ps1')]"]
+      },
+      "commandToExecute": {
+        "value": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File install.ps1 -release ', variables('releaseTag'), ' -UseUAI false -ResourceToken ', variables('uniqueSuffix'), ' -AzureTenantId ', tenant().tenantId, ' -AzureLocation ', parameters('location'), ' -AzureSubscriptionId ', subscription().subscriptionId, ' -AzureResourceGroupName ', resourceGroup().name, ' -AzdEnvName ', parameters('baseName'))]"
+      },
+      "tags": {
+        "value": "[parameters('tags')]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', concat('buildVmDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'vmRoleAssignments-BuildVm')]",
+    "[resourceId('Microsoft.Resources/deployments', 'vmCosmosRoleAssignment-BuildVm')]",
+    "[resourceId('Microsoft.Resources/deployments', 'appConfigPopulate')]"
   ]
 },
 
