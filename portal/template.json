@@ -302,6 +302,7 @@
     "acrName": "[concat('acr', parameters('baseName'))]",
     "storageAccountName": "[toLower(concat('st', parameters('baseName')))]",
     "appConfigName": "[concat('appcs-', parameters('baseName'))]",
+    "cosmosDbDatabaseName": "[concat('db-', parameters('baseName'))]",
     "bingGroundingName": "[concat('bing-', parameters('baseName'))]",
     "buildVMConcat": "[concat('vm-', parameters('baseName'), '-bld')]",
     "buildVMName": "[if(greater(length(variables('buildVMConcat')), 15), toLower(substring(variables('buildVMConcat'), 0, 15)), toLower(variables('buildVMConcat')))]",
@@ -1628,9 +1629,38 @@
         "value": {
           "name": "[concat('cosmos-', parameters('baseName'))]",
           "location": "[parameters('location')]",
+          "capabilitiesToAdd": ["EnableServerless"],
+          "defaultConsistencyLevel": "Session",
+          "enableAnalyticalStorage": true,
+          "enableFreeTier": false,
           "networkRestrictions": {
             "publicNetworkAccess": "Disabled"
-          }
+          },
+          "sqlDatabases": [
+            {
+              "name": "[variables('cosmosDbDatabaseName')]",
+              "containers": [
+                {
+                  "name": "conversations",
+                  "paths": ["/principal_id"],
+                  "defaultTtl": -1,
+                  "indexingPolicy": {
+                    "compositeIndexes": [
+                      [
+                        { "path": "/isDeleted", "order": "Ascending" },
+                        { "path": "/_ts", "order": "Descending" }
+                      ],
+                      [
+                        { "path": "/isDeleted", "order": "Ascending" },
+                        { "path": "/name", "order": "Ascending" },
+                        { "path": "/_ts", "order": "Descending" }
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
         }
       }
     }
@@ -3451,6 +3481,18 @@
           {
             "name": "DATABASE_ACCOUNT_NAME",
             "value": "[if(variables('deployCosmosDb'), concat('cosmos-', parameters('baseName')), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DATABASE_NAME",
+            "value": "[if(variables('deployCosmosDb'), variables('cosmosDbDatabaseName'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "CONVERSATIONS_DATABASE_CONTAINER",
+            "value": "conversations",
             "label": "ai-lz",
             "contentType": "text/plain"
           },
