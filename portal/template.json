@@ -347,6 +347,7 @@
     "aiFoundryConnectionInsightsTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.ai-foundry-connection-insights.json', variables('artifactsLocationSasToken')))]",
     "aiFoundryConnectionStorageTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.ai-foundry-connection-storage.json', variables('artifactsLocationSasToken')))]",
     "vmCseTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/res.vm-custom-script-extension.json', variables('artifactsLocationSasToken')))]",
+    "containerAppTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.app.container-app.json', variables('artifactsLocationSasToken')))]",
 
     "deployBastionHost": "[coalesce(parameters('deployToggles').bastionHost, true())]",
     "deployContainerApps": "[coalesce(parameters('deployToggles').containerApps, true())]",
@@ -355,7 +356,8 @@
 
     "bastionName": "[concat('bas-', parameters('baseName'))]",
     "natGatewayName": "[concat('ng-', parameters('baseName'))]",
-    "privateLinkScopeName": "[concat('pls-', parameters('baseName'))]"
+    "privateLinkScopeName": "[concat('pls-', parameters('baseName'))]",
+    "containerAppName": "[concat('ca-', parameters('baseName'), '-orchestrator')]"
   },
   "resources": [
     {
@@ -2814,6 +2816,52 @@
 },
 
 {
+  "condition": "[variables('deployContainerApps')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "deployContainerApp-orchestrator",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('containerAppTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "containerApp": {
+        "value": {
+          "name": "[variables('containerAppName')]",
+          "environmentResourceId": "[if(variables('deployContainerAppEnv'), reference('deployContainerEnv').outputs.resourceId.value, '')]",
+          "location": "[parameters('location')]",
+          "tags": "[union(parameters('tags'), createObject('azd-service-name', 'orchestrator'))]",
+          "workloadProfileName": "default",
+          "ingressExternal": true,
+          "ingressTargetPort": 8080,
+          "ingressTransport": "auto",
+          "ingressAllowInsecure": false,
+          "managedIdentities": {
+            "systemAssigned": true
+          },
+          "dapr": {
+            "enabled": true,
+            "appId": "orchestrator",
+            "appPort": 8080,
+            "appProtocol": "http"
+          },
+          "scaleSettings": {
+            "minReplicas": 1,
+            "maxReplicas": 1
+          }
+        }
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerEnv')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]"
+  ]
+},
+
+{
   "condition": "[variables('deployAiSearch')]",
   "type": "Microsoft.Resources/deployments",
   "apiVersion": "2025-04-01",
@@ -3269,6 +3317,164 @@
 },
 
 {
+  "condition": "[variables('deployContainerApps')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "resolveContainerAppIdentity",
+  "properties": {
+    "mode": "Incremental",
+    "expressionEvaluationOptions": {
+      "scope": "inner"
+    },
+    "parameters": {
+      "principalId": {
+        "value": "[reference('deployContainerApp-orchestrator').outputs.systemAssignedMIPrincipalId.value]"
+      }
+    },
+    "template": {
+      "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "principalId": {
+          "type": "string"
+        }
+      },
+      "resources": [],
+      "outputs": {
+        "principalId": {
+          "type": "string",
+          "value": "[parameters('principalId')]"
+        }
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerApp-orchestrator')]"
+  ]
+},
+
+{
+  "condition": "[variables('deployContainerApps')]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "containerAppRoleAssignments-orchestrator",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('roleAssignmentTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "roleAssignments": {
+        "value": [
+          {
+            "resourceId": "[if(variables('deployAcr'), reference('deployContainerRegistry').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAppConfig'), reference('configurationStoreDeploymentFixed').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployKeyVault'), reference('keyVaultModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '1407120a-92aa-4202-b7e9-c0e197c71c8f')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deployAiSearch'), reference('aiSearchModule').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          },
+          {
+            "resourceId": "[if(variables('deploySa'), reference('deployStorageAccount').outputs.resourceId.value, '')]",
+            "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'db58b8e5-c6ad-4a2a-8342-4190687cbf4a')]",
+            "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
+            "principalType": "ServicePrincipal"
+          }
+        ]
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'resolveContainerAppIdentity')]",
+    "[resourceId('Microsoft.Resources/deployments', concat('aiFoundryDeployment-', variables('uniqueSuffix')))]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]",
+    "[resourceId('Microsoft.Resources/deployments', 'configurationStoreDeploymentFixed')]",
+    "[resourceId('Microsoft.Resources/deployments', 'keyVaultModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployStorageAccount')]"
+  ]
+},
+
+{
+  "condition": "[and(variables('deployContainerApps'), variables('deployCosmosDb'))]",
+  "type": "Microsoft.Resources/deployments",
+  "apiVersion": "2025-04-01",
+  "name": "containerAppCosmosRoleAssignment-orchestrator",
+  "properties": {
+    "mode": "Incremental",
+    "templateLink": {
+      "uri": "[variables('cosmosRoleAssignmentTemplateUri')]",
+      "contentVersion": "1.0.0.0"
+    },
+    "parameters": {
+      "cosmosDbAccountName": {
+        "value": "[concat('cosmos-', parameters('baseName'))]"
+      },
+      "principalId": {
+        "value": "[reference('resolveContainerAppIdentity').outputs.principalId.value]"
+      },
+      "roleDefinitionGuid": {
+        "value": "00000000-0000-0000-0000-000000000002"
+      },
+      "scopePath": {
+        "value": "[concat(resourceId('Microsoft.DocumentDB/databaseAccounts', concat('cosmos-', parameters('baseName'))), '/dbs/', variables('cosmosDbDatabaseName'))]"
+      }
+    }
+  },
+  "dependsOn": [
+    "[resourceId('Microsoft.Resources/deployments', 'resolveContainerAppIdentity')]",
+    "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
+  ]
+},
+
+{
   "condition": "[and(variables('deployJumpVm'), variables('deploySoftware'), not(parameters('flagPlatformLandingZone')))]",
   "type": "Microsoft.Resources/deployments",
   "apiVersion": "2025-04-01",
@@ -3618,6 +3824,30 @@
             "value": "[string(variables('deployContainerAppEnv'))]",
             "label": "ai-lz",
             "contentType": "text/plain"
+          },
+          {
+            "name": "ORCHESTRATOR_APP_NAME",
+            "value": "[if(variables('deployContainerApps'), reference('deployContainerApp-orchestrator').outputs.name.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "ORCHESTRATOR_APP_FQDN",
+            "value": "[if(variables('deployContainerApps'), reference('deployContainerApp-orchestrator').outputs.fqdn.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "ORCHESTRATOR_APP_RESOURCE_ID",
+            "value": "[if(variables('deployContainerApps'), reference('deployContainerApp-orchestrator').outputs.resourceId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "ORCHESTRATOR_APP_PRINCIPAL_ID",
+            "value": "[if(variables('deployContainerApps'), reference('resolveContainerAppIdentity').outputs.principalId.value, '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
           }
         ]
       }
@@ -3633,7 +3863,9 @@
     "[resourceId('Microsoft.Resources/deployments', 'deployContainerRegistry')]",
     "[resourceId('Microsoft.Resources/deployments', 'deployContainerEnv')]",
     "[resourceId('Microsoft.Resources/deployments', 'aiSearchModule')]",
-    "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]"
+    "[resourceId('Microsoft.Resources/deployments', 'cosmosDbModule')]",
+    "[resourceId('Microsoft.Resources/deployments', 'deployContainerApp-orchestrator')]",
+    "[resourceId('Microsoft.Resources/deployments', 'resolveContainerAppIdentity')]"
   ]
 },
 
