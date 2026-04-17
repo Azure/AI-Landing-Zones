@@ -1802,7 +1802,7 @@
             "privateDnsZoneGroupConfigs": [
               {
                 "name": "kvARecord",
-                "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesece(parameters('resourceIds').keyVaultPrivateDnsZoneResourceId, ''))]"
+                "privateDnsZoneResourceId": "[if(variables('deployPdnsKeyVault'), reference('kv-private-dns-zone').outputs.resourceId.value, coalesce(parameters('resourceIds').keyVaultPrivateDnsZoneResourceId, ''))]"
               }
             ]
           }
