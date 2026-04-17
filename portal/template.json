@@ -1584,7 +1584,28 @@
           "tags": "[parameters('tags')]",
           "kind": "StorageV2",
           "sku": "Standard_LRS",
-          "publicNetworkAccess": "Disabled"
+          "publicNetworkAccess": "Disabled",
+          "allowBlobPublicAccess": false,
+          "supportsHttpsTrafficOnly": true,
+          "requireInfrastructureEncryption": true,
+          "networkAcls": {
+            "bypass": "AzureServices",
+            "defaultAction": "Allow"
+          },
+          "blobServices": {
+            "automaticSnapshotPolicyEnabled": true,
+            "containerDeleteRetentionPolicyDays": 10,
+            "containerDeleteRetentionPolicyEnabled": true,
+            "deleteRetentionPolicyDays": 7,
+            "deleteRetentionPolicyEnabled": true,
+            "lastAccessTimeTrackingPolicyEnabled": true,
+            "containers": [
+              {
+                "name": "documents",
+                "publicAccess": "None"
+              }
+            ]
+          }
         }
       }
     }
@@ -3427,6 +3448,12 @@
           {
             "name": "STORAGE_ACCOUNT_NAME",
             "value": "[if(variables('deploySa'), variables('storageAccountName'), '')]",
+            "label": "ai-lz",
+            "contentType": "text/plain"
+          },
+          {
+            "name": "DOCUMENTS_STORAGE_CONTAINER",
+            "value": "documents",
             "label": "ai-lz",
             "contentType": "text/plain"
           },
