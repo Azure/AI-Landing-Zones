@@ -785,7 +785,7 @@
             {
               "enabled": true,
               "name": "pe-subnet",
-              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.32/27')]",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.32/26')]",
               "serviceEndpoints": ["Microsoft.AzureCosmosDB"],
               "privateEndpointNetworkPolicies": "Disabled",
               "networkSecurityGroupResourceId": "[if(variables('deployPeNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-pe-', parameters('baseName'))), null())]"
@@ -793,7 +793,7 @@
             {
               "enabled": ["variables('deployPdnsAndPe')"],
               "name": "AzureBastionSubnet",
-              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.64/26')]",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.0.0')), '.1.64/26')]",
               "networkSecurityGroupResourceId": "[if(variables('varDeployBastionNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-bastion-', parameters('baseName'))), null())]"
             },
             {
