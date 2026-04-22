@@ -797,7 +797,7 @@
             {
               "enabled": true,
               "name": "pe-subnet",
-              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.32/26')]",
+              "addressPrefix": "[concat(substring(parameters('vnetBaseAddress'), 0, lastIndexOf(parameters('vnetBaseAddress'), '.')), '.64/26')]",
               "serviceEndpoints": ["Microsoft.AzureCosmosDB"],
               "privateEndpointNetworkPolicies": "Disabled",
               "networkSecurityGroupResourceId": "[if(variables('deployPeNsg'), resourceId('Microsoft.Network/networkSecurityGroups', concat('nsg-pe-', parameters('baseName'))), null())]"
@@ -1636,6 +1636,7 @@
         "value": {
           "name": "[variables('appConfigName')]",
           "location": "[parameters('location')]",
+          "disableLocalAuth": false,
           "enableTelemetry": "[parameters('enableTelemetry')]",
           "tags": "[parameters('tags')]"
         }
