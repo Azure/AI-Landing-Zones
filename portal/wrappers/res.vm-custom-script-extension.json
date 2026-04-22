@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "vm-custom-script-extension",
+    "description": "Deploys a Custom Script Extension on an existing VM. Mirrors the CSE resource from bicep-ptn-aiml-landing-zone main.bicep."
+  },
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Name of the virtual machine to attach the extension to."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional. Location for the resource."
+      }
+    },
+    "fileUris": {
+      "type": "array",
+      "metadata": {
+        "description": "Required. Array of URIs to scripts to download."
+      }
+    },
+    "commandToExecute": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Command line to execute."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Tags to apply."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2024-11-01",
+      "name": "[concat(parameters('vmName'), '/cse')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.10",
+        "autoUpgradeMinorVersion": true,
+        "forceUpdateTag": "alwaysRun",
+        "settings": {
+          "fileUris": "[parameters('fileUris')]",
+          "commandToExecute": "[parameters('commandToExecute')]"
+        },
+        "protectedSettings": {}
+      },
+      "tags": "[parameters('tags')]"
+    }
+  ]
+}
