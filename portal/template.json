@@ -1736,6 +1736,9 @@
         "value": {
           "name": "[concat('search-', parameters('baseName'))]",
           "location": "[parameters('location')]",
+          "sku": "basic",
+          "replicaCount": 2,
+          "partitionCount": 1,
           "publicNetworkAccess": "Disabled",
           "managedIdentities": {
             "systemAssigned": true
