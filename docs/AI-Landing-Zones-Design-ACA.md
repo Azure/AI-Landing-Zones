@@ -20,7 +20,7 @@ The Container App Environment serves as the administrative and security boundary
 - **Dedicated Profiles:** Best for steady-state workloads or background workers that require reserved compute for consistent latency.
 - **Serverless GPUs vs. Dedicated GPUs:**
   - [Serverless GPUs](https://learn.microsoft.com/azure/container-apps/gpu-serverless-overview): Ideal for bursty inference where you only pay for the duration of the request.
-  - [Dedicated GPUs](https://learn.microsoft.com/azure/container-apps/plans#dedicated): Necessary for long-running training, fine-tuning, or high-throughput production inference requiring guaranteed availability.
+  - [Dedicated GPUs](https://learn.microsoft.com/azure/container-apps/plans#dedicated): Necessary for long-running training, fine-tuning, or supporting larger inferencing models.
 
 The architecture organizes workloads into five distinct workload profiles:
 
