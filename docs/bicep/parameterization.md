@@ -97,58 +97,95 @@ By default, resource names are auto-generated from the `environmentName` prefix.
 | `searchServiceName` | `null` | AI Search service name |
 | `solutionStorageAccountName` | `null` | Solution Storage account name |
 
-## Existing resource IDs
+## Existing resource IDs (BYO)
 
-Use these parameters to reuse existing resources instead of creating new ones.
+All of the parameters below are optional. Leave them empty to let the template create the resource; set any of them to a resource ID to **reuse** an existing resource instead. Cross-resource-group and cross-subscription IDs are supported throughout.
 
-| Parameter | Default | Description |
-|---|---|---|
-| `aiSearchResourceId` | `null` | Resource ID of an existing AI Search service |
-| `aiFoundryStorageAccountResourceId` | `null` | Resource ID of an existing Storage account for AI Foundry |
-| `aiFoundryCosmosDBAccountResourceId` | `null` | Resource ID of an existing Cosmos DB account for AI Foundry |
+Use these to compose hub-and-spoke and Application Landing Zone (ALZ) topologies where the platform team owns shared services (Key Vault, Log Analytics, Application Insights, Private DNS zones, hub Bastion / NAT / firewall, etc.) and the spoke just consumes them.
 
-### v2 — Bring-your-own platform services
-
-These parameters were added in v2 to support the [hub-and-spoke topology](hub-and-spoke.md). Set any value to a resource ID to **reuse** that platform resource (cross-RG and cross-subscription supported); leave empty to let the template create it.
+### Workload data services
 
 | Parameter | Env variable | Description |
 |---|---|---|
-| `existingPlatformServices.logAnalyticsWorkspaceResourceId` | `EXISTING_LOG_ANALYTICS_WORKSPACE_ID` | Reuse a Log Analytics workspace from the hub for diagnostics + App Insights linkage |
-| `existingPlatformServices.applicationInsightsResourceId` | `EXISTING_APPLICATION_INSIGHTS_ID` | Reuse an existing Application Insights instance |
-| `existingPlatformServices.keyVaultResourceId` | `EXISTING_KEY_VAULT_ID` | Reuse a hub-managed Key Vault for shared secrets |
-| `existingBastionResourceId` | `EXISTING_BASTION_RESOURCE_ID` | Hub Bastion host that already has line-of-sight to the spoke jumpbox via peering |
-| `existingNatGatewayResourceId` | `EXISTING_NAT_GATEWAY_RESOURCE_ID` | Hub-owned NAT Gateway to associate with spoke subnets |
-| `existingJumpboxResourceId` | `EXISTING_JUMPBOX_RESOURCE_ID` | Reference to a hub-managed jumpbox VM (informational; used by docs and post-provisioning scripts) |
-| `existingPrivateDnsZones.*` | per-zone | 15 per-namespace overrides (blob, file, queue, table, vault, search, openai, cosmos-documents, redis, container apps, ACR, AMPLS, etc.). See the [source migration guide](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/v2-migration.md#3-4-private-dns-zones) for the complete list and behavior |
+| `aiSearchResourceId` | `AI_SEARCH_RESOURCE_ID` | Reuse an existing Azure AI Search service instead of creating one in the spoke. |
+| `aiFoundryStorageAccountResourceId` | `AI_FOUNDRY_STORAGE_ACCOUNT_RESOURCE_ID` | Reuse an existing Storage account as the AI Foundry storage backing. |
+| `aiFoundryCosmosDBAccountResourceId` | `AI_FOUNDRY_COSMOS_DB_ACCOUNT_RESOURCE_ID` | Reuse an existing Cosmos DB account as the AI Foundry Cosmos backing. |
+| `keyVaultResourceId` | `KEY_VAULT_RESOURCE_ID` | Reuse an existing Key Vault for the workload (skips local vault creation). |
+
+### Observability (v2)
+
+| Parameter | Env variable | Description |
+|---|---|---|
+| `existingLogAnalyticsWorkspaceResourceId` | `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID` | Reuse a central Log Analytics workspace. All diagnostic settings, AMPLS linkage, and the App Configuration entries point at this workspace. |
+| `existingApplicationInsightsResourceId` | `EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID` | Reuse an existing Application Insights component. Pair with `existingApplicationInsightsConnectionString` so downstream consumers (Container Apps Environment, App Configuration) receive a working connection string without needing access to the AppInsights resource. |
+| `existingApplicationInsightsConnectionString` | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | Connection string for the reused AppInsights component (`az monitor app-insights component show -g <rg> -a <name> --query connectionString -o tsv`). Marked `@secure()`. |
+
+### Networking
+
+| Parameter | Env variable | Description |
+|---|---|---|
+| `existingVnetResourceId` | `EXISTING_VNET_RESOURCE_ID` | Existing VNet to deploy the workload subnets into. Used together with `useExistingVNet=true`. |
+| `hubIntegrationHubVnetResourceId` | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | Resource ID of the hub VNet to peer with. When set and `hubIntegrationCreateHubPeering=true`, the deployment creates the spoke→hub peering automatically (the reverse hub→spoke direction is the operator's responsibility — see `tests/scripts/Add-HubSpokePeering.ps1`). |
+| `hubIntegrationExistingRouteTableResourceId` | `HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID` | Existing Route Table to attach to the spoke workload subnets. When set, the deployment skips local RT creation and assumes the RT is already configured with the correct default route. |
+
+### Hub jumpbox / Bastion / NAT (v2)
+
+When any of these is set, the matching `deploy*` flag defaults to `false`, so the spoke reuses the hub-managed component instead of deploying its own.
+
+| Parameter | Env variable | Description |
+|---|---|---|
+| `existingBastionResourceId` | `EXISTING_BASTION_RESOURCE_ID` | Hub-managed Bastion host that has line-of-sight to the spoke jumpbox via peering. |
+| `existingNatGatewayResourceId` | `EXISTING_NAT_GATEWAY_RESOURCE_ID` | Hub-managed NAT Gateway to associate with the spoke subnets for outbound egress. |
+| `existingJumpboxResourceId` | `EXISTING_JUMPBOX_RESOURCE_ID` | Reference to a hub-managed jumpbox VM. Informational — surfaced to runbooks and post-provision scripts. |
+
+### Private DNS zones (v2)
+
+All 15 zones used by the landing zone can be brought from a central platform subscription independently. When any of these is set, the local zone is **not** created. Pre-link the zone to the spoke VNet (or rely on hub→spoke peering + hub-side link) — automatic spoke linking is not performed. When `policyManagedPrivateDns=true`, no zone creation or linking happens regardless of these overrides.
+
+| Parameter | Zone |
+|---|---|
+| `existingPrivateDnsZoneCogSvcsResourceId` | `privatelink.cognitiveservices.azure.com` (Cognitive Services / Foundry) |
+| `existingPrivateDnsZoneOpenAiResourceId` | `privatelink.openai.azure.com` |
+| `existingPrivateDnsZoneAiServicesResourceId` | `privatelink.services.ai.azure.com` |
+| `existingPrivateDnsZoneSearchResourceId` | `privatelink.search.windows.net` |
+| `existingPrivateDnsZoneCosmosResourceId` | `privatelink.documents.azure.com` |
+| `existingPrivateDnsZoneBlobResourceId` | `privatelink.blob.<storage suffix>` |
+| `existingPrivateDnsZoneKeyVaultResourceId` | `privatelink.vaultcore.azure.net` |
+| `existingPrivateDnsZoneAppConfigResourceId` | `privatelink.azconfig.io` |
+| `existingPrivateDnsZoneContainerAppsResourceId` | `privatelink.<region>.azurecontainerapps.io` (region-specific) |
+| `existingPrivateDnsZoneAcrResourceId` | `privatelink.azurecr.io` |
+| `existingPrivateDnsZoneAzureMonitorResourceId` | `privatelink.monitor.azure.com` |
+| `existingPrivateDnsZoneOmsOpsInsightsResourceId` | `privatelink.oms.opinsights.azure.com` |
+| `existingPrivateDnsZoneOdsOpsInsightsResourceId` | `privatelink.ods.opinsights.azure.com` |
+| `existingPrivateDnsZoneAzureAutomationResourceId` | `privatelink.agentsvc.azure.automation.net` |
+| `existingPrivateDnsZoneAppInsightsResourceId` | `privatelink.applicationinsights.io` (consumed only when AMPLS is created locally) |
 
 ## Hub integration (v2)
 
-For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke deployments.
+For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke deployments. See the [Hub-and-Spoke topology](hub-and-spoke.md) runbook for the full picture.
 
-| Parameter | Env variable | Description |
+| Parameter | Default | Description |
 |---|---|---|
-| `hubIntegration.hubVnetResourceId` | `HUB_VNET_RESOURCE_ID` | Resource ID of the hub VNet to peer with. When set, the template creates a spoke→hub peering automatically. |
-| `hubIntegration.createHubPeering` | `CREATE_HUB_PEERING` | Whether the template should create the spoke→hub peering (default `true` when `hubVnetResourceId` is set) |
-| `hubIntegration.egressNextHopIp` | `EGRESS_NEXT_HOP_IP` | Private IP of the hub Azure Firewall / NVA. When set, the spoke UDR for `0.0.0.0/0` points here instead of a local firewall. |
-| `hubIntegration.existingRouteTableResourceId` | `EXISTING_ROUTE_TABLE_RESOURCE_ID` | BYO route table for the spoke workload subnets. Bypasses the auto-generated UDR. |
-| `hubIntegration.peeringAllowGatewayTransit` | — | Allow gateway transit on the spoke side of the peering |
-| `hubIntegration.peeringUseRemoteGateways` | — | Use remote gateways from the hub |
+| `hubIntegrationCreateHubPeering` | `true` | When `true` and `hubIntegrationHubVnetResourceId` is set, the deployment creates the spoke→hub peering inline. Set to `false` to defer peering creation to the platform team. |
+| `hubIntegrationEgressNextHopIp` | `null` | Private IP of the hub Azure Firewall / NVA. When set, the spoke UDR for `0.0.0.0/0` points here. Effective only when `deployAzureFirewall=false` and `networkIsolation=true`. |
+| `hubIntegrationPeeringAllowGatewayTransit` | `false` | `allowGatewayTransit` flag on the spoke→hub peering. Set to `true` only when the spoke owns a VPN / ExpressRoute gateway. |
+| `hubIntegrationPeeringUseRemoteGateways` | `false` | `useRemoteGateways` flag on the spoke→hub peering. Set to `true` to route on-premises traffic through a hub-owned gateway. |
+
+The BYO IDs that drive this section (`hubIntegrationHubVnetResourceId`, `hubIntegrationExistingRouteTableResourceId`) are listed in the [Networking BYO table above](#networking).
 
 ## DNS zone link suffix (v2)
 
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
-| `dnsZoneLinkSuffix` | `''` | `DNS_ZONE_LINK_SUFFIX` | Suffix appended to VNet-link names when reusing shared Private DNS zones across multiple spokes, so links don't collide on name |
-| `linkExistingPrivateDnsZonesToSpoke` | `true` | — | When reusing BYO DNS zones, also create a link from each zone to the spoke VNet (needed when peering doesn't propagate DNS) |
+| `dnsZoneLinkSuffix` | `''` | `DNS_ZONE_LINK_SUFFIX` | Suffix appended to VNet-link names when multiple spokes share the same hub Private DNS zones, so the per-spoke link names don't collide. Typical values: `spoke01`, `spoke02`, … |
 
 ## Networking
 
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
-| `useExistingVNet` | `false` | `USE_EXISTING_VNET` | Use an existing VNet instead of creating a new one |
-| `deploySubnets` | — | `DEPLOY_SUBNETS` | Create subnets in the existing VNet |
-| `sideBySideDeploy` | — | `SIDE_BY_SIDE` | Enable side-by-side deployment in the same VNet |
-| `existingVnetResourceId` | — | `EXISTING_VNET_RESOURCE_ID` | Resource ID of the existing VNet to use |
+| `useExistingVNet` | `false` | `USE_EXISTING_VNET` | Use an existing VNet instead of creating a new one. Pair with `existingVnetResourceId`. |
+| `deploySubnets` | `true` | `DEPLOY_SUBNETS` | Create the workload subnets (PE, jumpbox, agent, ACA, NAT, Bastion). Set to `false` to BYO subnets in an existing VNet. |
+| `sideBySideDeploy` | `false` | `SIDE_BY_SIDE` | Allow a second AI LZ to be deployed side-by-side in the same existing VNet without disturbing the first one's subnets / NSGs. |
 
 ## Virtual Machine
 
