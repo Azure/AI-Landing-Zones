@@ -63,12 +63,9 @@ A handful of other quality-of-life additions:
 - **Hub integration helpers** — `hubIntegration.hubVnetResourceId` creates the spoke→hub peering for you; `hubIntegration.egressNextHopIp` routes spoke egress through your hub firewall / NVA.
 - **Pre-flight validation** — `scripts/Invoke-PreflightChecks.ps1` runs automatically as an `azd preprovision` hook and catches the usual mistakes (CIDR overlap, undersized subnets, missing BYO resource IDs, conflicting flags) before they reach ARM. Bypass with `PREFLIGHT_SKIP=true`.
 
-If you are upgrading from v1.x, read the [Migration to v2](migration-v2.md) guide before re-deploying.
-
 ## Next steps
 
 - [How to Deploy](how-to-deploy.md) — Prerequisites and deployment instructions
 - [Hub-and-Spoke Topology](hub-and-spoke.md) — Step-by-step walkthrough for ALZ-integrated deployments
-- [Migration to v2](migration-v2.md) — Upgrade guide for users coming from v1.x
 - [Parameterization](parameterization.md) — Full parameter reference
 - [Permissions](permissions.md) — Role assignments provisioned by the template

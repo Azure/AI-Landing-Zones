@@ -82,6 +82,5 @@ The pre-flight script catches the most common hub-and-spoke mistakes (typos in `
 ## See also
 
 - [Source-repo hub-and-spoke runbook](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md) — full walkthrough with test-hub Bicep, screenshots, and troubleshooting
-- [Migration to v2](migration-v2.md) — upgrade path from v1.x
-- [Parameterization](parameterization.md) — full parameter reference for the new BYO inputs
-- [v2 release notes on GitHub](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases?q=v2&expanded=true)
+- [Parameterization](parameterization.md) — full parameter reference for BYO inputs
+- [Release notes on GitHub](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases)

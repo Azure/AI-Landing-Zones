@@ -13,7 +13,7 @@
     - **Granular BYO Private DNS** — 15 per-zone override parameters, plus `dnsZoneLinkSuffix` for multi-spoke shared-zone topologies
     - **Hub integration** — new spoke→hub VNet peering (created by `main.bicep`) and external-egress UDR via hub firewall/NVA
     - **Pre-flight validation** — `scripts/Invoke-PreflightChecks.ps1` runs as an `azd preprovision` hook and catches parameter mistakes before they reach ARM
-    - See the [Migration to v2](bicep/migration-v2.md) guide and the [Hub-and-Spoke Topology](bicep/hub-and-spoke.md) runbook for full details. Release: [v2.0.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.0).
+    - See the [Hub-and-Spoke Topology](bicep/hub-and-spoke.md) runbook for full details. Release: [v2.0.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.0).
 
 ## 17th November 2025
 - AI Landing Zones goes from preview to GA
