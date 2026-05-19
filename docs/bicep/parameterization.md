@@ -37,6 +37,7 @@ azd env set NETWORK_ISOLATION true
 | `useZoneRedundancy` | `false` | — | Enable zone redundancy for supported services |
 | `useCMK` | `false` | — | Enable customer-managed keys for encryption |
 | `greenFieldDeployment` | `true` | — | Green-field deployment (creates all resources from scratch) |
+| `publicIngress` | `{ enabled: false }` | — | Optional Application Gateway WAF v2 public endpoint for a private Container App. See [Public Ingress with Application Gateway](public-ingress.md). |
 
 ## Deploy toggles
 
@@ -112,7 +113,7 @@ Use these to compose hub-and-spoke and Application Landing Zone (ALZ) topologies
 | `aiFoundryCosmosDBAccountResourceId` | `AI_FOUNDRY_COSMOS_DB_ACCOUNT_RESOURCE_ID` | Reuse an existing Cosmos DB account as the AI Foundry Cosmos backing. |
 | `keyVaultResourceId` | `KEY_VAULT_RESOURCE_ID` | Reuse an existing Key Vault for the workload (skips local vault creation). |
 
-### Observability (v2)
+### Observability
 
 | Parameter | Env variable | Description |
 |---|---|---|
@@ -128,7 +129,7 @@ Use these to compose hub-and-spoke and Application Landing Zone (ALZ) topologies
 | `hubIntegrationHubVnetResourceId` | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | Resource ID of the hub VNet to peer with. When set and `hubIntegrationCreateHubPeering=true`, the deployment creates the spoke→hub peering automatically (the reverse hub→spoke direction is the operator's responsibility — see `tests/scripts/Add-HubSpokePeering.ps1`). |
 | `hubIntegrationExistingRouteTableResourceId` | `HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID` | Existing Route Table to attach to the spoke workload subnets. When set, the deployment skips local RT creation and assumes the RT is already configured with the correct default route. |
 
-### Hub jumpbox / Bastion / NAT (v2)
+### Hub jumpbox / Bastion / NAT
 
 When any of these is set, the matching `deploy*` flag defaults to `false`, so the spoke reuses the hub-managed component instead of deploying its own.
 
@@ -138,7 +139,7 @@ When any of these is set, the matching `deploy*` flag defaults to `false`, so th
 | `existingNatGatewayResourceId` | `EXISTING_NAT_GATEWAY_RESOURCE_ID` | Hub-managed NAT Gateway to associate with the spoke subnets for outbound egress. |
 | `existingJumpboxResourceId` | `EXISTING_JUMPBOX_RESOURCE_ID` | Reference to a hub-managed jumpbox VM. Informational — surfaced to runbooks and post-provision scripts. |
 
-### Private DNS zones (v2)
+### Private DNS zones
 
 All 15 zones used by the landing zone can be brought from a central platform subscription independently. When any of these is set, the local zone is **not** created. Pre-link the zone to the spoke VNet (or rely on hub→spoke peering + hub-side link) — automatic spoke linking is not performed. When `policyManagedPrivateDns=true`, no zone creation or linking happens regardless of these overrides.
 
@@ -160,7 +161,7 @@ All 15 zones used by the landing zone can be brought from a central platform sub
 | `existingPrivateDnsZoneAzureAutomationResourceId` | `privatelink.agentsvc.azure.automation.net` |
 | `existingPrivateDnsZoneAppInsightsResourceId` | `privatelink.applicationinsights.io` (consumed only when AMPLS is created locally) |
 
-## Hub integration (v2)
+## Hub integration
 
 For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke deployments. See the [Hub-and-Spoke topology](hub-and-spoke.md) runbook for the full picture.
 
@@ -173,7 +174,7 @@ For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke deployments. See th
 
 The BYO IDs that drive this section (`hubIntegrationHubVnetResourceId`, `hubIntegrationExistingRouteTableResourceId`) are listed in the [Networking BYO table above](#networking).
 
-## DNS zone link suffix (v2)
+## DNS zone link suffix
 
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
