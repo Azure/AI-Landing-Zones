@@ -1,0 +1,29 @@
+/* Minimal nav typography tweak: reduce left sidebar size for better density */
+
+.md-nav--primary .md-nav__link,
+.md-nav--primary .md-nav__title {
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+/* Slightly reduce section labels as well (Material renders them as labels) */
+.md-nav--primary .md-nav__item--section > label.md-nav__link {
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+/* Keep parameter / env-var identifiers in reference tables on a single line.
+   Material for MkDocs applies `word-break: break-word` to typeset tables,
+   which causes long camelCase names (e.g. `networkIsolation`,
+   `useZoneRedundancy`, `NETWORK_ISOLATION`) to wrap mid-word inside narrow
+   columns. We disable that for inline <code> elements inside tables — the
+   Material `.md-typeset__table` wrapper already provides horizontal scroll
+   when a row gets too wide, which is a much nicer fallback than breaking
+   identifiers mid-word. */
+.md-typeset table:not([class]) td code,
+.md-typeset table:not([class]) th code {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
