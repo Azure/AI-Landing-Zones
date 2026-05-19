@@ -507,9 +507,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#whats-new-in-v2" class="md-nav__link">
+  <a href="#highlights" class="md-nav__link">
     <span class="md-ellipsis">
-      What's new in v2
+      Highlights
     </span>
   </a>
   
@@ -569,6 +569,29 @@
   
   <span class="md-ellipsis">
     Hub-and-Spoke Topology
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Public Ingress (App Gateway)
     
   </span>
   
@@ -765,8 +788,8 @@
 <p>Every service can be individually toggled on or off via deploy parameters. See <a href="../parameterization/">Parameterization</a> for the full reference.</p>
 <h2 id="role-assignments">Role assignments</h2>
 <p>The deployment configures role-based access control (RBAC) for service-to-service communication using managed identities. See <a href="../permissions/">Permissions</a> for the complete list of role assignments.</p>
-<h2 id="whats-new-in-v2">What's new in v2</h2>
-<p>The <strong>v2</strong> line adds two things that matter most for everyday use:</p>
+<h2 id="highlights">Highlights</h2>
+<p>The Bicep implementation supports two deployment shapes that matter most for everyday use:</p>
 <ol>
 <li><strong>A topology switch</strong> — set <code>deploymentMode</code> to one of:
     - <strong><code>standalone</code></strong> — the AI Landing Zone provisions everything it needs (VNet, private endpoints, Bastion, jumpbox, NAT Gateway, observability). Best for sandboxes, evaluations, and teams without a corporate hub.
@@ -784,6 +807,7 @@
 <ul>
 <li><a href="../how-to-deploy/">How to Deploy</a> — Prerequisites and deployment instructions</li>
 <li><a href="../hub-and-spoke/">Hub-and-Spoke Topology</a> — Step-by-step walkthrough for ALZ-integrated deployments</li>
+<li><a href="../public-ingress/">Public Ingress with Application Gateway</a> — Publish a private Container App through Application Gateway WAF v2</li>
 <li><a href="../parameterization/">Parameterization</a> — Full parameter reference</li>
 <li><a href="../permissions/">Permissions</a> — Role assignments provisioned by the template</li>
 </ul>

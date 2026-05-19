@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../how-to-deploy/">
+        <link rel="prev" href="../hub-and-spoke/">
       
       
-        <link rel="next" href="../public-ingress/">
+        <link rel="next" href="../permissions/">
       
       
       <link rel="icon" href="../../media/logo.svg">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Hub-and-Spoke Topology - Azure AI Landing Zones</title>
+        <title>Public Ingress (App Gateway) - Azure AI Landing Zones</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#hub-and-spoke-topology" class="md-skip">
+        <a href="#public-ingress-with-application-gateway" class="md-skip">
           Skip to content
         </a>
       
@@ -111,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Hub-and-Spoke Topology
+              Public Ingress (App Gateway)
             
           </span>
         </div>
@@ -473,6 +473,29 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hub-and-Spoke Topology
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -490,7 +513,7 @@
   
   
   <span class="md-ellipsis">
-    Hub-and-Spoke Topology
+    Public Ingress (App Gateway)
     
   </span>
   
@@ -503,7 +526,7 @@
   
   
   <span class="md-ellipsis">
-    Hub-and-Spoke Topology
+    Public Ingress (App Gateway)
     
   </span>
   
@@ -526,54 +549,90 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#when-to-use-this-topology" class="md-nav__link">
+  <a href="#what-gets-created" class="md-nav__link">
     <span class="md-ellipsis">
-      When to use this topology
+      What gets created
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-spoke-creates-vs-consumes" class="md-nav__link">
+  <a href="#operating-states" class="md-nav__link">
     <span class="md-ellipsis">
-      What the spoke creates vs. consumes
+      Operating states
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#minimum-parameters" class="md-nav__link">
+  <a href="#step-1-enable-the-gateway-skeleton" class="md-nav__link">
     <span class="md-ellipsis">
-      Minimum parameters
+      Step 1: enable the gateway skeleton
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#network-planning" class="md-nav__link">
+  <a href="#step-2-prepare-the-hostname-and-certificate" class="md-nav__link">
     <span class="md-ellipsis">
-      Network planning
+      Step 2: prepare the hostname and certificate
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#deployment-flow" class="md-nav__link">
+  <a href="#step-3-point-dns-at-application-gateway" class="md-nav__link">
     <span class="md-ellipsis">
-      Deployment flow
+      Step 3: point DNS at Application Gateway
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
+  <a href="#step-4-switch-to-live-mode" class="md-nav__link">
     <span class="md-ellipsis">
-      See also
+      Step 4: switch to live mode
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 5: validate
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameter-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter reference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#useful-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Useful outputs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#teardown" class="md-nav__link">
+    <span class="md-ellipsis">
+      Teardown
     </span>
   </a>
   
@@ -583,29 +642,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../public-ingress/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Public Ingress (App Gateway)
-    
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -727,159 +763,271 @@
   
 
 
-<h1 id="hub-and-spoke-topology">Hub-and-Spoke Topology</h1>
-<p>This page summarizes the <strong>hub-and-spoke</strong> deployment topology: the AI Landing Zone spoke peers to a hub VNet that hosts shared platform services (Azure Firewall, Bastion, Private DNS zones, Log Analytics workspace).</p>
-<p>For the full end-to-end walkthrough — including the minimal test hub Bicep template, IP planning, peering setup, post-provisioning steps from the jumpbox, and the verification checklist — read the source runbook at <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md">docs/runbook-hub-spoke.md</a>.</p>
-<h2 id="when-to-use-this-topology">When to use this topology</h2>
-<p>Pick hub-and-spoke when <strong>any</strong> of the following applies:</p>
-<ul>
-<li>A platform team already operates a corporate hub VNet (Connectivity subscription) with Azure Firewall and a central Bastion.</li>
-<li>DNS, identity, monitoring, or networking policy is centrally managed by a different team than the one shipping the AI workload.</li>
-<li>Multiple AI workloads (or other workloads) need to share egress, jumpbox, and DNS resolution.</li>
-<li>You are integrating the AI Landing Zone into an <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/">Azure Landing Zone</a> (CAF).</li>
-</ul>
-<h2 id="what-the-spoke-creates-vs-consumes">What the spoke creates vs. consumes</h2>
+<h1 id="public-ingress-with-application-gateway">Public Ingress with Application Gateway</h1>
+<p>Network-isolated deployments keep Container Apps private by default. The Container Apps environment is internal-only and is normally reached from inside the virtual network, for example from the jumpbox.</p>
+<p>Use <strong>Public Ingress</strong> when one Container App needs a controlled public entry point. The Bicep template provisions Azure Application Gateway WAF v2 in front of the private Container Apps environment, without making the environment itself public.</p>
+<div class="admonition warning">
+<p class="admonition-title">Cost and teardown</p>
+<p>Application Gateway WAF v2 and Standard Public IP incur hourly charges while deployed. Turning <code>publicIngress.enabled</code> back to <code>false</code> does not delete resources that were already created by an incremental ARM deployment. Use <code>azd down</code> for full teardown, or manually delete the gateway, Public IP, WAF policy, NSG, and gateway identity.</p>
+</div>
+<h2 id="what-gets-created">What gets created</h2>
+<p>When <code>publicIngress.enabled=true</code>, and the deployment also has <code>networkIsolation=true</code>, <code>deployContainerEnv=true</code>, <code>deployContainerApps=true</code>, and at least one app in <code>containerAppsList</code>, the template creates:</p>
 <table>
 <thead>
 <tr>
 <th>Resource</th>
-<th>Spoke creates</th>
-<th>Consumes from hub</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Spoke VNet, subnets, NSGs</td>
-<td>✅</td>
-<td>—</td>
+<td>Application Gateway WAF v2</td>
+<td>Public HTTPS entry point for one Container App backend.</td>
 </tr>
 <tr>
-<td>Private endpoints for AI services</td>
-<td>✅</td>
-<td>—</td>
+<td>Standard Public IP</td>
+<td>Public address for the gateway.</td>
 </tr>
 <tr>
-<td>AI Foundry, AI Search, Cosmos DB, Storage, ACR, App Config, Key Vault</td>
-<td>✅</td>
-<td>—</td>
+<td>WAF policy</td>
+<td>Managed WAF rules, using Prevention mode by default.</td>
 </tr>
 <tr>
-<td>Container Apps environment + workload profiles</td>
-<td>✅</td>
-<td>—</td>
+<td>User-assigned identity</td>
+<td>Lets Application Gateway read the TLS certificate from Key Vault.</td>
 </tr>
 <tr>
-<td>Log Analytics workspace</td>
-<td>Optional</td>
-<td>✅ via <code>existingPlatformServices.logAnalyticsWorkspaceResourceId</code></td>
+<td>NSG for <code>AppGatewaySubnet</code></td>
+<td>Keeps the gateway closed until source CIDRs are configured.</td>
 </tr>
 <tr>
-<td>Application Insights</td>
-<td>Optional</td>
-<td>✅ via <code>existingPlatformServices.applicationInsightsResourceId</code></td>
-</tr>
-<tr>
-<td>Private DNS zones (15 namespaces)</td>
-<td>Optional, per-zone</td>
-<td>✅ via <code>existingPrivateDnsZones.*</code></td>
-</tr>
-<tr>
-<td>Azure Firewall</td>
-<td>Optional</td>
-<td>✅ via <code>hubIntegration.egressNextHopIp</code></td>
-</tr>
-<tr>
-<td>Bastion</td>
-<td>Optional</td>
-<td>✅ (hub Bastion reaches spoke jumpbox via peering)</td>
-</tr>
-<tr>
-<td>Jumpbox VM</td>
-<td>Optional</td>
-<td>✅ via <code>existingJumpboxResourceId</code></td>
-</tr>
-<tr>
-<td>NAT Gateway</td>
-<td>Optional</td>
-<td>— (typically the hub firewall provides egress)</td>
-</tr>
-<tr>
-<td>Spoke→hub VNet peering</td>
-<td>✅ (created by <code>main.bicep</code>)</td>
-<td>—</td>
+<td>Diagnostic settings</td>
+<td>Sends gateway logs and metrics to Log Analytics.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="minimum-parameters">Minimum parameters</h2>
-<p>For an AI LZ Integrated deployment:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w">                  </span>ailz-integrated
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_VNET_RESOURCE_ID<span class="w">             </span><span class="s2">&quot;/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EGRESS_NEXT_HOP_IP<span class="w">               </span><span class="s2">&quot;&lt;hub firewall private IP&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w">                </span><span class="nb">true</span>
-
-<span class="c1"># Recommended: reuse hub observability</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_ID<span class="w"> </span><span class="s2">&quot;/subscriptions/.../workspaces/&lt;law&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_ID<span class="w">    </span><span class="s2">&quot;/subscriptions/.../components/&lt;ai&gt;&quot;</span>
-</code></pre></div>
-<p>If your hub also hosts the standard Private DNS zones, set each <code>EXISTING_PRIVATE_DNS_ZONE_*</code> variable to its hub resource ID. See <a href="../parameterization/">Parameterization</a> for the complete list of 15 zone parameters.</p>
-<h2 id="network-planning">Network planning</h2>
-<p>The spoke VNet address space must not overlap with the hub VNet. The default spoke prefix (<code>10.0.0.0/22</code>) is safe for a hub on <code>10.100.0.0/16</code>. If your hub uses a different prefix, set:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>VNET_ADDRESS_PREFIXES<span class="w"> </span><span class="s2">&quot;[\&quot;10.200.0.0/22\&quot;]&quot;</span>
-</code></pre></div>
-<p>Subnet minimums enforced by the pre-flight script:</p>
+<p>The backend defaults to the first app in <code>containerAppsList</code>. Use <code>publicIngress.backendAppIndex</code> to point to a different app.</p>
+<h2 id="operating-states">Operating states</h2>
+<p>Public Ingress is intentionally a two-step workflow.</p>
 <table>
 <thead>
 <tr>
-<th>Subnet</th>
-<th>Minimum size</th>
-<th>Notes</th>
+<th>State</th>
+<th>Configuration</th>
+<th>Behavior</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Container Apps environment</td>
-<td><code>/27</code> (consumption), <code>/23</code> (workload profiles)</td>
-<td>AVM requirement</td>
+<td>Skeleton mode</td>
+<td><code>enabled=true</code>, but <code>frontendHostName</code> or <code>sslCertSecretId</code> is empty</td>
+<td>The gateway resources exist, but Internet traffic is not opened through the NSG.</td>
 </tr>
 <tr>
-<td>Private endpoints</td>
-<td><code>/28</code></td>
-<td>One IP per private endpoint</td>
-</tr>
-<tr>
-<td>AzureBastionSubnet</td>
-<td><code>/26</code></td>
-<td>Fixed by Bastion</td>
-</tr>
-<tr>
-<td>AzureFirewallSubnet</td>
-<td><code>/26</code></td>
-<td>Fixed by Azure Firewall</td>
-</tr>
-<tr>
-<td>Jumpbox</td>
-<td><code>/29</code></td>
-<td>One IP per VM</td>
+<td>Live mode</td>
+<td><code>enabled=true</code>, <code>frontendHostName</code> and <code>sslCertSecretId</code> are set, and allowed source CIDRs are provided</td>
+<td>HTTPS on 443 is enabled, HTTP redirects to HTTPS, and only configured CIDRs can reach the gateway.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="deployment-flow">Deployment flow</h2>
-<div class="highlight"><pre><span></span><code>flowchart LR
-    A[Hub team:&lt;br/&gt;VNet + Firewall + Bastion&lt;br/&gt;+ Private DNS zones&lt;br/&gt;+ LAW] --&gt; B
-    B[You: set DEPLOYMENT_MODE=ailz-integrated&lt;br/&gt;+ HUB_VNET_RESOURCE_ID&lt;br/&gt;+ EGRESS_NEXT_HOP_IP] --&gt; C
-    C[azd preprovision:&lt;br/&gt;Invoke-PreflightChecks.ps1] --&gt; D
-    D[azd provision:&lt;br/&gt;spoke VNet + private endpoints&lt;br/&gt;+ AI services + Container Apps&lt;br/&gt;+ spoke→hub peering]
-    D --&gt; E[You / hub team:&lt;br/&gt;create hub→spoke peering&lt;br/&gt;+ DNS zone links to spoke]
-    E --&gt; F[Verify hello-world from&lt;br/&gt;jumpbox over Bastion]
+<p>This keeps the post-provision configuration in source control instead of relying on portal edits that can be overwritten later.</p>
+<h2 id="step-1-enable-the-gateway-skeleton">Step 1: enable the gateway skeleton</h2>
+<p>In <code>main.parameters.json</code>, enable Public Ingress:</p>
+<div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
+  &quot;value&quot;: {
+    &quot;enabled&quot;: true
+  }
+}
 </code></pre></div>
-<p>The pre-flight script catches the most common hub-and-spoke mistakes (typos in <code>HUB_VNET_RESOURCE_ID</code>, subnets too small, CIDR overlap with hub, missing ACA delegation on BYO subnets) <strong>before</strong> ARM rejects the deployment 20 minutes in.</p>
-<h2 id="see-also">See also</h2>
-<ul>
-<li><a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md">Source-repo hub-and-spoke runbook</a> — full walkthrough with test-hub Bicep, screenshots, and troubleshooting</li>
-<li><a href="../public-ingress/">Public Ingress with Application Gateway</a> — publish a private Container App through Application Gateway WAF v2</li>
-<li><a href="../parameterization/">Parameterization</a> — full parameter reference for BYO inputs</li>
-<li><a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases">Release notes on GitHub</a></li>
-</ul>
+<p>Provision the landing zone:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
+</code></pre></div>
+<p>After provisioning, capture the <code>PUBLIC_INGRESS_PUBLIC_IP</code> output. You can get it from the <code>azd provision</code> output or from the resource group deployment outputs in the Azure portal.</p>
+<h2 id="step-2-prepare-the-hostname-and-certificate">Step 2: prepare the hostname and certificate</h2>
+<p>Choose the public hostname, for example:</p>
+<div class="highlight"><pre><span></span><code>app.contoso.com
+</code></pre></div>
+<p>From the jumpbox, use the ACME client installed by the bootstrap script:</p>
+<div class="highlight"><pre><span></span><code><span class="n">C</span><span class="p">:\</span><span class="n">tools</span><span class="p">\</span><span class="n">win-acme</span><span class="p">\</span><span class="n">wacs</span><span class="p">.</span><span class="n">exe</span>
+</code></pre></div>
+<p>Use a DNS-01 flow with your DNS provider, then import the certificate into the landing-zone Key Vault. The jumpbox managed identity has the Key Vault certificate permissions needed for this workflow.</p>
+<p>After import, copy the <strong>versionless</strong> Key Vault secret URI for the certificate:</p>
+<div class="highlight"><pre><span></span><code>https://&lt;key-vault-name&gt;.vault.azure.net/secrets/&lt;certificate-name&gt;
+</code></pre></div>
+<p>Use the versionless URI, not a URI that includes a certificate version.</p>
+<h2 id="step-3-point-dns-at-application-gateway">Step 3: point DNS at Application Gateway</h2>
+<p>In your public DNS provider, create or update an A record:</p>
+<table>
+<thead>
+<tr>
+<th>Record</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app.contoso.com</code></td>
+<td><code>PUBLIC_INGRESS_PUBLIC_IP</code></td>
+</tr>
+</tbody>
+</table>
+<p>Wait for DNS propagation before validating the endpoint.</p>
+<h2 id="step-4-switch-to-live-mode">Step 4: switch to live mode</h2>
+<p>Update <code>main.parameters.json</code> with the hostname, certificate secret URI, and source CIDRs that are allowed to reach the gateway:</p>
+<div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
+  &quot;value&quot;: {
+    &quot;enabled&quot;: true,
+    &quot;frontendHostName&quot;: &quot;app.contoso.com&quot;,
+    &quot;sslCertSecretId&quot;: &quot;https://&lt;key-vault-name&gt;.vault.azure.net/secrets/&lt;certificate-name&gt;&quot;,
+    &quot;allowedSourceAddressPrefixes&quot;: [&quot;203.0.113.0/24&quot;]
+  }
+}
+</code></pre></div>
+<p>Provision again:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
+</code></pre></div>
+<p>The template now configures the HTTPS listener, attaches the Key Vault certificate, redirects HTTP to HTTPS, and opens the NSG only for the configured source CIDRs.</p>
+<h2 id="step-5-validate">Step 5: validate</h2>
+<p>From an allowed source:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-v<span class="w"> </span>https://app.contoso.com/
+curl<span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
+</code></pre></div>
+<p>Expected behavior:</p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Expected result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>https://app.contoso.com/</code></td>
+<td>Returns the Container App response.</td>
+</tr>
+<tr>
+<td><code>http://app.contoso.com/</code></td>
+<td>Redirects to HTTPS.</td>
+</tr>
+<tr>
+<td>Source outside <code>allowedSourceAddressPrefixes</code></td>
+<td>Cannot reach the gateway on 443.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="parameter-reference">Parameter reference</h2>
+<div class="highlight"><pre><span></span><code>publicIngress: {
+  enabled: bool
+  backendAppIndex: int?
+  frontendHostName: string?
+  sslCertSecretId: string?
+  allowedSourceAddressPrefixes: string[]?
+  wafMode: (&#39;Prevention&#39; | &#39;Detection&#39;)?
+  wafCustomRules: object[]?
+  capacity: object?
+  sslPolicy: object?
+}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td><code>false</code></td>
+<td>Master switch for Public Ingress.</td>
+</tr>
+<tr>
+<td><code>backendAppIndex</code></td>
+<td><code>0</code></td>
+<td>Index into <code>containerAppsList</code> for the backend app.</td>
+</tr>
+<tr>
+<td><code>frontendHostName</code></td>
+<td>Empty</td>
+<td>Public hostname used by the HTTPS listener. Required for live mode.</td>
+</tr>
+<tr>
+<td><code>sslCertSecretId</code></td>
+<td>Empty</td>
+<td>Versionless Key Vault secret URI for the TLS certificate. Required for live mode.</td>
+</tr>
+<tr>
+<td><code>allowedSourceAddressPrefixes</code></td>
+<td><code>[]</code></td>
+<td>CIDRs allowed to reach HTTPS on 443. Empty keeps the gateway closed.</td>
+</tr>
+<tr>
+<td><code>wafMode</code></td>
+<td><code>Prevention</code></td>
+<td>WAF mode.</td>
+</tr>
+<tr>
+<td><code>wafCustomRules</code></td>
+<td><code>[]</code></td>
+<td>Optional custom WAF rules.</td>
+</tr>
+<tr>
+<td><code>capacity</code></td>
+<td><code>{ minCapacity: 0, maxCapacity: 2 }</code></td>
+<td>Application Gateway autoscale capacity.</td>
+</tr>
+<tr>
+<td><code>sslPolicy</code></td>
+<td><code>{}</code></td>
+<td>Optional Application Gateway SSL policy block.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="useful-outputs">Useful outputs</h2>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUBLIC_INGRESS_ENABLED</code></td>
+<td>Whether Public Ingress was deployed.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_PUBLIC_IP</code></td>
+<td>Public IPv4 address for the gateway.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_GATEWAY_RESOURCE_ID</code></td>
+<td>Application Gateway resource ID.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_NSG_RESOURCE_ID</code></td>
+<td>NSG attached to <code>AppGatewaySubnet</code>.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_WAF_POLICY_RESOURCE_ID</code></td>
+<td>WAF policy resource ID.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_IDENTITY_PRINCIPAL_ID</code></td>
+<td>Gateway identity principal ID. Use this if an external Key Vault must grant certificate access.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_LIVE</code></td>
+<td><code>true</code> when live mode is active.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="teardown">Teardown</h2>
+<p>For full teardown:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>down
+</code></pre></div>
+<p>If the rest of the landing zone must remain, delete the Public Ingress resources manually: Application Gateway, Public IP, WAF policy, NSG, and gateway user-assigned identity.</p>
 
 
 

@@ -499,6 +499,29 @@
   
   
     <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Public Ingress (App Gateway)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../permissions/" class="md-nav__link">
         
   
@@ -636,9 +659,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#observability-v2" class="md-nav__link">
+  <a href="#observability" class="md-nav__link">
     <span class="md-ellipsis">
-      Observability (v2)
+      Observability
     </span>
   </a>
   
@@ -654,18 +677,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#hub-jumpbox-bastion-nat-v2" class="md-nav__link">
+  <a href="#hub-jumpbox-bastion-nat" class="md-nav__link">
     <span class="md-ellipsis">
-      Hub jumpbox / Bastion / NAT (v2)
+      Hub jumpbox / Bastion / NAT
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#private-dns-zones-v2" class="md-nav__link">
+  <a href="#private-dns-zones" class="md-nav__link">
     <span class="md-ellipsis">
-      Private DNS zones (v2)
+      Private DNS zones
     </span>
   </a>
   
@@ -677,18 +700,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hub-integration-v2" class="md-nav__link">
+  <a href="#hub-integration" class="md-nav__link">
     <span class="md-ellipsis">
-      Hub integration (v2)
+      Hub integration
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#dns-zone-link-suffix-v2" class="md-nav__link">
+  <a href="#dns-zone-link-suffix" class="md-nav__link">
     <span class="md-ellipsis">
-      DNS zone link suffix (v2)
+      DNS zone link suffix
     </span>
   </a>
   
@@ -984,6 +1007,12 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <td>—</td>
 <td>Green-field deployment (creates all resources from scratch)</td>
 </tr>
+<tr>
+<td><code>publicIngress</code></td>
+<td><code>{ enabled: false }</code></td>
+<td>—</td>
+<td>Optional Application Gateway WAF v2 public endpoint for a private Container App. See <a href="../public-ingress/">Public Ingress with Application Gateway</a>.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="deploy-toggles">Deploy toggles</h2>
@@ -1261,7 +1290,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tr>
 </tbody>
 </table>
-<h3 id="observability-v2">Observability (v2)</h3>
+<h3 id="observability">Observability</h3>
 <table>
 <thead>
 <tr>
@@ -1315,7 +1344,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tr>
 </tbody>
 </table>
-<h3 id="hub-jumpbox-bastion-nat-v2">Hub jumpbox / Bastion / NAT (v2)</h3>
+<h3 id="hub-jumpbox-bastion-nat">Hub jumpbox / Bastion / NAT</h3>
 <p>When any of these is set, the matching <code>deploy*</code> flag defaults to <code>false</code>, so the spoke reuses the hub-managed component instead of deploying its own.</p>
 <table>
 <thead>
@@ -1343,7 +1372,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tr>
 </tbody>
 </table>
-<h3 id="private-dns-zones-v2">Private DNS zones (v2)</h3>
+<h3 id="private-dns-zones">Private DNS zones</h3>
 <p>All 15 zones used by the landing zone can be brought from a central platform subscription independently. When any of these is set, the local zone is <strong>not</strong> created. Pre-link the zone to the spoke VNet (or rely on hub→spoke peering + hub-side link) — automatic spoke linking is not performed. When <code>policyManagedPrivateDns=true</code>, no zone creation or linking happens regardless of these overrides.</p>
 <table>
 <thead>
@@ -1415,7 +1444,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tr>
 </tbody>
 </table>
-<h2 id="hub-integration-v2">Hub integration (v2)</h2>
+<h2 id="hub-integration">Hub integration</h2>
 <p>For <code>deploymentMode=ailz-integrated</code> or hybrid hub-and-spoke deployments. See the <a href="../hub-and-spoke/">Hub-and-Spoke topology</a> runbook for the full picture.</p>
 <table>
 <thead>
@@ -1449,7 +1478,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tbody>
 </table>
 <p>The BYO IDs that drive this section (<code>hubIntegrationHubVnetResourceId</code>, <code>hubIntegrationExistingRouteTableResourceId</code>) are listed in the <a href="#networking">Networking BYO table above</a>.</p>
-<h2 id="dns-zone-link-suffix-v2">DNS zone link suffix (v2)</h2>
+<h2 id="dns-zone-link-suffix">DNS zone link suffix</h2>
 <table>
 <thead>
 <tr>

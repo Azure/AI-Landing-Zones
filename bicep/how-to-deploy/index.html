@@ -539,6 +539,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#optional-public-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional public endpoint
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -584,6 +593,29 @@
   
   <span class="md-ellipsis">
     Hub-and-Spoke Topology
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Public Ingress (App Gateway)
     
   </span>
   
@@ -730,7 +762,7 @@
 <p>Azure CLI and PowerShell 7+ are required by the <code>azd preprovision</code> hook that runs <code>scripts/Invoke-PreflightChecks.ps1</code> before deployment. You can bypass the hook by setting <code>PREFLIGHT_SKIP=true</code> in your shell, but the script is the fastest way to catch parameter mistakes (subnet sizing, CIDR overlap, BYO resource typos) before they reach ARM.</p>
 </div>
 <h2 id="basic-deployment">Basic Deployment</h2>
-<p>Quick setup for demos and development environments without network isolation. This is the <strong>standalone</strong> topology (the default in v2).</p>
+<p>Quick setup for demos and development environments without network isolation. This is the <strong>standalone</strong> topology.</p>
 <p><strong>1. Initialize the project</strong></p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>azure/bicep-ptn-aiml-landing-zone
 </code></pre></div>
@@ -780,6 +812,8 @@ azd<span class="w"> </span>auth<span class="w"> </span>login
 <p><strong>2. Connect via Azure Bastion</strong></p>
 <p>- In the Azure Portal, go to your VM resource → <strong>Connect</strong> → <strong>Bastion</strong>
    - Enter the credentials you set in step 1</p>
+<h3 id="optional-public-endpoint">Optional public endpoint</h3>
+<p>If a private Container App must be reachable through a controlled public endpoint, use <a href="../public-ingress/">Public Ingress with Application Gateway</a>. The template first provisions an inert Application Gateway skeleton, then you complete the hostname, certificate, DNS, and allowed-source configuration.</p>
 <h2 id="ai-landing-zone-integrated-deployment">AI Landing Zone Integrated Deployment</h2>
 <p>For deployments that <strong>plug into an existing Azure Landing Zone</strong> — i.e. the spoke peers to a corporate hub that already provides Bastion, Firewall, Private DNS zones, and Log Analytics.</p>
 <p>This topology assumes you (or another team) already operate a hub VNet and shared platform services. The AI Landing Zone spoke consumes them rather than re-creating them.</p>
@@ -807,6 +841,7 @@ azd<span class="w"> </span>provision
 </div>
 <h2 id="next-steps">Next steps</h2>
 <ul>
+<li><a href="../public-ingress/">Public Ingress with Application Gateway</a> — Publish a private Container App through Application Gateway WAF v2</li>
 <li><a href="../parameterization/">Parameterization</a> — Customize your deployment</li>
 <li><a href="../permissions/">Permissions</a> — Understand the role assignments</li>
 </ul>
