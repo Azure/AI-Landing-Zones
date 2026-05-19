@@ -10,4 +10,4 @@ hide:
   window.location.replace("../how-to-deploy/");
 </script>
 
-This page moved to [How to Deploy](how-to-deploy.md).
+This page is no longer part of the Bicep documentation flow. Continue with [How to Deploy](how-to-deploy.md).
