@@ -31,7 +31,9 @@ azd env set NETWORK_ISOLATION true
 
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
-| `networkIsolation` | `false` | `NETWORK_ISOLATION` | Enable Zero Trust network isolation (private endpoints, VNet, Bastion, Jumpbox VM) |
+| `deploymentMode` | `standalone` | `DEPLOYMENT_MODE` | Topology preset (**v2.0.0+**): `standalone` (self-contained spoke) or `ailz-integrated` (peer to an existing hub VNet, reuse hub services) |
+| `networkIsolation` | `false` | `NETWORK_ISOLATION` | Enable Zero Trust network isolation (private endpoints, VNet) |
+| `allowedIpRanges` | `[]` | `ALLOWED_IP_RANGES` | IPv4 / CIDR allow-list (**v2.0.0+**) applied to Storage, Key Vault, Cosmos DB, AI Search, ACR, AI Foundry, and Container Registry data planes when `networkIsolation=true` |
 | `useZoneRedundancy` | `false` | — | Enable zone redundancy for supported services |
 | `useCMK` | `false` | — | Enable customer-managed keys for encryption |
 | `greenFieldDeployment` | `true` | — | Green-field deployment (creates all resources from scratch) |
@@ -54,12 +56,17 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 | `deployMcp` | `true` | MCP (Model Context Protocol) server |
 | `deployGroundingWithBing` | `false` | Bing Grounding service |
 | `deployKeyVault` | `true` | Azure Key Vault |
-| `deployVmKeyVault` | — | `DEPLOY_VM_KEY_VAULT` | Separate Key Vault for VM secrets |
+| `deployVmKeyVault` | — | Separate Key Vault for VM secrets (`DEPLOY_VM_KEY_VAULT`) |
 | `deployLogAnalytics` | `true` | Log Analytics workspace |
 | `deploySearchService` | `true` | Azure AI Search service |
 | `deployStorageAccount` | `true` | Azure Storage account |
-| `deployVM` | `true` | Jumpbox Virtual Machine (used with network isolation) |
+| `deployJumpbox` | `null` (inherits from preset) | Jumpbox VM (**v2.0.0+** — replaces the v1.x `deployVM` flag) |
+| `deployBastion` | `null` (inherits from preset) | Azure Bastion host (**v2.0.0+** — independent of jumpbox) |
+| `deployNatGateway` | `null` (inherits from preset) | NAT Gateway for outbound traffic (**v2.0.0+** — independent of jumpbox) |
 | `deploySoftware` | `true` | Pre-install development tools on the Jumpbox VM |
+
+!!! warning "Breaking change in v2.0.0"
+    The v1.x umbrella flag `deployVM` is **removed**. Use the three independent flags `deployJumpbox` / `deployBastion` / `deployNatGateway` instead. See the [Migration to v2.0](migration-v2.md) guide.
 
 ## Resource name overrides
 
@@ -99,6 +106,40 @@ Use these parameters to reuse existing resources instead of creating new ones.
 | `aiSearchResourceId` | `null` | Resource ID of an existing AI Search service |
 | `aiFoundryStorageAccountResourceId` | `null` | Resource ID of an existing Storage account for AI Foundry |
 | `aiFoundryCosmosDBAccountResourceId` | `null` | Resource ID of an existing Cosmos DB account for AI Foundry |
+
+### v2.0.0 — Bring-your-own platform services
+
+These parameters were added in v2.0.0 to support the [hub-and-spoke topology](hub-and-spoke.md). Set any value to a resource ID to **reuse** that platform resource (cross-RG and cross-subscription supported); leave empty to let the template create it.
+
+| Parameter | Env variable | Description |
+|---|---|---|
+| `existingPlatformServices.logAnalyticsWorkspaceResourceId` | `EXISTING_LOG_ANALYTICS_WORKSPACE_ID` | Reuse a Log Analytics workspace from the hub for diagnostics + App Insights linkage |
+| `existingPlatformServices.applicationInsightsResourceId` | `EXISTING_APPLICATION_INSIGHTS_ID` | Reuse an existing Application Insights instance |
+| `existingPlatformServices.keyVaultResourceId` | `EXISTING_KEY_VAULT_ID` | Reuse a hub-managed Key Vault for shared secrets |
+| `existingBastionResourceId` | `EXISTING_BASTION_RESOURCE_ID` | Hub Bastion host that already has line-of-sight to the spoke jumpbox via peering |
+| `existingNatGatewayResourceId` | `EXISTING_NAT_GATEWAY_RESOURCE_ID` | Hub-owned NAT Gateway to associate with spoke subnets |
+| `existingJumpboxResourceId` | `EXISTING_JUMPBOX_RESOURCE_ID` | Reference to a hub-managed jumpbox VM (informational; used by docs and post-provisioning scripts) |
+| `existingPrivateDnsZones.*` | per-zone | 15 per-namespace overrides (blob, file, queue, table, vault, search, openai, cosmos-documents, redis, container apps, ACR, AMPLS, etc.). See the [source migration guide](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/v2-migration.md#3-4-private-dns-zones) for the complete list and behavior |
+
+## Hub integration (v2.0.0)
+
+For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke deployments.
+
+| Parameter | Env variable | Description |
+|---|---|---|
+| `hubIntegration.hubVnetResourceId` | `HUB_VNET_RESOURCE_ID` | Resource ID of the hub VNet to peer with. When set, the template creates a spoke→hub peering automatically. |
+| `hubIntegration.createHubPeering` | `CREATE_HUB_PEERING` | Whether the template should create the spoke→hub peering (default `true` when `hubVnetResourceId` is set) |
+| `hubIntegration.egressNextHopIp` | `EGRESS_NEXT_HOP_IP` | Private IP of the hub Azure Firewall / NVA. When set, the spoke UDR for `0.0.0.0/0` points here instead of a local firewall. |
+| `hubIntegration.existingRouteTableResourceId` | `EXISTING_ROUTE_TABLE_RESOURCE_ID` | BYO route table for the spoke workload subnets. Bypasses the auto-generated UDR. |
+| `hubIntegration.peeringAllowGatewayTransit` | — | Allow gateway transit on the spoke side of the peering |
+| `hubIntegration.peeringUseRemoteGateways` | — | Use remote gateways from the hub |
+
+## DNS zone link suffix (v2.0.0)
+
+| Parameter | Default | Env variable | Description |
+|---|---|---|---|
+| `dnsZoneLinkSuffix` | `''` | `DNS_ZONE_LINK_SUFFIX` | Suffix appended to VNet-link names when reusing shared Private DNS zones across multiple spokes, so links don't collide on name |
+| `linkExistingPrivateDnsZonesToSpoke` | `true` | — | When reusing BYO DNS zones, also create a link from each zone to the spoke VNet (needed when peering doesn't propagate DNS) |
 
 ## Networking
 
