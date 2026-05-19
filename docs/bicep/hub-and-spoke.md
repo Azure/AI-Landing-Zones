@@ -1,6 +1,6 @@
 # Hub-and-Spoke Topology
 
-This page summarizes the **hub-and-spoke** deployment topology introduced in **v2.0.0**: the AI Landing Zone spoke peers to a hub VNet that hosts shared platform services (Azure Firewall, Bastion, Private DNS zones, Log Analytics workspace).
+This page summarizes the **hub-and-spoke** deployment topology introduced in **v2**: the AI Landing Zone spoke peers to a hub VNet that hosts shared platform services (Azure Firewall, Bastion, Private DNS zones, Log Analytics workspace).
 
 For the full end-to-end walkthrough — including the minimal test hub Bicep template, IP planning, peering setup, post-provisioning steps from the jumpbox, and the verification checklist — read the source runbook at [docs/runbook-hub-spoke.md](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md).
 
@@ -82,6 +82,6 @@ The pre-flight script catches the most common hub-and-spoke mistakes (typos in `
 ## See also
 
 - [Source-repo hub-and-spoke runbook](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md) — full walkthrough with test-hub Bicep, screenshots, and troubleshooting
-- [Migration to v2.0](migration-v2.md) — upgrade path from v1.x
+- [Migration to v2](migration-v2.md) — upgrade path from v1.x
 - [Parameterization](parameterization.md) — full parameter reference for the new BYO inputs
-- [v2.0.0 release notes](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.0)
+- [v2 release notes on GitHub](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases?q=v2&expanded=true)

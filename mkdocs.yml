@@ -42,7 +42,7 @@ nav:
       - "Overview": bicep/overview.md
       - "How to Deploy": bicep/how-to-deploy.md
       - "Hub-and-Spoke Topology": bicep/hub-and-spoke.md
-      - "Migration to v2.0": bicep/migration-v2.md
+      - "Migration to v2": bicep/migration-v2.md
       - "Permissions": bicep/permissions.md
       - "Parameterization": bicep/parameterization.md
   - Terraform Implementation: terraform/index.md
