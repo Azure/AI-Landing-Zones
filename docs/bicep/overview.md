@@ -8,7 +8,7 @@ The Azure AI Landing Zone is an enterprise-scale, production-ready reference arc
 
 ## Deployment modes
 
-The template supports three deployment topologies that you choose with the `deploymentMode` parameter (introduced in **v2.0.0**). Each topology is a curated set of defaults — every individual flag remains overridable.
+The template supports three deployment topologies. You pick one with the `deploymentMode` parameter — each topology is a curated set of defaults, and every individual flag remains overridable.
 
 | Mode | `deploymentMode` value | Network isolation | Jumpbox VM | Hub integration | Use case |
 |---|---|---|---|---|---|
@@ -47,22 +47,28 @@ Every service can be individually toggled on or off via deploy parameters. See [
 
 The deployment configures role-based access control (RBAC) for service-to-service communication using managed identities. See [Permissions](permissions.md) for the complete list of role assignments.
 
-## What's new in v2.0.0
+## What's new in v2
 
-**v2.0.0** (May 2026) extends the template with composability features for enterprises integrating the AI Landing Zone into an existing Azure Landing Zone. The major themes:
+The **v2** line adds two things that matter most for everyday use:
 
-- **Bring your own platform services** — the spoke can now consume an existing Log Analytics workspace, Application Insights, hub VNet, Private DNS zones, route table, and NAT Gateway / Bastion / jumpbox VM. Cross-subscription scenarios are supported.
-- **Hybrid network access** — the new `allowedIpRanges` parameter combines private endpoints with a public IP allow-list across Storage, Key Vault, Cosmos DB, AI Search, ACR, AI Foundry, and Container Registry.
-- **Topology preset** — pick `standalone` or `ailz-integrated` once with `deploymentMode`; the template derives a coherent default for every networking and identity flag.
-- **Decoupled jumpbox / Bastion / NAT Gateway** — each is now independently controllable; the old `deployVM` umbrella is removed.
-- **Pre-flight validation** — `scripts/Invoke-PreflightChecks.ps1` runs automatically before `azd provision` and catches subnet sizing / CIDR overlap / parameter conflicts before they reach ARM.
+1. **A topology switch** — set `deploymentMode` to one of:
+    - **`standalone`** — the AI Landing Zone provisions everything it needs (VNet, private endpoints, Bastion, jumpbox, NAT Gateway, observability). Best for sandboxes, evaluations, and teams without a corporate hub.
+    - **`ailz-integrated`** — the AI Landing Zone deploys only the **spoke** (VNet + private endpoints + AI services) and peers into a hub VNet you already operate, reusing the hub's Firewall, Bastion, Private DNS zones, and Log Analytics workspace. Best for production inside an existing Azure Landing Zone.
+2. **Granular reuse of existing resources** — every platform service can be brought from the outside via an `existing*ResourceId` parameter (cross-subscription IDs are accepted): Log Analytics, Application Insights, Private DNS zones (per zone, 15 available), hub VNet, jumpbox, Bastion, NAT Gateway, route table.
 
-If you are upgrading from v1.x, read the [Migration to v2.0](migration-v2.md) guide before re-deploying.
+A handful of other quality-of-life additions:
+
+- **`allowedIpRanges`** — let named CIDRs reach the data plane of Storage, Key Vault, Cosmos DB, AI Search, ACR, AI Foundry, and App Configuration without disabling private endpoints. Use this when developers need to query the workload from their laptops without routing through Bastion.
+- **Decoupled hub components** — `deployJumpbox`, `deployBastion`, and `deployNatGateway` are now independent flags.
+- **Hub integration helpers** — `hubIntegration.hubVnetResourceId` creates the spoke→hub peering for you; `hubIntegration.egressNextHopIp` routes spoke egress through your hub firewall / NVA.
+- **Pre-flight validation** — `scripts/Invoke-PreflightChecks.ps1` runs automatically as an `azd preprovision` hook and catches the usual mistakes (CIDR overlap, undersized subnets, missing BYO resource IDs, conflicting flags) before they reach ARM. Bypass with `PREFLIGHT_SKIP=true`.
+
+If you are upgrading from v1.x, read the [Migration to v2](migration-v2.md) guide before re-deploying.
 
 ## Next steps
 
 - [How to Deploy](how-to-deploy.md) — Prerequisites and deployment instructions
-- [Hub-and-Spoke Topology](hub-and-spoke.md) — Step-by-step walkthrough for ALZ-integrated deployments (**new in v2.0**)
-- [Migration to v2.0](migration-v2.md) — Breaking-change map and upgrade guide (**new in v2.0**)
+- [Hub-and-Spoke Topology](hub-and-spoke.md) — Step-by-step walkthrough for ALZ-integrated deployments
+- [Migration to v2](migration-v2.md) — Upgrade guide for users coming from v1.x
 - [Parameterization](parameterization.md) — Full parameter reference
 - [Permissions](permissions.md) — Role assignments provisioned by the template

@@ -13,7 +13,7 @@ Choose your preferred deployment mode based on project requirements and environm
 
 - [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
 - [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd)
-- [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) — required by the pre-flight validation hook (v2.0.0+)
+- [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) — required by the pre-flight validation hook (v2+)
 - [Git](https://git-scm.com/downloads)
 
 !!! note
@@ -21,7 +21,7 @@ Choose your preferred deployment mode based on project requirements and environm
 
 ## Basic Deployment
 
-Quick setup for demos and development environments without network isolation. This is the **standalone** topology (the default in v2.0.0).
+Quick setup for demos and development environments without network isolation. This is the **standalone** topology (the default in v2).
 
 **1. Initialize the project**
 
@@ -137,6 +137,6 @@ azd provision
     The [Hub-and-Spoke Topology](hub-and-spoke.md) page documents this scenario end-to-end, including a minimal test hub Bicep template, IP planning, peering setup, and verifying connectivity through the hub Bastion.
 
 ## Next steps
-- [Migration to v2.0](migration-v2.md) — Upgrade guide for users coming from v1.x
+- [Migration to v2](migration-v2.md) — Upgrade guide for users coming from v1.x
 - [Parameterization](parameterization.md) — Customize your deployment
 - [Permissions](permissions.md) — Understand the role assignments
