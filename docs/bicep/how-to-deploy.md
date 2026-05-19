@@ -21,7 +21,7 @@ Choose your preferred deployment mode based on project requirements and environm
 
 ## Basic Deployment
 
-Quick setup for demos and development environments without network isolation. This is the **standalone** topology (the default in v2).
+Quick setup for demos and development environments without network isolation. This is the **standalone** topology.
 
 **1. Initialize the project**
 
@@ -97,6 +97,10 @@ After a Zero Trust deployment, use the Jumpbox VM to access services inside the 
    - In the Azure Portal, go to your VM resource → **Connect** → **Bastion**
    - Enter the credentials you set in step 1
 
+### Optional public endpoint
+
+If a private Container App must be reachable through a controlled public endpoint, use [Public Ingress with Application Gateway](public-ingress.md). The template first provisions an inert Application Gateway skeleton, then you complete the hostname, certificate, DNS, and allowed-source configuration.
+
 ## AI Landing Zone Integrated Deployment
 
 For deployments that **plug into an existing Azure Landing Zone** — i.e. the spoke peers to a corporate hub that already provides Bastion, Firewall, Private DNS zones, and Log Analytics.
@@ -137,5 +141,6 @@ azd provision
     The [Hub-and-Spoke Topology](hub-and-spoke.md) page documents this scenario end-to-end, including a minimal test hub Bicep template, IP planning, peering setup, and verifying connectivity through the hub Bastion.
 
 ## Next steps
+- [Public Ingress with Application Gateway](public-ingress.md) — Publish a private Container App through Application Gateway WAF v2
 - [Parameterization](parameterization.md) — Customize your deployment
 - [Permissions](permissions.md) — Understand the role assignments

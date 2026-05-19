@@ -47,9 +47,9 @@ Every service can be individually toggled on or off via deploy parameters. See [
 
 The deployment configures role-based access control (RBAC) for service-to-service communication using managed identities. See [Permissions](permissions.md) for the complete list of role assignments.
 
-## What's new in v2
+## Highlights
 
-The **v2** line adds two things that matter most for everyday use:
+The Bicep implementation supports two deployment shapes that matter most for everyday use:
 
 1. **A topology switch** — set `deploymentMode` to one of:
     - **`standalone`** — the AI Landing Zone provisions everything it needs (VNet, private endpoints, Bastion, jumpbox, NAT Gateway, observability). Best for sandboxes, evaluations, and teams without a corporate hub.
@@ -67,5 +67,6 @@ A handful of other quality-of-life additions:
 
 - [How to Deploy](how-to-deploy.md) — Prerequisites and deployment instructions
 - [Hub-and-Spoke Topology](hub-and-spoke.md) — Step-by-step walkthrough for ALZ-integrated deployments
+- [Public Ingress with Application Gateway](public-ingress.md) — Publish a private Container App through Application Gateway WAF v2
 - [Parameterization](parameterization.md) — Full parameter reference
 - [Permissions](permissions.md) — Role assignments provisioned by the template
