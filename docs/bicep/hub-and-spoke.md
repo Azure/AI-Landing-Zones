@@ -1,6 +1,6 @@
 # Hub-and-Spoke Topology
 
-This page summarizes the **hub-and-spoke** deployment topology introduced in **v2**: the AI Landing Zone spoke peers to a hub VNet that hosts shared platform services (Azure Firewall, Bastion, Private DNS zones, Log Analytics workspace).
+This page summarizes the **hub-and-spoke** deployment topology: the AI Landing Zone spoke peers to a hub VNet that hosts shared platform services (Azure Firewall, Bastion, Private DNS zones, Log Analytics workspace).
 
 For the full end-to-end walkthrough — including the minimal test hub Bicep template, IP planning, peering setup, post-provisioning steps from the jumpbox, and the verification checklist — read the source runbook at [docs/runbook-hub-spoke.md](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md).
 
