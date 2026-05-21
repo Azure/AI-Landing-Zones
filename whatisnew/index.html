@@ -824,17 +824,18 @@
 <li><strong>AI Landing Zones Bicep v2.0.1 released.</strong> Hotfix for a v2.0.0 regression in the AI Foundry account private-endpoint emission that caused <code>azd provision</code> to fail with <code>InvalidTemplate: 'The resource 'Microsoft.Resources/deployments/module.account.pe.&lt;name&gt;' is not defined in the template'</code> during template validation. Single-line fix; no behavior change for any topology. Release: <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.1">v2.0.1</a>.</li>
 </ul>
 <h2 id="18th-may-2026">18th May 2026</h2>
+<p><strong>AI Landing Zones Bicep v2 released.</strong> Adds hub-and-spoke composability and granular reuse of platform resources for Application Landing Zone (ALZ) integrated topologies.</p>
+<p><strong>Highlights:</strong></p>
 <ul>
-<li><strong>AI Landing Zones Bicep v2 released.</strong> Adds hub-and-spoke composability and granular reuse of platform resources for Application Landing Zone (ALZ) integrated topologies. Highlights:
-    - <strong>Topology preset</strong> — new <code>deploymentMode</code> parameter (<code>standalone</code> / <code>ailz-integrated</code>) picks the deployment shape in one place
-    - <strong>IP allow-lists</strong> — new <code>allowedIpRanges</code> parameter for "Zero Trust + named developer IPs" hybrid scenarios, applied uniformly to 7 PaaS services
-    - <strong>Decoupled jumpbox / Bastion / NAT Gateway</strong> — each is now an independent flag, each with a BYO <code>existingResourceId</code> variant
-    - <strong>Observability reuse</strong> — bring your own Log Analytics workspace and Application Insights, including cross-subscription scenarios
-    - <strong>Granular BYO Private DNS</strong> — 15 per-zone override parameters, plus <code>dnsZoneLinkSuffix</code> for multi-spoke shared-zone topologies
-    - <strong>Hub integration</strong> — new spoke→hub VNet peering (created by <code>main.bicep</code>) and external-egress UDR via hub firewall/NVA
-    - <strong>Pre-flight validation</strong> — <code>scripts/Invoke-PreflightChecks.ps1</code> runs as an <code>azd preprovision</code> hook and catches parameter mistakes before they reach ARM
-    - See the <a href="../bicep/hub-and-spoke/">Hub-and-Spoke Topology</a> runbook for full details. Release: <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.0">v2.0.0</a>.</li>
+<li><strong>Topology preset</strong> — new <code>deploymentMode</code> parameter (<code>standalone</code> / <code>ailz-integrated</code>) picks the deployment shape in one place</li>
+<li><strong>IP allow-lists</strong> — new <code>allowedIpRanges</code> parameter for "Zero Trust + named developer IPs" hybrid scenarios, applied uniformly to 7 PaaS services</li>
+<li><strong>Decoupled jumpbox / Bastion / NAT Gateway</strong> — each is now an independent flag, each with a BYO <code>existingResourceId</code> variant</li>
+<li><strong>Observability reuse</strong> — bring your own Log Analytics workspace and Application Insights, including cross-subscription scenarios</li>
+<li><strong>Granular BYO Private DNS</strong> — 15 per-zone override parameters, plus <code>dnsZoneLinkSuffix</code> for multi-spoke shared-zone topologies</li>
+<li><strong>Hub integration</strong> — new spoke→hub VNet peering (created by <code>main.bicep</code>) and external-egress UDR via hub firewall/NVA</li>
+<li><strong>Pre-flight validation</strong> — <code>scripts/Invoke-PreflightChecks.ps1</code> runs as an <code>azd preprovision</code> hook and catches parameter mistakes before they reach ARM</li>
 </ul>
+<p>See the <a href="../bicep/hub-and-spoke/">Hub-and-Spoke Topology</a> runbook for full details. Release: <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.0">v2.0.0</a>.</p>
 <h2 id="17th-november-2025">17th November 2025</h2>
 <ul>
 <li>AI Landing Zones goes from preview to GA</li>
