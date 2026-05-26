@@ -201,16 +201,16 @@
     },
     "enableDefenderForAI": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
-        "description": "Optional. Enable Microsoft Defender for AI (part of Defender for Cloud). Deploys Defender for AI, Storage (with malware scanning and sensitive data discovery), and Key Vault at subscription level."
+        "description": "Optional. Enable Microsoft Defender for AI (part of Defender for Cloud). Deploys Defender for AI, Storage (with malware scanning and sensitive data discovery), and Key Vault at subscription level. Note: Currently disabled by default due to ARM template subscription-scope limitations."
       }
     },
     "enableDefenderForKeyVault": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
-        "description": "Optional. Enable Microsoft Defender for Key Vault. Only applies if enableDefenderForAI is true and Key Vault is being deployed."
+        "description": "Optional. Enable Microsoft Defender for Key Vault. Only applies if enableDefenderForAI is true and Key Vault is being deployed. Note: Currently disabled by default due to ARM template subscription-scope limitations."
       }
     },
     "resourceIds": {
@@ -467,8 +467,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "[concat('defender-', variables('uniqueSuffix'))]",
-      "location": "[resourceGroup().location]",
-      "subscriptionId": "[subscription().subscriptionId]",
       "properties": {
         "mode": "Incremental",
         "expressionEvaluationOptions": {
@@ -524,8 +522,6 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "[concat('defender-keyvault-', variables('uniqueSuffix'))]",
-      "location": "[resourceGroup().location]",
-      "subscriptionId": "[subscription().subscriptionId]",
       "properties": {
         "mode": "Incremental",
         "expressionEvaluationOptions": {
@@ -3093,7 +3089,7 @@
       "roleAssignments": {
         "value": [
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
             "principalId": "[reference('aiSearchModule').outputs.systemAssignedMIPrincipalId.value]",
             "principalType": "ServicePrincipal"
@@ -3295,13 +3291,13 @@
             "principalType": "ServicePrincipal"
           },
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68')]",
             "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')]",
             "principalId": "[reference('resolveJumpVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
@@ -3463,13 +3459,13 @@
             "principalType": "ServicePrincipal"
           },
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68')]",
             "principalId": "[reference('resolveBuildVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')]",
             "principalId": "[reference('resolveBuildVmIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
@@ -3597,13 +3593,13 @@
             "principalType": "ServicePrincipal"
           },
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a97b65f3-24c7-4388-baec-2e87135dc908')]",
             "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
           },
           {
-            "resourceId": "[reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value]",
+            "resourceId": "[resourceId('Microsoft.CognitiveServices/accounts', reference(concat('aiFoundryDeployment-', variables('uniqueSuffix'))).outputs.aiServicesName.value)]",
             "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')]",
             "principalId": "[reference('resolveContainerAppIdentity').outputs.principalId.value]",
             "principalType": "ServicePrincipal"
