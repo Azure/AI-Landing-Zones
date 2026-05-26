@@ -56,7 +56,7 @@
               "name": "enableDefenderForAI",
               "type": "Microsoft.Common.OptionsGroup",
               "label": "Enable Microsoft Defender for AI",
-              "defaultValue": "Yes",
+              "defaultValue": "No",
               "toolTip": "Enable Microsoft Defender for AI and Storage (with malware scanning and sensitive data discovery) at subscription level. Provides advanced threat detection and security monitoring for AI workloads.",
               "constraints": {
                 "allowedValues": [
@@ -76,7 +76,7 @@
               "name": "enableDefenderForKeyVault",
               "type": "Microsoft.Common.OptionsGroup",
               "label": "Enable Microsoft Defender for Key Vault",
-              "defaultValue": "Yes",
+              "defaultValue": "No",
               "toolTip": "Enable Microsoft Defender for Key Vault at subscription level. Provides threat detection for Key Vault operations and access patterns. Only applies if Defender for AI is enabled and Key Vault is being deployed.",
               "constraints": {
                 "allowedValues": [
