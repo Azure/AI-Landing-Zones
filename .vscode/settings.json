@@ -1,0 +1,9 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^python -c \"import json; json\\.load\\(open\\('portal/template\\.json'\\)\\); print\\('Valid JSON'\\)\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "az": true
+    }
+}
