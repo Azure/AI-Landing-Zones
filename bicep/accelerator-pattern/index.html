@@ -1088,14 +1088,12 @@
         MJ["manifest.json&lt;br/&gt;(optional metadata)"]
         APP["src/, backend/, frontend/, ..."]
     end
-
     subgraph Submodule["infra/ (git submodule)"]
         SUB["Azure/bicep-ptn-aiml-landing-zone @ v2.0.2"]
         MB["main.bicep + modules"]
         SUB_PARAMS["main.parameters.json&lt;br/&gt;(reference defaults — gets overwritten)"]
         PFC["scripts/Invoke-PreflightChecks.ps1"]
     end
-
     AY -. "tells azd to use" .-&gt; Submodule
     GM -. "declares URL + tag" .-&gt; Submodule
     PP -- "overwrites" --&gt; SUB_PARAMS
@@ -1110,7 +1108,6 @@
     participant Git as git
     participant FS as Filesystem
     participant ARM as Azure Resource Manager
-
     Dev-&gt;&gt;AZD: azd provision
     AZD-&gt;&gt;PP: run preprovision hook
     PP-&gt;&gt;Git: git submodule update --init --recursive
