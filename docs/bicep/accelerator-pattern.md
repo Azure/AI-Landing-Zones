@@ -71,12 +71,12 @@ sequenceDiagram
     alt Normal git clone path
         Git-->>FS: populate infra/ from gitlink
     else azd init ZIP path
-        Note over PP,Git: gitlink is missing;<br/>submodule stays empty
-        PP->>FS: read URL & ref from .gitmodules
-        PP->>Git: git clone --depth 1 --branch <ref> URL infra/
+        Note over PP,Git: gitlink is missing — submodule stays empty
+        PP->>FS: read URL and ref from .gitmodules
+        PP->>Git: git clone --depth 1 --branch TAG URL infra/
         Git-->>FS: populate infra/
     end
-    PP->>Git: fetch + checkout <ref> from .gitmodules (pin)
+    PP->>Git: fetch + checkout TAG from .gitmodules (pin)
     PP->>FS: cp main.parameters.json infra/main.parameters.json
     PP->>FS: cp manifest.json infra/manifest.json
     opt Boolean rewrites (object-typed params)
