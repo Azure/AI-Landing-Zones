@@ -714,21 +714,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#high-level-layout" class="md-nav__link">
+  <a href="#how-the-pattern-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        High-level layout
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-happens-during-azd-provision" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What happens during azd provision
+        How the pattern works
       
     </span>
   </a>
@@ -744,133 +733,16 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="The five files that wire it together">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-gitmodules-declares-the-submodule-and-pins-a-version" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. .gitmodules — declares the submodule and pins a version
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-azureyaml-points-azd-at-the-submodule-and-registers-hooks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. azure.yaml — points azd at the submodule and registers hooks
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-scriptspreprovisionsh-and-scriptspreprovisionps1-the-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. scripts/preProvision.sh and scripts/preProvision.ps1 — the engine
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-mainparametersjson-project-root-your-overlay" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. main.parameters.json (project root) — your overlay
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-manifestjson-optional-accelerator-metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. manifest.json (optional) — accelerator metadata
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-submodule-bootstrap-mechanism-detailed" class="md-nav__link">
+  <a href="#runtime-mechanics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The submodule bootstrap mechanism (detailed)
+        Runtime mechanics
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="The submodule bootstrap mechanism (detailed)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#why-the-zip-fallback-exists" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why the ZIP fallback exists
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-the-re-pin-step-exists" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why the re-pin step exists
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-parameters-overlay-mechanism-detailed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The parameters overlay mechanism (detailed)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The parameters overlay mechanism (detailed)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#optional-boolean-coercion-rewrite" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Optional: boolean coercion rewrite
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -886,21 +758,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pinning-and-upgrading-the-ai-landing-zone-version" class="md-nav__link">
+  <a href="#upgrade-and-local-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pinning and upgrading the AI Landing Zone version
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#working-with-the-submodule-locally" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Working with the submodule locally
+        Upgrade and local workflow
       
     </span>
   </a>
@@ -1078,7 +939,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="high-level-layout">High-level layout</h2>
+<h2 id="how-the-pattern-works">How the pattern works</h2>
+<p><strong>High-level layout</strong></p>
 <pre class="mermaid"><code>flowchart LR
     subgraph Accelerator["Accelerator Repository (e.g. Azure/GPT-RAG)"]
         AY["azure.yaml&lt;br/&gt;(infra path: infra)"]
@@ -1100,7 +962,7 @@
     MP -- "is source for overwrite" --&gt; PP
     MJ -- "is source for overwrite" --&gt; PP
     PP -- "delegates to" --&gt; PFC</code></pre>
-<h2 id="what-happens-during-azd-provision">What happens during <code>azd provision</code></h2>
+<p><strong>What happens during <code>azd provision</code></strong></p>
 <pre class="mermaid"><code>sequenceDiagram
     participant Dev as Developer / CI
     participant AZD as azd
@@ -1131,7 +993,7 @@
     ARM--&gt;&gt;AZD: deployment outputs
     AZD--&gt;&gt;Dev: provisioned</code></pre>
 <h2 id="the-five-files-that-wire-it-together">The five files that wire it together</h2>
-<h3 id="1-gitmodules-declares-the-submodule-and-pins-a-version">1. <code>.gitmodules</code> — declares the submodule and pins a version</h3>
+<p><strong>1. <code>.gitmodules</code> — declares the submodule and pins a version</strong></p>
 <div class="highlight"><pre><span></span><code><span class="k">[submodule &quot;infra&quot;]</span>
 <span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
 <span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
@@ -1148,7 +1010,7 @@
 <p class="admonition-title">Why the <code>branch</code> field doubles as a version pin</p>
 <p>Standard git doesn't support pinning a submodule to a tag via <code>.gitmodules</code> alone — it tracks a commit (gitlink) instead. The preProvision script bridges this gap: it reads <code>branch = &lt;value&gt;</code> from <code>.gitmodules</code> and runs <code>git checkout &lt;value&gt;</code> inside <code>infra/</code>, so you can pin to a tag like <code>v2.0.2</code> and developers get the right version regardless of what commit the gitlink points at.</p>
 </div>
-<h3 id="2-azureyaml-points-azd-at-the-submodule-and-registers-hooks">2. <code>azure.yaml</code> — points azd at the submodule and registers hooks</h3>
+<p><strong>2. <code>azure.yaml</code> — points azd at the submodule and registers hooks</strong></p>
 <div class="highlight"><pre><span></span><code><span class="c1"># yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -1172,19 +1034,19 @@
 <li><strong><code>infra.path: infra</code></strong> matches the submodule <code>path</code> in <code>.gitmodules</code>. azd compiles <code>infra/main.bicep</code> and evaluates <code>infra/main.parameters.json</code> at provision time.</li>
 <li><strong><code>hooks.preprovision</code></strong> runs <code>scripts/preProvision.{sh,ps1}</code> <strong>before</strong> azd evaluates parameters or talks to ARM. This is where the bootstrap and overlay happen.</li>
 </ul>
-<h3 id="3-scriptspreprovisionsh-and-scriptspreprovisionps1-the-engine">3. <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code> — the engine</h3>
+<p><strong>3. <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code> — the engine</strong></p>
 <p>These two scripts perform the same work for POSIX and Windows shells. Both follow this contract:</p>
 <ol>
 <li><strong>Initialize the submodule</strong>: <code>git submodule update --init --recursive</code>.</li>
 <li><strong>Detect the <code>azd init</code> ZIP scenario</strong> (no <code>infra/main.bicep</code> after step 1) and <strong>fall back</strong> to <code>git clone --depth 1 --branch &lt;ref&gt; &lt;url&gt; infra/</code>, reading the URL and ref from <code>.gitmodules</code>.</li>
 <li><strong>Pin to the desired ref</strong> read from <code>.gitmodules</code>, even if the parent gitlink points at an older commit. This makes the <code>branch = v2.0.2</code> line in <code>.gitmodules</code> the single source of truth for the AI LZ version.</li>
 <li><strong>Overlay</strong> <code>main.parameters.json</code> and <code>manifest.json</code> from the project root onto <code>infra/</code>.</li>
-<li><em>(Optional)</em> <strong>rewrite parameters</strong> that ARM cannot string-coerce (see the <a href="#optional-boolean-coercion-rewrite">boolean rewrite section</a>).</li>
+<li><em>(Optional)</em> <strong>rewrite parameters</strong> that ARM cannot string-coerce (see <a href="#optional-boolean-coercion-rewrite">Boolean coercion rewrite</a>).</li>
 <li><strong>Run accelerator-specific preflight checks</strong> (region readiness, quota, etc.), then <strong>delegate to the AI LZ preflight</strong> at <code>infra/scripts/Invoke-PreflightChecks.ps1</code>.</li>
 <li><strong>Honour <code>PREFLIGHT_SKIP=true</code></strong> to bypass preflight checks.</li>
 </ol>
 <p>You can copy these scripts verbatim from one of the <a href="#reference-implementations">reference implementations</a> and trim the accelerator-specific section.</p>
-<h3 id="4-mainparametersjson-project-root-your-overlay">4. <code>main.parameters.json</code> (project root) — your overlay</h3>
+<p><strong>4. <code>main.parameters.json</code> (project root) — your overlay</strong></p>
 <p>This is the file that becomes <code>infra/main.parameters.json</code> at provision time. The submodule ships its own <code>main.parameters.json</code> as the <strong>reference defaults</strong> for the AI LZ, but every accelerator wants to:</p>
 <ul>
 <li>Pre-set feature toggles for the scenario (<code>deploySpeechService</code>, <code>deployContainerApps</code>, …).</li>
@@ -1192,7 +1054,7 @@
 <li>Add new parameters that the accelerator's own modules consume.</li>
 </ul>
 <p>Because it's a <strong>full overlay</strong> (the script does <code>cp -f</code>, not a JSON merge), your overlay must be a complete, valid <code>main.parameters.json</code> for the AI LZ version you've pinned. The simplest way to author one is to start from <code>infra/main.parameters.json</code> of the pinned AI LZ tag and edit it.</p>
-<h3 id="5-manifestjson-optional-accelerator-metadata">5. <code>manifest.json</code> (optional) — accelerator metadata</h3>
+<p><strong>5. <code>manifest.json</code> (optional) — accelerator metadata</strong></p>
 <p>A lightweight JSON file that records the accelerator version, the AI LZ tag it was tested with, and any companion component repositories. It's optional but useful for traceability and for downstream tooling (release notes, version reporting):</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.7.6&quot;</span><span class="p">,</span>
@@ -1208,7 +1070,8 @@
 <span class="p">}</span>
 </code></pre></div>
 <p>The preProvision script copies it into the submodule the same way it copies <code>main.parameters.json</code>, so Bicep modules can read it as a deployment input if needed.</p>
-<h2 id="the-submodule-bootstrap-mechanism-detailed">The submodule bootstrap mechanism (detailed)</h2>
+<h2 id="runtime-mechanics">Runtime mechanics</h2>
+<p><strong>Submodule bootstrap</strong></p>
 <p>There are three paths the preProvision script handles. All three converge on a populated <code>infra/</code> directory pinned to the version declared in <code>.gitmodules</code>.</p>
 <pre class="mermaid"><code>flowchart TD
     Start([preProvision starts]) --&gt; A["git submodule update --init --recursive"]
@@ -1219,11 +1082,11 @@
     D --&gt; E["git -C infra fetch --tags"]
     E --&gt; F["git -C infra checkout ref"]
     F --&gt; G([infra/ ready at pinned version])</code></pre>
-<h3 id="why-the-zip-fallback-exists">Why the ZIP fallback exists</h3>
+<p><strong>Why the ZIP fallback exists</strong></p>
 <p><code>azd init -t Azure/GPT-RAG</code> does <strong>not</strong> perform a git clone — it downloads a ZIP of the repo from GitHub. ZIPs do not contain the <code>.git/modules/</code> metadata or the submodule gitlink. As a result, <code>git submodule update --init --recursive</code> silently does nothing and <code>infra/</code> stays empty. The script detects this by checking for <code>infra/main.bicep</code> and falls back to a direct <code>git clone</code> whose URL and ref are read from <code>.gitmodules</code>.</p>
-<h3 id="why-the-re-pin-step-exists">Why the re-pin step exists</h3>
+<p><strong>Why the re-pin step exists</strong></p>
 <p>The git "gitlink" (the commit SHA recorded in the parent repo's tree for a submodule) may lag behind <code>.gitmodules</code>. The standard <code>git submodule update</code> honours the gitlink, not <code>.gitmodules</code>. The re-pin step forces <code>infra/</code> to the ref declared in <code>.gitmodules</code>, so <strong>changing the AI LZ version in your accelerator is a one-line edit</strong>.</p>
-<h2 id="the-parameters-overlay-mechanism-detailed">The parameters overlay mechanism (detailed)</h2>
+<p><strong>Parameters overlay</strong></p>
 <pre class="mermaid"><code>flowchart LR
     A["main.parameters.json&lt;br/&gt;(repo root — yours)"] --&gt;|cp -f| B["infra/main.parameters.json&lt;br/&gt;(submodule — overwritten)"]
     C["manifest.json&lt;br/&gt;(repo root — yours)"] --&gt;|cp -f| D["infra/manifest.json&lt;br/&gt;(submodule — overwritten)"]
@@ -1234,7 +1097,8 @@
 <li><strong>azd reads <code>infra/main.parameters.json</code>.</strong> Every <code>"${VAR}"</code> placeholder is replaced with the corresponding <code>azd env get VAR</code> value (or the <code>${VAR=default}</code> default if unset).</li>
 <li><strong>The resulting file is sent to ARM</strong> alongside the compiled <code>main.bicep</code>.</li>
 </ol>
-<h3 id="optional-boolean-coercion-rewrite">Optional: boolean coercion rewrite</h3>
+<p><a id="optional-boolean-coercion-rewrite"></a></p>
+<p><strong>Optional: boolean coercion rewrite</strong></p>
 <p>ARM rejects string-to-bool coercion <strong>inside aggregate object properties</strong>. The top-level form works:</p>
 <div class="highlight"><pre><span></span><code>&quot;networkIsolation&quot;: { &quot;value&quot;: &quot;${NETWORK_ISOLATION}&quot; }
 </code></pre></div>
@@ -1342,7 +1206,8 @@ Running landing-zone preflight checks...
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>.gitmodules<span class="w"> </span>infra<span class="w"> </span>azure.yaml<span class="w"> </span>scripts/<span class="w"> </span>main.parameters.json<span class="w"> </span>manifest.json<span class="w"> </span>.gitignore
 git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Wire AI Landing Zone v2.0.2 as a submodule&quot;</span>
 </code></pre></div>
-<h2 id="pinning-and-upgrading-the-ai-landing-zone-version">Pinning and upgrading the AI Landing Zone version</h2>
+<h2 id="upgrade-and-local-workflow">Upgrade and local workflow</h2>
+<p><strong>Pinning and upgrading the AI Landing Zone version</strong></p>
 <p>To bump the AI LZ version that your accelerator uses:</p>
 <p><strong>1.</strong> Edit <code>.gitmodules</code> and change <code>branch = v2.0.2</code> to the new tag.</p>
 <p><strong>2.</strong> Update the gitlink so a fresh <code>git clone --recurse-submodules</code> lands on the same commit:</p>
@@ -1356,7 +1221,7 @@ git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </sp
 <p><strong>3.</strong> Reconcile your <code>main.parameters.json</code> overlay against the new tag's <code>infra/main.parameters.json</code> — new parameters may have been added; old ones may have been renamed.</p>
 <p><strong>4.</strong> If <code>manifest.json</code> exists, update its <code>ailz_tag</code> field.</p>
 <p><strong>5.</strong> Re-run <code>azd provision</code> in a test environment and verify the preflight checks still pass.</p>
-<h2 id="working-with-the-submodule-locally">Working with the submodule locally</h2>
+<p><strong>Working with the submodule locally</strong></p>
 <p><strong>Clone a repository that uses this pattern:</strong></p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/Azure/GPT-RAG.git
 </code></pre></div>
