@@ -27,7 +27,11 @@ markdown_extensions:
   - md_in_html
   - sane_lists
   - mdx_truly_sane_lists
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -45,6 +49,7 @@ nav:
       - "Public Ingress (App Gateway)": bicep/public-ingress.md
       - "Permissions": bicep/permissions.md
       - "Parameterization": bicep/parameterization.md
+      - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
   - Terraform Implementation: terraform/index.md
   - Portal installation: portal/index.md  
 extra:
