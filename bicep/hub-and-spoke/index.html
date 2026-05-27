@@ -749,6 +749,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -967,14 +995,13 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tbody>
 </table>
 <h2 id="deployment-flow">Deployment flow</h2>
-<div class="highlight"><pre><span></span><code>flowchart LR
+<pre class="mermaid"><code>flowchart LR
     A[Hub team:&lt;br/&gt;VNet + Firewall + Bastion&lt;br/&gt;+ Private DNS zones&lt;br/&gt;+ LAW] --&gt; B
     B[You: set DEPLOYMENT_MODE=ailz-integrated&lt;br/&gt;+ HUB_VNET_RESOURCE_ID&lt;br/&gt;+ EGRESS_NEXT_HOP_IP] --&gt; C
     C[azd preprovision:&lt;br/&gt;Invoke-PreflightChecks.ps1] --&gt; D
     D[azd provision:&lt;br/&gt;spoke VNet + private endpoints&lt;br/&gt;+ AI services + Container Apps&lt;br/&gt;+ spoke→hub peering]
     D --&gt; E[You / hub team:&lt;br/&gt;create hub→spoke peering&lt;br/&gt;+ DNS zone links to spoke]
-    E --&gt; F[Verify hello-world from&lt;br/&gt;jumpbox over Bastion]
-</code></pre></div>
+    E --&gt; F[Verify hello-world from&lt;br/&gt;jumpbox over Bastion]</code></pre>
 <p>The pre-flight script catches the most common hub-and-spoke mistakes (typos in <code>HUB_VNET_RESOURCE_ID</code>, subnets too small, CIDR overlap with hub, missing ACA delegation on BYO subnets) <strong>before</strong> ARM rejects the deployment 20 minutes in.</p>
 <h2 id="see-also">See also</h2>
 <ul>

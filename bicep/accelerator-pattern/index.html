@@ -1,0 +1,1526 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for Azure AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../parameterization/">
+      
+      
+        <link rel="next" href="../../terraform/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Building Accelerators (Submodule Pattern) - Azure AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#building-accelerators-on-the-ai-landing-zone-submodule-pattern" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Azure AI Landing Zones" class="md-header__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Azure AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Building Accelerators (Submodule Pattern)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    Azure AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why this pattern?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#high-level-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High-level layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-during-azd-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens during azd provision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-five-files-that-wire-it-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The five files that wire it together
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The five files that wire it together">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gitmodules-declares-the-submodule-and-pins-a-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. .gitmodules — declares the submodule and pins a version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-azureyaml-points-azd-at-the-submodule-and-registers-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. azure.yaml — points azd at the submodule and registers hooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-scriptspreprovisionsh-and-scriptspreprovisionps1-the-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. scripts/preProvision.sh and scripts/preProvision.ps1 — the engine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-mainparametersjson-project-root-your-overlay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. main.parameters.json (project root) — your overlay
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-manifestjson-optional-accelerator-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. manifest.json (optional) — accelerator metadata
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-submodule-bootstrap-mechanism-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The submodule bootstrap mechanism (detailed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The submodule bootstrap mechanism (detailed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-the-zip-fallback-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why the ZIP fallback exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-the-re-pin-step-exists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why the re-pin step exists
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-parameters-overlay-mechanism-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The parameters overlay mechanism (detailed)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The parameters overlay mechanism (detailed)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-boolean-coercion-rewrite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional: boolean coercion rewrite
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-replicate-this-pattern-in-a-new-accelerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step: replicate this pattern in a new accelerator
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pinning-and-upgrading-the-ai-landing-zone-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pinning and upgrading the AI Landing Zone version
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-the-submodule-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with the submodule locally
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference-for-code-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference for code agents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference-implementations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference implementations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="building-accelerators-on-the-ai-landing-zone-submodule-pattern">Building Accelerators on the AI Landing Zone (Submodule Pattern)</h1>
+<p>This page documents the <strong>submodule pattern</strong> used by Azure accelerators to consume the <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone">bicep-ptn-aiml-landing-zone</a> infrastructure as a git submodule. It explains the mechanism end-to-end and gives you a copy-paste-ready recipe to replicate it in a new accelerator repository.</p>
+<p><strong>Audience:</strong> developers and code agents building new accelerators on top of the AI Landing Zone.</p>
+<p><strong>Reference implementations:</strong></p>
+<ul>
+<li><a href="https://github.com/Azure/GPT-RAG">Azure/GPT-RAG</a> — chat-with-your-data RAG accelerator</li>
+<li><a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a> — real-time voice agent accelerator</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">TL;DR</p>
+<p>Your accelerator repo holds <strong>application code + a thin infra overlay</strong>. The AI Landing Zone is consumed as a git submodule at <code>infra/</code>. At <code>azd provision</code> time, a <code>preprovision</code> hook (<code>scripts/preProvision.{sh,ps1}</code>) does three things in order:</p>
+<ol>
+<li><strong>Bootstraps</strong> the submodule (even when the repo was downloaded as a ZIP).</li>
+<li><strong>Pins</strong> it to the version declared in <code>.gitmodules</code>.</li>
+<li><strong>Overlays</strong> your <code>main.parameters.json</code> (and optional <code>manifest.json</code>) on top of the submodule.</li>
+</ol>
+</div>
+<h2 id="why-this-pattern">Why this pattern?</h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>What this pattern gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reuse</strong></td>
+<td>The AI Landing Zone is maintained in one place; every accelerator inherits fixes, new services, and security hardening for free.</td>
+</tr>
+<tr>
+<td><strong>Override</strong></td>
+<td>Each accelerator decides its own defaults (toggles, regions, model deployments) via a project-level <code>main.parameters.json</code> without forking the infra.</td>
+</tr>
+<tr>
+<td><strong>Pinning</strong></td>
+<td>Each accelerator declares the exact AI LZ version (e.g. <code>v2.0.2</code>) it was tested against. Upgrades become a one-line <code>.gitmodules</code> change.</td>
+</tr>
+<tr>
+<td><strong><code>azd init</code> compatibility</strong></td>
+<td>The bootstrap script handles the ZIP-download path that <code>azd init -t &lt;template&gt;</code> uses, where git submodule entries do not exist.</td>
+</tr>
+<tr>
+<td><strong>Composition</strong></td>
+<td>Accelerator-specific pre-flight checks (e.g. region/quota validation) can run alongside the AI LZ's own pre-flight checks.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="high-level-layout">High-level layout</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Accelerator["Accelerator Repository (e.g. Azure/GPT-RAG)"]
+        AY["azure.yaml&lt;br/&gt;(infra path: infra)"]
+        GM[".gitmodules&lt;br/&gt;(pins AI LZ version)"]
+        PP["scripts/preProvision.sh&lt;br/&gt;scripts/preProvision.ps1"]
+        MP["main.parameters.json&lt;br/&gt;(project-level overlay)"]
+        MJ["manifest.json&lt;br/&gt;(optional metadata)"]
+        APP["src/, backend/, frontend/, ..."]
+    end
+
+    subgraph Submodule["infra/ (git submodule)"]
+        SUB["Azure/bicep-ptn-aiml-landing-zone @ v2.0.2"]
+        MB["main.bicep + modules"]
+        SUB_PARAMS["main.parameters.json&lt;br/&gt;(reference defaults — gets overwritten)"]
+        PFC["scripts/Invoke-PreflightChecks.ps1"]
+    end
+
+    AY -. "tells azd to use" .-&gt; Submodule
+    GM -. "declares URL + tag" .-&gt; Submodule
+    PP -- "overwrites" --&gt; SUB_PARAMS
+    MP -- "is source for overwrite" --&gt; PP
+    MJ -- "is source for overwrite" --&gt; PP
+    PP -- "delegates to" --&gt; PFC</code></pre>
+<h2 id="what-happens-during-azd-provision">What happens during <code>azd provision</code></h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Dev as Developer / CI
+    participant AZD as azd
+    participant PP as preProvision (hook)
+    participant Git as git
+    participant FS as Filesystem
+    participant ARM as Azure Resource Manager
+
+    Dev-&gt;&gt;AZD: azd provision
+    AZD-&gt;&gt;PP: run preprovision hook
+    PP-&gt;&gt;Git: git submodule update --init --recursive
+    alt Normal git clone path
+        Git--&gt;&gt;FS: populate infra/ from gitlink
+    else azd init ZIP path
+        Note over PP,Git: gitlink is missing;&lt;br/&gt;submodule stays empty
+        PP-&gt;&gt;FS: read URL &amp; ref from .gitmodules
+        PP-&gt;&gt;Git: git clone --depth 1 --branch &lt;ref&gt; URL infra/
+        Git--&gt;&gt;FS: populate infra/
+    end
+    PP-&gt;&gt;Git: fetch + checkout &lt;ref&gt; from .gitmodules (pin)
+    PP-&gt;&gt;FS: cp main.parameters.json infra/main.parameters.json
+    PP-&gt;&gt;FS: cp manifest.json infra/manifest.json
+    opt Boolean rewrites (object-typed params)
+        PP-&gt;&gt;FS: rewrite ${BOOL} placeholders ARM cannot coerce
+    end
+    PP-&gt;&gt;FS: run accelerator preflight + Invoke-PreflightChecks.ps1
+    PP--&gt;&gt;AZD: success
+    AZD-&gt;&gt;ARM: deploy infra/main.bicep with infra/main.parameters.json
+    ARM--&gt;&gt;AZD: deployment outputs
+    AZD--&gt;&gt;Dev: provisioned</code></pre>
+<h2 id="the-five-files-that-wire-it-together">The five files that wire it together</h2>
+<h3 id="1-gitmodules-declares-the-submodule-and-pins-a-version">1. <code>.gitmodules</code> — declares the submodule and pins a version</h3>
+<div class="highlight"><pre><span></span><code><span class="k">[submodule &quot;infra&quot;]</span>
+<span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
+<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
+<span class="w">    </span><span class="na">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">v2.0.2</span>
+<span class="w">    </span><span class="na">ignore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">dirty</span>
+</code></pre></div>
+<ul>
+<li><strong><code>path = infra</code></strong> — where the AI LZ lives in your repo. <code>azure.yaml</code> must point at the same path.</li>
+<li><strong><code>url</code></strong> — always the canonical AI LZ repo.</li>
+<li><strong><code>branch</code></strong> — the git ref to use. Despite the field name, this can be a <strong>tag</strong> (the recommended approach for reproducibility). The preProvision script reads this value at runtime to force-checkout the right version, so bumping the AI LZ version becomes a one-line change in this file.</li>
+<li><strong><code>ignore = dirty</code></strong> <em>(optional)</em> — tells <code>git status</code> not to flag working-tree changes inside <code>infra/</code>, which would otherwise be noisy because the script overwrites files there.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Why the <code>branch</code> field doubles as a version pin</p>
+<p>Standard git doesn't support pinning a submodule to a tag via <code>.gitmodules</code> alone — it tracks a commit (gitlink) instead. The preProvision script bridges this gap: it reads <code>branch = &lt;value&gt;</code> from <code>.gitmodules</code> and runs <code>git checkout &lt;value&gt;</code> inside <code>infra/</code>, so you can pin to a tag like <code>v2.0.2</code> and developers get the right version regardless of what commit the gitlink points at.</p>
+</div>
+<h3 id="2-azureyaml-points-azd-at-the-submodule-and-registers-hooks">2. <code>azure.yaml</code> — points azd at the submodule and registers hooks</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
+<span class="nt">infra</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bicep</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infra</span>
+<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+<span class="nt">hooks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">preprovision</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">posix</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/preProvision.sh</span>
+<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">windows</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pwsh</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/preProvision.ps1</span>
+<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<ul>
+<li><strong><code>infra.path: infra</code></strong> matches the submodule <code>path</code> in <code>.gitmodules</code>. azd compiles <code>infra/main.bicep</code> and evaluates <code>infra/main.parameters.json</code> at provision time.</li>
+<li><strong><code>hooks.preprovision</code></strong> runs <code>scripts/preProvision.{sh,ps1}</code> <strong>before</strong> azd evaluates parameters or talks to ARM. This is where the bootstrap and overlay happen.</li>
+</ul>
+<h3 id="3-scriptspreprovisionsh-and-scriptspreprovisionps1-the-engine">3. <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code> — the engine</h3>
+<p>These two scripts perform the same work for POSIX and Windows shells. Both follow this contract:</p>
+<ol>
+<li><strong>Initialize the submodule</strong>: <code>git submodule update --init --recursive</code>.</li>
+<li><strong>Detect the <code>azd init</code> ZIP scenario</strong> (no <code>infra/main.bicep</code> after step 1) and <strong>fall back</strong> to <code>git clone --depth 1 --branch &lt;ref&gt; &lt;url&gt; infra/</code>, reading the URL and ref from <code>.gitmodules</code>.</li>
+<li><strong>Pin to the desired ref</strong> read from <code>.gitmodules</code>, even if the parent gitlink points at an older commit. This makes the <code>branch = v2.0.2</code> line in <code>.gitmodules</code> the single source of truth for the AI LZ version.</li>
+<li><strong>Overlay</strong> <code>main.parameters.json</code> and <code>manifest.json</code> from the project root onto <code>infra/</code>.</li>
+<li><em>(Optional)</em> <strong>rewrite parameters</strong> that ARM cannot string-coerce (see the <a href="#optional-boolean-coercion-rewrite">boolean rewrite section</a>).</li>
+<li><strong>Run accelerator-specific preflight checks</strong> (region readiness, quota, etc.), then <strong>delegate to the AI LZ preflight</strong> at <code>infra/scripts/Invoke-PreflightChecks.ps1</code>.</li>
+<li><strong>Honour <code>PREFLIGHT_SKIP=true</code></strong> to bypass preflight checks.</li>
+</ol>
+<p>You can copy these scripts verbatim from one of the <a href="#reference-implementations">reference implementations</a> and trim the accelerator-specific section.</p>
+<h3 id="4-mainparametersjson-project-root-your-overlay">4. <code>main.parameters.json</code> (project root) — your overlay</h3>
+<p>This is the file that becomes <code>infra/main.parameters.json</code> at provision time. The submodule ships its own <code>main.parameters.json</code> as the <strong>reference defaults</strong> for the AI LZ, but every accelerator wants to:</p>
+<ul>
+<li>Pre-set feature toggles for the scenario (<code>deploySpeechService</code>, <code>deployContainerApps</code>, …).</li>
+<li>Hard-code accelerator-specific values (e.g. <code>"appConfigLabel": "gpt-rag"</code>).</li>
+<li>Add new parameters that the accelerator's own modules consume.</li>
+</ul>
+<p>Because it's a <strong>full overlay</strong> (the script does <code>cp -f</code>, not a JSON merge), your overlay must be a complete, valid <code>main.parameters.json</code> for the AI LZ version you've pinned. The simplest way to author one is to start from <code>infra/main.parameters.json</code> of the pinned AI LZ tag and edit it.</p>
+<h3 id="5-manifestjson-optional-accelerator-metadata">5. <code>manifest.json</code> (optional) — accelerator metadata</h3>
+<p>A lightweight JSON file that records the accelerator version, the AI LZ tag it was tested with, and any companion component repositories. It's optional but useful for traceability and for downstream tooling (release notes, version reporting):</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.7.6&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;repo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/azure/gpt-rag.git&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ailz_tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.0.2&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-rag-ui&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;repo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/azure/gpt-rag-ui.git&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.3.7&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The preProvision script copies it into the submodule the same way it copies <code>main.parameters.json</code>, so Bicep modules can read it as a deployment input if needed.</p>
+<h2 id="the-submodule-bootstrap-mechanism-detailed">The submodule bootstrap mechanism (detailed)</h2>
+<p>There are three paths the preProvision script handles. All three converge on a populated <code>infra/</code> directory pinned to the version declared in <code>.gitmodules</code>.</p>
+<pre class="mermaid"><code>flowchart TD
+    Start([preProvision starts]) --&gt; A["git submodule update --init --recursive"]
+    A --&gt; B{"infra/main.bicep exists?"}
+    B -- "Yes (normal git clone)" --&gt; D["Read branch= from .gitmodules"]
+    B -- "No (azd init ZIP scenario)" --&gt; C["Read url + branch from .gitmodules&lt;br/&gt;rm -rf infra/&lt;br/&gt;git clone --depth 1 --branch ref URL infra/"]
+    C --&gt; D
+    D --&gt; E["git -C infra fetch --tags"]
+    E --&gt; F["git -C infra checkout ref"]
+    F --&gt; G([infra/ ready at pinned version])</code></pre>
+<h3 id="why-the-zip-fallback-exists">Why the ZIP fallback exists</h3>
+<p><code>azd init -t Azure/GPT-RAG</code> does <strong>not</strong> perform a git clone — it downloads a ZIP of the repo from GitHub. ZIPs do not contain the <code>.git/modules/</code> metadata or the submodule gitlink. As a result, <code>git submodule update --init --recursive</code> silently does nothing and <code>infra/</code> stays empty. The script detects this by checking for <code>infra/main.bicep</code> and falls back to a direct <code>git clone</code> whose URL and ref are read from <code>.gitmodules</code>.</p>
+<h3 id="why-the-re-pin-step-exists">Why the re-pin step exists</h3>
+<p>The git "gitlink" (the commit SHA recorded in the parent repo's tree for a submodule) may lag behind <code>.gitmodules</code>. The standard <code>git submodule update</code> honours the gitlink, not <code>.gitmodules</code>. The re-pin step forces <code>infra/</code> to the ref declared in <code>.gitmodules</code>, so <strong>changing the AI LZ version in your accelerator is a one-line edit</strong>.</p>
+<h2 id="the-parameters-overlay-mechanism-detailed">The parameters overlay mechanism (detailed)</h2>
+<pre class="mermaid"><code>flowchart LR
+    A["main.parameters.json&lt;br/&gt;(repo root — yours)"] --&gt;|cp -f| B["infra/main.parameters.json&lt;br/&gt;(submodule — overwritten)"]
+    C["manifest.json&lt;br/&gt;(repo root — yours)"] --&gt;|cp -f| D["infra/manifest.json&lt;br/&gt;(submodule — overwritten)"]
+    B --&gt; E["azd evaluates ${VAR} placeholders&lt;br/&gt;against the azd environment"]
+    E --&gt; F["ARM template&lt;br/&gt;parameters file"]</code></pre>
+<p>After the copy:</p>
+<ol>
+<li><strong>azd reads <code>infra/main.parameters.json</code>.</strong> Every <code>"${VAR}"</code> placeholder is replaced with the corresponding <code>azd env get VAR</code> value (or the <code>${VAR=default}</code> default if unset).</li>
+<li><strong>The resulting file is sent to ARM</strong> alongside the compiled <code>main.bicep</code>.</li>
+</ol>
+<h3 id="optional-boolean-coercion-rewrite">Optional: boolean coercion rewrite</h3>
+<p>ARM rejects string-to-bool coercion <strong>inside aggregate object properties</strong>. The top-level form works:</p>
+<div class="highlight"><pre><span></span><code>&quot;networkIsolation&quot;: { &quot;value&quot;: &quot;${NETWORK_ISOLATION}&quot; }
+</code></pre></div>
+<p>…because ARM coerces top-level strings to <code>bool</code> for a <code>bool</code> parameter. The nested form <strong>does not</strong>:</p>
+<div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
+  &quot;value&quot;: {
+    &quot;enabled&quot;: &quot;${PUBLIC_INGRESS_ENABLED=false}&quot;,
+    &quot;frontendHostName&quot;: &quot;${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}&quot;
+  }
+}
+</code></pre></div>
+<p>The <code>live-voice-practice</code> preProvision script handles this by reading <code>PUBLIC_INGRESS_ENABLED</code> (falling back to <code>NETWORK_ISOLATION</code>) from the azd environment and rewriting the field as a <strong>raw JSON boolean</strong> before azd runs its substitution pass:</p>
+<div class="highlight"><pre><span></span><code>perl<span class="w"> </span>-i<span class="w"> </span>-pe<span class="w"> </span><span class="s1">&#39;s|&quot;enabled&quot;:\s*&quot;\$\{PUBLIC_INGRESS_ENABLED[^&quot;]*\}&quot;|&quot;enabled&quot;: &#39;</span><span class="s2">&quot;</span><span class="nv">$BOOL_LITERAL</span><span class="s2">&quot;</span><span class="s1">&#39;|&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$INFRA_PARAMS</span><span class="s2">&quot;</span>
+</code></pre></div>
+<p>Use this pattern for any object-typed parameter whose nested fields need to be true booleans.</p>
+<h2 id="step-by-step-replicate-this-pattern-in-a-new-accelerator">Step-by-step: replicate this pattern in a new accelerator</h2>
+<p>The instructions below assume you start from an empty repository and want to consume AI LZ <code>v2.0.2</code> (replace with the tag you want to pin).</p>
+<p><strong>1. Add the submodule and pin to a tag</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>-b<span class="w"> </span>v2.0.2<span class="w"> </span>https://github.com/Azure/bicep-ptn-aiml-landing-zone.git<span class="w"> </span>infra
+</code></pre></div>
+<p>Then edit <code>.gitmodules</code> and add <code>ignore = dirty</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[submodule &quot;infra&quot;]</span>
+<span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
+<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
+<span class="w">    </span><span class="na">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">v2.0.2</span>
+<span class="w">    </span><span class="na">ignore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">dirty</span>
+</code></pre></div>
+<p><strong>2. Create <code>azure.yaml</code></strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
+<span class="nt">infra</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bicep</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infra</span>
+<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+<span class="nt">hooks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">preprovision</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">posix</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/preProvision.sh</span>
+<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">windows</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pwsh</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/preProvision.ps1</span>
+<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<p><strong>3. Copy the preProvision scripts</strong></p>
+<p>Copy <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code> from a reference implementation. Both <a href="https://github.com/Azure/GPT-RAG/blob/main/scripts/preProvision.sh">GPT-RAG</a> and <a href="https://github.com/Azure/live-voice-practice/blob/main/scripts/preProvision.sh">live-voice-practice</a> are valid starting points:</p>
+<ul>
+<li><strong>GPT-RAG</strong> is the cleaner baseline.</li>
+<li><strong>live-voice-practice</strong> additionally rewrites <code>publicIngress.enabled</code> as a raw boolean (see <a href="#optional-boolean-coercion-rewrite">Boolean coercion rewrite</a>).</li>
+</ul>
+<p>Strip out any accelerator-specific preflight invocations (e.g. <code>Invoke-GptRagRegionalPreflight.ps1</code>) and keep the rest verbatim.</p>
+<p><strong>4. Author <code>main.parameters.json</code> (project-level overlay)</strong></p>
+<p>Start by copying <code>infra/main.parameters.json</code> from the pinned AI LZ tag to your repo root, then edit it to set your accelerator's defaults. Add an accelerator label so you can identify resources you own:</p>
+<div class="highlight"><pre><span></span><code>{
+  &quot;$schema&quot;: &quot;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&quot;,
+  &quot;contentVersion&quot;: &quot;1.0.0.0&quot;,
+  &quot;parameters&quot;: {
+    &quot;environmentName&quot;: { &quot;value&quot;: &quot;${AZURE_ENV_NAME}&quot; },
+    &quot;location&quot;:        { &quot;value&quot;: &quot;${AZURE_LOCATION}&quot; },
+    &quot;principalId&quot;:     { &quot;value&quot;: &quot;${AZURE_PRINCIPAL_ID}&quot; },
+    &quot;appConfigLabel&quot;:  { &quot;value&quot;: &quot;my-accelerator&quot; },
+
+    &quot;networkIsolation&quot;:     { &quot;value&quot;: &quot;${NETWORK_ISOLATION=false}&quot; },
+    &quot;deployContainerApps&quot;:  { &quot;value&quot;: &quot;true&quot; },
+    &quot;deploySearchService&quot;:  { &quot;value&quot;: &quot;true&quot; }
+    // ... add the rest based on your scenario
+  }
+}
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">The overlay is a full replacement</p>
+<p><code>preProvision</code> does <code>cp -f</code>, <strong>not</strong> a JSON merge. Your overlay must be a complete, valid parameters file for the AI LZ version you've pinned. Whenever you bump the AI LZ tag, diff against the new <code>infra/main.parameters.json</code> and update your overlay.</p>
+</div>
+<p><strong>5. (Optional) Create <code>manifest.json</code></strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v0.1.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;repo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/myorg/my-accelerator.git&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ailz_tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.0.2&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>6. Update <code>.gitignore</code></strong></p>
+<p>Add <code>.azure/</code> so azd local environment files aren't committed:</p>
+<div class="highlight"><pre><span></span><code>.azure
+</code></pre></div>
+<p><strong>7. Verify locally</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/myorg/my-accelerator.git
+<span class="nb">cd</span><span class="w"> </span>my-accelerator
+azd<span class="w"> </span>init<span class="w">                  </span><span class="c1"># links the repo to an azd environment name</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>eastus2
+azd<span class="w"> </span>provision<span class="w">             </span><span class="c1"># triggers the preprovision hook</span>
+</code></pre></div>
+<p>You should see the preProvision script print something like:</p>
+<div class="highlight"><pre><span></span><code>Initializing infrastructure submodule...
+Pinning infra submodule to &#39;v2.0.2&#39;...
+Applying project main.parameters.json to infra...
+Applying project manifest.json to infra...
+Running landing-zone preflight checks...
+</code></pre></div>
+<p>…before azd starts provisioning resources.</p>
+<p><strong>8. Commit</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>.gitmodules<span class="w"> </span>infra<span class="w"> </span>azure.yaml<span class="w"> </span>scripts/<span class="w"> </span>main.parameters.json<span class="w"> </span>manifest.json<span class="w"> </span>.gitignore
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Wire AI Landing Zone v2.0.2 as a submodule&quot;</span>
+</code></pre></div>
+<h2 id="pinning-and-upgrading-the-ai-landing-zone-version">Pinning and upgrading the AI Landing Zone version</h2>
+<p>To bump the AI LZ version that your accelerator uses:</p>
+<p><strong>1.</strong> Edit <code>.gitmodules</code> and change <code>branch = v2.0.2</code> to the new tag.</p>
+<p><strong>2.</strong> Update the gitlink so a fresh <code>git clone --recurse-submodules</code> lands on the same commit:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>infra
+git<span class="w"> </span>fetch<span class="w"> </span>--tags
+git<span class="w"> </span>checkout<span class="w"> </span>v2.1.0
+<span class="nb">cd</span><span class="w"> </span>..
+git<span class="w"> </span>add<span class="w"> </span>infra<span class="w"> </span>.gitmodules
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Bump AI LZ to v2.1.0&quot;</span>
+</code></pre></div>
+<p><strong>3.</strong> Reconcile your <code>main.parameters.json</code> overlay against the new tag's <code>infra/main.parameters.json</code> — new parameters may have been added; old ones may have been renamed.</p>
+<p><strong>4.</strong> If <code>manifest.json</code> exists, update its <code>ailz_tag</code> field.</p>
+<p><strong>5.</strong> Re-run <code>azd provision</code> in a test environment and verify the preflight checks still pass.</p>
+<h2 id="working-with-the-submodule-locally">Working with the submodule locally</h2>
+<p><strong>Clone a repository that uses this pattern:</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/Azure/GPT-RAG.git
+</code></pre></div>
+<p>If you forgot <code>--recurse-submodules</code>:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init<span class="w"> </span>--recursive
+</code></pre></div>
+<p><strong>See which version you're on:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>infra
+git<span class="w"> </span>describe<span class="w"> </span>--tags
+</code></pre></div>
+<p><strong>Local edits to <code>infra/</code>:</strong> don't. The preProvision script will overwrite <code>infra/main.parameters.json</code> and <code>infra/manifest.json</code> on every run. Edit the repo-root copies instead. For changes to Bicep modules, contribute them upstream in <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone">Azure/bicep-ptn-aiml-landing-zone</a>.</p>
+<h2 id="reference-for-code-agents">Reference for code agents</h2>
+<p>When asked to set up the submodule pattern in an accelerator, follow this deterministic checklist. Each step is idempotent.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>File</th>
+<th>Action</th>
+<th>Verification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>.gitmodules</code></td>
+<td>Add the <code>[submodule "infra"]</code> block pointing to the AI LZ repo, with <code>branch = &lt;tag&gt;</code>.</td>
+<td><code>grep -q 'bicep-ptn-aiml-landing-zone' .gitmodules</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>infra/</code></td>
+<td><code>git submodule add -b &lt;tag&gt; https://github.com/Azure/bicep-ptn-aiml-landing-zone.git infra</code></td>
+<td><code>test -f infra/main.bicep</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>azure.yaml</code></td>
+<td>Set <code>infra.path: infra</code>, <code>infra.module: main</code>, register the <code>preprovision</code> hook running <code>scripts/preProvision.{sh,ps1}</code>.</td>
+<td><code>grep -q 'path: infra' azure.yaml &amp;&amp; grep -q 'preprovision:' azure.yaml</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>scripts/preProvision.sh</code></td>
+<td>Copy from a reference. Must include: (a) <code>git submodule update --init --recursive</code>; (b) ZIP fallback that clones from <code>.gitmodules</code>; (c) re-pin to ref from <code>.gitmodules</code>; (d) overlay copy of <code>main.parameters.json</code> and <code>manifest.json</code>; (e) delegation to <code>infra/scripts/Invoke-PreflightChecks.ps1</code>.</td>
+<td>Run preProvision manually — script must exit 0 and <code>infra/main.bicep</code> must exist after.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>scripts/preProvision.ps1</code></td>
+<td>Same contract as <code>.sh</code>.</td>
+<td>Same as above on Windows.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>main.parameters.json</code></td>
+<td>Complete parameter overlay for the pinned AI LZ tag.</td>
+<td><code>jq . main.parameters.json &gt; /dev/null</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>manifest.json</code> <em>(optional)</em></td>
+<td>Record <code>tag</code>, <code>repo</code>, <code>ailz_tag</code>.</td>
+<td><code>jq . manifest.json &gt; /dev/null</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>.gitignore</code></td>
+<td>Include <code>.azure</code>.</td>
+<td><code>grep -q '^\.azure$' .gitignore</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Invariants the agent must preserve:</strong></p>
+<ul>
+<li><code>infra.path</code> in <code>azure.yaml</code> <strong>must equal</strong> <code>path</code> in <code>.gitmodules</code> for the <code>infra</code> submodule.</li>
+<li>The <code>branch</code> field in <code>.gitmodules</code> <strong>must</strong> be a tag that exists on <code>https://github.com/Azure/bicep-ptn-aiml-landing-zone</code>.</li>
+<li>The project-level <code>main.parameters.json</code> <strong>must</strong> be valid against the schema of the pinned AI LZ tag (compare it to <code>infra/main.parameters.json</code> after step 2).</li>
+<li>The preProvision script <strong>must not</strong> be modified in ways that break the seven-step contract above; accelerator-specific logic goes <strong>before</strong> the AI LZ preflight invocation.</li>
+<li>Any accelerator-specific preflight script <strong>must</strong> honour <code>PREFLIGHT_SKIP=true</code> for symmetry with the AI LZ preflight.</li>
+</ul>
+<h2 id="reference-implementations">Reference implementations</h2>
+<table>
+<thead>
+<tr>
+<th>Accelerator</th>
+<th>AI LZ tag pinned</th>
+<th>What it adds on top of the baseline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/Azure/GPT-RAG">Azure/GPT-RAG</a></td>
+<td><code>v2.0.2</code></td>
+<td>Regional preflight (<code>Invoke-GptRagRegionalPreflight.ps1</code>) that validates region, VM SKU, model quota before the AI LZ preflight runs. Adds <code>predeploy</code> and <code>postprovision</code> hooks for application wiring.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a></td>
+<td><code>v1.1.9</code></td>
+<td>In-place <code>publicIngress.enabled</code> boolean rewrite, plus <code>predeploy</code>/<code>postdeploy</code> hooks for container image build and seed data.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li><a href="../how-to-deploy/">How to Deploy</a> — the standalone AI LZ deployment flow that your accelerator builds on.</li>
+<li><a href="../parameterization/">Parameterization</a> — the full parameter reference your <code>main.parameters.json</code> overlay targets.</li>
+<li><a href="../hub-and-spoke/">Hub-and-Spoke Topology</a> — for accelerators that need to land into an existing platform landing zone.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
