@@ -26,7 +26,9 @@ This page documents the **submodule pattern** used by Azure accelerators to cons
 | **`azd init` compatibility** | The bootstrap script handles the ZIP-download path that `azd init -t <template>` uses, where git submodule entries do not exist. |
 | **Composition** | Accelerator-specific pre-flight checks (e.g. region/quota validation) can run alongside the AI LZ's own pre-flight checks. |
 
-## High-level layout
+## How the pattern works
+
+**High-level layout**
 
 ```mermaid
 flowchart LR
@@ -52,7 +54,7 @@ flowchart LR
     PP -- "delegates to" --> PFC
 ```
 
-## What happens during `azd provision`
+**What happens during `azd provision`**
 
 ```mermaid
 sequenceDiagram
@@ -88,7 +90,7 @@ sequenceDiagram
 
 ## The five files that wire it together
 
-### 1. `.gitmodules` — declares the submodule and pins a version
+**1. `.gitmodules` — declares the submodule and pins a version**
 
 ```ini
 [submodule "infra"]
@@ -106,7 +108,7 @@ sequenceDiagram
 !!! note "Why the `branch` field doubles as a version pin"
     Standard git doesn't support pinning a submodule to a tag via `.gitmodules` alone — it tracks a commit (gitlink) instead. The preProvision script bridges this gap: it reads `branch = <value>` from `.gitmodules` and runs `git checkout <value>` inside `infra/`, so you can pin to a tag like `v2.0.2` and developers get the right version regardless of what commit the gitlink points at.
 
-### 2. `azure.yaml` — points azd at the submodule and registers hooks
+**2. `azure.yaml` — points azd at the submodule and registers hooks**
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
@@ -132,7 +134,7 @@ hooks:
 - **`infra.path: infra`** matches the submodule `path` in `.gitmodules`. azd compiles `infra/main.bicep` and evaluates `infra/main.parameters.json` at provision time.
 - **`hooks.preprovision`** runs `scripts/preProvision.{sh,ps1}` **before** azd evaluates parameters or talks to ARM. This is where the bootstrap and overlay happen.
 
-### 3. `scripts/preProvision.sh` and `scripts/preProvision.ps1` — the engine
+**3. `scripts/preProvision.sh` and `scripts/preProvision.ps1` — the engine**
 
 These two scripts perform the same work for POSIX and Windows shells. Both follow this contract:
 
@@ -140,13 +142,13 @@ These two scripts perform the same work for POSIX and Windows shells. Both follo
 2. **Detect the `azd init` ZIP scenario** (no `infra/main.bicep` after step 1) and **fall back** to `git clone --depth 1 --branch <ref> <url> infra/`, reading the URL and ref from `.gitmodules`.
 3. **Pin to the desired ref** read from `.gitmodules`, even if the parent gitlink points at an older commit. This makes the `branch = v2.0.2` line in `.gitmodules` the single source of truth for the AI LZ version.
 4. **Overlay** `main.parameters.json` and `manifest.json` from the project root onto `infra/`.
-5. *(Optional)* **rewrite parameters** that ARM cannot string-coerce (see the [boolean rewrite section](#optional-boolean-coercion-rewrite)).
+5. *(Optional)* **rewrite parameters** that ARM cannot string-coerce (see [Boolean coercion rewrite](#optional-boolean-coercion-rewrite)).
 6. **Run accelerator-specific preflight checks** (region readiness, quota, etc.), then **delegate to the AI LZ preflight** at `infra/scripts/Invoke-PreflightChecks.ps1`.
 7. **Honour `PREFLIGHT_SKIP=true`** to bypass preflight checks.
 
 You can copy these scripts verbatim from one of the [reference implementations](#reference-implementations) and trim the accelerator-specific section.
 
-### 4. `main.parameters.json` (project root) — your overlay
+**4. `main.parameters.json` (project root) — your overlay**
 
 This is the file that becomes `infra/main.parameters.json` at provision time. The submodule ships its own `main.parameters.json` as the **reference defaults** for the AI LZ, but every accelerator wants to:
 
@@ -156,7 +158,7 @@ This is the file that becomes `infra/main.parameters.json` at provision time. Th
 
 Because it's a **full overlay** (the script does `cp -f`, not a JSON merge), your overlay must be a complete, valid `main.parameters.json` for the AI LZ version you've pinned. The simplest way to author one is to start from `infra/main.parameters.json` of the pinned AI LZ tag and edit it.
 
-### 5. `manifest.json` (optional) — accelerator metadata
+**5. `manifest.json` (optional) — accelerator metadata**
 
 A lightweight JSON file that records the accelerator version, the AI LZ tag it was tested with, and any companion component repositories. It's optional but useful for traceability and for downstream tooling (release notes, version reporting):
 
@@ -177,7 +179,9 @@ A lightweight JSON file that records the accelerator version, the AI LZ tag it w
 
 The preProvision script copies it into the submodule the same way it copies `main.parameters.json`, so Bicep modules can read it as a deployment input if needed.
 
-## The submodule bootstrap mechanism (detailed)
+## Runtime mechanics
+
+**Submodule bootstrap**
 
 There are three paths the preProvision script handles. All three converge on a populated `infra/` directory pinned to the version declared in `.gitmodules`.
 
@@ -193,15 +197,15 @@ flowchart TD
     F --> G([infra/ ready at pinned version])
 ```
 
-### Why the ZIP fallback exists
+**Why the ZIP fallback exists**
 
 `azd init -t Azure/GPT-RAG` does **not** perform a git clone — it downloads a ZIP of the repo from GitHub. ZIPs do not contain the `.git/modules/` metadata or the submodule gitlink. As a result, `git submodule update --init --recursive` silently does nothing and `infra/` stays empty. The script detects this by checking for `infra/main.bicep` and falls back to a direct `git clone` whose URL and ref are read from `.gitmodules`.
 
-### Why the re-pin step exists
+**Why the re-pin step exists**
 
 The git "gitlink" (the commit SHA recorded in the parent repo's tree for a submodule) may lag behind `.gitmodules`. The standard `git submodule update` honours the gitlink, not `.gitmodules`. The re-pin step forces `infra/` to the ref declared in `.gitmodules`, so **changing the AI LZ version in your accelerator is a one-line edit**.
 
-## The parameters overlay mechanism (detailed)
+**Parameters overlay**
 
 ```mermaid
 flowchart LR
@@ -216,7 +220,9 @@ After the copy:
 1. **azd reads `infra/main.parameters.json`.** Every `"${VAR}"` placeholder is replaced with the corresponding `azd env get VAR` value (or the `${VAR=default}` default if unset).
 2. **The resulting file is sent to ARM** alongside the compiled `main.bicep`.
 
-### Optional: boolean coercion rewrite
+<a id="optional-boolean-coercion-rewrite"></a>
+
+**Optional: boolean coercion rewrite**
 
 ARM rejects string-to-bool coercion **inside aggregate object properties**. The top-level form works:
 
@@ -368,7 +374,9 @@ git add .gitmodules infra azure.yaml scripts/ main.parameters.json manifest.json
 git commit -m "Wire AI Landing Zone v2.0.2 as a submodule"
 ```
 
-## Pinning and upgrading the AI Landing Zone version
+## Upgrade and local workflow
+
+**Pinning and upgrading the AI Landing Zone version**
 
 To bump the AI LZ version that your accelerator uses:
 
@@ -391,7 +399,7 @@ git commit -m "Bump AI LZ to v2.1.0"
 
 **5.** Re-run `azd provision` in a test environment and verify the preflight checks still pass.
 
-## Working with the submodule locally
+**Working with the submodule locally**
 
 **Clone a repository that uses this pattern:**
 
