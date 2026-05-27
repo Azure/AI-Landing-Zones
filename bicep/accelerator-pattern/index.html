@@ -1117,12 +1117,12 @@
     alt Normal git clone path
         Git--&gt;&gt;FS: populate infra/ from gitlink
     else azd init ZIP path
-        Note over PP,Git: gitlink is missing;&lt;br/&gt;submodule stays empty
-        PP-&gt;&gt;FS: read URL &amp; ref from .gitmodules
-        PP-&gt;&gt;Git: git clone --depth 1 --branch &lt;ref&gt; URL infra/
+        Note over PP,Git: gitlink is missing — submodule stays empty
+        PP-&gt;&gt;FS: read URL and ref from .gitmodules
+        PP-&gt;&gt;Git: git clone --depth 1 --branch TAG URL infra/
         Git--&gt;&gt;FS: populate infra/
     end
-    PP-&gt;&gt;Git: fetch + checkout &lt;ref&gt; from .gitmodules (pin)
+    PP-&gt;&gt;Git: fetch + checkout TAG from .gitmodules (pin)
     PP-&gt;&gt;FS: cp main.parameters.json infra/main.parameters.json
     PP-&gt;&gt;FS: cp manifest.json infra/manifest.json
     opt Boolean rewrites (object-typed params)
