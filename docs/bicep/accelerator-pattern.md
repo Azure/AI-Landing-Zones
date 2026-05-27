@@ -38,14 +38,12 @@ flowchart LR
         MJ["manifest.json<br/>(optional metadata)"]
         APP["src/, backend/, frontend/, ..."]
     end
-
     subgraph Submodule["infra/ (git submodule)"]
         SUB["Azure/bicep-ptn-aiml-landing-zone @ v2.0.2"]
         MB["main.bicep + modules"]
         SUB_PARAMS["main.parameters.json<br/>(reference defaults — gets overwritten)"]
         PFC["scripts/Invoke-PreflightChecks.ps1"]
     end
-
     AY -. "tells azd to use" .-> Submodule
     GM -. "declares URL + tag" .-> Submodule
     PP -- "overwrites" --> SUB_PARAMS
@@ -64,7 +62,6 @@ sequenceDiagram
     participant Git as git
     participant FS as Filesystem
     participant ARM as Azure Resource Manager
-
     Dev->>AZD: azd provision
     AZD->>PP: run preprovision hook
     PP->>Git: git submodule update --init --recursive
