@@ -212,7 +212,7 @@ Two implementation details are worth understanding:
 
 **Nested boolean compatibility note**
 
-Prefer typed Bicep `bool` parameters for new configurable booleans. Use `nestedBooleanRewrites` only when you must keep an existing parameter shaped as an `object`, and one property inside that object is populated from an environment variable but must reach Bicep as a real JSON boolean.
+This is about the parameter contract consumed by the AI Landing Zone Bicep module, not a requirement to edit the module from each accelerator. When you control the Bicep parameter shape, keep configurable booleans as typed `bool` parameters. When the accelerator must pass an existing AI Landing Zone `object` parameter and one nested property comes from an environment variable, use `nestedBooleanRewrites` to make that specific value a real JSON boolean before deployment.
 
 For example, this parameter has a nested boolean contract:
 
@@ -255,7 +255,7 @@ NESTED_BOOLEAN_REWRITES='[
 ]'
 ```
 
-Leave the configuration empty when the accelerator does not have this exact kind of nested boolean. If the boolean can be modeled as a top-level Bicep parameter, do that instead.
+Leave the configuration empty when the accelerator does not pass this exact kind of nested boolean. Do not add a rewrite for regular top-level boolean parameters.
 
 ## Step-by-step setup
 
