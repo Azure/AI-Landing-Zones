@@ -212,9 +212,9 @@ Two implementation details are worth understanding:
 
 **Nested boolean compatibility note**
 
-This is about the parameter contract consumed by the AI Landing Zone Bicep module, not a requirement to edit the module from each accelerator. When you control the Bicep parameter shape, keep configurable booleans as typed `bool` parameters. When the accelerator must pass an existing AI Landing Zone `object` parameter and one nested property comes from an environment variable, use `nestedBooleanRewrites` to make that specific value a real JSON boolean before deployment.
+This is about the values an accelerator passes into the AI Landing Zone Bicep module. If the accelerator parameterizes a boolean field that lives inside an AI Landing Zone `object` parameter, configure that conversion in the accelerator's `preProvision` hook with `nestedBooleanRewrites`. The hook runs after `main.parameters.json` is copied into `infra/` and before preflight checks, so the deployment receives a real JSON boolean instead of the string produced by environment-variable substitution.
 
-For example, this parameter has a nested boolean contract:
+For example, this accelerator parameterizes the nested `enabled` field:
 
 ```json
 {
@@ -227,7 +227,7 @@ For example, this parameter has a nested boolean contract:
 }
 ```
 
-In that case, configure the starter `preProvision` template to normalize only `publicIngress.value.enabled` after the parameters file is copied into `infra/` and before preflight checks run.
+In that case, configure the starter `preProvision` template to normalize only `publicIngress.value.enabled`.
 
 PowerShell starter:
 
@@ -255,7 +255,7 @@ NESTED_BOOLEAN_REWRITES='[
 ]'
 ```
 
-Leave the configuration empty when the accelerator does not pass this exact kind of nested boolean. Do not add a rewrite for regular top-level boolean parameters.
+Leave the configuration empty when the accelerator does not parameterize this kind of nested boolean field.
 
 ## Step-by-step setup
 
