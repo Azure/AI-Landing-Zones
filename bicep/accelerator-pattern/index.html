@@ -1053,7 +1053,7 @@
 <div class="highlight"><pre><span></span><code>&quot;enabled&quot;: false
 </code></pre></div>
 <p>Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as <code>true</code> and <code>false</code>, when the value does not need to come from an environment variable.</p>
-<p>The <code>live-voice-practice</code> accelerator contains an example of this rewrite. Copy that part only if your accelerator has an environment-driven boolean inside a nested object.</p>
+<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. Use that approach only if you need the same behavior: after copying <code>main.parameters.json</code> into <code>infra/</code>, update the copied file so the specific nested field, such as <code>publicIngress.value.enabled</code>, is written as JSON boolean <code>true</code> or <code>false</code> instead of string <code>"true"</code> or <code>"false"</code>.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
