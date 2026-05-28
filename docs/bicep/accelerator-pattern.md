@@ -212,34 +212,7 @@ Two implementation details are worth understanding:
 
 **Nested boolean compatibility note**
 
-For new accelerators, prefer typed Bicep parameters for configurable booleans. This keeps `preProvision` focused on orchestration: prepare `infra/`, copy the accelerator parameters, and run preflight checks.
-
-Recommended shape:
-
-```bicep
-param publicIngressEnabled bool = false
-param publicIngressFrontendHostName string = ''
-
-var publicIngress = {
-  enabled: publicIngressEnabled
-  frontendHostName: publicIngressFrontendHostName
-}
-```
-
-Then keep the accelerator parameter file simple:
-
-```jsonc
-"publicIngressEnabled": {
-  "value": "${PUBLIC_INGRESS_ENABLED=false}"
-},
-"publicIngressFrontendHostName": {
-  "value": "${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}"
-}
-```
-
-This avoids JSON mutation in the deployment hook and makes the expected type clear to both Bicep and code agents.
-
-If you are maintaining an existing accelerator that already exposes a nested `object` contract, you may need a compatibility bridge because `azd` substitutions are text-based before ARM evaluates the template. In that case, normalize only the specific nested boolean after copying `main.parameters.json` into `infra/` and before running preflight checks. The [`nested-boolean-rewrite.ps1`](downloads/nested-boolean-rewrite.ps1) helper is provided only for that legacy contract scenario; do not use it for new parameter designs.
+Prefer typed Bicep parameters for configurable booleans. If an accelerator must keep an existing nested `object` parameter contract, use the `nestedBooleanRewrites` configuration already included in the starter `preProvision` templates. Leave it empty for the normal path; add an entry only for the specific nested boolean that must be normalized before preflight checks run.
 
 ## Step-by-step setup
 
