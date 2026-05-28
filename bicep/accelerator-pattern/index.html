@@ -979,11 +979,9 @@
 <li>Run any accelerator-specific checks.</li>
 <li>Delegate to <code>infra/scripts/Invoke-PreflightChecks.ps1</code>.</li>
 </ol>
-<p>For a new accelerator, download the starter scripts instead of copying code from this page:</p>
-<ul>
-<li><a href="../downloads/preProvision.sh"><code>scripts/preProvision.sh</code></a></li>
-<li><a href="../downloads/preProvision.ps1"><code>scripts/preProvision.ps1</code></a></li>
-</ul>
+<p>For a new accelerator, download the starter scripts instead of copying code from this page.</p>
+<p><a class="md-button md-button--primary" href="../downloads/preProvision.sh">Download <code>preProvision.sh</code></a>
+<a class="md-button" href="../downloads/preProvision.ps1">Download <code>preProvision.ps1</code></a></p>
 <p>They cover the generic flow: prepare <code>infra/</code>, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use <a href="https://github.com/Azure/GPT-RAG">Azure/GPT-RAG</a> as a reference for the same baseline in a real accelerator, and <a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a> only when you need an example of nested boolean rewriting.</p>
 <p><strong>4. <code>main.parameters.json</code></strong></p>
 <p>This file lives in the accelerator repository root. During <code>preprovision</code>, it replaces the submodule's <code>infra/main.parameters.json</code>.</p>
@@ -1058,7 +1056,8 @@
 <div class="highlight"><pre><span></span><code>&quot;enabled&quot;: false
 </code></pre></div>
 <p>Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as <code>true</code> and <code>false</code>, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.</p>
-<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. If you need it, download the optional <a href="../downloads/nested-boolean-rewrite.ps1"><code>nested-boolean-rewrite.ps1</code></a> snippet and adapt the field path and environment variable names before adding it to <code>preProvision</code>.</p>
+<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. If you need it, download the optional snippet and adapt the field path and environment variable names before adding it to <code>preProvision</code>.</p>
+<p><a class="md-button" href="../downloads/nested-boolean-rewrite.ps1">Download <code>nested-boolean-rewrite.ps1</code></a></p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
