@@ -210,60 +210,36 @@ Two implementation details are worth understanding:
 
 <a id="boolean-rewrite-edge-case"></a>
 
-**Environment-driven booleans inside object parameters**
+**Nested boolean compatibility note**
 
-Most accelerators can pass boolean values directly through normal `azd` parameter substitution. Add the helper in this section only when a boolean value comes from an environment variable and is nested inside an `object` parameter.
+For new accelerators, prefer typed Bicep parameters for configurable booleans. This keeps `preProvision` focused on orchestration: prepare `infra/`, copy the accelerator parameters, and run preflight checks.
 
-The reason is how the deployment pipeline interprets parameter values. `azd` replaces expressions such as `"${NETWORK_ISOLATION=false}"` with text first. For a top-level Bicep parameter typed as `bool`, ARM can usually interpret that text as a boolean value.
+Recommended shape:
 
-For a nested property, the Bicep type is usually just `object`. ARM validates the object as a whole, but it does not infer that one specific property inside the object should be a boolean. In that situation, the value can remain `"false"` as a string when the template expects `false` as a JSON boolean.
+```bicep
+param publicIngressEnabled bool = false
+param publicIngressFrontendHostName string = ''
 
-Example:
-
-```jsonc
-"publicIngress": {
-  "value": {
-    "enabled": "${PUBLIC_INGRESS_ENABLED=false}",
-    "frontendHostName": "${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}"
-  }
+var publicIngress = {
+  enabled: publicIngressEnabled
+  frontendHostName: publicIngressFrontendHostName
 }
 ```
 
-If the template expects `enabled` to be a JSON boolean, `preProvision` can normalize that one property before deployment:
+Then keep the accelerator parameter file simple:
 
 ```jsonc
-"enabled": false
+"publicIngressEnabled": {
+  "value": "${PUBLIC_INGRESS_ENABLED=false}"
+},
+"publicIngressFrontendHostName": {
+  "value": "${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}"
+}
 ```
 
-Use the helper only for the specific nested property that needs normalization. If the value does not need to come from an environment variable, prefer a regular JSON boolean such as `true` or `false` in `main.parameters.json`.
+This avoids JSON mutation in the deployment hook and makes the expected type clear to both Bicep and code agents.
 
-The `live-voice-practice` accelerator contains an example of this logic. In a new accelerator, keep it as an explicit step inside `preProvision`: copy the parameters file, normalize the nested boolean if your accelerator has one, then run the AI Landing Zone preflight checks.
-
-<div class="alz-download-grid alz-download-grid--single">
-  <a class="alz-download-card" href="downloads/nested-boolean-rewrite.ps1" download>
-    <span class="alz-download-card__label">Optional helper</span>
-    <strong>nested-boolean-rewrite.ps1</strong>
-    <span>Use only when an environment-driven boolean lives inside an object parameter.</span>
-  </a>
-</div>
-
-How to use it:
-
-1. Save the helper as `scripts/nested-boolean-rewrite.ps1`.
-2. Edit the helper and replace `publicIngress.value.enabled` and `PUBLIC_INGRESS_ENABLED` with your accelerator's real parameter path and environment variable.
-3. Call it immediately after `main.parameters.json` is copied into `infra/main.parameters.json`, and before `Invoke-PreflightChecks.ps1` runs.
-
-PowerShell hook:
-
-```powershell
-& (Join-Path $PSScriptRoot 'nested-boolean-rewrite.ps1') -InfraPath $infraPath
-```
-
-Shell hook:
-
-```sh
-pwsh -NoProfile -ExecutionPolicy Bypass -File "$SCRIPT_DIR/nested-boolean-rewrite.ps1" -InfraPath "$INFRA_PATH"
-```
+If you are maintaining an existing accelerator that already exposes a nested `object` contract, you may need a compatibility bridge because `azd` substitutions are text-based before ARM evaluates the template. In that case, normalize only the specific nested boolean after copying `main.parameters.json` into `infra/` and before running preflight checks. The [`nested-boolean-rewrite.ps1`](downloads/nested-boolean-rewrite.ps1) helper is provided only for that legacy contract scenario; do not use it for new parameter designs.
 
 ## Step-by-step setup
 
