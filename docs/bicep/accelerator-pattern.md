@@ -212,7 +212,50 @@ Two implementation details are worth understanding:
 
 **Nested boolean compatibility note**
 
-Prefer typed Bicep parameters for configurable booleans. If an accelerator must keep an existing nested `object` parameter contract, use the `nestedBooleanRewrites` configuration already included in the starter `preProvision` templates. Leave it empty for the normal path; add an entry only for the specific nested boolean that must be normalized before preflight checks run.
+Prefer typed Bicep `bool` parameters for new configurable booleans. Use `nestedBooleanRewrites` only when you must keep an existing parameter shaped as an `object`, and one property inside that object is populated from an environment variable but must reach Bicep as a real JSON boolean.
+
+For example, this parameter has a nested boolean contract:
+
+```json
+{
+  "publicIngress": {
+    "value": {
+      "enabled": "${PUBLIC_INGRESS_ENABLED=false}",
+      "frontendHostName": "${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}"
+    }
+  }
+}
+```
+
+In that case, configure the starter `preProvision` template to normalize only `publicIngress.value.enabled` after the parameters file is copied into `infra/` and before preflight checks run.
+
+PowerShell starter:
+
+```powershell
+$nestedBooleanRewrites = @(
+    @{
+        Parameter = 'publicIngress'
+        PropertyPath = @('enabled')
+        EnvironmentVariable = 'PUBLIC_INGRESS_ENABLED'
+        Default = $false
+    }
+)
+```
+
+Shell starter:
+
+```sh
+NESTED_BOOLEAN_REWRITES='[
+  {
+    "parameter": "publicIngress",
+    "propertyPath": ["enabled"],
+    "environmentVariable": "PUBLIC_INGRESS_ENABLED",
+    "default": false
+  }
+]'
+```
+
+Leave the configuration empty when the accelerator does not have this exact kind of nested boolean. If the boolean can be modeled as a top-level Bicep parameter, do that instead.
 
 ## Step-by-step setup
 
