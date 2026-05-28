@@ -913,17 +913,17 @@
         MANIFEST["manifest.json&lt;br/&gt;(optional)"]
     end
     subgraph Infra["infra/ submodule"]
-        LZ["Azure/bicep-ptn-aiml-landing-zone"]
-        BICEP["main.bicep + modules"]
+        LZ["Azure/bicep-ptn-aiml-landing-zone&lt;br/&gt;(checked out locally)"]
+        BICEP["infra/main.bicep&lt;br/&gt;(azd entry point)"]
         LZPARAMS["main.parameters.json&lt;br/&gt;(overwritten before provision)"]
         CHECKS["scripts/Invoke-PreflightChecks.ps1"]
     end
-    GM --&gt; LZ
-    AZD --&gt; Infra
+    GM -- "declares URL + tag" --&gt; LZ
+    AZD -- "infra.path + module" --&gt; BICEP
     PARAMS --&gt; PP
     MANIFEST --&gt; PP
-    PP --&gt; LZPARAMS
-    PP --&gt; CHECKS</code></pre>
+    PP -- "copies overlay" --&gt; LZPARAMS
+    PP -- "runs" --&gt; CHECKS</code></pre>
 <p>At provision time, <code>azd</code> uses <code>infra/main.bicep</code> from the submodule, but it does <strong>not</strong> use the default parameters from the submodule. The accelerator's root-level <code>main.parameters.json</code> is copied into <code>infra/main.parameters.json</code> first.</p>
 <p>That copy is intentional. It lets each accelerator keep its scenario defaults close to the application code while still reusing the shared Bicep implementation.</p>
 <h2 id="required-files">Required files</h2>
