@@ -347,9 +347,51 @@ If `enabled` must be a real boolean, the preprovision script can rewrite only th
 "enabled": false
 ```
 
-Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable.
+Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.
 
 The `live-voice-practice` accelerator contains an example of this logic. Use that approach only if you need the same behavior: after copying `main.parameters.json` into `infra/`, update the copied file so the specific nested field, such as `publicIngress.value.enabled`, is written as JSON boolean `true` or `false` instead of string `"true"` or `"false"`.
+
+??? example "Optional snippet: nested boolean rewrite"
+
+    Add this only when your accelerator has this specific shape. Place it after the script copies `main.parameters.json` into `infra/`.
+
+    In `scripts/preProvision.ps1`:
+
+    ```powershell
+    $parametersPath = Join-Path $infraPath 'main.parameters.json'
+    $parameters = Get-Content $parametersPath -Raw | ConvertFrom-Json
+
+    if ($parameters.parameters.PSObject.Properties.Name -contains 'publicIngress') {
+        $enabled = if ([string]::IsNullOrWhiteSpace($env:PUBLIC_INGRESS_ENABLED)) {
+            $false
+        } else {
+            [bool]::Parse($env:PUBLIC_INGRESS_ENABLED)
+        }
+
+        $parameters.parameters.publicIngress.value.enabled = $enabled
+        $parameters | ConvertTo-Json -Depth 100 | Set-Content $parametersPath
+    }
+    ```
+
+    In `scripts/preProvision.sh`, call the same rewrite through PowerShell because the AI Landing Zone preflight checks already require `pwsh`:
+
+    ```bash
+    pwsh -NoProfile -Command '
+    $parametersPath = Join-Path "infra" "main.parameters.json"
+    $parameters = Get-Content $parametersPath -Raw | ConvertFrom-Json
+    if ($parameters.parameters.PSObject.Properties.Name -contains "publicIngress") {
+        $enabled = if ([string]::IsNullOrWhiteSpace($env:PUBLIC_INGRESS_ENABLED)) {
+            $false
+        } else {
+            [bool]::Parse($env:PUBLIC_INGRESS_ENABLED)
+        }
+        $parameters.parameters.publicIngress.value.enabled = $enabled
+        $parameters | ConvertTo-Json -Depth 100 | Set-Content $parametersPath
+    }
+    '
+    ```
+
+    Replace `publicIngress.value.enabled` and `PUBLIC_INGRESS_ENABLED` with the nested field and environment variable used by your accelerator.
 
 ## Step-by-step setup
 
