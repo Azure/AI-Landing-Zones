@@ -1052,7 +1052,7 @@
 <p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
 <p><strong>Nested boolean compatibility note</strong></p>
-<p>Prefer typed Bicep <code>bool</code> parameters for new configurable booleans. Use <code>nestedBooleanRewrites</code> only when you must keep an existing parameter shaped as an <code>object</code>, and one property inside that object is populated from an environment variable but must reach Bicep as a real JSON boolean.</p>
+<p>This is about the parameter contract consumed by the AI Landing Zone Bicep module, not a requirement to edit the module from each accelerator. When you control the Bicep parameter shape, keep configurable booleans as typed <code>bool</code> parameters. When the accelerator must pass an existing AI Landing Zone <code>object</code> parameter and one nested property comes from an environment variable, use <code>nestedBooleanRewrites</code> to make that specific value a real JSON boolean before deployment.</p>
 <p>For example, this parameter has a nested boolean contract:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;publicIngress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -1084,7 +1084,7 @@
 <span class="s1">  }</span>
 <span class="s1">]&#39;</span>
 </code></pre></div>
-<p>Leave the configuration empty when the accelerator does not have this exact kind of nested boolean. If the boolean can be modeled as a top-level Bicep parameter, do that instead.</p>
+<p>Leave the configuration empty when the accelerator does not pass this exact kind of nested boolean. Do not add a rewrite for regular top-level boolean parameters.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
