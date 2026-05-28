@@ -119,7 +119,134 @@ They should:
 6. Run any accelerator-specific checks.
 7. Delegate to `infra/scripts/Invoke-PreflightChecks.ps1`.
 
-For a new accelerator, start from the [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) scripts because they show the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) as a second reference only when your accelerator has nested boolean parameters that must be converted before deployment.
+For a new accelerator, use the starter templates below. They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
+
+??? example "Starter template: scripts/preProvision.sh"
+
+    ```bash
+    #!/usr/bin/env sh
+    set -eu
+
+    SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+    REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
+    cd "$REPO_ROOT"
+
+    INFRA_PATH="infra"
+    SUBMODULE_URL="$(git config -f .gitmodules --get "submodule.${INFRA_PATH}.url" || true)"
+    SUBMODULE_TAG="$(git config -f .gitmodules --get "submodule.${INFRA_PATH}.branch" || true)"
+
+    if [ -z "$SUBMODULE_URL" ] || [ -z "$SUBMODULE_TAG" ]; then
+      echo "Missing infra submodule url or branch in .gitmodules."
+      exit 1
+    fi
+
+    if [ ! -f "$INFRA_PATH/main.bicep" ] && [ -d ".git" ]; then
+      echo "Initializing infrastructure submodule..."
+      git submodule update --init --recursive "$INFRA_PATH"
+    fi
+
+    if [ ! -f "$INFRA_PATH/main.bicep" ]; then
+      echo "Cloning AI Landing Zone into $INFRA_PATH..."
+      rm -rf "$INFRA_PATH"
+      git clone "$SUBMODULE_URL" "$INFRA_PATH"
+    fi
+
+    echo "Pinning $INFRA_PATH to '$SUBMODULE_TAG'..."
+    git -C "$INFRA_PATH" fetch --tags
+    git -C "$INFRA_PATH" checkout "$SUBMODULE_TAG"
+
+    if [ ! -f "main.parameters.json" ]; then
+      echo "Missing root main.parameters.json."
+      exit 1
+    fi
+
+    echo "Applying accelerator main.parameters.json to infra..."
+    cp "main.parameters.json" "$INFRA_PATH/main.parameters.json"
+
+    if [ -f "manifest.json" ]; then
+      cp "manifest.json" "$INFRA_PATH/manifest.json"
+    fi
+
+    # Add accelerator-specific validation here if needed.
+
+    if [ "${PREFLIGHT_SKIP:-false}" = "true" ]; then
+      echo "Skipping preflight checks because PREFLIGHT_SKIP=true."
+      exit 0
+    fi
+
+    if ! command -v pwsh >/dev/null 2>&1; then
+      echo "PowerShell (pwsh) is required to run AI Landing Zone preflight checks."
+      exit 1
+    fi
+
+    echo "Running AI Landing Zone preflight checks..."
+    pwsh -NoProfile -ExecutionPolicy Bypass -File "$INFRA_PATH/scripts/Invoke-PreflightChecks.ps1"
+    ```
+
+??? example "Starter template: scripts/preProvision.ps1"
+
+    ```powershell
+    $ErrorActionPreference = 'Stop'
+
+    $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
+    Set-Location $repoRoot
+
+    $infraPath = 'infra'
+
+    function Get-GitModulesValue {
+        param([string] $Key)
+
+        $value = git config -f .gitmodules --get "submodule.$infraPath.$Key"
+        if (-not $value) {
+            throw "Missing submodule.$infraPath.$Key in .gitmodules."
+        }
+
+        return $value
+    }
+
+    $submoduleUrl = Get-GitModulesValue -Key 'url'
+    $submoduleTag = Get-GitModulesValue -Key 'branch'
+    $mainBicepPath = Join-Path $infraPath 'main.bicep'
+
+    if (-not (Test-Path $mainBicepPath) -and (Test-Path '.git')) {
+        Write-Host 'Initializing infrastructure submodule...'
+        git submodule update --init --recursive $infraPath
+    }
+
+    if (-not (Test-Path $mainBicepPath)) {
+        Write-Host "Cloning AI Landing Zone into $infraPath..."
+        if (Test-Path $infraPath) {
+            Remove-Item -Recurse -Force $infraPath
+        }
+
+        git clone $submoduleUrl $infraPath
+    }
+
+    Write-Host "Pinning $infraPath to '$submoduleTag'..."
+    git -C $infraPath fetch --tags
+    git -C $infraPath checkout $submoduleTag
+
+    if (-not (Test-Path 'main.parameters.json')) {
+        throw 'Missing root main.parameters.json.'
+    }
+
+    Write-Host 'Applying accelerator main.parameters.json to infra...'
+    Copy-Item 'main.parameters.json' (Join-Path $infraPath 'main.parameters.json') -Force
+
+    if (Test-Path 'manifest.json') {
+        Copy-Item 'manifest.json' (Join-Path $infraPath 'manifest.json') -Force
+    }
+
+    # Add accelerator-specific validation here if needed.
+
+    if ($env:PREFLIGHT_SKIP -eq 'true') {
+        Write-Host 'Skipping preflight checks because PREFLIGHT_SKIP=true.'
+        exit 0
+    }
+
+    Write-Host 'Running AI Landing Zone preflight checks...'
+    & (Join-Path $infraPath 'scripts/Invoke-PreflightChecks.ps1')
+    ```
 
 **4. `main.parameters.json`**
 
@@ -257,12 +384,12 @@ Use the example in [Required files](#required-files) as the starting point.
 
 **3. Copy the preprovision scripts**
 
-Copy both scripts from a reference accelerator:
+Create both scripts from the starter templates in [Required files](#required-files):
 
 - `scripts/preProvision.sh`
 - `scripts/preProvision.ps1`
 
-Keep the generic submodule, overlay, and AI Landing Zone preflight behavior. Remove only checks that are specific to the reference accelerator you copied from.
+Keep the generic submodule, overlay, and AI Landing Zone preflight behavior. Add accelerator-specific checks only where the templates say to add them.
 
 **4. Create the root `main.parameters.json`**
 
