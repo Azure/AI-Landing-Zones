@@ -119,7 +119,7 @@ They should:
 6. Run any accelerator-specific checks.
 7. Delegate to `infra/scripts/Invoke-PreflightChecks.ps1`.
 
-Copy the scripts from [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) when you need a clean baseline. Use [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) as a reference only if you need its additional boolean rewrite behavior.
+For a new accelerator, start from the [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) scripts because they show the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) as a second reference only when your accelerator has nested boolean parameters that must be converted before deployment.
 
 **4. `main.parameters.json`**
 
