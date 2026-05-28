@@ -222,7 +222,7 @@ If `enabled` must be a real boolean, the preprovision script can rewrite only th
 
 Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable.
 
-The `live-voice-practice` accelerator contains an example of this rewrite. Copy that part only if your accelerator has an environment-driven boolean inside a nested object.
+The `live-voice-practice` accelerator contains an example of this logic. Use that approach only if you need the same behavior: after copying `main.parameters.json` into `infra/`, update the copied file so the specific nested field, such as `publicIngress.value.enabled`, is written as JSON boolean `true` or `false` instead of string `"true"` or `"false"`.
 
 ## Step-by-step setup
 
