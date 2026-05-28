@@ -1038,9 +1038,10 @@
 <p><strong>Version re-pin:</strong> a submodule gitlink can point to a specific commit, but the accelerator wants the readable tag in <code>.gitmodules</code> to be authoritative. The script fetches tags and checks out that value inside <code>infra/</code>.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
 <p><strong>Boolean rewrite edge case</strong></p>
-<p>Most accelerators do not need this.</p>
-<p>Use it only when a parameter contains a boolean inside a nested object. ARM can coerce a top-level string such as <code>"${NETWORK_ISOLATION=false}"</code> into a boolean, but it does not reliably coerce nested object fields.</p>
-<p>For example, this nested value may need to be rewritten by the preprovision script before deployment:</p>
+<p>This is an exception, not the normal pattern. Most accelerators should not need it.</p>
+<p>It exists because <code>azd</code> parameter substitution starts from text. A value such as <code>"${NETWORK_ISOLATION=false}"</code> is first written as the string <code>"false"</code>.</p>
+<p>When the Bicep parameter itself is typed as <code>bool</code>, ARM can usually convert that top-level string into a real boolean. But when the boolean is inside an object parameter, ARM sees only an <code>object</code>. It does not know that one nested field should be a boolean, so the value may remain the string <code>"false"</code> instead of the boolean <code>false</code>.</p>
+<p>Example:</p>
 <div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
   &quot;value&quot;: {
     &quot;enabled&quot;: &quot;${PUBLIC_INGRESS_ENABLED=false}&quot;,
@@ -1048,7 +1049,11 @@
   }
 }
 </code></pre></div>
-<p>The <code>live-voice-practice</code> accelerator contains an example of this rewrite. Do not copy that part unless your accelerator has the same kind of nested boolean parameter.</p>
+<p>If <code>enabled</code> must be a real boolean, the preprovision script can rewrite only that field before deployment:</p>
+<div class="highlight"><pre><span></span><code>&quot;enabled&quot;: false
+</code></pre></div>
+<p>Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as <code>true</code> and <code>false</code>, when the value does not need to come from an environment variable.</p>
+<p>The <code>live-voice-practice</code> accelerator contains an example of this rewrite. Copy that part only if your accelerator has an environment-driven boolean inside a nested object.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
