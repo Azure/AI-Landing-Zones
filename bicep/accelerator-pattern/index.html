@@ -1027,7 +1027,7 @@
     else azd init ZIP download
         Hook-&gt;&gt;Git: clone AI Landing Zone into infra/
     end
-    Hook-&gt;&gt;Git: checkout tag from .gitmodules
+    Hook-&gt;&gt;Git: ensure infra/ is on the tag from .gitmodules
     Hook-&gt;&gt;FS: copy main.parameters.json into infra/
     Hook-&gt;&gt;FS: copy manifest.json into infra/ if present
     Hook-&gt;&gt;FS: run preflight checks
@@ -1035,7 +1035,7 @@
     AZD-&gt;&gt;Azure: deploy infra/main.bicep</code></pre>
 <p>Two implementation details are worth understanding:</p>
 <p><strong>ZIP fallback:</strong> <code>azd init -t &lt;repo&gt;</code> can download a ZIP instead of doing a full git clone. ZIP files do not preserve submodule metadata, so <code>infra/</code> may be empty. The script detects this and clones the AI Landing Zone directly using the URL and tag from <code>.gitmodules</code>.</p>
-<p><strong>Version re-pin:</strong> a submodule gitlink can point to a specific commit, but the accelerator wants the readable tag in <code>.gitmodules</code> to be authoritative. The script fetches tags and checks out that value inside <code>infra/</code>.</p>
+<p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
 <p><strong>Boolean rewrite edge case</strong></p>
 <p>This is an exception, not the normal pattern. Most accelerators should not need it.</p>
