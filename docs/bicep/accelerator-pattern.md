@@ -22,7 +22,7 @@ It gives you:
 - **Scenario defaults:** the accelerator can provide its own `main.parameters.json`.
 - **Version control:** the accelerator pins the AI Landing Zone to a tested tag, such as `v2.0.2`.
 - **`azd init` support:** the setup works even when an accelerator is downloaded as a ZIP by `azd init -t`.
-- **Room for accelerator logic:** the accelerator can add its own preflight checks before delegating to the AI Landing Zone preflight checks.
+- **Custom checks:** add accelerator-specific validation before AI Landing Zone checks.
 
 ## The pattern in one picture
 
