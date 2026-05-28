@@ -37,17 +37,17 @@ flowchart LR
         MANIFEST["manifest.json<br/>(optional)"]
     end
     subgraph Infra["infra/ submodule"]
-        LZ["Azure/bicep-ptn-aiml-landing-zone"]
-        BICEP["main.bicep + modules"]
+        LZ["Azure/bicep-ptn-aiml-landing-zone<br/>(checked out locally)"]
+        BICEP["infra/main.bicep<br/>(azd entry point)"]
         LZPARAMS["main.parameters.json<br/>(overwritten before provision)"]
         CHECKS["scripts/Invoke-PreflightChecks.ps1"]
     end
-    GM --> LZ
-    AZD --> Infra
+    GM -- "declares URL + tag" --> LZ
+    AZD -- "infra.path + module" --> BICEP
     PARAMS --> PP
     MANIFEST --> PP
-    PP --> LZPARAMS
-    PP --> CHECKS
+    PP -- "copies overlay" --> LZPARAMS
+    PP -- "runs" --> CHECKS
 ```
 
 At provision time, `azd` uses `infra/main.bicep` from the submodule, but it does **not** use the default parameters from the submodule. The accelerator's root-level `main.parameters.json` is copied into `infra/main.parameters.json` first.
