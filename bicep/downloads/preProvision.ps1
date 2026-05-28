@@ -45,7 +45,8 @@ if (-not (Test-Path 'main.parameters.json')) {
 Write-Host 'Applying accelerator main.parameters.json to infra...'
 Copy-Item 'main.parameters.json' (Join-Path $infraPath 'main.parameters.json') -Force
 
-# If you use the optional nested boolean helper, invoke it here after adapting it.
+# Prefer typed Bicep bool parameters. For legacy nested object contracts only,
+# invoke the compatibility helper here after adapting it.
 # & (Join-Path $PSScriptRoot 'nested-boolean-rewrite.ps1') -InfraPath $infraPath
 
 if (Test-Path 'manifest.json') {

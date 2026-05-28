@@ -2,7 +2,8 @@ param(
     [string] $InfraPath = (Join-Path $PSScriptRoot '..\infra')
 )
 
-# Optional helper for scripts/preProvision.ps1 or scripts/preProvision.sh.
+# Compatibility helper for accelerators that must keep an existing nested object parameter contract.
+# Prefer top-level Bicep bool parameters for new accelerator designs.
 # Call this after main.parameters.json has been copied into infra/.
 # Replace publicIngress.value.enabled and PUBLIC_INGRESS_ENABLED with the field and environment variable used by your accelerator.
 

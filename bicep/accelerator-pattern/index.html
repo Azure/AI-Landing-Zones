@@ -1051,43 +1051,27 @@
 <p><strong>ZIP fallback:</strong> <code>azd init -t &lt;repo&gt;</code> can download a ZIP instead of doing a full git clone. ZIP files do not preserve submodule metadata, so <code>infra/</code> may be empty. The script detects this and clones the AI Landing Zone directly using the URL and tag from <code>.gitmodules</code>.</p>
 <p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
-<p><strong>Environment-driven booleans inside object parameters</strong></p>
-<p>Most accelerators can pass boolean values directly through normal <code>azd</code> parameter substitution. Add the helper in this section only when a boolean value comes from an environment variable and is nested inside an <code>object</code> parameter.</p>
-<p>The reason is how the deployment pipeline interprets parameter values. <code>azd</code> replaces expressions such as <code>"${NETWORK_ISOLATION=false}"</code> with text first. For a top-level Bicep parameter typed as <code>bool</code>, ARM can usually interpret that text as a boolean value.</p>
-<p>For a nested property, the Bicep type is usually just <code>object</code>. ARM validates the object as a whole, but it does not infer that one specific property inside the object should be a boolean. In that situation, the value can remain <code>"false"</code> as a string when the template expects <code>false</code> as a JSON boolean.</p>
-<p>Example:</p>
-<div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
-  &quot;value&quot;: {
-    &quot;enabled&quot;: &quot;${PUBLIC_INGRESS_ENABLED=false}&quot;,
-    &quot;frontendHostName&quot;: &quot;${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}&quot;
-  }
+<p><strong>Nested boolean compatibility note</strong></p>
+<p>For new accelerators, prefer typed Bicep parameters for configurable booleans. This keeps <code>preProvision</code> focused on orchestration: prepare <code>infra/</code>, copy the accelerator parameters, and run preflight checks.</p>
+<p>Recommended shape:</p>
+<div class="highlight"><pre><span></span><code>param publicIngressEnabled bool = false
+param publicIngressFrontendHostName string = &#39;&#39;
+
+var publicIngress = {
+  enabled: publicIngressEnabled
+  frontendHostName: publicIngressFrontendHostName
 }
 </code></pre></div>
-<p>If the template expects <code>enabled</code> to be a JSON boolean, <code>preProvision</code> can normalize that one property before deployment:</p>
-<div class="highlight"><pre><span></span><code>&quot;enabled&quot;: false
+<p>Then keep the accelerator parameter file simple:</p>
+<div class="highlight"><pre><span></span><code>&quot;publicIngressEnabled&quot;: {
+  &quot;value&quot;: &quot;${PUBLIC_INGRESS_ENABLED=false}&quot;
+},
+&quot;publicIngressFrontendHostName&quot;: {
+  &quot;value&quot;: &quot;${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}&quot;
+}
 </code></pre></div>
-<p>Use the helper only for the specific nested property that needs normalization. If the value does not need to come from an environment variable, prefer a regular JSON boolean such as <code>true</code> or <code>false</code> in <code>main.parameters.json</code>.</p>
-<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. In a new accelerator, keep it as an explicit step inside <code>preProvision</code>: copy the parameters file, normalize the nested boolean if your accelerator has one, then run the AI Landing Zone preflight checks.</p>
-<div class="alz-download-grid alz-download-grid--single">
-  <a class="alz-download-card" href="downloads/nested-boolean-rewrite.ps1" download>
-    <span class="alz-download-card__label">Optional helper</span>
-    <strong>nested-boolean-rewrite.ps1</strong>
-    <span>Use only when an environment-driven boolean lives inside an object parameter.</span>
-  </a>
-</div>
-
-<p>How to use it:</p>
-<ol>
-<li>Save the helper as <code>scripts/nested-boolean-rewrite.ps1</code>.</li>
-<li>Edit the helper and replace <code>publicIngress.value.enabled</code> and <code>PUBLIC_INGRESS_ENABLED</code> with your accelerator's real parameter path and environment variable.</li>
-<li>Call it immediately after <code>main.parameters.json</code> is copied into <code>infra/main.parameters.json</code>, and before <code>Invoke-PreflightChecks.ps1</code> runs.</li>
-</ol>
-<p>PowerShell hook:</p>
-<div class="highlight"><pre><span></span><code><span class="p">&amp;</span> <span class="p">(</span><span class="nb">Join-Path</span> <span class="nv">$PSScriptRoot</span> <span class="s1">&#39;nested-boolean-rewrite.ps1&#39;</span><span class="p">)</span> <span class="n">-InfraPath</span> <span class="nv">$infraPath</span>
-</code></pre></div>
-<p>Shell hook:</p>
-<div class="highlight"><pre><span></span><code>pwsh<span class="w"> </span>-NoProfile<span class="w"> </span>-ExecutionPolicy<span class="w"> </span>Bypass<span class="w"> </span>-File<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SCRIPT_DIR</span><span class="s2">/nested-boolean-rewrite.ps1&quot;</span><span class="w"> </span>-InfraPath<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$INFRA_PATH</span><span class="s2">&quot;</span>
-</code></pre></div>
+<p>This avoids JSON mutation in the deployment hook and makes the expected type clear to both Bicep and code agents.</p>
+<p>If you are maintaining an existing accelerator that already exposes a nested <code>object</code> contract, you may need a compatibility bridge because <code>azd</code> substitutions are text-based before ARM evaluates the template. In that case, normalize only the specific nested boolean after copying <code>main.parameters.json</code> into <code>infra/</code> and before running preflight checks. The <a href="../downloads/nested-boolean-rewrite.ps1"><code>nested-boolean-rewrite.ps1</code></a> helper is provided only for that legacy contract scenario; do not use it for new parameter designs.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
