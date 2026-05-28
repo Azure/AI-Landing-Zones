@@ -210,13 +210,13 @@ Two implementation details are worth understanding:
 
 <a id="boolean-rewrite-edge-case"></a>
 
-**Boolean rewrite edge case**
+**Environment-driven booleans inside object parameters**
 
-This is an exception, not the normal pattern. Most accelerators should not need it.
+Most accelerators can pass boolean values directly through normal `azd` parameter substitution. Add the helper in this section only when a boolean value comes from an environment variable and is nested inside an `object` parameter.
 
-It exists because `azd` parameter substitution starts from text. A value such as `"${NETWORK_ISOLATION=false}"` is first written as the string `"false"`.
+The reason is how the deployment pipeline interprets parameter values. `azd` replaces expressions such as `"${NETWORK_ISOLATION=false}"` with text first. For a top-level Bicep parameter typed as `bool`, ARM can usually interpret that text as a boolean value.
 
-When the Bicep parameter itself is typed as `bool`, ARM can usually convert that top-level string into a real boolean. But when the boolean is inside an object parameter, ARM sees only an `object`. It does not know that one nested field should be a boolean, so the value may remain the string `"false"` instead of the boolean `false`.
+For a nested property, the Bicep type is usually just `object`. ARM validates the object as a whole, but it does not infer that one specific property inside the object should be a boolean. In that situation, the value can remain `"false"` as a string when the template expects `false` as a JSON boolean.
 
 Example:
 
@@ -229,15 +229,15 @@ Example:
 }
 ```
 
-If `enabled` must be a real boolean, the preprovision script can rewrite only that field before deployment:
+If the template expects `enabled` to be a JSON boolean, `preProvision` can normalize that one property before deployment:
 
 ```jsonc
 "enabled": false
 ```
 
-Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.
+Use the helper only for the specific nested property that needs normalization. If the value does not need to come from an environment variable, prefer a regular JSON boolean such as `true` or `false` in `main.parameters.json`.
 
-The `live-voice-practice` accelerator contains an example of this logic. If you need the same behavior, use the helper as a small, explicit step in `preProvision`; do not treat it as a third azd hook.
+The `live-voice-practice` accelerator contains an example of this logic. In a new accelerator, keep it as an explicit step inside `preProvision`: copy the parameters file, normalize the nested boolean if your accelerator has one, then run the AI Landing Zone preflight checks.
 
 <div class="alz-download-grid alz-download-grid--single">
   <a class="alz-download-card" href="downloads/nested-boolean-rewrite.ps1" download>
