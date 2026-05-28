@@ -1051,10 +1051,10 @@
 <p><strong>ZIP fallback:</strong> <code>azd init -t &lt;repo&gt;</code> can download a ZIP instead of doing a full git clone. ZIP files do not preserve submodule metadata, so <code>infra/</code> may be empty. The script detects this and clones the AI Landing Zone directly using the URL and tag from <code>.gitmodules</code>.</p>
 <p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
-<p><strong>Boolean rewrite edge case</strong></p>
-<p>This is an exception, not the normal pattern. Most accelerators should not need it.</p>
-<p>It exists because <code>azd</code> parameter substitution starts from text. A value such as <code>"${NETWORK_ISOLATION=false}"</code> is first written as the string <code>"false"</code>.</p>
-<p>When the Bicep parameter itself is typed as <code>bool</code>, ARM can usually convert that top-level string into a real boolean. But when the boolean is inside an object parameter, ARM sees only an <code>object</code>. It does not know that one nested field should be a boolean, so the value may remain the string <code>"false"</code> instead of the boolean <code>false</code>.</p>
+<p><strong>Environment-driven booleans inside object parameters</strong></p>
+<p>Most accelerators can pass boolean values directly through normal <code>azd</code> parameter substitution. Add the helper in this section only when a boolean value comes from an environment variable and is nested inside an <code>object</code> parameter.</p>
+<p>The reason is how the deployment pipeline interprets parameter values. <code>azd</code> replaces expressions such as <code>"${NETWORK_ISOLATION=false}"</code> with text first. For a top-level Bicep parameter typed as <code>bool</code>, ARM can usually interpret that text as a boolean value.</p>
+<p>For a nested property, the Bicep type is usually just <code>object</code>. ARM validates the object as a whole, but it does not infer that one specific property inside the object should be a boolean. In that situation, the value can remain <code>"false"</code> as a string when the template expects <code>false</code> as a JSON boolean.</p>
 <p>Example:</p>
 <div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
   &quot;value&quot;: {
@@ -1063,11 +1063,11 @@
   }
 }
 </code></pre></div>
-<p>If <code>enabled</code> must be a real boolean, the preprovision script can rewrite only that field before deployment:</p>
+<p>If the template expects <code>enabled</code> to be a JSON boolean, <code>preProvision</code> can normalize that one property before deployment:</p>
 <div class="highlight"><pre><span></span><code>&quot;enabled&quot;: false
 </code></pre></div>
-<p>Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as <code>true</code> and <code>false</code>, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.</p>
-<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. If you need the same behavior, use the helper as a small, explicit step in <code>preProvision</code>; do not treat it as a third azd hook.</p>
+<p>Use the helper only for the specific nested property that needs normalization. If the value does not need to come from an environment variable, prefer a regular JSON boolean such as <code>true</code> or <code>false</code> in <code>main.parameters.json</code>.</p>
+<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. In a new accelerator, keep it as an explicit step inside <code>preProvision</code>: copy the parameters file, normalize the nested boolean if your accelerator has one, then run the AI Landing Zone preflight checks.</p>
 <div class="alz-download-grid alz-download-grid--single">
   <a class="alz-download-card" href="downloads/nested-boolean-rewrite.ps1" download>
     <span class="alz-download-card__label">Optional helper</span>
