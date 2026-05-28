@@ -1052,7 +1052,39 @@
 <p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
 <p><strong>Nested boolean compatibility note</strong></p>
-<p>Prefer typed Bicep parameters for configurable booleans. If an accelerator must keep an existing nested <code>object</code> parameter contract, use the <code>nestedBooleanRewrites</code> configuration already included in the starter <code>preProvision</code> templates. Leave it empty for the normal path; add an entry only for the specific nested boolean that must be normalized before preflight checks run.</p>
+<p>Prefer typed Bicep <code>bool</code> parameters for new configurable booleans. Use <code>nestedBooleanRewrites</code> only when you must keep an existing parameter shaped as an <code>object</code>, and one property inside that object is populated from an environment variable but must reach Bicep as a real JSON boolean.</p>
+<p>For example, this parameter has a nested boolean contract:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;publicIngress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${PUBLIC_INGRESS_ENABLED=false}&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;frontendHostName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>In that case, configure the starter <code>preProvision</code> template to normalize only <code>publicIngress.value.enabled</code> after the parameters file is copied into <code>infra/</code> and before preflight checks run.</p>
+<p>PowerShell starter:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$nestedBooleanRewrites</span> <span class="p">=</span> <span class="p">@(</span>
+    <span class="p">@{</span>
+        <span class="k">Parameter</span> <span class="p">=</span> <span class="s1">&#39;publicIngress&#39;</span>
+        <span class="n">PropertyPath</span> <span class="p">=</span> <span class="p">@(</span><span class="s1">&#39;enabled&#39;</span><span class="p">)</span>
+        <span class="n">EnvironmentVariable</span> <span class="p">=</span> <span class="s1">&#39;PUBLIC_INGRESS_ENABLED&#39;</span>
+        <span class="k">Default</span> <span class="p">=</span> <span class="nv">$false</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Shell starter:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">NESTED_BOOLEAN_REWRITES</span><span class="o">=</span><span class="s1">&#39;[</span>
+<span class="s1">  {</span>
+<span class="s1">    &quot;parameter&quot;: &quot;publicIngress&quot;,</span>
+<span class="s1">    &quot;propertyPath&quot;: [&quot;enabled&quot;],</span>
+<span class="s1">    &quot;environmentVariable&quot;: &quot;PUBLIC_INGRESS_ENABLED&quot;,</span>
+<span class="s1">    &quot;default&quot;: false</span>
+<span class="s1">  }</span>
+<span class="s1">]&#39;</span>
+</code></pre></div>
+<p>Leave the configuration empty when the accelerator does not have this exact kind of nested boolean. If the boolean can be modeled as a top-level Bicep parameter, do that instead.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
