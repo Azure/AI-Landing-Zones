@@ -119,10 +119,10 @@ They should:
 6. Run any accelerator-specific checks.
 7. Delegate to `infra/scripts/Invoke-PreflightChecks.ps1`.
 
-For a new accelerator, download the starter scripts instead of copying code from this page:
+For a new accelerator, download the starter scripts instead of copying code from this page.
 
-- [`scripts/preProvision.sh`](downloads/preProvision.sh)
-- [`scripts/preProvision.ps1`](downloads/preProvision.ps1)
+[Download `preProvision.sh`](downloads/preProvision.sh){ .md-button .md-button--primary }
+[Download `preProvision.ps1`](downloads/preProvision.ps1){ .md-button }
 
 They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
 
@@ -227,7 +227,9 @@ If `enabled` must be a real boolean, the preprovision script can rewrite only th
 
 Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.
 
-The `live-voice-practice` accelerator contains an example of this logic. If you need it, download the optional [`nested-boolean-rewrite.ps1`](downloads/nested-boolean-rewrite.ps1) snippet and adapt the field path and environment variable names before adding it to `preProvision`.
+The `live-voice-practice` accelerator contains an example of this logic. If you need it, download the optional snippet and adapt the field path and environment variable names before adding it to `preProvision`.
+
+[Download `nested-boolean-rewrite.ps1`](downloads/nested-boolean-rewrite.ps1){ .md-button }
 
 ## Step-by-step setup
 
