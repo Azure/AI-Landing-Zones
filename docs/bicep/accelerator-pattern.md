@@ -119,134 +119,12 @@ They should:
 6. Run any accelerator-specific checks.
 7. Delegate to `infra/scripts/Invoke-PreflightChecks.ps1`.
 
-For a new accelerator, use the starter templates below. They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
+For a new accelerator, download the starter scripts instead of copying code from this page:
 
-??? example "Starter template: scripts/preProvision.sh"
+- [`scripts/preProvision.sh`](downloads/preProvision.sh)
+- [`scripts/preProvision.ps1`](downloads/preProvision.ps1)
 
-    ```bash
-    #!/usr/bin/env sh
-    set -eu
-
-    SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-    REPO_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)"
-    cd "$REPO_ROOT"
-
-    INFRA_PATH="infra"
-    SUBMODULE_URL="$(git config -f .gitmodules --get "submodule.${INFRA_PATH}.url" || true)"
-    SUBMODULE_TAG="$(git config -f .gitmodules --get "submodule.${INFRA_PATH}.branch" || true)"
-
-    if [ -z "$SUBMODULE_URL" ] || [ -z "$SUBMODULE_TAG" ]; then
-      echo "Missing infra submodule url or branch in .gitmodules."
-      exit 1
-    fi
-
-    if [ ! -f "$INFRA_PATH/main.bicep" ] && [ -d ".git" ]; then
-      echo "Initializing infrastructure submodule..."
-      git submodule update --init --recursive "$INFRA_PATH"
-    fi
-
-    if [ ! -f "$INFRA_PATH/main.bicep" ]; then
-      echo "Cloning AI Landing Zone into $INFRA_PATH..."
-      rm -rf "$INFRA_PATH"
-      git clone "$SUBMODULE_URL" "$INFRA_PATH"
-    fi
-
-    echo "Pinning $INFRA_PATH to '$SUBMODULE_TAG'..."
-    git -C "$INFRA_PATH" fetch --tags
-    git -C "$INFRA_PATH" checkout "$SUBMODULE_TAG"
-
-    if [ ! -f "main.parameters.json" ]; then
-      echo "Missing root main.parameters.json."
-      exit 1
-    fi
-
-    echo "Applying accelerator main.parameters.json to infra..."
-    cp "main.parameters.json" "$INFRA_PATH/main.parameters.json"
-
-    if [ -f "manifest.json" ]; then
-      cp "manifest.json" "$INFRA_PATH/manifest.json"
-    fi
-
-    # Add accelerator-specific validation here if needed.
-
-    if [ "${PREFLIGHT_SKIP:-false}" = "true" ]; then
-      echo "Skipping preflight checks because PREFLIGHT_SKIP=true."
-      exit 0
-    fi
-
-    if ! command -v pwsh >/dev/null 2>&1; then
-      echo "PowerShell (pwsh) is required to run AI Landing Zone preflight checks."
-      exit 1
-    fi
-
-    echo "Running AI Landing Zone preflight checks..."
-    pwsh -NoProfile -ExecutionPolicy Bypass -File "$INFRA_PATH/scripts/Invoke-PreflightChecks.ps1"
-    ```
-
-??? example "Starter template: scripts/preProvision.ps1"
-
-    ```powershell
-    $ErrorActionPreference = 'Stop'
-
-    $repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
-    Set-Location $repoRoot
-
-    $infraPath = 'infra'
-
-    function Get-GitModulesValue {
-        param([string] $Key)
-
-        $value = git config -f .gitmodules --get "submodule.$infraPath.$Key"
-        if (-not $value) {
-            throw "Missing submodule.$infraPath.$Key in .gitmodules."
-        }
-
-        return $value
-    }
-
-    $submoduleUrl = Get-GitModulesValue -Key 'url'
-    $submoduleTag = Get-GitModulesValue -Key 'branch'
-    $mainBicepPath = Join-Path $infraPath 'main.bicep'
-
-    if (-not (Test-Path $mainBicepPath) -and (Test-Path '.git')) {
-        Write-Host 'Initializing infrastructure submodule...'
-        git submodule update --init --recursive $infraPath
-    }
-
-    if (-not (Test-Path $mainBicepPath)) {
-        Write-Host "Cloning AI Landing Zone into $infraPath..."
-        if (Test-Path $infraPath) {
-            Remove-Item -Recurse -Force $infraPath
-        }
-
-        git clone $submoduleUrl $infraPath
-    }
-
-    Write-Host "Pinning $infraPath to '$submoduleTag'..."
-    git -C $infraPath fetch --tags
-    git -C $infraPath checkout $submoduleTag
-
-    if (-not (Test-Path 'main.parameters.json')) {
-        throw 'Missing root main.parameters.json.'
-    }
-
-    Write-Host 'Applying accelerator main.parameters.json to infra...'
-    Copy-Item 'main.parameters.json' (Join-Path $infraPath 'main.parameters.json') -Force
-
-    if (Test-Path 'manifest.json') {
-        Copy-Item 'manifest.json' (Join-Path $infraPath 'manifest.json') -Force
-    }
-
-    # Add accelerator-specific validation here if needed.
-
-    if ($env:PREFLIGHT_SKIP -eq 'true') {
-        Write-Host 'Skipping preflight checks because PREFLIGHT_SKIP=true.'
-        exit 0
-    }
-
-    Write-Host 'Running AI Landing Zone preflight checks...'
-    & (Join-Path $infraPath 'scripts/Invoke-PreflightChecks.ps1')
-    ```
+They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
 
 **4. `main.parameters.json`**
 
@@ -349,49 +227,7 @@ If `enabled` must be a real boolean, the preprovision script can rewrite only th
 
 Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.
 
-The `live-voice-practice` accelerator contains an example of this logic. Use that approach only if you need the same behavior: after copying `main.parameters.json` into `infra/`, update the copied file so the specific nested field, such as `publicIngress.value.enabled`, is written as JSON boolean `true` or `false` instead of string `"true"` or `"false"`.
-
-??? example "Optional snippet: nested boolean rewrite"
-
-    Add this only when your accelerator has this specific shape. Place it after the script copies `main.parameters.json` into `infra/`.
-
-    In `scripts/preProvision.ps1`:
-
-    ```powershell
-    $parametersPath = Join-Path $infraPath 'main.parameters.json'
-    $parameters = Get-Content $parametersPath -Raw | ConvertFrom-Json
-
-    if ($parameters.parameters.PSObject.Properties.Name -contains 'publicIngress') {
-        $enabled = if ([string]::IsNullOrWhiteSpace($env:PUBLIC_INGRESS_ENABLED)) {
-            $false
-        } else {
-            [bool]::Parse($env:PUBLIC_INGRESS_ENABLED)
-        }
-
-        $parameters.parameters.publicIngress.value.enabled = $enabled
-        $parameters | ConvertTo-Json -Depth 100 | Set-Content $parametersPath
-    }
-    ```
-
-    In `scripts/preProvision.sh`, call the same rewrite through PowerShell because the AI Landing Zone preflight checks already require `pwsh`:
-
-    ```bash
-    pwsh -NoProfile -Command '
-    $parametersPath = Join-Path "infra" "main.parameters.json"
-    $parameters = Get-Content $parametersPath -Raw | ConvertFrom-Json
-    if ($parameters.parameters.PSObject.Properties.Name -contains "publicIngress") {
-        $enabled = if ([string]::IsNullOrWhiteSpace($env:PUBLIC_INGRESS_ENABLED)) {
-            $false
-        } else {
-            [bool]::Parse($env:PUBLIC_INGRESS_ENABLED)
-        }
-        $parameters.parameters.publicIngress.value.enabled = $enabled
-        $parameters | ConvertTo-Json -Depth 100 | Set-Content $parametersPath
-    }
-    '
-    ```
-
-    Replace `publicIngress.value.enabled` and `PUBLIC_INGRESS_ENABLED` with the nested field and environment variable used by your accelerator.
+The `live-voice-practice` accelerator contains an example of this logic. If you need it, download the optional [`nested-boolean-rewrite.ps1`](downloads/nested-boolean-rewrite.ps1) snippet and adapt the field path and environment variable names before adding it to `preProvision`.
 
 ## Step-by-step setup
 
