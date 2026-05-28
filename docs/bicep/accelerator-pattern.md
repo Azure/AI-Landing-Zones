@@ -179,7 +179,7 @@ sequenceDiagram
     else azd init ZIP download
         Hook->>Git: clone AI Landing Zone into infra/
     end
-    Hook->>Git: checkout tag from .gitmodules
+    Hook->>Git: ensure infra/ is on the tag from .gitmodules
     Hook->>FS: copy main.parameters.json into infra/
     Hook->>FS: copy manifest.json into infra/ if present
     Hook->>FS: run preflight checks
@@ -191,7 +191,7 @@ Two implementation details are worth understanding:
 
 **ZIP fallback:** `azd init -t <repo>` can download a ZIP instead of doing a full git clone. ZIP files do not preserve submodule metadata, so `infra/` may be empty. The script detects this and clones the AI Landing Zone directly using the URL and tag from `.gitmodules`.
 
-**Version re-pin:** a submodule gitlink can point to a specific commit, but the accelerator wants the readable tag in `.gitmodules` to be authoritative. The script fetches tags and checks out that value inside `infra/`.
+**Version re-pin:** this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned `infra/` directly. In both cases, the readable tag in `.gitmodules` is treated as the version the accelerator expects.
 
 <a id="boolean-rewrite-edge-case"></a>
 
