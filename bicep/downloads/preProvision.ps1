@@ -5,6 +5,16 @@ Set-Location $repoRoot
 
 $infraPath = 'infra'
 
+$nestedBooleanRewrites = @(
+    # Example for legacy object parameters:
+    # @{
+    #     Parameter = 'publicIngress'
+    #     PropertyPath = @('enabled')
+    #     EnvironmentVariable = 'PUBLIC_INGRESS_ENABLED'
+    #     Default = $false
+    # }
+)
+
 function Get-GitModulesValue {
     param([string] $Key)
 
@@ -14,6 +24,54 @@ function Get-GitModulesValue {
     }
 
     return $value
+}
+
+function Set-NestedBooleanParameters {
+    param(
+        [string] $ParametersPath,
+        [object[]] $Rules
+    )
+
+    if (-not $Rules -or $Rules.Count -eq 0) {
+        return
+    }
+
+    $parameters = Get-Content $ParametersPath -Raw | ConvertFrom-Json
+
+    foreach ($rule in $Rules) {
+        $parameterName = $rule['Parameter']
+        $propertyPath = @($rule['PropertyPath'])
+        $environmentVariable = $rule['EnvironmentVariable']
+        $defaultValue = [bool] $rule['Default']
+
+        if (-not ($parameters.parameters.PSObject.Properties.Name -contains $parameterName)) {
+            throw "Cannot normalize nested boolean: parameter '$parameterName' does not exist in $ParametersPath."
+        }
+
+        $target = $parameters.parameters.$parameterName.value
+        if ($propertyPath.Count -gt 1) {
+            foreach ($segment in $propertyPath[0..($propertyPath.Count - 2)]) {
+                if (-not ($target.PSObject.Properties.Name -contains $segment)) {
+                    throw "Cannot normalize nested boolean: property '$segment' does not exist under parameter '$parameterName'."
+                }
+                $target = $target.$segment
+            }
+        }
+
+        $leafProperty = $propertyPath[-1]
+        if (-not ($target.PSObject.Properties.Name -contains $leafProperty)) {
+            throw "Cannot normalize nested boolean: property '$leafProperty' does not exist under parameter '$parameterName'."
+        }
+
+        $rawValue = [Environment]::GetEnvironmentVariable($environmentVariable)
+        $target.$leafProperty = if ([string]::IsNullOrWhiteSpace($rawValue)) {
+            $defaultValue
+        } else {
+            [bool]::Parse($rawValue)
+        }
+    }
+
+    $parameters | ConvertTo-Json -Depth 100 | Set-Content $ParametersPath
 }
 
 $submoduleUrl = Get-GitModulesValue -Key 'url'
@@ -43,11 +101,9 @@ if (-not (Test-Path 'main.parameters.json')) {
 }
 
 Write-Host 'Applying accelerator main.parameters.json to infra...'
-Copy-Item 'main.parameters.json' (Join-Path $infraPath 'main.parameters.json') -Force
-
-# Prefer typed Bicep bool parameters. For legacy nested object contracts only,
-# invoke the compatibility helper here after adapting it.
-# & (Join-Path $PSScriptRoot 'nested-boolean-rewrite.ps1') -InfraPath $infraPath
+$parametersPath = Join-Path $infraPath 'main.parameters.json'
+Copy-Item 'main.parameters.json' $parametersPath -Force
+Set-NestedBooleanParameters -ParametersPath $parametersPath -Rules $nestedBooleanRewrites
 
 if (Test-Path 'manifest.json') {
     Copy-Item 'manifest.json' (Join-Path $infraPath 'manifest.json') -Force

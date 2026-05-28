@@ -1052,26 +1052,7 @@
 <p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
 <p><strong>Nested boolean compatibility note</strong></p>
-<p>For new accelerators, prefer typed Bicep parameters for configurable booleans. This keeps <code>preProvision</code> focused on orchestration: prepare <code>infra/</code>, copy the accelerator parameters, and run preflight checks.</p>
-<p>Recommended shape:</p>
-<div class="highlight"><pre><span></span><code>param publicIngressEnabled bool = false
-param publicIngressFrontendHostName string = &#39;&#39;
-
-var publicIngress = {
-  enabled: publicIngressEnabled
-  frontendHostName: publicIngressFrontendHostName
-}
-</code></pre></div>
-<p>Then keep the accelerator parameter file simple:</p>
-<div class="highlight"><pre><span></span><code>&quot;publicIngressEnabled&quot;: {
-  &quot;value&quot;: &quot;${PUBLIC_INGRESS_ENABLED=false}&quot;
-},
-&quot;publicIngressFrontendHostName&quot;: {
-  &quot;value&quot;: &quot;${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}&quot;
-}
-</code></pre></div>
-<p>This avoids JSON mutation in the deployment hook and makes the expected type clear to both Bicep and code agents.</p>
-<p>If you are maintaining an existing accelerator that already exposes a nested <code>object</code> contract, you may need a compatibility bridge because <code>azd</code> substitutions are text-based before ARM evaluates the template. In that case, normalize only the specific nested boolean after copying <code>main.parameters.json</code> into <code>infra/</code> and before running preflight checks. The <a href="../downloads/nested-boolean-rewrite.ps1"><code>nested-boolean-rewrite.ps1</code></a> helper is provided only for that legacy contract scenario; do not use it for new parameter designs.</p>
+<p>Prefer typed Bicep parameters for configurable booleans. If an accelerator must keep an existing nested <code>object</code> parameter contract, use the <code>nestedBooleanRewrites</code> configuration already included in the starter <code>preProvision</code> templates. Leave it empty for the normal path; add an entry only for the specific nested boolean that must be normalized before preflight checks run.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>
