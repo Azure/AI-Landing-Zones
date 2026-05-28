@@ -197,11 +197,13 @@ Two implementation details are worth understanding:
 
 **Boolean rewrite edge case**
 
-Most accelerators do not need this.
+This is an exception, not the normal pattern. Most accelerators should not need it.
 
-Use it only when a parameter contains a boolean inside a nested object. ARM can coerce a top-level string such as `"${NETWORK_ISOLATION=false}"` into a boolean, but it does not reliably coerce nested object fields.
+It exists because `azd` parameter substitution starts from text. A value such as `"${NETWORK_ISOLATION=false}"` is first written as the string `"false"`.
 
-For example, this nested value may need to be rewritten by the preprovision script before deployment:
+When the Bicep parameter itself is typed as `bool`, ARM can usually convert that top-level string into a real boolean. But when the boolean is inside an object parameter, ARM sees only an `object`. It does not know that one nested field should be a boolean, so the value may remain the string `"false"` instead of the boolean `false`.
+
+Example:
 
 ```jsonc
 "publicIngress": {
@@ -212,7 +214,15 @@ For example, this nested value may need to be rewritten by the preprovision scri
 }
 ```
 
-The `live-voice-practice` accelerator contains an example of this rewrite. Do not copy that part unless your accelerator has the same kind of nested boolean parameter.
+If `enabled` must be a real boolean, the preprovision script can rewrite only that field before deployment:
+
+```jsonc
+"enabled": false
+```
+
+Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable.
+
+The `live-voice-practice` accelerator contains an example of this rewrite. Copy that part only if your accelerator has an environment-driven boolean inside a nested object.
 
 ## Step-by-step setup
 
