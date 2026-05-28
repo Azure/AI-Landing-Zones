@@ -121,8 +121,18 @@ They should:
 
 For a new accelerator, download the starter scripts instead of copying code from this page.
 
-[Download `preProvision.sh`](downloads/preProvision.sh){ .md-button .md-button--primary }
-[Download `preProvision.ps1`](downloads/preProvision.ps1){ .md-button }
+<div class="alz-download-grid">
+  <a class="alz-download-card alz-download-card--primary" href="downloads/preProvision.sh" download>
+    <span class="alz-download-card__label">Linux/macOS hook</span>
+    <strong>preProvision.sh</strong>
+    <span>Shell starter for azd environments that execute the POSIX hook.</span>
+  </a>
+  <a class="alz-download-card" href="downloads/preProvision.ps1" download>
+    <span class="alz-download-card__label">Windows/PowerShell hook</span>
+    <strong>preProvision.ps1</strong>
+    <span>PowerShell starter with the same submodule, parameter copy, and preflight flow.</span>
+  </a>
+</div>
 
 They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
 
@@ -227,9 +237,33 @@ If `enabled` must be a real boolean, the preprovision script can rewrite only th
 
 Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as `true` and `false`, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.
 
-The `live-voice-practice` accelerator contains an example of this logic. If you need it, download the optional snippet and adapt the field path and environment variable names before adding it to `preProvision`.
+The `live-voice-practice` accelerator contains an example of this logic. If you need the same behavior, use the helper as a small, explicit step in `preProvision`; do not treat it as a third azd hook.
 
-[Download `nested-boolean-rewrite.ps1`](downloads/nested-boolean-rewrite.ps1){ .md-button }
+<div class="alz-download-grid alz-download-grid--single">
+  <a class="alz-download-card" href="downloads/nested-boolean-rewrite.ps1" download>
+    <span class="alz-download-card__label">Optional helper</span>
+    <strong>nested-boolean-rewrite.ps1</strong>
+    <span>Use only when an environment-driven boolean lives inside an object parameter.</span>
+  </a>
+</div>
+
+How to use it:
+
+1. Save the helper as `scripts/nested-boolean-rewrite.ps1`.
+2. Edit the helper and replace `publicIngress.value.enabled` and `PUBLIC_INGRESS_ENABLED` with your accelerator's real parameter path and environment variable.
+3. Call it immediately after `main.parameters.json` is copied into `infra/main.parameters.json`, and before `Invoke-PreflightChecks.ps1` runs.
+
+PowerShell hook:
+
+```powershell
+& (Join-Path $PSScriptRoot 'nested-boolean-rewrite.ps1') -InfraPath $infraPath
+```
+
+Shell hook:
+
+```sh
+pwsh -NoProfile -ExecutionPolicy Bypass -File "$SCRIPT_DIR/nested-boolean-rewrite.ps1" -InfraPath "$INFRA_PATH"
+```
 
 ## Step-by-step setup
 
