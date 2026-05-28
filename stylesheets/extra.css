@@ -27,3 +27,55 @@
   white-space: nowrap;
 }
 
+.md-typeset .alz-download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+
+.md-typeset .alz-download-grid--single {
+  max-width: 28rem;
+}
+
+.md-typeset .alz-download-card {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.55rem;
+  box-shadow: 0 0.15rem 0.45rem rgba(0, 0, 0, 0.05);
+  color: var(--md-default-fg-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  padding: 0.85rem 1rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.md-typeset .alz-download-card:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.09);
+  transform: translateY(-1px);
+}
+
+.md-typeset .alz-download-card strong {
+  color: var(--md-primary-fg-color);
+  font-size: 0.95rem;
+}
+
+.md-typeset .alz-download-card span:last-child {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.md-typeset .alz-download-card__label {
+  color: var(--md-accent-fg-color);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.md-typeset .alz-download-card--primary {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--md-primary-fg-color) 8%, transparent), transparent);
+  border-color: color-mix(in srgb, var(--md-primary-fg-color) 28%, var(--md-default-fg-color--lightest));
+}

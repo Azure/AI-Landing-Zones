@@ -980,8 +980,19 @@
 <li>Delegate to <code>infra/scripts/Invoke-PreflightChecks.ps1</code>.</li>
 </ol>
 <p>For a new accelerator, download the starter scripts instead of copying code from this page.</p>
-<p><a class="md-button md-button--primary" href="../downloads/preProvision.sh">Download <code>preProvision.sh</code></a>
-<a class="md-button" href="../downloads/preProvision.ps1">Download <code>preProvision.ps1</code></a></p>
+<div class="alz-download-grid">
+  <a class="alz-download-card alz-download-card--primary" href="downloads/preProvision.sh" download>
+    <span class="alz-download-card__label">Linux/macOS hook</span>
+    <strong>preProvision.sh</strong>
+    <span>Shell starter for azd environments that execute the POSIX hook.</span>
+  </a>
+  <a class="alz-download-card" href="downloads/preProvision.ps1" download>
+    <span class="alz-download-card__label">Windows/PowerShell hook</span>
+    <strong>preProvision.ps1</strong>
+    <span>PowerShell starter with the same submodule, parameter copy, and preflight flow.</span>
+  </a>
+</div>
+
 <p>They cover the generic flow: prepare <code>infra/</code>, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use <a href="https://github.com/Azure/GPT-RAG">Azure/GPT-RAG</a> as a reference for the same baseline in a real accelerator, and <a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a> only when you need an example of nested boolean rewriting.</p>
 <p><strong>4. <code>main.parameters.json</code></strong></p>
 <p>This file lives in the accelerator repository root. During <code>preprovision</code>, it replaces the submodule's <code>infra/main.parameters.json</code>.</p>
@@ -1056,8 +1067,27 @@
 <div class="highlight"><pre><span></span><code>&quot;enabled&quot;: false
 </code></pre></div>
 <p>Avoid this when possible. Prefer top-level boolean parameters, or fixed JSON booleans such as <code>true</code> and <code>false</code>, when the value does not need to come from an environment variable. Do not run a hard-coded rewrite in every accelerator: it is field-specific and can accidentally create or change parameters that the accelerator does not use.</p>
-<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. If you need it, download the optional snippet and adapt the field path and environment variable names before adding it to <code>preProvision</code>.</p>
-<p><a class="md-button" href="../downloads/nested-boolean-rewrite.ps1">Download <code>nested-boolean-rewrite.ps1</code></a></p>
+<p>The <code>live-voice-practice</code> accelerator contains an example of this logic. If you need the same behavior, use the helper as a small, explicit step in <code>preProvision</code>; do not treat it as a third azd hook.</p>
+<div class="alz-download-grid alz-download-grid--single">
+  <a class="alz-download-card" href="downloads/nested-boolean-rewrite.ps1" download>
+    <span class="alz-download-card__label">Optional helper</span>
+    <strong>nested-boolean-rewrite.ps1</strong>
+    <span>Use only when an environment-driven boolean lives inside an object parameter.</span>
+  </a>
+</div>
+
+<p>How to use it:</p>
+<ol>
+<li>Save the helper as <code>scripts/nested-boolean-rewrite.ps1</code>.</li>
+<li>Edit the helper and replace <code>publicIngress.value.enabled</code> and <code>PUBLIC_INGRESS_ENABLED</code> with your accelerator's real parameter path and environment variable.</li>
+<li>Call it immediately after <code>main.parameters.json</code> is copied into <code>infra/main.parameters.json</code>, and before <code>Invoke-PreflightChecks.ps1</code> runs.</li>
+</ol>
+<p>PowerShell hook:</p>
+<div class="highlight"><pre><span></span><code><span class="p">&amp;</span> <span class="p">(</span><span class="nb">Join-Path</span> <span class="nv">$PSScriptRoot</span> <span class="s1">&#39;nested-boolean-rewrite.ps1&#39;</span><span class="p">)</span> <span class="n">-InfraPath</span> <span class="nv">$infraPath</span>
+</code></pre></div>
+<p>Shell hook:</p>
+<div class="highlight"><pre><span></span><code>pwsh<span class="w"> </span>-NoProfile<span class="w"> </span>-ExecutionPolicy<span class="w"> </span>Bypass<span class="w"> </span>-File<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SCRIPT_DIR</span><span class="s2">/nested-boolean-rewrite.ps1&quot;</span><span class="w"> </span>-InfraPath<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$INFRA_PATH</span><span class="s2">&quot;</span>
+</code></pre></div>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
 <p>Follow these steps when creating a new accelerator.</p>
 <p><strong>1. Add the submodule</strong></p>

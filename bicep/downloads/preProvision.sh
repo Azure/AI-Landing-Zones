@@ -37,6 +37,9 @@ fi
 echo "Applying accelerator main.parameters.json to infra..."
 cp "main.parameters.json" "$INFRA_PATH/main.parameters.json"
 
+# If you use the optional nested boolean helper, invoke it here after adapting it.
+# pwsh -NoProfile -ExecutionPolicy Bypass -File "$SCRIPT_DIR/nested-boolean-rewrite.ps1" -InfraPath "$INFRA_PATH"
+
 if [ -f "manifest.json" ]; then
   cp "manifest.json" "$INFRA_PATH/manifest.json"
 fi
