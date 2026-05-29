@@ -19,12 +19,17 @@ This is not an exhaustive list; AI Foundry and AI Services model deployments are
 ## Recommended practice
 
 - **Pick a primary region and an alternate region up front.** If the primary fails on capacity, you want to fail over quickly rather than redesign.
-- **Validate model quota first.** Use `az cognitiveservices usage list --location <region>` for the model SKUs you need. This is the one signal you *can* trust before provisioning.
+- **Validate model quota first.** Use `az cognitiveservices usage list --location <region>` for the model SKUs you need. This is the one signal you *can* trust before provisioning. As of **landing zone [v2.0.3](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.3)** the `azd preprovision` hook does this automatically for every `format=OpenAI` entry in `modelDeploymentList` and fails fast (`MODEL_QUOTA_INSUFFICIENT`) if `(limit − currentValue) < sku.capacity` for any of them.
 - **Treat the first provision as a capacity probe.** If it fails on `InsufficientResourcesAvailable` or `ServiceUnavailable`, retry in the alternate region. Do not assume the failure means the deployment template is broken.
 - **Tear down failed provisions asynchronously.** Resource groups holding Cosmos DB, AI Search, or Container Apps Environment can take 10–30 minutes to delete. Use `az group delete --no-wait` and move on with a fresh resource group name.
 
+!!! info "What the preflight now covers (v2.0.3+)"
+    Starting with [v2.0.3](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.3) (issue [#72](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/72)), `scripts/Invoke-PreflightChecks.ps1` extends its read-only validation with a regional readiness pass that runs from the `azd preprovision` hook. It checks: **subscription drift** vs. the azd env, **provider/location support per resource type** (AI Search, Cosmos DB, Container Apps, AI Foundry/Cognitive Services, Key Vault, Storage, App Configuration, Log Analytics, Application Insights), **jumpbox VM SKU availability** in the region, and **AI model quota**. Each check is gated on the corresponding `deploy*` feature flag.
+
 !!! warning
-    The `azd preprovision` hook in this landing zone validates **parameter shape, BYO references, and provider/location support**. It deliberately does **not** claim to validate regional capacity for AI Search, Cosmos DB, or Container Apps Environment, because Azure does not expose that signal before allocation. A passing preflight does not guarantee a successful provision in a capacity-constrained region.
+    Even with v2.0.3+, the preflight surfaces **transient regional capacity** caveats for AI Search, Cosmos DB, and Container Apps Environment as **`WARN` (non-blocking)** findings only, because Azure does not expose that signal before allocation. A passing preflight does not guarantee a successful provision in a capacity-constrained region — the WARN just makes it obvious what to retry in your alternate region if provisioning later fails.
+
+    You can opt out of the new regional block (while keeping parameter/topology/BYO validation) via the `LZ_PREFLIGHT_REGIONAL_SKIP=true` env var or the `-SkipRegional` switch on the script. The full preflight can still be bypassed via `PREFLIGHT_SKIP=true` or `-SkipAzureLookups` (offline/CI).
 
 ## See also
 
