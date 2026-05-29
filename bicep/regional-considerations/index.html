@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../regional-considerations/">
+        <link rel="prev" href="../how-to-deploy/">
       
       
-        <link rel="next" href="../public-ingress/">
+        <link rel="next" href="../hub-and-spoke/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Hub-and-Spoke Topology - Azure AI Landing Zones</title>
+        <title>Regional Considerations - Azure AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#hub-and-spoke-topology" class="md-skip">
+        <a href="#regional-considerations" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Hub-and-Spoke Topology
+              Regional Considerations
             
           </span>
         </div>
@@ -528,34 +528,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../regional-considerations/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Regional Considerations
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -575,7 +547,7 @@
   <span class="md-ellipsis">
     
   
-    Hub-and-Spoke Topology
+    Regional Considerations
   
 
     
@@ -593,7 +565,7 @@
   <span class="md-ellipsis">
     
   
-    Hub-and-Spoke Topology
+    Regional Considerations
   
 
     
@@ -619,10 +591,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#when-to-use-this-topology" class="md-nav__link">
+  <a href="#why-providerlocation-support-is-not-enough" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to use this topology
+        Why provider/location support is not enough
       
     </span>
   </a>
@@ -630,10 +602,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-the-spoke-creates-vs-consumes" class="md-nav__link">
+  <a href="#resources-with-known-transient-capacity-caveats" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What the spoke creates vs. consumes
+        Resources with known transient capacity caveats
       
     </span>
   </a>
@@ -641,32 +613,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#minimum-parameters" class="md-nav__link">
+  <a href="#recommended-practice" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Minimum parameters
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#network-planning" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Network planning
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#deployment-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Deployment flow
+        Recommended practice
       
     </span>
   </a>
@@ -688,6 +638,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -886,157 +864,33 @@
   
 
 
-<h1 id="hub-and-spoke-topology">Hub-and-Spoke Topology</h1>
-<p>This page summarizes the <strong>hub-and-spoke</strong> deployment topology: the AI Landing Zone spoke peers to a hub VNet that hosts shared platform services (Azure Firewall, Bastion, Private DNS zones, Log Analytics workspace).</p>
-<p>For the full end-to-end walkthrough — including the minimal test hub Bicep template, IP planning, peering setup, post-provisioning steps from the jumpbox, and the verification checklist — read the source runbook at <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md">docs/runbook-hub-spoke.md</a>.</p>
-<h2 id="when-to-use-this-topology">When to use this topology</h2>
-<p>Pick hub-and-spoke when <strong>any</strong> of the following applies:</p>
+<h1 id="regional-considerations">Regional Considerations</h1>
+<p>Choosing the right Azure region for an AI Landing Zone deployment is more than provider/location support. Some resources can be <strong>listed as supported</strong> in a region but still fail at provision time because of <strong>transient regional capacity</strong> that is not exposed by any reliable pre-create quota API.</p>
+<h2 id="why-providerlocation-support-is-not-enough">Why provider/location support is not enough</h2>
+<p>Azure Resource Manager only tells you whether a resource type is <strong>registered and available</strong> in a region. It does not tell you whether that region has free capacity <em>right now</em> for your subscription tier and SKU. The control plane only attempts allocation when the deployment actually runs, and capacity-related failures surface as errors such as <code>InsufficientResourcesAvailable</code> or <code>ServiceUnavailable</code> minutes into a provision that otherwise looked healthy.</p>
+<h2 id="resources-with-known-transient-capacity-caveats">Resources with known transient capacity caveats</h2>
+<p>The following resource types are part of the AI Landing Zone and have been observed to fail at provision time even when the region lists them as supported. Treat these as <strong>regions to validate, not regions to trust blindly</strong>:</p>
 <ul>
-<li>A platform team already operates a corporate hub VNet (Connectivity subscription) with Azure Firewall and a central Bastion.</li>
-<li>DNS, identity, monitoring, or networking policy is centrally managed by a different team than the one shipping the AI workload.</li>
-<li>Multiple AI workloads (or other workloads) need to share egress, jumpbox, and DNS resolution.</li>
-<li>You are integrating the AI Landing Zone into an <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/">Azure Landing Zone</a> (CAF).</li>
+<li><strong>Azure AI Search</strong> — may return <code>InsufficientResourcesAvailable</code> for the chosen SKU/region combination. There is no pre-create quota API to consult.</li>
+<li><strong>Azure Cosmos DB</strong> — may return high-demand <code>ServiceUnavailable</code> errors during account creation in popular regions.</li>
+<li><strong>Azure Container Apps Environment</strong> — managed environment creation can fail in regions under heavy demand, especially for workload profile environments.</li>
 </ul>
-<h2 id="what-the-spoke-creates-vs-consumes">What the spoke creates vs. consumes</h2>
-<table>
-<thead>
-<tr>
-<th>Resource</th>
-<th>Spoke creates</th>
-<th>Consumes from hub</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Spoke VNet, subnets, NSGs</td>
-<td>✅</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Private endpoints for AI services</td>
-<td>✅</td>
-<td>—</td>
-</tr>
-<tr>
-<td>AI Foundry, AI Search, Cosmos DB, Storage, ACR, App Config, Key Vault</td>
-<td>✅</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Container Apps environment + workload profiles</td>
-<td>✅</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Log Analytics workspace</td>
-<td>Optional</td>
-<td>✅ via <code>existingPlatformServices.logAnalyticsWorkspaceResourceId</code></td>
-</tr>
-<tr>
-<td>Application Insights</td>
-<td>Optional</td>
-<td>✅ via <code>existingPlatformServices.applicationInsightsResourceId</code></td>
-</tr>
-<tr>
-<td>Private DNS zones (15 namespaces)</td>
-<td>Optional, per-zone</td>
-<td>✅ via <code>existingPrivateDnsZones.*</code></td>
-</tr>
-<tr>
-<td>Azure Firewall</td>
-<td>Optional</td>
-<td>✅ via <code>hubIntegration.egressNextHopIp</code></td>
-</tr>
-<tr>
-<td>Bastion</td>
-<td>Optional</td>
-<td>✅ (hub Bastion reaches spoke jumpbox via peering)</td>
-</tr>
-<tr>
-<td>Jumpbox VM</td>
-<td>Optional</td>
-<td>✅ via <code>existingJumpboxResourceId</code></td>
-</tr>
-<tr>
-<td>NAT Gateway</td>
-<td>Optional</td>
-<td>— (typically the hub firewall provides egress)</td>
-</tr>
-<tr>
-<td>Spoke→hub VNet peering</td>
-<td>✅ (created by <code>main.bicep</code>)</td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-<h2 id="minimum-parameters">Minimum parameters</h2>
-<p>For an AI LZ Integrated deployment:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w">                  </span>ailz-integrated
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_VNET_RESOURCE_ID<span class="w">             </span><span class="s2">&quot;/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EGRESS_NEXT_HOP_IP<span class="w">               </span><span class="s2">&quot;&lt;hub firewall private IP&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w">                </span><span class="nb">true</span>
-
-<span class="c1"># Recommended: reuse hub observability</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_ID<span class="w"> </span><span class="s2">&quot;/subscriptions/.../workspaces/&lt;law&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_ID<span class="w">    </span><span class="s2">&quot;/subscriptions/.../components/&lt;ai&gt;&quot;</span>
-</code></pre></div>
-<p>If your hub also hosts the standard Private DNS zones, set each <code>EXISTING_PRIVATE_DNS_ZONE_*</code> variable to its hub resource ID. See <a href="../parameterization/">Parameterization</a> for the complete list of 15 zone parameters.</p>
-<h2 id="network-planning">Network planning</h2>
-<p>The spoke VNet address space must not overlap with the hub VNet. The default spoke prefix (<code>10.0.0.0/22</code>) is safe for a hub on <code>10.100.0.0/16</code>. If your hub uses a different prefix, set:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>VNET_ADDRESS_PREFIXES<span class="w"> </span><span class="s2">&quot;[\&quot;10.200.0.0/22\&quot;]&quot;</span>
-</code></pre></div>
-<p>Subnet minimums enforced by the pre-flight script:</p>
-<table>
-<thead>
-<tr>
-<th>Subnet</th>
-<th>Minimum size</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Container Apps environment</td>
-<td><code>/27</code> (consumption), <code>/23</code> (workload profiles)</td>
-<td>AVM requirement</td>
-</tr>
-<tr>
-<td>Private endpoints</td>
-<td><code>/28</code></td>
-<td>One IP per private endpoint</td>
-</tr>
-<tr>
-<td>AzureBastionSubnet</td>
-<td><code>/26</code></td>
-<td>Fixed by Bastion</td>
-</tr>
-<tr>
-<td>AzureFirewallSubnet</td>
-<td><code>/26</code></td>
-<td>Fixed by Azure Firewall</td>
-</tr>
-<tr>
-<td>Jumpbox</td>
-<td><code>/29</code></td>
-<td>One IP per VM</td>
-</tr>
-</tbody>
-</table>
-<h2 id="deployment-flow">Deployment flow</h2>
-<pre class="mermaid"><code>flowchart LR
-    A[Hub team:&lt;br/&gt;VNet + Firewall + Bastion&lt;br/&gt;+ Private DNS zones&lt;br/&gt;+ LAW] --&gt; B
-    B[You: set DEPLOYMENT_MODE=ailz-integrated&lt;br/&gt;+ HUB_VNET_RESOURCE_ID&lt;br/&gt;+ EGRESS_NEXT_HOP_IP] --&gt; C
-    C[azd preprovision:&lt;br/&gt;Invoke-PreflightChecks.ps1] --&gt; D
-    D[azd provision:&lt;br/&gt;spoke VNet + private endpoints&lt;br/&gt;+ AI services + Container Apps&lt;br/&gt;+ spoke→hub peering]
-    D --&gt; E[You / hub team:&lt;br/&gt;create hub→spoke peering&lt;br/&gt;+ DNS zone links to spoke]
-    E --&gt; F[Verify hello-world from&lt;br/&gt;jumpbox over Bastion]</code></pre>
-<p>The pre-flight script catches the most common hub-and-spoke mistakes (typos in <code>HUB_VNET_RESOURCE_ID</code>, subnets too small, CIDR overlap with hub, missing ACA delegation on BYO subnets) <strong>before</strong> ARM rejects the deployment 20 minutes in.</p>
+<p>This is not an exhaustive list; AI Foundry and AI Services model deployments are governed instead by <strong>regional model quota</strong>, which <em>can</em> be checked ahead of time and should be validated separately for each model SKU you plan to deploy.</p>
+<h2 id="recommended-practice">Recommended practice</h2>
+<ul>
+<li><strong>Pick a primary region and an alternate region up front.</strong> If the primary fails on capacity, you want to fail over quickly rather than redesign.</li>
+<li><strong>Validate model quota first.</strong> Use <code>az cognitiveservices usage list --location &lt;region&gt;</code> for the model SKUs you need. This is the one signal you <em>can</em> trust before provisioning.</li>
+<li><strong>Treat the first provision as a capacity probe.</strong> If it fails on <code>InsufficientResourcesAvailable</code> or <code>ServiceUnavailable</code>, retry in the alternate region. Do not assume the failure means the deployment template is broken.</li>
+<li><strong>Tear down failed provisions asynchronously.</strong> Resource groups holding Cosmos DB, AI Search, or Container Apps Environment can take 10–30 minutes to delete. Use <code>az group delete --no-wait</code> and move on with a fresh resource group name.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code>azd preprovision</code> hook in this landing zone validates <strong>parameter shape, BYO references, and provider/location support</strong>. It deliberately does <strong>not</strong> claim to validate regional capacity for AI Search, Cosmos DB, or Container Apps Environment, because Azure does not expose that signal before allocation. A passing preflight does not guarantee a successful provision in a capacity-constrained region.</p>
+</div>
 <h2 id="see-also">See also</h2>
 <ul>
-<li><a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/runbook-hub-spoke.md">Source-repo hub-and-spoke runbook</a> — full walkthrough with test-hub Bicep, screenshots, and troubleshooting</li>
-<li><a href="../public-ingress/">Public Ingress with Application Gateway</a> — publish a private Container App through Application Gateway WAF v2</li>
-<li><a href="../parameterization/">Parameterization</a> — full parameter reference for BYO inputs</li>
-<li><a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases">Release notes on GitHub</a></li>
+<li><a href="../how-to-deploy/">How to Deploy</a> — covers the <code>azd preprovision</code> hook and parameter validation.</li>
+<li><a href="../parameterization/">Parameterization</a> — how to set the deployment region and BYO resource overrides.</li>
 </ul>
 
 
