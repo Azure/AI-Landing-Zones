@@ -1100,7 +1100,7 @@
 <div class="admonition tip">
 <p class="admonition-title">How to opt out of the duplicate Foundry data plane</p>
 <ul>
-<li><strong>Bring your own</strong> — set <code>aiSearchResourceId</code>, <code>aiFoundryStorageAccountResourceId</code>, and <code>aiFoundryCosmosDBAccountResourceId</code> to existing resource IDs. <strong>Recommended sources</strong>: a hub/platform-owned Foundry data plane shared across multiple landing zones, or a dedicated Foundry-only set provisioned out-of-band. <strong>Do not</strong> point them at the workload's own Search / Storage / Cosmos — collocating the Foundry Agent Service data plane with the workload data path collapses the blast radius (a runaway agent index can starve workload queries), couples IAM (workload identities end up with read access to agent state), and breaks lifecycle ownership (the workload team can no longer drop / recreate its own data services without coordinating with Foundry agents).</li>
+<li><strong>Bring your own</strong> — set <code>aiSearchResourceId</code>, <code>aiFoundryStorageAccountResourceId</code>, and <code>aiFoundryCosmosDBAccountResourceId</code> to existing resource IDs of a <strong>dedicated Foundry-only data plane</strong> that belongs exclusively to this Foundry account / landing zone. <strong>Never co-mingle the Agent Service data plane with anything else</strong> — not with the workload's own Search / Storage / Cosmos, not with another workload's, and not with another Foundry instance's. Co-mingling collapses the blast radius (a runaway agent index or thread blob can starve unrelated queries), couples IAM (every co-tenant identity ends up needing — and getting — data-plane access to agent state), and breaks lifecycle ownership (no team can drop / recreate its own data services without coordinating across the co-tenants). The safest pattern is to keep the defaults and let each landing zone provision its own Foundry-dedicated trio; only use BYO when the <strong>same Foundry instance</strong> already has a trio provisioned out-of-band that you want to reattach to.</li>
 <li><strong>Disable the Agent Service</strong> — set <code>deployAAfAgentSvc=false</code> (and optionally <code>deployAfProject=false</code>). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.</li>
 <li><strong>Foundry AI Search defaults to <code>1 partition × 1 replica</code></strong> (lowered from 3 replicas in v2.0.5; see <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/CHANGELOG.md">CHANGELOG</a>) — scale it back up to 3 replicas in-place if you need Azure AI Search's read/write SLA.</li>
 </ul>
@@ -1784,9 +1784,9 @@ publicIngress.enabled   = true   # exposes a private Container App via App Gatew
 <td>No Agent Service; you keep models, projects, and your own workload Search</td>
 </tr>
 <tr>
-<td><code>aiSearchResourceId=&lt;existing&gt;</code> — point Foundry to an existing <strong>hub/platform-owned</strong> Search service (do not reuse the workload's own Search)</td>
+<td><code>aiSearchResourceId=&lt;existing&gt;</code> — reattach Foundry to a <strong>dedicated Search service it already exclusively owns</strong> (e.g. one provisioned out-of-band for this same Foundry instance)</td>
 <td style="text-align: right;"><strong>~$245/mo</strong></td>
-<td>Adds a cross-team dependency on the platform Search; correct sizing/quotas must be planned at the platform layer</td>
+<td>Only valid when the Search service is exclusively dedicated to this Foundry account; <strong>do not share it with the workload or with other Foundry instances</strong></td>
 </tr>
 <tr>
 <td>Drop the <code>D4</code> workload profile (use Consumption-only) and remove <code>min_replicas=1</code> from orchestrator</td>
