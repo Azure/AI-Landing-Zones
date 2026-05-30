@@ -1107,7 +1107,7 @@
 </div>
 <hr />
 <h2 id="what-gets-deployed">What gets deployed</h2>
-<p>The deployment is composed in five layers. Every box below maps to a real <code>deploy*</code> flag in <code>main.parameters.json</code>, so any of them can be toggled independently ��� the layers are purely a presentation aid.</p>
+<p>The deployment is composed in five layers. Every box below maps to a real <code>deploy*</code> flag in <code>main.parameters.json</code>, so any of them can be toggled independently — the layers are purely a presentation aid.</p>
 <table>
 <thead>
 <tr>
@@ -1297,7 +1297,7 @@
 </tr>
 <tr>
 <td>Workload Cosmos DB</td>
-<td>��� 🔧</td>
+<td>✅ 🔧</td>
 <td><code>deployCosmosDb</code></td>
 <td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>)</td>
 </tr>
@@ -1400,7 +1400,7 @@
 <td><strong>~13–15 PEs</strong> — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.)</td>
 </tr>
 <tr>
-<td>Private DNS zones (��15)</td>
+<td>Private DNS zones (×15)</td>
 <td>🔒 🔧</td>
 <td><code>existingPrivateDnsZone*ResourceId</code> (one parameter per zone)</td>
 <td>All 15 zones BYO-capable individually</td>
@@ -1431,7 +1431,7 @@
 </tr>
 <tr>
 <td>Azure Bastion</td>
-<td>🔒 ����</td>
+<td>🔒 🔧</td>
 <td><code>deployBastion</code> / <code>existingBastionResourceId</code></td>
 <td><strong>Standard</strong> SKU</td>
 </tr>
@@ -1443,7 +1443,7 @@
 </tr>
 <tr>
 <td>Public IP (NAT)</td>
-<td>��</td>
+<td>🔒</td>
 <td>(auto)</td>
 <td>Standard, Static</td>
 </tr>
