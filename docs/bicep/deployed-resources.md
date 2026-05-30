@@ -22,7 +22,7 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 | Key Vault | **2** — one for workload secrets, one for the jumpbox VM (ZT only) | `deployVmKeyVault=true` is on by default |
 
 !!! tip "How to opt out of the duplicate Foundry data plane"
-    - **Bring your own** — set `aiSearchResourceId`, `aiFoundryStorageAccountResourceId`, and `aiFoundryCosmosDBAccountResourceId` to existing resource IDs (the workload's own services or a hub-owned set).
+    - **Bring your own** — set `aiSearchResourceId`, `aiFoundryStorageAccountResourceId`, and `aiFoundryCosmosDBAccountResourceId` to existing resource IDs. **Recommended sources**: a hub/platform-owned Foundry data plane shared across multiple landing zones, or a dedicated Foundry-only set provisioned out-of-band. **Do not** point them at the workload's own Search / Storage / Cosmos — collocating the Foundry Agent Service data plane with the workload data path collapses the blast radius (a runaway agent index can starve workload queries), couples IAM (workload identities end up with read access to agent state), and breaks lifecycle ownership (the workload team can no longer drop / recreate its own data services without coordinating with Foundry agents).
     - **Disable the Agent Service** — set `deployAAfAgentSvc=false` (and optionally `deployAfProject=false`). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.
     - **Foundry AI Search defaults to `1 partition × 1 replica`** (lowered from 3 replicas in v2.0.5; see [CHANGELOG](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/CHANGELOG.md)) — scale it back up to 3 replicas in-place if you need Azure AI Search's read/write SLA.
 
@@ -245,7 +245,7 @@ Variable model / data / processing cost applies to all three and depends entirel
     | Lever | Savings (approx.) | Trade-off |
     |---|---:|---|
     | `deployAAfAgentSvc=false` — turn off Standard Agent Setup if you don't use Foundry agents | **~$270/mo** (drops Foundry Search + Cosmos) | No Agent Service; you keep models, projects, and your own workload Search |
-    | `aiSearchResourceId=<existing>` — point Foundry to an existing Search service | **~$245/mo** | Foundry agents and the workload share one Search service |
+    | `aiSearchResourceId=<existing>` — point Foundry to an existing **hub/platform-owned** Search service (do not reuse the workload's own Search) | **~$245/mo** | Adds a cross-team dependency on the platform Search; correct sizing/quotas must be planned at the platform layer |
     | Drop the `D4` workload profile (use Consumption-only) and remove `min_replicas=1` from orchestrator | **~$290/mo** | Cold-start latency on first request |
     | `deployAzureFirewall=false` + `hubIntegrationEgressNextHopIp=…` (share hub FW) | **~$912/mo** (ZT scenarios only) | Requires a hub firewall already operated by the platform team |
     | BYO Log Analytics / App Insights (`existingLogAnalyticsWorkspaceResourceId`, `existingApplicationInsightsResourceId`) | Avoids duplicate workspaces | Workspace governed centrally |
