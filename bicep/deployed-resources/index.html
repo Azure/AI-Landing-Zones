@@ -1,0 +1,1642 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for Azure AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Deployed Resources & Cost Estimates - Azure AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deployed-resources-cost-estimates" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Azure AI Landing Zones" class="md-header__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Azure AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deployed Resources &amp; Cost Estimates
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    Azure AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bill-of-materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bill of Materials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="deployed-resources-cost-estimates">Deployed Resources &amp; Cost Estimates</h1>
+<p>This page answers the two questions operators always ask before approving an AI Landing Zone deployment:</p>
+<ol>
+<li><strong>What does this template actually deploy?</strong> — every resource, broken down by <em>always-on baseline</em>, <em>default-on (toggleable)</em>, <em>BYO-capable</em>, and <em>opt-in add-on</em>.</li>
+<li><strong>What will it cost?</strong> — an order-of-magnitude monthly estimate for three common scenarios, with the variable (token / call / data) drivers called out separately.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Cost figures are estimates, not a quote</p>
+<p>All numbers here are <strong>USD/month</strong>, <strong>East US 2 PAYG retail pricing</strong>, <strong>as of 2026-05-29</strong>, with empty data and a quiet workload (~1 user). Your bill will vary with region, currency, EA/MCA discounts, reserved capacity, autoscale behavior, data volumes, model token consumption, AI Search index size, and Application Gateway capacity units. <strong>Always validate with the <a href="https://azure.microsoft.com/en-us/pricing/calculator/">Azure Pricing Calculator</a></strong> before committing.</p>
+</div>
+<hr />
+<h2 id="the-standard-agent-setup-gotcha-read-this-first">The "Standard Agent Setup" gotcha — read this first</h2>
+<p>By default the landing zone deploys <strong>AI Foundry with the Standard Agent Setup</strong> (<code>deployAiFoundry=true</code> + <code>deployAfProject=true</code> + <code>deployAAfAgentSvc=true</code>). The Agent Service requires its own data plane, so when this combination is on the template provisions a <strong>second</strong>, dedicated set of supporting resources just for Foundry:</p>
+<table>
+<thead>
+<tr>
+<th>Resource family</th>
+<th>Default count when Agent Service is enabled</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure AI Search</td>
+<td><strong>2</strong> — one for Foundry agents, one for the workload</td>
+<td>Agent Service stores agent state, thread embeddings, and tool indices in its own Search service so workload index churn never affects agents</td>
+</tr>
+<tr>
+<td>Storage account</td>
+<td><strong>2</strong> — one for Foundry artifacts, one for workload blobs</td>
+<td>Agent files, run outputs, and Foundry connections live in the Foundry-owned account</td>
+</tr>
+<tr>
+<td>Cosmos DB account</td>
+<td><strong>2</strong> — one for Foundry agent threads/state, one for workload documents</td>
+<td>Foundry-owned account holds thread/run/message documents</td>
+</tr>
+<tr>
+<td>Key Vault</td>
+<td><strong>2</strong> — one for workload secrets, one for the jumpbox VM (ZT only)</td>
+<td><code>deployVmKeyVault=true</code> is on by default</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">How to opt out of the duplicate Foundry data plane</p>
+<ul>
+<li><strong>Bring your own</strong> — set <code>aiSearchResourceId</code>, <code>aiFoundryStorageAccountResourceId</code>, and <code>aiFoundryCosmosDBAccountResourceId</code> to existing resource IDs (the workload's own services or a hub-owned set).</li>
+<li><strong>Disable the Agent Service</strong> — set <code>deployAAfAgentSvc=false</code> (and optionally <code>deployAfProject=false</code>). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.</li>
+<li><strong>Foundry AI Search runs <code>replicaCount: 3</code></strong> — that is the single biggest line item in the default deployment. Each replica is billed at the full Standard SKU rate.</li>
+</ul>
+</div>
+<hr />
+<h2 id="what-gets-deployed">What gets deployed</h2>
+<p>The deployment is composed in five layers. Every box below maps to a real <code>deploy*</code> flag in <code>main.parameters.json</code>, so any of them can be toggled independently — the layers are purely a presentation aid.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Purpose</th>
+<th>Always present?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Runtime apps</strong></td>
+<td>The Container Apps that run your workload (orchestrator and any you add)</td>
+<td>Yes (driven by <code>containerAppsList</code>)</td>
+</tr>
+<tr>
+<td><strong>AI Foundry &amp; agent data plane</strong></td>
+<td>Foundry account/project, model deployments, Foundry-owned Search/Storage/Cosmos when Agent Service is on</td>
+<td>Yes by default; the agent data plane appears only when <code>deployAAfAgentSvc=true</code></td>
+</tr>
+<tr>
+<td><strong>Workload data path</strong></td>
+<td>Workload-owned AI Search, Storage, Cosmos, Key Vault</td>
+<td>Yes by default, each individually toggleable / BYO-capable</td>
+</tr>
+<tr>
+<td><strong>Common platform</strong></td>
+<td>App Configuration, Container Registry, Container Apps Environment, managed identity / RBAC, Log Analytics, App Insights</td>
+<td>Yes by default, each individually toggleable</td>
+</tr>
+<tr>
+<td><strong>Zero Trust networking</strong></td>
+<td>VNet/subnets, NSGs, private endpoints, private DNS, Azure Firewall, Jumpbox VM, VM Key Vault, Bastion, NAT Gateway</td>
+<td>Opt-in via <code>networkIsolation=true</code></td>
+</tr>
+<tr>
+<td><strong>Scenario add-ons</strong></td>
+<td>Application Gateway WAF v2, Azure Speech, ACR build-agent pool</td>
+<td>Mostly opt-in (a couple are default-on)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="legend-used-below">Legend used below</h3>
+<table>
+<thead>
+<tr>
+<th>Marker</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>✅ <strong>Default-on</strong></td>
+<td>Provisioned automatically; turn off with the corresponding <code>deploy*=false</code> flag</td>
+</tr>
+<tr>
+<td>🔧 <strong>BYO-capable</strong></td>
+<td>Default-on, but can be replaced with an existing resource via an <code>existing*ResourceId</code> parameter (cross-subscription accepted)</td>
+</tr>
+<tr>
+<td>🟧 <strong>Opt-in</strong></td>
+<td>Off by default; set the flag to <code>true</code> to provision</td>
+</tr>
+<tr>
+<td>🔒 <strong>ZT-only</strong></td>
+<td>Only provisioned when <code>networkIsolation=true</code></td>
+</tr>
+<tr>
+<td>🚪 <strong>Public-ingress-only</strong></td>
+<td>Only provisioned when <code>publicIngress.enabled=true</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="resource-inventory">Resource inventory</h2>
+<h3 id="runtime-apps">Runtime apps</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Marker</th>
+<th>Flag / parameter</th>
+<th>Default config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orchestrator Container App</td>
+<td>✅</td>
+<td><code>containerAppsList[]</code></td>
+<td>1 vCPU / 2 GiB, <code>min_replicas=1</code>, profile <code>main</code> (D4)</td>
+</tr>
+<tr>
+<td>Additional Container Apps</td>
+<td>🟧</td>
+<td>Append entries to <code>containerAppsList</code></td>
+<td>One entry per app; see <a href="../parameterization/">Parameterization</a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Why this matters for cost</p>
+<p>The default orchestrator has <code>min_replicas=1</code> and <code>profile_name="main"</code>, which pins <strong>one D4 workload-profile node always running</strong> (≈$290/month). If you do not need the D4 profile, remove it from <code>workloadProfiles</code> and let apps run on Consumption (which scales to zero). See the cost-reduction tips below.</p>
+</div>
+<h3 id="ai-foundry-agent-data-plane">AI Foundry &amp; agent data plane</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Marker</th>
+<th>Flag / parameter</th>
+<th>Default config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI Foundry account (Cognitive Services <code>kind=AIServices</code>)</td>
+<td>✅</td>
+<td><code>deployAiFoundry</code></td>
+<td>S0; billed only per token</td>
+</tr>
+<tr>
+<td>AI Foundry project</td>
+<td>✅</td>
+<td><code>deployAfProject</code></td>
+<td>Created inside the account</td>
+</tr>
+<tr>
+<td>Model deployment: chat</td>
+<td>✅</td>
+<td><code>modelDeploymentList[0]</code></td>
+<td><code>gpt-5-nano</code>, GlobalStandard, capacity 40</td>
+</tr>
+<tr>
+<td>Model deployment: embeddings</td>
+<td>✅</td>
+<td><code>modelDeploymentList[1]</code></td>
+<td><code>text-embedding-3-large</code>, Standard, capacity 10</td>
+</tr>
+<tr>
+<td>Grounding with Bing</td>
+<td>✅</td>
+<td><code>deployGroundingWithBing</code></td>
+<td>Bing Search resource, S1; <strong>billed per query</strong></td>
+</tr>
+<tr>
+<td>Foundry-dedicated AI Search</td>
+<td>✅ 🔧</td>
+<td><code>deployAAfAgentSvc</code> / <code>aiSearchResourceId</code></td>
+<td>Standard SKU, <strong>1 partition × 3 replicas</strong></td>
+</tr>
+<tr>
+<td>Foundry-dedicated Storage</td>
+<td>✅ 🔧</td>
+<td><code>deployAAfAgentSvc</code> / <code>aiFoundryStorageAccountResourceId</code></td>
+<td>Standard_LRS, Hot</td>
+</tr>
+<tr>
+<td>Foundry-dedicated Cosmos DB</td>
+<td>✅ 🔧</td>
+<td><code>deployAAfAgentSvc</code> / <code>aiFoundryCosmosDBAccountResourceId</code></td>
+<td>NoSQL, autoscale</td>
+</tr>
+</tbody>
+</table>
+<h3 id="workload-data-path">Workload data path</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Marker</th>
+<th>Flag / parameter</th>
+<th>Default config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Workload AI Search</td>
+<td>✅ 🔧</td>
+<td><code>deploySearchService</code> / <code>aiSearchResourceId</code></td>
+<td>Standard SKU, <strong>1 partition × 1 replica</strong></td>
+</tr>
+<tr>
+<td>Workload Storage</td>
+<td>✅ 🔧</td>
+<td><code>deployStorageAccount</code></td>
+<td>Standard_LRS, Hot</td>
+</tr>
+<tr>
+<td>Workload Cosmos DB</td>
+<td>✅ 🔧</td>
+<td><code>deployCosmosDb</code></td>
+<td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>)</td>
+</tr>
+<tr>
+<td>Workload Key Vault</td>
+<td>✅ 🔧</td>
+<td><code>deployKeyVault</code> / <code>keyVaultResourceId</code></td>
+<td>Standard tier</td>
+</tr>
+<tr>
+<td>Azure Speech</td>
+<td>🟧</td>
+<td><code>deploySpeechService</code></td>
+<td>S0 (off by default)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="common-platform-services">Common platform services</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Marker</th>
+<th>Flag / parameter</th>
+<th>Default config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>App Configuration</td>
+<td>✅</td>
+<td><code>deployAppConfig</code></td>
+<td>Standard tier</td>
+</tr>
+<tr>
+<td>Container Registry</td>
+<td>✅</td>
+<td><code>deployContainerRegistry</code></td>
+<td><strong>Premium</strong> (required for private endpoints)</td>
+</tr>
+<tr>
+<td>Container Apps Environment</td>
+<td>✅</td>
+<td><code>deployContainerEnv</code></td>
+<td><code>Consumption</code> + <code>D4</code> workload profile (<code>minimumCount=0</code>, but pinned by <code>min_replicas=1</code> on the orchestrator)</td>
+</tr>
+<tr>
+<td>Managed identity &amp; RBAC</td>
+<td>✅</td>
+<td><code>useUAI</code></td>
+<td>System-assigned by default; UAI when <code>useUAI=true</code></td>
+</tr>
+<tr>
+<td>Log Analytics workspace</td>
+<td>✅ 🔧</td>
+<td><code>deployLogAnalytics</code> / <code>existingLogAnalyticsWorkspaceResourceId</code></td>
+<td>PAYG ingestion</td>
+</tr>
+<tr>
+<td>Application Insights</td>
+<td>✅ 🔧</td>
+<td><code>deployAppInsights</code> / <code>existingApplicationInsightsResourceId</code></td>
+<td>Workspace-based</td>
+</tr>
+<tr>
+<td>ACR build-agent pool</td>
+<td>✅</td>
+<td><code>deployAcrTaskAgentPool</code></td>
+<td>For ACR Tasks (S1 agent pool)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="zero-trust-networking-only-when-networkisolationtrue">Zero Trust networking (only when <code>networkIsolation=true</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Marker</th>
+<th>Flag / parameter</th>
+<th>Default config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VNet + subnets</td>
+<td>🔒 🔧</td>
+<td><code>useExistingVNet</code> / <code>deploySubnets</code></td>
+<td>Workload, PE, jumpbox, agent, ACA, NAT, Bastion subnets</td>
+</tr>
+<tr>
+<td>NSGs</td>
+<td>🔒</td>
+<td><code>deployNsgs</code></td>
+<td>One per subnet, locked-down rules</td>
+</tr>
+<tr>
+<td>Private endpoints</td>
+<td>🔒</td>
+<td>(auto, per service)</td>
+<td><strong>~13–15 PEs</strong> — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.)</td>
+</tr>
+<tr>
+<td>Private DNS zones (×15)</td>
+<td>🔒 🔧</td>
+<td><code>existingPrivateDnsZone*ResourceId</code> (one parameter per zone)</td>
+<td>All 15 zones BYO-capable individually</td>
+</tr>
+<tr>
+<td>Azure Firewall</td>
+<td>🔒 🟧</td>
+<td><code>deployAzureFirewall</code> (default <code>true</code> when ZT)</td>
+<td><strong>Standard SKU</strong>; can be turned off when reusing a hub firewall</td>
+</tr>
+<tr>
+<td>Public IP (firewall)</td>
+<td>🔒</td>
+<td>(auto)</td>
+<td>Standard, Static</td>
+</tr>
+<tr>
+<td>Jumpbox VM</td>
+<td>🔒 🔧</td>
+<td><code>deployJumpbox</code> (defaults to <code>networkIsolation</code>) / <code>existingJumpboxResourceId</code></td>
+<td><code>Standard_D2s_v3</code>, Windows Server 2022 Datacenter Azure Edition, 128 GB P10 disk</td>
+</tr>
+<tr>
+<td>VM Key Vault</td>
+<td>🔒</td>
+<td><code>deployVmKeyVault</code></td>
+<td>Standard tier, for jumpbox secrets</td>
+</tr>
+<tr>
+<td>Azure Bastion</td>
+<td>🔒 🔧</td>
+<td><code>deployBastion</code> / <code>existingBastionResourceId</code></td>
+<td><strong>Standard</strong> SKU</td>
+</tr>
+<tr>
+<td>NAT Gateway</td>
+<td>🔒 🔧</td>
+<td><code>deployNatGateway</code> / <code>existingNatGatewayResourceId</code></td>
+<td>For outbound egress when no spoke firewall</td>
+</tr>
+<tr>
+<td>Public IP (NAT)</td>
+<td>🔒</td>
+<td>(auto)</td>
+<td>Standard, Static</td>
+</tr>
+<tr>
+<td>Hub peering</td>
+<td>🔒</td>
+<td><code>hubIntegrationHubVnetResourceId</code></td>
+<td>Spoke→hub only; reverse peering stays operator-owned</td>
+</tr>
+</tbody>
+</table>
+<h3 id="public-ingress-add-on-publicingressenabledtrue">Public ingress add-on (<code>publicIngress.enabled=true</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Marker</th>
+<th>Flag / parameter</th>
+<th>Default config</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application Gateway WAF v2</td>
+<td>🚪</td>
+<td><code>publicIngress.enabled</code></td>
+<td>WAF v2, minimum capacity (autoscales with traffic)</td>
+</tr>
+<tr>
+<td>Public IP (App Gateway)</td>
+<td>🚪</td>
+<td>(auto)</td>
+<td>Standard, Static</td>
+</tr>
+<tr>
+<td>WAF policy</td>
+<td>🚪</td>
+<td>(auto)</td>
+<td>OWASP CRS managed rule set</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../public-ingress/">Public Ingress</a> for the full topology.</p>
+<hr />
+<h2 id="estimated-monthly-cost-by-scenario">Estimated monthly cost — by scenario</h2>
+<p>The three scenarios correspond to the most common shapes operators ask about. Each shows:</p>
+<ul>
+<li><strong>Fixed monthly cost</strong> — what you pay even with zero traffic and empty data (the resource exists and is billed by allocation).</li>
+<li><strong>Variable driver</strong> — what makes the line grow over the fixed floor.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Quick mental model</p>
+<p>Most of the <em>fixed</em> cost comes from a small number of allocation-based resources: the two AI Search services, Application Gateway (if any), Azure Firewall (if any), Bastion, ACR Premium, App Configuration, and any pinned D4 workload-profile node. Everything else is essentially zero at idle but scales fast with use.</p>
+</div>
+<h3 id="scenario-1-basic-deployment-public-no-network-isolation">Scenario 1 — Basic deployment (public, no network isolation)</h3>
+<div class="highlight"><pre><span></span><code>networkIsolation        = false
+deployAzureFirewall     = false   (auto-suppressed when NI is off)
+deployJumpbox / Bastion / NatGateway = false (defaults to NI; no VNet)
+publicIngress.enabled   = false
+deployAAfAgentSvc       = true    (default — Standard Agent Setup)
+deployAcrTaskAgentPool  = true    (default)
+deployGroundingWithBing = true    (default)
+</code></pre></div>
+<p>Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a public endpoint.</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th style="text-align: right;">Fixed monthly</th>
+<th>Variable driver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI Foundry account + project</td>
+<td style="text-align: right;">$0</td>
+<td>Per-token model usage</td>
+</tr>
+<tr>
+<td>Model: <code>gpt-5-nano</code> (GlobalStandard, cap 40)</td>
+<td style="text-align: right;">$0</td>
+<td>~$0.05 / 1M input tokens, ~$0.40 / 1M output tokens — pay-as-you-go</td>
+</tr>
+<tr>
+<td>Model: <code>text-embedding-3-large</code> (Standard, cap 10)</td>
+<td style="text-align: right;">$0</td>
+<td>~$0.13 / 1M tokens</td>
+</tr>
+<tr>
+<td>Grounding with Bing (S1)</td>
+<td style="text-align: right;">$0</td>
+<td>~$3 per 1,000 transactions</td>
+</tr>
+<tr>
+<td><strong>Foundry AI Search</strong> (Standard, 1p × <strong>3r</strong>)</td>
+<td style="text-align: right;"><strong>~$735</strong></td>
+<td>Index storage; queries scale with QPS</td>
+</tr>
+<tr>
+<td>Foundry Storage (Standard_LRS, Hot)</td>
+<td style="text-align: right;">~$1</td>
+<td>~$0.018 / GB + ~$0.005 / 10K ops</td>
+</tr>
+<tr>
+<td>Foundry Cosmos DB (autoscale)</td>
+<td style="text-align: right;">~$24</td>
+<td>Min 400 RU/s autoscale floor + storage</td>
+</tr>
+<tr>
+<td>Workload AI Search (Standard, 1p × 1r)</td>
+<td style="text-align: right;"><strong>~$245</strong></td>
+<td>Index storage; queries scale with QPS</td>
+</tr>
+<tr>
+<td>Workload Storage (Standard_LRS, Hot)</td>
+<td style="text-align: right;">~$1</td>
+<td>~$0.018 / GB + ~$0.005 / 10K ops</td>
+</tr>
+<tr>
+<td>Workload Cosmos DB (serverless)</td>
+<td style="text-align: right;">$0</td>
+<td>~$0.25 / 1M RU + ~$0.25 / GB-month</td>
+</tr>
+<tr>
+<td>Workload Key Vault (Standard)</td>
+<td style="text-align: right;">$0</td>
+<td>~$0.03 / 10K operations</td>
+</tr>
+<tr>
+<td>Container Apps Environment — D4 workload-profile node (pinned by orchestrator <code>min_replicas=1</code>)</td>
+<td style="text-align: right;"><strong>~$290</strong></td>
+<td>Additional D4 instances when scaled up</td>
+</tr>
+<tr>
+<td>Container Apps Environment — Consumption profile</td>
+<td style="text-align: right;">$0</td>
+<td>vCPU-s + GiB-s per request</td>
+</tr>
+<tr>
+<td>Container Registry (<strong>Premium</strong>)</td>
+<td style="text-align: right;"><strong>~$50</strong></td>
+<td>Storage above 500 GB + geo-replication if enabled</td>
+</tr>
+<tr>
+<td>ACR build-agent pool (S1, on-demand)</td>
+<td style="text-align: right;">$0</td>
+<td>~$0.50 / build-hour</td>
+</tr>
+<tr>
+<td>App Configuration (Standard)</td>
+<td style="text-align: right;"><strong>~$36</strong></td>
+<td>Per-request above the included quota</td>
+</tr>
+<tr>
+<td>Log Analytics workspace</td>
+<td style="text-align: right;">$0</td>
+<td>~$2.30 / GB ingested</td>
+</tr>
+<tr>
+<td>Application Insights</td>
+<td style="text-align: right;">$0</td>
+<td>(Bundled into Log Analytics billing)</td>
+</tr>
+<tr>
+<td><strong>Subtotal — Basic</strong></td>
+<td style="text-align: right;"><strong>~$1,382 / month</strong></td>
+<td>+ token / data / request usage</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scenario-2-zero-trust-private-internal-users-only">Scenario 2 — Zero Trust (private, internal users only)</h3>
+<div class="highlight"><pre><span></span><code>networkIsolation        = true
+deployAzureFirewall     = true     (default when NI; share hub FW to skip)
+deployJumpbox           = true     (default = NI)
+deployBastion           = true     (default = NI &amp;&amp; deployJumpbox)
+deployNatGateway        = true     (default = NI &amp;&amp; deployJumpbox)
+deployVmKeyVault        = true     (default)
+publicIngress.enabled   = false
+</code></pre></div>
+<p>Best for: production internal workloads — users reach the app over ExpressRoute / VPN / Bastion; no public ingress.</p>
+<p>Adds, <strong>on top of Scenario 1</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th style="text-align: right;">Fixed monthly</th>
+<th>Variable driver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VNet + subnets + NSGs + Private DNS zones (×15)</td>
+<td style="text-align: right;">~$8</td>
+<td>$0.50 / DNS zone / mo</td>
+</tr>
+<tr>
+<td>Private endpoints (~13–15)</td>
+<td style="text-align: right;"><strong>~$105</strong></td>
+<td>~$7.30 each + ~$0.01 / GB processed</td>
+</tr>
+<tr>
+<td><strong>Azure Firewall (Standard)</strong></td>
+<td style="text-align: right;"><strong>~$912</strong></td>
+<td>+ ~$0.016 / GB processed</td>
+</tr>
+<tr>
+<td>Public IP (firewall)</td>
+<td style="text-align: right;">~$4</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Azure Bastion (Standard)</strong></td>
+<td style="text-align: right;"><strong>~$140</strong></td>
+<td>+ ~$0.09 / GB outbound</td>
+</tr>
+<tr>
+<td>Jumpbox VM (<code>Standard_D2s_v3</code> + 128 GB P10)</td>
+<td style="text-align: right;"><strong>~$87</strong> (~$70 VM + ~$17 disk)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>VM Key Vault (Standard)</td>
+<td style="text-align: right;">$0</td>
+<td>~$0.03 / 10K operations</td>
+</tr>
+<tr>
+<td>NAT Gateway</td>
+<td style="text-align: right;"><strong>~$32</strong></td>
+<td>+ ~$0.045 / GB processed</td>
+</tr>
+<tr>
+<td>Public IP (NAT)</td>
+<td style="text-align: right;">~$4</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Zero Trust additions subtotal</strong></td>
+<td style="text-align: right;"><strong>~$1,292 / month</strong></td>
+<td>+ per-GB processing</td>
+</tr>
+<tr>
+<td><strong>Subtotal — ZTA (Basic + ZT)</strong></td>
+<td style="text-align: right;"><strong>~$2,674 / month</strong></td>
+<td>+ token / data / request usage</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Where Zero Trust cost actually goes</p>
+<p>Roughly <strong>70 % of the ZT-only surcharge is Azure Firewall (~$912)</strong>. If your platform team already operates a hub Firewall, set <code>deployAzureFirewall=false</code> and configure <code>hubIntegrationEgressNextHopIp=&lt;hub-firewall-private-IP&gt;</code>. The spoke then reuses the hub's firewall and the ZT delta drops to <strong>~$380/month</strong>. See <a href="../hub-and-spoke/">Hub-and-Spoke Topology</a>.</p>
+</div>
+<h3 id="scenario-3-zero-trust-application-gateway-external-users">Scenario 3 — Zero Trust + Application Gateway (external users)</h3>
+<div class="highlight"><pre><span></span><code>(everything from Scenario 2, plus)
+publicIngress.enabled   = true   # exposes a private Container App via App Gateway WAF v2
+</code></pre></div>
+<p>Best for: production workloads that need to serve <strong>external users over the public internet</strong> while keeping the workload itself private (the frontend Container App is reachable only through the gateway).</p>
+<p>Adds, <strong>on top of Scenario 2</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th style="text-align: right;">Fixed monthly</th>
+<th>Variable driver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Application Gateway WAF v2</strong> (1 instance, minimum)</td>
+<td style="text-align: right;"><strong>~$250</strong></td>
+<td>+ ~$0.0072 / capacity-unit-hour; scales with throughput, TLS, and WAF rules</td>
+</tr>
+<tr>
+<td>Public IP (App Gateway)</td>
+<td style="text-align: right;">~$4</td>
+<td>—</td>
+</tr>
+<tr>
+<td>WAF policy</td>
+<td style="text-align: right;">$0</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>App Gateway additions subtotal</strong></td>
+<td style="text-align: right;"><strong>~$254 / month</strong></td>
+<td>+ capacity-unit consumption</td>
+</tr>
+<tr>
+<td><strong>Subtotal — ZTA + App Gateway (Basic + ZT + AppGW)</strong></td>
+<td style="text-align: right;"><strong>~$2,928 / month</strong></td>
+<td>+ token / data / request usage</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../public-ingress/">Public Ingress with Application Gateway</a> for the topology and parameters.</p>
+<hr />
+<h2 id="cost-comparison-at-a-glance">Cost comparison at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th style="text-align: right;">Fixed monthly floor</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Basic</strong></td>
+<td style="text-align: right;"><strong>~$1,382</strong></td>
+<td>Sandbox, demo, dev/test, public evaluation</td>
+</tr>
+<tr>
+<td><strong>2. Zero Trust (internal)</strong></td>
+<td style="text-align: right;"><strong>~$2,674</strong></td>
+<td>Production for internal users (VPN / ExpressRoute / Bastion)</td>
+</tr>
+<tr>
+<td><strong>3. Zero Trust + App Gateway</strong></td>
+<td style="text-align: right;"><strong>~$2,928</strong></td>
+<td>Production for external users with WAF-protected public ingress</td>
+</tr>
+</tbody>
+</table>
+<p>Variable model / data / processing cost applies to all three and depends entirely on traffic.</p>
+<div class="admonition info">
+<p class="admonition-title">Concrete levers to lower the floor</p>
+<table>
+<thead>
+<tr>
+<th>Lever</th>
+<th style="text-align: right;">Savings (approx.)</th>
+<th>Trade-off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>deployAAfAgentSvc=false</code> — turn off Standard Agent Setup if you don't use Foundry agents</td>
+<td style="text-align: right;"><strong>~$760/mo</strong> (drops the 3-replica Foundry Search + Cosmos)</td>
+<td>No Agent Service; you keep models, projects, and your own workload Search</td>
+</tr>
+<tr>
+<td><code>aiSearchResourceId=&lt;existing&gt;</code> — point Foundry to an existing Search service</td>
+<td style="text-align: right;"><strong>~$735/mo</strong></td>
+<td>Foundry agents and the workload share one Search service</td>
+</tr>
+<tr>
+<td>Drop the <code>D4</code> workload profile (use Consumption-only) and remove <code>min_replicas=1</code> from orchestrator</td>
+<td style="text-align: right;"><strong>~$290/mo</strong></td>
+<td>Cold-start latency on first request</td>
+</tr>
+<tr>
+<td><code>deployAzureFirewall=false</code> + <code>hubIntegrationEgressNextHopIp=…</code> (share hub FW)</td>
+<td style="text-align: right;"><strong>~$912/mo</strong> (ZT scenarios only)</td>
+<td>Requires a hub firewall already operated by the platform team</td>
+</tr>
+<tr>
+<td>BYO Log Analytics / App Insights (<code>existingLogAnalyticsWorkspaceResourceId</code>, <code>existingApplicationInsightsResourceId</code>)</td>
+<td style="text-align: right;">Avoids duplicate workspaces</td>
+<td>Workspace governed centrally</td>
+</tr>
+<tr>
+<td>BYO Private DNS zones (any of the 15 <code>existingPrivateDnsZone*ResourceId</code> params)</td>
+<td style="text-align: right;">$0.50/zone/mo + admin time</td>
+<td>Zones owned by the platform team</td>
+</tr>
+<tr>
+<td><code>deployGroundingWithBing=false</code> if you don't use Bing-grounded answers</td>
+<td style="text-align: right;">$0 fixed; saves variable Bing query cost</td>
+<td>No Bing grounding</td>
+</tr>
+<tr>
+<td>Deallocate the Jumpbox VM when idle</td>
+<td style="text-align: right;">~$70/mo (compute only; disk continues)</td>
+<td>Manual stop/start</td>
+</tr>
+</tbody>
+</table>
+<p>Stacking the first three levers in Scenario 1 takes the <strong>Basic floor from ~$1,382 to ~$330/month</strong>.</p>
+</div>
+<hr />
+<h2 id="methodology-and-caveats">Methodology and caveats</h2>
+<ul>
+<li><strong>Pricing snapshot</strong>: Azure retail PAYG, <strong>East US 2</strong>, <strong>2026-05-29</strong>.</li>
+<li><strong>Currency</strong>: USD; convert at your contract rate.</li>
+<li><strong>Discounts not applied</strong>: EA, MCA, CSP, reservations, savings plans, Azure Hybrid Benefit, dev/test rates — all of these can materially lower the floor.</li>
+<li><strong>Empty-data assumption</strong>: Storage, Log Analytics, and Cosmos data charges are shown as ~$0 fixed because the resource itself is free at zero bytes; they grow linearly with data.</li>
+<li><strong>Quiet workload assumption</strong>: variable token / call / processing line items are listed without a number because they depend entirely on your traffic — model the load you actually expect in the Pricing Calculator.</li>
+<li><strong>Foundry Cosmos</strong> floor reflects the minimum autoscale band (400 RU/s) commonly used by the AVM Foundry module; the exact number depends on the Foundry CapabilityHost configuration.</li>
+<li><strong>Container Apps</strong>: the D4 workload-profile baseline assumes 1 node remains active because the default <code>orchestrator</code> app pins <code>min_replicas=1</code> on <code>profile_name: "main"</code>. With Consumption-only deployments the baseline drops to $0.</li>
+<li><strong>Region matters</strong>: AI Search, Azure Firewall, and Application Gateway can vary by ±20 % across regions.</li>
+<li><strong>Page is a snapshot, not a contract</strong>: when in doubt, the <a href="https://azure.microsoft.com/en-us/pricing/calculator/">Azure Pricing Calculator</a> is the source of truth.</li>
+</ul>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../overview/">Overview</a> — high-level architecture and topology</li>
+<li><a href="../parameterization/">Parameterization</a> — full reference for every flag mentioned here</li>
+<li><a href="../regional-considerations/">Regional Considerations</a> — capacity caveats per region (AI Search, Cosmos, ACA)</li>
+<li><a href="../hub-and-spoke/">Hub-and-Spoke Topology</a> — how to share hub Firewall / Bastion / DNS to lower the ZT floor</li>
+<li><a href="../public-ingress/">Public Ingress (App Gateway)</a> — Scenario 3 details</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
