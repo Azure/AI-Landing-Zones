@@ -44,7 +44,7 @@ nav:
       - "FAQ": architecture/faq.md
   - Bicep Implementation:
       - "Overview": bicep/overview.md
-      - "Bill of Materials": bicep/bill-of-materials.md
+      - "Deployed Resources & Cost": bicep/deployed-resources.md
       - "How to Deploy": bicep/how-to-deploy.md
       - "Regional Considerations": bicep/regional-considerations.md
       - "Hub-and-Spoke Topology": bicep/hub-and-spoke.md
