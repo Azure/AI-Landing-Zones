@@ -24,13 +24,13 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 !!! tip "How to opt out of the duplicate Foundry data plane"
     - **Bring your own** — set `aiSearchResourceId`, `aiFoundryStorageAccountResourceId`, and `aiFoundryCosmosDBAccountResourceId` to existing resource IDs (the workload's own services or a hub-owned set).
     - **Disable the Agent Service** — set `deployAAfAgentSvc=false` (and optionally `deployAfProject=false`). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.
-    - **Foundry AI Search runs `replicaCount: 3`** — that is the single biggest line item in the default deployment. Each replica is billed at the full Standard SKU rate.
+    - **Foundry AI Search defaults to `1 partition × 1 replica`** (lowered from 3 replicas in v2.0.5; see [CHANGELOG](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/CHANGELOG.md)) — scale it back up to 3 replicas in-place if you need Azure AI Search's read/write SLA.
 
 ---
 
 ## What gets deployed
 
-The deployment is composed in five layers. Every box below maps to a real `deploy*` flag in `main.parameters.json`, so any of them can be toggled independently — the layers are purely a presentation aid.
+The deployment is composed in five layers. Every box below maps to a real `deploy*` flag in `main.parameters.json`, so any of them can be toggled independently ��� the layers are purely a presentation aid.
 
 | Layer | Purpose | Always present? |
 |---|---|---|
@@ -74,7 +74,7 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 | Model deployment: chat | ✅ | `modelDeploymentList[0]` | `gpt-5-nano`, GlobalStandard, capacity 40 |
 | Model deployment: embeddings | ✅ | `modelDeploymentList[1]` | `text-embedding-3-large`, Standard, capacity 10 |
 | Grounding with Bing | ✅ | `deployGroundingWithBing` | Bing Search resource, S1; **billed per query** |
-| Foundry-dedicated AI Search | ✅ 🔧 | `deployAAfAgentSvc` / `aiSearchResourceId` | Standard SKU, **1 partition × 3 replicas** |
+| Foundry-dedicated AI Search | ✅ 🔧 | `deployAAfAgentSvc` / `aiSearchResourceId` | Standard SKU, **1 partition × 1 replica** (scale up for AI Search read/write SLA) |
 | Foundry-dedicated Storage | ✅ 🔧 | `deployAAfAgentSvc` / `aiFoundryStorageAccountResourceId` | Standard_LRS, Hot |
 | Foundry-dedicated Cosmos DB | ✅ 🔧 | `deployAAfAgentSvc` / `aiFoundryCosmosDBAccountResourceId` | NoSQL, autoscale |
 
@@ -84,7 +84,7 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 |---|---|---|---|
 | Workload AI Search | ✅ 🔧 | `deploySearchService` / `aiSearchResourceId` | Standard SKU, **1 partition × 1 replica** |
 | Workload Storage | ✅ 🔧 | `deployStorageAccount` | Standard_LRS, Hot |
-| Workload Cosmos DB | ✅ 🔧 | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
+| Workload Cosmos DB | ��� 🔧 | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
 | Workload Key Vault | ✅ 🔧 | `deployKeyVault` / `keyVaultResourceId` | Standard tier |
 | Azure Speech | 🟧 | `deploySpeechService` | S0 (off by default) |
 
@@ -107,14 +107,14 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 | VNet + subnets | 🔒 🔧 | `useExistingVNet` / `deploySubnets` | Workload, PE, jumpbox, agent, ACA, NAT, Bastion subnets |
 | NSGs | 🔒 | `deployNsgs` | One per subnet, locked-down rules |
 | Private endpoints | 🔒 | (auto, per service) | **~13–15 PEs** — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.) |
-| Private DNS zones (×15) | 🔒 🔧 | `existingPrivateDnsZone*ResourceId` (one parameter per zone) | All 15 zones BYO-capable individually |
+| Private DNS zones (��15) | 🔒 🔧 | `existingPrivateDnsZone*ResourceId` (one parameter per zone) | All 15 zones BYO-capable individually |
 | Azure Firewall | 🔒 🟧 | `deployAzureFirewall` (default `true` when ZT) | **Standard SKU**; can be turned off when reusing a hub firewall |
 | Public IP (firewall) | 🔒 | (auto) | Standard, Static |
 | Jumpbox VM | 🔒 🔧 | `deployJumpbox` (defaults to `networkIsolation`) / `existingJumpboxResourceId` | `Standard_D2s_v3`, Windows Server 2022 Datacenter Azure Edition, 128 GB P10 disk |
 | VM Key Vault | 🔒 | `deployVmKeyVault` | Standard tier, for jumpbox secrets |
-| Azure Bastion | 🔒 🔧 | `deployBastion` / `existingBastionResourceId` | **Standard** SKU |
+| Azure Bastion | 🔒 ���� | `deployBastion` / `existingBastionResourceId` | **Standard** SKU |
 | NAT Gateway | 🔒 🔧 | `deployNatGateway` / `existingNatGatewayResourceId` | For outbound egress when no spoke firewall |
-| Public IP (NAT) | 🔒 | (auto) | Standard, Static |
+| Public IP (NAT) | �� | (auto) | Standard, Static |
 | Hub peering | 🔒 | `hubIntegrationHubVnetResourceId` | Spoke→hub only; reverse peering stays operator-owned |
 
 ### Public ingress add-on (`publicIngress.enabled=true`)
@@ -159,7 +159,7 @@ Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a pu
 | Model: `gpt-5-nano` (GlobalStandard, cap 40) | $0 | ~$0.05 / 1M input tokens, ~$0.40 / 1M output tokens — pay-as-you-go |
 | Model: `text-embedding-3-large` (Standard, cap 10) | $0 | ~$0.13 / 1M tokens |
 | Grounding with Bing (S1) | $0 | ~$3 per 1,000 transactions |
-| **Foundry AI Search** (Standard, 1p × **3r**) | **~$735** | Index storage; queries scale with QPS |
+| **Foundry AI Search** (Standard, 1p × 1r) | **~$245** | Index storage; queries scale with QPS. Scale to 3r for read/write SLA (~$735/mo) |
 | Foundry Storage (Standard_LRS, Hot) | ~$1 | ~$0.018 / GB + ~$0.005 / 10K ops |
 | Foundry Cosmos DB (autoscale) | ~$24 | Min 400 RU/s autoscale floor + storage |
 | Workload AI Search (Standard, 1p × 1r) | **~$245** | Index storage; queries scale with QPS |
@@ -173,7 +173,7 @@ Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a pu
 | App Configuration (Standard) | **~$36** | Per-request above the included quota |
 | Log Analytics workspace | $0 | ~$2.30 / GB ingested |
 | Application Insights | $0 | (Bundled into Log Analytics billing) |
-| **Subtotal — Basic** | **~$1,382 / month** | + token / data / request usage |
+| **Subtotal — Basic** | **~$892 / month** | + token / data / request usage |
 
 ### Scenario 2 — Zero Trust (private, internal users only)
 
@@ -203,7 +203,7 @@ Adds, **on top of Scenario 1**:
 | NAT Gateway | **~$32** | + ~$0.045 / GB processed |
 | Public IP (NAT) | ~$4 | — |
 | **Zero Trust additions subtotal** | **~$1,292 / month** | + per-GB processing |
-| **Subtotal — ZTA (Basic + ZT)** | **~$2,674 / month** | + token / data / request usage |
+| **Subtotal — ZTA (Basic + ZT)** | **~$2,184 / month** | + token / data / request usage |
 
 !!! note "Where Zero Trust cost actually goes"
     Roughly **70 % of the ZT-only surcharge is Azure Firewall (~$912)**. If your platform team already operates a hub Firewall, set `deployAzureFirewall=false` and configure `hubIntegrationEgressNextHopIp=<hub-firewall-private-IP>`. The spoke then reuses the hub's firewall and the ZT delta drops to **~$380/month**. See [Hub-and-Spoke Topology](hub-and-spoke.md).
@@ -225,7 +225,7 @@ Adds, **on top of Scenario 2**:
 | Public IP (App Gateway) | ~$4 | — |
 | WAF policy | $0 | — |
 | **App Gateway additions subtotal** | **~$254 / month** | + capacity-unit consumption |
-| **Subtotal — ZTA + App Gateway (Basic + ZT + AppGW)** | **~$2,928 / month** | + token / data / request usage |
+| **Subtotal — ZTA + App Gateway (Basic + ZT + AppGW)** | **~$2,438 / month** | + token / data / request usage |
 
 See [Public Ingress with Application Gateway](public-ingress.md) for the topology and parameters.
 
@@ -235,17 +235,17 @@ See [Public Ingress with Application Gateway](public-ingress.md) for the topolog
 
 | Scenario | Fixed monthly floor | Best for |
 |---|---:|---|
-| **1. Basic** | **~$1,382** | Sandbox, demo, dev/test, public evaluation |
-| **2. Zero Trust (internal)** | **~$2,674** | Production for internal users (VPN / ExpressRoute / Bastion) |
-| **3. Zero Trust + App Gateway** | **~$2,928** | Production for external users with WAF-protected public ingress |
+| **1. Basic** | **~$892** | Sandbox, demo, dev/test, public evaluation |
+| **2. Zero Trust (internal)** | **~$2,184** | Production for internal users (VPN / ExpressRoute / Bastion) |
+| **3. Zero Trust + App Gateway** | **~$2,438** | Production for external users with WAF-protected public ingress |
 
 Variable model / data / processing cost applies to all three and depends entirely on traffic.
 
 !!! info "Concrete levers to lower the floor"
     | Lever | Savings (approx.) | Trade-off |
     |---|---:|---|
-    | `deployAAfAgentSvc=false` — turn off Standard Agent Setup if you don't use Foundry agents | **~$760/mo** (drops the 3-replica Foundry Search + Cosmos) | No Agent Service; you keep models, projects, and your own workload Search |
-    | `aiSearchResourceId=<existing>` — point Foundry to an existing Search service | **~$735/mo** | Foundry agents and the workload share one Search service |
+    | `deployAAfAgentSvc=false` — turn off Standard Agent Setup if you don't use Foundry agents | **~$270/mo** (drops Foundry Search + Cosmos) | No Agent Service; you keep models, projects, and your own workload Search |
+    | `aiSearchResourceId=<existing>` — point Foundry to an existing Search service | **~$245/mo** | Foundry agents and the workload share one Search service |
     | Drop the `D4` workload profile (use Consumption-only) and remove `min_replicas=1` from orchestrator | **~$290/mo** | Cold-start latency on first request |
     | `deployAzureFirewall=false` + `hubIntegrationEgressNextHopIp=…` (share hub FW) | **~$912/mo** (ZT scenarios only) | Requires a hub firewall already operated by the platform team |
     | BYO Log Analytics / App Insights (`existingLogAnalyticsWorkspaceResourceId`, `existingApplicationInsightsResourceId`) | Avoids duplicate workspaces | Workspace governed centrally |
@@ -253,7 +253,7 @@ Variable model / data / processing cost applies to all three and depends entirel
     | `deployGroundingWithBing=false` if you don't use Bing-grounded answers | $0 fixed; saves variable Bing query cost | No Bing grounding |
     | Deallocate the Jumpbox VM when idle | ~$70/mo (compute only; disk continues) | Manual stop/start |
 
-    Stacking the first three levers in Scenario 1 takes the **Basic floor from ~$1,382 to ~$330/month**.
+    Stacking the first two levers in Scenario 1 takes the **Basic floor from ~$892 to ~$332/month**.
 
 ---
 
