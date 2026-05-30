@@ -30,7 +30,7 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 
 ## What gets deployed
 
-The deployment is composed in five layers. Every box below maps to a real `deploy*` flag in `main.parameters.json`, so any of them can be toggled independently ��� the layers are purely a presentation aid.
+The deployment is composed in five layers. Every box below maps to a real `deploy*` flag in `main.parameters.json`, so any of them can be toggled independently — the layers are purely a presentation aid.
 
 | Layer | Purpose | Always present? |
 |---|---|---|
@@ -84,7 +84,7 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 |---|---|---|---|
 | Workload AI Search | ✅ 🔧 | `deploySearchService` / `aiSearchResourceId` | Standard SKU, **1 partition × 1 replica** |
 | Workload Storage | ✅ 🔧 | `deployStorageAccount` | Standard_LRS, Hot |
-| Workload Cosmos DB | ��� 🔧 | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
+| Workload Cosmos DB | ✅ 🔧 | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
 | Workload Key Vault | ✅ 🔧 | `deployKeyVault` / `keyVaultResourceId` | Standard tier |
 | Azure Speech | 🟧 | `deploySpeechService` | S0 (off by default) |
 
@@ -107,14 +107,14 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 | VNet + subnets | 🔒 🔧 | `useExistingVNet` / `deploySubnets` | Workload, PE, jumpbox, agent, ACA, NAT, Bastion subnets |
 | NSGs | 🔒 | `deployNsgs` | One per subnet, locked-down rules |
 | Private endpoints | 🔒 | (auto, per service) | **~13–15 PEs** — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.) |
-| Private DNS zones (��15) | 🔒 🔧 | `existingPrivateDnsZone*ResourceId` (one parameter per zone) | All 15 zones BYO-capable individually |
+| Private DNS zones (×15) | 🔒 🔧 | `existingPrivateDnsZone*ResourceId` (one parameter per zone) | All 15 zones BYO-capable individually |
 | Azure Firewall | 🔒 🟧 | `deployAzureFirewall` (default `true` when ZT) | **Standard SKU**; can be turned off when reusing a hub firewall |
 | Public IP (firewall) | 🔒 | (auto) | Standard, Static |
 | Jumpbox VM | 🔒 🔧 | `deployJumpbox` (defaults to `networkIsolation`) / `existingJumpboxResourceId` | `Standard_D2s_v3`, Windows Server 2022 Datacenter Azure Edition, 128 GB P10 disk |
 | VM Key Vault | 🔒 | `deployVmKeyVault` | Standard tier, for jumpbox secrets |
-| Azure Bastion | 🔒 ���� | `deployBastion` / `existingBastionResourceId` | **Standard** SKU |
+| Azure Bastion | 🔒 🔧 | `deployBastion` / `existingBastionResourceId` | **Standard** SKU |
 | NAT Gateway | 🔒 🔧 | `deployNatGateway` / `existingNatGatewayResourceId` | For outbound egress when no spoke firewall |
-| Public IP (NAT) | �� | (auto) | Standard, Static |
+| Public IP (NAT) | 🔒 | (auto) | Standard, Static |
 | Hub peering | 🔒 | `hubIntegrationHubVnetResourceId` | Spoke→hub only; reverse peering stays operator-owned |
 
 ### Public ingress add-on (`publicIngress.enabled=true`)
