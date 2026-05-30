@@ -13,6 +13,10 @@
       
       
       
+        <link rel="prev" href="../overview/">
+      
+      
+        <link rel="next" href="../how-to-deploy/">
       
       
         
@@ -23,7 +27,7 @@
     
     
       
-        <title>Deployed Resources & Cost Estimates - Azure AI Landing Zones</title>
+        <title>Deployed Resources & Cost - Azure AI Landing Zones</title>
       
     
     
@@ -109,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Deployed Resources &amp; Cost Estimates
+              Deployed Resources & Cost
             
           </span>
         </div>
@@ -419,18 +423,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -451,7 +457,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -494,17 +500,44 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../bill-of-materials.md" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    Bill of Materials
+    Deployed Resources & Cost
   
 
     
@@ -513,6 +546,231 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-standard-agent-setup-gotcha-read-this-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Standard Agent Setup" gotcha — read this first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-gets-deployed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What gets deployed
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What gets deployed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#legend-used-below" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legend used below
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource inventory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource inventory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#runtime-apps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime apps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-agent-data-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry &amp; agent data plane
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-data-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workload data path
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-platform-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common platform services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero-trust-networking-only-when-networkisolationtrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero Trust networking (only when networkIsolation=true)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-ingress-add-on-publicingressenabledtrue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public ingress add-on (publicIngress.enabled=true)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimated-monthly-cost-by-scenario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated monthly cost — by scenario
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estimated monthly cost — by scenario">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-basic-deployment-public-no-network-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1 — Basic deployment (public, no network isolation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-zero-trust-private-internal-users-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2 — Zero Trust (private, internal users only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-zero-trust-application-gateway-external-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3 — Zero Trust + Application Gateway (external users)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cost-comparison-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cost comparison at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methodology-and-caveats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methodology and caveats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -844,12 +1102,12 @@
 <ul>
 <li><strong>Bring your own</strong> — set <code>aiSearchResourceId</code>, <code>aiFoundryStorageAccountResourceId</code>, and <code>aiFoundryCosmosDBAccountResourceId</code> to existing resource IDs (the workload's own services or a hub-owned set).</li>
 <li><strong>Disable the Agent Service</strong> — set <code>deployAAfAgentSvc=false</code> (and optionally <code>deployAfProject=false</code>). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.</li>
-<li><strong>Foundry AI Search runs <code>replicaCount: 3</code></strong> — that is the single biggest line item in the default deployment. Each replica is billed at the full Standard SKU rate.</li>
+<li><strong>Foundry AI Search defaults to <code>1 partition × 1 replica</code></strong> (lowered from 3 replicas in v2.0.5; see <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/CHANGELOG.md">CHANGELOG</a>) — scale it back up to 3 replicas in-place if you need Azure AI Search's read/write SLA.</li>
 </ul>
 </div>
 <hr />
 <h2 id="what-gets-deployed">What gets deployed</h2>
-<p>The deployment is composed in five layers. Every box below maps to a real <code>deploy*</code> flag in <code>main.parameters.json</code>, so any of them can be toggled independently — the layers are purely a presentation aid.</p>
+<p>The deployment is composed in five layers. Every box below maps to a real <code>deploy*</code> flag in <code>main.parameters.json</code>, so any of them can be toggled independently ��� the layers are purely a presentation aid.</p>
 <table>
 <thead>
 <tr>
@@ -998,7 +1256,7 @@
 <td>Foundry-dedicated AI Search</td>
 <td>✅ 🔧</td>
 <td><code>deployAAfAgentSvc</code> / <code>aiSearchResourceId</code></td>
-<td>Standard SKU, <strong>1 partition × 3 replicas</strong></td>
+<td>Standard SKU, <strong>1 partition × 1 replica</strong> (scale up for AI Search read/write SLA)</td>
 </tr>
 <tr>
 <td>Foundry-dedicated Storage</td>
@@ -1039,7 +1297,7 @@
 </tr>
 <tr>
 <td>Workload Cosmos DB</td>
-<td>✅ 🔧</td>
+<td>��� 🔧</td>
 <td><code>deployCosmosDb</code></td>
 <td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>)</td>
 </tr>
@@ -1142,7 +1400,7 @@
 <td><strong>~13–15 PEs</strong> — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.)</td>
 </tr>
 <tr>
-<td>Private DNS zones (×15)</td>
+<td>Private DNS zones (��15)</td>
 <td>🔒 🔧</td>
 <td><code>existingPrivateDnsZone*ResourceId</code> (one parameter per zone)</td>
 <td>All 15 zones BYO-capable individually</td>
@@ -1173,7 +1431,7 @@
 </tr>
 <tr>
 <td>Azure Bastion</td>
-<td>🔒 🔧</td>
+<td>🔒 ����</td>
 <td><code>deployBastion</code> / <code>existingBastionResourceId</code></td>
 <td><strong>Standard</strong> SKU</td>
 </tr>
@@ -1185,7 +1443,7 @@
 </tr>
 <tr>
 <td>Public IP (NAT)</td>
-<td>🔒</td>
+<td>��</td>
 <td>(auto)</td>
 <td>Standard, Static</td>
 </tr>
@@ -1280,9 +1538,9 @@ deployGroundingWithBing = true    (default)
 <td>~$3 per 1,000 transactions</td>
 </tr>
 <tr>
-<td><strong>Foundry AI Search</strong> (Standard, 1p × <strong>3r</strong>)</td>
-<td style="text-align: right;"><strong>~$735</strong></td>
-<td>Index storage; queries scale with QPS</td>
+<td><strong>Foundry AI Search</strong> (Standard, 1p × 1r)</td>
+<td style="text-align: right;"><strong>~$245</strong></td>
+<td>Index storage; queries scale with QPS. Scale to 3r for read/write SLA (~$735/mo)</td>
 </tr>
 <tr>
 <td>Foundry Storage (Standard_LRS, Hot)</td>
@@ -1351,7 +1609,7 @@ deployGroundingWithBing = true    (default)
 </tr>
 <tr>
 <td><strong>Subtotal — Basic</strong></td>
-<td style="text-align: right;"><strong>~$1,382 / month</strong></td>
+<td style="text-align: right;"><strong>~$892 / month</strong></td>
 <td>+ token / data / request usage</td>
 </tr>
 </tbody>
@@ -1428,7 +1686,7 @@ publicIngress.enabled   = false
 </tr>
 <tr>
 <td><strong>Subtotal — ZTA (Basic + ZT)</strong></td>
-<td style="text-align: right;"><strong>~$2,674 / month</strong></td>
+<td style="text-align: right;"><strong>~$2,184 / month</strong></td>
 <td>+ token / data / request usage</td>
 </tr>
 </tbody>
@@ -1474,7 +1732,7 @@ publicIngress.enabled   = true   # exposes a private Container App via App Gatew
 </tr>
 <tr>
 <td><strong>Subtotal — ZTA + App Gateway (Basic + ZT + AppGW)</strong></td>
-<td style="text-align: right;"><strong>~$2,928 / month</strong></td>
+<td style="text-align: right;"><strong>~$2,438 / month</strong></td>
 <td>+ token / data / request usage</td>
 </tr>
 </tbody>
@@ -1493,17 +1751,17 @@ publicIngress.enabled   = true   # exposes a private Container App via App Gatew
 <tbody>
 <tr>
 <td><strong>1. Basic</strong></td>
-<td style="text-align: right;"><strong>~$1,382</strong></td>
+<td style="text-align: right;"><strong>~$892</strong></td>
 <td>Sandbox, demo, dev/test, public evaluation</td>
 </tr>
 <tr>
 <td><strong>2. Zero Trust (internal)</strong></td>
-<td style="text-align: right;"><strong>~$2,674</strong></td>
+<td style="text-align: right;"><strong>~$2,184</strong></td>
 <td>Production for internal users (VPN / ExpressRoute / Bastion)</td>
 </tr>
 <tr>
 <td><strong>3. Zero Trust + App Gateway</strong></td>
-<td style="text-align: right;"><strong>~$2,928</strong></td>
+<td style="text-align: right;"><strong>~$2,438</strong></td>
 <td>Production for external users with WAF-protected public ingress</td>
 </tr>
 </tbody>
@@ -1522,12 +1780,12 @@ publicIngress.enabled   = true   # exposes a private Container App via App Gatew
 <tbody>
 <tr>
 <td><code>deployAAfAgentSvc=false</code> — turn off Standard Agent Setup if you don't use Foundry agents</td>
-<td style="text-align: right;"><strong>~$760/mo</strong> (drops the 3-replica Foundry Search + Cosmos)</td>
+<td style="text-align: right;"><strong>~$270/mo</strong> (drops Foundry Search + Cosmos)</td>
 <td>No Agent Service; you keep models, projects, and your own workload Search</td>
 </tr>
 <tr>
 <td><code>aiSearchResourceId=&lt;existing&gt;</code> — point Foundry to an existing Search service</td>
-<td style="text-align: right;"><strong>~$735/mo</strong></td>
+<td style="text-align: right;"><strong>~$245/mo</strong></td>
 <td>Foundry agents and the workload share one Search service</td>
 </tr>
 <tr>
@@ -1562,7 +1820,7 @@ publicIngress.enabled   = true   # exposes a private Container App via App Gatew
 </tr>
 </tbody>
 </table>
-<p>Stacking the first three levers in Scenario 1 takes the <strong>Basic floor from ~$1,382 to ~$330/month</strong>.</p>
+<p>Stacking the first two levers in Scenario 1 takes the <strong>Basic floor from ~$892 to ~$332/month</strong>.</p>
 </div>
 <hr />
 <h2 id="methodology-and-caveats">Methodology and caveats</h2>
