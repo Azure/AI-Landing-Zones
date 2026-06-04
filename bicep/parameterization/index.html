@@ -1965,44 +1965,74 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <thead>
 <tr>
 <th>Field</th>
+<th>Default</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>name</code></td>
-<td>Container App name (auto-generated from <code>service_name</code> if <code>null</code>)</td>
+<td>Auto-generated from <code>service_name</code> when <code>null</code> or empty</td>
+<td>Container App resource name</td>
 </tr>
 <tr>
 <td><code>external</code></td>
+<td>Required</td>
 <td>Whether the app is externally accessible</td>
 </tr>
 <tr>
 <td><code>target_port</code></td>
+<td><code>8080</code></td>
 <td>Port the container listens on</td>
 </tr>
 <tr>
 <td><code>service_name</code></td>
+<td>Required</td>
 <td>Logical service name</td>
 </tr>
 <tr>
 <td><code>profile_name</code></td>
+<td>Required</td>
 <td>Workload profile to use (must match a <code>workloadProfiles</code> entry)</td>
 </tr>
 <tr>
 <td><code>min_replicas</code> / <code>max_replicas</code></td>
+<td>Required</td>
 <td>Replica scaling bounds</td>
 </tr>
 <tr>
 <td><code>canonical_name</code></td>
+<td>Required</td>
 <td>Environment variable name exported to App Configuration</td>
 </tr>
 <tr>
-<td><code>dapr</code></td>
-<td>Optional Dapr configuration. Omit this object, or set <code>enabled</code> to <code>false</code>, to deploy the app without Dapr. Set <code>enabled</code> to <code>true</code> for apps that need Dapr service invocation or other Dapr features.</td>
+<td><code>dapr.enabled</code></td>
+<td><code>false</code></td>
+<td>Enables Dapr for apps that need service invocation or other Dapr features</td>
+</tr>
+<tr>
+<td><code>dapr.appId</code></td>
+<td><code>service_name</code></td>
+<td>Dapr app ID used for service invocation when Dapr is enabled</td>
+</tr>
+<tr>
+<td><code>dapr.appPort</code></td>
+<td><code>target_port</code>, then <code>8080</code></td>
+<td>Dapr app port when Dapr is enabled</td>
+</tr>
+<tr>
+<td><code>dapr.appProtocol</code></td>
+<td><code>http</code></td>
+<td>Dapr app protocol when Dapr is enabled</td>
+</tr>
+<tr>
+<td><code>dapr.enableApiLogging</code></td>
+<td><code>false</code></td>
+<td>Enables Dapr API logging when Dapr is enabled</td>
 </tr>
 <tr>
 <td><code>roles</code></td>
+<td>Required</td>
 <td>List of RBAC roles assigned to the container app's managed identity</td>
 </tr>
 </tbody>
