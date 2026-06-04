@@ -327,6 +327,11 @@ The `containerAppsList` parameter defines the container apps to deploy and their
       "min_replicas": 1,
       "max_replicas": 1,
       "canonical_name": "ORCHESTRATOR_APP",
+      "dapr": {
+        "enabled": true,
+        "appId": "orchestrator",
+        "appPort": 8080
+      },
       "roles": [
         "AppConfigurationDataReader",
         "CognitiveServicesUser",
@@ -351,6 +356,7 @@ The `containerAppsList` parameter defines the container apps to deploy and their
 | `profile_name` | Workload profile to use (must match a `workloadProfiles` entry) |
 | `min_replicas` / `max_replicas` | Replica scaling bounds |
 | `canonical_name` | Environment variable name exported to App Configuration |
+| `dapr` | Optional Dapr configuration. Omit this object, or set `enabled` to `false`, to deploy the app without Dapr. Set `enabled` to `true` for apps that need Dapr service invocation or other Dapr features. |
 | `roles` | List of RBAC roles assigned to the container app's managed identity |
 
 See [Permissions](permissions.md) for the resulting role assignments with the default configuration.
