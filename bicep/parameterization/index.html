@@ -1942,6 +1942,11 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <span class="w">      </span><span class="nt">&quot;min_replicas&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;max_replicas&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;canonical_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ORCHESTRATOR_APP&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;dapr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;appId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;orchestrator&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;appPort&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span>
+<span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;roles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="s2">&quot;AppConfigurationDataReader&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="s2">&quot;CognitiveServicesUser&quot;</span><span class="p">,</span>
@@ -1991,6 +1996,10 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <tr>
 <td><code>canonical_name</code></td>
 <td>Environment variable name exported to App Configuration</td>
+</tr>
+<tr>
+<td><code>dapr</code></td>
+<td>Optional Dapr configuration. Omit this object, or set <code>enabled</code> to <code>false</code>, to deploy the app without Dapr. Set <code>enabled</code> to <code>true</code> for apps that need Dapr service invocation or other Dapr features.</td>
 </tr>
 <tr>
 <td><code>roles</code></td>
