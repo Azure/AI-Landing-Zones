@@ -347,16 +347,20 @@ The `containerAppsList` parameter defines the container apps to deploy and their
 }
 ```
 
-| Field | Description |
-|---|---|
-| `name` | Container App name (auto-generated from `service_name` if `null`) |
-| `external` | Whether the app is externally accessible |
-| `target_port` | Port the container listens on |
-| `service_name` | Logical service name |
-| `profile_name` | Workload profile to use (must match a `workloadProfiles` entry) |
-| `min_replicas` / `max_replicas` | Replica scaling bounds |
-| `canonical_name` | Environment variable name exported to App Configuration |
-| `dapr` | Optional Dapr configuration. Omit this object, or set `enabled` to `false`, to deploy the app without Dapr. Set `enabled` to `true` for apps that need Dapr service invocation or other Dapr features. |
-| `roles` | List of RBAC roles assigned to the container app's managed identity |
+| Field | Default | Description |
+|---|---|---|
+| `name` | Auto-generated from `service_name` when `null` or empty | Container App resource name |
+| `external` | Required | Whether the app is externally accessible |
+| `target_port` | `8080` | Port the container listens on |
+| `service_name` | Required | Logical service name |
+| `profile_name` | Required | Workload profile to use (must match a `workloadProfiles` entry) |
+| `min_replicas` / `max_replicas` | Required | Replica scaling bounds |
+| `canonical_name` | Required | Environment variable name exported to App Configuration |
+| `dapr.enabled` | `false` | Enables Dapr for apps that need service invocation or other Dapr features |
+| `dapr.appId` | `service_name` | Dapr app ID used for service invocation when Dapr is enabled |
+| `dapr.appPort` | `target_port`, then `8080` | Dapr app port when Dapr is enabled |
+| `dapr.appProtocol` | `http` | Dapr app protocol when Dapr is enabled |
+| `dapr.enableApiLogging` | `false` | Enables Dapr API logging when Dapr is enabled |
+| `roles` | Required | List of RBAC roles assigned to the container app's managed identity |
 
 See [Permissions](permissions.md) for the resulting role assignments with the default configuration.
