@@ -79,7 +79,7 @@ Step-by-step Azure and Azure DevOps configuration required before running the CI
 ---
 
 
-### Step 1: Create the ARM Service Connections (one per environment)
+### 1. Service Connections
 
 The pipelines target up to three environments — DEV, TEST, PROD — each with its own ARM service connection. The connections may point to the same subscription or to different subscriptions.
 
@@ -135,7 +135,7 @@ Use this option if your organization restricts app registrations (e.g., via Azur
 
 ---
 
-### Step 2: Assign Azure RBAC Roles to the Service Principal(s)
+### 2. RBAC Role Assignments
 
 Each service principal that backs your service connections needs specific Azure roles. The AI Landing Zone template creates resources **and** assigns RBAC roles to managed identities, which requires elevated permissions.
 
@@ -237,7 +237,7 @@ If you prefer the portal UI instead of CLI:
 
 ---
 
-### Step 3: Create Azure DevOps Environments
+### 3. DevOps Environments
 
 Azure DevOps Environments provide deployment history, traceability, and approval gates. The CD pipeline targets three environments: `dev`, `test`, and `prod`.
 
@@ -266,7 +266,7 @@ After creating all three, you should see:
 
 ---
 
-### Step 4: Add Approval Checks to Environments
+### 4. Approval Checks
 
 **(Optional but Recommended)**
 
@@ -310,7 +310,7 @@ To ensure only the `main` branch can deploy to production:
 
 ---
 
-### Step 5: Create the Variable Group
+### 5. Variable Group
 
 The CD pipeline expects a variable group named `ailz-secrets` that stores the VM admin password and any other secrets.
 
@@ -337,7 +337,7 @@ The CD pipeline expects a variable group named `ailz-secrets` that stores the VM
 
 ---
 
-### Step 6: Update Pipeline Variables
+### 6. Pipeline Variables
 
 Before creating pipelines, update the shared variables to match your Azure environment.
 
@@ -386,7 +386,7 @@ If an env needs extra `azd` env variables, set them per stage in `pipelines/azur
 
 How to register, authorize, run, and customize the CI/CD pipelines.
 
-### Step 7: Create the CI Pipeline
+### 7. CI Pipeline
 
 1. In your Azure DevOps project, go to **Pipelines** in the left menu.
 2. Select **New pipeline** (or **Create pipeline** if this is the first pipeline).
@@ -405,7 +405,7 @@ How to register, authorize, run, and customize the CI/CD pipelines.
 
 ---
 
-### Step 8: Create the CD Pipeline
+### 8. CD Pipeline
 
 1. Go to **Pipelines** → **New pipeline**.
 2. Select **Azure Repos Git** → select the **ailz** repository.
@@ -419,7 +419,7 @@ How to register, authorize, run, and customize the CI/CD pipelines.
 
 ---
 
-### Step 9: Authorize Pipeline Permissions
+### 9. Pipeline Permissions
 
 Now that both pipelines exist, authorize them to use the service connections and variable group.
 
@@ -447,7 +447,7 @@ Repeat the following for each service connection you created in Step 1 (e.g., `a
 
 ---
 
-### Step 10: Run and Verify
+### 10. Run & Verify
 
 **Test the CI Pipeline**
 
@@ -616,11 +616,11 @@ git push origin main
 |-------|-------|-----|
 | `No hosted parallelism has been purchased or granted` | The free grant for Microsoft-hosted parallel jobs is not enabled for your organization. New Azure DevOps organizations do not receive this grant by default. Even if you have purchased parallel jobs via Billing, the free grant must also be approved separately. | Submit the [free parallelism grant request form](https://aka.ms/azpipelines-parallelism-request). Processing takes several business days. See [Configure and pay for parallel jobs](https://learn.microsoft.com/en-us/azure/devops/pipelines/licensing/concurrent-jobs?view=azure-devops) for details. While waiting, you can use a self-hosted agent (see Prerequisites). |
 | `No agent found in pool Azure Pipelines` | Same root cause as above — no Microsoft-hosted parallel jobs available | Same fix: submit the [free grant request](https://aka.ms/azpipelines-parallelism-request) or use a self-hosted agent. |
-| `Environment 'dev' could not be found` | Environment not created before pipeline run | Create the environment in Pipelines → Environments (see [Step 3: Create Azure DevOps Environments](#step-3-create-azure-devops-environments)) |
-| `This pipeline needs permission to access a resource` | Service connection or variable group not authorized | Select View → Permit, or authorize manually in Project Settings (see [Step 9: Authorize Pipeline Permissions](#step-9-authorize-pipeline-permissions)) |
+| `Environment 'dev' could not be found` | Environment not created before pipeline run | Create the environment in Pipelines → Environments (see [Step 3: DevOps Environments](#3-devops-environments)) |
+| `This pipeline needs permission to access a resource` | Service connection or variable group not authorized | Select View → Permit, or authorize manually in Project Settings (see [Step 9: Pipeline Permissions](#9-pipeline-permissions)) |
 | `Bicep build failed` | Syntax error in `.bicep` files | Check the build log for the specific error. Run `az bicep build --file main.bicep` locally to debug |
 | `The deployment 'ailz-dev-xxx' failed with error` | Azure resource creation failed | Check the deployment error in the Azure Portal → Resource Group → Deployments |
-| `429 Too Many Requests` / `AuthorizationFailed` | Service principal lacks required roles | Verify RBAC assignments (see [Step 2: Assign Azure RBAC Roles to the Service Principal(s)](#step-2-assign-azure-rbac-roles-to-the-service-principals)) |
+| `429 Too Many Requests` / `AuthorizationFailed` | Service principal lacks required roles | Verify RBAC assignments (see [Step 2: RBAC Role Assignments](#2-rbac-role-assignments)) |
 | `Responsible AI terms have not been accepted` | Responsible AI terms not accepted in target subscription | Accept the terms manually in the Azure Portal by deploying any Cognitive Services account interactively once per subscription |
 | `The template is not valid` | Parameter mismatch between `main.bicep` and `main.parameters.json` | This should not occur when using `azd provision` as it filters parameters automatically. If using raw `az` CLI, run `azd provision --preview` locally instead |
 | `UnmatchedPrincipalType` | `principalType` defaults to `User` but pipeline deploys as `ServicePrincipal` | Ensure `principalType` is in `main.parameters.json` with `${AZURE_PRINCIPAL_TYPE}` substitution and the deploy template sets `AZURE_PRINCIPAL_TYPE=ServicePrincipal` |
