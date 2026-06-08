@@ -46,6 +46,7 @@ nav:
       - "Overview": bicep/overview.md
       - "Deployed Resources & Cost": bicep/deployed-resources.md
       - "How to Deploy": bicep/how-to-deploy.md
+      - "Deploy with Azure DevOps": bicep/deploy-with-azure-devops.md
       - "Regional Considerations": bicep/regional-considerations.md
       - "Hub-and-Spoke Topology": bicep/hub-and-spoke.md
       - "Public Ingress (App Gateway)": bicep/public-ingress.md
