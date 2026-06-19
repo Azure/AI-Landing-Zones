@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../deploy-with-azure-devops/">
+        <link rel="prev" href="../how-to-deploy/">
       
       
-        <link rel="next" href="../hub-and-spoke/">
+        <link rel="next" href="../regional-considerations/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Regional Considerations - Azure AI Landing Zones</title>
+        <title>Deploy with Azure DevOps - Azure AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#regional-considerations" class="md-skip">
+        <a href="#deploy-with-azure-devops" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Regional Considerations
+              Deploy with Azure DevOps
             
           </span>
         </div>
@@ -556,34 +556,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-with-azure-devops/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Azure DevOps
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -603,7 +575,7 @@
   <span class="md-ellipsis">
     
   
-    Regional Considerations
+    Deploy with Azure DevOps
   
 
     
@@ -621,7 +593,7 @@
   <span class="md-ellipsis">
     
   
-    Regional Considerations
+    Deploy with Azure DevOps
   
 
     
@@ -647,10 +619,49 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-providerlocation-support-is-not-enough" class="md-nav__link">
+  <a href="#what-the-pipelines-do" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why provider/location support is not enough
+        What the pipelines do
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the pipelines do">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deployment-stages-and-gating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment stages and gating
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reusable-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reusable templates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
       
     </span>
   </a>
@@ -658,10 +669,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resources-with-known-transient-capacity-caveats" class="md-nav__link">
+  <a href="#how-to-wire-it-up-in-azure-devops" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resources with known transient capacity caveats
+        How to wire it up in Azure DevOps
       
     </span>
   </a>
@@ -669,10 +680,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recommended-practice" class="md-nav__link">
+  <a href="#relationship-to-the-pre-flight-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Recommended practice
+        Relationship to the pre-flight checks
       
     </span>
   </a>
@@ -680,10 +691,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
+  <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
       
-        See also
+        Troubleshooting
       
     </span>
   </a>
@@ -694,6 +705,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -920,39 +959,200 @@
   
 
 
-<h1 id="regional-considerations">Regional Considerations</h1>
-<p>Choosing the right Azure region for an AI Landing Zone deployment is more than provider/location support. Some resources can be <strong>listed as supported</strong> in a region but still fail at provision time because of <strong>transient regional capacity</strong> that is not exposed by any reliable pre-create quota API.</p>
-<h2 id="why-providerlocation-support-is-not-enough">Why provider/location support is not enough</h2>
-<p>Azure Resource Manager only tells you whether a resource type is <strong>registered and available</strong> in a region. It does not tell you whether that region has free capacity <em>right now</em> for your subscription tier and SKU. The control plane only attempts allocation when the deployment actually runs, and capacity-related failures surface as errors such as <code>InsufficientResourcesAvailable</code> or <code>ServiceUnavailable</code> minutes into a provision that otherwise looked healthy.</p>
-<h2 id="resources-with-known-transient-capacity-caveats">Resources with known transient capacity caveats</h2>
-<p>The following resource types are part of the AI Landing Zone and have been observed to fail at provision time even when the region lists them as supported. Treat these as <strong>regions to validate, not regions to trust blindly</strong>:</p>
+<h1 id="deploy-with-azure-devops">Deploy with Azure DevOps</h1>
+<p>This guide explains how to deploy the AI Landing Zone (Bicep) from Azure DevOps
+Pipelines. It covers what the pipelines do, what you need to set up first, how to
+wire everything together in your project, and how the pipelines relate to the
+pre-flight checks that run before each deployment.</p>
+<p>Use this when you want repeatable, gated deployments to Dev, Test, and Prod
+instead of running <code>azd provision</code> by hand. If you only need a one-off local
+deployment, see <a href="../how-to-deploy/">How to Deploy</a> instead.</p>
+<p>The pipeline assets live in the landing zone repository under
+<code>pipelines/azuredevops/</code>. This page is the source of truth for setup and usage;
+the YAML files in that folder are the assets it references.</p>
+<h2 id="what-the-pipelines-do">What the pipelines do</h2>
+<p>There are two pipelines that work together.</p>
+<p><strong>CI pipeline (<code>ci-pipeline.yml</code>)</strong> validates the Bicep templates. It runs on
+pull requests and on pushes to <code>main</code>, filtered to the paths that affect the
+deployment (<code>*.bicep</code>, <code>*.json</code>, <code>modules/</code>, <code>constants/</code>, and
+<code>pipelines/azuredevops/</code>). It has a single <code>Validate</code> stage that:</p>
 <ul>
-<li><strong>Azure AI Search</strong> — may return <code>InsufficientResourcesAvailable</code> for the chosen SKU/region combination. There is no pre-create quota API to consult.</li>
-<li><strong>Azure Cosmos DB</strong> — may return high-demand <code>ServiceUnavailable</code> errors during account creation in popular regions.</li>
-<li><strong>Azure Container Apps Environment</strong> — managed environment creation can fail in regions under heavy demand, especially for workload profile environments.</li>
+<li>installs the Bicep CLI,</li>
+<li>compiles the template with <code>az bicep build</code>,</li>
+<li>lints the template with <code>az bicep lint</code>,</li>
+<li>publishes the repository as a pipeline artifact named <code>bicep-templates</code>.</li>
 </ul>
-<p>This is not an exhaustive list; AI Foundry and AI Services model deployments are governed instead by <strong>regional model quota</strong>, which <em>can</em> be checked ahead of time and should be validated separately for each model SKU you plan to deploy.</p>
-<h2 id="recommended-practice">Recommended practice</h2>
+<p>No Azure sign-in or provisioning happens in CI. It only proves the templates are
+well formed, and it hands a validated artifact to the CD pipeline.</p>
+<p><strong>CD pipeline (<code>cd-pipeline.yml</code>)</strong> deploys the landing zone. It does not trigger
+automatically (<code>trigger: none</code> and <code>pr: none</code>); you run it on demand and choose
+which environments to promote to. It consumes the artifact produced by CI rather
+than rebuilding from source, then promotes through Dev, Test, and Prod with
+manual approval gates on the environments you choose to protect.</p>
+<pre class="mermaid"><code>flowchart LR
+  PR[PR or push to main] --&gt; CI[CI pipeline\nbuild + lint]
+  CI --&gt; ART[(bicep-templates\nartifact)]
+  ART --&gt; CD[CD pipeline\non demand]
+  CD --&gt; Dev[DEV]
+  Dev --&gt; Test[TEST]
+  Test --&gt; Prod[PROD]</code></pre>
+<h3 id="deployment-stages-and-gating">Deployment stages and gating</h3>
+<p>When you queue the CD pipeline, you pick the environments to deploy with three
+boolean parameters: <code>Deploy to DEV</code>, <code>Deploy to TEST</code>, and <code>Deploy to PROD</code>. All
+default to off, so a run deploys only what you opt into.</p>
+<p>The stages run in a fixed order through stage dependencies: Dev depends on the
+artifact download, Test depends on Dev, and Prod depends on Test. If a selected
+environment fails, the later environments are skipped. Each environment deploys
+with the reusable <code>deploy-bicep.yml</code> template, which runs <code>azd provision</code> against
+that environment.</p>
+<pre class="mermaid"><code>flowchart LR
+  Build[Download CI artifact] --&gt; Dev[DEV\nno approval]
+  Dev --&gt; Test[TEST\napproval gate]
+  Test --&gt; Prod[PROD\napproval gate]</code></pre>
+<p>Approvals are not defined in YAML. They live on the Azure DevOps Environment
+resource, so you control them from the portal without editing the pipeline. The
+recommended setup is no approval on <code>dev</code> and a required approval on <code>test</code> and
+<code>prod</code>. When an approval is configured, the pipeline pauses before that stage
+until an approver allows it to continue.</p>
+<h3 id="reusable-templates">Reusable templates</h3>
+<p>The pipelines are built from small templates under
+<code>pipelines/azuredevops/templates/</code>:</p>
 <ul>
-<li><strong>Pick a primary region and an alternate region up front.</strong> If the primary fails on capacity, you want to fail over quickly rather than redesign.</li>
-<li><strong>Validate model quota first.</strong> Use <code>az cognitiveservices usage list --location &lt;region&gt;</code> for the model SKUs you need. This is the one signal you <em>can</em> trust before provisioning. As of <strong>landing zone <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.3">v2.0.3</a></strong> the <code>azd preprovision</code> hook does this automatically for every <code>format=OpenAI</code> entry in <code>modelDeploymentList</code> and fails fast (<code>MODEL_QUOTA_INSUFFICIENT</code>) if <code>(limit − currentValue) &lt; sku.capacity</code> for any of them.</li>
-<li><strong>Treat the first provision as a capacity probe.</strong> If it fails on <code>InsufficientResourcesAvailable</code> or <code>ServiceUnavailable</code>, retry in the alternate region. Do not assume the failure means the deployment template is broken.</li>
-<li><strong>Tear down failed provisions asynchronously.</strong> Resource groups holding Cosmos DB, AI Search, or Container Apps Environment can take 10–30 minutes to delete. Use <code>az group delete --no-wait</code> and move on with a fresh resource group name.</li>
+<li><code>validate-bicep.yml</code> compiles and lints the template and publishes the
+  artifact. Used by CI.</li>
+<li><code>deploy-bicep.yml</code> installs <code>azd</code> and the Bicep CLI, resolves the deploying
+  principal, sets the azd environment, and runs <code>azd provision</code> with an optional
+  retry loop. Used by each CD stage.</li>
+<li><code>preview-bicep.yml</code> runs <code>azd provision --preview</code> (a what-if) against a target
+  environment. It is provided for teams that want a preview step before deploy.</li>
+<li><code>variables.yml</code> holds the shared values you fill in for your environment.</li>
 </ul>
-<div class="admonition info">
-<p class="admonition-title">What the preflight now covers (v2.0.3+)</p>
-<p>Starting with <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.3">v2.0.3</a> (issue <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/72">#72</a>), <code>scripts/Invoke-PreflightChecks.ps1</code> extends its read-only validation with a regional readiness pass that runs from the <code>azd preprovision</code> hook. It checks: <strong>subscription drift</strong> vs. the azd env, <strong>provider/location support per resource type</strong> (AI Search, Cosmos DB, Container Apps, AI Foundry/Cognitive Services, Key Vault, Storage, App Configuration, Log Analytics, Application Insights), <strong>jumpbox VM SKU availability</strong> in the region, and <strong>AI model quota</strong>. Each check is gated on the corresponding <code>deploy*</code> feature flag.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before the first run, set up the following in Azure DevOps.</p>
+<p><strong>1. Service connections.</strong> Create one Azure Resource Manager service connection
+per environment you plan to use (Dev, Test, Prod). Each service principal needs
+<code>Contributor</code> and <code>User Access Administrator</code> on the target subscription, because
+the landing zone creates resources and assigns roles. You will reference these
+connection names in <code>variables.yml</code>.</p>
+<p><strong>2. Environments.</strong> Create Azure DevOps Environments named <code>dev</code>, <code>test</code>, and
+<code>prod</code>. Add an approval check on <code>test</code> and <code>prod</code> so deployments to those
+environments pause for a human. Leave <code>dev</code> without an approval for fast
+iteration.</p>
+<p><strong>3. Variable group.</strong> Create a variable group named <code>ailz-secrets</code> and add a
+secret variable <code>secretOrRandomPassword</code>. This value is used as the jumpbox VM
+admin password in Zero Trust deployments. Link the group to the CD pipeline.</p>
+<p><strong>4. Fill in <code>variables.yml</code>.</strong> Edit
+<code>pipelines/azuredevops/templates/variables.yml</code> and set the values for your
+environment:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What to set</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>azureServiceConnectionDev</code></td>
+<td>Name of the Dev ARM service connection</td>
+</tr>
+<tr>
+<td><code>azureServiceConnectionTest</code></td>
+<td>Name of the Test ARM service connection</td>
+</tr>
+<tr>
+<td><code>azureServiceConnectionProd</code></td>
+<td>Name of the Prod ARM service connection</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Azure region for the deployment, for example <code>eastus2</code></td>
+</tr>
+<tr>
+<td><code>environmentName</code></td>
+<td>Base azd environment name, default <code>ailz-bicep</code></td>
+</tr>
+<tr>
+<td><code>deploymentMode</code></td>
+<td><code>zeroTrust</code> for network isolation, or <code>basic</code> for public networking</td>
+</tr>
+<tr>
+<td><code>agentPool</code></td>
+<td><code>ubuntu-latest</code> for Microsoft-hosted agents, or your self-hosted pool name</td>
+</tr>
+<tr>
+<td><code>deployRetryCount</code></td>
+<td>Extra <code>azd provision</code> attempts on transient Azure failures, default <code>0</code></td>
+</tr>
+<tr>
+<td><code>templateFile</code></td>
+<td>Bicep entry point, default <code>main.bicep</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>deploymentMode</code> value maps directly to network isolation. <code>zeroTrust</code> sets
+<code>NETWORK_ISOLATION true</code> (VNet, private endpoints, Bastion), and <code>basic</code> sets it
+to <code>false</code> for public networking. This is the same toggle described in
+<a href="../how-to-deploy/">How to Deploy</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The pipelines deploy with the Azure Developer CLI (<code>azd provision</code>), which
+handles resource group creation, parameter filtering, and principal ID
+resolution. You do not need to pre-create the resource group.</p>
 </div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Even with v2.0.3+, the preflight surfaces <strong>transient regional capacity</strong> caveats for AI Search, Cosmos DB, and Container Apps Environment as <strong><code>WARN</code> (non-blocking)</strong> findings only, because Azure does not expose that signal before allocation. A passing preflight does not guarantee a successful provision in a capacity-constrained region — the WARN just makes it obvious what to retry in your alternate region if provisioning later fails.</p>
-<p>You can opt out of the new regional block (while keeping parameter/topology/BYO validation) via the <code>LZ_PREFLIGHT_REGIONAL_SKIP=true</code> env var or the <code>-SkipRegional</code> switch on the script. The full preflight can still be bypassed via <code>PREFLIGHT_SKIP=true</code> or <code>-SkipAzureLookups</code> (offline/CI).</p>
+<h2 id="how-to-wire-it-up-in-azure-devops">How to wire it up in Azure DevOps</h2>
+<p><strong>1. Create the CI pipeline.</strong> In your Azure DevOps project, go to Pipelines, New
+pipeline, point it at this repository, and select
+<code>pipelines/azuredevops/ci-pipeline.yml</code>. Name it exactly <code>AI Landing Zone - CI</code>.
+The CD pipeline references the CI pipeline by that name to pull its artifact, so
+the name must match.</p>
+<p><strong>2. Create the CD pipeline.</strong> Create a second pipeline from
+<code>pipelines/azuredevops/cd-pipeline.yml</code>. Link the <code>ailz-secrets</code> variable group
+to it (Edit, Variables, Variable groups).</p>
+<p><strong>3. Run a deployment.</strong> Run the CD pipeline manually. Turn on <code>Deploy to DEV</code>
+to start, and add <code>Deploy to TEST</code> or <code>Deploy to PROD</code> when you are ready to
+promote. The run downloads the CI-validated artifact, then deploys to each
+selected environment in order, pausing at any environment that has an approval
+gate.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For strict promotion where Test must wait for a successful Dev run, change
+the Test stage condition to require <code>succeeded('Dev')</code>. The default condition
+uses <code>not(failed())</code>, which lets you deploy directly to Test or Prod without
+deploying Dev first.</p>
 </div>
-<h2 id="see-also">See also</h2>
-<ul>
-<li><a href="../how-to-deploy/">How to Deploy</a> — covers the <code>azd preprovision</code> hook and parameter validation.</li>
-<li><a href="../parameterization/">Parameterization</a> — how to set the deployment region and BYO resource overrides.</li>
-</ul>
+<h2 id="relationship-to-the-pre-flight-checks">Relationship to the pre-flight checks</h2>
+<p>Every deployment runs the repository pre-flight script,
+<code>scripts/Invoke-PreflightChecks.ps1</code>, through the <code>azd</code> preprovision hook before
+anything reaches Azure Resource Manager. The pipelines do not call the script
+directly. They run <code>azd provision</code>, and azd runs the hook.</p>
+<p>The script is read-only and never changes Azure state. It catches the common
+topology mistakes that otherwise surface as deep, late ARM errors, such as
+conflicting Private DNS settings, mutually exclusive hub-integration parameters,
+invalid IP allow-list shapes, subnet prefixes that overflow or overlap, subnets
+too small for the services that use them, and bring-your-own resources that were
+promised but do not exist. It also checks regional readiness, including provider
+registration, jumpbox VM SKU availability, and AI model quota.</p>
+<p>If a check fails, the deployment stops before ARM is called, and the pipeline
+reports the failure. You can narrow or skip checks with the script switches and
+environment variables documented in the script header, for example
+<code>LZ_PREFLIGHT_REGIONAL_SKIP</code> to skip only the regional block, or
+<code>PREFLIGHT_SKIP</code> as an emergency escape hatch. Skipping is meant for unblocking,
+not for normal runs.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p><strong>The CD pipeline cannot find the CI artifact.</strong> Confirm the CI pipeline is named
+exactly <code>AI Landing Zone - CI</code> and that it has run successfully at least once, so
+the <code>bicep-templates</code> artifact exists.</p>
+<p><strong>Deployment fails with a missing password error.</strong> Confirm the <code>ailz-secrets</code>
+variable group is linked to the CD pipeline and contains a secret variable named
+<code>secretOrRandomPassword</code>.</p>
+<p><strong>Deployment fails resolving the deployment principal.</strong> Set the
+<code>AZURE_PRINCIPAL_ID</code> pipeline variable to the Entra object ID of the deploying
+identity. The deploy template tries to resolve it automatically from the service
+connection, but you can set it explicitly if resolution fails.</p>
+<p><strong>Role assignment errors during provisioning.</strong> Confirm the service principal
+behind the environment's service connection has both <code>Contributor</code> and
+<code>User Access Administrator</code> on the target subscription.</p>
 
 
 
