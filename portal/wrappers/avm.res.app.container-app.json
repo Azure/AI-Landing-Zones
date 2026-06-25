@@ -419,6 +419,12 @@
           "managedIdentities": {
             "value": "[tryGet(parameters('containerApp'), 'managedIdentities')]"
           },
+          "dapr": {
+            "value": "[tryGet(parameters('containerApp'), 'dapr')]"
+          },
+          "scaleSettings": {
+            "value": "[tryGet(parameters('containerApp'), 'scaleSettings')]"
+          },
           "revisionSuffix": {
             "value": "[tryGet(parameters('containerApp'), 'revisionSuffix')]"
           },

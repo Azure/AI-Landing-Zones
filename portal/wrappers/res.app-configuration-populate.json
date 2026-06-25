@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "app-configuration-populate",
+    "description": "Populates an existing App Configuration store with key-value pairs. Mirrors modules/app-configuration/app-configuration.bicep from bicep-ptn-aiml-landing-zone."
+  },
+  "parameters": {
+    "storeName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Name of the existing App Configuration store."
+      }
+    },
+    "keyValues": {
+      "type": "array",
+      "metadata": {
+        "description": "Required. List of key/value pairs to create. Each item must have: name, value, label, contentType."
+      }
+    }
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "kvResources",
+        "count": "[length(parameters('keyValues'))]"
+      },
+      "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+      "apiVersion": "2024-05-01",
+      "name": "[concat(parameters('storeName'), '/', if(empty(parameters('keyValues')[copyIndex()].label), parameters('keyValues')[copyIndex()].name, concat(parameters('keyValues')[copyIndex()].name, '$', parameters('keyValues')[copyIndex()].label)))]",
+      "properties": {
+        "value": "[parameters('keyValues')[copyIndex()].value]",
+        "contentType": "[parameters('keyValues')[copyIndex()].contentType]"
+      }
+    }
+  ]
+}

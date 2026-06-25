@@ -1,0 +1,93 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "private-link-scope",
+    "description": "Deploys an Azure Monitor Private Link Scope with scoped resources. Mirrors privateLinkScope resource from bicep-ptn-aiml-landing-zone main.bicep."
+  },
+  "parameters": {
+    "name": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Name of the Private Link Scope."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "global",
+      "metadata": {
+        "description": "Optional. Location for the Private Link Scope (typically 'global')."
+      }
+    },
+    "queryAccessMode": {
+      "type": "string",
+      "defaultValue": "Open",
+      "allowedValues": ["Open", "PrivateOnly"],
+      "metadata": {
+        "description": "Optional. Query access mode."
+      }
+    },
+    "ingestionAccessMode": {
+      "type": "string",
+      "defaultValue": "Open",
+      "allowedValues": ["Open", "PrivateOnly"],
+      "metadata": {
+        "description": "Optional. Ingestion access mode."
+      }
+    },
+    "scopedResources": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Optional. Array of scoped resources. Each item has: name, linkedResourceId."
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Optional. Tags to apply."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "microsoft.insights/privatelinkscopes",
+      "apiVersion": "2021-07-01-preview",
+      "name": "[parameters('name')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accessModeSettings": {
+          "queryAccessMode": "[parameters('queryAccessMode')]",
+          "ingestionAccessMode": "[parameters('ingestionAccessMode')]"
+        }
+      },
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "copy": {
+        "name": "scopedResourceLoop",
+        "count": "[length(parameters('scopedResources'))]"
+      },
+      "type": "microsoft.insights/privatelinkscopes/scopedresources",
+      "apiVersion": "2021-07-01-preview",
+      "name": "[concat(parameters('name'), '/', parameters('scopedResources')[copyIndex()].name)]",
+      "properties": {
+        "linkedResourceId": "[parameters('scopedResources')[copyIndex()].linkedResourceId]"
+      },
+      "dependsOn": [
+        "[resourceId('microsoft.insights/privatelinkscopes', parameters('name'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('microsoft.insights/privatelinkscopes', parameters('name'))]"
+    },
+    "name": {
+      "type": "string",
+      "value": "[parameters('name')]"
+    }
+  }
+}
