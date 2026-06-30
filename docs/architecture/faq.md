@@ -7,3 +7,7 @@ The Azure Landing Zone is comprise of platform landing zone and application land
 **What is the recommended reference architecture for AI Landing Zones, with or with out Platform Landing Zone?**
 
 The AI Landing Zone with Platform Landing Zone is the recommend reference architecture where shared services like firewall, DDoS, Bastion, jump boxes are centralized in the Platform Landing Zone whereas resources specific to an Agentic AI Application are in the AI Landing Zones. AI Landing Zone without Platform Landing Zone is suitable for scenarios where an organization either wants their AI Application to be independent and isolated from the rest of their platform and applications or for an organization that will only have a single AI Application hosted on Azure.
+
+**Which private IP ranges are supported for Azure AI Foundry delegated subnets?**
+
+For deployments that create or reuse the Azure AI Foundry delegated subnet, plan the VNet and delegated subnet in private ranges under `172.16.0.0/12` or `192.168.0.0/16`. Avoid `10.0.0.0/8` ranges for this subnet because current Azure AI Foundry delegated subnet behavior does not accept them, even though some public documentation is still being clarified. Validate the CIDR plan before starting the deployment, especially for Zero Trust and hub-and-spoke topologies.
