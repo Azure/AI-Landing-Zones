@@ -55,6 +55,16 @@ nav:
       - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
   - Terraform Implementation: terraform/index.md
   - Portal installation: portal/index.md  
+
+# These pages are intentionally kept out of the left navigation. The ACA
+# design article is a standalone reference, and the bicep v2 migration page is
+# a redirect stub that preserves an older URL. Listing them here keeps the nav
+# clean and silences the "not in nav" check for just these files, while still
+# flagging any future stray pages.
+not_in_nav: |
+  /AI-Landing-Zones-Design-ACA.md
+  /bicep/migration-v2.md
+
 extra:
   generator: false
 

@@ -6,8 +6,6 @@
 
 This article defines a production-ready landing zone architecture for deploying AI workloads on Azure Container Apps. It lists the design considerations and recommendations when using Azure Container Apps for AI workloads.
 
-![Screenshot showing the AI Landing zone for Azure Container Apps](../media/AI%20Landing%20Zones%20-%20ACA.png)
-
 ### Infrastructure & Compute
 
 This section covers the recommendations for the infrastructure and compute design area for the landing zone.
