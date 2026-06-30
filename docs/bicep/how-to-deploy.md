@@ -19,6 +19,9 @@ Choose your preferred deployment mode based on project requirements and environm
 !!! note
     Azure CLI and PowerShell 7+ are required by the `azd preprovision` hook that runs `scripts/Invoke-PreflightChecks.ps1` before deployment. You can bypass the hook by setting `PREFLIGHT_SKIP=true` in your shell, but the script is the fastest way to catch parameter mistakes (subnet sizing, CIDR overlap, BYO resource typos) before they reach ARM.
 
+!!! warning "Azure AI Foundry delegated subnet CIDR limitation"
+    If your deployment creates or reuses the Azure AI Foundry delegated subnet, do **not** plan that subnet inside `10.0.0.0/8`. Current Azure AI Foundry delegated subnet behavior supports private ranges within `172.16.0.0/12` or `192.168.0.0/16` only. Validate `VNET_ADDRESS_PREFIXES` and any BYO subnet prefixes before running `azd provision`.
+
 ## Basic Deployment
 
 Quick setup for demos and development environments without network isolation. This is the **standalone** topology.
