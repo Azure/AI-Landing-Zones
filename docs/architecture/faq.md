@@ -10,4 +10,4 @@ The AI Landing Zone with Platform Landing Zone is the recommend reference archit
 
 **Which private IP ranges are supported for Azure AI Foundry delegated subnets?**
 
-For deployments that create or reuse the Azure AI Foundry delegated subnet, plan the VNet and delegated subnet in private ranges under `172.16.0.0/12` or `192.168.0.0/16`. Avoid `10.0.0.0/8` ranges for this subnet because current Azure AI Foundry delegated subnet behavior does not accept them, even though some public documentation is still being clarified. Validate the CIDR plan before starting the deployment, especially for Zero Trust and hub-and-spoke topologies.
+For deployments that create or reuse the Azure AI Foundry delegated subnet, plan the VNet address space and delegated subnet CIDR within `172.16.0.0/12` or `192.168.0.0/16`. Avoid `10.0.0.0/8` ranges for this subnet because current Azure AI Foundry delegated subnet behavior does not accept them, even though some public documentation is still being clarified. Validate the CIDR plan before starting the deployment, especially for Zero Trust and hub-and-spoke topologies.

@@ -26,7 +26,7 @@ This Terraform configuration deploys an **AI Landing Zone** which is a complete 
 - **Owner** or **Contributor** role on the subscription (required to create resources)
 - Sufficient quota for the resources being deployed (VMs, networking, AI services)
 
-> **Important:** If the deployment creates or reuses an Azure AI Foundry delegated subnet, plan the VNet and delegated subnet inside `172.16.0.0/12` or `192.168.0.0/16`. Avoid `10.0.0.0/8` ranges for that subnet because current Azure AI Foundry delegated subnet behavior does not accept them. Validate the CIDR ranges in your Terraform inputs before you start the deployment.
+> **Important:** If the deployment creates or reuses an Azure AI Foundry delegated subnet, plan the VNet address space and delegated subnet CIDR within `172.16.0.0/12` or `192.168.0.0/16`. Avoid `10.0.0.0/8` ranges for that subnet because current Azure AI Foundry delegated subnet behavior does not accept them. Validate the CIDR ranges in your Terraform inputs before you start the deployment.
 
 **3. Register Required Resource Providers**
 
