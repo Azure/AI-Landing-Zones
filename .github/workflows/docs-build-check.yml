@@ -1,0 +1,45 @@
+name: Docs Build Check
+
+# Build-only validation for the MkDocs site on pull requests targeting main.
+# This complements deploy-docs.yml (which deploys on push to main) by catching
+# broken docs before they merge. It never deploys and needs no write access.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - docs/**
+      - overrides/**
+      - mkdocs.yml
+      - requirements-docs.txt
+      - main.py
+      - .github/workflows/docs-build-check.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install MkDocs and dependencies
+        run: pip install -r requirements-docs.txt
+
+      # Plain build (not --strict): the current docs tree has known, harmless
+      # informational warnings (pages not in nav for AI-Landing-Zones-Design-ACA,
+      # Design-Checklist, Whats-New, bicep/migration-v2, plus one image link in
+      # the ACA doc). Using --strict would fail this check on day one. Plain build
+      # still fails on hard errors (invalid config, missing nav targets, etc.).
+      # Switch to `mkdocs build --strict` once those warnings are resolved.
+      - name: Build documentation
+        run: mkdocs build
