@@ -69,9 +69,34 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 !!! note "Jumpbox, Bastion, and NAT Gateway"
     These components are controlled independently with `deployJumpbox`, `deployBastion`, and `deployNatGateway`, so each topology can choose only the pieces it needs.
 
+## Resource naming
+
+By default, generated resource names follow the Cloud Adoption Framework (CAF) pattern `type-workload-environment-region-instance`, for example `kv-a1b2c3-dev-eus2-001`. You do not have to set anything: every CAF token has a safe default, so a plain `azd provision` produces valid, readable names.
+
+| Parameter | Env variable | Default | Description |
+|---|---|---|---|
+| `resourceNamingMode` | `RESOURCE_NAMING_MODE` | `caf` | Naming strategy: `caf` (default) or `legacy` (older `resourceToken`-based names). |
+| `cafWorkloadName` | `CAF_WORKLOAD_NAME` | short deterministic hash | Workload token. When empty, derived from subscription, environment, and location. Override with a meaningful name such as `contosoai`. |
+| `cafEnvironmentName` | `CAF_ENVIRONMENT_NAME` | azd environment name | Environment token, for example `dev` or `prod`. |
+| `cafRegionName` | `CAF_REGION_NAME` | mapped from `AZURE_LOCATION` | Region token. `eastus2` becomes `eus2`. |
+| `cafInstance` | `CAF_INSTANCE` | `001` | Instance token. Increment only for a second parallel copy of the same workload in the same environment and region. |
+
+Names are length-bounded automatically so they stay within Azure limits (storage 24, Key Vault 24, Container Apps environment 32, and so on). Because the tokens are deterministic, redeploying the same environment produces the same names, so naming stays idempotent.
+
+!!! tip "Override a single token"
+    ```bash
+    azd env set CAF_WORKLOAD_NAME contosoai
+    ```
+
+!!! warning "Upgrading an existing deployment"
+    CAF is now the default. To keep the older `resourceToken`-based names and avoid renaming existing resources, pin the legacy mode before provisioning:
+    ```bash
+    azd env set RESOURCE_NAMING_MODE legacy
+    ```
+
 ## Resource name overrides
 
-By default, resource names are auto-generated from the `environmentName` prefix. Use these parameters to override specific resource names.
+By default, resource names are generated using the [CAF naming pattern](#resource-naming) described above. These parameters override individual resource names in either naming mode.
 
 | Parameter | Default | Description |
 |---|---|---|
