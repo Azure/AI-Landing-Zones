@@ -803,6 +803,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#resource-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource naming
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#resource-name-overrides" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1379,8 +1390,64 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <p class="admonition-title">Jumpbox, Bastion, and NAT Gateway</p>
 <p>These components are controlled independently with <code>deployJumpbox</code>, <code>deployBastion</code>, and <code>deployNatGateway</code>, so each topology can choose only the pieces it needs.</p>
 </div>
+<h2 id="resource-naming">Resource naming</h2>
+<p>By default, generated resource names follow the Cloud Adoption Framework (CAF) pattern <code>type-workload-environment-region-instance</code>, for example <code>kv-a1b2c3-dev-eus2-001</code>. You do not have to set anything: every CAF token has a safe default, so a plain <code>azd provision</code> produces valid, readable names.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Env variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resourceNamingMode</code></td>
+<td><code>RESOURCE_NAMING_MODE</code></td>
+<td><code>caf</code></td>
+<td>Naming strategy: <code>caf</code> (default) or <code>legacy</code> (older <code>resourceToken</code>-based names).</td>
+</tr>
+<tr>
+<td><code>cafWorkloadName</code></td>
+<td><code>CAF_WORKLOAD_NAME</code></td>
+<td>short deterministic hash</td>
+<td>Workload token. When empty, derived from subscription, environment, and location. Override with a meaningful name such as <code>contosoai</code>.</td>
+</tr>
+<tr>
+<td><code>cafEnvironmentName</code></td>
+<td><code>CAF_ENVIRONMENT_NAME</code></td>
+<td>azd environment name</td>
+<td>Environment token, for example <code>dev</code> or <code>prod</code>.</td>
+</tr>
+<tr>
+<td><code>cafRegionName</code></td>
+<td><code>CAF_REGION_NAME</code></td>
+<td>mapped from <code>AZURE_LOCATION</code></td>
+<td>Region token. <code>eastus2</code> becomes <code>eus2</code>.</td>
+</tr>
+<tr>
+<td><code>cafInstance</code></td>
+<td><code>CAF_INSTANCE</code></td>
+<td><code>001</code></td>
+<td>Instance token. Increment only for a second parallel copy of the same workload in the same environment and region.</td>
+</tr>
+</tbody>
+</table>
+<p>Names are length-bounded automatically so they stay within Azure limits (storage 24, Key Vault 24, Container Apps environment 32, and so on). Because the tokens are deterministic, redeploying the same environment produces the same names, so naming stays idempotent.</p>
+<div class="admonition tip">
+<p class="admonition-title">Override a single token</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>CAF_WORKLOAD_NAME<span class="w"> </span>contosoai
+</code></pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Upgrading an existing deployment</p>
+<p>CAF is now the default. To keep the older <code>resourceToken</code>-based names and avoid renaming existing resources, pin the legacy mode before provisioning:
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RESOURCE_NAMING_MODE<span class="w"> </span>legacy
+</code></pre></div></p>
+</div>
 <h2 id="resource-name-overrides">Resource name overrides</h2>
-<p>By default, resource names are auto-generated from the <code>environmentName</code> prefix. Use these parameters to override specific resource names.</p>
+<p>By default, resource names are generated using the <a href="#resource-naming">CAF naming pattern</a> described above. These parameters override individual resource names in either naming mode.</p>
 <table>
 <thead>
 <tr>
