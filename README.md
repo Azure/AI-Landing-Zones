@@ -9,28 +9,28 @@ The AI Landing Zone provides an enterprise-scale production ready reference arch
 - The AI Landing Zone is able to cover both generative and non-generative scenario per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
 - Given the pace of innovation and change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.
 
-The AI Landing Zones comprises of a landing zone for Foundry and a landing zone for APIM as AI Gateway, both of them can be deployed together or independently based on the needs of the organization and the use case.
+The AI Landing Zones comprises of an AI Foundry Landing Zone and an AI Gateway Landing Zone, both of them can be deployed together or independently based on the needs of the organization and the use case.
 
 ![image](/media/AI-Landing-Zone.png)
 
 ## Reference Architectures
 
-### AI Landing Zone for Foundry
+### AI Foundry Landing Zone
 
-The below diagram represents the reference architecture of the AI Landing Zone for Foundry which leverages the Foundry for AI Apps & Agents workloads.
+The below diagram represents the reference architecture of the AI Foundry Landing Zone which leverages the Foundry for AI Apps & Agents workloads.
 
 ![image](/media/AI-Landing-Zone-Foundry.png)
 
-### AI Landing Zone for APIM
+### AI Gateway Landing Zone
 
-The below diagram represents the reference architecture of the AI Landing Zone for APIM which leverages APIM as AI Gateway for centrally managing and serving Foundry models.
+The below diagram represents the reference architecture of the AI Gateway Landing Zone which leverages APIM as AI Gateway for centrally managing and serving Foundry models.
 
 ![image](/media/AI-Landing-Zones-APIM.png)
 
 ## Extensible Implementations
 
 The table represents the various reference implementations of the AI Landing Zone based on the service inventory & configuration
-### AI Landing Zone for Foundry
+### AI Foundry Landing Zone
 | Type | Description |
 | ----------- | ----------- |
 | Terraform | [Repo](https://aka.ms/ailz/terraform) |
@@ -39,7 +39,7 @@ The table represents the various reference implementations of the AI Landing Zon
 
 > **Note:** The previous Bicep implementation is still available in the [`legacy-bicep`](https://github.com/Azure/AI-Landing-Zones/tree/legacy-bicep) branch for users who need the legacy codebase.
 
-### AI Landing Zone for APIM
+### AI Gateway Landing Zone
 | Type | Description |
 | ----------- | ----------- |
 | Bicep | [Repo](https://aka.ms/ailz/apim) |
