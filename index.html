@@ -300,6 +300,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Reference Architectures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-landing-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry Landing Zone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-landing-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Gateway Landing Zone
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -310,6 +338,34 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Extensible Implementations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-landing-zone_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry Landing Zone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-gateway-landing-zone_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Gateway Landing Zone
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -999,22 +1055,22 @@
 <li>The AI Landing Zone is an <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones">application landing zone</a> meant to act as a foundation for various use cases, scenarios and patterns of AI Apps &amp; Agents based workloads which can be deployed with or without <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones">platform landing zone</a>.</li>
 <li>The IaC implementations of the AI Landing Zone i.e. Bicep and Terraform are based on <a href="https://aka.ms/AVM">Azure Verified Modules</a>.</li>
 <li>The AI Landing Zone focuses on <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures">AI on Azure Platform</a>. A future version of it will cover <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud">AI on Azure Infrastructure</a>.</li>
-<li>The AI Landing Zone has been tested for Azure Public Cloud but can be leveraged in Azure Government and Sovereign Cloud.</li>
-<li>The AI Landing Zone is able to cover generative and non-generative scenario per <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection">resource selection guidance CAF AI Scenario</a>.</li>
-<li>Given change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.</li>
+<li>The AI Landing Zone has been designed and tested for Azure Public Cloud but can be leveraged in the Azure Government and Sovereign Cloud.</li>
+<li>The AI Landing Zone is able to cover both generative and non-generative scenario per <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection">resource selection guidance CAF AI Scenario</a>.</li>
+<li>Given the pace of innovation and change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.</li>
 </ul>
+<p>The AI Landing Zones comprises of an AI Foundry Landing Zone and an AI Gateway Landing Zone, both of them can be deployed together or independently based on the needs of the organization and the use case.</p>
+<p><img alt="image" src="/media/AI-Landing-Zone.png" /></p>
 <h2 id="reference-architectures">Reference Architectures</h2>
-<p>The AI Landing Zones comprises of a landing zone for Foundry and a landing zone for AI Gateway, both of them can be deployed together or independently based on the needs of the organization and the use case.
-<img alt="image" src="architecture/media/AI-Landing-Zone.png" /></p>
-<p><strong>AI Landing Zone for Foundry</strong></p>
-<p>The below diagram represents the reference architecture of the AI Landing Zone for Foundry which leverages the Foundry for AI Apps &amp; Agents workloads.
-<img alt="image" src="architecture/media/AI-Landing-Zone-Foundry.png" /></p>
-<p><strong>AI Landing Zone for APIM</strong></p>
-<p>The below diagram represents the reference architecture of the AI Landing Zone for APIM which leverages APIM as AI Gateway for centrally managing and serving Foundry models.
-<img alt="image" src="architecture/media/AI-Landing-Zones-APIM.png" /></p>
+<h3 id="ai-foundry-landing-zone">AI Foundry Landing Zone</h3>
+<p>The below diagram represents the reference architecture of the AI Foundry Landing Zone which leverages the Foundry for AI Apps &amp; Agents workloads.</p>
+<p><img alt="image" src="/media/AI-Landing-Zone-Foundry.png" /></p>
+<h3 id="ai-gateway-landing-zone">AI Gateway Landing Zone</h3>
+<p>The below diagram represents the reference architecture of the AI Gateway Landing Zone which leverages APIM as AI Gateway for centrally managing and serving Foundry models.</p>
+<p><img alt="image" src="/media/AI-Landing-Zones-APIM.png" /></p>
 <h2 id="extensible-implementations">Extensible Implementations</h2>
 <p>The table represents the various reference implementations of the AI Landing Zone based on the service inventory &amp; configuration</p>
-<p><strong>AI Landing Zone for Foundry</strong></p>
+<h3 id="ai-foundry-landing-zone_1">AI Foundry Landing Zone</h3>
 <table>
 <thead>
 <tr>
@@ -1037,7 +1093,10 @@
 </tr>
 </tbody>
 </table>
-<p><strong>AI Landing Zone for APIM</strong></p>
+<blockquote>
+<p><strong>Note:</strong> The previous Bicep implementation is still available in the <a href="https://github.com/Azure/AI-Landing-Zones/tree/legacy-bicep"><code>legacy-bicep</code></a> branch for users who need the legacy codebase.</p>
+</blockquote>
+<h3 id="ai-gateway-landing-zone_1">AI Gateway Landing Zone</h3>
 <table>
 <thead>
 <tr>
@@ -1047,14 +1106,18 @@
 </thead>
 <tbody>
 <tr>
+<td>Terraform</td>
+<td><a href="https://aka.ms/ailz/aigateway/terraform">Repo</a></td>
+</tr>
+<tr>
 <td>Bicep</td>
-<td><a href="https://aka.ms/ai-hub-gateway">Repo</a></td>
+<td><a href="https://aka.ms/ailz/apim">Repo</a></td>
 </tr>
 </tbody>
 </table>
 <h2 id="design-checklist">Design Checklist</h2>
-<p>The AI Landing Zone cover the following design areas which are across the Cloud Adoption Framework and the Well-Architected Framework. In each design area there are design considertion and design recommendations to help you design a greenfield environment and assess a brown field environment using the <a href="architecture/design-checklist/">AI Landing Zone Checklist</a>.</p>
-<p><img alt="image" src="architecture/media/AI-Landing-Zone-design-area-checklist.png" /></p>
+<p>The AI Landing Zone cover the following design areas which are across the Cloud Adoption Framework and the Well-Architected Framework. In each design area there are design considertion and design recommendations to help you design a greenfield environment and assess a brown field environment using the <a href="https://azure.github.io/AI-Landing-Zones/architecture/design-checklist/">AI Landing Zone Checklist</a>.</p>
+<p><img alt="image" src="/media/AI-Landing-Zone-design-area-checklist.png" /></p>
 <h2 id="use-cases-scenarios">Use cases &amp; Scenarios</h2>
 <p>The AI Landing Zone act as a foundation architecture which can be leveraged to deploy a particular AI usecase &amp; scenario on Azure, such as the below, either with its default architecture or by extending it with additional Azure services as needed.</p>
 <ul>
@@ -1070,9 +1133,9 @@
 <h2 id="roadmap">Roadmap</h2>
 <p>The AI Landing Zone is currently in preview. The roadmap for the project is available <a href="https://aka.ms/ailz/roadmap">here</a>.</p>
 <h2 id="whats-new">What's New</h2>
-<p>The latest updates to the AI Landing Zone are documented <a href="whatisnew/">here</a>.</p>
+<p>The latest updates to the AI Landing Zone are documented <a href="https://azure.github.io/AI-Landing-Zones/whatisnew/">here</a>.</p>
 <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
-<p>The frequently asked questions about the AI Landing Zone are documented <a href="architecture/faq/">here</a>.</p>
+<p>The frequently asked questions about the AI Landing Zone are documented <a href="https://azure.github.io/AI-Landing-Zones/architecture/faq/">here</a>.</p>
 <h2 id="cloud-adoption-framework">Cloud Adoption Framework</h2>
 <p>The AI landing Zone aligns with the guidance in the <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/">CAF AI Scenario</a>. For a holistic implementation of the AI Landing Zone, we recommend to review the <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/#ai-checklists">AI Checklist</a>. To understand how to leverage the AI Landing Zone as part of a wider strategy, review the guidance on <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy">AI Strategy</a>. AI Landing Zone is part of the AI Ready stage in particular the <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures">AI on Azure platforms (PaaS)</a>.</p>
 <p><img alt="image" src="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/images/ai-ready.svg" /></p>
