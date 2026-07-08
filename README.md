@@ -42,6 +42,7 @@ The table represents the various reference implementations of the AI Landing Zon
 ### AI Gateway Landing Zone
 | Type | Description |
 | ----------- | ----------- |
+| Terraform | [Repo](https://aka.ms/ailz/aigateway/terraform) |
 | Bicep | [Repo](https://aka.ms/ailz/apim) |
 
 ## Design Checklist
