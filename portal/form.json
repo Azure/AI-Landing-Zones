@@ -14,8 +14,41 @@
               "type": "Microsoft.Common.ResourceScope",
               "location": {
                 "resourceTypes": [
-                  "Microsoft.Resources/resourceGroups"
+                  "Microsoft.CognitiveServices/accounts",
+                  "Microsoft.Search/searchServices",
+                  "Microsoft.App/managedEnvironments",
+                  "Microsoft.DocumentDB/databaseAccounts",
+                  "Microsoft.ContainerRegistry/registries",
+                  "Microsoft.AppConfiguration/configurationStores",
+                  "Microsoft.KeyVault/vaults",
+                  "Microsoft.Compute/virtualMachines"
+                ],
+                "allowedValues": [
+                  "australiaeast",
+                  "eastus",
+                  "francecentral",
+                  "germanywestcentral",
+                  "japaneast",
+                  "koreacentral",
+                  "norwayeast",
+                  "polandcentral",
+                  "southafricanorth",
+                  "southeastasia",
+                  "spaincentral",
+                  "swedencentral",
+                  "switzerlandnorth",
+                  "uaenorth",
+                  "uksouth"
                 ]
+              }
+            },
+            {
+              "name": "regionInfo",
+              "type": "Microsoft.Common.InfoBox",
+              "visible": true,
+              "options": {
+                "icon": "Info",
+                "text": "The region list is filtered to locations that support all required services for this landing zone, including AI Services (text-embedding-3-large model), AI Search, Container Apps, Cosmos DB, Container Registry, App Configuration, Key Vault, and Compute."
               }
             },
             {

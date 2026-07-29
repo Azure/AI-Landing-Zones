@@ -16,6 +16,7 @@
 .azd/
 .azd
 
+
 # Bicep build outputs (don’t commit generated ARM templates)
 bicep/**/*.json
 bicep/deploy/
@@ -427,3 +428,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Agent instructions and configuration
+# .github/
+# /context/
+# /bicep-only-no-portal.md

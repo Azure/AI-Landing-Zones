@@ -435,7 +435,7 @@
     "deployBastionHost": "[and(coalesce(parameters('deployToggles').bastionHost, true()), empty(coalesce(parameters('resourceIds').bastionHostResourceId, '')))]",
     "deployContainerApps": "[coalesce(parameters('deployToggles').containerApps, true())]",
     "deploySoftware": true,
-    "releaseTag": "v1.0.7",
+    "releaseTag": "v2.0.12",
 
     "bastionName": "[concat('bas-', parameters('baseName'))]",
     "natGatewayName": "[concat('ng-', parameters('baseName'))]",
@@ -3354,7 +3354,7 @@
         "value": "00000000-0000-0000-0000-000000000002"
       },
       "scopePath": {
-        "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts', concat('cosmos-', parameters('baseName')))]"
+        "value": "[concat(resourceId('Microsoft.DocumentDB/databaseAccounts', concat('cosmos-', parameters('baseName'))), '/dbs/', variables('cosmosDbDatabaseName'))]"
       }
     }
   },
@@ -3522,7 +3522,7 @@
         "value": "00000000-0000-0000-0000-000000000002"
       },
       "scopePath": {
-        "value": "[resourceId('Microsoft.DocumentDB/databaseAccounts', concat('cosmos-', parameters('baseName')))]"
+        "value": "[concat(resourceId('Microsoft.DocumentDB/databaseAccounts', concat('cosmos-', parameters('baseName'))), '/dbs/', variables('cosmosDbDatabaseName'))]"
       }
     }
   },
