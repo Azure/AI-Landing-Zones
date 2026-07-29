@@ -43,7 +43,7 @@ Enable accelerator-neutral prerequisites and deployment contracts for a Microsof
 | | |
 |---|---|
 | **Type** | `hostedAgentConfigurationType` (exported Bicep type) |
-| **Default** | All fields empty; `runtime` = `1` CPU / `1Gi`; `protocols` = `responses 2.0.0` |
+| **Default** | `name`/`image`/`version`/`startupCommand` empty; `runtime` and `protocols` use defaults |
 
 Typed handoff consumed by the downstream `azure.ai.agent` service. Values are validated by preflight only when `deployHostedAgent=true`.
 
@@ -164,7 +164,7 @@ The landing zone resolves the registry automatically:
 
 | `deployContainerRegistry` | Registry used | Consumer responsibilities |
 |---|---|---|
-| `true` (default) | Landing-zone ACR | None — RBAC, endpoints, and connectivity managed by the landing zone. |
+| `true` (default) | Landing-zone ACR | RBAC, private endpoint, DNS, and public-access configuration are managed by the landing zone. The operator must still provide VNet-reachable build/push execution and satisfy the [June 25, 2026 project-date gate](#private-registry-compatibility-gate) for private-endpoint-only use. |
 | `false` | ACR provided via `hostedAgentContainerRegistryResourceId` / `hostedAgentContainerRegistryEndpoint` | Private endpoint, DNS integration, authentication-as-ARM policy, and network reachability remain **the consumer's responsibility**. |
 
 ---
