@@ -127,6 +127,18 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 
 See [Public Ingress](public-ingress.md) for the full topology.
 
+### Hosted-agent prerequisites add-on (`deployHostedAgent=true`)
+
+| Resource | Marker | Flag / parameter | Default config |
+|---|---|---|---|
+| Azure AI Project Manager RBAC (Foundry project) | 🟧 | `deployHostedAgent` | Assigned to the deploying principal. Enables downstream agent version registration. |
+| Container Registry Repository Reader RBAC (selected ACR) | 🟧 | `deployHostedAgent` | Assigned to the AI Foundry project managed identity. Enables Foundry to pull the agent image during `azd deploy`. |
+
+!!! note "No new ARM resources"
+    `deployHostedAgent=true` creates role assignments only — no new Azure resources (Container Apps, storage, identities, or otherwise) are provisioned. All existing resources are unchanged.
+
+See [Hosted-Agent Prerequisites](hosted-agent.md) for parameter details, outputs, ACR selection, and the downstream `azd deploy` workflow.
+
 ---
 
 ## Estimated monthly cost — by scenario

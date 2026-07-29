@@ -66,3 +66,15 @@ Current default configuration provisions a single Hello World container app (`or
 | GenAI App Cosmos DB | Cosmos DB Built-in Data Contributor | Jumpbox VM | Read/write Cosmos DB data |
 | Microsoft Foundry Account | Cognitive Services Contributor | Jumpbox VM | Manage Cognitive Services resources |
 | Microsoft Foundry Account | Cognitive Services OpenAI User | Jumpbox VM | Use OpenAI APIs |
+
+## Hosted-Agent Role Assignments
+
+The following assignments are added only when `deployHostedAgent=true` (and `deployAiFoundry=true`). They are prerequisites for the downstream `azure.ai.agent` service during `azd deploy`. No other resources are created or modified.
+
+| Resource | Role | Assignee | Description |
+|---|---|---|---|
+| AI Foundry project | Azure AI Project Manager | Executor (deploying principal) | Allows the deploying principal to register the hosted-agent deployment contract against the Foundry project. |
+| Selected ACR (landing-zone or BYO) | Container Registry Repository Reader | AI Foundry project managed identity | Allows the Foundry project to pull the agent image during `azd deploy`. The dedicated per-agent identity and its pull assignment are created by the downstream `azure.ai.agent` service, not the landing zone. |
+
+!!! note "What the landing zone does not assign"
+    The per-agent managed identity and its runtime role assignments (including ACR pull) are created by the downstream `azure.ai.agent` service during `azd deploy`. See [Hosted-Agent Prerequisites](hosted-agent.md) and the [hosted-agent permissions reference](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup).

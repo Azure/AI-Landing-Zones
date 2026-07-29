@@ -53,6 +53,7 @@ nav:
       - "Permissions": bicep/permissions.md
       - "Parameterization": bicep/parameterization.md
       - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
+      - "Hosted-Agent Prerequisites": bicep/hosted-agent.md
   - Terraform Implementation: terraform/index.md
   - Portal installation: portal/index.md  
 

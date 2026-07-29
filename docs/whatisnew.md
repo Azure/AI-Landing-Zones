@@ -1,5 +1,9 @@
 # What's New
 
+## 29th July 2026
+
+**`deployHostedAgent` — accelerator-neutral hosted-agent prerequisites.** New opt-in parameter (`false` by default) that readies an AI Landing Zone for a downstream Microsoft Foundry hosted-agent deployment without changing the existing resource graph. When enabled, the landing zone adds only generic Foundry-project and ACR RBAC plus a typed `HOSTED_AGENT_DEPLOYMENT` handoff for the downstream `azure.ai.agent` service. No Container Apps, agent versions, admin panels, or existing workload resources are created, modified, or suppressed. See [Hosted-Agent Prerequisites](bicep/hosted-agent.md). Related: [bicep-ptn-aiml-landing-zone PR #121](https://github.com/Azure/bicep-ptn-aiml-landing-zone/pull/121).
+
 ## 19th May 2026
 - **AI Landing Zones Bicep v2.0.2 released.** Hotfix for a v2.0.0 regression that caused `azd provision` to fail mid-deployment with `InvalidTemplate: 'databaseAccount_privateEndpoints[0]' / 'keyVault_privateEndpoints[0]' ... 'reference' is not valid: all function arguments should be string literals.` whenever `networkIsolation=false` was combined with the default `deployAiFoundry=true`. The fix gates the AI Foundry private-endpoint subnet on `_networkIsolation`, mirroring an existing sibling pattern in the same file. No behavior change for the `networkIsolation=true` (Zero Trust) topology. Release: [v2.0.2](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.2).
 - **AI Landing Zones Bicep v2.0.1 released.** Hotfix for a v2.0.0 regression in the AI Foundry account private-endpoint emission that caused `azd provision` to fail with `InvalidTemplate: 'The resource 'Microsoft.Resources/deployments/module.account.pe.<name>' is not defined in the template'` during template validation. Single-line fix; no behavior change for any topology. Release: [v2.0.1](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.1).
