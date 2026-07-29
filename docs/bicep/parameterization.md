@@ -87,9 +87,9 @@ These parameters are consumed only when `deployHostedAgent=true`. They define th
 | `hostedAgent.name` | `''` | Stable hosted-agent name. Reusing this name creates a new immutable version. |
 | `hostedAgent.image` | `''` | Repository path inside the selected ACR, without tag or digest (e.g. `agents/my-agent`). |
 | `hostedAgent.version` | `''` | Immutable OCI digest in `sha256:<64 hex characters>` form. Mutable tags are rejected by preflight. |
-| `hostedAgent.startupCommand` | `''` | Command that starts the agent server. Maps to `startupCommand` in the `azure.ai.agent` service contract. |
-| `hostedAgent.runtime.cpu` | `'1'` | CPU allocation (e.g. `1`, `500m`). Maps to `container.resources`. |
-| `hostedAgent.runtime.memory` | `'1Gi'` | Memory allocation (e.g. `1Gi`, `512Mi`). Maps to `container.resources`. |
+| `hostedAgent.startupCommand` | `''` | Command that starts the agent server. Optional per the `azure.ai.agent` service contract. Maps to `startupCommand` in the downstream service definition. |
+| `hostedAgent.runtime.cpu` | `'1'` | CPU allocation in cores (range 0.25–4.0, e.g. `0.5` or `1`). Maps to `container.resources`. |
+| `hostedAgent.runtime.memory` | `'1Gi'` | Memory allocation (range 0.5Gi–8Gi, e.g. `0.5Gi` or `1Gi`). Maps to `container.resources`. |
 | `hostedAgent.protocols` | `[{ protocol: 'responses', version: '2.0.0' }]` | Invocation protocols. Each entry has a `protocol` (`responses` \| `invocations` \| `invocations_ws` \| `a2a`) and an optional `version` string. |
 
 ### Existing ACR (when `deployContainerRegistry=false`)

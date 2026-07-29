@@ -6,12 +6,12 @@ The `deployHostedAgent` flag readies an AI Landing Zone for a downstream Microso
 
 ## What the flag does and does not do
 
-When `deployHostedAgent` is `false` (the default), the compiled resource graph is identical to a deployment without the flag. No RBAC changes; no additional outputs; complete backward compatibility.
+When `deployHostedAgent` is `false` (the default), the compiled resource graph is identical to a deployment without the flag. RBAC is unchanged. All hosted-agent outputs are still emitted but resolve to disabled/empty values (`false`, empty strings, or `null`). Complete backward compatibility.
 
 When `deployHostedAgent` is `true`, the landing zone adds exactly two infrastructure changes:
 
-1. **Azure AI Project Manager** on the AI Foundry project — assigned to the deploying principal so it can register the deployment contract against the project.
-2. **Container Registry Repository Reader** on the selected ACR — assigned to the AI Foundry project's managed identity so Foundry can pull the agent image during `azd deploy`.
+1. **Azure AI Project Manager** on the AI Foundry project — assigned to the deploying principal to enable downstream agent deployment against the project.
+2. **Container Registry Repository Reader** on the selected ACR — assigned to the AI Foundry project's managed identity to provide deployment-time repository read access so Foundry can pull the agent image during `azd deploy`.
 
 These additions come on top of the existing resource graph. Nothing is removed, suppressed, or reordered.
 
@@ -20,6 +20,7 @@ These additions come on top of the existing resource graph. Nothing is removed, 
     - Does **not** create any Container App — neither a workload replacement nor an admin panel.
     - Does **not** modify `containerAppsList`, Container Apps Environment, Cosmos DB, Storage, AI Search, App Configuration, or any other existing resource.
     - Does **not** emit App Configuration keys for the agent.
+    - Does **not** assign the per-agent runtime identity's ACR pull role — the `azure.ai.agent` service assigns **AcrPull** to that per-agent identity during `azd deploy`.
     - Workload topology remains entirely under the existing parameters.
 
 The data-plane operations — creating the immutable agent version, the dedicated per-agent identity, the invocation endpoint, and that identity's ACR pull assignment — are performed by the downstream `azure.ai.agent` service during `azd deploy`. See the official [hosted-agent `azure.yaml` reference](https://learn.microsoft.com/azure/foundry/agents/concepts/azure-yaml-reference#azureaiagent-service) and the [pre-built image workflow](https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry#deploy-a-pre-built-image).
@@ -51,9 +52,9 @@ Typed handoff consumed by the downstream `azure.ai.agent` service. Values are va
 | `name` | Yes | Stable hosted-agent name. Reusing the same name in a later deployment creates a new immutable version under that name. |
 | `image` | Yes | Repository path inside the selected ACR, **without** a tag or digest (e.g. `agents/my-agent`). |
 | `version` | Yes | Immutable OCI digest in `sha256:<64 hex characters>` form. Mutable tags are rejected by preflight because Foundry versions are immutable by design. |
-| `startupCommand` | Yes | Command that starts the agent server. Maps to `startupCommand` in the [`azure.ai.agent` service contract](https://learn.microsoft.com/azure/foundry/agents/concepts/azure-yaml-reference#azureaiagent-service). |
-| `runtime.cpu` | Yes | CPU allocation (`1`, `500m`, etc.). Maps to `container.resources` in `azure.ai.agent`. |
-| `runtime.memory` | Yes | Memory allocation (`1Gi`, `512Mi`, etc.). Maps to `container.resources` in `azure.ai.agent`. |
+| `startupCommand` | No | Command that starts the agent server. Optional per the [`azure.ai.agent` service contract](https://learn.microsoft.com/azure/foundry/agents/concepts/azure-yaml-reference#azureaiagent-service). |
+| `runtime.cpu` | Yes | CPU allocation in cores (range 0.25–4.0, e.g. `0.5` or `1`). Maps to `container.resources` in `azure.ai.agent`. |
+| `runtime.memory` | Yes | Memory allocation (range 0.5Gi–8Gi, e.g. `0.5Gi` or `1Gi`). Maps to `container.resources` in `azure.ai.agent`. |
 | `protocols` | Yes | One or more invocation-protocol entries. Each entry has a `protocol` (`responses` \| `invocations` \| `invocations_ws` \| `a2a`) and an optional `version` string. |
 
 ```json
@@ -197,7 +198,7 @@ Reference: [hosted-agent `azure.yaml` reference](https://learn.microsoft.com/azu
 
 ## Private-registry compatibility gate
 
-Microsoft Learn documents a Foundry-project creation-date condition that determines whether a fully private ACR (public access disabled + private endpoint only) is supported:
+Microsoft Learn documents a Foundry-project creation-date condition that determines whether a fully private ACR (public access disabled + private endpoint only) is supported. This is stated on the [hosted-agent permissions and virtual-network limitations](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup) reference page:
 
 | Foundry project created | Private-endpoint-only ACR support |
 |---|---|
@@ -207,9 +208,7 @@ Microsoft Learn documents a Foundry-project creation-date condition that determi
 !!! warning "Check your project's creation date before going live"
     If your AI Foundry project predates June 25, 2026 and you are using a private-endpoint-only registry, either keep the registry's public endpoint enabled or migrate to a new Foundry project created after June 25, 2026.
 
-References:
-- [Deploy a hosted agent from a private Azure Container Registry](https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry) — full private-ACR deployment guide including the creation-date limitation
-- [Hosted-agent permissions — Azure resource setup](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup) — role assignments and network requirements
+Reference: [Hosted-agent permissions — Azure resource setup (virtual-network limitations)](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup)
 
 ---
 
@@ -217,10 +216,14 @@ References:
 
 See [Permissions](permissions.md#hosted-agent-role-assignments) for the complete table. In summary:
 
-| Resource | Role | Assignee |
-|---|---|---|
-| AI Foundry project | Azure AI Project Manager | Deploying principal (executor) |
-| Selected ACR | Container Registry Repository Reader | AI Foundry project managed identity |
+| Resource | Role | Assignee | Purpose |
+|---|---|---|---|
+| AI Foundry project | Azure AI Project Manager | Deploying principal (executor) | Enables downstream agent deployment against the project |
+| Selected ACR | Container Registry Repository Reader | AI Foundry project managed identity | Deployment-time repository read access so Foundry can pull the agent image during `azd deploy` |
+| Selected ACR | AcrPull | Per-agent managed identity (created by `azure.ai.agent`) | Runtime image pull — assigned by the downstream service, not the landing zone |
+
+!!! note "Per-agent identity and AcrPull are downstream responsibilities"
+    The per-agent managed identity and its **AcrPull** role assignment are created by the `azure.ai.agent` service during `azd deploy`. The landing zone does not create or manage them.
 
 ---
 
