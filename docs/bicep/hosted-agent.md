@@ -197,7 +197,19 @@ Reference: [hosted-agent `azure.yaml` reference](https://learn.microsoft.com/azu
 
 ## Private-registry compatibility gate
 
-Microsoft documents a Foundry-project creation-date condition that affects private-registry support for hosted agents. Verify the current status against the [private ACR deployment guide](https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry) and the [hosted-agent permissions reference](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup) before going live with a private-registry deployment.
+Microsoft Learn documents a Foundry-project creation-date condition that determines whether a fully private ACR (public access disabled + private endpoint only) is supported:
+
+| Foundry project created | Private-endpoint-only ACR support |
+|---|---|
+| **After June 25, 2026** | ✅ Supported — public access may be disabled; Foundry pulls exclusively through the private endpoint. |
+| **Before June 25, 2026** | ⚠️ Not supported — the registry must remain reachable over its public endpoint. Disabling public access will cause the hosted-agent pull to fail at `azd deploy` time. |
+
+!!! warning "Check your project's creation date before going live"
+    If your AI Foundry project predates June 25, 2026 and you are using a private-endpoint-only registry, either keep the registry's public endpoint enabled or migrate to a new Foundry project created after June 25, 2026.
+
+References:
+- [Deploy a hosted agent from a private Azure Container Registry](https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry) — full private-ACR deployment guide including the creation-date limitation
+- [Hosted-agent permissions — Azure resource setup](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup) — role assignments and network requirements
 
 ---
 
