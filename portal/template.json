@@ -2384,7 +2384,8 @@
         "privatelink.cognitiveservices.azure.com" : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
         "privatelink.vaultcore.azure.net": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
         "privatelink.documents.azure.com": "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
-        "[format('privatelink.blob.{0}', environment().suffixes.storage)]"  : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]"
+        "[format('privatelink.blob.{0}', environment().suffixes.storage)]"  : "[if(variables('deployPdnsAndPe'), resourceGroup().name, '')]",
+        "privatelink.search.windows.net": ""
       }
     },
     "includeAssociatedResources": {
