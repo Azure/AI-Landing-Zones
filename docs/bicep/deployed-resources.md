@@ -131,7 +131,7 @@ See [Public Ingress](public-ingress.md) for the full topology.
 
 | Resource | Marker | Flag / parameter | Default config |
 |---|---|---|---|
-| Azure AI Project Manager RBAC (Foundry project) | 🟧 | `deployHostedAgent` | Assigned to the deploying principal. Enables downstream agent deployment against the Foundry project. |
+| Foundry Project Manager RBAC (Foundry project) | 🟧 | `deployHostedAgent` | Assigned to the deploying principal. Enables downstream agent deployment against the Foundry project. |
 | Container Registry Repository Reader RBAC (selected ACR) | 🟧 | `deployHostedAgent` | Assigned to the AI Foundry project managed identity. Provides deployment-time repository read access during `azd deploy`. |
 
 !!! note "No new service or workload resources"

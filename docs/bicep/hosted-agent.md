@@ -10,7 +10,7 @@ When `deployHostedAgent` is `false` (the default), the compiled resource graph i
 
 When `deployHostedAgent` is `true`, the landing zone adds exactly two infrastructure changes:
 
-1. **Azure AI Project Manager** on the AI Foundry project — assigned to the deploying principal to enable downstream agent deployment against the project.
+1. **Foundry Project Manager** on the AI Foundry project — assigned to the deploying principal to enable downstream agent deployment against the project.
 2. **Container Registry Repository Reader** on the selected ACR — assigned to the AI Foundry project's managed identity to provide deployment-time repository read access so Foundry can pull the agent image during `azd deploy`.
 
 These additions come on top of the existing resource graph. Nothing is removed, suppressed, or reordered.
@@ -218,9 +218,14 @@ See [Permissions](permissions.md#hosted-agent-role-assignments) for the complete
 
 | Resource | Role | Assignee | Purpose |
 |---|---|---|---|
-| AI Foundry project | Azure AI Project Manager | Deploying principal (executor) | Enables downstream agent deployment against the project |
+| AI Foundry project | Foundry Project Manager | Deploying principal (executor) | Enables downstream agent deployment against the project |
 | Selected ACR | Container Registry Repository Reader | AI Foundry project managed identity | Deployment-time repository read access so Foundry can pull the agent image during `azd deploy` |
 | Selected ACR | AcrPull | Per-agent managed identity (created by `azure.ai.agent`) | Runtime image pull — assigned by the downstream service, not the landing zone |
+
+The `hostedAgent` input intentionally has no `roles` field. Arbitrary role-name
+lists fail preflight instead of being silently ignored. After `azd deploy`
+creates the dedicated agent identity, assign explicit least-privilege role
+definition IDs for any external resources that identity needs.
 
 !!! note "Per-agent identity and AcrPull are downstream responsibilities"
     The per-agent managed identity and its **AcrPull** role assignment are created by the `azure.ai.agent` service during `azd deploy`. The landing zone does not create or manage them.

@@ -73,7 +73,7 @@ The following assignments are added only when `deployHostedAgent=true` (and `dep
 
 | Resource | Role | Assignee | Description |
 |---|---|---|---|
-| AI Foundry project | Azure AI Project Manager | Executor (deploying principal) | Enables downstream agent deployment against the Foundry project. |
+| AI Foundry project | Foundry Project Manager | Executor (deploying principal) | Enables downstream agent deployment against the Foundry project. |
 | Selected ACR (landing-zone or BYO) | Container Registry Repository Reader | AI Foundry project managed identity | Deployment-time repository read access: allows Foundry to pull the agent image during `azd deploy`. |
 | Selected ACR (landing-zone or BYO) | AcrPull | Per-agent managed identity (created by `azure.ai.agent`) | Runtime image pull for the running agent. Assigned by the downstream `azure.ai.agent` service, not by the landing zone. |
 
