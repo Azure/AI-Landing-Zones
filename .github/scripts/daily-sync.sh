@@ -26,7 +26,7 @@ UI_LABEL="${UI_LABEL:-ui-decision}"
 
 # Static region list — update manually when Azure adds new region support
 # for all required services (AI Services, AI Search, Container Apps,
-# Cosmos DB, Container Registry, App Configuration, Key Vault, Compute).
+# Cosmos DB, Container Registry, App Configuration, Key Vault, and zonal Compute).
 SUPPORTED_REGIONS=(
   australiaeast
   eastus

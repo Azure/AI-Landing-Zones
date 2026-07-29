@@ -50,6 +50,25 @@ The AI Landing Zone cover the following design areas which are across the Cloud 
 
 ![image](/media/AI-Landing-Zone-design-area-checklist.png)
 
+Current Azure Regions that support a full ALZ deployment are:
+- australiaeast
+- eastus
+- francecentral
+- germanywestcentral
+- japaneast
+- koreacentral
+- norwayeast
+- polandcentral
+- southafricanorth
+- southeastasia
+- spaincentral
+- swedencentral
+- switzerlandnorth
+- uaenorth
+- uksouth
+
+This list is based on co-availability of all required services (AI Services, AI Search, Container Apps, Cosmos DB, Container Registry, App Configuration, Key Vault, and zonal Compute) in each region.  Partial deployments in regions that do not support full deployment are not supported.
+
 ## Use cases & Scenarios
 The AI Landing Zone act as a foundation architecture which can be leveraged to deploy a particular AI usecase & scenario on Azure, such as the below, either with its default architecture or by extending it with additional Azure services as needed.
 
