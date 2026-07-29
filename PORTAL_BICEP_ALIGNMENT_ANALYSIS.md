@@ -58,17 +58,34 @@ az bicep build --file modules/ai-foundry/main.bicep --outfile portal/wrappers/av
 
 ---
 
-## Phase 2 — Deferred (UI Decisions Required)
+## Phase 2 — UI Decisions (Resolved)
 
-| ID | Item | Decision Needed |
-|----|------|-----------------|
-| A | AI Foundry project name parameterization | Add form field or keep hardcoded default? |
-| B | App runtime configuration mode (`none`) | Add mode selector dropdown? |
-| C | Capacity Host wait timeout exposure | Surface in Advanced settings? |
-| D | DNS Zone Link Suffix for multi-spoke | Add to networking step? |
-| E | Additional ACR Task Build FQDNs | Add repeating text field? |
-| F | Standalone AI Search removal (Foundry bundles its own) | Remove duplicate module? |
-| G | Container App workload profile selection | Add profile picker dropdown? |
+| ID | Item | Decision | Status |
+|----|------|----------|--------|
+| A | AI Foundry project name parameterization | ✅ Added TextBox to AI Services step | **Implemented** |
+| B | App runtime configuration mode (`none`) | Keep as-is — existing `deployContainerAppEnv` toggle covers this | **Skipped** |
+| C | Capacity Host wait timeout exposure | Keep as-is — not a template parameter, CI/deployment concern only | **Skipped** |
+| D | DNS Zone Link Suffix for multi-spoke | Keep as-is — Portal naming is already unique per deployment | **Skipped** |
+| E | Additional ACR Task Build FQDNs | Keep as-is — Portal doesn't deploy ACR Task agent pool; post-deploy config | **Skipped** |
+| F | Standalone AI Search removal (Foundry bundles its own) | ✅ Removed duplicate module, wrapper files, and all references | **Implemented** |
+| G | Container App workload profile selection | ✅ Added DropDown to AI Services step (D4–E16 options) | **Implemented** |
+
+### Phase 2 Implementation Details
+
+**Item A — AI Foundry Project Name:**
+- `form.json`: Added `aiFoundryProjectName` TextBox (first element in AI Services step)
+- `template.json`: Added `aiFoundryProjectName` parameter; replaced hardcoded `"aifoundry-default-project"` with parameterized value
+- Wrapper appends unique suffix automatically via `res.ai-foundry.json`
+
+**Item F — Standalone AI Search Removal:**
+- Removed ~303 lines from `template.json` (deployment, PE, DNS zone, conditions, variables)
+- Removed 35 lines from `form.json` (toggle + output)
+- Deleted `portal/wrappers/avm.res.search.search-service.json` (2,840 lines)
+- Deleted `portal/wrappers/res.ai-foundry-connection-search.json` (63 lines)
+
+**Item G — Container App Workload Profile:**
+- `form.json`: Added `containerAppWorkloadProfile` DropDown (last element in AI Services step)
+- `template.json`: Added `containerAppWorkloadProfile` parameter with `allowedValues`; replaced hardcoded `"D4"` with parameterized value
 
 ---
 
@@ -80,6 +97,7 @@ az bicep build --file modules/ai-foundry/main.bicep --outfile portal/wrappers/av
 
 ## Next Steps
 
-1. Recompile AVM wrappers from upstream v2.3.0 source
-2. Resolve Phase 2 UI decisions with stakeholders
+1. Recompile AVM wrappers from upstream v2.3.0 source (fixes PE name collision + search replica count)
+2. Re-enable maintenance toggles after upstream fix (see `context/upstream-bug-maintenance-config.md`)
 3. Full deployment validation in test subscription
+4. Get `daily-sync.yml` merged to `main` branch for cron activation

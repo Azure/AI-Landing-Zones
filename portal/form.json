@@ -154,26 +154,18 @@
           "label": "AI Services Configuration",
           "elements": [
             {
-              "name": "deployAiSearch",
-              "type": "Microsoft.Common.OptionsGroup",
-              "label": "Deploy AI Search",
-              "defaultValue": "Yes",
-              "toolTip": "Deploy Azure AI Search service",
+              "name": "aiFoundryProjectName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "AI Foundry Project Name",
+              "defaultValue": "aifoundry-project",
+              "toolTip": "Name for the AI Foundry project. This will be combined with a unique suffix to form the final resource name.",
+              "placeholder": "e.g. aifoundry-project",
               "constraints": {
-                "allowedValues": [
-                  {
-                    "label": "Yes",
-                    "value": "true"
-                  },
-                  {
-                    "label": "No",
-                    "value": "false"
-                  }
-                ],
-                "required": "true"
+                "required": true,
+                "regex": "^[a-zA-Z0-9][a-zA-Z0-9-]{1,30}[a-zA-Z0-9]$",
+                "validationMessage": "Must be 3-32 characters, alphanumeric and hyphens only, cannot start or end with a hyphen."
               },
-              "visible": "true"
-
+              "visible": true
             },
             {
               "name": "deployGroundingWithBing",
@@ -258,6 +250,47 @@
                 "required": "true"
               },
               "visible": "true"
+            },
+            {
+              "name": "containerAppWorkloadProfile",
+              "type": "Microsoft.Common.DropDown",
+              "label": "Container App Workload Profile",
+              "defaultValue": "D4 (4 vCPU, 16 GB RAM)",
+              "toolTip": "Select the workload profile type for the Container Apps environment. This determines the compute resources available to your container apps.",
+              "constraints": {
+                "allowedValues": [
+                  {
+                    "label": "D4 (4 vCPU, 16 GB RAM)",
+                    "value": "D4"
+                  },
+                  {
+                    "label": "D8 (8 vCPU, 32 GB RAM)",
+                    "value": "D8"
+                  },
+                  {
+                    "label": "D16 (16 vCPU, 64 GB RAM)",
+                    "value": "D16"
+                  },
+                  {
+                    "label": "D32 (32 vCPU, 128 GB RAM)",
+                    "value": "D32"
+                  },
+                  {
+                    "label": "E4 (4 vCPU, 32 GB RAM - Memory Optimized)",
+                    "value": "E4"
+                  },
+                  {
+                    "label": "E8 (8 vCPU, 64 GB RAM - Memory Optimized)",
+                    "value": "E8"
+                  },
+                  {
+                    "label": "E16 (16 vCPU, 128 GB RAM - Memory Optimized)",
+                    "value": "E16"
+                  }
+                ],
+                "required": true
+              },
+              "visible": true
             }
           ]
         },
@@ -521,7 +554,7 @@
                 "type": "Microsoft.Common.OptionsGroup",
                 "label": "Enable Automated Maintenance for Jump VM",
                 "defaultValue": "No",
-                "toolTip": "Enable automated maintenance configuration for the Jump VM. This configures scheduled patching and updates for the Windows VM.",
+                "toolTip": "Disabled: maintenance configuration assignment is not supported for non-isolated VM SKUs in the current AVM wrapper (see upstream issue).",
                 "constraints": {
                   "allowedValues": [
                     {
@@ -535,7 +568,7 @@
                   ],
                   "required": true
                 },
-                "visible": "[equals(steps('devops').deployJumpVm, 'true')]"
+                "visible": false
             },
             {
                 "name": "buildVmSkuSize",
@@ -567,7 +600,7 @@
                 "type": "Microsoft.Common.OptionsGroup",
                 "label": "Enable Automated Maintenance for Build VM",
                 "defaultValue": "No",
-                "toolTip": "Enable automated maintenance configuration for the Build VM. This configures scheduled patching and updates for the Linux VM.",
+                "toolTip": "Disabled: maintenance configuration assignment is not supported for non-isolated VM SKUs in the current AVM wrapper (see upstream issue).",
                 "constraints": {
                   "allowedValues": [
                     {
@@ -581,7 +614,7 @@
                   ],
                   "required": true
                 },
-                "visible": "[equals(steps('devops').deployBuildVm, 'true')]"
+                "visible": false
             }
           ]
         },
@@ -934,17 +967,6 @@
               "visible": "[equals(steps('basics').platformLandingZone, 'true')]"
             },
             {
-              "name": "searchPrivateDnsZone",
-              "type": "Microsoft.Solutions.ResourceSelector",
-              "label": "Select Azure Private DNS Zone for Azure AI Search",
-              "resourceType": "Microsoft.network/privateDnsZones",
-              "toolTip": "Select an existing DNS zone for Azure AI Search private endpoints",
-              "constraints": {
-                "required": "[equals(steps('basics').platformLandingZone, 'true')]"
-              },
-              "visible": "[equals(steps('basics').platformLandingZone, 'true')]"
-            },
-            {
               "name": "cosmosSqlPrivateDnsZone",
               "type": "Microsoft.Solutions.ResourceSelector",
               "label": "Select Azure Private DNS Zone for Azure Cosmos DB",
@@ -1071,7 +1093,6 @@
           "keyVault": "[equals(steps('aiServices').deployKeyVault, 'true')]",
           "logAnalytics": "[equals(steps('monitoring').deployLogAnalytics, 'true')]",
           "peNsg": "[and( equals(steps('basics').platformLandingZone, 'false'),or(equals(steps('networking').createSubnets, 'true'),  equals(steps('networking').deployVnet, 'true') ))]",
-          "searchService": "[equals(steps('aiServices').deployAiSearch, 'true')]",
           "storageAccount": "[equals(steps('aiServices').deployStorageAccount, 'true')]",
           "virtualNetwork": "[equals(steps('networking').deployVnet, 'true')]",
           "bastionNsg": "[and(equals(steps('basics').platformLandingZone, 'false'), equals(steps('networking').deployVnet, 'true'))]"
@@ -1098,8 +1119,8 @@
         "vmPassword": "[coalesce(steps('devops').adminPassword, '')]",
         "vmSize": "[coalesce(steps('devops').jumpVmSkuSize, 'Standard_D4as_v5')]",
         "buildVmSize": "[coalesce(steps('devops').buildVmSkuSize, 'Standard_D4as_v5')]",
-        "jumpVmMaintenanceDefinition": "[if(equals(steps('devops').enableJumpVmMaintenance, 'true'), parse('{\"maintenanceScope\":\"InGuestPatch\",\"rebootSetting\":\"IfRequired\",\"duration\":\"03:00\",\"recurEvery\":\"1Week Saturday\",\"startDateTime\":\"2024-06-15 22:00\",\"timeZone\":\"UTC\",\"extensionProperties\":{\"InGuestPatchMode\":\"User\"}}'), parse('{}'))]",
-        "buildVmMaintenanceDefinition": "[if(equals(steps('devops').enableBuildVmMaintenance, 'true'), parse('{\"maintenanceScope\":\"InGuestPatch\",\"rebootSetting\":\"IfRequired\",\"duration\":\"03:00\",\"recurEvery\":\"1Week Sunday\",\"startDateTime\":\"2024-06-16 22:00\",\"timeZone\":\"UTC\",\"extensionProperties\":{\"InGuestPatchMode\":\"User\"}}'), parse('{}'))]",
+        "jumpVmMaintenanceDefinition": "[parse('{}')]",
+        "buildVmMaintenanceDefinition": "[parse('{}')]",
         "existingVnetName": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.name, '')]",
         "existingVnetId": "[if(equals(steps('networking').deployVnet, 'false'), steps('networking').existingVnet.id, '')]",
         "appGwPrivateIp" : "[coalesce(steps('networking').appGwPrivateIp, '')]",
@@ -1109,7 +1130,6 @@
           "cognitiveservicesZoneId": "[coalesce(steps('networking').cognitiveServicesPrivateDnsZone.id, '')]",
           "openaiZoneId": "[coalesce(steps('networking').openaiPrivateDnsZone.id, '')]",
           "aiServicesZoneId": "[coalesce(steps('networking').aiServicesPrivateDnsZone.id, '')]",
-          "searchZoneId": "[coalesce(steps('networking').searchPrivateDnsZone.id, '')]",
           "cosmosSqlZoneId": "[coalesce(steps('networking').cosmosSqlPrivateDnsZone.id, '')]",
           "blobZoneId": "[coalesce(steps('networking').blobPrivateDnsZone.id, '')]",
           "keyVaultZoneId": "[coalesce(steps('networking').keyVaultPrivateDnsZone.id, '')]",
@@ -1122,7 +1142,9 @@
             "Project": "AI-ML-Landing-Zone",
             "DeployedBy": "UI-Form",
             "BaseName": "[steps('basics').baseName]"
-        }
+        },
+        "aiFoundryProjectName": "[steps('aiServices').aiFoundryProjectName]",
+        "containerAppWorkloadProfile": "[steps('aiServices').containerAppWorkloadProfile]"
       }
     }
   }

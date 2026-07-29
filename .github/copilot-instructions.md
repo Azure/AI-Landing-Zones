@@ -153,13 +153,18 @@ This repository uses an automated agent workflow to keep the Portal deployment a
    - Update `PORTAL_BICEP_ALIGNMENT_ANALYSIS.md` with current alignment status
    - Commit context snapshots to `context/` for future diffing
 
-8. **Validate supported regions** — Verify the `allowedValues` region list in `form.json` remains accurate:
-   - Query Azure for `text-embedding-3-large` model availability with Standard SKU across all recommended regions (this is the most restrictive constraint)
-   - Verify the intersection with Container Apps (`Microsoft.App/managedEnvironments`), AI Search (`Microsoft.Search/searchServices`), Cognitive Services (`Microsoft.CognitiveServices/accounts`), Cosmos DB (`Microsoft.DocumentDB/databaseAccounts`), and Container Registry (`Microsoft.ContainerRegistry/registries`)
-   - Compare the resulting region set against the current `allowedValues` in `form.json` → `resourceScope.location`
-   - If regions have been added or removed, update the `allowedValues` array in `form.json`
-   - Log any region changes to `PORTAL_BICEP_ALIGNMENT_ANALYSIS.md`
-   - This step requires no human input — region changes are data-driven and automatic
+8. **Region list (static)** — The supported region list is maintained as a static set in both `form.json` (the `allowedValues` array) and `.github/scripts/daily-sync.sh` (the `SUPPORTED_REGIONS` variable). The current list is:
+   `australiaeast`, `eastus`, `francecentral`, `germanywestcentral`, `japaneast`, `koreacentral`, `norwayeast`, `polandcentral`, `southafricanorth`, `southeastasia`, `spaincentral`, `swedencentral`, `switzerlandnorth`, `uaenorth`, `uksouth`
+   - When Azure adds new region support for all required services, update both locations manually
+   - Do not perform live Azure API queries during the daily sync — the region list is refreshed manually
+   - The daily sync script validates that the `form.json` region list matches the static list and warns on mismatch
+
+9. **Create GitHub Issues for findings** — The daily sync runs as a GitHub Actions workflow (`.github/workflows/daily-sync.yml`) and creates issues automatically:
+   - **Version drift issue** — Created when `releaseTag` in `template.json` is behind the latest upstream release. Contains a parameter diff, triage checklist, and agent implementation instructions.
+   - **Parameter issues** — One issue per new upstream parameter not yet in the portal template. Each issue asks the user for a UI decision and includes structured agent instructions for implementation.
+   - **Deduplication** — Before creating any issue, the script checks for existing open issues with the `portal-sync` label and matching title. No duplicates are created.
+   - **Labels** — Issues are labeled `portal-sync` and `ui-decision`. After triage, auto-resolvable items can be relabeled `auto-resolved`.
+   - **Agent handoff** — Each issue contains a `🤖 Agent Instructions` section with structured implementation steps. When the user comments their decision, an agent can read the issue and execute the instructions.
 
 #### Decision Authority
 

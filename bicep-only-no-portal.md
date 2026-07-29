@@ -637,7 +637,20 @@ This file tracks features that exist in the Bicep implementation (`Azure/bicep-p
 |--------|-------|
 | Permanent exclusions | 24 |
 | Potentially resolvable | 12 |
-| **Total tracked gaps** | **36** |
+| Blocked by upstream bug | 1 |
+| **Total tracked gaps** | **37** |
+
+---
+
+### 37. VM Maintenance Configuration (`jumpVmMaintenanceDefinition`, `buildVmMaintenanceDefinition`)
+
+| Field | Value |
+|-------|-------|
+| **Bicep Parameter** | `jumpVmMaintenanceDefinition`, `buildVmMaintenanceDefinition` (object) |
+| **Category** | ARM limitation (upstream bug) |
+| **Identified** | v2.3.0 / 2026-07 |
+| **Status** | Blocked — awaiting upstream fix |
+| **Notes** | The compiled AVM wrapper `avm.res.maintenance.maintenance-configuration.json` does not forward `maintenanceScope` (or any scheduling properties) from the outer parameter to its inner nested deployment. The inner template defaults `maintenanceScope` to `"Host"`, which requires isolated/dedicated-host VM SKUs. Non-isolated SKUs (e.g. `Standard_D4as_v5`) fail with error `UnsupportedResourceOperation: Non-Isolated VMs are currently not permitted to opt in to Maintenance`. Both Portal toggles (Jump VM and Build VM) have been hidden and hardcoded to pass `{}` (disabled). Re-enablement steps documented in `context/upstream-bug-maintenance-config.md`. See: https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/TBD |
 
 ---
 
