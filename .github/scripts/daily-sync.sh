@@ -1,6 +1,84 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+HAVE_JQ=0
+if command -v jq >/dev/null 2>&1; then
+  HAVE_JQ=1
+fi
+
+# Extract a top-level field from JSON read from stdin.
+json_stdin_field() {
+  local field="$1"
+  if [[ "$HAVE_JQ" -eq 1 ]]; then
+    jq -r --arg f "$field" '.[$f] // empty'
+  else
+    python -c "import json,sys; field=sys.argv[1]; data=json.load(sys.stdin); value=data.get(field, ''); print('' if value is None else value)" "$field"
+  fi
+}
+
+get_current_tag() {
+  if [[ "$HAVE_JQ" -eq 1 ]]; then
+    jq -r '.variables.releaseTag // empty' "$PORTAL_TEMPLATE"
+  else
+    python - "$PORTAL_TEMPLATE" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path, encoding='utf-8') as f:
+    data = json.load(f)
+print(((data.get('variables') or {}).get('releaseTag')) or '')
+PY
+  fi
+}
+
+get_portal_params() {
+  if [[ "$HAVE_JQ" -eq 1 ]]; then
+    jq -r '.parameters | keys[]' "$PORTAL_TEMPLATE" | sort
+  else
+    python - "$PORTAL_TEMPLATE" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path, encoding='utf-8') as f:
+    data = json.load(f)
+for k in sorted((data.get('parameters') or {}).keys()):
+    print(k)
+PY
+  fi
+}
+
+get_form_regions() {
+  if [[ "$HAVE_JQ" -eq 1 ]]; then
+    jq -r '
+      (((.view.properties.steps // .steps) // [])[0].elements[0]) as $scope
+      | (($scope.location.allowedValues // $scope.resourceScope.location.allowedValues) // [])[]
+    ' "$PORTAL_FORM" 2>/dev/null | sort
+  else
+    python - "$PORTAL_FORM" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+with open(path, encoding='utf-8') as f:
+    data = json.load(f)
+
+steps = (((data.get('view') or {}).get('properties') or {}).get('steps')) or data.get('steps') or []
+regions = []
+if steps and isinstance(steps, list):
+    elements = (steps[0] or {}).get('elements') or []
+    if elements:
+        scope = elements[0] or {}
+        location = (scope.get('location') or ((scope.get('resourceScope') or {}).get('location')) or {})
+        regions = location.get('allowedValues') or []
+
+for r in sorted(regions):
+    print(r)
+PY
+  fi
+}
+
 # =============================================================================
 # Daily Portal-Bicep Sync Check
 #
@@ -52,11 +130,9 @@ validate_regions() {
   echo ""
   echo "--- Region Validation ---"
 
-  FORM_REGIONS=$(jq -r '
-    .steps[0].elements[0].resourceScope.location.allowedValues // [] | .[]
-  ' "$PORTAL_FORM" 2>/dev/null | sort)
+  FORM_REGIONS=$(get_form_regions | tr -d '\r')
 
-  STATIC_REGIONS=$(printf '%s\n' "${SUPPORTED_REGIONS[@]}" | sort)
+  STATIC_REGIONS=$(printf '%s\n' "${SUPPORTED_REGIONS[@]}" | sort | tr -d '\r')
 
   REGION_DIFF=$(diff <(echo "$FORM_REGIONS") <(echo "$STATIC_REGIONS") || true)
 
@@ -72,7 +148,7 @@ validate_regions() {
 # -----------------------------------------------------------------------------
 # Step 1: Get current portal releaseTag
 # -----------------------------------------------------------------------------
-CURRENT_TAG=$(jq -r '.variables.releaseTag // empty' "$PORTAL_TEMPLATE")
+CURRENT_TAG=$(get_current_tag)
 if [[ -z "$CURRENT_TAG" ]]; then
   echo "::error::Could not read releaseTag from $PORTAL_TEMPLATE"
   exit 1
@@ -86,9 +162,9 @@ LATEST_RELEASE=$(curl -sf "${UPSTREAM_API}/releases/latest" \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28")
 
-LATEST_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name // empty')
-LATEST_DATE=$(echo "$LATEST_RELEASE" | jq -r '.published_at // empty')
-LATEST_URL=$(echo "$LATEST_RELEASE" | jq -r '.html_url // empty')
+LATEST_TAG=$(echo "$LATEST_RELEASE" | json_stdin_field 'tag_name')
+LATEST_DATE=$(echo "$LATEST_RELEASE" | json_stdin_field 'published_at')
+LATEST_URL=$(echo "$LATEST_RELEASE" | json_stdin_field 'html_url')
 
 if [[ -z "$LATEST_TAG" ]]; then
   echo "::error::Could not fetch latest release from upstream"
@@ -129,7 +205,7 @@ if [[ -f "${TMPDIR}/main.bicep" ]]; then
 fi
 
 # Extract portal template parameters
-PORTAL_PARAMS=$(jq -r '.parameters | keys[]' "$PORTAL_TEMPLATE" | sort)
+PORTAL_PARAMS=$(get_portal_params)
 
 # -----------------------------------------------------------------------------
 # Step 6: Compute diffs
