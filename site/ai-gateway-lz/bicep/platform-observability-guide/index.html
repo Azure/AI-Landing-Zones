@@ -1,0 +1,1433 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>📊 Platform Observability Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#platform-observability-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              📊 Platform Observability Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-apim-analytics-dashboard-built-in-llm-ai-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. APIM Analytics Dashboard (built-in LLM &amp; AI usage)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. APIM Analytics Dashboard (built-in LLM &amp; AI usage)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-provides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-apim-application-insights-performance-usage-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. APIM → Application Insights (performance &amp; usage monitoring)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. APIM → Application Insights (performance &amp; usage monitoring)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-provides_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-apim-log-analytics-detailed-llm-logs-optional-prompt-auditing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. APIM → Log Analytics (detailed LLM logs + optional prompt auditing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. APIM → Log Analytics (detailed LLM logs + optional prompt auditing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-provides_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cosmos-db-usage-data-power-bi-finops-chargeback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Cosmos DB usage data + Power BI (FinOps &amp; chargeback)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Cosmos DB usage data + Power BI (FinOps &amp; chargeback)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-provides_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it provides
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-the-right-signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing the right signal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="platform-observability-guide">📊 Platform Observability Guide</h1>
+<p>Citadel Governance Hub provides <strong>layered observability</strong> over every AI request that flows through the unified gateway. Because all AI consumption is funneled through Azure API Management (APIM), the hub can observe usage, performance, cost, and — optionally — the full prompt/response content from a <strong>single, central control plane</strong>, without instrumenting individual agents or applications.</p>
+<p>This guide describes the four complementary observability capabilities shipped in the accelerator, how each one is configured in the infrastructure-as-code, and where to look for the data.</p>
+<blockquote>
+<p>💡 <strong>Reading tip:</strong> Each capability starts with a plain-language <strong>"What it provides"</strong> overview for all readers. The deeper <strong>"⚙️ How it is configured in the accelerator"</strong> sections are <strong>collapsed by default</strong> — click to expand them when you need the infrastructure-as-code detail.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Capability</th>
+<th>Primary question it answers</th>
+<th>Data store</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><a href="#1-apim-analytics-dashboard-built-in-llm--ai-usage"><strong>APIM Analytics Dashboard</strong></a></td>
+<td><em>How much are my LLMs / AI services being used?</em></td>
+<td>Azure Monitor metrics</td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="#2-apim--application-insights-performance-monitoring"><strong>APIM → Application Insights</strong></a></td>
+<td><em>Is the gateway healthy and fast?</em></td>
+<td>Application Insights</td>
+</tr>
+<tr>
+<td>3</td>
+<td><a href="#3-apim--log-analytics-detailed-llm-logs--optional-prompt-auditing"><strong>APIM → Log Analytics (<code>ApiManagementGatewayLlmLogs</code>)</strong></a></td>
+<td><em>What exactly was sent and returned?</em></td>
+<td>Log Analytics workspace</td>
+</tr>
+<tr>
+<td>4</td>
+<td><a href="#4-cosmos-db-usage-data--power-bi-finops--chargeback"><strong>Cosmos DB usage data + Power BI</strong></a></td>
+<td><em>Who is spending what, and how do I charge it back?</em></td>
+<td>Cosmos DB → Power BI</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    Client[Agents &amp; Apps] --&gt; APIM[🚪 APIM AI Gateway]
+    APIM --&gt;|emit-metric / llm-emit-token-metric| Metrics[(App Insights Metrics)]
+    APIM --&gt;|applicationinsights diagnostic| AI[(App Insights)]
+    APIM --&gt;|azuremonitor diagnostic| LAW[(Log Analytics&lt;br/&gt;ApiManagementGatewayLlmLogs)]
+    APIM --&gt;|log-to-eventhub| EH[(Event Hub)]
+    EH --&gt; LA[⚡ Usage Ingestion&lt;br/&gt;Logic App]
+    LA --&gt; Cosmos[(Cosmos DB&lt;br/&gt;llm-usage-container)]
+    Cosmos --&gt; PBI[📊 Power BI Dashboard]
+    Metrics --&gt; Portal[Azure Monitor Portal&lt;br/&gt;APIM Analytics]
+    Metrics --&gt; LA
+    AI --&gt; Portal
+    LAW --&gt; Portal</code></pre>
+<hr />
+<h2 id="1-apim-analytics-dashboard-built-in-llm-ai-usage">1. APIM Analytics Dashboard (built-in LLM &amp; AI usage)</h2>
+<h3 id="what-it-provides">What it provides</h3>
+<p>APIM ships with a native <strong>Analytics</strong> experience in the Azure portal (APIM instance → <strong>Monitoring → Analytics</strong>) plus a dedicated <strong>Language Models</strong> view. Because the gateway emits token-level custom metrics on every request, you get out-of-the-box charts for:</p>
+<ul>
+<li>Requests per API, product (access contract), and operation</li>
+<li>Token consumption (prompt / completion / total) per model and per product</li>
+<li>Latency and response-code distribution</li>
+</ul>
+<blockquote>
+<p><img alt="APIM Analytics Dashboard" src="../assets/obs-analytics-llm.png" /></p>
+</blockquote>
+<details>
+<summary>⚙️ <strong>How it is configured in the accelerator</strong> — technical details (click to expand)</summary>
+
+The built-in analytics view is powered by the **APIM Azure Monitor diagnostic settings**, not by the usage policies. The accelerator attaches an `azuremonitor` diagnostic to each inference API that is configured to emit the **logs and metrics related to the generative AI gateway** (requests, tokens, models, throttling). This is what surfaces in the portal's **Analytics → Language Models** experience — no additional configuration is required beyond deploying the hub.
+
+The relevant setting is exposed on each API under **Settings → Azure Monitor**, where the **"Log LLM messages"** toggle controls whether prompt/completion message content is captured alongside the metadata. In infrastructure-as-code this maps to the `largeLanguageModel` block of the `azureMonitorLogSettings` parameter applied by the `azuremonitor` diagnostic ([inference-api.bicep](../bicep/infra/modules/apim/inference-api.bicep), [api.bicep](../bicep/infra/modules/apim/api.bicep)):
+
+<div class="highlight"><pre><span></span><code>resource apiDiagnostics &#39;Microsoft.ApiManagement/service/apis/diagnostics@2024-06-01-preview&#39; = {
+  name: &#39;azuremonitor&#39;
+  properties: {
+    loggerId: apimLoggerId
+    // ...
+    largeLanguageModel: {
+      logs: &#39;enabled&#39;                                          // emit generative-AI gateway logs &amp; metrics
+      requests:  { messages: &#39;all&#39;, maxSizeInBytes: 262144 }   // &quot;Log LLM messages&quot; — prompt content (optional)
+      responses: { messages: &#39;all&#39;, maxSizeInBytes: 262144 }   // &quot;Log LLM messages&quot; — completion content (optional)
+    }
+  }
+}
+</code></pre></div>
+
+> The metadata (token counts, model, deployment, throttling) powers the built-in dashboards regardless of the message toggle. Enabling **"Log LLM messages"** additionally captures prompt/completion content — see [capability 3](#3-apim--log-analytics-detailed-llm-logs--optional-prompt-auditing) for the detailed logs and the data-governance implications of that toggle.
+
+> **Note:** The built-in dashboard shows **aggregated** usage; it does not contain per-request detail or (unless the message toggle is enabled) prompt content. For request-level detail use capability 3, and for cost attribution use capability 4.
+
+> **Related — Application Insights custom metrics.** Separately from the built-in dashboard, the gateway usage policies (`<llm-emit-token-metric>` in [frag-set-llm-usage.xml](../bicep/infra/modules/apim/policies/frag-set-llm-usage.xml), `<azure-openai-emit-token-metric>` in the streaming fragments, and `<emit-metric>` for critical-event alerting in [frag-raise-alert-events.xml](../bicep/infra/modules/apim/policies/frag-raise-alert-events.xml)) ship **custom metrics** to Application Insights. These are described under [capability 2](#2-apim--application-insights-performance-monitoring) and are the recommended target for **alerting** (see the [Throttling & Critical Event Alerting Guide](./throttling-events-handling.md)).
+
+</details>
+
+<hr />
+<h2 id="2-apim-application-insights-performance-usage-monitoring">2. APIM → Application Insights (performance &amp; usage monitoring)</h2>
+<h3 id="what-it-provides_1">What it provides</h3>
+<p>Every inference API is wired to an <strong>Application Insights</strong> diagnostic channel, giving you application performance monitoring (APM) for the gateway itself:</p>
+<ul>
+<li>End-to-end request tracing with <strong>W3C correlation</strong> across the gateway → backend hop</li>
+<li>Failure and dependency analytics, live metrics, and the <em>Application Map</em></li>
+<li>Response times, failure rates, and configurable request/response <strong>header capture</strong></li>
+<li><strong>LLM usage &amp; throttling custom metrics</strong> emitted by the gateway policies — the recommended target for <strong>alerting</strong></li>
+<li>Optional pre-built Azure portal dashboards</li>
+</ul>
+<blockquote>
+<p><img alt="APIM Application Insights" src="../assets/obs-app-ins-appmap.png" /></p>
+</blockquote>
+<details>
+<summary>⚙️ <strong>How it is configured in the accelerator</strong> — technical details (click to expand)</summary>
+
+**Logger + credential handling.** The accelerator provisions an APIM logger named `appinsights-logger`. Following Microsoft's guidance, the Application Insights connection string is **not** embedded in the logger resource. Instead it is stored as a Key Vault secret and exposed to APIM through a named value resolved with the APIM user-assigned managed identity (auto-refreshed on rotation):
+
+<div class="highlight"><pre><span></span><code>// bicep/infra/modules/apim/apim.bicep
+var appInsightsConnectionStringSecretName = &#39;apim-appinsights-connection-string&#39;   // Key Vault secret
+var appInsightsLoggerCredentialsNamedValueName = &#39;appinsights-logger-credentials&#39;  // APIM named value → secret
+</code></pre></div>
+
+**Per-API diagnostic.** Each inference API attaches an `applicationinsights` diagnostic with verbose logging, client-IP logging, metrics, and 100% fixed sampling ([inference-api.bicep](../bicep/infra/modules/apim/inference-api.bicep), [api.bicep](../bicep/infra/modules/apim/api.bicep)):
+
+<div class="highlight"><pre><span></span><code>resource apiDiagnosticsAppInsights &#39;Microsoft.ApiManagement/service/apis/diagnostics@2022-08-01&#39; = {
+  name: &#39;applicationinsights&#39;
+  properties: {
+    alwaysLog: &#39;allErrors&#39;
+    httpCorrelationProtocol: &#39;W3C&#39;
+    logClientIp: true
+    metrics: true
+    verbosity: &#39;verbose&#39;
+    sampling: { samplingType: &#39;fixed&#39;, percentage: 100 }
+    // frontend/backend header + body capture from appInsightsLogSettings
+  }
+}
+</code></pre></div>
+
+**Header capture** is controlled by the `appInsightsLogSettings` parameter. By default a curated set of correlation and rate-limit headers is captured, with no request body:
+
+<div class="highlight"><pre><span></span><code>param appInsightsLogSettings object = {
+  headers: [ &#39;Content-type&#39;, &#39;User-agent&#39;, &#39;x-ms-region&#39;,
+             &#39;x-ratelimit-remaining-tokens&#39;, &#39;x-ratelimit-remaining-requests&#39; ]
+  body: { bytes: 0 }
+}
+</code></pre></div>
+
+**LLM usage & alerting custom metrics.** In addition to request telemetry, the gateway usage policies emit **custom metrics** into this Application Insights component. `<llm-emit-token-metric>` ([frag-set-llm-usage.xml](../bicep/infra/modules/apim/policies/frag-set-llm-usage.xml), namespace `llm-usage`), while `<emit-metric>` in [frag-raise-alert-events.xml](../bicep/infra/modules/apim/policies/frag-raise-alert-events.xml) publishes critical-event alerts — throttling (`429`), backend failures (`5xx`), authorization failures, content-safety blocks, and PII failures (metric `AI Gateway Alert`, namespace `ai-gateway-alerts`, sliced by an `alertType` dimension):
+
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;llm-emit-token-metric</span><span class="w"> </span><span class="na">namespace=</span><span class="s">&quot;llm-usage&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;productName&quot;</span><span class="w">    </span><span class="na">value=</span><span class="s">&quot;@(context.Product?.Name ?? &quot;</span><span class="err">Portal-Admin&quot;)&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;deploymentName&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;@((string)context.Variables.GetValueOrDefault&lt;string&gt;(&quot;</span><span class="err">requestedModel&quot;,&quot;NA&quot;))&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;appId&quot;</span><span class="w">          </span><span class="na">value=</span><span class="s">&quot;@((string)context.Variables.GetValueOrDefault&lt;string&gt;(&quot;</span><span class="err">appId&quot;,&quot;NA&quot;))&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- up to 6 custom dimensions supported --&gt;</span>
+<span class="nt">&lt;/llm-emit-token-metric&gt;</span>
+</code></pre></div>
+
+Custom metrics require the Application Insights component to have **dimension support** enabled, which the accelerator sets automatically:
+
+<div class="highlight"><pre><span></span><code>// bicep/infra/modules/monitor/applicationinsights.bicep
+resource applicationInsights &#39;Microsoft.Insights/components@2020-02-02&#39; = {
+  properties: {
+    Application_Type: &#39;web&#39;
+    WorkspaceResourceId: logAnalyticsWorkspaceId
+    CustomMetricsOptedInType: &#39;WithDimensions&#39;   // enables custom metric dimensions
+  }
+}
+</code></pre></div>
+
+Because these are **App Insights custom metrics**, alerts are easy to set up directly against them (e.g., alert when `throttling-events` exceeds a threshold for a given product or deployment). See the [Throttling Events Handling Guide](./throttling-events-handling.md) for a worked alerting example.
+
+**Connected to Log Analytics.** The Application Insights component is **workspace-based** (`WorkspaceResourceId` points at the hub Log Analytics workspace), so App Insights telemetry and gateway logs live in the same workspace and can be cross-queried with KQL.
+
+**Optional portal dashboards.** Set `createAppInsightsDashboards = true` to deploy the pre-built Azure portal dashboards defined in [applicationinsights-dashboard.bicep](../bicep/infra/modules/monitor/applicationinsights-dashboard.bicep). This is `false` in dev and `true` in the production parameter file ([main.parameters.prod.bicepparam](../bicep/infra/main.parameters.prod.bicepparam)).
+
+</details>
+
+<hr />
+<h2 id="3-apim-log-analytics-detailed-llm-logs-optional-prompt-auditing">3. APIM → Log Analytics (detailed LLM logs + optional prompt auditing)</h2>
+<h3 id="what-it-provides_2">What it provides</h3>
+<p>The gateway sends <strong>LLM-aware diagnostics</strong> to Azure Monitor / Log Analytics, surfaced in the dedicated <strong><code>ApiManagementGatewayLlmLogs</code></strong> table (with correlated entries in <code>ApiManagementGatewayLogs</code>). This is the most detailed built-in signal and supports:</p>
+<ul>
+<li>Per-request model, deployment, token usage, and gateway/region metadata</li>
+<li>Full KQL querying, joins, workbooks, and alerting over LLM traffic</li>
+<li><strong>Optional prompt / completion auditing</strong> — capturing the actual request and response <em>messages</em> when compliance or debugging requires it</li>
+</ul>
+<p>Example KQL:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ApiManagementGatewayLlmLog</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="n">ago</span><span class="p">(</span><span class="mi">7</span><span class="n">d</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">summarize</span><span class="w"> </span><span class="n">TotalTokens</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="n">TotalTokens</span><span class="p">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">DeploymentName</span><span class="p">,</span><span class="w"> </span><span class="n">bin</span><span class="p">(</span><span class="n">TimeGenerated</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="n">h</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">render</span><span class="w"> </span><span class="n">timechart</span>
+</code></pre></div>
+<blockquote>
+<p><img alt="Log Analytics LLM Logs" src="../assets/obs-law-logs.png" /></p>
+</blockquote>
+<details>
+<summary>⚙️ <strong>How it is configured in the accelerator</strong> — technical details (click to expand)</summary>
+
+**Azure Monitor logger.** The gateway attaches an `azuremonitor` diagnostic to each inference API. Its behavior is driven by the `azureMonitorLogSettings` parameter, whose `largeLanguageModel` block controls prompt/completion auditing ([inference-api.bicep](../bicep/infra/modules/apim/inference-api.bicep), [api.bicep](../bicep/infra/modules/apim/api.bicep)):
+
+<div class="highlight"><pre><span></span><code>param azureMonitorLogSettings object = {
+  frontend: {
+    request:  { headers: [], body: { bytes: 0 } }
+    response: { headers: [], body: { bytes: 0 } }
+  }
+  backend: {
+    request:  { headers: [], body: { bytes: 0 } }
+    response: { headers: [], body: { bytes: 0 } }
+  }
+  largeLanguageModel: {
+    logs: &#39;enabled&#39;                                          // LLM logging on
+    requests:  { messages: &#39;all&#39;, maxSizeInBytes: 262144 }   // audit prompts (≤ 256 KB)
+    responses: { messages: &#39;all&#39;, maxSizeInBytes: 262144 }   // audit completions (≤ 256 KB)
+  }
+}
+</code></pre></div>
+
+The diagnostic itself uses verbose logging, client-IP logging, and 100% sampling:
+
+<div class="highlight"><pre><span></span><code>resource apiDiagnostics &#39;Microsoft.ApiManagement/service/apis/diagnostics@2024-06-01-preview&#39; = {
+  name: &#39;azuremonitor&#39;
+  properties: {
+    alwaysLog: &#39;allErrors&#39;
+    verbosity: &#39;verbose&#39;
+    logClientIp: true
+    loggerId: apimLoggerId
+    sampling: { samplingType: &#39;fixed&#39;, percentage: 100 }
+    largeLanguageModel: { /* from azureMonitorLogSettings.largeLanguageModel */ }
+  }
+}
+</code></pre></div>
+
+**Controlling prompt/response auditing.** Prompt and completion content capture is a **deliberate, configurable choice**:
+
+| Goal | Setting |
+|------|---------|
+| Capture full prompts & completions (auditing / debugging) | `largeLanguageModel.requests.messages` = `'all'`, `responses.messages` = `'all'` |
+| Log LLM metadata (tokens, model) but **not** message content | `requests.messages` = `'none'`, `responses.messages` = `'none'` |
+| Disable LLM logging entirely | `largeLanguageModel.logs` = `'disabled'` |
+| Limit payload size | reduce `maxSizeInBytes` (default `262144` = 256 KB) |
+
+> **⚠️ Data governance:** Capturing message content means prompts and completions (which may contain sensitive or personal data) are stored in Log Analytics. Enable it only where your data-handling policy allows, consider pairing it with [PII detection & masking](./pii-masking-apim.md), and apply appropriate workspace retention and access controls.
+
+**Where the workspace comes from.** In the primary deployment the logger targets the hub-provisioned Log Analytics workspace. When using the [APIM Gateway Upgrade](../bicep/infra/apim-gateway-upgrade/README.md) submodule against an existing instance, `deployAzureMonitorLogger` + `logAnalyticsWorkspaceResourceId` wire the `azuremonitor` logger and diagnostic settings to an existing workspace without provisioning a new one.
+
+For the full parameter reference and production examples, see the *Azure Monitor Log Settings* section of the [Full Deployment Guide](./full-deployment-guide.md).
+
+</details>
+
+<hr />
+<h2 id="4-cosmos-db-usage-data-power-bi-finops-chargeback">4. Cosmos DB usage data + Power BI (FinOps &amp; chargeback)</h2>
+<h3 id="what-it-provides_3">What it provides</h3>
+<p>For long-term, richly structured usage analytics and <strong>cost attribution / chargeback</strong>, the gateway streams a compact usage record per request into Cosmos DB, which is then visualized in <strong>Power BI</strong>. This capability answers the FinOps questions the metrics and logs cannot:</p>
+<ul>
+<li>Cost per <strong>product (access contract)</strong>, model, backend, and application</li>
+<li>Detailed token breakdown (cached, audio, reasoning, prediction) priced independently</li>
+<li>Chargeback/showback of <strong>fixed-cost</strong> capacity (e.g., PTU) via proportional distribution</li>
+<li>Two free-form <strong>custom dimensions</strong> per record (e.g., end-user, session, cost center)</li>
+</ul>
+<blockquote>
+<p><img alt="Power BI Usage Dashboard" src="../assets/powerbi-usage-dashboard-citadel.png" /></p>
+</blockquote>
+<details>
+<summary>⚙️ <strong>How it is configured in the accelerator</strong> — technical details (click to expand)</summary>
+
+**LLM Usage**: ingestion is done through Logic Apps workflow that runs on a schedule (8 times per day by default). The workflow reads the custom metrics in the `llm-usage` namespace from the Application Insights component, transforms them into a compact usage record, and writes them to the Cosmos DB `llm-usage-container`. The workflow is defined in [logic-app-llm-usage-ingestion.bicep](../bicep/infra/modules/logic-apps/logic-app-llm-usage-ingestion.bicep).
+
+**Non-LLM Usage**: It is not activated by default, but it can be activated through referencing `ai-usage` policy fragment in the access contract. This policy relies on `log-to-eventhub` policy to send the usage data to Event Hub, which is then processed by the same Logic App workflow and written to Cosmos DB.
+
+**Published assets (Tools/MCP & Agents/A2A)**: the [Publish Contract](../bicep/infra/citadel-publish-contracts/publish-contract-guide.md#5-usage-tracking) tracks usage the **same way as LLM** — inbound `emit-metric` calls to the `mcp-usage` / `a2a-usage` App Insights namespaces (tool/agent name carried on the `deploymentName` dimension). Two dedicated scheduled Logic App workflows (`mcp-usage-ingestion`, `agent-usage-ingestion`) read those custom metrics and write request-count records into the `mcp-usage-container` / `agent-usage-container` Cosmos collections. **No Event Hub / `log-to-eventhub` is involved** — this keeps MCP streaming intact (MCP policies never read the response body).
+
+**Pricing join & visualization.** A second `model-pricing` container holds per-token-type unit costs; the Power BI report joins usage against pricing to compute cost. The report template, data model, custom-dimension activation, and PTU/fixed-cost handling are documented in detail in the dedicated guide.
+
+> 🔗 **See:** [**Power BI Dashboard Guide**](./power-bi-dashboard.md) for the complete data model, pricing setup, custom dimensions, and step-by-step report configuration.
+
+</details>
+
+<hr />
+<h2 id="choosing-the-right-signal">Choosing the right signal</h2>
+<table>
+<thead>
+<tr>
+<th>You need…</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A quick, near real-time view of usage &amp; performance</td>
+<td><strong>APIM Analytics Dashboard</strong> (1)</td>
+</tr>
+<tr>
+<td>Gateway health, latency, failures, tracing</td>
+<td><strong>Application Insights</strong> (2)</td>
+</tr>
+<tr>
+<td>Per-request detail and (optionally) the actual prompts/responses</td>
+<td><strong>Log Analytics <code>ApiManagementGatewayLlmLogs</code></strong> (3)</td>
+</tr>
+<tr>
+<td>Cost attribution, chargeback, and FinOps reporting</td>
+<td><strong>Cosmos DB + Power BI</strong> (4)</td>
+</tr>
+</tbody>
+</table>
+<p>All four capabilities are <strong>complementary</strong> and enabled by default (except prompt-content auditing and the optional portal dashboards, which are opt-in). Together they give platform teams, security/compliance, and FinOps a shared, gateway-centric view of every AI interaction in the enterprise.</p>
+<hr />
+<h2 id="related-guides">Related guides</h2>
+<ul>
+<li><a href="../power-bi-dashboard/">Power BI Dashboard</a></li>
+<li><a href="../throttling-events-handling/">Throttling Events Handling</a></li>
+<li><a href="../bicep/infra/citadel-access-contracts/">Access Contracts</a></li>
+<li><a href="../full-deployment-guide/">Full Deployment Guide</a> — Azure Monitor &amp; App Insights log settings reference</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

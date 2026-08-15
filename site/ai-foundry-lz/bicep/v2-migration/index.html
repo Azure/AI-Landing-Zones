@@ -1,0 +1,1618 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Migrating from v1.x to v2 - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#migrating-from-v1x-to-v2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migrating from v1.x to v2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-gateway-lz/bicep/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-why-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Why v2?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-big-picture-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Big-picture changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-things-that-need-attention-when-upgrading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Things that need attention when upgrading
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Things that need attention when upgrading">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-deployvm-is-split-into-three-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. deployVM is split into three flags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-networkisolation-semantics-are-unchanged-but-allowedipranges-is-now-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. networkIsolation semantics are unchanged, but allowedIpRanges is now available
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-observability-can-be-reused" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3. Observability can be reused
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-hub-to-spoke-peering-is-now-created-from-the-spoke-side" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4. Hub-to-spoke peering is now created from the spoke side
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-external-egress-no-spoke-firewall" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5. External egress (no spoke firewall)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#36-byo-private-dns-zones-per-zone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6. BYO Private DNS zones (per zone)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#37-deploymentmode-preset-advisory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7. deploymentMode preset (advisory)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#38-workload-app-configuration-passthrough-additive-opt-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.8. Workload App Configuration passthrough (additive, opt-in)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-things-that-are-not-broken" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Things that are NOT broken
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-upgrade-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Upgrade checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-pre-flight-validation-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Pre-flight validation script
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Pre-flight validation script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bypass-opt-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bypass / opt-out
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#submodule-consumers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Submodule consumers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exit codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-known-limitations-carried-forward-to-v21x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Known limitations carried forward to v2.1.x
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="migrating-from-v1x-to-v2">Migrating from v1.x to v2</h1>
+<p>This document walks you through upgrading an existing AI Landing Zone deployment, or a downstream accelerator that consumes this repo as a submodule, from the v1.x line to <strong>v2</strong>.</p>
+<p>v2 is a <strong>major release</strong> (see <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/58">issue #58</a>) that introduces hub-and-spoke composability, granular reuse of platform resources, IP allow-lists, and a deployment-mode preset. The Zero Trust topology that v1.x operators already use keeps working.</p>
+<blockquote>
+<p>If you are deploying for the first time, you do <strong>not</strong> need this document — go straight to the <a href="../runbook-standalone/">Standalone runbook</a> or the <a href="../runbook-hub-spoke/">Hub-and-Spoke runbook</a>.</p>
+</blockquote>
+<hr />
+<h2 id="1-why-v2">1. Why v2?</h2>
+<p>v1.x was designed for the <strong>standalone</strong> scenario: a customer points <code>azd provision</code> at an empty subscription, the template builds everything — VNet, Firewall, DNS zones, jumpbox, Bastion, App Insights, Log Analytics, the application stack — and the customer accesses the result.</p>
+<p>That assumption breaks when the customer already has an <strong>Application Landing Zone</strong> (or wants to share platform resources across multiple AI workloads):</p>
+<ul>
+<li>the <strong>hub</strong> subscription owns the Azure Firewall, the central Private DNS zones, the Bastion host, and the Log Analytics workspace</li>
+<li>the <strong>spoke</strong> subscription is where the AI workload itself lands, peered to the hub</li>
+<li>the spoke must <strong>not</strong> redeploy hub-owned resources, but <strong>must</strong> still come up with a working private-DNS resolution chain, a route to the hub firewall, and an observability story that does not duplicate platform telemetry</li>
+</ul>
+<p>v2.0.0 unblocks this scenario by letting any v1.x resource be brought in from the outside via an existing-resource-ID parameter, without losing the ability to fall back to "create it for me".</p>
+<p>Additional deployment-flexibility requirements that v2.0.0 also addresses (common across hub-and-spoke and ALZ-integrated topologies — explained in detail below):</p>
+<ul>
+<li><strong>Cross-region private endpoints</strong> — a spoke in <code>eastus2</code> consuming an AI Search service that lives in <code>eastus</code> because the spoke's home region ran out of capacity for that SKU.</li>
+<li><strong>Resource group override for private endpoints</strong> — placing every PE in a single centrally-managed RG so the platform team can attach policies and locks in one place.</li>
+<li><strong>Enable / disable DNS entries on private endpoints</strong> — handing DNS off to Azure Policy / DDI when the platform team manages the resolution chain externally.</li>
+<li><strong>Network access control: Disabled / Public / Public with restricted IPs</strong> — explicit IP allow-lists for PaaS services so a dev workstation can hit the data plane without routing the whole development team through Bastion.</li>
+</ul>
+<p>These were already partially solvable by hand-editing the template; v2.0.0 makes each one a first-class parameter so the template itself stays the source of truth and <code>azd</code> re-provisions stay idempotent.</p>
+<hr />
+<h2 id="2-big-picture-changes">2. Big-picture changes</h2>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>v1.x</th>
+<th>v2.0.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Topology preset</td>
+<td>Implicit</td>
+<td>New <code>deploymentMode</code> (<code>standalone</code> | <code>ailz-integrated</code>) tag on the deployment</td>
+</tr>
+<tr>
+<td>IP allow-list for PaaS data planes</td>
+<td>Not supported</td>
+<td>New <code>allowedIpRanges</code> parameter, applied to 7 services</td>
+</tr>
+<tr>
+<td>Jumpbox / Bastion / NAT Gateway</td>
+<td>One coarse <code>deployVM</code> flag</td>
+<td>Three independent flags + BYO resource IDs</td>
+</tr>
+<tr>
+<td>Observability</td>
+<td>Always creates LAW + App Insights</td>
+<td>Can reuse existing LAW and App Insights</td>
+</tr>
+<tr>
+<td>Private DNS zones</td>
+<td>Always created by the spoke</td>
+<td>Can BYO <strong>per zone</strong> (15 overrides)</td>
+</tr>
+<tr>
+<td>Hub egress</td>
+<td>Implicit Azure Firewall in same RG</td>
+<td>Can route to an <strong>external</strong> firewall / NVA via next-hop IP</td>
+</tr>
+<tr>
+<td>Hub peering</td>
+<td>Manual post-deploy</td>
+<td>Spoke→hub created by <code>main.bicep</code>; reverse helper script shipped</td>
+</tr>
+<tr>
+<td>DNS link suffix</td>
+<td>Single, fixed</td>
+<td>Configurable <code>dnsZoneLinkSuffix</code> for multi-spoke shared zones</td>
+</tr>
+<tr>
+<td>Container app port</td>
+<td>Always <code>8080</code></td>
+<td>Per-app <code>target_port</code> honored (still defaults to <code>8080</code>)</td>
+</tr>
+<tr>
+<td>Generated names</td>
+<td>Legacy <code>resourceToken</code> pattern</td>
+<td>Legacy remains the default; <code>resourceNamingMode=caf</code> is opt-in for new greenfield deployments</td>
+</tr>
+</tbody>
+</table>
+<p>Internally, every v2.0.0 parameter has either a sensible default that reproduces v1.x behavior, or a <code>null</code>/empty default that means <strong>"don't override"</strong>. Apart from the explicit <code>deployVM</code> → <code>deployJumpbox</code>/<code>deployBastion</code>/<code>deployNatGateway</code> split, the v1.x mental model still works.</p>
+<p>Name generation also stays backward-compatible. Existing deployments should keep
+<code>RESOURCE_NAMING_MODE=legacy</code> unless they intentionally want a new greenfield
+environment with CAF-style generated names. Explicit <code>*Name</code> parameters still
+override generated names in either mode.</p>
+<hr />
+<h2 id="3-things-that-need-attention-when-upgrading">3. Things that need attention when upgrading</h2>
+<h3 id="31-deployvm-is-split-into-three-flags">3.1. <code>deployVM</code> is split into three flags</h3>
+<p><code>deployVM</code> is <strong>deprecated</strong> and removed from <code>main.parameters.json</code> defaults in a future release. For v2.0.0 it remains as a backwards-compatible umbrella: when explicitly set, it acts as the default for all three new flags that don't have their own explicit value.</p>
+<p>Replace:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_VM<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<p>with one of these, depending on intent:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Standalone topology, same as old behavior (jumpbox + bastion + NAT GW)</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_JUMPBOX<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_BASTION<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_NAT_GATEWAY<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Hub-and-Spoke topology: jumpbox + own NAT GW, but reuse hub Bastion</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_JUMPBOX<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_BASTION<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_NAT_GATEWAY<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_BASTION_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/bastionHosts/&lt;hub-bastion-name&gt;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># ALZ-integrated topology: reuse hub-managed jumpbox VM as well</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_JUMPBOX<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_JUMPBOX_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Compute/virtualMachines/&lt;hub-vm&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_BASTION<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_BASTION_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/bastionHosts/&lt;hub-bastion&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_NAT_GATEWAY<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_NAT_GATEWAY_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/natGateways/&lt;hub-natgw&gt;
+</code></pre></div>
+<p>If you leave <code>DEPLOY_VM</code> unset and <strong>don't</strong> set the three new flags either, behavior is <strong>off</strong> for all three (this matches v1.x when <code>deployVM=false</code>).</p>
+<blockquote>
+<p><strong>CI/CD action</strong>: search your pipelines for <code>DEPLOY_VM</code> and update accordingly. The legacy variable still works for v2.0.x; planning to remove in v3.0.0.</p>
+</blockquote>
+<h3 id="32-networkisolation-semantics-are-unchanged-but-allowedipranges-is-now-available">3.2. <code>networkIsolation</code> semantics are unchanged, but <code>allowedIpRanges</code> is now available</h3>
+<p><code>NETWORK_ISOLATION=true</code> still puts the AI Landing Zone in Zero Trust mode (Private Endpoints, Private DNS zones, public access disabled on PaaS services, traffic forced through the firewall).</p>
+<p>What changed: you can now <strong>also</strong> allow specific public IPs to reach the data planes of PaaS services — useful for letting a developer workstation talk to Cosmos DB or App Configuration without going through Bastion. This is gated by:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span><span class="w">                  </span><span class="c1"># unchanged</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ALLOWED_IP_RANGES<span class="w"> </span><span class="s1">&#39;[&quot;198.51.100.10/32&quot;,&quot;203.0.113.0/24&quot;]&#39;</span>
+</code></pre></div>
+<p>When <code>allowedIpRanges</code> is non-empty, the public endpoint is opened only to those CIDRs (default action = <code>Deny</code>). Applied to: Storage, Key Vault, App Configuration, Container Registry, Cosmos DB, AI Search, the AI Foundry storage account.</p>
+<p>The IP allow-list is <strong>independent</strong> of Zero Trust:</p>
+<ul>
+<li><code>networkIsolation=false, allowedIpRanges=[]</code> — fully public PaaS planes (dev / demo only)</li>
+<li><code>networkIsolation=false, allowedIpRanges=[...CIDRs]</code> — public planes restricted to a CIDR list (rare, but supported for hybrid pilot scenarios)</li>
+<li><code>networkIsolation=true, allowedIpRanges=[]</code> — Zero Trust, PaaS reachable only through PE (default)</li>
+<li><code>networkIsolation=true, allowedIpRanges=[...CIDRs]</code> — Zero Trust plus opt-in IP exceptions on top (defense-in-depth + named-developer egress)</li>
+</ul>
+<h3 id="33-observability-can-be-reused">3.3. Observability can be reused</h3>
+<p>Production AI Landing Zones typically already have a central Log Analytics workspace owned by the platform team. v2.0.0 lets the spoke reuse it instead of provisioning its own:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.OperationalInsights/workspaces/&lt;law&gt;
+</code></pre></div>
+<p>When set, the spoke skips LAW creation and binds App Insights, Container Apps Environment, and AMPLS diagnostics to the hub workspace. The cross-subscription / cross-RG case works as long as the deploying identity has <code>Log Analytics Contributor</code> on the hub workspace and the workspace is in a region that allows your spoke resources to send logs (typically same region or a paired region).</p>
+<p>You can also bring your own Application Insights:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Insights/components/&lt;appi&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING<span class="w"> </span><span class="s1">&#39;&lt;conn-string&gt;&#39;</span>
+</code></pre></div>
+<p>When set, the App Configuration <code>APPLICATIONINSIGHTS_*</code> keys point at the existing component, the AI Foundry App Insights connection points at it cross-RG, and the AMPLS scope (if any) does not enroll the resource (the hub already does that).</p>
+<blockquote>
+<p><strong>Action</strong>: if you previously had two separate LAWs (hub and spoke) and want to consolidate, set the env var, re-provision, then manually delete the spoke LAW that v1.x left behind (<code>azd</code> does not delete resources it no longer references).</p>
+</blockquote>
+<h3 id="34-hub-to-spoke-peering-is-now-created-from-the-spoke-side">3.4. Hub-to-spoke peering is now created from the spoke side</h3>
+<p>If you provide the hub VNet ID:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_INTEGRATION_HUB_VNET_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;
+</code></pre></div>
+<p><code>main.bicep</code> creates the <strong>spoke → hub</strong> peering automatically (<code>hubIntegrationCreateHubPeering=true</code> by default). The reverse direction (<code>hub → spoke</code>) is <strong>not</strong> created — typically the spoke deployment does not have write access to the hub RG.</p>
+<p>To create the reverse direction:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="p">./</span><span class="n">tests</span><span class="p">/</span><span class="n">scripts</span><span class="p">/</span><span class="nb">Add-HubSpokePeering</span><span class="p">.</span><span class="n">ps1</span> <span class="p">`</span>
+    <span class="n">-HubVnetResourceId</span>  <span class="p">/</span><span class="n">subscriptions</span><span class="p">/&lt;</span><span class="n">sub</span><span class="p">&gt;/</span><span class="n">resourceGroups</span><span class="p">/&lt;</span><span class="n">hub-rg</span><span class="p">&gt;/</span><span class="n">providers</span><span class="p">/</span><span class="n">Microsoft</span><span class="p">.</span><span class="n">Network</span><span class="p">/</span><span class="n">virtualNetworks</span><span class="p">/&lt;</span><span class="n">hub-vnet</span><span class="p">&gt;</span> <span class="p">`</span>
+    <span class="n">-SpokeVnetResourceId</span> <span class="p">/</span><span class="n">subscriptions</span><span class="p">/&lt;</span><span class="n">sub</span><span class="p">&gt;/</span><span class="n">resourceGroups</span><span class="p">/&lt;</span><span class="n">spoke-rg</span><span class="p">&gt;/</span><span class="n">providers</span><span class="p">/</span><span class="n">Microsoft</span><span class="p">.</span><span class="n">Network</span><span class="p">/</span><span class="n">virtualNetworks</span><span class="p">/&lt;</span><span class="n">spoke-vnet</span><span class="p">&gt;</span>
+</code></pre></div>
+<p>Run this with credentials that <strong>do</strong> have write access to the hub RG (typically a platform-team operator).</p>
+<h3 id="35-external-egress-no-spoke-firewall">3.5. External egress (no spoke firewall)</h3>
+<p>If your hub already runs Azure Firewall or an NVA, you don't need another firewall in the spoke. v2.0.0 lets you:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AZURE_FIREWALL<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_INTEGRATION_EGRESS_NEXT_HOP_IP<span class="w"> </span><span class="m">10</span>.100.0.4<span class="w">   </span><span class="c1"># hub FW private IP</span>
+</code></pre></div>
+<p>When both are set, the spoke creates a Route Table with a <code>0.0.0.0/0 → &lt;hub FW IP&gt;</code> UDR and attaches it to all workload subnets. PE traffic stays internal to the spoke; only Internet-bound traffic is forwarded to the hub FW.</p>
+<p>Alternatively, BYO route table (e.g., managed by Azure Policy):</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID<span class="w"> </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/routeTables/&lt;rt&gt;
+</code></pre></div>
+<p>When set, the spoke does not create its own RT; the existing RT is associated with workload subnets.</p>
+<h3 id="36-byo-private-dns-zones-per-zone">3.6. BYO Private DNS zones (per zone)</h3>
+<p>In ALZ topologies, Private DNS zones live in a central platform subscription. To reuse them, set as many of these as apply:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_OPENAI_RESOURCE_ID<span class="w">         </span>/subscriptions/&lt;sub&gt;/resourceGroups/&lt;dns-rg&gt;/providers/Microsoft.Network/privateDnsZones/privatelink.openai.azure.com
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_COGSVCS_RESOURCE_ID<span class="w">        </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_AISERVICES_RESOURCE_ID<span class="w">     </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_SEARCH_RESOURCE_ID<span class="w">         </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_COSMOS_RESOURCE_ID<span class="w">         </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_BLOB_RESOURCE_ID<span class="w">           </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_KEYVAULT_RESOURCE_ID<span class="w">       </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_APPCONFIG_RESOURCE_ID<span class="w">      </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_CONTAINERAPPS_RESOURCE_ID<span class="w">  </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_ACR_RESOURCE_ID<span class="w">            </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_AZUREMONITOR_RESOURCE_ID<span class="w">   </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_OMSOPSINSIGHTS_RESOURCE_ID<span class="w"> </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_ODSOPSINSIGHTS_RESOURCE_ID<span class="w"> </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_AZUREAUTOMATION_RESOURCE_ID<span class="w"> </span>...
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_PRIVATE_DNS_ZONE_APPINSIGHTS_RESOURCE_ID<span class="w">    </span>...
+</code></pre></div>
+<p>Each one is <strong>opt-in</strong>. Unset zones continue to be created by the spoke. This lets you migrate incrementally — start by reusing one (e.g., OpenAI) and converting more as your platform team adds them.</p>
+<p>For multi-spoke shared zones, set:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DNS_ZONE_LINK_SUFFIX<span class="w"> </span>spoke02<span class="w">   </span><span class="c1"># unique per spoke</span>
+</code></pre></div>
+<p>This appends <code>-&lt;suffix&gt;</code> to the VNet-link names so a single zone can be linked to multiple spoke VNets without name conflicts.</p>
+<h3 id="37-deploymentmode-preset-advisory">3.7. <code>deploymentMode</code> preset (advisory)</h3>
+<p>A new required-ish parameter is added so the topology intent is captured <strong>in the deployment</strong> itself (visible in deployment tags, audit logs, downstream automation):</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>ailz-integrated<span class="w">   </span><span class="c1"># or &#39;standalone&#39; (default)</span>
+</code></pre></div>
+<p>The preset is <strong>advisory</strong> in v2.0.0 — it does not auto-flip any other flag. Operators still set the BYO / hub-integration flags explicitly. A future v2.x release may make the preset drive defaults.</p>
+<hr />
+<h3 id="38-workload-app-configuration-passthrough-additive-opt-in">3.8. Workload App Configuration passthrough (additive, opt-in)</h3>
+<p>The <code>additionalAppConfigurationSettings</code> parameter lets a solution accelerator
+publish its own runtime key-values into the App Configuration store without new
+template parameters. It defaults to an empty array, so existing deployments are
+unaffected and produce byte-identical App Configuration output.</p>
+<p>If your accelerator currently drives runtime config through the workload-specific
+<code>foundryIq*</code> parameters, nothing breaks: those parameters still work. Going
+forward, prefer publishing accelerator keys through the passthrough so the
+landing zone stays workload-agnostic:</p>
+<div class="highlight"><pre><span></span><code>additionalAppConfigurationSettings: [
+  { name: &#39;MY_WORKLOAD_FLAG&#39;, value: &#39;true&#39; }
+  { name: &#39;MY_WORKLOAD_MODE&#39;, value: &#39;hybrid&#39;, label: &#39;prod&#39; }
+]
+</code></pre></div>
+<p>Notes:</p>
+<ul>
+<li>Values are plaintext. Do not pass secrets; use Key Vault references instead.</li>
+<li>Each <code>name</code> + <code>label</code> pair must be unique. A passthrough entry that collides
+  with a built-in setting wins, so it can also override a stamped default.</li>
+<li>App Configuration is only populated on non-isolated deployments where the
+  runtime config store is App Configuration. In isolated deployments, stamp
+  workload keys through the jumpbox post-provision step instead.</li>
+<li>In the <code>containerEnv</code> runtime mode the same entries are injected as Container
+  App env vars (name/value only), so the passthrough works in both modes.</li>
+</ul>
+<p><code>retrievalBackend</code> is <strong>not</strong> deprecated: it gates real infrastructure (the AI
+Foundry knowledge-base connection and shared private links), so it stays a
+first-class parameter.</p>
+<hr />
+<h2 id="4-things-that-are-not-broken">4. Things that are NOT broken</h2>
+<p>These v1.x patterns continue to work unchanged:</p>
+<ul>
+<li><code>azd init -t azure/bicep-ptn-aiml-landing-zone</code> (template entry remains the same)</li>
+<li><code>azd provision</code> flow</li>
+<li><code>azd env set NETWORK_ISOLATION true</code> for Zero Trust deployments</li>
+<li><code>main.parameters.json</code> overrides instead of env vars</li>
+<li><code>manifest.json</code> <code>tag</code> / <code>ailz_tag</code> / <code>components</code> bootstrap contract — your downstream accelerator's <code>manifest.json</code> does not need a structural change to pick up v2.0.0</li>
+<li>Downstream consumer pattern (submodule pinned to a tag, overlay <code>main.parameters.json</code> + <code>manifest.json</code> copied in by <code>preprovision</code>)</li>
+</ul>
+<p>You also do not need to drain any data: every BYO resource is <strong>referenced</strong> (<code>existing = ...</code>), not recreated. Switching between "create" and "BYO" mid-life is supported as long as the resource you point at is in a region that satisfies Azure's regional placement rules for the dependent resources.</p>
+<hr />
+<h2 id="5-upgrade-checklist">5. Upgrade checklist</h2>
+<p>For an existing v1.x deployment that you want to bring to v2.0.0:</p>
+<ol>
+<li><strong>Pin the submodule (downstream consumers)</strong> to <code>v2.0.0</code>:
+   <div class="highlight"><pre><span></span><code>git<span class="w"> </span>-C<span class="w"> </span>infra<span class="w"> </span>fetch<span class="w"> </span>--tags
+git<span class="w"> </span>-C<span class="w"> </span>infra<span class="w"> </span>checkout<span class="w"> </span>tags/v2.0.0
+git<span class="w"> </span>config<span class="w"> </span>-f<span class="w"> </span>.gitmodules<span class="w"> </span>submodule.infra.branch<span class="w"> </span>v2.0.0
+git<span class="w"> </span>add<span class="w"> </span>.gitmodules<span class="w"> </span>infra<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Bump AI LZ infra submodule to v2.0.0&quot;</span>
+</code></pre></div></li>
+<li><strong>Audit env vars / <code>main.parameters.json</code> for <code>DEPLOY_VM</code></strong> and replace with the three new flags (see §3.1).</li>
+<li><strong>Decide on observability</strong> — reuse the hub LAW (set <code>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID</code>) or keep the spoke LAW (no change).</li>
+<li><strong>Decide on egress</strong> — keep the spoke Azure Firewall (no change) or switch to hub-managed egress (§3.5).</li>
+<li><strong>Decide on Private DNS</strong> — keep spoke-owned zones (no change) or reuse hub zones (§3.6).</li>
+<li><strong>Set <code>DEPLOYMENT_MODE</code></strong> to match your topology — <code>standalone</code> or <code>ailz-integrated</code> (defaults to <code>standalone</code>).</li>
+<li><strong>Run the pre-flight script</strong> (see §6) — it catches parameter mistakes before <code>azd provision</code> does. Skipping it is supported via <code>PREFLIGHT_SKIP=true</code> but not recommended for first-time ALZ-integrated deployments.</li>
+<li><strong>Run <code>azd provision</code></strong> and verify the deployment plan against the change set you expected.</li>
+<li><strong>For hub-and-spoke</strong>, after the spoke provision completes, run <code>tests/scripts/Add-HubSpokePeering.ps1</code> from a workstation with access to the hub RG to create the reverse peering.</li>
+</ol>
+<p>If you encounter unexpected resource creation (e.g., a duplicate DNS zone), it usually means a BYO env var is unset where it should have been set — re-run with the missing override.</p>
+<hr />
+<h2 id="6-pre-flight-validation-script">6. Pre-flight validation script</h2>
+<p>v2.0.0 ships a read-only pre-flight script — <strong><code>scripts/Invoke-PreflightChecks.ps1</code></strong> — that validates the effective parameter set <strong>before</strong> <code>azd provision</code> reaches Azure Resource Manager. It catches the class of mistakes that otherwise surface as deep, late, hard-to-debug ARM errors.</p>
+<h3 id="what-it-checks">What it checks</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Checks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tooling</strong></td>
+<td><code>az</code>, <code>azd</code>, pwsh 7+ on PATH; logged in to Azure</td>
+</tr>
+<tr>
+<td><strong>Parameter resolution</strong></td>
+<td>Unresolved <code>${VAR}</code> substitutions; missing required values</td>
+</tr>
+<tr>
+<td><strong>Topology consistency</strong></td>
+<td><code>policyManagedPrivateDns=true</code> + any BYO <code>existingPrivateDnsZone*ResourceId</code> set (conflict); <code>hubIntegrationEgressNextHopIp</code> + <code>hubIntegrationExistingRouteTableResourceId</code> set together (mutually exclusive); <code>deployAzureFirewall=true</code> + external egress IP (likely-unintended); <code>deploymentMode=ailz-integrated</code> declared without any hub-integration parameters; <code>existingApplicationInsightsResourceId</code> set without a connection string (will fail); <code>existingApplicationInsightsResourceId</code> without a matching <code>existingLogAnalyticsWorkspaceResourceId</code> unless <code>allowMixedObservabilityWorkspaces=true</code>; <code>networkIsolation=true</code> with no jumpbox/Bastion/allow-list ingress (you'd lock yourself out)</td>
+</tr>
+<tr>
+<td><strong>IP allow-list</strong></td>
+<td>CIDR format validation; <code>0.0.0.0/0</code> warning</td>
+</tr>
+<tr>
+<td><strong>Local CIDR sanity</strong></td>
+<td>Subnet prefixes contained in the VNet; no subnet-to-subnet overlap; each subnet at or above its minimum size (Bastion /26, Firewall /26, PE /27, jumpbox /29, ACA env /27 — /23 recommended for workload-profile ACA)</td>
+</tr>
+<tr>
+<td><strong>BYO VNet (when <code>useExistingVNet=true</code>)</strong></td>
+<td>VNet exists; required subnets (<code>agent</code>, <code>pe</code>, <code>acaEnvironment</code>, <code>jumpbox</code>, <code>AzureBastionSubnet</code>, <code>AzureFirewallSubnet</code>) present when <code>deploySubnets=false</code>; ACA env subnet has <code>Microsoft.App/environments</code> delegation under network isolation</td>
+</tr>
+<tr>
+<td><strong>BYO Private DNS</strong></td>
+<td>Each <code>existingPrivateDnsZone*ResourceId</code> points at a zone whose name matches the expected <code>privatelink.&lt;namespace&gt;</code> convention; zone exists in Azure</td>
+</tr>
+<tr>
+<td><strong>BYO observability</strong></td>
+<td><code>existingLogAnalyticsWorkspaceResourceId</code>, <code>existingApplicationInsightsResourceId</code>, <code>existingBastionResourceId</code>, <code>existingNatGatewayResourceId</code>, <code>hubIntegrationExistingRouteTableResourceId</code> exist in Azure</td>
+</tr>
+<tr>
+<td><strong>Hub VNet overlap</strong></td>
+<td>When <code>hubIntegrationHubVnetResourceId</code> is set, the spoke's <code>vnetAddressPrefixes</code> do not overlap any of the hub's address prefixes (peering would fail)</td>
+</tr>
+<tr>
+<td><strong>Regional readiness</strong></td>
+<td>Provider/location support, jumpbox VM SKU availability, and AI Foundry OpenAI model quota for each OpenAI-format <code>modelDeploymentList</code> entry in the AI Foundry region</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-it-runs">How it runs</h3>
+<p>The script is wired into <code>azure.yaml</code> as a <code>preprovision</code> hook, so it runs automatically on every <code>azd provision</code>. You can also run it standalone at any time:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="nb">Invoke-PreflightChecks</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p>Useful flags:</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Strict</code></td>
+<td>Treat warnings as failures (exit 2). Recommended in CI.</td>
+</tr>
+<tr>
+<td><code>-SkipAzureLookups</code></td>
+<td>Skip every Azure CLI call. Use for offline / CI scenarios where you only want the deterministic checks.</td>
+</tr>
+<tr>
+<td><code>-Skip</code></td>
+<td>Skip every check. Identical to <code>PREFLIGHT_SKIP=true</code>. Emergency bypass.</td>
+</tr>
+<tr>
+<td><code>-AzdEnv &lt;name&gt;</code></td>
+<td>Read env values from a specific azd env (otherwise current default).</td>
+</tr>
+<tr>
+<td><code>-ParametersFile &lt;path&gt;</code></td>
+<td>Override parameters file path.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bypass-opt-out">Bypass / opt-out</h3>
+<p>If you intentionally need to skip the hook (e.g., temporarily during a complex rollback), set <code>PREFLIGHT_SKIP=true</code> in your environment:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$env:PREFLIGHT_SKIP</span> <span class="p">=</span> <span class="s1">&#39;true&#39;</span>
+<span class="n">azd</span> <span class="n">provision</span>
+</code></pre></div>
+<h3 id="submodule-consumers">Submodule consumers</h3>
+<p>The repo's submodule-consumer pattern means <code>azd</code> reads the <strong>consumer's</strong> <code>azure.yaml</code>, not this repo's — so the default preprovision hook is invoked only for direct consumers. For submodule consumers, copy this snippet into the consumer's <code>azure.yaml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">hooks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">preprovision</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">posix</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pwsh</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./infra/scripts/Invoke-PreflightChecks.ps1</span>
+<span class="w">      </span><span class="nt">continueOnError</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">windows</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pwsh</span>
+<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./infra/scripts/Invoke-PreflightChecks.ps1</span>
+<span class="w">      </span><span class="nt">continueOnError</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<p>(Adjust <code>./infra/</code> to wherever the submodule is mounted.)</p>
+<h3 id="exit-codes">Exit codes</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>All checks passed (possibly with warnings; warnings are non-fatal unless <code>-Strict</code>)</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>At least one fatal finding — fix before provisioning</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Only warnings were raised AND <code>-Strict</code> was specified</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-known-limitations-carried-forward-to-v21x">7. Known limitations carried forward to v2.1.x</h2>
+<ul>
+<li><code>deploymentMode</code> does not yet auto-derive other flags. Set them explicitly.</li>
+<li>The <code>deployVM</code> legacy umbrella flag is retained for v2.x; expected removal in v3.0.0.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

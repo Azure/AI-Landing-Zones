@@ -1,0 +1,1602 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Publish Contract Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#publish-contract-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Publish Contract Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Concepts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asset-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Asset types
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-parameter-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Parameter schema
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Parameter schema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#per-asset-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-asset fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-auth-backendauthtype" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend auth (backend.authType)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#folder-structure-source-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Folder structure &amp; source control
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-resiliency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Resiliency
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-policies-reuse-of-llm-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Policies &amp; reuse of LLM capabilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Policies &amp; reuse of LLM capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a2a-authentication-model-important" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A2A authentication model (important)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mcp-streaming-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ MCP streaming constraint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-usage-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Usage tracking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-api-center-registration-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. API Center registration (optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-path-prefixing-backward-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Path prefixing &amp; backward compatibility
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Path prefixing &amp; backward compatibility">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backward-compatibility-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Backward-compatibility considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-publishing-a-foundry-agent-as-a2a" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Publishing a Foundry agent as A2A
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Related
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="publish-contract-guide">Publish Contract Guide</h1>
+<p>The <strong>Publish Contract</strong> is the mechanism the Citadel Governance Hub uses to onboard and publish centrally protected AI assets — <strong>Tools (MCP)</strong> and <strong>Agents (A2A)</strong> — through the AI Hub Gateway (Azure API Management). It complements the two existing contracts:</p>
+<table>
+<thead>
+<tr>
+<th>Contract</th>
+<th>Answers</th>
+<th>Artifact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Backend Contract</strong></td>
+<td><em>Where</em> do LLM requests route to?</td>
+<td><code>bicep/infra/llm-backend-onboarding/</code></td>
+</tr>
+<tr>
+<td><strong>Access Contract</strong></td>
+<td><em>Who</em> may access an AI asset and under what limits?</td>
+<td><code>bicep/infra/citadel-access-contracts/</code></td>
+</tr>
+<tr>
+<td><strong>Publish Contract</strong> (this)</td>
+<td><em>What</em> AI assets (tools/agents) are published and protected?</td>
+<td><code>bicep/infra/citadel-publish-contracts/</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Publishing vs. access.</strong> The Publish Contract establishes the asset: endpoints, per-asset backends, baseline policies, usage tracking, and optional API Center registration. <strong>Granting access</strong> is the job of the <a href="../citadel-access-contracts/">Access Contract</a>, which now governs published Tools/Agents alongside LLMs — a single product can grant a mix of asset types (prefix <code>MULTI-</code>) and applies <strong>conditional per-asset-type</strong> policies (model RBAC + token limits for LLM; request-based rate limits for Tools/Agents). Publishing itself does <strong>not</strong> create APIM Products/Subscriptions.</p>
+</blockquote>
+<hr />
+<h2 id="1-concepts">1. Concepts</h2>
+<p>A <strong>published asset</strong> is a governed entry point on the primary gateway. Publishing an asset creates:</p>
+<ol>
+<li>An APIM API of the appropriate type (<code>mcp</code> or <code>a2a</code>).</li>
+<li>For remote MCP / A2A: a dedicated APIM <strong>backend</strong> with a circuit breaker and credential injection.</li>
+<li>A <strong>baseline policy</strong> that layers the gateway's shared governance fragments (authentication, usage metrics, alerting) onto the asset.</li>
+<li>Optionally, an <strong>Azure API Center</strong> registration for discoverability.</li>
+</ol>
+<p>Assets are declared as entries in the <code>publishAssets</code> array of a <code>.bicepparam</code> file — one file can publish many assets.</p>
+<h3 id="asset-types">Asset types</h3>
+<table>
+<thead>
+<tr>
+<th><code>assetType</code></th>
+<th>Description</th>
+<th>APIM type</th>
+<th>Gateway endpoint</th>
+<th>Backend</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mcp-from-api</code></td>
+<td>Wrap selected operations of an <strong>existing onboarded REST API</strong> as MCP tools</td>
+<td><code>mcp</code> (<code>mcpTools[]</code>)</td>
+<td><code>{gateway}/mcp/{path}/mcp</code></td>
+<td>Reuses the source API's backend</td>
+</tr>
+<tr>
+<td><code>mcp-existing</code></td>
+<td>Publish an <strong>existing/remote MCP server</strong> (e.g. <code>https://learn.microsoft.com/api/mcp</code>)</td>
+<td><code>mcp</code> (<code>backendId</code> + <code>mcpPropperties</code>)</td>
+<td><code>{gateway}/mcp/{path}</code></td>
+<td>Dedicated <code>&lt;name&gt;-backend</code></td>
+</tr>
+<tr>
+<td><code>a2a</code></td>
+<td>Publish a native <strong>A2A agent</strong> endpoint + agent card (e.g. a Foundry-hosted agent)</td>
+<td><code>a2a</code> (<code>a2aProperties</code> + <code>jsonRpcProperties</code>)</td>
+<td><code>{gateway}/agent/{path}</code> (card at <code>/.well-known/agent.json</code>)</td>
+<td>Policy MI auth to backend (no backend object, see §4); optional subscription-key on the client</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Asset-type path prefix (default on):</strong> with <code>useAssetTypePathPrefix = true</code> (default) every <strong>Tool</strong> is served under an <code>mcp/</code> segment and every <strong>Agent</strong> under an <code>agent/</code> segment — e.g. <code>path: 'weather-tool-mcp'</code> → <code>{gateway}/mcp/weather-tool-mcp/...</code>, <code>path: 'hr-chat-agent'</code> → <code>{gateway}/agent/hr-chat-agent</code>. This namespaces tools and agents on the gateway. Override per asset with <code>pathPrefix</code> (a custom segment, or <code>''</code> to opt one asset out), or set the global toggle to <code>false</code> to keep legacy un-prefixed paths. See <a href="#7-path-prefixing--backward-compatibility">§7 Path prefixing &amp; backward compatibility</a>.</p>
+<p><strong>MCP endpoint suffix (important):</strong> APIM appends <code>/mcp</code> to the path <strong>only</strong> for API→MCP tools (<code>mcp-from-api</code>) — e.g. <code>path: 'weather-tool-mcp'</code> → <code>{gateway}/mcp/weather-tool-mcp/mcp</code> (note the <code>mcp/</code> prefix <em>and</em> the <code>/mcp</code> suffix). For a native/remote MCP server (<code>mcp-existing</code>) APIM does <strong>not</strong> append <code>/mcp</code> — the endpoint is <code>{gateway}/mcp/{path}</code> exactly (e.g. <code>{gateway}/mcp/ms-learn-tool-mcp</code>). Point MCP clients at these URLs accordingly. (With the prefix disabled these become <code>{gateway}/{path}/mcp</code> and <code>{gateway}/{path}</code>.)</p>
+</blockquote>
+<hr />
+<h2 id="2-parameter-schema">2. Parameter schema</h2>
+<p>Global parameters (see <a href="./main.bicepparam">main.bicepparam</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apim</code></td>
+<td><code>{ subscriptionId, resourceGroupName, name }</code> of the target gateway</td>
+</tr>
+<tr>
+<td><code>managedIdentityClientId</code></td>
+<td>UAMI client id for managed-identity backends (empty = system-assigned)</td>
+</tr>
+<tr>
+<td><code>configureCircuitBreaker</code></td>
+<td>Master toggle for backend circuit breakers (default <code>true</code>)</td>
+</tr>
+<tr>
+<td><code>circuitBreakerDefaults</code></td>
+<td>Default breaker settings, shallow-merged with per-asset overrides</td>
+</tr>
+<tr>
+<td><code>ensureUsageFragments</code></td>
+<td>Create the <code>mcp-usage</code> / <code>a2a-usage</code> fragments if missing (default <code>true</code>)</td>
+</tr>
+<tr>
+<td><code>useAssetTypePathPrefix</code></td>
+<td>Prefix each asset's gateway path with its type segment — <code>mcp/</code> for Tools, <code>agent/</code> for Agents (default <code>true</code>). <code>false</code> = legacy un-prefixed paths. Per-asset override via <code>pathPrefix</code>.</td>
+</tr>
+<tr>
+<td><code>apiCenter</code></td>
+<td><code>{ subscriptionId, resourceGroupName, serviceName, workspaceName }</code> — required only if any asset opts into API Center</td>
+</tr>
+<tr>
+<td><code>publishAssets</code></td>
+<td>The array of assets to publish</td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-asset-fields">Per-asset fields</h3>
+<p>Common: <code>assetType</code>, <code>name</code>, <code>displayName</code>, <code>description</code>, <code>path</code>, <code>metadata</code>, <code>policyXml?</code>, <code>publishToApiCenter?</code>, <code>apiCenter?</code>.</p>
+<blockquote>
+<p><strong><code>pathPrefix</code> (optional):</strong> overrides the automatic asset-type prefix for a single asset. Set a custom segment (e.g. <code>'tools'</code>) to group differently, or <code>''</code> to publish this one asset at the bare <code>path</code> even when <code>useAssetTypePathPrefix</code> is on. Omit it to use the default (<code>mcp</code> for Tools, <code>agent</code> for Agents).</p>
+</blockquote>
+<p><strong><code>metadata</code></strong> (informational governance context surfaced to operators / API Center):</p>
+<div class="highlight"><pre><span></span><code>metadata: {
+  version: &#39;1.0.0&#39;
+  owner: &#39;Platform Engineering&#39;
+  contactEmail: &#39;ai-platform@contoso.com&#39;
+  compliance: [ &#39;GDPR&#39; ]        // regulatory/compliance tags
+  classification: &#39;confidential&#39; // public | internal | confidential
+}
+</code></pre></div>
+<p><strong><code>mcp-from-api</code></strong>: <code>sourceApiName</code>, <code>operationNames</code>, <code>subscriptionRequired</code> (default <code>true</code>), <code>subscriptionKeyHeaderName</code> (<code>api-key</code> default, or <code>Ocp-Apim-Subscription-Key</code>), <code>forwardSubscriptionKeyToSource</code> (default <code>false</code>), <code>sourceSubscriptionKeyHeaderName</code> (default <code>x-mcp-sub-key</code>).</p>
+<blockquote>
+<p>⚠️ <strong>Source API must NOT require its own subscription key.</strong> An <code>mcp-from-api</code> server forwards <code>tools/call</code> to the source API (<code>sourceApiName</code>) <strong>internally</strong>. If that source API is onboarded with <code>subscriptionRequired: true</code>, the internal hop has no subscription key and APIM rejects it with <code>401 — Access denied due to missing subscription key</code>. The failure is subtle: <code>initialize</code> and <code>tools/list</code> still succeed (they only read tool metadata and never touch the backend), so only actual tool invocations break. Onboard the source API with <strong><code>subscriptionRequired: false</code></strong> (the sample <code>weather-api</code> uses <code>subscriptionRequired: false</code> + the <code>api-key</code> header) and let the published MCP server's own <code>subscriptionRequired</code>/Access Contract gate govern who may call it. The <code>subscriptionRequired</code> field here controls the <strong>published MCP server's</strong> gate, which is independent of the source API's setting.</p>
+<p>🔐 <strong>Keep the source API protected (opt-in key forwarding).</strong> If you don't want the source API reachable anonymously, set <code>forwardSubscriptionKeyToSource: true</code>. The published MCP policy then injects the caller's subscription key (<code>context.Subscription.Key</code>) into a <strong>custom header</strong> — <code>sourceSubscriptionKeyHeaderName</code> (default <code>x-mcp-sub-key</code>) — that survives the internal hop, so the <strong>same contract key</strong> reaches both the MCP tool and the raw API. This works because APIM strips the <em>standard</em> subscription headers (<code>api-key</code> <strong>and</strong> <code>Ocp-Apim-Subscription-Key</code>) before the tool→backend hop, but leaves a non-standard header intact. Two prerequisites (outside this module):
+1. <strong>Source API</strong> onboarded with <code>subscriptionRequired: true</code> reading its key from the <strong>same</strong> custom header (e.g. <code>weather-api</code> → <code>subscriptionKeyParameterNames.header = x-mcp-sub-key</code>).
+2. <strong>Access Contract</strong> grants the source API too — add it to <code>apiNameMapping</code> (e.g. <code>MULTI: [ 'weather-tool', 'weather-api', … ]</code>) so the one subscription key authorizes both APIs.</p>
+<p>Result: direct calls to the source API without a key return <code>401</code>, the same key works directly <em>and</em> via the tool, and no second credential is needed. Leave <code>forwardSubscriptionKeyToSource: false</code> (default) to keep the simpler anonymous-source model. Ignored when a custom <code>policyXml</code> is supplied on the asset.</p>
+</blockquote>
+<p><strong><code>mcp-existing</code></strong>: <code>transportType</code> (default <code>streamable</code>), <code>subscriptionRequired</code> (default <code>true</code>), <code>subscriptionKeyHeaderName</code> (<code>api-key</code> default, or <code>Ocp-Apim-Subscription-Key</code>), <code>backend { url, authType, authConfig?, circuitBreaker? }</code>.</p>
+<p><strong><code>a2a</code></strong>: <code>agentId</code>, <code>agentCardPath</code> (default <code>/.well-known/agent.json</code>), <code>agentCardBackendUrl</code>, <code>jsonRpcPath</code> (default <code>/</code>), <code>subscriptionRequired</code> (default <code>false</code>), <code>subscriptionKeyHeaderName</code> (<code>api-key</code> default, or <code>Ocp-Apim-Subscription-Key</code>), <code>backend { url, authType, authConfig? }</code>.</p>
+<blockquote>
+<p><strong>A2A client auth:</strong> set <code>subscriptionRequired: true</code> to require an APIM subscription (API) key on the caller. The key is read from the header named by <code>subscriptionKeyHeaderName</code> — use <code>api-key</code> to match the LLM/MCP convention, or <code>Ocp-Apim-Subscription-Key</code> for the APIM-native header (query-string key name is <code>api-key</code> / <code>subscription-key</code> respectively). Leave <code>subscriptionRequired: false</code> for an anonymous endpoint. The gateway still authenticates to the backend (Foundry) agent with its managed identity regardless.</p>
+</blockquote>
+<h3 id="backend-auth-backendauthtype">Backend auth (<code>backend.authType</code>)</h3>
+<table>
+<thead>
+<tr>
+<th><code>authType</code></th>
+<th>Use</th>
+<th><code>authConfig</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>none</code></td>
+<td>Public remote MCP</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>managed-identity</code></td>
+<td>Foundry A2A, Azure-hosted backends</td>
+<td><code>{ resource }</code> (e.g. <code>https://ai.azure.com</code>)</td>
+</tr>
+<tr>
+<td><code>api-key-header</code></td>
+<td>Remote server keyed by a header</td>
+<td><code>{ headerName?, namedValueKey, keyVaultSecretUri? | secretValue? }</code></td>
+</tr>
+<tr>
+<td><code>api-key-bearer</code></td>
+<td>Bearer-token server</td>
+<td><code>{ namedValueKey, keyVaultSecretUri? | secretValue? }</code> (store the full <code>Bearer ...</code> value)</td>
+</tr>
+</tbody>
+</table>
+<p>API keys are stored as APIM <strong>named values</strong> — prefer <code>keyVaultSecretUri</code> (rotatable, auditable) over inline <code>secretValue</code>.</p>
+<h3 id="folder-structure-source-control">Folder structure &amp; source control</h3>
+<p>Organize publish contracts by <strong>name</strong> and <strong>environment</strong> — the same layout used by the <a href="../citadel-access-contracts/README.md">Access Contract</a> — so each contract is a self-contained, reviewable unit:</p>
+<div class="highlight"><pre><span></span><code>citadel-publish-contracts/
+├── main.bicep                          # the module (do not edit per-contract)
+├── main.bicepparam                     # reference sample (using &#39;main.bicep&#39;)
+└── contracts/                          # per-contract publish definitions (git-ignored by default)
+    └── &lt;contract-name&gt;/
+        └── &lt;env&gt;/
+            └── main.bicepparam         # using &#39;../../../main.bicep&#39;
+</code></pre></div>
+<ul>
+<li><strong><code>contracts/&lt;contract-name&gt;/&lt;env&gt;/main.bicepparam</code></strong> — one folder per environment. The <code>using</code> points <strong>three levels up</strong> to the module (<code>using '../../../main.bicep'</code>).</li>
+<li>The <code>contracts/</code> tree is <strong>git-ignored</strong> in this accelerator (like <code>citadel-access-contracts/contracts</code>) because generated params carry environment-specific ids; teams source-control their own contracts in their repo/branch following this layout.</li>
+<li>The validation notebook writes its generated publish contract to <code>contracts/sample-assets/dev/main.bicepparam</code> and the paired access contract to <code>citadel-access-contracts/contracts/&lt;biz&gt;-&lt;usecase&gt;/&lt;env&gt;/</code>.</li>
+</ul>
+<p>Deploy a contract from its folder:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>publish-&lt;contract-name&gt;-&lt;env&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>&lt;region&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>bicep/infra/citadel-publish-contracts/main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>bicep/infra/citadel-publish-contracts/contracts/&lt;contract-name&gt;/&lt;env&gt;/main.bicepparam
+</code></pre></div>
+<hr />
+<h2 id="3-resiliency">3. Resiliency</h2>
+<p><strong>Remote MCP</strong> assets create a dedicated APIM backend with a native <strong>circuit breaker</strong>, reusing the Backend Contract model:</p>
+<div class="highlight"><pre><span></span><code>backend: {
+  url: &#39;https://remote-mcp.contoso.com/mcp&#39;
+  authType: &#39;none&#39;
+  circuitBreaker: {          // optional per-asset override
+    failureCount: 5
+    failureInterval: &#39;PT1M&#39;
+    tripDuration: &#39;PT30S&#39;
+    acceptRetryAfter: true
+  }
+}
+</code></pre></div>
+<p>Defaults (from <code>circuitBreakerDefaults</code>): trip after <strong>3</strong> failures within <strong>PT5M</strong>, stay open <strong>PT1M</strong>, honor upstream <code>Retry-After</code>, on status <code>429</code> and <code>500–503</code>. Set <code>configureCircuitBreaker=false</code> to disable globally, or <code>backend.circuitBreaker.enabled=false</code> per asset. See the <a href="../../../guides/resiliency-guide.md">resiliency guide</a> for the wider gateway resiliency model.</p>
+<blockquote>
+<p><strong>A2A assets</strong> authenticate to the backend in policy against a full URL (see §4), so they do <strong>not</strong> create an APIM backend object and have no native circuit breaker. Add resilience for agents with a retry policy (custom <code>policyXml</code>) if needed.</p>
+</blockquote>
+<hr />
+<h2 id="4-policies-reuse-of-llm-capabilities">4. Policies &amp; reuse of LLM capabilities</h2>
+<p>Each asset gets a <strong>baseline policy</strong> (<a href="./policies/baseline-mcp-policy.xml">baseline-mcp-policy.xml</a> / <a href="./policies/baseline-a2a-policy.xml">baseline-a2a-policy.xml</a>) that composes the gateway's shared fragments:</p>
+<ul>
+<li><strong>MCP</strong> — <code>security-handler</code> (API key + optional per-product JWT), <code>mcp-usage</code> (metric), <code>raise-alert-events</code> (opt-in alerting).</li>
+<li><strong>A2A</strong> — <code>authentication-managed-identity</code> (backend/Foundry auth, injected with the asset's MI client id), <code>a2a-usage</code> (metric), <code>raise-alert-events</code>. <strong>No <code>security-handler</code></strong> — see the A2A auth model below.</li>
+</ul>
+<p>The MCP fragments are the <strong>same</strong> ones used by the LLM APIs, so existing governance composes with published tools. To layer more controls on a specific asset (e.g. inbound PII anonymization or content safety), supply a custom <code>policyXml</code> on that asset rather than editing the baseline.</p>
+<h3 id="a2a-authentication-model-important">A2A authentication model (important)</h3>
+<p>APIM's A2A preview <strong>does not validate product/subscription keys</strong> — sending an <code>api-key</code> header to an A2A endpoint re-triggers a broken subscription gate and returns <code>401</code>. Therefore, in <strong>phase 1</strong>:</p>
+<ul>
+<li>The A2A endpoint is <strong>anonymous at the gateway</strong> (<code>subscriptionRequired: false</code>); client-side auth (subscription/JWT) is added by the <strong>phase-2 Access Contract</strong>.</li>
+<li>The gateway authenticates to the <strong>agent backend</strong> (Foundry) using a <strong>managed identity</strong> — attached in the policy via <code>&lt;authentication-managed-identity resource="https://ai.azure.com" client-id="…"/&gt;</code>, injected from <code>managedIdentityClientId</code>. The MI must hold <strong>Foundry Agent Consumer</strong> (or <strong>Azure AI User</strong>) on the Foundry project.</li>
+<li>Because auth is done in policy against a <strong>full backend URL</strong>, A2A assets do <strong>not</strong> create an APIM backend object (and thus have no native circuit breaker — see §3). MCP assets are unaffected.</li>
+</ul>
+<h3 id="mcp-streaming-constraint">⚠️ MCP streaming constraint</h3>
+<p>MCP servers use a streaming (SSE) transport. <strong>Policies must not read <code>context.Response.Body</code></strong> for MCP assets — doing so buffers the response and breaks the transport. Consequently:</p>
+<ul>
+<li>Request-side controls (auth, usage, inbound PII/content-safety) <strong>work</strong> for MCP.</li>
+<li>Response-side controls (PII <strong>de</strong>-anonymization, response content-safety) are <strong>not supported</strong> for MCP.</li>
+</ul>
+<p>A2A v1.0 is JSON-RPC (non-streaming), so response-side inspection is generally safe there — but the baseline keeps it opt-in for simplicity.</p>
+<hr />
+<h2 id="5-usage-tracking">5. Usage tracking</h2>
+<p>Usage is emitted as <strong>App Insights custom metrics</strong> (no Event Hub, no <code>log-to-eventhub</code>), mirroring the LLM metric approach:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Namespace</th>
+<th><code>deploymentName</code> dim</th>
+<th><code>customDimension1</code></th>
+<th><code>customDimension2</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>McpRequests</code></td>
+<td><code>mcp-usage</code></td>
+<td>tool / MCP name</td>
+<td><code>mcp</code></td>
+<td>operation</td>
+</tr>
+<tr>
+<td><code>A2ARequests</code></td>
+<td><code>a2a-usage</code></td>
+<td>agent name</td>
+<td><code>a2a</code></td>
+<td>operation</td>
+</tr>
+</tbody>
+</table>
+<p>Two scheduled <strong>Logic App</strong> workflows aggregate these metrics into Cosmos DB, cloned from the LLM usage workflow:</p>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Reads metric</th>
+<th>Writes container</th>
+<th>Export-config id</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/usage-ingestion-logicapp/mcp-usage-ingestion</code></td>
+<td><code>McpRequests</code></td>
+<td><code>mcp-usage-container</code></td>
+<td><code>003</code></td>
+</tr>
+<tr>
+<td><code>src/usage-ingestion-logicapp/agent-usage-ingestion</code></td>
+<td><code>A2ARequests</code></td>
+<td><code>agent-usage-container</code></td>
+<td><code>004</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each run queries <code>customMetrics</code> over a rolling window (<code>sum(valueSum)</code> = request count), upserts one document per <code>(tool/agent, product, backend, hour)</code> bin, and advances <code>lastExportDate</code> in the <code>streaming-export-config</code> container. The Logic App's existing <code>azuremonitorlogs</code> connection and managed-identity RBAC (Azure Monitor Logs Reader + Cosmos SQL Contributor) are reused unchanged. The two new containers are added to the Cosmos module.</p>
+<hr />
+<h2 id="6-api-center-registration-optional">6. API Center registration (optional)</h2>
+<p>Set <code>publishToApiCenter: true</code> and provide the global <code>apiCenter</code> coordinates plus a per-asset <code>apiCenter</code> block:</p>
+<div class="highlight"><pre><span></span><code>publishToApiCenter: true
+apiCenter: {
+  environmentName: &#39;mcp-dev&#39;          // mcp-dev | mcp-prod | api-dev | ...
+  lifecycleStage: &#39;development&#39;
+  versionName: &#39;1-0-0&#39;
+  customProperties: { Visibility: true, Vendor: &#39;Internal&#39;, Type: &#39;AI Gateway&#39; }
+}
+</code></pre></div>
+<p>The asset is registered (kind <code>mcp</code> or <code>a2a</code>) via the shared <code>api-center-onboarding</code> module. Off by default.</p>
+<hr />
+<h2 id="7-path-prefixing-backward-compatibility">7. Path prefixing &amp; backward compatibility</h2>
+<p>By default (<code>useAssetTypePathPrefix = true</code>) the module prepends an <strong>asset-type segment</strong> to every published asset's gateway path, so the gateway namespaces assets by type:</p>
+<table>
+<thead>
+<tr>
+<th>Asset type</th>
+<th><code>path</code></th>
+<th>Endpoint (prefix on)</th>
+<th>Endpoint (prefix off)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mcp-from-api</code></td>
+<td><code>weather-tool-mcp</code></td>
+<td><code>{gateway}/mcp/weather-tool-mcp/mcp</code></td>
+<td><code>{gateway}/weather-tool-mcp/mcp</code></td>
+</tr>
+<tr>
+<td><code>mcp-existing</code></td>
+<td><code>ms-learn-tool-mcp</code></td>
+<td><code>{gateway}/mcp/ms-learn-tool-mcp</code></td>
+<td><code>{gateway}/ms-learn-tool-mcp</code></td>
+</tr>
+<tr>
+<td><code>a2a</code></td>
+<td><code>hr-chat-agent</code></td>
+<td><code>{gateway}/agent/hr-chat-agent</code></td>
+<td><code>{gateway}/hr-chat-agent</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Controls</strong></p>
+<ul>
+<li><strong>Global toggle</strong> — <code>useAssetTypePathPrefix</code> (default <code>true</code>). Set <code>false</code> to restore the legacy behavior where <code>path</code> is used verbatim.</li>
+<li><strong>Per-asset override</strong> — <code>pathPrefix</code> on any asset: a custom segment (e.g. <code>'tools'</code> → <code>{gateway}/tools/{path}</code>) or <code>''</code> to opt that single asset out even when the toggle is on.</li>
+<li>The <strong><code>/mcp</code> suffix</strong> on <code>mcp-from-api</code> is unchanged — it is APIM behavior, independent of this prefix — so an API→MCP tool ends up with <strong>both</strong> (<code>{gateway}/mcp/{path}/mcp</code>). Choose <code>path</code> names accordingly (e.g. drop a trailing <code>-mcp</code> if the double reads awkwardly).</li>
+</ul>
+<h3 id="backward-compatibility-considerations">⚠️ Backward-compatibility considerations</h3>
+<p>Enabling the prefix <strong>changes the public URL</strong> of every published asset. When adopting it on an existing gateway:</p>
+<ol>
+<li><strong>Clients must repoint.</strong> Existing MCP/A2A clients calling <code>{gateway}/{path}</code> (or <code>{gateway}/{path}/mcp</code>) break — update them to the <code>mcp/</code> / <code>agent/</code> URLs (or keep <code>useAssetTypePathPrefix = false</code> until they migrate).</li>
+<li><strong>Access Contracts auto-heal on redeploy, but stored secrets go stale.</strong> The <a href="../citadel-access-contracts/README.md">Access Contract</a> resolves each granted API's path <strong>live</strong> from APIM at deploy time, so re-running an access contract picks up the new path automatically. However, Key Vault <strong>endpoint secrets</strong> and Foundry connections written by an earlier run still hold the old URL until the access contract is redeployed — re-run it after flipping the prefix.</li>
+<li><strong>API Center runtime URIs change.</strong> Re-registration updates each asset's <code>apiPath</code> (<code>mcp/{path}[/mcp]</code> or <code>agent/{path}</code>); consumers reading the runtime URI from API Center get the new value.</li>
+<li><strong>Escape hatch.</strong> For a phased rollout, keep <code>useAssetTypePathPrefix = false</code> globally and prefix assets one at a time with a per-asset <code>pathPrefix</code>, or vice-versa (<code>true</code> globally with <code>pathPrefix: ''</code> on assets that must stay on legacy paths).</li>
+</ol>
+<hr />
+<h2 id="8-publishing-a-foundry-agent-as-a2a">8. Publishing a Foundry agent as A2A</h2>
+<p>Foundry-hosted agents can be exposed as A2A endpoints. Before publishing:</p>
+<ol>
+<li><strong>Enable incoming A2A</strong> on the agent (a prompt agent, or a hosted agent that implements the responses protocol) via a <code>PATCH</code> to <code>…/agents/{agent}?api-version=v1</code> setting the <code>agent_card</code> and <code>protocol_configuration { responses: {}, a2a: {} }</code>. See <a href="https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/enable-agent-to-agent-endpoint">Enable incoming A2A on a Foundry agent</a> and the sample <a href="../../../local/contracts/a2a-foundry-sample-agent.ps1">a2a-foundry-sample-agent.ps1</a>.</li>
+<li><strong>Grant the gateway's managed identity</strong> access on the Foundry project. Incoming A2A requires Microsoft Entra auth (key-based auth is not supported), so the identity APIM uses to call the agent needs a data-plane role on the project (<code>Azure AI User</code>, or the least-privilege <code>Foundry Agent Consumer</code>). Prefer APIM's <strong>user-assigned</strong> managed identity and pass its <strong><code>clientId</code></strong> as the global <code>managedIdentityClientId</code> parameter — the A2A backend then embeds managed-identity auth (audience <code>https://ai.azure.com</code>) using that specific identity. The validation notebook automates both the grant and the <code>clientId</code> wiring (step 3️⃣.1).</li>
+</ol>
+<p>Then configure the asset:</p>
+<div class="highlight"><pre><span></span><code>{
+  assetType: &#39;a2a&#39;
+  name: &#39;hr-chat-agent&#39;
+  displayName: &#39;HR Chat Agent (A2A)&#39;
+  path: &#39;hr-chat-agent&#39;
+  agentId: &#39;HR-ChatAgent&#39;
+  subscriptionRequired: true        // require an APIM subscription key on the caller
+  subscriptionKeyHeaderName: &#39;api-key&#39;  // or &#39;Ocp-Apim-Subscription-Key&#39;
+  agentCardPath: &#39;/.well-known/agent.json&#39;
+  agentCardBackendUrl: &#39;https://{account}.services.ai.azure.com/api/projects/{project}/agents/{agent}/endpoint/protocols/a2a/agentCard/v1.0&#39;
+  jsonRpcPath: &#39;/&#39;
+  backend: {
+    url: &#39;https://{account}.services.ai.azure.com/api/projects/{project}/agents/{agent}/endpoint/protocols/a2a&#39;
+    authType: &#39;managed-identity&#39;
+    authConfig: { resource: &#39;https://ai.azure.com&#39; }
+  }
+}
+</code></pre></div>
+<p>APIM re-exposes the Foundry agent card (served at the custom <code>agentCard/v1.0</code> path) at the standard <code>/.well-known/agent.json</code> path, and proxies JSON-RPC calls to the Foundry A2A base path. The gateway authenticates to Foundry with the <strong>user-assigned managed identity</strong> whose <code>clientId</code> you pass as <code>managedIdentityClientId</code> (that identity needs <strong>Foundry Agent Consumer</strong> on the project).</p>
+<p><strong>Agent card transport rewrite.</strong> A2A SDK / Microsoft Agent Framework clients read the agent card's transport <strong>interface URLs</strong> to decide where to send requests. Foundry's card advertises the Foundry endpoint, which would make clients bypass the gateway and call Foundry directly. So <code>publishA2aAgent.bicep</code> adds an <strong>outbound policy</strong> that rewrites the backend (Foundry) transport URLs in the card to the <strong>gateway</strong> A2A URL (<code>{gateway}/{path}</code>). The rewrite is guarded to JSON responses (the card), so it never buffers a streaming body. The inbound policy also forces <code>Accept-Encoding: identity</code> on the backend request, because <code>find-and-replace</code> cannot rewrite a gzip-compressed card body (a compressed card returns empty and clients fail to resolve it). Result: clients that resolve the card — including <code>agent_framework.a2a.A2AAgent</code> — route <strong>through the gateway</strong> (presenting their subscription key when <code>subscriptionRequired: true</code>), keeping the traffic governed, regardless of the client's compression settings.</p>
+<blockquote>
+<p><strong>Foundry A2A notes:</strong> v1.0 is <strong>JSON-RPC only</strong>, <strong>text-only</strong>, <strong>no streaming</strong>, and in <strong>preview</strong>; Foundry serves <strong>v0.3 by default</strong> (send <code>A2A-Version: 1.0</code> to select v1.0, and note the message object needs a <code>kind</code> field). Client access is <strong>subscription-key based</strong>: publish with <code>subscriptionRequired: true</code> and callers present a valid APIM subscription key in the header named by <code>subscriptionKeyHeaderName</code> (<code>api-key</code> or <code>Ocp-Apim-Subscription-Key</code>); publish with <code>subscriptionRequired: false</code> for an anonymous endpoint. Richer client auth (JWT, product scoping) is added by the phase-2 Access Contract.</p>
+</blockquote>
+<hr />
+<h2 id="9-validation">9. Validation</h2>
+<p><code>validation/citadel-publish-contract-tests.ipynb</code> deploys and validates all three asset types end-to-end (MCP handshake, agent-card fetch, JSON-RPC call, policy application, usage metrics, and circuit-breaker resiliency). See that notebook for a runnable scenario.</p>
+<hr />
+<h2 id="10-related">10. Related</h2>
+<ul>
+<li><a href="../citadel-access-contracts/README.md">Access Contract</a></li>
+<li><a href="../llm-backend-onboarding/README.md">Backend Contract</a></li>
+<li><a href="../../../guides/resiliency-guide.md">Resiliency guide</a></li>
+<li><a href="../../../guides/platform-observability-guide.md">Platform observability guide</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

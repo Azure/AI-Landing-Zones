@@ -1,0 +1,2832 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🏗️ Full Deployment Guide - All Environments - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#full-deployment-guide-all-environments" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🏗️ Full Deployment Guide - All Environments
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-this-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to use this guide
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Prerequisites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#azure-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-decisions-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Deployment Decisions Checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📝 Deployment Decisions Checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-resource-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required Resource Providers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Tools
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-preparation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Deployment Preparation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Deployment Preparation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sizing-sku-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sizing &amp; SKU Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-parameter-files-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Parameter Files Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Parameter Files Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-parameter-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Parameter Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter File Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-resource-naming-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Resource Naming &amp; Tagging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Resource Naming &amp; Tagging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Naming Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tagging-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tagging Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-network-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Network Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Network Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-deployment-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Deployment Approaches
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network Deployment Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#approach-1-hub-based-citadel-as-part-of-hub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approach 1: Hub-Based (Citadel as Part of Hub)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#approach-2-hub-spoke-hub-citadel-as-dedicated-spoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approach 2: Hub-Spoke-Hub (Citadel as Dedicated Spoke)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-setup-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Setup Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network Setup Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-create-new-network-greenfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Create New Network (Greenfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-bring-your-own-network-brownfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Bring Your Own Network (Brownfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-resiliency-business-continuity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Resiliency &amp; Business Continuity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-ai-model-deployment-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. AI Model Deployment (Optional)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. AI Model Deployment (Optional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#microsoft-foundry-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Foundry Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Microsoft Foundry Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#foundry-instances-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry instances deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Foundry instances deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#foundry-model-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry model deployments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disable-microsoft-foundry-model-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Microsoft Foundry Model deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-log-analytics-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Log Analytics Strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Log Analytics Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-create-new-log-analytics-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Create New Log Analytics Workspace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-bring-your-own-log-analytics-recommended-for-enterprise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Bring Your Own Log Analytics (Recommended for Enterprise)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-inference-api-diagnostic-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Inference API Diagnostic Logging
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Inference API Diagnostic Logging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#azure-monitor-log-settings-azuremonitorlogsettings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure Monitor Log Settings (azureMonitorLogSettings)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-insights-log-settings-appinsightslogsettings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Insights Log Settings (appInsightsLogSettings)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recommended-settings-by-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Settings by Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-security-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Security &amp; Compliance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Security &amp; Compliance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entra-id-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entra ID Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Deployment Execution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Deployment Execution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-az-deployment-sub-create" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using az deployment sub create:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-azd-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using azd up:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#existing-resource-group-deployment-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing Resource Group Deployment Execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Post-Deployment Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Post-Deployment Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-resource-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Resource Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate-governance-hub-functionality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validate Governance Hub functionality
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps-operate-the-hub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ➡️ Next Steps: Operate the Hub
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="➡️ Next Steps: Operate the Hub">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-deployment-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        👉 Post-Deployment Guide
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Help
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="full-deployment-guide-all-environments">🏗️ Full Deployment Guide - All Environments</h1>
+<p>This guide covers deploying the AI Citadel Governance Hub across <strong>development, staging, and production</strong> environments with enterprise-grade configuration, networking, and governance.</p>
+<p>For quick non-production deployments, see the <a href="../quick-deployment-guide/">Quick Deployment Guide</a>.</p>
+<h3 id="how-to-use-this-guide">How to use this guide</h3>
+<p>Deploying the hub is a three-phase journey. This guide covers <strong>Phase 1 (Plan)</strong> and <strong>Phase 2 (Deploy)</strong>; day-2 configuration lives in the <a href="../post-deployment-guide/">Post-Deployment Guide</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>You do</th>
+<th>Primary references</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Plan</strong></td>
+<td>Pick region(s), network model, SKUs, resiliency/BC-DR posture</td>
+<td>This guide · <a href="../network-approach/">Networking Guide</a> · <a href="../citadel-sizing-guide/">Sizing Guide</a> · <a href="../resiliency-guide/">Resiliency Guide</a> · <a href="../business-continuity-dr-guide/">BC/DR Guide</a></td>
+</tr>
+<tr>
+<td><strong>2. Deploy</strong></td>
+<td>Provision the landing zone (<code>azd up</code>)</td>
+<td>This guide</td>
+</tr>
+<tr>
+<td><strong>3. Operate</strong></td>
+<td>Onboard backends &amp; use cases, enable auth, activate reporting, upgrade</td>
+<td><a href="../post-deployment-guide/">Post-Deployment Guide</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Complete the <a href="#-deployment-decisions-checklist">Deployment Decisions Checklist</a> first.</strong> Every decision maps to a parameter in <a href="../bicep/infra/main.bicepparam"><code>main.bicepparam</code></a>, so a completed checklist becomes your deployment configuration.</p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">📋 Table of Contents</h2>
+<ol>
+<li><a href="#-prerequisites">Prerequisites</a></li>
+<li><a href="#-deployment-decisions-checklist">Deployment Decisions Checklist</a></li>
+<li><a href="#-deployment-preparation">Deployment Preparation</a><ul>
+<li><a href="#1-sizing--sku-selection">Sizing &amp; SKU Selection</a></li>
+<li><a href="#2-parameter-files-strategy">Parameter Files Strategy</a></li>
+<li><a href="#3-resource-naming--tagging">Resource Naming &amp; Tagging</a></li>
+<li><a href="#4-network-architecture">Network Architecture</a></li>
+<li><a href="#5-resiliency--business-continuity">Resiliency &amp; Business Continuity</a></li>
+<li><a href="#6-ai-model-deployment-optional">AI Model Deployment</a></li>
+<li><a href="#7-log-analytics-strategy">Log Analytics Strategy</a></li>
+<li><a href="#8-inference-api-diagnostic-logging">Inference API Diagnostic Logging</a></li>
+<li><a href="#9-security--compliance">Security &amp; Compliance</a></li>
+</ul>
+</li>
+<li><a href="#-deployment-execution">Deployment Execution</a></li>
+<li><a href="#-post-deployment-validation">Post-Deployment Validation</a></li>
+<li><a href="#-next-steps-operate-the-hub">Next Steps: Operate the Hub</a></li>
+<li><a href="#-troubleshooting">Troubleshooting</a></li>
+</ol>
+<hr />
+<h2 id="prerequisites">✅ Prerequisites</h2>
+<h3 id="azure-requirements">Azure Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure Subscription</strong></td>
+<td>Active subscription with sufficient quota</td>
+</tr>
+<tr>
+<td><strong>Permissions</strong></td>
+<td>Owner or Contributor + User Access Administrator</td>
+</tr>
+<tr>
+<td><strong>Resource Providers</strong></td>
+<td>All required providers registered (see below)</td>
+</tr>
+<tr>
+<td><strong>Service Quotas</strong></td>
+<td>Verified quotas for LLMs, CosmosDB and other elements</td>
+</tr>
+</tbody>
+</table>
+<h2 id="deployment-decisions-checklist">📝 Deployment Decisions Checklist</h2>
+<p>Work through this checklist first — each decision maps directly to a parameter in <a href="../bicep/infra/main.bicepparam"><code>main.bicepparam</code></a>. The linked guides help you choose.</p>
+<ul>
+<li>[ ] <strong>Sizing (T-shirt size → SKUs)</strong> — pick Small / Medium / Large per environment → <a href="../citadel-sizing-guide/">Sizing Guide</a><ul>
+<li>[ ] Development (cost-optimized SKUs)</li>
+<li>[ ] Staging (production SKUs, reduced capacity)</li>
+<li>[ ] Production (production SKUs, full capacity)</li>
+</ul>
+</li>
+<li>[ ] <strong>Resiliency posture</strong> — circuit breaker, session affinity, failover, error handling → <a href="../resiliency-guide/">Resiliency Guide</a></li>
+<li>[ ] <strong>Business continuity / DR</strong> — single-region, multi-region, or Premium multi-region; RTO/RPO targets → <a href="../business-continuity-dr-guide/">BC/DR Guide</a></li>
+<li>[ ] Subscription allocation<ul>
+<li>[ ] New subscription</li>
+<li>[ ] Existing subscription</li>
+</ul>
+</li>
+<li>[ ] Target Azure Region(s)<ul>
+<li>[ ] Primary Region (for core governance components)</li>
+<li>[ ] Regions for Foundry instances and model deployments</li>
+</ul>
+</li>
+<li>[ ] Network Approach<ul>
+<li>[ ] Hub-Based (using new subnets in existing hub network)</li>
+<li>[ ] AIGovSpoke-Hub-Spoke (create dedicated spoke VNet linked to hub)</li>
+</ul>
+</li>
+<li>[ ] Bring-Your-Own Network<ul>
+<li>[ ] Create new VNet with customized address space</li>
+<li>[ ] Use existing VNet integration (vnet/subnets already created &amp; configured)</li>
+<li>[ ] Use exiting Private DNS Zones (better with using existing VNet)</li>
+<li>[ ] Create new Private DNS Zones (better with new VNet)</li>
+</ul>
+</li>
+<li>[ ] APIM Network Configuration<ul>
+<li>[ ] External (public endpoint, suitable for dev/test)</li>
+<li>[ ] Internal (private endpoint, recommended for production)</li>
+<li>[ ] APIM Custom Domains (list them for gateway, developer portal and management names)</li>
+</ul>
+</li>
+<li>[ ] Log Analytics Strategy<ul>
+<li>[ ] New Workspace will be created</li>
+<li>[ ] Use existing centralized Workspace (cross-environment)</li>
+</ul>
+</li>
+<li>[ ] Resource Naming Convention &amp; tags<ul>
+<li>[ ] Auto-generated names</li>
+<li>[ ] Custom names/tags per organizational standards</li>
+</ul>
+</li>
+<li>[ ] Microsoft Foundry Model Deployment<ul>
+<li>[ ] Deploy models as part of AI Citadel deployment (specify models/regions)</li>
+<li>[ ] None (use existing deployments that will be onboarded later)</li>
+</ul>
+</li>
+<li>[ ] Inference API Diagnostic Logging<ul>
+<li>[ ] Azure Monitor LLM log verbosity (enabled/disabled, message capture, max payload size)</li>
+<li>[ ] Application Insights log headers and body capture size</li>
+<li>[ ] Use defaults (recommended) or customize per environment</li>
+</ul>
+</li>
+<li>[ ] Source Control Strategy<ul>
+<li>[ ] Single repository with branches per environment
+    - [ ] Branch for original unchanged Citadel Governance Hub repo (synchronized with upstream)
+    - [ ] Branches for dev, staging, production with environment-specific parameter files (apply changes through new parameter files only)</li>
+<li>[ ] Separate repositories per environment (with similar branching strategy to point 1)</li>
+<li>[ ] Automation Strategy
+    - [ ] Manual deployments using <code>azd up</code> or <code>az deployment sub create</code>
+    - [ ] CI/CD pipelines (i.e. Azure DevOps or GitHub Actions) for automated deployments</li>
+</ul>
+</li>
+</ul>
+<p>Leverage deployment parameter files (<a href="../bicep/infra/main.bicepparam">main.bicepparam</a>) to capture these decisions for each environment.</p>
+<h3 id="required-resource-providers">Required Resource Providers</h3>
+<p>You can use Azure Cloud Shell or your local Azure CLI installation to register the required resource providers.</p>
+<p>First we make sure that the target subscription is selected:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
+az<span class="w"> </span>account<span class="w"> </span>list<span class="w"> </span>--output<span class="w"> </span>table
+az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span><span class="s2">&quot;&lt;subscription-name or id&gt;&quot;</span>
+az<span class="w"> </span>account<span class="w"> </span>show<span class="w"> </span>--output<span class="w"> </span>table
+</code></pre></div>
+<p>Then register all required resource providers:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Register all required providers</span>
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.AlertsManagement
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.ApiCenter
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.ApiManagement
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.App
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Automation
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Cache
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.CognitiveServices
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Compute
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.ContainerRegistry
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.ContainerService
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Diagnostics
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.DocumentDB
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.EventHub
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Insights
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.KeyVault
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.MachineLearningServices
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.ManagedIdentity
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Monitor
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Network
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.OperationalInsights
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Resources
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Search
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Sql
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Storage
+az<span class="w"> </span>provider<span class="w"> </span>register<span class="w"> </span>--namespace<span class="w"> </span>Microsoft.Web
+
+<span class="c1"># Verify registration status</span>
+az<span class="w"> </span>provider<span class="w"> </span>list<span class="w"> </span>--query<span class="w"> </span><span class="s2">&quot;[?registrationState==&#39;Registered&#39;].namespace&quot;</span><span class="w"> </span>-o<span class="w"> </span>table
+</code></pre></div>
+<h3 id="deployment-tools">Deployment Tools</h3>
+<p><strong>Option 1: Local Machine</strong>
+- <a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd">Azure Developer CLI (azd)</a>
+- <a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI</a> (v2.50.0+)
+- <a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/install">Bicep CLI</a> (v0.20.0+)
+- <a href="https://git-scm.com/downloads">Git</a>
+- <a href="https://code.visualstudio.com/">VS Code</a> with extensions:
+  - Bicep</p>
+<p><strong>Option 2: Azure Cloud Shell</strong>
+- All tools pre-installed
+- Storage account for persistence must be attached
+- Built-in editor (in the classic mode)</p>
+<p><strong>Option 3:  DevOps (i.e. Azure DevOps / GitHub Actions)</strong>
+- Self-hosted or Microsoft-hosted agents
+- Service Principal with appropriate permissions
+- Secure variable groups for secrets</p>
+<hr />
+<h2 id="deployment-preparation">🎯 Deployment Preparation</h2>
+<p>Based on your choices in the <a href="#-deployment-decisions-checklist">Deployment Decisions Checklist</a>, you can now prepare your deployment configuration.</p>
+<p>For source control, make sure you have a working directory linked to your source control repository.</p>
+<p>First you need to get the deployment template files:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a working directory:</span>
+mkdir<span class="w"> </span>ai-hub-citadel-deployment
+<span class="c1"># Make the repository your current directory:</span>
+<span class="nb">cd</span><span class="w"> </span>ai-hub-citadel-deployment<span class="w"> </span><span class="c1"># it may differ if you used git clone</span>
+
+<span class="c1"># Copy repo files</span>
+azd<span class="w"> </span>init<span class="w"> </span>--template<span class="w"> </span>Azure-Samples/ai-hub-gateway-solution-accelerator<span class="w"> </span>-e<span class="w"> </span>ai-hub-citadel-dev<span class="w"> </span>--branch<span class="w"> </span>citadel-v1
+
+<span class="c1"># or use git clone:</span>
+<span class="c1"># git clone https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator.git</span>
+<span class="c1"># git checkout citadel-v1</span>
+</code></pre></div>
+<p>Once you have the Infrastructure-as-Code files, proceed to configure your deployment based on the following strategies.</p>
+<p>You can perform the deployment using either <code>azd up</code> (recommended) or <code>az deployment sub create</code> commands.</p>
+<h3 id="1-sizing-sku-selection">1. Sizing &amp; SKU Selection</h3>
+<p>Before touching parameter files, decide the <strong>size</strong> of each environment. The <a href="../citadel-sizing-guide/">Citadel Sizing Guide</a> uses a T-shirt model (Small / Medium / Large) tied to expected PTU throughput and SLA needs, and tells you exactly which SKUs to set.</p>
+<table>
+<thead>
+<tr>
+<th>T-shirt size</th>
+<th>Fit</th>
+<th>APIM SKU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Small</strong></td>
+<td>Dev / experimental, no SLA</td>
+<td>Developer</td>
+</tr>
+<tr>
+<td><strong>Medium Classic</strong></td>
+<td>Non-prod or minimum-prod with SLA, full network isolation</td>
+<td>Premium</td>
+</tr>
+<tr>
+<td><strong>Medium v2</strong></td>
+<td>Non-prod or minimum-prod with SLA</td>
+<td>StandardV2</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>Multi-zone production with SLA</td>
+<td>Premium (multi-unit)</td>
+</tr>
+</tbody>
+</table>
+<p>Once you have chosen a size, set the SKUs in your parameter file under the <strong><code>COMPUTE SKU &amp; SIZE</code></strong> block:</p>
+<div class="highlight"><pre><span></span><code>// ============================================================================
+// COMPUTE SKU &amp; SIZE - SKUs and capacity settings for services
+// ============================================================================
+param apimSku = readEnvironmentVariable(&#39;APIM_SKU&#39;, &#39;StandardV2&#39;)
+param apimSkuUnits = int(readEnvironmentVariable(&#39;APIM_SKU_UNITS&#39;, &#39;1&#39;))
+param eventHubCapacityUnits = int(readEnvironmentVariable(&#39;EVENTHUB_CAPACITY&#39;, &#39;1&#39;))
+param cosmosDbRUs = int(readEnvironmentVariable(&#39;COSMOS_DB_RUS&#39;, &#39;400&#39;))
+param logicAppsSkuCapacityUnits = int(readEnvironmentVariable(&#39;LOGIC_APPS_SKU_CAPACITY_UNITS&#39;, &#39;1&#39;))
+param apicSku = readEnvironmentVariable(&#39;APIC_SKU&#39;, &#39;Free&#39;)
+param keyVaultSkuName = readEnvironmentVariable(&#39;KEY_VAULT_SKU_NAME&#39;, &#39;standard&#39;)
+</code></pre></div>
+<blockquote>
+<p>📐 <strong>See the <a href="../citadel-sizing-guide/">Sizing Guide</a></strong> for the reference Azure pricing estimates behind each size and for scale-out guidance (adding APIM units).</p>
+</blockquote>
+<hr />
+<h3 id="2-parameter-files-strategy">2. Parameter Files Strategy</h3>
+<p>AI Citadel Governance Hub uses <strong>Bicep parameter files (.bicepparam)</strong> for environment-specific configurations.</p>
+<blockquote>
+<p>NOTE: Always keep a separate copy of your customized parameter files with different names of the main repository <code>main.bicepparam</code> to avoid overwriting during updates.</p>
+</blockquote>
+<h4 id="available-parameter-files">Available Parameter Files</h4>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../bicep/infra/main.bicepparam"><code>main.bicepparam</code></a></td>
+<td>Environment variables</td>
+<td>Used in azd deployments, CI/CD (Default values come from here)</td>
+</tr>
+<tr>
+<td><a href="../bicep/infra/main.parameters.dev.bicepparam"><code>main.parameters.dev.bicepparam</code></a></td>
+<td>Development</td>
+<td>Dev/test environments</td>
+</tr>
+<tr>
+<td><a href="../bicep/infra/main.parameters.prod.bicepparam"><code>main.parameters.prod.bicepparam</code></a></td>
+<td>Production</td>
+<td>Production workloads</td>
+</tr>
+<tr>
+<td><a href="../bicep/infra/main.parameters.complete.bicepparam"><code>main.parameters.complete.bicepparam</code></a></td>
+<td>Reference</td>
+<td>All parameters documented</td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameter-file-structure">Parameter File Structure</h4>
+<div class="highlight"><pre><span></span><code>using &#39;./main.bicep&#39;
+
+// Basic Configuration
+param environmentName = &#39;citadel-dev&#39;
+param location = &#39;eastus&#39;
+param tags = {
+  &#39;azd-env-name&#39;: &#39;citadel-dev&#39;
+  Environment: &#39;Development&#39;
+  CostCenter: &#39;Engineering&#39;
+}
+
+// Compute SKUs
+param apimSku = &#39;Developer&#39;
+param apimSkuUnits = 1
+
+// Networking
+param useExistingVnet = false
+param useExistingLogAnalytics = false
+
+// Features
+param enableAPICenter = true
+</code></pre></div>
+<hr />
+<h3 id="3-resource-naming-tagging">3. Resource Naming &amp; Tagging</h3>
+<h4 id="naming-strategy">Naming Strategy</h4>
+<p>AI Citadel supports two naming approaches:</p>
+<p><strong>Option A: Auto-Generated Names (for default non-production deployment)</strong>
+<div class="highlight"><pre><span></span><code>param resourceGroupName = &#39;&#39;  // Auto-generated: rg-citadel-dev
+param apimServiceName = &#39;&#39;    // Auto-generated: apim-abc123def
+param logAnalyticsName = &#39;&#39;   // Auto-generated: log-abc123def
+</code></pre></div></p>
+<p>Benefits:
+- ✅ Quick naming across environments
+- ✅ Unique names prevent conflicts
+- ✅ Includes environment hash for traceability</p>
+<p><strong>Option B: Custom Names</strong>
+<div class="highlight"><pre><span></span><code>param resourceGroupName = &#39;rg-ai-gov-citadel-prod-eastus&#39;
+param apimServiceName = &#39;apim-ai-gov-citadel-prod&#39;
+param logAnalyticsName = &#39;law-ai-gov-citadel-shared&#39;
+</code></pre></div></p>
+<p>Benefits:
+- ✅ Human-readable names
+- ✅ Matches organizational naming standards
+- ✅ Easier to locate in portal</p>
+<h4 id="tagging-strategy">Tagging Strategy</h4>
+<p><strong>Minimum Required Tags:</strong>
+<div class="highlight"><pre><span></span><code>param tags = {
+  &#39;azd-env-name&#39;: &#39;ai-gov-citadel-prod&#39;
+  Environment: &#39;Production&#39;
+  CostCenter: &#39;Platform&#39;
+  Owner: &#39;platform-team@company.com&#39;
+  Criticality: &#39;High&#39;
+}
+</code></pre></div></p>
+<p><strong>Recommended Tags by Environment:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Dev</th>
+<th>Staging</th>
+<th>Production</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Environment</td>
+<td>Development</td>
+<td>Staging</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>Criticality</td>
+<td>Low</td>
+<td>Medium</td>
+<td>High</td>
+</tr>
+<tr>
+<td>CostCenter</td>
+<td>Engineering</td>
+<td>Engineering</td>
+<td>Platform</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="4-network-architecture">4. Network Architecture</h3>
+<h4 id="network-deployment-approaches">Network Deployment Approaches</h4>
+<p>AI Citadel Governance Hub supports <strong>two architectural patterns</strong> for network integration.</p>
+<p>Based on your decisions in the earlier checklist, choose one of the following approaches:</p>
+<h5 id="approach-1-hub-based-citadel-as-part-of-hub"><strong>Approach 1: Hub-Based (Citadel as Part of Hub)</strong></h5>
+<p>Citadel Governance Hub deployed <strong>within</strong> your existing hub VNet.</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────┐
+│         Hub Network (VNet)          │
+│  ┌──────────────────────────────┐   │
+│  │   Citadel Governance Hub     │   │
+│  │   - APIM (External/Internal) │   │
+│  │   - Private Endpoints        │   │
+│  │   - Log Analytics            │   │
+│  └──────────────────────────────┘   │
+│  ┌──────────────────────────────┐   │
+│  │   Shared Services            │   │
+│  │   - Azure Firewall &amp; WAF     │   │
+│  │   - DNS                      │   │
+│  └──────────────────────────────┘   │
+└─────────────────────────────────────┘
+           │           │
+           ▼           ▼
+    ┌──────────┐  ┌──────────┐
+    │ Spoke 1  │  │ Spoke 2  │
+    │ Agents   │  │ Agents   │
+    └──────────┘  └──────────┘
+</code></pre></div>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = true
+param vnetName = &#39;vnet-hub-eastus&#39;
+param existingVnetRG = &#39;rg-network-hub&#39;
+param apimSubnetName = &#39;snet-citadel-apim&#39;
+param privateEndpointSubnetName = &#39;snet-citadel-private-endpoints&#39;
+param functionAppSubnetName = &#39;snet-citadel-functions&#39;
+</code></pre></div></p>
+<p><strong>When to Use:</strong>
+- ✅ Citadel manages all enterprise AI traffic
+- ✅ Direct spoke-to-hub connectivity
+- ✅ Simplified network topology</p>
+<hr />
+<h5 id="approach-2-hub-spoke-hub-citadel-as-dedicated-spoke"><strong>Approach 2: Hub-Spoke-Hub (Citadel as Dedicated Spoke)</strong></h5>
+<p>Citadel deployed in a <strong>dedicated spoke</strong> with firewall in between.</p>
+<div class="highlight"><pre><span></span><code>                 ┌─────────────┐
+                 │ Hub Network │
+                 │  - Firewall │
+                 │  - DNS      │
+                 └──────┬──────┘
+                        │
+         ┌──────────────┼──────────────┐
+         ▼              ▼              ▼
+  ┌────────────┐ ┌────────────┐ ┌────────────┐
+  │  Spoke 1   │ │  Citadel   │ │  Spoke 2   │
+  │  Agents    │ │  Governance│ │  Agents    │
+  └────────────┘ │   Hub      │ └────────────┘
+                 │  - APIM    │
+                 │  - PE      │
+                 └────────────┘
+</code></pre></div>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = false  // Creates new spoke VNet
+param vnetName = &#39;vnet-citadel-eastus&#39;
+param vnetAddressPrefix = &#39;10.170.0.0/24&#39;
+param dnsZoneRG = &#39;rg-network-hub&#39;
+param dnsSubscriptionId = &#39;&lt;hub-subscription-id&gt;&#39;
+
+// Post-deployment: Configure VNet peering to hub
+</code></pre></div></p>
+<p><strong>When to Use:</strong>
+- ✅ Defense-in-depth security (dual inspection)
+- ✅ Isolated AI workloads from general traffic
+- ✅ Separate cost centers/subscriptions
+- ✅ Compliance requirements for network isolation</p>
+<hr />
+<h4 id="network-setup-options">Network Setup Options</h4>
+<h5 id="option-1-create-new-network-greenfield"><strong>Option 1: Create New Network (Greenfield)</strong></h5>
+<p>Citadel creates all networking components:</p>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = false
+param vnetAddressPrefix = &#39;10.170.0.0/24&#39;
+param apimSubnetPrefix = &#39;10.170.0.0/26&#39;
+param privateEndpointSubnetPrefix = &#39;10.170.0.64/26&#39;
+param functionAppSubnetPrefix = &#39;10.170.0.128/26&#39;
+
+// Network access
+param apimNetworkType = &#39;External&#39;  // or &#39;Internal&#39; for production
+param apimV2UsePrivateEndpoint = true
+param cosmosDbPublicAccess = &#39;Disabled&#39;
+param eventHubNetworkAccess = &#39;Enabled&#39;  // Required during deployment of APIM v2 SKUs
+</code></pre></div>
+<p><strong>Includes:</strong>
+- ✅ Virtual Network with subnets
+- ✅ Network Security Groups
+- ✅ Private DNS Zones
+- ✅ Private Endpoints for all services
+- ✅ Route tables (needed for APIM Developer and Premium SKUs)</p>
+<hr />
+<h5 id="option-2-bring-your-own-network-brownfield"><strong>Option 2: Bring Your Own Network (Brownfield)</strong></h5>
+<p>Integrate with existing enterprise network:</p>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = true
+param vnetName = &#39;vnet-hub-prod-eastus&#39;
+param existingVnetRG = &#39;rg-network-prod&#39;
+
+// Subnet names (must exist)
+param apimSubnetName = &#39;snet-citadel-apim&#39;
+param privateEndpointSubnetName = &#39;snet-citadel-pe&#39;
+param functionAppSubnetName = &#39;snet-citadel-functions&#39;
+
+// DNS configuration
+param dnsZoneRG = &#39;rg-network-dns&#39;
+param dnsSubscriptionId = &#39;00000000-0000-0000-0000-000000000000&#39;
+</code></pre></div>
+<p><strong>Prerequisites:</strong>
+1. VNet with sufficient address space
+2. Three subnets created:
+   - APIM subnet: <code>/26</code> or larger (64 IPs)
+   - Private endpoint subnet: <code>/26</code> or larger
+   - Function App subnet: <code>/26</code> or larger
+3. Private DNS zones created (or delegated)
+4. NSG required rules configured for APIM subnet</p>
+<p><strong>Required DNS Zones:</strong>
+- <code>privatelink.vaultcore.azure.com</code>
+- <code>privatelink.monitor.azure.com</code>
+- <code>privatelink.servicebus.windows.net</code>
+- <code>privatelink.documents.azure.com</code>
+- <code>privatelink.blob.core.windows.net</code>
+- <code>privatelink.file.core.windows.net</code>
+- <code>privatelink.table.core.windows.net</code>
+- <code>privatelink.queue.core.windows.net</code>
+- <code>privatelink.azure-api.net</code> (for APIM v2 SKUs)
+- <code>privatelink.services.ai.azure.com</code> (for AI Foundry)
+- <code>privatelink.openai.azure.com</code> (for AI Foundry)
+- <code>privatelink.cognitiveservices.azure.com</code> (for AI Foundry)</p>
+<p><strong>APIM Subnet Requirements:</strong></p>
+<p>For <strong>Developer/Premium SKU</strong> (VNet injection):
+<div class="highlight"><pre><span></span><code><span class="c1"># No special delegation required</span>
+<span class="c1"># NSG must allow all required APIM management traffic</span>
+<span class="c1"># must have required service endpoints enabled</span>
+<span class="c1"># associated with APIM route table</span>
+</code></pre></div></p>
+<p>For <strong>StandardV2/PremiumV2 SKU</strong> (Private Endpoint):
+<div class="highlight"><pre><span></span><code><span class="c1"># Standard subnet configuration</span>
+<span class="c1"># Private endpoint will be created</span>
+</code></pre></div></p>
+<p>Detailed guide: <a href="../network-approach/">Bring Your Own Network</a></p>
+<hr />
+<h3 id="5-resiliency-business-continuity">5. Resiliency &amp; Business Continuity</h3>
+<p>Resiliency is a <strong>planning decision</strong>, not a post-deploy afterthought — the topology and SKU you pick here determine what recovery objectives you can meet. Two complementary guides cover the two layers:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What it protects</th>
+<th>Guide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Backend resiliency</strong></td>
+<td>Keeping LLM traffic flowing when a <em>backend</em> throttles or fails — circuit breaking, session affinity, automated failover, structured error handling.</td>
+<td><a href="../resiliency-guide/">Resiliency Guide</a></td>
+</tr>
+<tr>
+<td><strong>Hub business continuity</strong></td>
+<td>Keeping the <em>gateway itself</em> available when a service, zone, or whole region fails — multi-region topologies, global routing, Cosmos DB multi-write.</td>
+<td><a href="../business-continuity-dr-guide/">BC/DR Guide</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Golden rule:</strong> a resilient gateway in front of a fragile backend still fails, and a resilient backend behind a single-region gateway is unreachable when that region goes down. <strong>Plan both.</strong></p>
+</blockquote>
+<p><strong>Decisions to lock in now (they influence SKU, region, and network choices above):</strong></p>
+<ul>
+<li>[ ] <strong>BC/DR topology</strong> — single-region + zone redundancy, multiple full deployments (recommended, works on StandardV2+), or APIM Premium multi-region. See <a href="../business-continuity-dr-guide/#3-deployment-topologies">Deployment topologies</a>.</li>
+<li>[ ] <strong>RTO / RPO / RLO targets</strong> per use case (drives topology). See <a href="../business-continuity-dr-guide/#2-planning-your-bcdr-strategy">Planning your BC/DR strategy</a>.</li>
+<li>[ ] <strong>Global usage consolidation</strong> — if going multi-region, plan Cosmos DB multi-write via <a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md"><code>citadel-cosmos-global-multi-master-sync</code></a> (configured post-deployment).</li>
+</ul>
+<blockquote>
+<p>Circuit breaker, session affinity, and failover defaults are applied automatically during <strong>backend onboarding</strong> (a post-deployment step) — you tune them there. See the <a href="../post-deployment-guide/">Post-Deployment Guide</a>.</p>
+</blockquote>
+<hr />
+<h3 id="6-ai-model-deployment-optional">6. AI Model Deployment (Optional)</h3>
+<h4 id="microsoft-foundry-configuration">Microsoft Foundry Configuration</h4>
+<p>AI Citadel always deploys at least <strong>one Microsoft Foundry resource</strong> — the <strong>primary</strong> Foundry (the first entry in <code>aiFoundryInstances</code>). This primary Foundry is mandatory because the AI Citadel Gateway re-uses its <strong>AI Services unified endpoint</strong> (<code>https://&lt;foundry&gt;.cognitiveservices.azure.com/</code>) to power:</p>
+<ul>
+<li><strong>Content Safety</strong> policies (<code>llm-content-safety</code> / <code>content-safety-backend</code> in APIM)</li>
+<li><strong>PII detection / anonymization</strong> policies (<code>piiServiceUrl</code> named value in APIM)</li>
+</ul>
+<p>Additional entries can be added to deploy <strong>extra Foundry resources in different regions</strong> for added LLM capacity, geo-redundancy, or access to region-restricted models. The primary Foundry can also host LLM deployments alongside the additional ones — there is no separation between "core capability" and "LLM" Foundry roles.</p>
+<blockquote>
+<p><strong>Note:</strong> The previous standalone Azure Language Service and Azure AI Content Safety resources are no longer provisioned. Their capabilities are consumed directly from the primary Foundry account (AI Services kind), removing two private endpoints and simplifying RBAC and DNS configuration.</p>
+</blockquote>
+<p>Input parameters are separated into two parts:</p>
+<h5 id="foundry-instances-deployment">Foundry instances deployment</h5>
+<div class="highlight"><pre><span></span><code>// AI Foundry instances configuration array
+param aiFoundryInstances = [
+  {
+    name: readEnvironmentVariable(&#39;AI_FOUNDRY_RESOURCE_NAME&#39;, &#39;&#39;)
+    location: readEnvironmentVariable(&#39;AZURE_LOCATION&#39;, &#39;swedencentral&#39;)
+    customSubDomainName: &#39;&#39;
+    defaultProjectName: &#39;citadel-governance-project&#39;
+  }
+  {
+    name: readEnvironmentVariable(&#39;AI_FOUNDRY_RESOURCE_NAME&#39;, &#39;&#39;)
+    location: &#39;eastus2&#39;
+    customSubDomainName: &#39;&#39;
+    defaultProjectName: &#39;citadel-governance-project&#39;
+  }
+]
+</code></pre></div>
+<p>The above, creates two Foundry instances in <code>swedencentral</code> and <code>eastus2</code> regions as examples.</p>
+<p>This allows you to deploy models in multiple regions for geo-redundancy, added capacity or accessing restricted regional models.</p>
+<h6 id="foundry-model-deployments">Foundry model deployments</h6>
+<div class="highlight"><pre><span></span><code>// AI Foundry model deployments configuration
+param aiFoundryModelsConfig = [
+  {
+    name: &#39;gpt-4o-mini&#39;
+    publisher: &#39;OpenAI&#39;
+    version: &#39;2024-07-18&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 100
+    aiserviceIndex: 0 // First instance in aiFoundryInstances array
+  }
+  {
+    name: &#39;gpt-4o&#39;
+    publisher: &#39;OpenAI&#39;
+    version: &#39;2024-11-20&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 100
+    aiserviceIndex: 0
+  }
+  {
+    name: &#39;DeepSeek-R1&#39;
+    publisher: &#39;DeepSeek&#39;
+    version: &#39;1&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 1
+    aiserviceIndex: 0
+  }
+  {
+    name: &#39;Phi-4&#39;
+    publisher: &#39;Microsoft&#39;
+    version: &#39;3&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 1
+    aiserviceIndex: 0
+  }
+  {
+    name: &#39;text-embedding-3-large&#39;
+    publisher: &#39;OpenAI&#39;
+    version: &#39;1&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 100
+    aiserviceIndex: 0
+  }
+  {
+    name: &#39;gpt-5&#39;
+    publisher: &#39;OpenAI&#39;
+    version: &#39;2025-08-07&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 100
+    aiserviceIndex: 1 // Second instance in aiFoundryInstances array
+  }
+  {
+    name: &#39;DeepSeek-R1&#39;
+    publisher: &#39;DeepSeek&#39;
+    version: &#39;1&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 1
+    aiserviceIndex: 1
+  }
+  {
+    name: &#39;text-embedding-3-large&#39;
+    publisher: &#39;OpenAI&#39;
+    version: &#39;1&#39;
+    sku: &#39;GlobalStandard&#39;
+    capacity: 100
+    aiserviceIndex: 1
+  }
+]
+</code></pre></div>
+<blockquote>
+<p>NOTE: Ensure that your target subscription has sufficient quota for the selected models.</p>
+</blockquote>
+<h5 id="disable-microsoft-foundry-model-deployment">Disable Microsoft Foundry Model deployment</h5>
+<p>If you are planning to leverage existing model deployments or you are planning to provision the LLMs separately, you can skip model deployment during Citadel provisioning. </p>
+<div class="highlight"><pre><span></span><code>param aiFoundryModelsConfig = [] // No models will be deployed as part of AI Citadel primary deployment
+</code></pre></div>
+<hr />
+<h3 id="7-log-analytics-strategy">7. Log Analytics Strategy</h3>
+<h4 id="option-1-create-new-log-analytics-workspace">Option 1: Create New Log Analytics Workspace</h4>
+<p><strong>Recommended for:</strong> Isolated environments, proof-of-concept, dedicated subscriptions</p>
+<div class="highlight"><pre><span></span><code>param useExistingLogAnalytics = false
+param logAnalyticsName = &#39;&#39;  // Auto-generated if empty or supply a compliant name.
+</code></pre></div>
+<p><strong>Benefits:</strong>
+- ✅ Isolated logs per environment
+- ✅ Independent retention policies
+- ✅ Simplified RBAC
+- ✅ Environment-specific dashboards</p>
+<p><strong>Typical Setup:</strong>
+<div class="highlight"><pre><span></span><code>┌────────────────┐  ┌────────────────┐  ┌─────────────────┐
+│ LAW Dev        │  │ LAW Staging    │  │ LAW Prod        │
+│ - 30d retention│  │ - 90d retention│  │ - 180d retention│
+│ - Dev RBAC     │  │ - Ops RBAC     │  │ - Audit RBAC    │
+└────────────────┘  └────────────────┘  └─────────────────┘
+</code></pre></div></p>
+<hr />
+<h4 id="option-2-bring-your-own-log-analytics-recommended-for-enterprise">Option 2: Bring Your Own Log Analytics (Recommended for Enterprise)</h4>
+<p><strong>Recommended for:</strong> Enterprise, multi-environment, centralized monitoring</p>
+<div class="highlight"><pre><span></span><code>param useExistingLogAnalytics = true
+param existingLogAnalyticsName = &#39;law-centralized-prod&#39;
+param existingLogAnalyticsRG = &#39;rg-monitoring-prod&#39;
+param existingLogAnalyticsSubscriptionId = &#39;00000000-0000-0000-0000-000000000000&#39;
+</code></pre></div>
+<blockquote>
+<p>NOTE: Log Analytics can exists in a different subscription than the Citadel governance hub deployment subscription.</p>
+</blockquote>
+<p><strong>Benefits:</strong>
+- ✅ Centralized logging across all environments
+- ✅ Integration with central SIEM
+- ✅ Cross-environment correlation
+- ✅ Compliance and audit requirements</p>
+<p><strong>Typical Setup:</strong>
+<div class="highlight"><pre><span></span><code>              ┌──────────────────────────┐
+              │ Centralized LAW (Prod)   │
+              │ - All environments       │
+              │ - 180d retention         │
+              │ - Advanced analytics     │
+              └──────────────────────────┘
+                            ▲
+                            │
+         ┌──────────────────┼──────────────────┐
+         │                  │                  │
+    ┌────────┐         ┌────────┐        ┌────────┐
+    │  Dev   │         │Staging │        │  Prod  │
+    │ Citadel│         │Citadel │        │ Citadel│
+    └────────┘         └────────┘        └────────┘
+</code></pre></div></p>
+<hr />
+<h3 id="8-inference-api-diagnostic-logging">8. Inference API Diagnostic Logging</h3>
+<p>AI Citadel configures <strong>per-API diagnostic logging</strong> on every inference API (Universal LLM API and Azure OpenAI API). Two diagnostic channels are provisioned:</p>
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Purpose</th>
+<th>Default Destination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure Monitor</strong> (<code>azuremonitor</code>)</td>
+<td>LLM-aware diagnostics sent to Log Analytics</td>
+<td>Azure Monitor / Log Analytics</td>
+</tr>
+<tr>
+<td><strong>Application Insights</strong> (<code>applicationinsights</code>)</td>
+<td>Request/response tracing with custom headers</td>
+<td>Application Insights</td>
+</tr>
+</tbody>
+</table>
+<p>Both channels are fully configurable through the deployment parameter files.</p>
+<h4 id="azure-monitor-log-settings-azuremonitorlogsettings">Azure Monitor Log Settings (<code>azureMonitorLogSettings</code>)</h4>
+<p>Controls frontend/backend request and response header capture, body byte limits, and <strong>LLM-specific</strong> log settings (prompt/completion logging).</p>
+<p><strong>Default values:</strong></p>
+<div class="highlight"><pre><span></span><code>param azureMonitorLogSettings = {
+  frontend: {
+    request:  { headers: [], body: { bytes: 0 } }   // No frontend headers/body captured by default
+    response: { headers: [], body: { bytes: 0 } }
+  }
+  backend: {
+    request:  { headers: [], body: { bytes: 0 } }   // No backend headers/body captured by default
+    response: { headers: [], body: { bytes: 0 } }
+  }
+  largeLanguageModel: {
+    logs: &#39;enabled&#39;                                  // LLM logging enabled
+    requests:  { messages: &#39;all&#39;, maxSizeInBytes: 262144 }  // Capture all prompt messages (up to 256 KB)
+    responses: { messages: &#39;all&#39;, maxSizeInBytes: 262144 }  // Capture all completion messages (up to 256 KB)
+  }
+}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frontend.request.headers</code></td>
+<td><code>[]</code></td>
+<td>HTTP headers to capture from the client request</td>
+</tr>
+<tr>
+<td><code>frontend.request.body.bytes</code></td>
+<td><code>0</code></td>
+<td>Max bytes of client request body to log (<code>0</code> = none)</td>
+</tr>
+<tr>
+<td><code>frontend.response.headers</code></td>
+<td><code>[]</code></td>
+<td>HTTP headers to capture from the response to client</td>
+</tr>
+<tr>
+<td><code>frontend.response.body.bytes</code></td>
+<td><code>0</code></td>
+<td>Max bytes of response body to log (<code>0</code> = none)</td>
+</tr>
+<tr>
+<td><code>backend.request.headers</code></td>
+<td><code>[]</code></td>
+<td>HTTP headers to capture from the backend request</td>
+</tr>
+<tr>
+<td><code>backend.request.body.bytes</code></td>
+<td><code>0</code></td>
+<td>Max bytes of backend request body to log (<code>0</code> = none)</td>
+</tr>
+<tr>
+<td><code>backend.response.headers</code></td>
+<td><code>[]</code></td>
+<td>HTTP headers to capture from backend response</td>
+</tr>
+<tr>
+<td><code>backend.response.body.bytes</code></td>
+<td><code>0</code></td>
+<td>Max bytes of backend response body to log (<code>0</code> = none)</td>
+</tr>
+<tr>
+<td><code>largeLanguageModel.logs</code></td>
+<td><code>'enabled'</code></td>
+<td>Enable or disable LLM-specific logging (<code>'enabled'</code> / <code>'disabled'</code>)</td>
+</tr>
+<tr>
+<td><code>largeLanguageModel.requests.messages</code></td>
+<td><code>'all'</code></td>
+<td>Which prompt messages to capture (<code>'all'</code> / <code>'none'</code>)</td>
+</tr>
+<tr>
+<td><code>largeLanguageModel.requests.maxSizeInBytes</code></td>
+<td><code>262144</code></td>
+<td>Maximum prompt payload size in bytes (256 KB)</td>
+</tr>
+<tr>
+<td><code>largeLanguageModel.responses.messages</code></td>
+<td><code>'all'</code></td>
+<td>Which completion messages to capture (<code>'all'</code> / <code>'none'</code>)</td>
+</tr>
+<tr>
+<td><code>largeLanguageModel.responses.maxSizeInBytes</code></td>
+<td><code>262144</code></td>
+<td>Maximum completion payload size in bytes (256 KB)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example — Production with header capture and reduced LLM payload:</strong>
+<div class="highlight"><pre><span></span><code>param azureMonitorLogSettings = {
+  frontend: {
+    request:  { headers: [ &#39;Content-type&#39;, &#39;User-agent&#39; ], body: { bytes: 0 } }
+    response: { headers: [ &#39;x-ms-region&#39; ], body: { bytes: 0 } }
+  }
+  backend: {
+    request:  { headers: [ &#39;Content-type&#39; ], body: { bytes: 8192 } }
+    response: { headers: [ &#39;x-ratelimit-remaining-tokens&#39;, &#39;x-ratelimit-remaining-requests&#39; ], body: { bytes: 8192 } }
+  }
+  largeLanguageModel: {
+    logs: &#39;enabled&#39;
+    requests:  { messages: &#39;all&#39;, maxSizeInBytes: 131072 }  // 128 KB limit
+    responses: { messages: &#39;all&#39;, maxSizeInBytes: 131072 }
+  }
+}
+</code></pre></div></p>
+<p><strong>Example — Disable LLM prompt/completion logging (privacy-sensitive environments):</strong>
+<div class="highlight"><pre><span></span><code>param azureMonitorLogSettings = {
+  frontend: {
+    request:  { headers: [], body: { bytes: 0 } }
+    response: { headers: [], body: { bytes: 0 } }
+  }
+  backend: {
+    request:  { headers: [], body: { bytes: 0 } }
+    response: { headers: [], body: { bytes: 0 } }
+  }
+  largeLanguageModel: {
+    logs: &#39;disabled&#39;
+    requests:  { messages: &#39;none&#39;, maxSizeInBytes: 0 }
+    responses: { messages: &#39;none&#39;, maxSizeInBytes: 0 }
+  }
+}
+</code></pre></div></p>
+<hr />
+<h4 id="application-insights-log-settings-appinsightslogsettings">Application Insights Log Settings (<code>appInsightsLogSettings</code>)</h4>
+<p>Controls which HTTP headers are captured and how many bytes of request/response body are logged to Application Insights for all inference APIs.</p>
+<p><strong>Default values:</strong></p>
+<div class="highlight"><pre><span></span><code>param appInsightsLogSettings = {
+  headers: [ &#39;Content-type&#39;, &#39;User-agent&#39;, &#39;x-ms-region&#39;, &#39;x-ratelimit-remaining-tokens&#39;, &#39;x-ratelimit-remaining-requests&#39; ]
+  body: { bytes: 0 }  // No body captured by default
+}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>headers</code></td>
+<td><code>[ 'Content-type', 'User-agent', 'x-ms-region', 'x-ratelimit-remaining-tokens', 'x-ratelimit-remaining-requests' ]</code></td>
+<td>HTTP headers captured in both frontend and backend request/response traces</td>
+</tr>
+<tr>
+<td><code>body.bytes</code></td>
+<td><code>0</code></td>
+<td>Max bytes of request/response body to log (<code>0</code> = none)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example — Capture up to 8 KB of body content:</strong>
+<div class="highlight"><pre><span></span><code>param appInsightsLogSettings = {
+  headers: [ &#39;Content-type&#39;, &#39;User-agent&#39;, &#39;x-ms-region&#39;, &#39;x-ratelimit-remaining-tokens&#39;, &#39;x-ratelimit-remaining-requests&#39; ]
+  body: { bytes: 8192 }
+}
+</code></pre></div></p>
+<p><strong>Example — Minimal header capture for cost-sensitive environments:</strong>
+<div class="highlight"><pre><span></span><code>param appInsightsLogSettings = {
+  headers: [ &#39;Content-type&#39; ]
+  body: { bytes: 0 }
+}
+</code></pre></div></p>
+<hr />
+<h4 id="recommended-settings-by-environment">Recommended Settings by Environment</h4>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Development</th>
+<th>Staging</th>
+<th>Production</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure Monitor LLM logs</strong></td>
+<td><code>'enabled'</code></td>
+<td><code>'enabled'</code></td>
+<td><code>'enabled'</code> (or <code>'disabled'</code> for PII-sensitive workloads)</td>
+</tr>
+<tr>
+<td><strong>LLM messages capture</strong></td>
+<td><code>'all'</code></td>
+<td><code>'all'</code></td>
+<td><code>'all'</code> or <code>'none'</code></td>
+</tr>
+<tr>
+<td><strong>LLM max payload (bytes)</strong></td>
+<td><code>262144</code> (256 KB)</td>
+<td><code>262144</code> (256 KB)</td>
+<td><code>131072</code>–<code>262144</code> (128–256 KB)</td>
+</tr>
+<tr>
+<td><strong>App Insights body bytes</strong></td>
+<td><code>8192</code> (8 KB)</td>
+<td><code>0</code></td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td><strong>App Insights headers</strong></td>
+<td>All 5 defaults</td>
+<td>All 5 defaults</td>
+<td>All 5 defaults</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> Increasing body byte capture or LLM payload sizes will increase Log Analytics and Application Insights ingestion costs. For production environments, balance observability needs against cost and data-sensitivity requirements.</p>
+</blockquote>
+<hr />
+<h3 id="9-security-compliance">9. Security &amp; Compliance</h3>
+<h4 id="entra-id-authentication">Entra ID Authentication</h4>
+<p>JWT-based authentication adds a security layer on top of subscription API keys. When enabled, the gateway validates JWT tokens from Microsoft Entra ID before forwarding requests to backends.</p>
+<p><strong>Automatic Provisioning (Recommended):</strong></p>
+<p>Set <code>entraAuth</code> to <code>true</code> and leave <code>entraClientId</code> empty. After deploying the landing zone, run the standalone Entra ID setup script which creates the app registration <strong>and configures APIM directly</strong> — no redeployment needed:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Deploy the gateway infrastructure (creates Key Vault, APIM, etc.)</span>
+azd<span class="w"> </span>up
+
+<span class="c1"># 2. Run Entra ID setup (creates app registration + configures APIM named values)</span>
+<span class="nb">cd</span><span class="w"> </span>bicep/infra/entra-id-setup
+pwsh<span class="w"> </span>./setup.ps1
+
+<span class="c1"># Done! APIM is now JWT-ready. No redeployment needed.</span>
+</code></pre></div>
+<p>The setup script automatically:
+1. Creates an Entra ID App Registration with OAuth2 scopes and app roles
+2. Creates a service principal
+3. Generates a client secret and stores it in Key Vault as <code>ENTRA-APP-CLIENT-SECRET</code>
+4. Configures APIM JWT named values directly: <code>JWT-TenantId</code>, <code>JWT-AppRegistrationId</code>, <code>JWT-Issuer</code>, <code>JWT-OpenIdConfigUrl</code>
+5. Stores <code>AZURE_CLIENT_ID</code>, <code>AZURE_TENANT_ID</code>, <code>AZURE_AUDIENCE</code> as azd environment variables for future deployments</p>
+<blockquote>
+<p><strong>Prerequisite:</strong> The deploying user must have <code>Application.ReadWrite.All</code> or the <code>Application Developer</code> role in Entra ID.</p>
+</blockquote>
+<p>See <a href="../bicep/infra/entra-id-setup/README.md">Entra ID Setup README</a> for full details.</p>
+<div class="highlight"><pre><span></span><code>param entraAuth = true
+// Leave these empty for auto-provisioning:
+param entraTenantId = &#39;&#39;
+param entraClientId = &#39;&#39;
+param entraAudience = &#39;&#39;
+</code></pre></div>
+<p><strong>Manual Configuration (Bring Your Own App Registration):</strong></p>
+<div class="highlight"><pre><span></span><code>param entraAuth = true
+param entraTenantId = &#39;00000000-0000-0000-0000-000000000000&#39;
+param entraClientId = &#39;11111111-2222-3333-4444-555555555555&#39;
+param entraAudience = &#39;api://citadel-gateway&#39;
+</code></pre></div>
+<p><strong>How JWT Authentication Works Across APIs:</strong></p>
+<ul>
+<li>JWT named values are deployed when <code>entraAuth=true</code>, supporting all APIs (Azure OpenAI, Universal LLM, Unified AI)</li>
+<li>API Key authentication is always required (subscription-based)</li>
+<li>JWT validation is optional per access contract — enable it per product by setting <code>jwtAuth.enabled: true</code> in the access contract JSON</li>
+<li>The <code>security-handler</code> policy fragment handles both API Key and JWT validation</li>
+<li>When a product requires JWT, clients must send both <code>api-key</code> and <code>Authorization: Bearer {token}</code> headers</li>
+</ul>
+<p><strong>Access Contract JWT Integration:</strong></p>
+<p>To require JWT authentication for a specific access contract, include the <code>jwtAuth</code> policy in the contract JSON:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;policies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;jwtAuth&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;modelAccess&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;allowedModels&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>Acquiring a JWT Token (Client Credentials Flow):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="err">POST https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token</span>
+<span class="err">Content-Type: application/x-www-form-urlencoded</span>
+
+<span class="err">grant_type=client_credentials</span>
+<span class="err">&amp;client_id={entra-app-client-id}</span>
+<span class="err">&amp;client_secret={entra-app-client-secret}</span>
+<span class="err">&amp;scope={audience}/.default</span>
+</code></pre></div>
+<p><strong>Validation:</strong> See the <a href="../test/citadel-jwt-access-contract-tests.ipynb">JWT Access Contract Validation Notebook</a> for end-to-end testing.</p>
+<p>Guide: <a href="../entraid-auth-validation/">Entra ID Authentication</a></p>
+<h4 id="network-security">Network Security</h4>
+<p>All applicable network security settings are configurable through the parameters of the accelerator:</p>
+<p><strong>Suggested Production Configuration:</strong>
+<div class="highlight"><pre><span></span><code>// APIM Security
+param apimNetworkType = &#39;Internal&#39;  // No public access (applies to APIM Developer and Premium SKUs)
+param apimV2UsePrivateEndpoint = true
+param apimV2PublicNetworkAccess = false
+
+// Service Network Access
+param cosmosDbPublicAccess = &#39;Disabled&#39;
+param eventHubNetworkAccess = &#39;Disabled&#39;  // Enable during deployment, disable after for APIM Standardv2 and PremiumV2 SKUs
+
+...
+</code></pre></div></p>
+<hr />
+<h2 id="deployment-execution">🚀 Deployment Execution</h2>
+<p>It is recommended to leverage Azure Developer CLI (<code>azd</code>) for simplified deployments of both the infrastructure and application (Logic Apps workflows).</p>
+<p>Based on the configured parameter files, you can deploy using either <code>az deployment sub create</code> or <code>azd up</code>.</p>
+<h3 id="using-az-deployment-sub-create">Using <code>az deployment sub create</code>:</h3>
+<p><strong>For Development:</strong>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>eastus<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>./bicep/infra/main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>./bicep/infra/main.parameters.dev.bicepparam
+</code></pre></div></p>
+<p><strong>For Production:</strong>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>eastus<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>./bicep/infra/main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>./bicep/infra/main.parameters.prod.bicepparam
+</code></pre></div></p>
+<p><strong>For Custom Environments:</strong>
+1. Copy <code>main.parameters.complete.bicepparam</code>
+2. Rename to <code>main.parameters.&lt;env&gt;.bicepparam</code>
+3. Customize values
+4. Version control the file</p>
+<blockquote>
+<p>Note: Using <code>az deployment sub create</code> will only provision the infrastructure. You still will need to deploy the <code>Logic App</code> workflows separately after the infrastructure is ready.</p>
+</blockquote>
+<h3 id="using-azd-up">Using <code>azd up</code>:</h3>
+<p>This automatically picks up the <code>main.bicepparam</code> file. You can override specific parameters using environment variables or by modifying the <code>main.bicepparam</code> file directly.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Authenticate to Azure</span>
+<span class="c1"># append --tenant-id &lt;your-tenant-id&gt; if needed</span>
+azd<span class="w"> </span>auth<span class="w"> </span>login
+
+<span class="c1"># Initialize environment</span>
+azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>ai-hub-citadel-dev-01
+
+<span class="c1"># Provision and deploy everything based on defaults</span>
+azd<span class="w"> </span>up
+</code></pre></div>
+<blockquote>
+<p>NOTE: Using <code>azd up</code> will use the <code>main.bicepparam</code> file for parameter values. You can modify it or set environment variables to override specific parameters. This command provisions the infrastructure and deploys the Logic App workflows in one step.</p>
+</blockquote>
+<h3 id="existing-resource-group-deployment-execution">Existing Resource Group Deployment Execution</h3>
+<p>Use this path only when subscription-scoped deployment is not possible and the hub resource group already exists. Create your own resource-scope parameter file, such as <code>resources.parameters.dev.bicepparam</code> or <code>resources.parameters.prod.bicepparam</code>, with the values for that environment. This exception uses <code>resources.bicep</code> directly at resource group scope. It is not an <code>azd up</code> flow.</p>
+<p>Replace <code>dev</code> in the example below with your environment name when needed.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Preview the resource-group deployment</span>
+az<span class="w"> </span>deployment<span class="w"> </span>group<span class="w"> </span>what-if<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span>&lt;existing-hub-resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>./bicep/infra/resources.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>./bicep/infra/resources.parameters.dev.bicepparam
+
+<span class="c1"># Deploy infrastructure into the existing resource group</span>
+az<span class="w"> </span>deployment<span class="w"> </span>group<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span>&lt;existing-hub-resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>./bicep/infra/resources.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>./bicep/infra/resources.parameters.dev.bicepparam
+</code></pre></div>
+<hr />
+<h2 id="post-deployment-validation">✅ Post-Deployment Validation</h2>
+<p>Confirm the landing zone provisioned correctly before moving on to configuration.</p>
+<h3 id="verify-resource-deployment">Verify Resource Deployment</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List all resources in resource group</span>
+<span class="nv">RG_NAME</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>show<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>&lt;deployment-name&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--query<span class="w"> </span>properties.outputs.resourceGroupName.value<span class="w"> </span>-o<span class="w"> </span>tsv<span class="k">)</span>
+
+az<span class="w"> </span>resource<span class="w"> </span>list<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span><span class="nv">$RG_NAME</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>table
+</code></pre></div>
+<h3 id="validate-governance-hub-functionality">Validate Governance Hub functionality</h3>
+<p>This repo includes a set of validation notebooks under the <code>/validation</code> folder:</p>
+<ul>
+<li><a href="../validation/llm-backend-onboarding-runner.ipynb">llm-backend-onboarding-runner.ipynb</a>: Onboard existing LLM backends, configure routing, and validate connectivity.</li>
+<li><a href="../validation/citadel-access-contracts-tests.ipynb">citadel-access-contracts-tests.ipynb</a>: Onbaord AI Agents and AI use cases into the gateway</li>
+<li><a href="../validation/citadel-agent-frameworks-tests.ipynb">citadel-agent-frameworks-tests.ipynb</a>: Build/deploy 3 types of agents that uses the gateway's access contracts (Microsoft Agent Framework, Foundry Agent and LangChain agent)</li>
+</ul>
+<hr />
+<h2 id="next-steps-operate-the-hub">➡️ Next Steps: Operate the Hub</h2>
+<p>The <code>main.bicep</code> deployment is the <strong>initial implementation only</strong>. All day-2 configuration — onboarding backends and use cases, enabling authentication, activating usage reporting, going multi-region, and upgrading the gateway to newer releases — is covered end-to-end in the:</p>
+<h3 id="post-deployment-guide">👉 <a href="../post-deployment-guide/">Post-Deployment Guide</a></h3>
+<p>At a glance, your next activities are:</p>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th>Guide / Module</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Onboard LLM backends &amp; routing (<strong>Backend Contract</strong>)</td>
+<td><a href="../bicep/infra/llm-backend-onboarding/README.md">llm-backend-onboarding</a> · <a href="../llm-access-guide/">LLM Access Guide</a></td>
+</tr>
+<tr>
+<td>Onboard use cases (<strong>Access Contract</strong>)</td>
+<td><a href="../bicep/infra/citadel-access-contracts/README.md">citadel-access-contracts</a></td>
+</tr>
+<tr>
+<td>Enable Entra ID (JWT) authentication</td>
+<td><a href="../bicep/infra/entra-id-setup/README.md">entra-id-setup</a> · <a href="../entraid-auth-validation/">Entra ID Auth</a></td>
+</tr>
+<tr>
+<td>Activate Power BI usage reporting</td>
+<td><a href="../power-bi-dashboard/">Power BI Dashboard</a></td>
+</tr>
+<tr>
+<td>Go multi-region (Cosmos DB multi-write)</td>
+<td><a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md">citadel-cosmos-global-multi-master-sync</a> · <a href="../business-continuity-dr-guide/">BC/DR Guide</a></td>
+</tr>
+<tr>
+<td>Upgrade an existing gateway to a newer release</td>
+<td><a href="../bicep/infra/apim-gateway-upgrade/README.md">APIM Gateway Upgrade</a> · <a href="../release-version-management/">Release Version Management</a></td>
+</tr>
+<tr>
+<td>Enable PII detection / masking</td>
+<td><a href="../pii-masking-apim/">PII Masking</a></td>
+</tr>
+<tr>
+<td>Configure alerts &amp; throttling events</td>
+<td><a href="../throttling-events-handling/">Throttling Events Handling</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Keeping the repo current:</strong> synchronize your local repository's <code>original</code> branch with the upstream accelerator, then open a Pull Request into your environment-specific branch to merge changes. To apply those changes to a <em>running</em> gateway, use the <a href="../bicep/infra/apim-gateway-upgrade/README.md">APIM Gateway Upgrade</a> submodule rather than re-running <code>main.bicep</code> — see the <a href="../post-deployment-guide/#6-upgrade-the-gateway-to-a-newer-release">Post-Deployment Guide</a>.</p>
+</blockquote>
+<hr />
+<h2 id="troubleshooting">🚨 Troubleshooting</h2>
+<p>Visit the <a href="./#">Deployment Troubleshooting Guide</a> for common issues and resolutions.</p>
+<h3 id="getting-help">Getting Help</h3>
+<ul>
+<li><strong>GitHub Issues:</strong> <a href="https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator/issues">Report a bug</a></li>
+</ul>
+<hr />
+<p><strong>Congratulations! Your AI Citadel Governance Hub landing zone is deployed. Continue with the <a href="../post-deployment-guide/">Post-Deployment Guide</a> to onboard workloads and go live.</strong> 🎉</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

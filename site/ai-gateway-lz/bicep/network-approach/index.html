@@ -1,0 +1,1911 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Network Architecture - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#network-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Network Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#network-deployment-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Deployment Approaches
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network Deployment Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#approach-1-hub-based-citadel-as-part-of-hub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approach 1: Hub-Based (Citadel as Part of Hub)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Approach 1: Hub-Based (Citadel as Part of Hub)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#traffic-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Traffic Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#approach-2-hub-spoke-hub-citadel-as-dedicated-spoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approach 2: Hub-Spoke-Hub (Citadel as Dedicated Spoke)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Approach 2: Hub-Spoke-Hub (Citadel as Dedicated Spoke)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#traffic-isolation-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Traffic isolation flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-setup-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network Setup Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network Setup Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-create-new-network-greenfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Create New Network (Greenfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-bring-your-own-network-brownfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Bring Your Own Network (Brownfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#subnet-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnet Requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Subnet Requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apim-subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APIM Subnet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="APIM Subnet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-developerpremium-sku-vnet-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For Developer/Premium SKU (VNet Injection)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-standardv2premiumv2-sku-private-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For StandardV2/PremiumV2 SKU (Private Endpoint)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logic-app-subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logic App Subnet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-endpoints-subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private Endpoints Subnet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-subnet-ai-foundry-network-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Subnet (AI Foundry Network Injection)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dns-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNS Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DNS Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#private-dns-zones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private DNS Zones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apim-internal-mode-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        APIM Internal Mode DNS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#required-dns-zones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required DNS Zones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#azure-services-network-access-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure services network access settings
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="network-architecture">Network Architecture</h1>
+<h2 id="network-deployment-approaches">Network Deployment Approaches</h2>
+<p>AI Citadel Governance Hub supports <strong>two architectural patterns</strong> for network integration.</p>
+<p>Based on your decisions in the earlier checklist, choose one of the following approaches:</p>
+<p><img alt="Network Architecture" src="../assets/citadel-governance-hub-architecture-v1.1.png" /></p>
+<h3 id="approach-1-hub-based-citadel-as-part-of-hub"><strong>Approach 1: Hub-Based (Citadel as Part of Hub)</strong></h3>
+<p>In this approach, the Citadel Governance Hub is deployed within the existing hub virtual network (VNet) of your enterprise Azure Landing Zone.</p>
+<p>This allows for direct communication between the unified AI gateway and connected agentic spokes, leveraging existing security and networking configurations.</p>
+<pre class="mermaid"><code>%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#0078d4',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#0078d4',
+    'lineColor': '#8a8886',
+    'secondaryColor': '#50e6ff',
+    'tertiaryColor': '#f3f2f1',
+    'noteBkgColor': '#fef9e7',
+    'noteTextColor': '#323130',
+    'noteBorderColor': '#d4a300',
+    'actorBkg': '#0078d4',
+    'actorBorder': '#005a9e',
+    'actorTextColor': '#fff',
+    'actorLineColor': '#8a8886',
+    'signalColor': '#323130',
+    'signalTextColor': '#323130',
+    'labelBoxBkgColor': '#e1dfdd',
+    'labelBoxBorderColor': '#605e5c',
+    'labelTextColor': '#323130',
+    'loopTextColor': '#323130',
+    'activationBorderColor': '#0078d4',
+    'activationBkgColor': '#deecf9',
+    'sequenceNumberColor': '#fff'
+  }
+}}%%
+sequenceDiagram
+    autonumber
+
+    participant Agent as 🤖 Spoke Agent&lt;br/&gt;(Spoke Network)
+    participant Gateway as 🚪 AI Gateway&lt;br/&gt;(Hub Network)
+    participant Backends as ⚡ AI Backends&lt;br/&gt;(Hub/Spoke Network*)
+
+    Note over Agent,Backends: 🔷 Hub-Based Governance Architecture
+
+    rect rgba(0, 120, 212, 0.1)
+        Note right of Agent: Step 1: Request Initiation
+        Agent-&gt;&gt;+Gateway: AI Request with Auth Token
+    end
+
+    rect rgba(80, 230, 255, 0.1)
+        Note over Gateway: Step 2: Governance &amp; Security Enforcement
+        Gateway-&gt;&gt;+Backends: Routed Request to LLM/Agent/Tool
+    end
+
+    rect rgba(16, 124, 16, 0.1)
+        Note over Backends: Step 3: AI Processing &amp; Response
+        Backends--&gt;&gt;-Gateway: AI Response + Telemetry
+    end
+
+    rect rgba(147, 51, 234, 0.1)
+        Note over Gateway: Step 4: Response Validation &amp; Logging
+        Gateway--&gt;&gt;-Agent: Governed AI Response
+    end
+
+    Note over Agent,Backends: ✅ Complete observability with zero agent-side instrumentation</code></pre>
+<blockquote>
+<p><strong>Note:</strong> When AI Backends reside in a different spoke networks, their traffic should be forced through the hub firewall to maintain integrity of the network traffic flow.*</p>
+</blockquote>
+<h4 id="traffic-flow">Traffic Flow</h4>
+<ul>
+<li>Routed requests originate from spoke-hosted agents.</li>
+<li>Traffic is directly forwarded to AI Gateway for governance, security, and observability enforcement.</li>
+<li>Traffic intelligently routed out to managed LLMs, tools, or downstream agents (gateway-spoke-network).</li>
+</ul>
+<p><strong>Deployment Configuration:</strong>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = true
+param vnetName = &#39;vnet-hub-eastus&#39;
+param existingVnetRG = &#39;rg-network-hub&#39;
+param apimSubnetName = &#39;snet-citadel-apim&#39;
+param privateEndpointSubnetName = &#39;snet-citadel-private-endpoints&#39;
+// Required when foundryNetworkInjectionEnabled = true (default).
+// Subnet must be delegated to Microsoft.App/environments.
+param agentSubnetName = &#39;snet-citadel-agents&#39;
+param dnsZoneRG = &#39;rg-network-hub&#39;
+param dnsSubscriptionId = &#39;&lt;hub-subscription-id&gt;&#39;
+</code></pre></div></p>
+<p><strong>When to Use:</strong>
+- ✅ Citadel manages all enterprise AI traffic
+- ✅ Direct spoke-to-hub connectivity
+- ✅ Simplified network topology</p>
+<h3 id="approach-2-hub-spoke-hub-citadel-as-dedicated-spoke"><strong>Approach 2: Hub-Spoke-Hub (Citadel as Dedicated Spoke)</strong></h3>
+<p>In this approach, the Citadel Governance Hub is deployed within a dedicated spoke VNet that connects to the hub VNet via VNet peering. </p>
+<p>Agentic workloads in other spokes are routed first to the hub network firewall through direct peering, then forwarded to the Citadel Governance Hub gateway network.</p>
+<p>This provides an additional layer of isolation for AI workloads while still enabling secure communication with other enterprise resources in the hub.</p>
+<pre class="mermaid"><code>%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#0078d4',
+    'primaryTextColor': '#fff',
+    'primaryBorderColor': '#0078d4',
+    'lineColor': '#8a8886',
+    'secondaryColor': '#d13438',
+    'tertiaryColor': '#f3f2f1',
+    'noteBkgColor': '#fef9e7',
+    'noteTextColor': '#323130',
+    'noteBorderColor': '#d4a300',
+    'actorBkg': '#0078d4',
+    'actorBorder': '#005a9e',
+    'actorTextColor': '#fff',
+    'actorLineColor': '#8a8886',
+    'signalColor': '#323130',
+    'signalTextColor': '#323130',
+    'labelBoxBkgColor': '#e1dfdd',
+    'labelBoxBorderColor': '#605e5c',
+    'labelTextColor': '#323130',
+    'loopTextColor': '#323130',
+    'activationBorderColor': '#0078d4',
+    'activationBkgColor': '#deecf9',
+    'sequenceNumberColor': '#fff'
+  }
+}}%%
+sequenceDiagram
+    autonumber
+
+    participant Agent as 🤖 Spoke Agent&lt;br/&gt;(Agent Spoke Network)
+    participant Firewall as 🛡️ Hub Firewall&lt;br/&gt;(Hub Network)
+    participant Gateway as 🚪 AI Gateway&lt;br/&gt;(Gateway Spoke Network)
+    participant Backends as ⚡ AI Backends&lt;br/&gt;(Spoke Network*)
+
+    Note over Agent,Backends: 🔷 Spoke-Based Governance with Firewall Isolation
+
+    rect rgba(0, 120, 212, 0.1)
+        Note right of Agent: Step 1: Request Initiation
+        Agent-&gt;&gt;+Firewall: AI Request via Peering
+    end
+
+    rect rgba(209, 52, 56, 0.1)
+        Note over Firewall: Step 2: Network Security Inspection
+        Firewall-&gt;&gt;+Gateway: Forward Approved Traffic
+    end
+
+    rect rgba(80, 230, 255, 0.1)
+        Note over Gateway: Step 3: AI Governance Layer
+        Gateway-&gt;&gt;+Backends: Governed Request to LLM/Agent/Tool
+    end
+
+    rect rgba(16, 124, 16, 0.1)
+        Note over Backends: Step 4: AI Processing
+        Backends--&gt;&gt;-Gateway: AI Response + Telemetry
+    end
+
+    rect rgba(147, 51, 234, 0.1)
+        Note over Gateway: Step 5: Response Validation
+        Gateway--&gt;&gt;-Firewall: Validated Response
+    end
+
+    rect rgba(209, 52, 56, 0.1)
+        Note over Firewall: Step 6: Egress Inspection
+        Firewall--&gt;&gt;-Agent: Secured AI Response
+    end
+
+    Note over Agent,Backends: 🔒 Defense-in-depth with dual security layers&lt;br/&gt;✅ Network isolation + AI governance</code></pre>
+<blockquote>
+<p><strong>Note:</strong> * When AI Backends reside in a different spoke networks, their traffic should be forced through the hub firewall to maintain integrity of the network traffic flow.*</p>
+</blockquote>
+<h4 id="traffic-isolation-flow">Traffic isolation flow</h4>
+<ul>
+<li>Routed requests originate from spoke-hosted agents (agent-spoke-network).</li>
+<li>Traffic first routed to hub network firewall for inspection (hub-network).</li>
+<li>Hub Firewall forwards to AI Gateway for governance, security, and observability enforcement (gateway-spoke-network).</li>
+<li>Traffic intelligently routed out to managed LLMs, tools, or downstream agents (through the hub firewall or directly).</li>
+<li>AI Backend responses may still be routed through the hub firewall for final inspection before reaching spoke agents, depending on governance policy.</li>
+</ul>
+<p><strong>Deployment Configuration:</strong>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = false  // Creates new spoke VNet
+param vnetName = &#39;vnet-citadel-eastus&#39;
+param vnetAddressPrefix = &#39;10.170.0.0/24&#39;
+param apimSubnetPrefix = &#39;10.170.0.0/26&#39;
+param privateEndpointSubnetPrefix = &#39;10.170.0.64/26&#39;
+param functionAppSubnetPrefix = &#39;10.170.0.128/26&#39;
+// AI Foundry agent (network injection) subnet - delegated to Microsoft.App/environments.
+// Provisioned automatically when foundryNetworkInjectionEnabled = true (default).
+param agentSubnetPrefix = &#39;10.170.0.192/26&#39;
+param foundryNetworkInjectionEnabled = true
+param dnsZoneRG = &#39;rg-network-hub&#39;
+param dnsSubscriptionId = &#39;&lt;hub-subscription-id&gt;&#39;
+
+// Post-deployment: Configure VNet peering to hub
+</code></pre></div></p>
+<p><strong>When to Use:</strong>
+- ✅ Defense-in-depth security (dual inspection)
+- ✅ Isolated AI workloads from general traffic
+- ✅ Separate cost centers/subscriptions
+- ✅ Compliance requirements for network isolation</p>
+<blockquote>
+<p>Note: Post deployment, you must configure VNet peering, DNS servers and route tables between the Citadel spoke and your hub VNet to enable connectivity.</p>
+</blockquote>
+<hr />
+<h2 id="network-setup-options">Network Setup Options</h2>
+<h3 id="option-1-create-new-network-greenfield"><strong>Option 1: Create New Network (Greenfield)</strong></h3>
+<p>Accelerator will create all networking components:</p>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = false
+param vnetAddressPrefix = &#39;10.170.0.0/24&#39;
+param apimSubnetPrefix = &#39;10.170.0.0/26&#39;
+param privateEndpointSubnetPrefix = &#39;10.170.0.64/26&#39;
+param functionAppSubnetPrefix = &#39;10.170.0.128/26&#39;
+param agentSubnetPrefix = &#39;10.170.0.192/26&#39;
+
+// AI Foundry agent network injection (enabled by default).
+// Set to false to skip the agent subnet and disable Foundry network injection.
+param foundryNetworkInjectionEnabled = true
+
+// Network access
+param apimNetworkType = &#39;External&#39;  // or &#39;Internal&#39; for production
+param apimV2UsePrivateEndpoint = true
+</code></pre></div>
+<p><strong>Includes:</strong>
+- ✅ Virtual Network with subnets (APIM, Private Endpoints, Function App, <strong>Agent</strong> when network injection enabled)
+- ✅ Network Security Groups (one per subnet)
+- ✅ Private DNS Zones
+- ✅ Private Endpoints for all services
+- ✅ Route table (needed for APIM Developer and Premium SKUs)
+- ✅ Agent subnet delegated to <code>Microsoft.App/environments</code> for AI Foundry network injection</p>
+<hr />
+<h3 id="option-2-bring-your-own-network-brownfield"><strong>Option 2: Bring Your Own Network (Brownfield)</strong></h3>
+<p>Integrate with existing enterprise network:</p>
+<div class="highlight"><pre><span></span><code>param useExistingVnet = true
+param vnetName = &#39;vnet-hub-prod-eastus&#39;
+param existingVnetRG = &#39;rg-network-prod&#39;
+
+// Subnet names (must exist)
+param apimSubnetName = &#39;snet-citadel-apim&#39;
+param privateEndpointSubnetName = &#39;snet-citadel-pe&#39;
+param functionAppSubnetName = &#39;snet-citadel-functions&#39;
+// Required when foundryNetworkInjectionEnabled = true (default).
+// The subnet must already exist and be delegated to Microsoft.App/environments.
+param agentSubnetName = &#39;snet-citadel-agents&#39;
+param foundryNetworkInjectionEnabled = true
+
+// DNS configuration
+param existingPrivateDnsZones = {
+  keyVault: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net&#39;
+  ...
+}
+</code></pre></div>
+<p><strong>Prerequisites:</strong>
+1. VNet with sufficient address space
+2. Subnets created (see <a href="#subnet-requirements">Subnet Requirements</a>)
+    - APIM subnet /26 or larger
+    - Function App subnet /26 or larger
+    - Private Endpoints subnet /26 or larger
+    - Agent subnet /26 or larger (only when <code>foundryNetworkInjectionEnabled = true</code>)
+3. Private DNS zones created and linked (see <a href="#required-dns-zones">Required DNS Zones</a>)
+4. NSG rules configured for APIM subnet (see <a href="#apim-subnet">APIM Subnet</a>)
+5. Agent subnet delegated to <code>Microsoft.App/environments</code> (see <a href="#agent-subnet-ai-foundry-network-injection">Agent Subnet (AI Foundry Network Injection)</a>)</p>
+<hr />
+<h2 id="subnet-requirements">Subnet Requirements</h2>
+<h3 id="apim-subnet">APIM Subnet</h3>
+<p>Dedicated subnet with <code>/26</code> or larger address space.</p>
+<h4 id="for-developerpremium-sku-vnet-injection">For Developer/Premium SKU (VNet Injection)</h4>
+<p><strong>NSG Rules Required:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Priority</th>
+<th>Name</th>
+<th>Port</th>
+<th>Source</th>
+<th>Destination</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inbound</td>
+<td>3000</td>
+<td>AllowPublicAccess*</td>
+<td>443</td>
+<td>Internet</td>
+<td>VirtualNetwork</td>
+<td>Gateway access</td>
+</tr>
+<tr>
+<td>Inbound</td>
+<td>3010</td>
+<td>AllowAPIMManagement</td>
+<td>3443</td>
+<td>ApiManagement</td>
+<td>VirtualNetwork</td>
+<td>Control plane</td>
+</tr>
+<tr>
+<td>Inbound</td>
+<td>3020</td>
+<td>AllowAPIMLoadBalancer</td>
+<td>6390</td>
+<td>AzureLoadBalancer</td>
+<td>VirtualNetwork</td>
+<td>Health probes</td>
+</tr>
+<tr>
+<td>Inbound</td>
+<td>3030</td>
+<td>AllowAzureTrafficManager*</td>
+<td>443</td>
+<td>AzureTrafficManager</td>
+<td>VirtualNetwork</td>
+<td>Traffic routing</td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>3000</td>
+<td>AllowStorage</td>
+<td>443</td>
+<td>VirtualNetwork</td>
+<td>Storage</td>
+<td>Configuration</td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>3010</td>
+<td>AllowSql</td>
+<td>1433</td>
+<td>VirtualNetwork</td>
+<td>Sql</td>
+<td>Metadata</td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>3020</td>
+<td>AllowKeyVault</td>
+<td>443</td>
+<td>VirtualNetwork</td>
+<td>AzureKeyVault</td>
+<td>Secrets</td>
+</tr>
+<tr>
+<td>Outbound</td>
+<td>3030</td>
+<td>AllowMonitor</td>
+<td>1886, 443</td>
+<td>VirtualNetwork</td>
+<td>AzureMonitor</td>
+<td>Diagnostics</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>*Only required for External mode</p>
+</blockquote>
+<p><strong>Route Table Required (Only for APIM Developer/Premium SKUs):</strong></p>
+<div class="highlight"><pre><span></span><code>properties: {
+  routes: [
+    {
+      name: &#39;apim-management&#39;
+      properties: {
+        addressPrefix: &#39;ApiManagement&#39;
+        nextHopType: &#39;Internet&#39;
+      }
+    }
+  ]
+}
+</code></pre></div>
+<blockquote>
+<p>Note: This is a route record that you must add to your existing route table if using existing route table and it is ensure APIM can reach the control fabric communication, which fully private.</p>
+</blockquote>
+<p><strong>Service Endpoints (if forced tunneling):</strong>
+- Microsoft.Storage
+- Microsoft.Sql
+- Microsoft.KeyVault
+- Microsoft.ServiceBus
+- Microsoft.EventHub
+- Microsoft.AzureActiveDirectory</p>
+<h4 id="for-standardv2premiumv2-sku-private-endpoint">For StandardV2/PremiumV2 SKU (Private Endpoint)</h4>
+<ul>
+<li>Subnet delegated to <code>Microsoft.Web/serverFarms</code></li>
+<li>No route table required</li>
+<li>Private endpoint provides inbound connectivity</li>
+</ul>
+<hr />
+<h3 id="logic-app-subnet">Logic App Subnet</h3>
+<p>Dedicated subnet with <code>/26</code> or larger, delegated to <code>Microsoft.Web/serverFarms</code>:</p>
+<div class="highlight"><pre><span></span><code>{
+  name: &#39;snet-citadel-functions&#39;
+  properties: {
+    addressPrefix: &#39;10.x.x.x/26&#39;
+    delegations: [
+      {
+        name: &#39;Microsoft.Web/serverFarms&#39;
+        properties: {
+          serviceName: &#39;Microsoft.Web/serverFarms&#39;
+        }
+      }
+    ]
+    privateEndpointNetworkPolicies: &#39;Enabled&#39;
+  }
+}
+</code></pre></div>
+<hr />
+<h3 id="private-endpoints-subnet">Private Endpoints Subnet</h3>
+<p>Dedicated subnet with <code>/26</code> or larger for all private endpoints:</p>
+<div class="highlight"><pre><span></span><code>{
+  name: &#39;snet-citadel-pe&#39;
+  properties: {
+    addressPrefix: &#39;10.x.x.x/26&#39;
+    privateEndpointNetworkPolicies: &#39;Disabled&#39;
+    privateLinkServiceNetworkPolicies: &#39;Enabled&#39;
+  }
+}
+</code></pre></div>
+<blockquote>
+<p>For APIM V2 SKUs, private endpoints in this subnet enable private inbound connectivity.</p>
+</blockquote>
+<hr />
+<h3 id="agent-subnet-ai-foundry-network-injection">Agent Subnet (AI Foundry Network Injection)</h3>
+<p>When <code>foundryNetworkInjectionEnabled = true</code> (default), AI Foundry accounts are network-injected into a dedicated subnet so that Foundry agents and managed compute communicate over your VNet rather than the Microsoft-managed network. The subnet must be delegated to <code>Microsoft.App/environments</code>.</p>
+<p><strong>Sizing:</strong> <code>/26</code> or larger recommended. Greenfield default is <code>10.170.0.192/26</code>.</p>
+<p><strong>Subnet definition (matches what the accelerator provisions on greenfield):</strong></p>
+<div class="highlight"><pre><span></span><code>{
+  name: &#39;snet-citadel-agents&#39;
+  properties: {
+    addressPrefix: &#39;10.x.x.x/26&#39;
+    privateEndpointNetworkPolicies: &#39;Enabled&#39;
+    privateLinkServiceNetworkPolicies: &#39;Enabled&#39;
+    delegations: [
+      {
+        name: &#39;Microsoft.app/environments&#39;
+        properties: {
+          serviceName: &#39;Microsoft.App/environments&#39;
+        }
+      }
+    ]
+  }
+}
+</code></pre></div>
+<p><strong>Brownfield (existing VNet) requirements:</strong>
+- Subnet must already exist with the <code>Microsoft.App/environments</code> delegation above.
+- No other workload may share the subnet (delegation is exclusive).
+- Pass the subnet name via <code>agentSubnetName</code>.</p>
+<p><strong>Disabling network injection:</strong></p>
+<div class="highlight"><pre><span></span><code>param foundryNetworkInjectionEnabled = false
+// agentSubnetName / agentSubnetPrefix are then ignored
+</code></pre></div>
+<p>When disabled, AI Foundry uses the Microsoft-managed network and no agent subnet is provisioned.</p>
+<p><strong>Per-instance opt-in / opt-out:</strong></p>
+<p>The agent subnet is regional. When deploying multiple Foundry instances across regions (<code>aiFoundryInstances</code>), only the instance(s) in the same region as the VNet can use network injection. Use the per-instance <code>networkInjectionEnabled</code> flag to control this:</p>
+<div class="highlight"><pre><span></span><code>param aiFoundryInstances = [
+  {
+    name: &#39;&#39;
+    location: &#39;eastus&#39;              // same region as VNet
+    customSubDomainName: &#39;&#39;
+    defaultProjectName: &#39;citadel-governance-project&#39;
+    networkInjectionEnabled: true   // injected into agent subnet
+  }
+  {
+    name: &#39;&#39;
+    location: &#39;eastus2&#39;             // different region
+    customSubDomainName: &#39;&#39;
+    defaultProjectName: &#39;citadel-governance-project&#39;
+    networkInjectionEnabled: false  // uses Microsoft-managed network
+  }
+]
+</code></pre></div>
+<p>When the property is omitted, the global <code>foundryNetworkInjectionEnabled</code> flag applies. The global flag must also be <code>true</code> for any per-instance injection to take effect.</p>
+<hr />
+<h2 id="dns-configuration">DNS Configuration</h2>
+<h3 id="private-dns-zones">Private DNS Zones</h3>
+<p>Depending on your permissions and DNS zone distribution, choose one of these approaches:</p>
+<p><strong>Option A: Use Existing DNS Zones with Resource IDs (Recommended)</strong></p>
+<p>For maximum flexibility, specify each DNS zone by its full resource ID. This approach supports DNS zones across different subscriptions and resource groups:</p>
+<div class="highlight"><pre><span></span><code>param existingPrivateDnsZones = {
+  keyVault: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.vaultcore.azure.net&#39;
+  monitor: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.monitor.azure.com&#39;
+  eventHub: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.servicebus.windows.net&#39;
+  cosmosDb: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.documents.azure.com&#39;
+  storageBlob: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net&#39;
+  storageFile: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.file.core.windows.net&#39;
+  storageTable: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.table.core.windows.net&#39;
+  storageQueue: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.queue.core.windows.net&#39;
+  cognitiveServices: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.cognitiveservices.azure.com&#39;
+  apimGateway: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.azure-api.net&#39;
+  aiServices: &#39;/subscriptions/{sub-id}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/privatelink.services.ai.azure.com&#39;
+}
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> You only need to specify the DNS zones relevant to your deployment. The <code>existingPrivateDnsZones</code> parameter takes precedence over the legacy <code>dnsZoneRG</code>/<code>dnsSubscriptionId</code> approach when both are provided.</p>
+</blockquote>
+<p><strong>Option B: Use Existing Central DNS Zones (Legacy)</strong></p>
+<p>If all your DNS zones are in a single subscription and resource group:</p>
+<div class="highlight"><pre><span></span><code>param dnsZoneRG = &#39;rg-network-dns&#39;
+param dnsSubscriptionId = &#39;&lt;dns-subscription-id&gt;&#39;
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> This legacy approach is maintained for backward compatibility but Option A is recommended for new deployments.</p>
+</blockquote>
+<p><strong>Option C: Create New DNS Zones</strong></p>
+<p>Leave all DNS parameters empty to create new zones (requires manual VNet linking after provisioning):</p>
+<div class="highlight"><pre><span></span><code>param existingPrivateDnsZones = {}
+param dnsZoneRG = &#39;&#39;
+param dnsSubscriptionId = &#39;&#39;
+</code></pre></div>
+<blockquote>
+<p>Post-deployment: Link new zones to your VNet or configure central DNS resolver.</p>
+</blockquote>
+<h3 id="apim-internal-mode-dns">APIM Internal Mode DNS</h3>
+<p>When using <code>apimNetworkType = 'Internal'</code>, DNS resolution must be configured:</p>
+<p><strong>Recommended: Custom Domains</strong>
+- Configure custom domains for Gateway, Management, and Portal endpoints
+- Use wildcard CA-issued certificate (e.g., <code>*.api.az.company.com</code>)
+- Ensure network DNS resolver routes to APIM private IPs</p>
+<p><strong>Alternative: Private DNS Zone</strong>
+- Create <code>azure-api.net</code> private DNS zone
+- Add A records for all 5 APIM endpoints pointing to private IP
+- Link zone to VNet</p>
+<blockquote>
+<p><strong>WARNING:</strong> Using private <code>azure-api.net</code> zone may conflict with external APIM instances using public DNS. Add public IP records for external instances if needed. Failure to do so may lead to resolution issues for other APIM services that are external or without network integration.</p>
+</blockquote>
+<hr />
+<h2 id="required-dns-zones">Required DNS Zones</h2>
+<p>All zones must be linked to your VNet:</p>
+<table>
+<thead>
+<tr>
+<th>DNS Zone</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>privatelink.cognitiveservices.azure.com</code></td>
+<td>Azure OpenAI / Cognitive Services</td>
+</tr>
+<tr>
+<td><code>privatelink.openai.azure.com</code></td>
+<td>Azure OpenAI</td>
+</tr>
+<tr>
+<td><code>privatelink.vaultcore.azure.net</code></td>
+<td>Key Vault</td>
+</tr>
+<tr>
+<td><code>privatelink.monitor.azure.com</code></td>
+<td>Azure Monitor</td>
+</tr>
+<tr>
+<td><code>privatelink.servicebus.windows.net</code></td>
+<td>Event Hub</td>
+</tr>
+<tr>
+<td><code>privatelink.documents.azure.com</code></td>
+<td>Cosmos DB</td>
+</tr>
+<tr>
+<td><code>privatelink.blob.core.windows.net</code></td>
+<td>Storage Blob</td>
+</tr>
+<tr>
+<td><code>privatelink.file.core.windows.net</code></td>
+<td>Storage File</td>
+</tr>
+<tr>
+<td><code>privatelink.table.core.windows.net</code></td>
+<td>Storage Table</td>
+</tr>
+<tr>
+<td><code>privatelink.queue.core.windows.net</code></td>
+<td>Storage Queue</td>
+</tr>
+<tr>
+<td><code>privatelink.azure-api.net</code></td>
+<td>APIM V2 SKUs</td>
+</tr>
+<tr>
+<td><code>privatelink.services.ai.azure.com</code></td>
+<td>Azure AI Foundry</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Azure Monitor:</strong> Requires special Private Link Scope configuration post-deployment for centralized monitoring.</p>
+</blockquote>
+<h2 id="azure-services-network-access-settings">Azure services network access settings</h2>
+<p>Although the accelerator deploys services with private endpoints by default with disabled public access, some services may require specific network access settings to be configured based on your network architecture and security requirements.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Parameter</th>
+<th>Default</th>
+<th>Allowed Values</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>API Management (Developer/Premium)</strong></td>
+<td><code>apimNetworkType</code></td>
+<td><code>External</code></td>
+<td><code>External</code>, <code>Internal</code></td>
+<td>Network type for APIM VNet injection. <code>Internal</code> mode requires custom DNS configuration.</td>
+</tr>
+<tr>
+<td><strong>API Management (StandardV2/PremiumV2)</strong></td>
+<td><code>apimV2UsePrivateEndpoint</code></td>
+<td><code>true</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td>Enable private endpoint for inbound connectivity on V2 SKUs.</td>
+</tr>
+<tr>
+<td><strong>API Management (StandardV2/PremiumV2)</strong></td>
+<td><code>apimV2PublicNetworkAccess</code></td>
+<td><code>true</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td>Allow public network access. Set to <code>false</code> to restrict to private endpoint only.</td>
+</tr>
+<tr>
+<td><strong>Cosmos DB</strong></td>
+<td><code>cosmosDbPublicAccess</code></td>
+<td><code>Disabled</code></td>
+<td><code>Enabled</code>, <code>Disabled</code></td>
+<td>Public network access for Cosmos DB. Keep <code>Disabled</code> for secure deployments.</td>
+</tr>
+<tr>
+<td><strong>Event Hub</strong></td>
+<td><code>eventHubNetworkAccess</code></td>
+<td><code>Enabled</code></td>
+<td><code>Enabled</code>, <code>Disabled</code></td>
+<td>Public network access. Note: Must be <code>Enabled</code> during initial provisioning for APIM V2 SKUs.</td>
+</tr>
+<tr>
+<td><strong>AI Foundry</strong></td>
+<td><code>aiFoundryExternalNetworkAccess</code></td>
+<td><code>Disabled</code></td>
+<td><code>Enabled</code>, <code>Disabled</code></td>
+<td>External network access for the AI Foundry / AI Services resources (also serves Content Safety and Language / PII APIs from the <strong>primary</strong> Foundry account).</td>
+</tr>
+<tr>
+<td><strong>Azure Monitor</strong></td>
+<td><code>useAzureMonitorPrivateLinkScope</code></td>
+<td><code>false</code></td>
+<td><code>true</code>, <code>false</code></td>
+<td>Use Private Link Scope for Log Analytics and Application Insights. Requires additional configuration.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Configuration Example:</strong></p>
+<div class="highlight"><pre><span></span><code>// Fully private deployment (recommended for production)
+param apimNetworkType = &#39;Internal&#39;
+param apimV2UsePrivateEndpoint = true
+param apimV2PublicNetworkAccess = false
+param cosmosDbPublicAccess = &#39;Disabled&#39;
+param eventHubNetworkAccess = &#39;Disabled&#39;  // Set after initial deployment
+param aiFoundryExternalNetworkAccess = &#39;Disabled&#39;
+param useAzureMonitorPrivateLinkScope = true
+</code></pre></div>
+<blockquote>
+<p><strong>Important Notes:</strong>
+- Event Hub must have public access <code>Enabled</code> during initial deployment when using APIM V2 SKUs. You can disable it post-deployment.
+- When <code>apimNetworkType = 'Internal'</code>, ensure proper DNS configuration for APIM endpoints.
+- Azure Monitor Private Link Scope requires additional post-deployment configuration for centralized monitoring as Azure Monitor private link scope is a global resource and impact all Log Analytics and Application Insights workspaces across subscriptions when connecting to the same hub network.</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

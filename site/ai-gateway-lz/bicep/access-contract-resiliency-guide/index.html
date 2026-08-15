@@ -1,0 +1,1386 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🛡️ Access Contract Business Continuity & Resiliency Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#access-contract-business-continuity-resiliency-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🛡️ Access Contract Business Continuity &amp; Resiliency Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-this" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📌 When to use this
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Core concepts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧠 Core concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-consistent-subscription-key-across-gateways" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Consistent subscription key across gateways
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-global-endpoint-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Global endpoint (optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-endpoint-source-selection-for-additional-instances" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Endpoint source selection for additional instances
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔩 Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Deployment order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Configuration examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📝 Configuration examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-two-gateways-behind-a-global-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Two gateways behind a global endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-secondary-key-vault-pointing-at-the-secondary-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: Secondary Key Vault pointing at the secondary gateway
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-secondary-foundry-connection-using-the-global-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Secondary Foundry connection using the global endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📤 Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 Key rotation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Notes &amp; troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Related
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="access-contract-business-continuity-resiliency-guide">🛡️ Access Contract Business Continuity &amp; Resiliency Guide</h1>
+<p>This guide explains the <strong>optional</strong> multi-instance capability of Citadel Access Contracts. It lets a <strong>single</strong> access contract be mirrored across <strong>additional APIM gateways, Key Vaults, and Foundry instances</strong> so the contract keeps working if the primary instance or region becomes unavailable.</p>
+<blockquote>
+<p><strong>Backward compatibility promise</strong>: These features are 100% opt-in. Every new parameter defaults to empty. <strong>Existing access contracts continue to deploy and behave exactly as before</strong> — no parameter changes required. If you do nothing, nothing changes.</p>
+</blockquote>
+<hr />
+<h2 id="when-to-use-this">📌 When to use this</h2>
+<p>Use these features when you need the same AI use case to survive the loss of a single AI Gateway instance or region — for example:</p>
+<ul>
+<li>Active/active or active/passive APIM across two regions</li>
+<li>A global load balancer (Azure Front Door / Traffic Manager) in front of multiple gateways</li>
+<li>Credentials replicated into a secondary Key Vault for a DR region</li>
+<li>Foundry connections created in a secondary Foundry project</li>
+</ul>
+<p>If you only run a single gateway, ignore this guide — the base <a href="./README.md">README.md</a> already covers everything you need.</p>
+<hr />
+<h2 id="core-concepts">🧠 Core concepts</h2>
+<h3 id="1-consistent-subscription-key-across-gateways">1. Consistent subscription key across gateways</h3>
+<p>The single most important guarantee: <strong>the subscription key is generated once by the primary gateway and reused verbatim on every additional gateway.</strong></p>
+<p>This means client applications use the <strong>same <code>api-key</code></strong> no matter which gateway ultimately serves the request. A client can fail over from one gateway to another (or sit behind a global load balancer) without changing credentials.</p>
+<p>This is achieved by:
+1. Deploying the <strong>primary</strong> gateway first (creates the subscription, APIM generates the key).
+2. Passing that key as an <strong>explicit primary key</strong> when creating the mirrored subscription on each additional gateway.</p>
+<h3 id="2-global-endpoint-optional">2. Global endpoint (optional)</h3>
+<p><code>globalGatewayUrl</code> lets you record a single global entry point (e.g. an Azure Front Door / Traffic Manager hostname) as the endpoint stored in <strong>all</strong> Key Vault secrets and Foundry connections. When empty (default) the <strong>primary APIM gateway URL</strong> is used — the existing behavior.</p>
+<h3 id="3-endpoint-source-selection-for-additional-instances">3. Endpoint source selection for additional instances</h3>
+<p>Each additional Key Vault / Foundry entry can choose which endpoint URL it stores via <code>endpointSource</code>:</p>
+<table>
+<thead>
+<tr>
+<th><code>endpointSource</code></th>
+<th>Endpoint stored</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'global'</code></td>
+<td><code>globalGatewayUrl</code></td>
+</tr>
+<tr>
+<td><code>'primary'</code></td>
+<td>Primary APIM gateway URL</td>
+</tr>
+<tr>
+<td><code>'secondary:&lt;index&gt;'</code></td>
+<td>The additional gateway at that 0-based index in <code>additionalApimGateways</code></td>
+</tr>
+<tr>
+<td><code>''</code> (default / omitted)</td>
+<td><code>globalGatewayUrl</code> if set, otherwise the primary gateway URL</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>🔑 <strong>Per-asset endpoints are mirrored too.</strong> For a multi-asset (<code>MULTI-</code>) contract, each additional Key Vault receives the <strong>same set of secrets as the primary</strong>: the single shared key plus <strong>one endpoint secret per asset</strong> (from <code>assetEndpoints</code> / <code>publishAllAssetEndpoints</code>). The selected <code>endpointSource</code> gateway base is applied to <strong>every</strong> per-asset endpoint URL, so a DR-region Key Vault holds the full, region-appropriate endpoint set for LLM + Tools + Agents under one shared key.</p>
+</blockquote>
+<hr />
+<h2 id="parameters">🔩 Parameters</h2>
+<p>All parameters are optional. Add them to your use-case <code>.bicepparam</code> file.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>globalGatewayUrl</code></td>
+<td>string</td>
+<td><code>''</code></td>
+<td>Global endpoint base used for all Key Vault secrets and Foundry connections. Empty = primary gateway URL.</td>
+</tr>
+<tr>
+<td><code>additionalApimGateways</code></td>
+<td>array</td>
+<td><code>[]</code></td>
+<td>Additional APIM gateways to mirror the contract into. Item: <code>{ subscriptionId, resourceGroupName, name }</code>.</td>
+</tr>
+<tr>
+<td><code>additionalKeyVaults</code></td>
+<td>array</td>
+<td><code>[]</code></td>
+<td>Additional Key Vaults to store endpoint + shared key. Item: <code>{ subscriptionId, resourceGroupName, name, endpointSource? }</code>.</td>
+</tr>
+<tr>
+<td><code>additionalFoundries</code></td>
+<td>array</td>
+<td><code>[]</code></td>
+<td>Additional Foundry instances to create APIM connections in. Item: <code>{ subscriptionId, resourceGroupName, accountName, projectName, endpointSource? }</code>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The additional APIM gateways, Key Vaults, and Foundry projects <strong>must already exist</strong> — the same prerequisite that applies to the primary instances today. This package does not provision them.</p>
+</blockquote>
+<hr />
+<h2 id="deployment-order">🚀 Deployment order</h2>
+<p>The deployment is intentionally staged, enforced through Bicep output references and <code>dependsOn</code>:</p>
+<pre class="mermaid"><code>flowchart LR
+    P[1. Primary gateway&lt;br/&gt;onboarding&lt;br/&gt;generates keys] --&gt; A[2. Additional gateways&lt;br/&gt;reuse SAME keys]
+    A --&gt; K[3a. Additional Key Vaults]
+    A --&gt; F[3b. Additional Foundry connections]
+    P --&gt; PK[Primary Key Vault]
+    P --&gt; PF[Primary Foundry]</code></pre>
+<ol>
+<li><strong>Primary gateway</strong> onboarding runs first and produces the subscription key.</li>
+<li><strong>Additional gateways</strong> are created next, each reusing the primary key (via <code>explicitPrimaryKey</code>).</li>
+<li><strong>Additional Key Vaults and Foundry connections</strong> run last, after all gateways exist, so they store the shared key and the resolved endpoint.</li>
+</ol>
+<p>This ordering is automatic — you do not need to sequence anything manually.</p>
+<hr />
+<h2 id="configuration-examples">📝 Configuration examples</h2>
+<h3 id="example-1-two-gateways-behind-a-global-endpoint">Example 1: Two gateways behind a global endpoint</h3>
+<p>A global Front Door endpoint routes to a primary and a secondary APIM gateway. Both gateways share the same key; the primary Key Vault stores the global endpoint.</p>
+<div class="highlight"><pre><span></span><code>param globalGatewayUrl = &#39;https://ai-gateway.contoso.com&#39;
+
+param additionalApimGateways = [
+  {
+    subscriptionId: &#39;00000000-0000-0000-0000-000000000000&#39;
+    resourceGroupName: &#39;rg-apim-westeurope&#39;
+    name: &#39;apim-aihub-westeurope&#39;
+  }
+]
+
+// Primary Key Vault (existing param) now stores the global endpoint automatically
+// because globalGatewayUrl is set.
+param useTargetAzureKeyVault = true
+</code></pre></div>
+<h3 id="example-2-secondary-key-vault-pointing-at-the-secondary-gateway">Example 2: Secondary Key Vault pointing at the secondary gateway</h3>
+<p>Store credentials in a DR-region Key Vault whose endpoint points directly at the secondary gateway (not the global endpoint), for region-pinned clients.</p>
+<div class="highlight"><pre><span></span><code>param additionalApimGateways = [
+  {
+    subscriptionId: &#39;00000000-0000-0000-0000-000000000000&#39;
+    resourceGroupName: &#39;rg-apim-westeurope&#39;
+    name: &#39;apim-aihub-westeurope&#39;
+  }
+]
+
+param additionalKeyVaults = [
+  {
+    subscriptionId: &#39;00000000-0000-0000-0000-000000000000&#39;
+    resourceGroupName: &#39;rg-kv-westeurope&#39;
+    name: &#39;kv-aihub-westeurope&#39;
+    endpointSource: &#39;secondary:0&#39;   // -&gt; additionalApimGateways[0] gateway URL
+  }
+]
+</code></pre></div>
+<h3 id="example-3-secondary-foundry-connection-using-the-global-endpoint">Example 3: Secondary Foundry connection using the global endpoint</h3>
+<div class="highlight"><pre><span></span><code>param globalGatewayUrl = &#39;https://ai-gateway.contoso.com&#39;
+
+param additionalFoundries = [
+  {
+    subscriptionId: &#39;00000000-0000-0000-0000-000000000000&#39;
+    resourceGroupName: &#39;rg-foundry-westeurope&#39;
+    accountName: &#39;foundry-westeurope&#39;
+    projectName: &#39;ai-project-dr&#39;
+    endpointSource: &#39;global&#39;
+  }
+]
+</code></pre></div>
+<hr />
+<h2 id="outputs">📤 Outputs</h2>
+<p>In addition to all existing outputs (unchanged), the following additive outputs are available (empty when the features are unused):</p>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>globalGatewayUrl</code></td>
+<td>The global endpoint used (echo of the parameter).</td>
+</tr>
+<tr>
+<td><code>effectiveGatewayUrl</code></td>
+<td>The endpoint base actually applied to primary Key Vault/Foundry (global if set, else primary).</td>
+</tr>
+<tr>
+<td><code>additionalGatewayCount</code></td>
+<td>Number of additional gateways.</td>
+</tr>
+<tr>
+<td><code>additionalGateways</code></td>
+<td>Per additional gateway: <code>{ name, gatewayUrl, products[] }</code>.</td>
+</tr>
+<tr>
+<td><code>additionalKeyVaults</code></td>
+<td>Per additional Key Vault: <code>{ name, endpointSource }</code>.</td>
+</tr>
+<tr>
+<td><code>additionalFoundryConnections</code></td>
+<td>Per additional Foundry: <code>{ foundryAccount, foundryProject, connectionNames[] }</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-rotation">🔄 Key rotation</h2>
+<p>For <strong>zero-downtime subscription key rotation</strong> — including how both keys are kept in sync across all mirrored gateways — see the dedicated <a href="../access-contract-key-rotation-guide/">Access Contract Key Rotation Guide</a>.</p>
+<p>In a multi-gateway contract, the primary gateway owns both keys and syncs <strong>both</strong> the primary and secondary keys verbatim to every additional gateway, so a client uses the same active key regardless of which gateway serves the request. The 3-step rotation flow (switch → confirm → regenerate) works across all gateways at once.</p>
+<hr />
+<h2 id="notes-troubleshooting">⚠️ Notes &amp; troubleshooting</h2>
+<ul>
+<li><strong>Out-of-range <code>secondary:&lt;index&gt;</code></strong>: <code>endpointSource: 'secondary:&lt;index&gt;'</code> must reference an entry that exists in <code>additionalApimGateways</code>. The index is <strong>0-based</strong> (<code>secondary:0</code> = first additional gateway). An out-of-range index <strong>fails fast at deployment time</strong> with an index error — there is intentionally no silent fallback, so a misconfiguration surfaces immediately. Double-check the index matches the order of <code>additionalApimGateways</code>.</li>
+<li><strong>Additional Key Vaults are independent of <code>useTargetAzureKeyVault</code></strong>: entries in <code>additionalKeyVaults</code> are always written when present, regardless of the primary <code>useTargetAzureKeyVault</code> flag. The <code>useTargetAzureKeyVault</code> flag only governs the <strong>primary</strong> Key Vault.</li>
+<li><strong>Cross-subscription / cross-region</strong>: additional gateways, Key Vaults, and Foundry instances may live in different subscriptions and resource groups. Ensure the deploying identity has the required roles (APIM Service Contributor, Key Vault Secrets Officer, Foundry RG Contributor) in each target.</li>
+<li><strong>Deployment name length</strong>: mirrored deployments are named <code>onboard-add&lt;gatewayIndex&gt;-&lt;serviceCode&gt;-&lt;BU&gt;-&lt;UseCase&gt;-&lt;ENV&gt;</code>. Keep business unit / use case names concise to stay within Azure's 64-character deployment-name limit.</li>
+<li><strong>Product &amp; subscription names are identical</strong> across all gateways (mirrored contract), so clients experience a single logical contract.</li>
+</ul>
+<hr />
+<h2 id="related">🔗 Related</h2>
+<ul>
+<li><a href="./README.md">Access Contracts README</a></li>
+<li><a href="./contract-quick-reference-guide.md">Contract Quick Reference Guide</a></li>
+<li><a href="./citadel-access-contracts-policy.md">Access Contract Policy Guide</a>
+</content>
+</invoke></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

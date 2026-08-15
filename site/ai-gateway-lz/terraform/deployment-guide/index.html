@@ -1,0 +1,2463 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>AI Citadel Governance Hub — Terraform Deployment Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai-citadel-governance-hub-terraform-deployment-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AI Citadel Governance Hub — Terraform Deployment Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-mental-model-how-this-differs-from-bicep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Mental model: how this differs from Bicep
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Prerequisites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-script-flavors-bash-powershell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Script flavors: Bash &amp; PowerShell
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-execution-ordering-what-runs-and-when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Execution ordering (what runs and when)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-feature-flags-whats-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Feature flags (what's optional)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-first-deployment-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. First deployment: step by step
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. First deployment: step by step">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-configure-your-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Configure your environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-bootstrap-first-time-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Bootstrap (first time only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-core-only-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Core-only deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#55-llm-backend-routing-auto-derived-single-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 LLM backend routing (auto-derived, single apply)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-add-on-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Add-on deployments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Add-on deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-single-apply-mode-terraform-native" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Single-apply mode (Terraform-native)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-phased-mode-bicep-style-follow-ons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Phased mode (Bicep-style follow-ons)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-single-add-on-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Single add-on later
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-add-on-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Add-on reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Add-on reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-entra-id-with-entra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Entra ID (--with-entra)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-foundry-apim-connection-with-foundry-conn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Foundry → APIM connection (--with-foundry-conn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-access-contracts-with-access-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Access contracts (--with-access-contracts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-mcp-samples-with-mcp-samples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.4 MCP samples (--with-mcp-samples)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-api-center-onboarding-with-apic-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.5 API Center onboarding (--with-apic-onboarding)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-jwt-auth-without-entra-with-jwt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.6 JWT auth without Entra (--with-jwt)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#77-enabling-with-entra-implies-jwt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.7 Enabling --with-entra implies JWT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#78-logic-app-workflow-code-off-by-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.8 Logic App workflow code (off by default)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-full-rollout-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Full rollout scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Full rollout scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-developer-sandbox-one-shot-everything" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Developer sandbox (one-shot, everything)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-production-staged-reviewed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Production (staged, reviewed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-bicep-style-single-command-phased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Bicep-style single-command phased
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-disabling-an-add-on" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Disabling an add-on
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-interactions-with-existing-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Interactions with existing tooling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Interactions with existing tooling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-llm-backend-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 LLM backend onboarding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-apim-sku-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 APIM SKU upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-auto-import-on-drift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Auto-import on drift
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-validation-notebooks-validation-shared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 Validation notebooks (validation/ + shared/)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-tearing-down" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Tearing down
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-reference-command-cheatsheet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Reference: command cheatsheet
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Reference: command cheatsheet">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#powershell-equivalents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PowerShell equivalents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. See also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="ai-citadel-governance-hub-terraform-deployment-guide">AI Citadel Governance Hub — Terraform Deployment Guide</h1>
+<blockquote>
+<p><strong>Scope:</strong> This document covers the full deployment lifecycle for the Terraform
+port of the AI Hub Gateway Citadel accelerator: prerequisites, ordering,
+rollout strategies, every optional add-on, and the exact commands for each
+scenario.</p>
+<p><strong>Related files:</strong>
+<a href="scripts/deploy.sh">scripts/deploy.sh</a> / <a href="scripts/deploy.ps1">scripts/deploy.ps1</a> ·
+<a href="environments/dev.tfvars">environments/dev.tfvars</a> ·
+<a href="environments/prod.tfvars">environments/prod.tfvars</a></p>
+</blockquote>
+<hr />
+<h2 id="1-mental-model-how-this-differs-from-bicep">1. Mental model: how this differs from Bicep</h2>
+<p>The Bicep accelerator deploys its stack in <strong>two tiers</strong>:</p>
+<ol>
+<li><strong><code>main.bicep</code></strong> — core resource plane + APIM + APIC.</li>
+<li><strong>Follow-on sub-deployments</strong> (separate <code>az deployment sub create</code>
+   invocations) for pieces that <code>main.bicep</code> cannot express inline:<ul>
+<li><code>entra-id-setup/setup.ps1</code> — needs MS Graph (not ARM).</li>
+<li><code>foundry-integration/connection-apim.bicep</code> — needs the APIM subscription
+   key as a <strong>runtime input</strong>.</li>
+<li><code>citadel-access-contracts/main.bicep</code> — per-use-case products that change
+   often post-deploy.</li>
+<li><code>llm-backend-onboarding/</code> — adding/removing models.</li>
+<li><code>apim-gateway-upgrade/</code> — changing APIM SKU.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Terraform has no such split.</strong> The port folds every follow-on into the root
+graph and resolves ordering through resource references + <code>depends_on</code>. As a
+result:</p>
+<ul>
+<li>A single <code>terraform apply</code> can deploy the entire stack, including Entra ID,
+  Foundry→APIM connection, and access contracts.</li>
+<li>All follow-ons are gated by <strong>feature-flag variables</strong> (<code>enable_*</code>) so you
+  still choose what to roll out.</li>
+<li>If you prefer the Bicep workflow (stage core, validate, then enable
+  add-ons), the <code>--phased</code> deploy-script mode gives you two sequential
+  <code>plan</code>/<code>apply</code> passes against the same state.</li>
+</ul>
+<hr />
+<h2 id="2-prerequisites">2. Prerequisites</h2>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Version</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Terraform</td>
+<td>≥ 1.5.0</td>
+<td>Declared in <a href="versions.tf">versions.tf</a></td>
+</tr>
+<tr>
+<td>Azure CLI (<code>az</code>)</td>
+<td>≥ 2.57</td>
+<td>Used for auth + RP registration + Logic App code publish (uses core <code>az functionapp</code> commands; no extensions needed)</td>
+</tr>
+<tr>
+<td><code>azurerm</code> provider</td>
+<td><code>~&gt; 4.0</code></td>
+<td>Auto-installed by <code>terraform init</code></td>
+</tr>
+<tr>
+<td><code>azapi</code> provider</td>
+<td><code>~&gt; 2.0</code></td>
+<td>Used for APIM v2 backends, MCP, APIC</td>
+</tr>
+<tr>
+<td><code>azuread</code> provider</td>
+<td><code>~&gt; 3.0</code></td>
+<td>Only installed/used when <code>enable_entra_id_setup = true</code></td>
+</tr>
+<tr>
+<td><code>archive</code> / <code>null</code> providers</td>
+<td><code>~&gt; 2.5</code> / <code>~&gt; 3.2</code></td>
+<td>Used by the Logic App workflow-code publish step</td>
+</tr>
+<tr>
+<td>Azure subscription</td>
+<td>Owner or equivalent</td>
+<td>Creates RBAC role assignments</td>
+</tr>
+<tr>
+<td>Tenant permissions (Entra add-on only)</td>
+<td><code>Application.ReadWrite.All</code></td>
+<td>Required to create app registrations</td>
+</tr>
+</tbody>
+</table>
+<p>Sign in before anything else:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
+az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span><span class="s2">&quot;&lt;your-subscription-id&gt;&quot;</span>
+</code></pre></div>
+<h3 id="21-script-flavors-bash-powershell">2.1 Script flavors: Bash &amp; PowerShell</h3>
+<p>Every helper in <a href="scripts/">scripts/</a> ships in <strong>two interchangeable flavors</strong> —
+Bash (<code>*.sh</code>) and PowerShell 7+ (<code>*.ps1</code>). Both drive the same Terraform graph;
+pick whichever suits your shell. This guide's examples use the Bash form, but
+every <code>./scripts/*.sh</code> command has a <code>./scripts/*.ps1</code> equivalent. The only
+difference is flag syntax: Bash uses <code>--kebab-case</code> flags, PowerShell uses
+<code>-PascalCase</code> switches.</p>
+<table>
+<thead>
+<tr>
+<th>Bash (<code>deploy.sh</code>)</th>
+<th>PowerShell (<code>deploy.ps1</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dev</code> / <code>prod</code> (positional)</td>
+<td><code>dev</code> / <code>prod</code> (positional)</td>
+</tr>
+<tr>
+<td><code>--auto-approve</code></td>
+<td><code>-AutoApprove</code></td>
+</tr>
+<tr>
+<td><code>--phased</code></td>
+<td><code>-Phased</code></td>
+</tr>
+<tr>
+<td><code>--with-entra</code></td>
+<td><code>-WithEntra</code></td>
+</tr>
+<tr>
+<td><code>--with-foundry-conn</code></td>
+<td><code>-WithFoundryConn</code></td>
+</tr>
+<tr>
+<td><code>--with-access-contracts</code></td>
+<td><code>-WithAccessContracts</code></td>
+</tr>
+<tr>
+<td><code>--with-mcp-samples</code></td>
+<td><code>-WithMcpSamples</code></td>
+</tr>
+<tr>
+<td><code>--with-jwt</code></td>
+<td><code>-WithJwt</code></td>
+</tr>
+<tr>
+<td><code>--with-apic-onboarding</code></td>
+<td><code>-WithApicOnboarding</code></td>
+</tr>
+<tr>
+<td><code>--all-addons</code></td>
+<td><code>-AllAddons</code></td>
+</tr>
+<tr>
+<td><code>--skip-logic-app-code</code></td>
+<td><code>-SkipLogicAppCode</code></td>
+</tr>
+<tr>
+<td><code>--logic-app-code-only</code></td>
+<td><code>-LogicAppCodeOnly</code></td>
+</tr>
+<tr>
+<td><code>--help</code></td>
+<td><code>-Help</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example (identical result):</strong></p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--all-addons<span class="w"> </span>--phased<span class="w"> </span>--auto-approve
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">prod</span> <span class="n">-AllAddons</span> <span class="n">-Phased</span> <span class="n">-AutoApprove</span>
+</code></pre></div>
+<p>The same mapping applies to the other helpers:
+<a href="scripts/bootstrap-state.ps1">bootstrap-state</a>,
+<a href="scripts/validate.ps1">validate</a>, <a href="scripts/destroy.ps1">destroy</a>, and
+<a href="scripts/import-existing.ps1">import-existing</a> all expose <code>.ps1</code> equivalents
+with positional <code>dev</code>/<code>prod</code> arguments.</p>
+<hr />
+<h2 id="3-execution-ordering-what-runs-and-when">3. Execution ordering (what runs and when)</h2>
+<p>Terraform builds a DAG from every explicit reference + <code>depends_on</code> clause.
+The effective order for a full deployment is:</p>
+<div class="highlight"><pre><span></span><code>0. Random suffix + Resource Group
+1. networking         ── VNet, 3 subnets, NSGs, route table, DNS zones
+2. eventhub           ── namespace + ai-usage/pii-usage hubs + consumer groups
+   cosmosdb           ── account + usage-db + 4 containers
+   monitoring         ── LAW + 3 App Insights + 3 dashboards + AMPLS
+   ai_services        ── Foundry account + project + APIC scaffold
+                       (all run in parallel — no cross-dependencies)
+3. security           ── Key Vault + Foundry KV RBAC
+4. redis              ── Azure Managed Redis + PE + APIM caches link
+5. entra_id           ── (optional) azuread_application + SP + KV secret
+6. apim               ── APIM service + identity + loggers + diagnostics
+   ├─ backends        ── per-model LLM backends + pools + content safety
+   │                    + AI search + embeddings
+   ├─ fragments       ── 21 static + 3 dynamic policy fragments
+   ├─ extra-apis      ── Unified AI, AI Search, DocIntel×2, Inference,
+   │                    Realtime, Weather, Weather MCP, MS Learn MCP
+   ├─ named-values    ── JWT-*, piiServiceKey + 4 operation policies
+   ├─ apic-onboarding ── (optional) register each API in APIC
+   └─ foundry-sub     ── (optional) dedicated APIM subscription for Foundry
+7. logic_app          ── Logic App Standard + 4 storage PEs + MI RBAC
+   └─ publish_workflows
+                      ── zip + `az functionapp deployment source config-zip`
+                         of logicapp-src/usage-ingestion-logicapp (4 workflows +
+                         host.json + connections.json). On by default;
+                         gated by `enable_logic_app_code_deploy`.
+8. foundry.connection_apim
+                      ── (optional) Foundry project → APIM connection
+9. access_contracts   ── (optional) per-use-case APIM products + policies
+</code></pre></div>
+<p>Anything upstream is mandatory; anything marked <code>(optional)</code> is gated by a
+feature flag.</p>
+<hr />
+<h2 id="4-feature-flags-whats-optional">4. Feature flags (what's optional)</h2>
+<p>Every add-on defaults to <strong>off</strong> unless listed otherwise. You can set them in
+<code>environments/&lt;env&gt;.tfvars</code>, via <code>-var=…=true</code> on the command line, or via
+the <code>--with-*</code> shortcuts in <a href="scripts/deploy.sh">scripts/deploy.sh</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Shortcut flag</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable_entra_id_setup</code></td>
+<td><code>false</code></td>
+<td><code>--with-entra</code></td>
+<td>Creates Entra ID app registration, service principal, client secret → KV; auto-populates APIM JWT-* named values.</td>
+</tr>
+<tr>
+<td><code>enable_foundry_apim_connection</code></td>
+<td><code>false</code></td>
+<td><code>--with-foundry-conn</code></td>
+<td>Creates Foundry project → APIM connection (ApiKey) + dedicated APIM subscription.</td>
+</tr>
+<tr>
+<td><code>enable_access_contracts</code></td>
+<td><code>false</code></td>
+<td><code>--with-access-contracts</code></td>
+<td>Reads the <code>access_contracts</code> map and creates per-use-case APIM products, policies, subscriptions, and optional KV secrets + Foundry connections.</td>
+</tr>
+<tr>
+<td><code>is_mcp_sample_deployed</code></td>
+<td><code>false</code></td>
+<td><code>--with-mcp-samples</code></td>
+<td>Enables Weather API + Weather MCP + MS Learn MCP APIs.</td>
+</tr>
+<tr>
+<td><code>enable_jwt_auth</code></td>
+<td><code>false</code></td>
+<td><code>--with-jwt</code></td>
+<td>Populates JWT-* named values from <code>jwt_tenant_id</code> / <code>jwt_app_registration_id</code>. Auto-overridden by <code>enable_entra_id_setup</code>.</td>
+</tr>
+<tr>
+<td><code>enable_api_center_onboarding</code></td>
+<td><code>false</code></td>
+<td><code>--with-apic-onboarding</code></td>
+<td>Registers each APIM API in API Center with version + definition + deployment records.</td>
+</tr>
+<tr>
+<td><code>enable_unified_ai_api</code></td>
+<td>depends on tfvars</td>
+<td>—</td>
+<td>Wildcard unified AI API.</td>
+</tr>
+<tr>
+<td><code>enable_azure_ai_search</code></td>
+<td>depends on tfvars</td>
+<td>—</td>
+<td>AI Search Index API + backends from <code>ai_search_instances</code>.</td>
+</tr>
+<tr>
+<td><code>enable_document_intelligence</code></td>
+<td>depends on tfvars</td>
+<td>—</td>
+<td>Legacy <code>/formrecognizer</code> + current <code>/documentintelligence</code> APIs.</td>
+</tr>
+<tr>
+<td><code>enable_ai_model_inference</code></td>
+<td>depends on tfvars</td>
+<td>—</td>
+<td>Model Inference API.</td>
+</tr>
+<tr>
+<td><code>enable_openai_realtime</code></td>
+<td>depends on tfvars</td>
+<td>—</td>
+<td>WebSocket Realtime API.</td>
+</tr>
+<tr>
+<td><code>enable_embeddings_backend</code></td>
+<td><code>false</code></td>
+<td>—</td>
+<td>Dedicated embeddings backend for semantic cache.</td>
+</tr>
+<tr>
+<td><code>enable_pii_anonymization</code></td>
+<td><code>false</code></td>
+<td>—</td>
+<td>PII redaction policy + <code>piiServiceKey</code> named value (secret).</td>
+</tr>
+<tr>
+<td><code>enable_api_center</code></td>
+<td><code>true</code></td>
+<td>—</td>
+<td>Provisions the API Center service (workspace, environments, metadata schemas).</td>
+</tr>
+<tr>
+<td><code>eventhub_disaster_recovery_config</code></td>
+<td>empty</td>
+<td>—</td>
+<td>Optional EH DR namespace pairing.</td>
+</tr>
+<tr>
+<td><code>configure_circuit_breaker</code></td>
+<td><code>false</code></td>
+<td>—</td>
+<td>Adds circuit-breaker rules to LLM backends.</td>
+</tr>
+<tr>
+<td><code>enable_logic_app_code_deploy</code></td>
+<td><code>true</code></td>
+<td><code>--skip-logic-app-code</code> (inverse)</td>
+<td>Zips and publishes <code>logicapp-src/usage-ingestion-logicapp</code> to the Logic App Standard site after infra is ready. See §7.8.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-first-deployment-step-by-step">5. First deployment: step by step</h2>
+<h3 id="51-configure-your-environment">5.1 Configure your environment</h3>
+<p>The <code>environments/*.tfvars</code> files are git-ignored — only the <code>.example</code>
+templates are committed. Copy the template for your target environment and fill
+in the values:</p>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>environments/dev.tfvars.example<span class="w"> </span>environments/dev.tfvars
+<span class="c1"># (prod) cp environments/prod.tfvars.example environments/prod.tfvars</span>
+</code></pre></div>
+<p>Then edit <a href="environments/dev.tfvars">environments/dev.tfvars</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="na">subscription_id</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-SUBSCRIPTION-ID&quot;</span><span class="c1">   # auto-rewritten by deploy.sh</span>
+<span class="na">location</span><span class="w">               </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;swedencentral&quot;</span>
+<span class="na">environment_name</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;citadel-dev&quot;</span>
+<span class="na">resource_group_name</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;rg-citadel-dev&quot;</span>
+
+<span class="c1"># Feature flags (start conservative, enable more over time)</span>
+<span class="na">enable_azure_ai_search</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="no">false</span>
+<span class="na">enable_document_intelligence</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">false</span>
+<span class="na">enable_unified_ai_api</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="na">enable_api_center</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="na">enable_api_center_onboarding</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">false</span>
+<span class="na">enable_jwt_auth</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="no">false</span>
+</code></pre></div>
+<h3 id="52-bootstrap-first-time-only">5.2 Bootstrap (first time only)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify Azure login</span>
+az<span class="w"> </span>account<span class="w"> </span>show
+
+<span class="c1"># Register required resource providers (deploy.sh does this too)</span>
+./scripts/bootstrap-state.sh<span class="w">     </span><span class="c1"># (optional) set up remote state</span>
+</code></pre></div>
+<h3 id="53-core-only-deployment">5.3 Core-only deployment</h3>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev
+</code></pre></div>
+<p>This is equivalent to <code>main.bicep</code> with everything but APIC onboarding
+disabled. Adds ~35 resources. Expect 25–35 minutes for the first run
+(APIM + Redis dominate).</p>
+<h3 id="54-verify">5.4 Verify</h3>
+<div class="highlight"><pre><span></span><code>./scripts/validate.sh<span class="w"> </span>dev
+terraform<span class="w"> </span>output
+</code></pre></div>
+<h3 id="55-llm-backend-routing-auto-derived-single-apply">5.5 LLM backend routing (auto-derived, single apply)</h3>
+<p>As of this revision, the §5.3 core apply produces a <strong>fully-routed gateway
+in one shot</strong>. <code>llm_backend_config</code> is auto-derived in
+<a href="main.tf">main.tf</a> from <code>enable_ai_foundry</code> + <code>ai_foundry_instances</code> +
+<code>ai_foundry_models</code>, with endpoints sourced from
+<code>module.foundry.foundry_endpoints</code> (late-bound — known after apply, which
+Terraform handles transparently because <code>for_each</code> keys are deterministic
+<code>foundry-${location}-${index}</code> strings).</p>
+<p><strong>What you get automatically:</strong></p>
+<ul>
+<li>One APIM backend (<code>azapi_resource.llm_backend</code>) per Foundry instance,
+  priority <code>1</code> for index <code>0</code>, priority <code>2</code> for subsequent instances.</li>
+<li>Models grouped into pools by <code>ai_service_index</code> — every model you list
+  under <code>ai_foundry_models</code> targeting instance <code>i</code> is attached to that
+  instance's backend.</li>
+<li>The three dynamic policy fragments (<code>set-backend-pools</code>,
+  <code>get-available-models</code>, <code>metadata-config</code>) are populated with real
+  routing tables.</li>
+<li>Named values for the backend IDs / pool IDs are created automatically
+  (they're gated on <code>length(llm_backend_config) &gt; 0</code> internally — the
+  auto-derived list lights them up).</li>
+</ul>
+<p><strong>When to override (optional).</strong> Populate either of these variables in your
+tfvars:</p>
+<ul>
+<li><code>llm_backend_config</code> — <strong>full override.</strong> Non-empty value replaces the
+  auto-derived list entirely. Use when you need non-Foundry backends
+  exclusively (external Azure OpenAI, third-party LLM gateway, on-prem
+  model server).</li>
+<li><code>extra_llm_backends</code> — <strong>append.</strong> Added on top of the auto-derived
+  Foundry list. Use to mix Foundry (auto) with external backends in the
+  same gateway. Same object shape as <code>llm_backend_config</code>.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Example: keep Foundry auto-derive + add an external Azure OpenAI backend</span>
+<span class="na">llm_backend_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="c1">  # or omit entirely — default is []</span>
+<span class="na">extra_llm_backends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;external-aoai-0&quot;</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;azure-openai&quot;</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://my-aoai-resource.openai.azure.com/&quot;</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;apiKey&quot;</span>
+<span class="w">    </span><span class="na">priority</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gpt-4.1&quot;, sku = &quot;GlobalStandard&quot;, capacity = 100, modelFormat = &quot;OpenAI&quot;, modelVersion = &quot;2025-04-14&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div>
+<p><strong>Discover the auto-derived endpoints</strong> (for verification / external
+scripts):</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>output<span class="w"> </span>-json<span class="w"> </span>ai_foundry_endpoints<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[]&#39;</span>
+</code></pre></div>
+<p><strong>Rules to keep in mind (apply to both auto-derived and overridden
+configs):</strong></p>
+<ul>
+<li><code>backend_type</code> is one of <code>ai-foundry</code>, <code>azure-openai</code>, or <code>external</code>.</li>
+<li><code>auth_scheme = "managedIdentity"</code> works out of the box for Foundry — the
+  APIM UAMI already has <code>Cognitive Services OpenAI User</code> on every Foundry
+  account deployed by the stack. Use <code>apiKey</code> for external backends.</li>
+<li>Multiple backends advertising the same <code>supported_models[*].name</code> at the
+  same <code>priority</code> form a load-balanced pool with automatic failover. Use
+  different <code>priority</code> values for active/standby routing.</li>
+</ul>
+<hr />
+<h2 id="6-add-on-deployments">6. Add-on deployments</h2>
+<h3 id="61-single-apply-mode-terraform-native">6.1 Single-apply mode (Terraform-native)</h3>
+<p>Deploy everything in one pass:</p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-entra<span class="w"> </span>--with-foundry-conn<span class="w"> </span>--with-access-contracts<span class="w"> </span>--with-mcp-samples<span class="w"> </span>--with-apic-onboarding
+</code></pre></div>
+<p>Or the shorthand:</p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--all-addons
+</code></pre></div>
+<p>Terraform computes the full graph and creates dependencies correctly in one
+<code>apply</code>. This is the <strong>recommended path</strong> for most environments — it's
+faster, atomic, and gives you a single state snapshot.</p>
+<h3 id="62-phased-mode-bicep-style-follow-ons">6.2 Phased mode (Bicep-style follow-ons)</h3>
+<p>When you want to deploy core first, validate, then layer add-ons on top:</p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--all-addons<span class="w"> </span>--phased
+</code></pre></div>
+<p>The script performs:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>What runs</th>
+<th>What's forced off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 — <code>core</code></td>
+<td>networking, monitoring, data, APIM service + backends + fragments + APIs</td>
+<td><code>enable_entra_id_setup=false</code>, <code>enable_foundry_apim_connection=false</code>, <code>enable_access_contracts=false</code>, <code>is_mcp_sample_deployed=false</code>, <code>enable_jwt_auth=false</code>, <code>enable_api_center_onboarding=false</code></td>
+</tr>
+<tr>
+<td>Phase 2 — <code>add-ons</code></td>
+<td>Re-applies with the selected <code>--with-*</code> flags enabled; only the add-on resources change</td>
+<td>nothing forced — uses your flag selection</td>
+</tr>
+</tbody>
+</table>
+<p>This mirrors the Bicep "deploy + follow-on" workflow without splitting the
+state. If you pass <code>--phased</code> without any <code>--with-*</code> flags, phase 2 is a
+no-op (plan reports "no changes").</p>
+<h3 id="63-single-add-on-later">6.3 Single add-on later</h3>
+<p>After a successful core deployment, enable just one add-on:</p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-entra
+</code></pre></div>
+<p>Terraform plan shows exactly the new resources (≈6 for Entra, ≈2–5 for
+Foundry connection, N×6 for access contracts). You can keep re-running with
+different flags without touching anything else.</p>
+<hr />
+<h2 id="7-add-on-reference">7. Add-on reference</h2>
+<h3 id="71-entra-id-with-entra">7.1 Entra ID (<code>--with-entra</code>)</h3>
+<p><strong>Bicep parity:</strong> <code>entra-id-setup/setup.ps1</code> (uses MS Graph, runs outside
+<code>main.bicep</code> in Bicep).</p>
+<p><strong>What gets created</strong> (<a href="modules/entra-id/">modules/entra-id/</a>):</p>
+<ul>
+<li><code>azuread_application</code> — display name <code>ai-citadel-gateway-&lt;env&gt;</code>, OAuth2
+  <code>access_as_user</code> scope, 4 app roles (<code>Task.ReadWrite</code>, <code>Models.Read</code>,
+  <code>MCP.Read</code>, <code>Agent.Read</code>) with the same canonical GUIDs as the PowerShell
+  script (idempotent re-runs), + MS Graph <code>User.Read</code>.</li>
+<li><code>azuread_application_identifier_uri</code> — <code>api://&lt;client_id&gt;</code> (split to avoid
+  self-reference).</li>
+<li><code>azuread_service_principal</code>.</li>
+<li><code>azuread_application_password</code> — rotated every
+  <code>entra_client_secret_rotation_days</code> (default 730 = 2 years).</li>
+<li><code>azurerm_key_vault_secret</code> — writes the secret to KV as
+  <code>ENTRA-APP-CLIENT-SECRET</code>.</li>
+</ul>
+<p><strong>Side effect:</strong> When enabled, <code>local.effective_{enable_jwt_auth,
+jwt_tenant_id, jwt_app_registration_id}</code> override the bare <code>jwt_*</code> variables
+on the APIM module, so the <code>JWT-TenantId</code> and <code>JWT-AppRegistrationId</code> named
+values auto-populate from the live app registration + tenant.</p>
+<p><strong>Variables:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable_entra_id_setup</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>entra_app_display_name_prefix</code></td>
+<td><code>"ai-citadel-gateway"</code></td>
+</tr>
+<tr>
+<td><code>entra_client_secret_name</code></td>
+<td><code>"ENTRA-APP-CLIENT-SECRET"</code></td>
+</tr>
+<tr>
+<td><code>entra_client_secret_rotation_days</code></td>
+<td><code>730</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-entra
+</code></pre></div>
+<h3 id="72-foundry-apim-connection-with-foundry-conn">7.2 Foundry → APIM connection (<code>--with-foundry-conn</code>)</h3>
+<p><strong>Bicep parity:</strong> <code>foundry-integration/connection-apim.bicep</code>.</p>
+<p><strong>What gets created:</strong></p>
+<ul>
+<li><code>modules/apim/foundry-subscription.tf</code> — dedicated APIM subscription that
+  exposes a primary key as an output.</li>
+<li><code>modules/foundry/connection-apim.tf</code> —
+  <code>Microsoft.CognitiveServices/accounts/projects/connections@2025-04-01-preview</code>
+  per (foundry project × selected API) with Custom Keys auth, plus metadata
+  (<code>deploymentInPath</code>, <code>inferenceAPIVersion</code>, <code>deploymentAPIVersion</code>,
+  <code>modelDiscovery</code>, <code>models</code>, <code>customHeaders</code>).</li>
+</ul>
+<p><strong>Why it was a follow-on in Bicep:</strong> Bicep couldn't wire the APIM subscription
+key into the Foundry connection at plan time. Terraform uses the output of
+the subscription resource directly.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-foundry-conn
+</code></pre></div>
+<h3 id="73-access-contracts-with-access-contracts">7.3 Access contracts (<code>--with-access-contracts</code>)</h3>
+<p><strong>Bicep parity:</strong> <code>citadel-access-contracts/main.bicep</code> + its 3 sub-modules.</p>
+<p><strong>What gets created</strong> (<a href="modules/access-contracts/">modules/access-contracts/</a>):</p>
+<p>Per entry in <code>var.access_contracts</code>:</p>
+<ul>
+<li><code>azurerm_api_management_product</code> + display name, description, terms.</li>
+<li><code>azurerm_api_management_product_api</code> (per allowed API).</li>
+<li><code>azurerm_api_management_product_policy</code> — with allow-list of permitted
+  deployments rendered from the contract's <code>models</code> list; can also enforce
+  JWT.</li>
+<li><code>azurerm_api_management_subscription</code>.</li>
+<li>(optional) <code>azurerm_key_vault_secret</code> for the primary key.</li>
+<li>(optional) Foundry project connection created against this product.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># environments/dev.tfvars</span>
+<span class="na">access_contracts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">name</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;marketing-team&quot;</span>
+<span class="w">    </span><span class="na">display_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Marketing team&quot;</span>
+<span class="w">    </span><span class="na">apis</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;universal-llm-api&quot;, &quot;unified-ai-api&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="na">models</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;gpt-4o&quot;, &quot;gpt-4o-mini&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="na">jwt_required</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">    </span><span class="na">write_kv_key</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="w">    </span><span class="na">foundry_project</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;marketing-proj&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="c1">  # …</span>
+<span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-access-contracts
+</code></pre></div>
+<h3 id="74-mcp-samples-with-mcp-samples">7.4 MCP samples (<code>--with-mcp-samples</code>)</h3>
+<p><strong>Bicep parity:</strong> <code>mcp-from-api.bicep</code> + <code>mcp-existing.bicep</code>.</p>
+<p>Enables two APIM MCP resources:</p>
+<ul>
+<li><strong>Weather API + Weather MCP</strong> — demo API converted into an MCP server.</li>
+<li><strong>MS Learn MCP</strong> — external MCP endpoint registered via
+  <code>azapi_resource.ms_learn_mcp_backend</code> + <code>azapi_resource.ms_learn_mcp</code>.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-mcp-samples
+</code></pre></div>
+<h3 id="75-api-center-onboarding-with-apic-onboarding">7.5 API Center onboarding (<code>--with-apic-onboarding</code>)</h3>
+<p><strong>Bicep parity:</strong> <code>apim/api-center-onboarding.bicep</code>.</p>
+<p>Registers each enabled APIM API in API Center with:</p>
+<ul>
+<li><code>Microsoft.ApiCenter/services/workspaces/apis@2024-03-01</code></li>
+<li><code>…/versions</code></li>
+<li><code>…/definitions</code> (with the OpenAPI spec or import link)</li>
+<li><code>…/deployments</code> (pointing at the running APIM gateway URL +
+  <code>api-dev</code> / <code>mcp-dev</code> / <code>api-prod</code> / <code>mcp-prod</code> environment)</li>
+</ul>
+<p>The APIC service itself is created unconditionally when <code>enable_api_center =
+true</code> (default); this flag only controls the per-API record creation.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-apic-onboarding
+</code></pre></div>
+<h3 id="76-jwt-auth-without-entra-with-jwt">7.6 JWT auth without Entra (<code>--with-jwt</code>)</h3>
+<p>Use this when you already have an app registration and just want APIM to
+enforce JWT against its tenant/app-reg IDs.</p>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--with-jwt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--<span class="w"> </span>-var<span class="o">=</span><span class="nv">jwt_tenant_id</span><span class="o">=</span>&lt;tid&gt;<span class="w"> </span>-var<span class="o">=</span><span class="nv">jwt_app_registration_id</span><span class="o">=</span>&lt;aid&gt;
+</code></pre></div>
+<p>(Or set them in <code>dev.tfvars</code>.)</p>
+<blockquote>
+<p>⚠️ The <code>--</code> isn't parsed by the script; pass extra Terraform vars via
+<code>TF_VAR_*</code> environment variables or tfvars instead:
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">TF_VAR_jwt_tenant_id</span><span class="o">=</span>&lt;tid&gt;
+<span class="nb">export</span><span class="w"> </span><span class="nv">TF_VAR_jwt_app_registration_id</span><span class="o">=</span>&lt;aid&gt;
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-jwt
+</code></pre></div></p>
+</blockquote>
+<h3 id="77-enabling-with-entra-implies-jwt">7.7 Enabling <code>--with-entra</code> implies JWT</h3>
+<p><code>enable_entra_id_setup = true</code> derives <code>effective_enable_jwt_auth = true</code>
+automatically, populating all four JWT-* named values from the live app
+registration. You don't need to pass <code>--with-jwt</code> alongside <code>--with-entra</code>.</p>
+<h3 id="78-logic-app-workflow-code-off-by-default">7.8 Logic App workflow code (off by default)</h3>
+<p><strong>Bicep parity:</strong> <code>azd deploy usageProcessingLogicApp</code> in the upstream
+accelerator's <code>azure.yaml</code>.</p>
+<p><strong>What gets created</strong> (<a href="modules/logic-app/code-deploy.tf">modules/logic-app/code-deploy.tf</a>):</p>
+<ul>
+<li><code>data.archive_file.workflow_code</code> — zips the Logic App Standard project
+  folder (<code>host.json</code>, <code>connections.json</code>, and the 4 <code>workflow.json</code> files
+  under <code>ai-usage-ingestion/</code>, <code>ai-usage-streaming-ingestion/</code>,
+  <code>llm-usage-ingestion/</code>, <code>pii-usage-ingestion/</code>). Excludes
+  <code>workflow-designtime/</code>, <code>.funcignore</code>, and <code>local.settings.json</code>.</li>
+<li><code>null_resource.publish_workflows</code> — runs
+  <code>az functionapp deployment source config-zip</code> (Logic App Standard is built
+  on the Functions runtime, so the Functions zip-deploy command is the
+  supported path). Ships in core Azure CLI — no extension install required.</li>
+</ul>
+<p><strong>Runtime prerequisites:</strong></p>
+<ul>
+<li><code>az</code> CLI ≥ 2.57. No extra extensions needed.</li>
+<li>A signed-in principal with <strong>Logic App Contributor</strong> (or higher) on the RG
+  — the same identity that runs <code>terraform apply</code>.</li>
+<li>Network reachability to <code>management.azure.com</code> and the Logic App's SCM
+  endpoint (<code>&lt;sitename&gt;.scm.azurewebsites.net</code>). The zip is uploaded through
+  Kudu, so if the Logic App itself is behind a private endpoint the
+  deployer must run from inside the VNet. For public-network sites
+  (<code>apim_v2_public_network_access = true</code>) SCM is reachable from anywhere.</li>
+</ul>
+<p><strong>Trigger behaviour:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Effect on next apply</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Edit any file under <code>logicapp-src/usage-ingestion-logicapp/</code></td>
+<td><code>code_sha256</code> trigger changes → re-publish.</td>
+</tr>
+<tr>
+<td>Logic App site is recreated</td>
+<td><code>logic_app_id</code> trigger changes → re-publish.</td>
+</tr>
+<tr>
+<td>Infrastructure-only edits elsewhere</td>
+<td><code>null_resource</code> is untouched (no re-publish).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variables:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable_logic_app_code_deploy</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>logic_app_code_source_path</code></td>
+<td><code>logicapp-src/usage-ingestion-logicapp</code> (set in <code>environments/dev.tfvars</code>; blank disables the publish)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Default — publish as part of the normal apply</span>
+./scripts/deploy.sh<span class="w"> </span>dev
+
+<span class="c1"># Iterate on IaC without re-publishing the workflows</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--skip-logic-app-code
+
+<span class="c1"># Iterate on workflow JSON only — skips full plan/apply and retargets</span>
+<span class="c1"># `module.logic_app.null_resource.publish_workflows[0]`</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--logic-app-code-only
+
+<span class="c1"># Point at a fork or a locally-modified project tree</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">TF_VAR_logic_app_code_source_path</span><span class="o">=</span>/path/to/my/workflows
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--logic-app-code-only
+</code></pre></div>
+<p><strong>Rollback:</strong> there is no native slot history on Logic App Standard. To roll
+back, check out an earlier commit of <code>logicapp-src/usage-ingestion-logicapp/</code>
+and run <code>./scripts/deploy.sh &lt;env&gt; --logic-app-code-only</code>.</p>
+<hr />
+<h2 id="8-full-rollout-scenarios">8. Full rollout scenarios</h2>
+<h3 id="81-developer-sandbox-one-shot-everything">8.1 Developer sandbox (one-shot, everything)</h3>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--all-addons<span class="w"> </span>--auto-approve
+</code></pre></div>
+<p>Approx. 40 resources beyond core. Good for local demos.</p>
+<h3 id="82-production-staged-reviewed">8.2 Production (staged, reviewed)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Phase 1: core only — validate gateway endpoints, logs, dashboards</span>
+./scripts/deploy.sh<span class="w"> </span>prod
+
+<span class="c1"># Smoke-test APIM gateway</span>
+./scripts/validate.sh<span class="w"> </span>prod
+
+<span class="c1"># Phase 2: identity</span>
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--with-entra
+
+<span class="c1"># Verify Entra secret landed in KV, then enable JWT</span>
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--with-entra<span class="w"> </span>--with-apic-onboarding
+
+<span class="c1"># Phase 3: downstream consumers</span>
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--with-entra<span class="w"> </span>--with-apic-onboarding<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--with-foundry-conn<span class="w"> </span>--with-access-contracts
+</code></pre></div>
+<p>Each run is idempotent; re-running with the same flags is a no-op.</p>
+<h3 id="83-bicep-style-single-command-phased">8.3 Bicep-style single-command phased</h3>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--all-addons<span class="w"> </span>--phased
+</code></pre></div>
+<p>The script executes:</p>
+<ol>
+<li><code>terraform plan -var=enable_entra_id_setup=false … -out=plan-core</code> → apply</li>
+<li><code>terraform plan -var=enable_entra_id_setup=true  … -out=plan-addons</code> → apply</li>
+</ol>
+<p>Same end state as <code>--all-addons</code> without <code>--phased</code>, but with an
+intermediate checkpoint.</p>
+<h3 id="84-disabling-an-add-on">8.4 Disabling an add-on</h3>
+<p>Run without the flag. Terraform plans a destroy of just that module:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Was: ./scripts/deploy.sh dev --with-access-contracts</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w">            </span><span class="c1"># plan shows destroy of access-contracts</span>
+</code></pre></div>
+<p>Destroys are limited to the feature-flagged resources; core stays.</p>
+<hr />
+<h2 id="9-interactions-with-existing-tooling">9. Interactions with existing tooling</h2>
+<h3 id="91-llm-backend-onboarding">9.1 LLM backend onboarding</h3>
+<p>The Bicep accelerator ships a separate <code>llm-backend-onboarding/</code> sub-deployment.
+Terraform handles this inline — edit <code>llm_backend_config</code> in your tfvars and
+re-run <code>./scripts/deploy.sh &lt;env&gt;</code>. Changes are diff'd; only the affected
+backends + pools + the 3 dynamic policy fragments get re-applied.</p>
+<h3 id="92-apim-sku-upgrade">9.2 APIM SKU upgrade</h3>
+<p>The Bicep <code>apim-gateway-upgrade/</code> sub-deployment isn't needed. Change
+<code>apim_sku_name</code> + <code>apim_sku_capacity</code> in your tfvars and re-run — Terraform
+applies the SKU change in place on the existing APIM resource.</p>
+<h3 id="93-auto-import-on-drift">9.3 Auto-import on drift</h3>
+<p>If a resource exists in Azure but not in the Terraform state (e.g. from a
+previous partial run), <code>deploy.sh</code> detects <code>already exists</code> errors, offers to
+run <a href="scripts/import-existing.sh">scripts/import-existing.sh</a>, and retries the
+apply automatically.</p>
+<h3 id="94-validation-notebooks-validation-shared">9.4 Validation notebooks (<code>validation/</code> + <code>shared/</code>)</h3>
+<p>The Jupyter test suite ported from the upstream accelerator lives in
+<a href="validation/">validation/</a> with its Python helpers in <a href="shared/">shared/</a>. The
+suite is four notebooks that exercise a <strong>live</strong> deployment: LLM backend
+onboarding, the Universal LLM API across every model, access contracts, and
+model-alias routing.</p>
+<p>Each notebook is configured <strong>manually</strong>: open the first (config) cell and
+replace the <code>"REPLACE"</code> sentinel values — plus any inline config blocks such as
+<code>llm_backends_config</code> / <code>model_aliases</code> — with values that match your
+deployment, then run the cell. Any value left as <code>"REPLACE"</code> is flagged with a
+warning so you can see what still needs filling in.</p>
+<p>If you deployed with this repo's Terraform flow, pull the values you need
+straight from state and paste them into the config cell:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>output<span class="w"> </span>-raw<span class="w"> </span>resource_group_name
+terraform<span class="w"> </span>output<span class="w"> </span>-raw<span class="w"> </span>location
+terraform<span class="w"> </span>output<span class="w"> </span>-json<span class="w"> </span>llm_backend_config
+terraform<span class="w"> </span>output<span class="w"> </span>-raw<span class="w"> </span>key_vault_name
+</code></pre></div>
+<p><a href="shared/utils.py">shared/utils.py</a> also provides a Terraform-output bridge:
+<code>azd_env_get()</code> resolves a requested key from <code>terraform output -json</code>, with an
+internal alias map translating each azd-style variable name into the matching
+Terraform output:</p>
+<table>
+<thead>
+<tr>
+<th>Notebook variable / azd name</th>
+<th>Terraform output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AZURE_RESOURCE_GROUP</code>, <code>GOVERNANCE_HUB_RESOURCE_GROUP</code></td>
+<td><code>resource_group_name</code></td>
+</tr>
+<tr>
+<td><code>AZURE_LOCATION</code>, <code>LOCATION</code></td>
+<td><code>location</code></td>
+</tr>
+<tr>
+<td><code>AZURE_SUBSCRIPTION_ID</code></td>
+<td><code>subscription_id</code></td>
+</tr>
+<tr>
+<td><code>KEY_VAULT_NAME</code></td>
+<td><code>key_vault_name</code></td>
+</tr>
+<tr>
+<td><code>AI_FOUNDRY_SERVICES</code></td>
+<td><code>ai_foundry_services</code></td>
+</tr>
+<tr>
+<td><code>LLM_BACKEND_CONFIG</code>, <code>LLM_BACKENDS_CONFIG</code></td>
+<td><code>llm_backend_config</code></td>
+</tr>
+<tr>
+<td><code>APIM_NAME</code></td>
+<td><code>apim_name</code></td>
+</tr>
+<tr>
+<td><code>APIM_GATEWAY_URL</code></td>
+<td><code>apim_gateway_url</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>location</code>, <code>subscription_id</code>, <code>key_vault_name</code>, <code>ai_foundry_services</code>, and
+<code>llm_backend_config</code> outputs were added to <a href="outputs.tf">outputs.tf</a> for this
+purpose; they only appear in state after a <code>terraform apply</code>. The bridge
+resolves the Terraform root as the parent of <code>shared/</code> (the repo root);
+override with the <code>CITADEL_TF_DIR</code> environment variable to point at another
+state directory (e.g. <code>llm-backend-onboarding/</code>). <code>apimtools.py</code> is
+deployment-tool-agnostic — it uses <code>az</code> + the Azure SDK with the resource group
+/ APIM name passed as parameters.</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>shared/requirements.txt
+<span class="c1"># then open any notebook in validation/ and run the first (config) cell</span>
+</code></pre></div>
+<p>See <a href="validation/README.md">validation/README.md</a> for the full per-notebook
+variable map.</p>
+<hr />
+<h2 id="10-troubleshooting">10. Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>terraform init</code> downloads <code>azuread</code> even with <code>enable_entra_id_setup = false</code></td>
+<td>Provider is declared globally</td>
+<td>Expected; the provider is harmless until a resource is created.</td>
+</tr>
+<tr>
+<td><code>A resource with the ID "…applications/…" already exists</code></td>
+<td>Azure AD app with same display name exists from a prior run</td>
+<td><code>terraform import module.entra_id[0].azuread_application.gateway /applications/&lt;object-id&gt;</code></td>
+</tr>
+<tr>
+<td><code>Unauthorized: The client does not have authorization to perform action 'Microsoft.KeyVault/vaults/secrets/write'</code></td>
+<td>Current user lacks KV Secrets Officer role</td>
+<td>Use the printed <code>az role assignment create</code> command from the Key Vault module outputs.</td>
+</tr>
+<tr>
+<td>APIM deployment stuck ~30 min</td>
+<td>First-time APIM provisioning is slow</td>
+<td>Normal; don't cancel. Use <code>az apim list -g &lt;rg&gt;</code> to check <code>provisioningState</code>.</td>
+</tr>
+<tr>
+<td><code>enable_jwt_auth=true</code> but JWT fails at runtime</td>
+<td><code>jwt_tenant_id</code>/<code>jwt_app_registration_id</code> placeholders</td>
+<td>Enable Entra add-on (<code>--with-entra</code>) or set the variables explicitly.</td>
+</tr>
+<tr>
+<td>Foundry connection fails with "missing subscription key"</td>
+<td>APIM subscription hasn't finished provisioning</td>
+<td>Re-run <code>./scripts/deploy.sh &lt;env&gt; --with-foundry-conn</code>.</td>
+</tr>
+<tr>
+<td><code>az: command not found</code> during <code>publish_workflows</code></td>
+<td>Deployer doesn't have Azure CLI installed</td>
+<td>Install <code>az</code> CLI or run with <code>--skip-logic-app-code</code> and publish manually.</td>
+</tr>
+<tr>
+<td>Workflow publish fails with <code>AuthorizationFailed</code></td>
+<td>Signed-in principal lacks <strong>Website Contributor</strong> / <strong>Logic App Contributor</strong> on the RG</td>
+<td>Grant the role or run the zip-deploy as a different principal.</td>
+</tr>
+<tr>
+<td>Workflow publish hangs / <code>403 Ip Forbidden</code> on SCM</td>
+<td>Logic App is behind a private endpoint and the deployer isn't on the VNet</td>
+<td>Run <code>--logic-app-code-only</code> from a jumpbox inside the VNet, or temporarily flip <code>apim_v2_public_network_access = true</code>.</td>
+</tr>
+<tr>
+<td>Logic App runs trigger but workflows are empty</td>
+<td>Code-publish skipped or first apply crashed before the null_resource</td>
+<td>Run <code>./scripts/deploy.sh &lt;env&gt; --logic-app-code-only</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-tearing-down">11. Tearing down</h2>
+<div class="highlight"><pre><span></span><code>./scripts/destroy.sh<span class="w"> </span>dev
+</code></pre></div>
+<p>This performs <code>terraform destroy</code> with the dev tfvars. Some resources may
+linger in Azure for purge-protection reasons:</p>
+<ul>
+<li><strong>Key Vault</strong> — soft-deleted; purged on destroy when
+  <code>purge_soft_delete_on_destroy = true</code> (see <a href="providers.tf">providers.tf</a>).</li>
+<li><strong>APIM</strong> — soft-deleted; same purge behaviour.</li>
+<li><strong>Cognitive Services</strong> — soft-deleted; same purge behaviour.</li>
+</ul>
+<p>For a hard reset set the var to <code>true</code> in your tfvars and re-run destroy.</p>
+<hr />
+<h2 id="12-reference-command-cheatsheet">12. Reference: command cheatsheet</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Help</span>
+./scripts/deploy.sh<span class="w"> </span>--help
+
+<span class="c1"># Core only</span>
+./scripts/deploy.sh<span class="w"> </span>dev
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--auto-approve
+
+<span class="c1"># Individual add-ons</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-entra
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-foundry-conn
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-access-contracts
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-mcp-samples
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-apic-onboarding
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-jwt
+
+<span class="c1"># Combinations</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--with-entra<span class="w"> </span>--with-foundry-conn
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--all-addons
+
+<span class="c1"># Phased rollout</span>
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--phased
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--all-addons<span class="w"> </span>--phased
+./scripts/deploy.sh<span class="w"> </span>prod<span class="w"> </span>--with-entra<span class="w"> </span>--with-foundry-conn<span class="w"> </span>--phased
+
+<span class="c1"># Logic App workflow code</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--skip-logic-app-code<span class="w">     </span><span class="c1"># infra only</span>
+./scripts/deploy.sh<span class="w"> </span>dev<span class="w"> </span>--logic-app-code-only<span class="w">     </span><span class="c1"># republish workflows only</span>
+
+<span class="c1"># Validation + teardown</span>
+./scripts/validate.sh<span class="w"> </span>dev
+./scripts/destroy.sh<span class="w"> </span>dev
+
+<span class="c1"># Notebook test suite (against a live deployment)</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>shared/requirements.txt<span class="w">   </span><span class="c1"># then run validation/*.ipynb</span>
+</code></pre></div>
+<h3 id="powershell-equivalents">PowerShell equivalents</h3>
+<p>Every command above has a PowerShell twin (see §2.1 for the full flag map):</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Help</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Help</span>
+
+<span class="c"># Core only</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">prod</span> <span class="n">-AutoApprove</span>
+
+<span class="c"># Individual add-ons</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithEntra</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithFoundryConn</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithAccessContracts</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithMcpSamples</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithApicOnboarding</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithJwt</span>
+
+<span class="c"># Combinations</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-WithEntra</span> <span class="n">-WithFoundryConn</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">prod</span> <span class="n">-AllAddons</span>
+
+<span class="c"># Phased rollout</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">prod</span> <span class="n">-Phased</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">prod</span> <span class="n">-AllAddons</span> <span class="n">-Phased</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">prod</span> <span class="n">-WithEntra</span> <span class="n">-WithFoundryConn</span> <span class="n">-Phased</span>
+
+<span class="c"># Logic App workflow code</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-SkipLogicAppCode</span>     <span class="c"># infra only</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span> <span class="n">-LogicAppCodeOnly</span>     <span class="c"># republish workflows only</span>
+
+<span class="c"># Validation + teardown</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">validate</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">destroy</span><span class="p">.</span><span class="n">ps1</span> <span class="n">dev</span>
+</code></pre></div>
+<hr />
+<h2 id="13-see-also">13. See also</h2>
+<ul>
+<li><a href="README.md">README.md</a> — project overview.</li>
+<li><a href="VARIABLES.md">VARIABLES.md</a> — detailed reference for every variable, including the feature flags.</li>
+<li><a href="validation/README.md">validation/README.md</a> — notebook test suite + per-notebook variable map.</li>
+<li><a href="https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator/blob/citadel-v1/guides/full-deployment-guide.md">full-deployment-guide.md (upstream Bicep)</a>
+  — the original Bicep deployment guide, for comparison.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

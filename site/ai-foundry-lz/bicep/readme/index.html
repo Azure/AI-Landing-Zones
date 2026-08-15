@@ -1,0 +1,2397 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Azure AI Landing Zone - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#azure-ai-landing-zone" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Azure AI Landing Zone
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-gateway-lz/bicep/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-new-in-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's new in v2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to Deploy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to Deploy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate-bicep-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validate Bicep changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zero-trust-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero Trust Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Zero Trust Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloning-extra-repositories-onto-the-jumpbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloning extra repositories onto the jumpbox
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#building-and-pushing-images-with-network-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building and pushing images with network isolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#firewall-egress-allow-list-network-isolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall egress allow-list (network isolation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Firewall egress allow-list (network isolation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acr-task-agent-pool-platform-network-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACR Task agent pool platform Network Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-deployment-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry deployment modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hosted-agent-preparation-and-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted-agent preparation and deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-app-configuration-passthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workload App Configuration passthrough
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-iq-for-gpt-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry IQ for GPT-RAG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Permissions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#microsoft-foundry-and-ai-search-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Foundry and AI Search Assignments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-app-role-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container App Role Assignments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executor-role-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executor Role Assignments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jumpbox-vm-role-assignments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jumpbox VM Role Assignments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-public-ingress-application-gateway-waf-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Public Ingress (Application Gateway WAF v2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="azure-ai-landing-zone">Azure AI Landing Zone</h1>
+<h2 id="overview">Overview</h2>
+<p>The Azure AI Landing Zone is an enterprise-scale, production-ready reference architecture designed to deploy secure and resilient AI applications and agents on Azure. This repository contains the Bicep implementation, the Terraform implementations are available in separate repositories.   </p>
+<p><img alt="Architecture Diagram" src="media/Architecture%20Diagram.png" /></p>
+<h2 id="whats-new-in-v2">What's new in v2</h2>
+<p>The v2 line adds two things that matter most for everyday use:</p>
+<ol>
+<li><strong>A topology switch</strong> — set <code>deploymentMode</code> to one of:
+    - <strong><code>standalone</code></strong> — the AI Landing Zone provisions everything it needs (VNet, private endpoints, Bastion, jumpbox, NAT Gateway, observability). Best for sandboxes, evaluations, and teams without a corporate hub.
+    - <strong><code>ailz-integrated</code></strong> — the AI Landing Zone deploys only the <strong>spoke</strong> (VNet + private endpoints + AI services) and peers into a hub VNet you already operate, <strong>reusing</strong> the hub's Firewall, Bastion, Private DNS zones, and Log Analytics workspace. Best for production inside an existing Azure Landing Zone.</li>
+<li><strong>Granular reuse of existing resources</strong> — every platform service can be brought from the outside via an <code>existing*ResourceId</code> parameter (cross-subscription IDs are accepted): Log Analytics, Application Insights, Private DNS zones (per zone, 15 available), hub VNet, jumpbox, Bastion, NAT Gateway, route table.</li>
+</ol>
+<p>A handful of other quality-of-life additions:</p>
+<ul>
+<li><strong><code>allowedIpRanges</code></strong> — let named CIDRs reach the data plane of Storage, Key Vault, Cosmos DB, AI Search, ACR, AI Foundry, and App Configuration without disabling private endpoints. Use this when developers need to query the workload from their laptops without routing through Bastion.</li>
+<li><strong>Decoupled hub components</strong> — <code>deployJumpbox</code>, <code>deployBastion</code>, and <code>deployNatGateway</code> are now independent flags. No more all-or-nothing <code>deployVM</code>.</li>
+<li><strong>Hub integration helpers</strong> — <code>hubIntegration.hubVnetResourceId</code> creates the spoke→hub peering for you; <code>hubIntegration.egressNextHopIp</code> routes spoke egress through your hub firewall / NVA.</li>
+<li><strong>Pre-flight validation</strong> — <code>scripts/Invoke-PreflightChecks.ps1</code> runs automatically as an <code>azd preprovision</code> hook and catches the usual mistakes (CIDR overlap, undersized subnets, missing BYO resource IDs, conflicting flags, and insufficient AI Foundry OpenAI model quota) before they reach ARM. Bypass with <code>PREFLIGHT_SKIP=true</code>.</li>
+<li><strong>AI Foundry project naming</strong> — <code>aiFoundryProjectName</code>, <code>aiFoundryProjectDisplayName</code>, and <code>aiFoundryProjectDescription</code> let consumers customize the deployed AI Foundry project instead of using a hardcoded default.</li>
+<li><strong>Workload App Configuration passthrough</strong> — <code>additionalAppConfigurationSettings</code> lets a solution accelerator publish its own runtime key-values into the App Configuration store without adding template-specific parameters. See <a href="#workload-app-configuration-passthrough">Workload App Configuration passthrough</a>.</li>
+<li><strong>Foundry IQ groundwork for GPT-RAG:</strong> set <code>RETRIEVAL_BACKEND=foundry_iq</code> to stamp the orchestrator settings for a Foundry IQ knowledge base. See <a href="#foundry-iq-for-gpt-rag">Foundry IQ for GPT-RAG</a> for parameters, security expectations, billing, and the post-provision script.</li>
+<li><strong>Two-phase hosted-agent preparation and deployment</strong> — <code>prepareHostedAgent</code> provisions the generic project/registry prerequisites and build handoff before an image exists; <code>deployHostedAgent</code> remains the immutable-digest deployment intent and implies preparation. Both flags default to <code>false</code> and never remove or change existing Container Apps or data resources. See <a href="#hosted-agent-preparation-and-deployment">Hosted-agent preparation and deployment</a>.</li>
+</ul>
+<p><strong>Pick a runbook to deploy:</strong></p>
+<ul>
+<li><strong><a href="docs/runbook-standalone.md">Standalone deployment</a></strong> — single subscription, AI LZ owns all networking and platform resources.</li>
+<li><strong><a href="docs/runbook-hub-spoke.md">Hub-and-spoke deployment</a></strong> — spoke inside an existing Landing Zone, hub provides the platform.</li>
+</ul>
+<p>If you're upgrading from v1.x, see the <strong><a href="docs/v2-migration.md">migration guide</a></strong> — it shows what changed in v2 and the parameters you may need to update.</p>
+<h2 id="how-to-deploy">How to Deploy</h2>
+<p>Choose your preferred deployment method based on project requirements and environment constraints.</p>
+<h3 id="prerequisites">Prerequisites</h3>
+<p><strong>Required Permissions:</strong></p>
+<ul>
+<li>Azure subscription with <strong>Contributor</strong> and <strong>User Access Admin</strong> roles</li>
+<li>Agreement to Responsible AI terms for Azure AI Services</li>
+</ul>
+<p><strong>Required Tools:</strong></p>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/cli/azure/install-azure-cli">Azure CLI</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd">Azure Developer CLI</a></li>
+<li><a href="https://git-scm.com/downloads">Git</a></li>
+</ul>
+<blockquote>
+<p>Azure CLI is included as a prerequisite for future pre/post provisioning hooks that may depend on it.</p>
+</blockquote>
+<h3 id="validate-bicep-changes">Validate Bicep changes</h3>
+<p>Before submitting a Bicep change, compile <code>main.bicep</code> and apply the same
+compiled-template size gate used by CI:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="nb">Measure-MainJsonSize</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p>The script defaults are authoritative for both local and CI validation. The
+gate warns above the 3.5 MB working budget, fails at 4.7 MB, and treats the
+5.0 MB ARM ceiling as an unconditional failure.</p>
+<h3 id="basic-deployment">Basic Deployment</h3>
+<p>Quick setup for demos without network isolation.</p>
+<p><strong>Initialize the project</strong></p>
+<div class="highlight"><pre><span></span><code>azd init -t azure/bicep-ptn-aiml-landing-zone
+</code></pre></div>
+<p><strong>Sign in to Azure</strong></p>
+<div class="highlight"><pre><span></span><code>az login
+azd auth login
+</code></pre></div>
+<blockquote>
+<p>Add <code>--tenant</code> for <code>az</code> or <code>--tenant-id</code> for <code>azd</code> if you want a specific tenant.</p>
+</blockquote>
+<p><strong>Provision Infrastructure</strong></p>
+<div class="highlight"><pre><span></span><code>azd provision
+</code></pre></div>
+<blockquote>
+<p><strong>Optional:</strong> You can change parameter values in <code>main.parameters.json</code> or set them using <code>azd env set</code> before running <code>azd provision</code>. The latter applies only to parameters that support environment variable substitution.</p>
+</blockquote>
+<h3 id="resource-naming">Resource naming</h3>
+<p>By default, generated resource names follow the Cloud Adoption Framework (CAF)
+pattern <code>type-workload-environment-region-instance</code>, for example
+<code>kv-a1b2c3-dev-eus2-001</code>. You do not have to set anything: every CAF token has a
+safe default, so a plain <code>azd provision</code> produces valid, readable names.</p>
+<p>The CAF tokens and their defaults:</p>
+<ul>
+<li><code>CAF_WORKLOAD_NAME</code>: short deterministic hash derived from subscription,
+  environment, and location. Override with a meaningful name such as <code>contosoai</code>.</li>
+<li><code>CAF_ENVIRONMENT_NAME</code>: the azd environment name.</li>
+<li><code>CAF_REGION_NAME</code>: the deployment location from azd (<code>AZURE_LOCATION</code>), mapped
+  to a short region code (<code>eastus2</code> becomes <code>eus2</code>).</li>
+<li><code>CAF_INSTANCE</code>: <code>001</code>. Increment only for a second parallel copy of the same
+  workload in the same environment and region.</li>
+</ul>
+<p>To override a token:</p>
+<div class="highlight"><pre><span></span><code>azd env set CAF_WORKLOAD_NAME contosoai
+</code></pre></div>
+<p>Names are length-bounded automatically so they stay within Azure limits
+(storage 24, Key Vault 24, Container Apps environment 32, and so on). Because the
+tokens are deterministic, redeploying the same environment produces the same
+names (idempotent).</p>
+<p>Explicit resource-name parameters such as <code>aiFoundryAccountName</code>,
+<code>containerRegistryName</code>, <code>keyVaultName</code>, <code>storageAccountName</code>, and <code>vnetName</code>
+continue to override generated names in either naming mode.</p>
+<p><strong>Upgrading an existing deployment:</strong> CAF is now the default. To keep the older
+<code>resourceToken</code>-based names and avoid renaming existing resources, pin the legacy
+mode before provisioning:</p>
+<div class="highlight"><pre><span></span><code>azd env set RESOURCE_NAMING_MODE legacy
+</code></pre></div>
+<h3 id="zero-trust-deployment">Zero Trust Deployment</h3>
+<p>For deployments that <strong>require network isolation</strong>.</p>
+<p><strong>Before Provisioning</strong></p>
+<p>Enable network isolation in your environment:</p>
+<div class="highlight"><pre><span></span><code>azd env set NETWORK_ISOLATION true
+</code></pre></div>
+<blockquote>
+<p><strong>Optional:</strong> Update other parameters in <code>main.parameters.json</code> or via <code>azd env set</code> before provisioning.</p>
+</blockquote>
+<p>Make sure you're signed in with your Azure user account:</p>
+<div class="highlight"><pre><span></span><code>az login
+azd auth login
+</code></pre></div>
+<blockquote>
+<p>Add <code>--tenant</code> for <code>az</code> or <code>--tenant-id</code> for <code>azd</code> if you want a specific tenant.</p>
+</blockquote>
+<p><strong>Provision Infrastructure</strong></p>
+<div class="highlight"><pre><span></span><code>azd provision
+</code></pre></div>
+<p><strong>Using the Jumpbox VM</strong></p>
+<ol>
+<li>
+<p><strong>Reset the VM password</strong> in the Azure Portal (required on first access if not set in deployment parameters):</p>
+<ul>
+<li>Go to your VM resource → <strong>Support + troubleshooting</strong> → <strong>Reset password</strong> → Set new credentials</li>
+<li>Default username is <code>testvmuser</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Connect via Azure Bastion</strong></p>
+</li>
+</ol>
+<h4 id="cloning-extra-repositories-onto-the-jumpbox">Cloning extra repositories onto the jumpbox</h4>
+<p>The default <code>install.ps1</code> bootstrap clones this repository to <code>C:\github\ai-lz</code> and walks <code>manifest.json#components</code> for additional repos. Downstream solution accelerators that consume this landing zone as a Bicep module / git submodule and need their own application repository present on the jumpbox (for private-network data-plane post-provisioning — Cosmos seeding, AI Search index creation, sample data loading, etc.) declare those repos in their <strong>overlay</strong> <code>manifest.json</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v1.0.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ailz_tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v1.1.1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;voice-app&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;repo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/Contoso/voice-app.git&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v0.3.0&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>main.bicep</code> derives the URLs/tags/names from <code>_manifest.components</code> at compile time and forwards them to <code>install.ps1</code> over the CSE <code>commandToExecute</code>. Each entry is cloned into <code>C:\github\&lt;name&gt;</code> on the jumpbox. <code>tag</code> defaults to <code>main</code>; <code>name</code> defaults to the repo URL basename without <code>.git</code>. There are no per-deployment Bicep parameters to wire — <code>manifest.json</code> is the single source of truth, the same one consumers already use to pin their <code>ailz_tag</code> release.</p>
+<h4 id="building-and-pushing-images-with-network-isolation">Building and pushing images with network isolation</h4>
+<p>When <code>networkIsolation=true</code>, the Container Registry is deployed as <strong>Premium</strong> with <code>publicNetworkAccess=Disabled</code> and is only reachable via its private endpoint. <code>az acr build</code> against the shared Microsoft-managed builder will fail. This landing zone therefore provisions an <strong>ACR Tasks agent pool</strong> attached to the <code>devops-build-agents-subnet</code> so image builds run inside the VNet and push to the registry over its private endpoint. No Docker client is required (and the jumpbox has no Docker installed by design — see issue #14).</p>
+<p>Build and push from the jumpbox (or any client that can reach ARM):</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$acr</span>  <span class="p">=</span> <span class="p">(</span><span class="n">azd</span> <span class="n">env</span> <span class="nb">get-values</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="s1">&#39;^AZURE_CONTAINER_REGISTRY_ENDPOINT&#39;</span><span class="p">).</span><span class="n">Line</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="n">1</span><span class="p">].</span><span class="n">Trim</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">).</span><span class="n">Split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="n">0</span><span class="p">]</span>
+<span class="nv">$pool</span> <span class="p">=</span> <span class="p">(</span><span class="n">azd</span> <span class="n">env</span> <span class="nb">get-values</span> <span class="p">|</span> <span class="nb">Select-String</span> <span class="s1">&#39;^ACR_TASK_AGENT_POOL&#39;</span><span class="p">).</span><span class="n">Line</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="n">1</span><span class="p">].</span><span class="n">Trim</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+
+<span class="n">az</span> <span class="n">acr</span> <span class="n">build</span> <span class="p">`</span>
+  <span class="n">-r</span> <span class="nv">$acr</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-agent-pool</span> <span class="nv">$pool</span> <span class="p">`</span>
+  <span class="n">-t</span> <span class="n">myapp</span><span class="p">:</span><span class="n">latest</span> <span class="p">`</span>
+  <span class="o">-f</span> <span class="n">Dockerfile</span> <span class="p">`</span>
+  <span class="p">.</span>
+</code></pre></div>
+<p>Pause billing between builds (default tier <code>S1</code> is billed per hour whether idle or not):</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">acr</span> <span class="n">agentpool</span> <span class="n">update</span> <span class="n">-r</span> <span class="p">&lt;</span><span class="n">acr</span><span class="p">&gt;</span> <span class="n">-n</span> <span class="p">&lt;</span><span class="n">pool</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-count</span> <span class="n">0</span>
+</code></pre></div>
+<p>Resume before the next build:</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">acr</span> <span class="n">agentpool</span> <span class="n">update</span> <span class="n">-r</span> <span class="p">&lt;</span><span class="n">acr</span><span class="p">&gt;</span> <span class="n">-n</span> <span class="p">&lt;</span><span class="n">pool</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-count</span> <span class="n">1</span>
+</code></pre></div>
+<p>The agent pool can be disabled entirely with <code>deployAcrTaskAgentPool=false</code> if builds are handled by a central CI/CD runner that already reaches the registry's private endpoint.</p>
+<h4 id="firewall-egress-allow-list-network-isolation">Firewall egress allow-list (network isolation)</h4>
+<p>When <code>networkIsolation=true</code>, egress from the jumpbox and workload subnets is forced through the default Azure Firewall. The landing zone codifies the FQDNs required by the default <code>install.ps1</code> bootstrap and by the ACR Tasks agent pool. The set is split by purpose so you can audit or trim it:</p>
+<ul>
+<li>ACR Tasks control plane and registry: <code>*.azurecr.io</code>, <code>*.data.azurecr.io</code>, and Azure Storage queue/blob/table FQDNs.</li>
+<li>Language/runtime feeds: Python.org, PyPI, npm.</li>
+<li>OS package feeds: Debian, Ubuntu, Yarn, and <code>packages.microsoft.com</code> for Microsoft-supported Linux packages such as <code>msodbcsql18</code>.</li>
+</ul>
+<p>If your application build needs additional HTTPS endpoints, add them to the <code>additionalAcrTaskBuildFqdns</code> array parameter. The values are appended to the ACR Tasks HTTPS runtime rule only when <code>networkIsolation</code>, <code>deployAzureFirewall</code>, <code>deployAcrTaskAgentPool</code>, and <code>extendFirewallForAcrTaskBuilds</code> are all enabled, and are scoped to the <code>devops-build-agents-subnet</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Source subnet</th>
+<th>FQDN group</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AllowMicrosoftContainerRegistry</code></td>
+<td><code>*</code></td>
+<td><code>mcr.microsoft.com</code>, <code>*.data.mcr.microsoft.com</code></td>
+<td>ACA/agents/ACR Tasks pulling Microsoft base images</td>
+</tr>
+<tr>
+<td><code>AllowEntraIdAuth</code></td>
+<td><code>*</code></td>
+<td><code>login.microsoftonline.com</code>, <code>login.windows.net</code>, <code>management.azure.com</code>, <code>graph.microsoft.com</code>, <code>*.applicationinsights.azure.com</code></td>
+<td>Entra ID auth, ARM control plane, App Insights telemetry</td>
+</tr>
+<tr>
+<td><code>AllowGitHub</code></td>
+<td><code>*</code></td>
+<td><code>github.com</code>, <code>*.github.com</code>, <code>raw.githubusercontent.com</code>, <code>codeload.github.com</code>, <code>objects.githubusercontent.com</code>, <code>*.githubusercontent.com</code></td>
+<td>Repo clones, release downloads</td>
+</tr>
+<tr>
+<td><code>AllowContainerAppsPlatform</code></td>
+<td><code>*</code></td>
+<td>ACA control-plane/identity FQDNs (<code>*.servicebus.windows.net</code>, <code>*.identity.azure.net</code>, <code>*.azurecontainerapps.io</code>/<code>.dev</code>), Azure Monitor/Log Analytics/App Insights ingestion, CRL/OCSP revocation endpoints, and the Microsoft Foundry Agent Service's <code>agent365.svc.cloud.microsoft</code> observability endpoint</td>
+<td>Container Apps managed-identity token fetch, platform diagnostics, TLS certificate revocation checks, and Foundry hosted-agent observability on the AI Foundry Agents subnet (<code>agentSubnetPrefix</code>)</td>
+</tr>
+<tr>
+<td><code>AllowJumpboxBootstrap</code></td>
+<td><code>jumpboxSubnetPrefix</code></td>
+<td>Chocolatey, NuGet, VS Installer, <code>download.microsoft.com</code>, <code>aka.ms</code>, <code>go.microsoft.com</code>, <code>*.core.windows.net</code>, <code>*.azureedge.net</code></td>
+<td><code>choco install</code>, VS Code/PowerShell Core/Azure CLI/AZD MSIs (Python is installed from python.org embeddable zip — see <code>AllowJumpboxDevRuntimes</code>)</td>
+</tr>
+<tr>
+<td><code>AllowJumpboxDevRuntimes</code></td>
+<td><code>jumpboxSubnetPrefix</code></td>
+<td><code>*.python.org</code>, <code>*.pypi.org</code>, <code>*.pythonhosted.org</code>, <code>*.pypa.io</code>, <code>*.npmjs.org</code></td>
+<td><code>pip install</code>, <code>npm install</code>, jumpbox Python embeddable-zip install + <code>get-pip.py</code> bootstrap</td>
+</tr>
+<tr>
+<td><code>AllowJumpboxEditors</code></td>
+<td><code>jumpboxSubnetPrefix</code></td>
+<td><code>update.code.visualstudio.com</code>, <code>*.vo.msecnd.net</code>, <code>*.vscode-cdn.net</code></td>
+<td>VS Code updates</td>
+</tr>
+<tr>
+<td><code>AllowJumpboxAcme</code></td>
+<td><code>jumpboxSubnetPrefix</code></td>
+<td><code>api.github.com</code>, <code>acme-v02.api.letsencrypt.org</code></td>
+<td>win-acme release discovery + ACME v2 issuance/renewal from jumpbox</td>
+</tr>
+<tr>
+<td><code>AllowAcrTasks</code></td>
+<td><code>devopsBuildAgentsSubnetPrefix</code></td>
+<td><code>*.azurecr.io</code>, <code>*.data.azurecr.io</code></td>
+<td>ACR Tasks agent pool talking to its registry</td>
+</tr>
+</tbody>
+</table>
+<p>Set <code>extendFirewallForJumpboxBootstrap=false</code> to skip the jumpbox-scoped rules when egress is managed centrally by another policy.</p>
+<h5 id="acr-task-agent-pool-platform-network-rules">ACR Task agent pool platform Network Rules</h5>
+<p>The table above lists Application (FQDN) rules. The dedicated ACR Tasks agent
+pool additionally requires unconditional outbound <strong>Network Rules</strong> (service
+tags, not FQDNs) for its own platform bootstrap traffic — this is a
+requirement of the agent pool control plane itself, independent of what a
+build script does. When <code>networkIsolation</code>, <code>deployAzureFirewall</code>, and
+<code>deployAcrTaskAgentPool</code> are all enabled, the landing zone adds a
+<code>AllowAcrTaskAgentPoolPlatform</code> Network Rule Collection scoped to
+<code>devopsBuildAgentsSubnetPrefix</code>, allowing outbound TCP 443 to <code>AzureKeyVault</code>,
+<code>Storage</code>, <code>EventHub</code>, and <code>AzureActiveDirectory</code>, and TCP 443/12000 to
+<code>AzureMonitor</code>, matching the <a href="https://learn.microsoft.com/en-us/azure/container-registry/tasks-agent-pools">documented ACR Tasks agent pool network
+requirements</a>.
+Without these Network Rules the agent pool fails to provision when
+VNet-injected (see <a href="https://github.com/Azure/GPT-RAG/issues/597">Azure/GPT-RAG#597</a>).</p>
+<h3 id="ai-foundry-deployment-modes">AI Foundry deployment modes</h3>
+<p><code>deployAiFoundry</code> controls the base AI Foundry account, project, and model deployments. <code>deployAAfAgentSvc</code> controls the Agent Service Standard Setup and its associated AI Search, Storage, Cosmos DB, and Key Vault resources. <code>deploySearchService</code> controls only the workload/RAG Azure AI Search service used by applications.</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full Foundry Agent Service setup</td>
+<td><code>deployAiFoundry=true</code>, <code>deployAAfAgentSvc=true</code></td>
+</tr>
+<tr>
+<td>Foundry inference-only</td>
+<td><code>deployAiFoundry=true</code>, <code>deployAAfAgentSvc=false</code></td>
+</tr>
+<tr>
+<td>Workload Search only</td>
+<td><code>deploySearchService=true</code>, independent of <code>deployAAfAgentSvc</code></td>
+</tr>
+<tr>
+<td>No Foundry resources</td>
+<td><code>deployAiFoundry=false</code></td>
+</tr>
+</tbody>
+</table>
+<p>Use <code>DEPLOY_AAF_AGENT_SVC=false</code> when an external app only needs hosted model inference from Foundry and does not need Agent Service capability hosts or their associated state resources.</p>
+<h3 id="hosted-agent-preparation-and-deployment">Hosted-agent preparation and deployment</h3>
+<p>Hosted-agent infrastructure uses two additive, accelerator-neutral phases:</p>
+<ul>
+<li><code>prepareHostedAgent=true</code> provisions the shared prerequisites and exposes the
+  project, registry, network, and private-build handoff before an image or digest
+  exists. It does not request agent deployment.</li>
+<li><code>deployHostedAgent=true</code> implies preparation and additionally enables the typed
+  agent payload. It continues to require an immutable
+  <code>sha256:&lt;64 lowercase hex characters&gt;</code> image digest.</li>
+</ul>
+<p>Both flags default to <code>false</code>, so existing parameter files and deployments remain
+unchanged. The flags are <strong>not</strong> workload topology switches: they do not create
+an application UI or replacement workload, and they do not modify
+<code>containerAppsList</code>, Cosmos DB, Storage, Search, App Configuration, or any other
+existing workload resource.</p>
+<table>
+<thead>
+<tr>
+<th><code>prepareHostedAgent</code></th>
+<th><code>deployHostedAgent</code></th>
+<th>Prerequisite RBAC and handoff</th>
+<th>Agent payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>false</code></td>
+<td><code>false</code></td>
+<td>Disabled</td>
+<td>Disabled</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td><code>false</code></td>
+<td>Enabled</td>
+<td>Disabled; no image digest required</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td><code>true</code></td>
+<td>Enabled</td>
+<td>Enabled; immutable digest required</td>
+</tr>
+<tr>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td>Enabled</td>
+<td>Enabled; immutable digest required</td>
+</tr>
+</tbody>
+</table>
+<p>When either flag is enabled, the landing zone adds only:</p>
+<ul>
+<li><code>Foundry Project Manager</code> for the deployment principal on the Foundry project;</li>
+<li>the registry-mode-compatible pull role for the Foundry project managed
+  identity on the selected registry (<code>AcrPull</code> for RBAC-only registries or
+  <code>Container Registry Repository Reader</code> for ABAC-enabled registries); and</li>
+<li>a typed output handoff containing the project, registry, agent subnet, and
+  private-build context. Image, startup command, runtime, and protocol values are
+  added only when deployment is requested.</li>
+</ul>
+<p>The downstream <code>azure.ai.agent</code> service remains responsible for <code>azd deploy</code>.
+That data-plane operation creates the immutable agent version, dedicated
+per-agent identity, invocation endpoint, and the agent identity's registry pull
+assignment. <code>azure.ai.agent</code> is an azd deployment contract rather than an ARM
+resource type, so this Bicep template intentionally does not fabricate an agent
+resource or deployment script. See the official
+<a href="https://learn.microsoft.com/azure/foundry/agents/concepts/azure-yaml-reference#azureaiagent-service">hosted-agent <code>azure.yaml</code> reference</a>
+and <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry#deploy-a-pre-built-image">pre-built image workflow</a>.</p>
+<p>The typed <code>hostedAgent</code> object is sealed and deliberately has no <code>roles</code> field.
+Arbitrary role names are rejected by preflight rather than silently ignored.
+After <code>azd deploy</code> creates the dedicated agent identity, the accelerator must
+assign explicit least-privilege role definition IDs for any external resources
+that identity needs.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prepareHostedAgent</code></td>
+<td><code>false</code></td>
+<td>Enables prerequisite RBAC and project/registry/private-build outputs without requiring an image or enabling the agent payload.</td>
+</tr>
+<tr>
+<td><code>deployHostedAgent</code></td>
+<td><code>false</code></td>
+<td>Implies preparation and enables the downstream agent deployment payload.</td>
+</tr>
+<tr>
+<td><code>hostedAgent.name</code></td>
+<td>empty</td>
+<td>Stable hosted-agent name; downstream deploys create immutable versions under this name.</td>
+</tr>
+<tr>
+<td><code>hostedAgent.image</code></td>
+<td>empty</td>
+<td>Repository path inside the selected ACR, without tag or digest.</td>
+</tr>
+<tr>
+<td><code>hostedAgent.version</code></td>
+<td>empty</td>
+<td>Required only when <code>deployHostedAgent=true</code>; must be an immutable OCI digest in <code>sha256:&lt;64 lowercase hex&gt;</code> form.</td>
+</tr>
+<tr>
+<td><code>hostedAgent.startupCommand</code></td>
+<td>empty</td>
+<td>Optional container startup command, mapped to <code>startupCommand</code> in <code>azure.ai.agent</code>.</td>
+</tr>
+<tr>
+<td><code>hostedAgent.runtime</code></td>
+<td><code>1</code> CPU, <code>1Gi</code></td>
+<td>CPU (<code>0.25</code>–<code>4.0</code>) and memory (<code>0.5Gi</code>–<code>8Gi</code>) mapped to <code>container.resources</code>.</td>
+</tr>
+<tr>
+<td><code>hostedAgent.protocols</code></td>
+<td>Responses <code>2.0.0</code></td>
+<td>Typed <code>responses</code>, <code>invocations</code>, <code>invocations_ws</code>, or <code>a2a</code> contracts.</td>
+</tr>
+<tr>
+<td><code>hostedAgentContainerRegistryResourceId</code></td>
+<td>empty</td>
+<td>Existing ACR resource ID when <code>deployContainerRegistry=false</code>.</td>
+</tr>
+<tr>
+<td><code>hostedAgentContainerRegistryEndpoint</code></td>
+<td>empty</td>
+<td>Existing ACR login endpoint when <code>deployContainerRegistry=false</code>.</td>
+</tr>
+<tr>
+<td><code>hostedAgentContainerRegistryRoleAssignmentMode</code></td>
+<td><code>rbac</code></td>
+<td>Existing ACR permissions mode: <code>rbac</code> uses <code>AcrPull</code>; <code>rbac-abac</code> uses <code>Container Registry Repository Reader</code>. Ignored for the landing-zone registry, which is RBAC-only.</td>
+</tr>
+</tbody>
+</table>
+<p>For a fresh deployment, provision the prerequisites first:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>PREPARE_HOSTED_AGENT<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_HOSTED_AGENT<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>provision
+</code></pre></div>
+<p>At this point <code>HOSTED_AGENT_PREPARED=true</code>,
+<code>HOSTED_AGENT_DEPLOYMENT.enabled=false</code>, and
+<code>HOSTED_AGENT_DEPLOYMENT.agent=null</code>. The exact Foundry and registry outputs are
+available so a separate pipeline or VNet-connected build path can build, scan,
+sign, push, and resolve the immutable digest.</p>
+<p>After the image exists, enable deployment intent and pin that digest:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_HOSTED_AGENT<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_NAME<span class="w"> </span>sample-agent
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_IMAGE<span class="w"> </span>agents/sample-agent
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_IMAGE_VERSION<span class="w"> </span>sha256:&lt;<span class="m">64</span>-hex-digest&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_STARTUP_COMMAND<span class="w"> </span><span class="s2">&quot;python main.py&quot;</span>
+azd<span class="w"> </span>provision
+</code></pre></div>
+<p><code>PREPARE_HOSTED_AGENT</code> may remain <code>true</code> or be reset to <code>false</code>;
+<code>DEPLOY_HOSTED_AGENT=true</code> is always a superset.</p>
+<p>After provisioning, map <code>HOSTED_AGENT_DEPLOYMENT</code> (or the exact Foundry and ACR
+outputs) into the accelerator's <code>azure.ai.agent</code> service and run <code>azd deploy</code>
+from that accelerator. Preflight rejects mutable image tags and missing Foundry
+or registry prerequisites. It validates the canonical digest syntax but does not
+query the registry for manifest existence or signature authenticity; keep those
+checks in the image build, scan, signing, and promotion pipeline.</p>
+<p><strong>Private registry:</strong> the landing-zone ACR retains its existing Zero Trust
+behavior: Premium SKU, private endpoint and DNS integration, and disabled public
+network access when <code>networkIsolation=true</code>. Building or pushing an image in
+that mode must happen from a VNet-connected runner, build agent, or jumpbox.
+Set <code>DEPLOY_ACR_TASK_AGENT_POOL=true</code> when using the landing-zone VNet-injected
+ACR Tasks pool; its subnet, firewall, private endpoint, and DNS topology remain
+independently controlled by the existing registry/isolation/pool flags.
+For an existing ACR, set
+<code>HOSTED_AGENT_CONTAINER_REGISTRY_ROLE_ASSIGNMENT_MODE=rbac-abac</code> when its role
+assignment permissions mode is <strong>RBAC Registry + ABAC Repository Permissions</strong>;
+the default <code>rbac</code> mode is correct for <strong>RBAC Registry Permissions</strong>. Its private
+endpoint, DNS, authentication-as-ARM policy, and network reachability remain the
+consumer's responsibility. Microsoft
+currently documents private ACR support for Foundry projects created after
+June 25, 2026; projects created earlier require the registry to remain reachable
+over its public endpoint. Verify this platform limitation before a live
+deployment. See
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-private-azure-container-registry">private ACR deployment and RBAC</a>
+and <a href="https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agent-permissions#azure-resource-setup">hosted-agent permissions</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOY_HOSTED_AGENT</code></td>
+<td>Deployment intent; remains <code>false</code> in prepare-only mode.</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_PREPARED</code></td>
+<td>Effective prerequisite enablement (<code>prepareHostedAgent || deployHostedAgent</code>). It does not claim an agent version exists.</td>
+</tr>
+<tr>
+<td><code>AZURE_AI_PROJECT_RESOURCE_ID</code> / <code>AZURE_AI_PROJECT_ENDPOINT</code></td>
+<td>Exact Foundry project handoff in prepare and deploy modes.</td>
+</tr>
+<tr>
+<td><code>AZURE_CONTAINER_REGISTRY_RESOURCE_ID</code> / <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code></td>
+<td>Exact selected-registry handoff in prepare and deploy modes.</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_DEPLOYMENT</code></td>
+<td>Consolidated contract. Foundry, registry, network, and private-build values are populated in prepare mode; <code>enabled</code> and <code>agent</code> remain deployment-only.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="workload-app-configuration-passthrough">Workload App Configuration passthrough</h3>
+<p>The landing zone is workload-agnostic. When a solution accelerator needs its own
+runtime keys stamped into the App Configuration store, it should not require new
+typed parameters in this template. Use <code>additionalAppConfigurationSettings</code> to
+publish any number of extra key-values verbatim:</p>
+<div class="highlight"><pre><span></span><code>module ailz &#39;br/public:avm/ptn/aiml/ai-landing-zone:&lt;version&gt;&#39; = {
+  params: {
+    // ...
+    additionalAppConfigurationSettings: [
+      { name: &#39;MY_WORKLOAD_FLAG&#39;, value: &#39;true&#39; }
+      { name: &#39;MY_WORKLOAD_MODE&#39;, value: &#39;hybrid&#39;, label: &#39;prod&#39; }
+    ]
+  }
+}
+</code></pre></div>
+<p>Each entry accepts <code>name</code> (required), <code>value</code> (required), <code>label</code> (optional,
+defaults to <code>appConfigLabel</code>), and <code>contentType</code> (optional, defaults to
+<code>text/plain</code>). Rules and limits:</p>
+<ul>
+<li>Values are stored in plaintext. Do not pass secrets, connection strings, or
+  keys through this parameter. Use Key Vault references for sensitive data.</li>
+<li>Each <code>name</code> + <code>label</code> pair must be unique. If an entry collides with a
+  built-in setting the passthrough value wins (the built-in entry is dropped),
+  so an accelerator can also override a stamped default when it needs to.</li>
+<li>App Configuration is only populated on non-network-isolated deployments where
+  the runtime config store is App Configuration. In isolated deployments the
+  post-provision step running on the jumpbox is responsible for stamping config,
+  so pass workload keys through that path instead.</li>
+<li>When the consumer selects the <code>containerEnv</code> runtime mode (Issue #89) instead
+  of App Configuration, the same entries are injected into every Container App as
+  environment variables. Only <code>name</code> and <code>value</code> are used in that mode (<code>label</code>
+  and <code>contentType</code> are ignored, since env vars have neither), and the same
+  "passthrough wins on collision" precedence applies.</li>
+</ul>
+<p>This is the forward-looking way to configure workload settings such as the
+GPT-RAG Foundry IQ keys below: accelerators publish their own keys through the
+passthrough instead of the landing zone growing workload-specific parameters.</p>
+<h3 id="foundry-iq-for-gpt-rag">Foundry IQ for GPT-RAG</h3>
+<blockquote>
+<p>The individual <code>foundryIq*</code> knowledge-source parameters below are retained for
+backward compatibility but are being superseded by the generic
+<a href="#workload-app-configuration-passthrough">workload App Configuration passthrough</a>.
+New accelerators should publish these keys through
+<code>additionalAppConfigurationSettings</code> rather than relying on template-specific
+parameters. <code>retrievalBackend</code> stays a first-class parameter because it gates
+real infrastructure (the AI Foundry knowledge-base connection and shared
+private links), not just configuration.</p>
+</blockquote>
+<p>The landing zone stamps GPT-RAG runtime settings for a Foundry IQ knowledge
+base. New deployments default to Foundry IQ. Existing GPT-RAG deployments can
+stay on <code>RETRIEVAL_BACKEND=ai_search</code> until the operator intentionally migrates.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter / env var</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>retrievalBackend</code> / <code>RETRIEVAL_BACKEND</code></td>
+<td><code>foundry_iq</code></td>
+<td>Selects direct Azure AI Search or Foundry IQ. Existing deployments can keep <code>ai_search</code> until they migrate.</td>
+</tr>
+<tr>
+<td><code>foundryIqPattern</code> / <code>FOUNDRY_IQ_PATTERN</code></td>
+<td><code>azureBlob</code></td>
+<td><code>azureBlob</code> uses native Foundry IQ Blob or ADLS Gen2 ingestion. <code>managed</code> is accepted as a compatibility alias for <code>azureBlob</code>. <code>searchIndex</code> remains an explicit Pattern B opt-in for existing GPT-RAG Azure AI Search indexes.</td>
+</tr>
+<tr>
+<td><code>knowledgeBaseName</code> / <code>KNOWLEDGE_BASE_NAME</code></td>
+<td><code>knowledge-base</code></td>
+<td>Name stamped into <code>KNOWLEDGE_BASE_NAME</code>.</td>
+</tr>
+<tr>
+<td><code>knowledgeBaseConnectionName</code> / <code>KNOWLEDGE_BASE_CONNECTION_NAME</code></td>
+<td><code>knowledge-base-connection</code></td>
+<td>Dedicated AI Foundry Search connection for knowledge-base use.</td>
+</tr>
+<tr>
+<td><code>foundryIqApiVersion</code> / <code>FOUNDRY_IQ_API_VERSION</code></td>
+<td><code>2026-05-01-preview</code></td>
+<td>Required for per-user permissions and Pattern B <code>filterAddOn</code>.</td>
+</tr>
+<tr>
+<td><code>foundryIqKnowledgeRetrievalBillingPlan</code> / <code>FOUNDRY_IQ_KNOWLEDGE_RETRIEVAL_BILLING_PLAN</code></td>
+<td><code>free</code></td>
+<td>Azure AI Search <code>knowledgeRetrieval</code> billing plan. Set <code>standard</code> only after billing approval.</td>
+</tr>
+<tr>
+<td><code>foundryIqKnowledgeSourceName</code> / <code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME</code></td>
+<td><code>knowledge-base-blob-ks</code></td>
+<td>Native Blob Knowledge Source name by default; also used as the Pattern B source name when <code>searchIndex</code> is selected.</td>
+</tr>
+<tr>
+<td><code>foundryIqKnowledgeSourceKind</code> / <code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND</code></td>
+<td><code>azureBlob</code></td>
+<td>Runtime Knowledge Source kind. Keep aligned with <code>foundryIqPattern</code>; use <code>searchIndex</code> only for Pattern B.</td>
+</tr>
+<tr>
+<td><code>foundryIqStorageContainerName</code> / <code>FOUNDRY_IQ_STORAGE_CONTAINER_NAME</code></td>
+<td><code>documents</code></td>
+<td>Blob or ADLS Gen2 container for native Foundry IQ ingestion.</td>
+</tr>
+<tr>
+<td><code>foundryIqStorageFolderPath</code> / <code>FOUNDRY_IQ_STORAGE_FOLDER_PATH</code></td>
+<td>Empty</td>
+<td>Optional folder path within the native Blob or ADLS Gen2 container.</td>
+</tr>
+<tr>
+<td><code>foundryIqIsAdlsGen2</code> / <code>FOUNDRY_IQ_IS_ADLS_GEN2</code></td>
+<td><code>false</code></td>
+<td>Set to <code>true</code> when the native source is an ADLS Gen2 account with hierarchical namespace.</td>
+</tr>
+<tr>
+<td><code>foundryIqIngestionPermissionOptionsJson</code> / <code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS</code></td>
+<td><code>["rbacScope"]</code></td>
+<td>JSON array of permission metadata to ingest for native Foundry IQ sources.</td>
+</tr>
+<tr>
+<td><code>foundryIqSearchIndexName</code> / <code>FOUNDRY_IQ_SEARCH_INDEX_NAME</code></td>
+<td><code>gpt-rag-index</code></td>
+<td>Existing Azure AI Search index to register for Pattern B.</td>
+</tr>
+<tr>
+<td><code>foundryIqSemanticConfigurationName</code> / <code>FOUNDRY_IQ_SEMANTIC_CONFIGURATION_NAME</code></td>
+<td><code>default</code></td>
+<td>Semantic configuration on the existing index.</td>
+</tr>
+<tr>
+<td><code>foundryIqFilterAddOnEnabled</code> / <code>FOUNDRY_IQ_FILTER_ADD_ON_ENABLED</code></td>
+<td><code>false</code></td>
+<td>Enables GPT-RAG query-time security filtering for Pattern B. Leave <code>false</code> for native Blob.</td>
+</tr>
+<tr>
+<td><code>foundryIqSecurityFieldName</code> / <code>FOUNDRY_IQ_SECURITY_FIELD_NAME</code></td>
+<td><code>metadata_security_id</code></td>
+<td>Field used by the orchestrator to build Pattern B filters.</td>
+</tr>
+<tr>
+<td><code>foundryIqMaxOutputDocuments</code> / <code>FOUNDRY_IQ_MAX_OUTPUT_DOCUMENTS</code></td>
+<td>Empty</td>
+<td>Optional cap on documents returned by the knowledge base.</td>
+</tr>
+<tr>
+<td><code>foundryIqContentExtractionMode</code> / <code>FOUNDRY_IQ_CONTENT_EXTRACTION_MODE</code></td>
+<td><code>standard</code></td>
+<td>Native Blob content extraction mode. <code>standard</code> uses the Foundry IQ Content Understanding skill (layout and OCR) so scanned and image-only PDFs are ingested with text. <code>minimal</code> skips Content Understanding and only ingests text already present in the source. The setting is immutable on an existing Knowledge Source.</td>
+</tr>
+<tr>
+<td><code>foundryIqAiServicesEndpoint</code> / <code>FOUNDRY_IQ_AI_SERVICES_ENDPOINT</code></td>
+<td>Derived from the Foundry account</td>
+<td>Required by Azure AI Search when <code>FOUNDRY_IQ_CONTENT_EXTRACTION_MODE=standard</code>. Leave empty for deployments that create the Foundry account, or set it to <code>https://&lt;foundry-resource&gt;.services.ai.azure.com/</code> when reusing an existing Foundry resource.</td>
+</tr>
+<tr>
+<td><code>foundryIqBaseFilter</code> / <code>FOUNDRY_IQ_BASE_FILTER</code></td>
+<td>Empty</td>
+<td>Optional persisted filter for the Pattern B knowledge source.</td>
+</tr>
+<tr>
+<td><code>foundryIqSourceDataFields</code> / <code>FOUNDRY_IQ_SOURCE_DATA_FIELDS</code></td>
+<td>Template default</td>
+<td>Fields exposed by the Pattern B knowledge source.</td>
+</tr>
+<tr>
+<td><code>foundryIqSearchFields</code> / <code>FOUNDRY_IQ_SEARCH_FIELDS</code></td>
+<td>Template default</td>
+<td>Searchable fields used by the Pattern B knowledge source.</td>
+</tr>
+</tbody>
+</table>
+<p>Security expectations:</p>
+<ul>
+<li>Pattern B (<code>searchIndex</code>) keeps the existing GPT-RAG index and enforces
+  GPT-RAG security fields through query-time <code>filterAddOn</code>.</li>
+<li>Native Foundry IQ permissions use <code>x-ms-query-source-authorization</code> and require
+  a source that ingests permissions, such as ADLS Gen2 ACLs, SharePoint,
+  OneLake/Fabric, or Purview labels.</li>
+<li>Plain Blob storage is container-level RBAC for this purpose. Do not claim
+  per-document trimming for plain Blob unless Purview labels or an equivalent
+  per-document permission source are used.</li>
+</ul>
+<p>Bicep stamps runtime configuration and creates a dedicated Foundry connection
+ID, but Azure AI Search knowledge sources and knowledge bases are data-plane
+objects. After provisioning, create or update them with the signed-in Azure CLI
+identity:</p>
+<div class="highlight"><pre><span></span><code><span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">Configure-FoundryIQKnowledgeBase</span><span class="p">.</span><span class="n">ps1</span> <span class="p">`</span>
+  <span class="n">-SearchEndpoint</span> <span class="s2">&quot;https://&lt;search-name&gt;.search.windows.net&quot;</span> <span class="p">`</span>
+  <span class="n">-KnowledgeBaseName</span> <span class="s2">&quot;&lt;knowledge-base-name&gt;&quot;</span> <span class="p">`</span>
+  <span class="n">-KnowledgeSourceName</span> <span class="s2">&quot;&lt;knowledge-source-name&gt;&quot;</span> <span class="p">`</span>
+  <span class="n">-SearchIndexName</span> <span class="s2">&quot;&lt;gpt-rag-index-name&gt;&quot;</span> <span class="p">`</span>
+  <span class="n">-SemanticConfigurationName</span> <span class="s2">&quot;&lt;semantic-config-name&gt;&quot;</span> <span class="p">`</span>
+  <span class="n">-SearchServiceResourceId</span> <span class="s2">&quot;/subscriptions/&lt;sub&gt;/resourceGroups/&lt;rg&gt;/providers/Microsoft.Search/searchServices/&lt;search-name&gt;&quot;</span> <span class="p">`</span>
+  <span class="n">-KnowledgeRetrievalBillingPlan</span> <span class="s2">&quot;free&quot;</span>
+</code></pre></div>
+<p>The caller needs <strong>Search Service Contributor</strong> on the Search service. Use
+<code>-KnowledgeRetrievalBillingPlan standard</code> only when you want to opt in to
+pay-as-you-go agentic retrieval billing after the included free allowance.</p>
+<h3 id="permissions">Permissions</h3>
+<p>The following role assignments are provisioned by the template based on the <strong>default configuration</strong> in <code>main.parameters.json</code>. This includes the default set of container apps, their associated roles, and the services they interact with. If you customize the parameters before provisioning — such as adding or removing container apps or changing role mappings — the actual assignments will vary accordingly.</p>
+<h4 id="microsoft-foundry-and-ai-search-assignments">Microsoft Foundry and AI Search Assignments</h4>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services User</td>
+<td>Search Service</td>
+<td>Allow Search Service to access vectorizers</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Reader</td>
+<td>Microsoft Foundry Project</td>
+<td>Read index data</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Service Contributor</td>
+<td>Microsoft Foundry Project</td>
+<td>Create AI Search connection</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Reader</td>
+<td>Microsoft Foundry Project</td>
+<td>Read blob data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Reader</td>
+<td>Search Service</td>
+<td>Read blob data for indexing</td>
+</tr>
+</tbody>
+</table>
+<h4 id="container-app-role-assignments">Container App Role Assignments</h4>
+<p>Current default configuration provisions a single Hello World container app (<code>orchestrator</code>), so only the assignments below are expected by default.</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GenAI App Configuration Store</td>
+<td>App Configuration Data Reader</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read configuration data</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPull</td>
+<td>ContainerApp: orchestrator</td>
+<td>Pull container images</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Secrets User</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read secrets</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Reader</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read index data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Reader</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read blob data</td>
+</tr>
+<tr>
+<td>GenAI App Cosmos DB</td>
+<td>Cosmos DB Built-in Data Contributor</td>
+<td>ContainerApp: orchestrator</td>
+<td>Read/write Cosmos DB data</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services User</td>
+<td>ContainerApp: orchestrator</td>
+<td>Access Cognitive Services</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services OpenAI User</td>
+<td>ContainerApp: orchestrator</td>
+<td>Use OpenAI APIs</td>
+</tr>
+</tbody>
+</table>
+<h4 id="executor-role-assignments">Executor Role Assignments</h4>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GenAI App Configuration Store</td>
+<td>App Configuration Data Owner</td>
+<td>Executor</td>
+<td>Full control over configuration settings</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPush</td>
+<td>Executor</td>
+<td>Push container images</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPull</td>
+<td>Executor</td>
+<td>Pull container images</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Contributor</td>
+<td>Executor</td>
+<td>Manage Key Vault settings</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Secrets Officer</td>
+<td>Executor</td>
+<td>Create Key Vault secrets</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Service Contributor</td>
+<td>Executor</td>
+<td>Create/update search service elements</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Contributor</td>
+<td>Executor</td>
+<td>Read/write search index data</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Reader</td>
+<td>Executor</td>
+<td>Read index data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Contributor</td>
+<td>Executor</td>
+<td>Read/write blob data</td>
+</tr>
+<tr>
+<td>GenAI App Cosmos DB</td>
+<td>Cosmos DB Built-in Data Contributor</td>
+<td>Executor</td>
+<td>Read/write Cosmos DB data</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services OpenAI User</td>
+<td>Executor</td>
+<td>Use OpenAI APIs</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services User</td>
+<td>Executor</td>
+<td>Access Cognitive Services</td>
+</tr>
+</tbody>
+</table>
+<h4 id="jumpbox-vm-role-assignments">Jumpbox VM Role Assignments</h4>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Role</th>
+<th>Assignee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource Group</td>
+<td>Reader</td>
+<td>Jumpbox VM</td>
+<td>Enumerate ARM resources from inside the VNet (<code>az resource list</code>, <code>az cosmosdb list</code>, <code>az containerapp list</code>, …) for postProvision / data-seed scripts</td>
+</tr>
+<tr>
+<td>GenAI App Container Apps</td>
+<td>Container Apps Contributor</td>
+<td>Jumpbox VM</td>
+<td>Full control over Container Apps</td>
+</tr>
+<tr>
+<td>Azure Managed Identity</td>
+<td>Managed Identity Operator</td>
+<td>Jumpbox VM</td>
+<td>Assign and manage user-assigned identities</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>Container Registry Repository Writer</td>
+<td>Jumpbox VM</td>
+<td>Write to ACR repositories</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>Container Registry Tasks Contributor</td>
+<td>Jumpbox VM</td>
+<td>Manage ACR tasks</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>Container Registry Data Access Configuration Administrator</td>
+<td>Jumpbox VM</td>
+<td>Manage ACR data access configuration</td>
+</tr>
+<tr>
+<td>GenAI App Container Registry</td>
+<td>AcrPush</td>
+<td>Jumpbox VM</td>
+<td>Push container images</td>
+</tr>
+<tr>
+<td>GenAI App Configuration Store</td>
+<td>App Configuration Data Owner</td>
+<td>Jumpbox VM</td>
+<td>Full control over configuration settings</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Contributor</td>
+<td>Jumpbox VM</td>
+<td>Manage Key Vault settings</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Secrets Officer</td>
+<td>Jumpbox VM</td>
+<td>Create Key Vault secrets</td>
+</tr>
+<tr>
+<td>GenAI App Key Vault</td>
+<td>Key Vault Certificates Officer</td>
+<td>Jumpbox VM</td>
+<td>Import/manage Key Vault certificates for public ingress TLS</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Service Contributor</td>
+<td>Jumpbox VM</td>
+<td>Create/update search service elements</td>
+</tr>
+<tr>
+<td>GenAI App Search Service</td>
+<td>Search Index Data Contributor</td>
+<td>Jumpbox VM</td>
+<td>Read/write search index data</td>
+</tr>
+<tr>
+<td>GenAI App Storage Account</td>
+<td>Storage Blob Data Contributor</td>
+<td>Jumpbox VM</td>
+<td>Read/write blob data</td>
+</tr>
+<tr>
+<td>GenAI App Cosmos DB</td>
+<td>Cosmos DB Built-in Data Contributor</td>
+<td>Jumpbox VM</td>
+<td>Read/write Cosmos DB data</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services Contributor</td>
+<td>Jumpbox VM</td>
+<td>Manage Cognitive Services resources</td>
+</tr>
+<tr>
+<td>Microsoft Foundry Account</td>
+<td>Cognitive Services OpenAI User</td>
+<td>Jumpbox VM</td>
+<td>Use OpenAI APIs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optional-public-ingress-application-gateway-waf-v2">Optional Public Ingress (Application Gateway WAF v2)</h3>
+<p><strong>Issue #49.</strong> The landing zone provisions the Container Apps environment in <strong>internal</strong> mode under network isolation, so its apps are unreachable from the public Internet by default. Some workloads need a controlled, audited public entry point (a tester, a partner integration, a public demo). The optional <code>publicIngress</code> feature deploys an <strong>Application Gateway WAF v2</strong> in front of the internal ACA environment without changing any of the existing internal topology.</p>
+<blockquote>
+<p>⚠️ <strong>Cost warning.</strong> Enabling this feature deploys WAF_v2 + a Standard Public IP, which incur <strong>hourly charges even when idle</strong> (~USD 240/month for the gateway alone, region-dependent). Keep <code>publicIngress.enabled = false</code> unless actively needed and tear the stack down with <code>azd down</code> (or delete the resources manually) when the access window ends. <strong>Setting <code>publicIngress.enabled</code> back to <code>false</code> after a deploy will NOT delete the resources</strong> — <code>azd</code>/ARM incremental deployments only stop managing them.</p>
+</blockquote>
+<p><strong>Default state:</strong> disabled. No public-ingress resources are provisioned.</p>
+<p><strong>Parameter contract</strong> (<code>publicIngressType</code> exported from <code>main.bicep</code>):</p>
+<div class="highlight"><pre><span></span><code>publicIngress: {
+  enabled: bool                              // master toggle, default false
+  backendAppIndex: int?                      // index into containerAppsList; default 0
+  frontendHostName: string?                  // e.g., &#39;app.contoso.com&#39; — required to activate HTTPS
+  sslCertSecretId: string?                   // versionless Key Vault secret URI — required to activate HTTPS
+  allowedSourceAddressPrefixes: string[]?    // CIDRs allowed to reach :443; empty list = deny-all
+  wafMode: (&#39;Prevention&#39; | &#39;Detection&#39;)?     // default &#39;Prevention&#39;
+  wafCustomRules: object[]?                  // merged with OWASP CRS 3.2 managed ruleset
+  capacity: object?                          // default { minCapacity: 0, maxCapacity: 2 }
+  sslPolicy: object?                         // default Azure baseline
+}
+</code></pre></div>
+<p><strong>Resources deployed when <code>enabled = true</code></strong> (only effective with <code>networkIsolation</code>, <code>deployContainerEnv</code>, and at least one entry in <code>containerAppsList</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Microsoft.Network/networkSecurityGroups</code> (<code>nsg-&lt;vnet&gt;-AppGatewaySubnet</code>)</td>
+<td>Deny-all inbound except <code>GatewayManager</code> (65200-65535) and <code>AzureLoadBalancer</code>. Adds an <code>AllowHttpsFromAllowedSources</code> rule on TCP/443 only when <code>allowedSourceAddressPrefixes</code> is non-empty. <strong>Port 80 is never opened from the Internet.</strong></td>
+</tr>
+<tr>
+<td><code>Microsoft.Network/publicIPAddresses</code></td>
+<td>Standard SKU, Static, zone-redundant when <code>useZoneRedundancy=true</code>.</td>
+</tr>
+<tr>
+<td><code>Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies</code></td>
+<td>OWASP CRS 3.2, mode <code>Prevention</code> (or <code>Detection</code>), <code>wafCustomRules</code> merged in.</td>
+</tr>
+<tr>
+<td><code>Microsoft.ManagedIdentity/userAssignedIdentities</code></td>
+<td>Dedicated UAI for the gateway.</td>
+</tr>
+<tr>
+<td><code>Microsoft.Authorization/roleAssignments</code> (<code>Key Vault Secrets User</code>)</td>
+<td>Granted to the AGW UAI on the landing-zone Key Vault when <code>deployKeyVault=true</code>. External Key Vaults must be granted manually.</td>
+</tr>
+<tr>
+<td><code>Microsoft.Network/applicationGateways</code></td>
+<td>WAF_v2 SKU, autoscale 0..2, zone-redundant, attached to the existing <code>AppGatewaySubnet</code> (192.168.3.0/27). Backend pool targets the Container App's internal FQDN over HTTPS:443 with <code>pickHostNameFromBackendAddress=true</code>.</td>
+</tr>
+<tr>
+<td>Diagnostic settings</td>
+<td>Streamed to the existing Log Analytics workspace (<code>allLogs</code> + <code>AllMetrics</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two operational states:</strong></p>
+<ol>
+<li>
+<p><strong>Skeleton mode</strong> (<code>enabled=true</code> and either <code>sslCertSecretId</code> or <code>frontendHostName</code> empty)</p>
+<ul>
+<li>Gateway exists with a single HTTP:80 listener routed to the backend.</li>
+<li>NSG denies all Internet inbound (port 80 is never opened by the NSG).</li>
+<li>The skeleton is <strong>inert</strong>: no client can reach it from the Internet until the operator transitions to live mode.</li>
+</ul>
+</li>
+<li>
+<p><strong>Live mode</strong> (<code>enabled=true</code> with both <code>sslCertSecretId</code> and <code>frontendHostName</code> set, plus <code>allowedSourceAddressPrefixes</code> non-empty)</p>
+<ul>
+<li>HTTPS:443 listener using the Key Vault certificate (the AGW UAI reads it via <code>Key Vault Secrets User</code>).</li>
+<li>HTTP:80 becomes a permanent HTTP→HTTPS redirect.</li>
+<li>NSG allows TCP/443 from the supplied source CIDRs only.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Post-deploy runbook (provider-agnostic DNS + jumpbox ACME):</strong></p>
+<ol>
+<li><strong>Workstation (DNS provider side):</strong> choose your DNS provider/registrar and prepare your hostname (example: <code>app.contoso.com</code>). No provider-specific integration is required in this landing zone.</li>
+<li><strong>Jumpbox (certificate issuance/import side):</strong> use the built-in ACME client installed by <code>install.ps1</code> at <code>C:\tools\win-acme\wacs.exe</code> (DNS-01 flow), then import the resulting certificate into the landing-zone Key Vault. The jumpbox MI has <code>Key Vault Certificates Officer</code> for this workflow.</li>
+<li><strong>Workstation (DNS provider side):</strong> create/update the public DNS A record for the hostname pointing at <code>PUBLIC_INGRESS_PUBLIC_IP</code> (deployment output).</li>
+<li>Capture the <strong>versionless</strong> Key Vault secret URI for the certificate (<code>https://&lt;kv&gt;.vault.azure.net/secrets/&lt;name&gt;</code>), then set operator parameters in <code>main.parameters.json</code> (or via <code>azd env set</code> followed by an edit since <code>publicIngress</code> is an aggregate object):
+   <code>jsonc
+   "publicIngress": {
+      "value": {
+       "enabled": true,
+       "frontendHostName": "app.contoso.com",
+       "sslCertSecretId": "https://&lt;kv&gt;.vault.azure.net/secrets/&lt;name&gt;",
+        "allowedSourceAddressPrefixes": ["203.0.113.0/24"]
+      }
+    }</code></li>
+<li>Run <code>azd provision</code> again. The HTTPS listener, redirect rule, and NSG allow rule are now in place.</li>
+<li>Validate end-to-end: <code>curl -v https://app.contoso.com/</code> should return the Container App's response; <code>curl -v http://app.contoso.com/</code> should redirect to HTTPS.</li>
+</ol>
+<p><strong>Teardown:</strong> run <code>azd down</code> to remove the entire deployment, or delete the gateway/PIP/WAF policy/NSG/UAI manually. As stated above, flipping <code>enabled</code> back to <code>false</code> and re-provisioning will <strong>not</strong> delete the resources due to ARM incremental deployment semantics.</p>
+<p><strong>Outputs surfaced by <code>main.bicep</code>:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUBLIC_INGRESS_ENABLED</code></td>
+<td>Whether the stack was effectively deployed (also requires <code>networkIsolation</code> + <code>deployContainerEnv</code> + non-empty <code>containerAppsList</code>).</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_PUBLIC_IP</code></td>
+<td>The gateway's public IPv4 address (point your DNS A record at this).</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_GATEWAY_RESOURCE_ID</code></td>
+<td>Application Gateway resource ID.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_NSG_RESOURCE_ID</code></td>
+<td>NSG attached to the AGW subnet.</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_WAF_POLICY_RESOURCE_ID</code></td>
+<td>WAF policy resource ID (for adding custom rules outside the template).</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_IDENTITY_PRINCIPAL_ID</code></td>
+<td>Principal ID of the AGW UAI (use to grant access to external Key Vaults).</td>
+</tr>
+<tr>
+<td><code>PUBLIC_INGRESS_LIVE</code></td>
+<td><code>true</code> only when both <code>sslCertSecretId</code> and <code>frontendHostName</code> are set (live mode).</td>
+</tr>
+</tbody>
+</table>
+<p>In addition, the landing zone now surfaces a small set of outputs that consumers (and this module) depend on: <code>APP_GATEWAY_SUBNET_RESOURCE_ID</code>, <code>VNET_RESOURCE_ID</code>, <code>KEY_VAULT_RESOURCE_ID</code>, <code>KEY_VAULT_NAME</code>, <code>LOG_ANALYTICS_RESOURCE_ID</code>, and <code>CONTAINER_APP_INTERNAL_FQDN</code>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

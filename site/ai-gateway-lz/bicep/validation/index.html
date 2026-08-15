@@ -1,0 +1,3810 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Citadel Governance Hub - Testing & Validation Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#citadel-governance-hub-testing-validation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Citadel Governance Hub - Testing &amp; Validation Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-per-notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional (per notebook)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#initializing-variables-from-azd-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initializing Variables from azd Environment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initializing Variables from azd Environment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-flight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-flight
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-notebook-variable-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Notebook Variable Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-set-init_from_azd-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Set init_from_azd = False
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Notebooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-llm-backend-onboarding-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. LLM Backend Onboarding Runner
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. LLM Backend Onboarding Runner">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-universal-llm-api-all-models-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Universal LLM API — All-Models Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Universal LLM API — All-Models Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operations-exercised-per-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operations Exercised Per Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-citadel-access-contracts-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Citadel Access Contracts Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Citadel Access Contracts Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-contracts-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Contracts Created
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-citadel-agent-frameworks-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Citadel Agent Frameworks Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Citadel Agent Frameworks Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-framework-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Framework Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-citadel-model-aliases-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Citadel Model Aliases Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Citadel Model Aliases Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uaig-response-headers-inspected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UAIG-* Response Headers Inspected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-citadel-pii-processing-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Citadel PII Processing Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Citadel PII Processing Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-cases-tested" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Cases Tested
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii-types-covered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PII Types Covered
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-citadel-unified-ai-api-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Citadel Unified AI API Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Citadel Unified AI API Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-patterns-tested" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Patterns Tested
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-citadel-jwt-authentication-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Citadel JWT Authentication Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Citadel JWT Authentication Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-cases-tested_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use Cases Tested
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-extended-providers-backend-onboarding-aws-bedrock-gcp-gemini-anthropic-claude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Extended Providers Backend Onboarding (AWS Bedrock + GCP Gemini + Anthropic Claude)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Extended Providers Backend Onboarding (AWS Bedrock + GCP Gemini + Anthropic Claude)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backends-onboarded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backends Onboarded
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-surfaces-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Surfaces Validated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-session-affinity-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Session Affinity Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Session Affinity Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#11-gateway-alerting-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Gateway Alerting Tests
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Gateway Alerting Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What It Does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#steps_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-configuration_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-execution-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Execution Order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shared-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shared Utilities
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="citadel-governance-hub-testing-validation-guide">Citadel Governance Hub - Testing &amp; Validation Guide</h1>
+<h2 id="executive-summary">Executive Summary</h2>
+<p>This testing suite provides a comprehensive, end-to-end validation framework for the Citadel Governance Hub — an enterprise-grade AI gateway built on Azure API Management (APIM). The notebooks in this directory enable platform teams to onboard LLM backends, provision access contracts for different business units, test agent framework integrations, verify PII processing capabilities, validate JWT authentication with role-based access control, and test unified AI API routing patterns — all through guided, reproducible Jupyter workflows.</p>
+<p>The recommended execution order is:</p>
+<blockquote>
+<p><strong>Strongly recommended baseline (steps 1–4):</strong> these four notebooks together exercise the core gateway plumbing — backend onboarding, full model surface area, access-contract provisioning, and real-world agent consumption. Run them in order on every new Governance Hub deployment before moving on to the optional scenario-specific notebooks.</p>
+</blockquote>
+<ol>
+<li><strong>Backend Contracts (LLM Onboarding)</strong> — Register AI backends and deploy routing logic into APIM ⭐ <em>strongly recommended</em></li>
+<li><strong>Universal LLM API — All-Models Tests</strong> — Validate every gateway-configured model (chat / embeddings / Responses API) through <code>/models</code> ⭐ <em>strongly recommended</em></li>
+<li><strong>Access Contracts</strong> — Create per-team access contracts with Key Vault and Foundry integrations ⭐ <em>strongly recommended</em></li>
+<li><strong>Agent Frameworks</strong> — Validate agent-based consumption of provisioned contracts (Microsoft Agent Framework, Foundry Agent SDK, LangChain) ⭐ <em>strongly recommended</em></li>
+<li><strong>Model Aliases</strong> — Validate the shared <code>resolve-model-alias</code> policy fragment across all 3 LLM APIs (priority + weighted strategies, RBAC, discovery)</li>
+<li><strong>PII Processing</strong> — Test PII anonymization, deanonymization, and blocking policies</li>
+<li><strong>Unified AI API</strong> — Test multi-provider routing patterns through the Unified AI Wildcard API</li>
+<li><strong>JWT Authentication</strong> — Validate JWT-enforced and role-based access control across all API endpoints</li>
+<li><strong>Extended Providers Backend Onboarding</strong> — Onboard and validate non-Microsoft-Foundry AI backends (AWS Bedrock, GCP Gemini, Anthropic Claude) through native and OpenAI-compatible routing to confirm multi-cloud support</li>
+<li><strong>Session Affinity</strong> — Validate backend-pool sticky routing for the stateful OpenAI Responses API — a per-session cookie jar keeps all requests in a session pinned to the same backend</li>
+<li><strong>Gateway Alerting</strong> — Trigger real alerts: provision a restrictive access contract, force throttling (HTTP 429) <em>and</em> quota exhaustion (HTTP 403), deploy Azure Monitor metric alerts on the <code>AI Gateway Alert</code> custom metric, and verify the metrics + rules</li>
+<li><strong>Publish Contract</strong> — Publish three protected AI assets (API→MCP tool, remote MCP tool, Foundry A2A agent), then validate MCP handshakes, the A2A agent card + JSON-RPC call, <code>mcp-usage</code>/<code>a2a-usage</code> custom metrics, and per-asset circuit breakers</li>
+</ol>
+<p>Each notebook is self-contained with initialization, deployment, testing, visualization, and cleanup stages, enabling both interactive exploration and repeatable validation.</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<blockquote>
+<p><strong>First time running these notebooks?</strong> Follow the <a href="notebook-setup-guide.md">Validation Notebook Setup Guide</a> to create the repository's isolated <code>.venv</code>, install dependencies, select the correct VS Code kernel, and verify the notebook working directory.</p>
+</blockquote>
+<p>Before running any notebook, ensure the following are in place:</p>
+<ul>
+<li><strong>Citadel Governance Hub</strong> deployed (<a href="../guides/full-deployment-guide.md">Full Deployment Guide</a> or <a href="../guides/quick-deployment-guide.md">Quick Deployment Guide</a>)</li>
+<li><strong>Azure CLI</strong> installed and authenticated (<code>az login</code>)</li>
+<li><strong>Python 3.11</strong> with the repository-root <code>.venv</code> selected as the notebook kernel</li>
+<li><strong>Dependencies</strong> installed into <code>.venv</code> from the repository root (Windows PowerShell):
+    <code>powershell
+    py -3.11 -m venv .venv
+    .\.venv\Scripts\python.exe -m pip install --upgrade pip setuptools wheel
+    .\.venv\Scripts\python.exe -m pip install -r .\validation\requirements.txt
+    .\.venv\Scripts\python.exe -m pip install ipykernel</code></li>
+<li><strong>VS Code</strong> with the Jupyter extension (recommended for running notebooks)</li>
+</ul>
+<h3 id="optional-per-notebook">Optional (per notebook)</h3>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Required By</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Universal LLM API (<code>models</code>) imported in APIM</td>
+<td>Universal LLM All-Models Tests, Model Aliases</td>
+<td>Required for <code>/models</code> discovery and per-model operation tests</td>
+</tr>
+<tr>
+<td>Azure Key Vault</td>
+<td>Access Contracts, Agent Frameworks</td>
+<td>A Key Vault with secrets for LLM endpoint and API key</td>
+</tr>
+<tr>
+<td>Azure AI Foundry</td>
+<td>Access Contracts, Agent Frameworks</td>
+<td>A Foundry account and project for connection integration</td>
+</tr>
+<tr>
+<td>Azure AI Language Service</td>
+<td>PII Processing</td>
+<td>PII detection endpoint with managed identity access</td>
+</tr>
+<tr>
+<td>Event Hub</td>
+<td>PII Processing</td>
+<td>For PII state saving and audit logging</td>
+</tr>
+<tr>
+<td>Unified AI API (<code>unified-ai</code>) imported in APIM</td>
+<td>Unified AI API, Model Aliases (full coverage)</td>
+<td>Required for the wildcard <code>/unified-ai/**</code> routing patterns</td>
+</tr>
+<tr>
+<td><code>resolve-model-alias</code> policy fragment + alias-aware backend onboarding</td>
+<td>Model Aliases</td>
+<td>Re-deployed by the notebook itself via the LLM backend onboarding Bicep with <code>modelAliases</code> populated</td>
+</tr>
+<tr>
+<td>Entra ID App Registration</td>
+<td>JWT Authentication</td>
+<td>Client credentials (client ID + secret) with app roles configured</td>
+</tr>
+<tr>
+<td>MSAL Library</td>
+<td>JWT Authentication</td>
+<td>Optional — for interactive device code flow token acquisition</td>
+</tr>
+<tr>
+<td>Google Gemini API</td>
+<td>Unified AI API</td>
+<td>Optional — for testing Gemini routing pattern</td>
+</tr>
+<tr>
+<td>Unified AI API (<code>unified-ai</code>) imported in APIM</td>
+<td>Extended Providers Backend Onboarding</td>
+<td>Required for native <code>/bedrock/**</code>, <code>/gemini/**</code>, and <code>/claude/**</code> routing</td>
+</tr>
+<tr>
+<td>AWS Bedrock / GCP Gemini / Anthropic API keys</td>
+<td>Extended Providers Backend Onboarding</td>
+<td>Optional per provider — fill the <code>REPLACE_*</code> placeholders to enable each backend's tests</td>
+</tr>
+<tr>
+<td>Azure Key Vault (provider secrets)</td>
+<td>Extended Providers Backend Onboarding</td>
+<td>Optional — recommended over inline secrets to hold non-Azure provider keys</td>
+</tr>
+<tr>
+<td>Target model pooled across 2+ backends with <code>sessionAwareModel: true</code></td>
+<td>Session Affinity</td>
+<td>Required — the notebook enables it for you by regenerating the LLM backend onboarding Bicep into a <code>-local.bicepparam</code></td>
+</tr>
+<tr>
+<td>Unified AI API (<code>unified-ai</code>) imported in APIM</td>
+<td>Session Affinity</td>
+<td>Required — the Responses API is called at <code>/unified-ai/openai/responses</code></td>
+</tr>
+<tr>
+<td><code>openai</code>, <code>httpx</code>, <code>pandas</code> Python packages</td>
+<td>Session Affinity</td>
+<td>Installed via <code>../shared/requirements.txt</code> — used for the OpenAI SDK + per-session cookie jar + visualization</td>
+</tr>
+<tr>
+<td>---</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="initializing-variables-from-azd-environment">Initializing Variables from <code>azd</code> Environment</h2>
+<p>Every validation notebook supports a one-line <strong><code>init_from_azd = True</code></strong> toggle in its first code cell that auto-populates Citadel Governance Hub variables (resource group, location, Key Vault name, LLM backend config, Foundry account/project, Entra IDs, Cosmos account, …) directly from your active <code>azd</code> environment.</p>
+<p>This is the recommended path when the accelerator was deployed with <code>azd up</code>, because the relevant deployment outputs (<code>AZURE_RESOURCE_GROUP</code>, <code>AZURE_LOCATION</code>, <code>LLM_BACKEND_CONFIG</code>, <code>KEY_VAULT_NAME</code>, <code>AI_FOUNDRY_SERVICES</code>, <code>ENTRA_*</code>, <code>COSMOS_DB_ACCOUNT_NAME</code>, …) are already written to the active <code>azd</code> env file by the Bicep deployment.</p>
+<h3 id="how-it-works">How It Works</h3>
+<p>Each notebook's init cell follows the same pattern:</p>
+<div class="highlight"><pre><span></span><code><span class="n">init_from_azd</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># Set False to fill REPLACE values manually below</span>
+
+<span class="c1"># Manual fallbacks (used when azd env var is missing OR init_from_azd = False)</span>
+<span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span>                      <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="c1"># ... other notebook-specific REPLACE values ...</span>
+
+<span class="k">if</span> <span class="n">init_from_azd</span><span class="p">:</span>
+    <span class="n">loaded</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_azd_env</span><span class="p">({</span>
+        <span class="s2">&quot;resource_group&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;AZURE_RESOURCE_GROUP&quot;</span><span class="p">,</span> <span class="s2">&quot;GOVERNANCE_HUB_RESOURCE_GROUP&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;location&quot;</span><span class="p">:</span>       <span class="p">[</span><span class="s2">&quot;AZURE_LOCATION&quot;</span><span class="p">,</span> <span class="s2">&quot;LOCATION&quot;</span><span class="p">],</span>
+        <span class="c1"># ... notebook-specific azd vars ...</span>
+    <span class="p">},</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Manually-set values (anything not equal to the REPLACE sentinel) win over azd values.</span>
+</code></pre></div>
+<p>The shared helper <a href="../shared/utils.py"><code>utils.load_azd_env</code></a> in <a href="../shared/utils.py"><code>shared/utils.py</code></a> wraps <code>azd env get-value &lt;NAME&gt;</code> per variable, supports fallback name lists, and JSON-decodes complex values (<code>LLM_BACKEND_CONFIG</code>, <code>AI_FOUNDRY_SERVICES</code>).</p>
+<h3 id="pre-flight">Pre-flight</h3>
+<div class="highlight"><pre><span></span><code><span class="c"># Make sure the right azd environment is selected</span>
+<span class="n">azd</span> <span class="n">env</span> <span class="n">list</span>
+<span class="n">azd</span> <span class="n">env</span> <span class="nb">select </span><span class="p">&lt;</span><span class="n">env-name</span><span class="p">&gt;</span>
+
+<span class="c"># (Optional) inspect what will be auto-loaded</span>
+<span class="n">azd</span> <span class="n">env</span> <span class="nb">get-values</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Important:</strong> Manually edited values (anything not equal to the <code>"REPLACE"</code> sentinel string in the init cell) <strong>always win</strong> over values pulled from <code>azd</code>. Set <code>init_from_azd = False</code> to disable the lookup entirely and force purely manual configuration.</p>
+</blockquote>
+<h3 id="per-notebook-variable-map">Per-Notebook Variable Map</h3>
+<p>The table below summarizes which <code>azd</code> env variables each notebook auto-loads when <code>init_from_azd = True</code>. Variables in <em>italics</em> are optional / only used when the notebook actually exercises the corresponding integration.</p>
+<table>
+<thead>
+<tr>
+<th>Notebook</th>
+<th><code>azd</code> env variables auto-loaded → notebook variables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>llm-backend-onboarding-runner</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>LLM_BACKEND_CONFIG</code> (JSON) → <code>llm_backends_config</code><br><em><code>KEY_VAULT_NAME</code> → <code>key_vault_name</code></em></td>
+</tr>
+<tr>
+<td><code>citadel-universal-llm-api-all-models-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code></td>
+</tr>
+<tr>
+<td><code>citadel-access-contracts-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>AZURE_SUBSCRIPTION_ID</code> → <code>keyvault_subscription_id</code> / <code>foundry_subscription_id</code><br><em><code>KEY_VAULT_NAME</code> → <code>keyvault_name</code></em><br><em><code>AI_FOUNDRY_SERVICES[0]</code> (JSON) → <code>foundry_account_name</code> + <code>foundry_project_name</code></em></td>
+</tr>
+<tr>
+<td><code>citadel-agent-frameworks-tests</code></td>
+<td>Same as <code>citadel-access-contracts-tests</code></td>
+</tr>
+<tr>
+<td><code>citadel-model-aliases-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>LLM_BACKEND_CONFIG</code> (JSON) → <code>llm_backends_config</code></td>
+</tr>
+<tr>
+<td><code>citadel-pii-processing-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><em><code>COSMOS_DB_ACCOUNT_NAME</code> → <code>cosmos_account_endpoint</code></em></td>
+</tr>
+<tr>
+<td><code>citadel-unified-ai-api-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code></td>
+</tr>
+<tr>
+<td><code>citadel-jwt-authentication-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>AZURE_SUBSCRIPTION_ID</code> → <code>keyvault_subscription_id</code> / <code>foundry_subscription_id</code><br><code>ENTRA_TENANT_ID</code> → <code>entra_tenant_id</code><br><code>ENTRA_CLIENT_ID</code> → <code>entra_client_id</code><br><code>ENTRA_AUDIENCE</code> → <code>entra_audience</code> (defaults to <code>api://&lt;client_id&gt;</code> if missing)<br><em><code>KEY_VAULT_NAME</code> → <code>keyvault_name</code></em><br><em><code>AI_FOUNDRY_SERVICES[0]</code> (JSON) → <code>foundry_account_name</code> + <code>foundry_project_name</code></em><br><strong>Note:</strong> <code>entra_client_secret</code> is intentionally <strong>not</strong> auto-loaded — set it manually before running JWT tests.</td>
+</tr>
+<tr>
+<td><code>llm-backend-onboarding-extended-providers-runner</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>LLM_BACKEND_CONFIG</code> (JSON) → merged with the extended-provider backends in <code>llm_backends_config</code><br><em><code>KEY_VAULT_NAME</code> → <code>key_vault_name</code></em><br><strong>Note:</strong> <code>init_from_azd</code> defaults to <strong><code>False</code></strong> here so the in-notebook <code>REPLACE_*</code> provider placeholders are preserved; flip to <code>True</code> to merge your azd-maintained Foundry backends with the new providers.</td>
+</tr>
+<tr>
+<td><code>citadel-session-affinity-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>LLM_BACKEND_CONFIG</code> (JSON) → <code>llm_backends_config</code> (used to enable <code>sessionAwareModel</code> for the target model)</td>
+</tr>
+<tr>
+<td><code>citadel-alerting-tests</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code> → <code>governance_hub_resource_group</code><br><code>AZURE_LOCATION</code> → <code>location</code><br><code>AZURE_SUBSCRIPTION_ID</code> → <code>subscription_id</code><br><em><code>APIM_APP_INSIGHTS_NAME</code> → <code>app_insights_name</code></em> (auto-discovered from the hub RG if unset)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Multi-environment teams:</strong> Run <code>azd env select &lt;env-name&gt;</code> before launching the notebook to switch which deployment the notebook talks to. Each <code>.azure/&lt;env-name&gt;/.env</code> file is fully self-contained.</p>
+</blockquote>
+<h3 id="when-to-set-init_from_azd-false">When to Set <code>init_from_azd = False</code></h3>
+<ul>
+<li>You are validating a Citadel Governance Hub that was <strong>not</strong> deployed via <code>azd</code> (e.g. deployed via <code>az deployment sub create</code> directly, or via a CI/CD pipeline that doesn't write azd env vars).</li>
+<li>You want to point a notebook at a <strong>different</strong> environment than the currently selected <code>azd</code> env.</li>
+<li>You are running the notebook on a workstation where <code>azd</code> is not installed.</li>
+</ul>
+<p>In any of these cases, set <code>init_from_azd = False</code> and fill the <code>REPLACE</code> values manually. The shared helpers (<code>utils.azd_env_get</code>, <code>utils.azd_env_get_json</code>, <code>utils.load_azd_env</code>) will silently no-op when <code>azd</code> isn't available, so leaving <code>init_from_azd = True</code> on a machine without <code>azd</code> is also harmless — it just won't override your manual values.</p>
+<hr />
+<h2 id="notebooks">Notebooks</h2>
+<h3 id="1-llm-backend-onboarding-runner">1. LLM Backend Onboarding Runner</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="llm-backend-onboarding-runner.ipynb"><code>llm-backend-onboarding-runner.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Onboard AI backends into the Citadel Governance Hub and deploy routing logic</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>First — before any other notebook</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does">What It Does</h4>
+<p>This notebook automates the full lifecycle of registering LLM backends with your APIM gateway. It extracts the current backend configuration, generates a Bicep parameter file with per-model metadata (SKU, capacity, model format, version), deploys the backends and policy fragments, and verifies the deployment through multiple API formats.</p>
+<h4 id="steps">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, location, and backend endpoints</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Connect to the existing Governance Hub deployment</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Extract current backends</strong> — Retrieve existing backend pools and routing configuration</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Discover managed identity</strong> — Auto-detect the APIM user-assigned managed identity</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Generate parameter file</strong> — Create a <code>.bicepparam</code> file with full backend definitions</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Deploy</strong> — Run the Bicep deployment to create backends, pools, and policy fragments</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Verify deployment</strong> — Confirm backends and policy fragments were created</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Verify GET /deployments</strong> — Test the <code>get-available-models</code> policy fragment for Foundry integration</td>
+</tr>
+<tr>
+<td>Test</td>
+<td><strong>Test models</strong> — Validate via Universal LLM API, Azure OpenAI API, Python SDK, and streaming</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>  <span class="c1"># Your Governance Hub resource group</span>
+<span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>                       <span class="c1"># e.g., &quot;eastus&quot;, &quot;swedencentral&quot;</span>
+
+<span class="n">llm_backends_config</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;backendId&quot;</span><span class="p">:</span> <span class="s2">&quot;aif-citadel-primary&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;backendType&quot;</span><span class="p">:</span> <span class="s2">&quot;ai-foundry&quot;</span><span class="p">,</span>           <span class="c1"># &#39;ai-foundry&#39; | &#39;azure-openai&#39; | &#39;aws-bedrock&#39; | &#39;gemini&#39; | &#39;anthropic&#39; | &#39;external&#39;</span>
+        <span class="s2">&quot;endpoint&quot;</span><span class="p">:</span> <span class="s2">&quot;https://...&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;authType&quot;</span><span class="p">:</span> <span class="s2">&quot;managed-identity&quot;</span><span class="p">,</span>        <span class="c1"># &#39;managed-identity&#39; | &#39;aws-sigv4&#39; | &#39;api-key-bearer&#39; | &#39;api-key-header&#39; | &#39;api-key-gemini&#39; | &#39;api-key-anthropic&#39; | &#39;none&#39; (omit to derive from backendType)</span>
+        <span class="s2">&quot;supportedModels&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span> <span class="s2">&quot;sku&quot;</span><span class="p">:</span> <span class="s2">&quot;GlobalStandard&quot;</span><span class="p">,</span> <span class="s2">&quot;capacity&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;modelFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;OpenAI&quot;</span><span class="p">,</span> <span class="s2">&quot;modelVersion&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-11-20&quot;</span> <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;priority&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="mi">100</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h4 id="output">Output</h4>
+<ul>
+<li>Deployed APIM backends with circuit breaker support</li>
+<li>Backend pools with priority/weight-based load balancing</li>
+<li><code>set-backend-pools</code> and <code>get-available-models</code> policy fragments</li>
+<li>Verified model routing through both API formats</li>
+</ul>
+<hr />
+<h3 id="2-universal-llm-api-all-models-tests">2. Universal LLM API — All-Models Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-universal-llm-api-all-models-tests.ipynb"><code>citadel-universal-llm-api-all-models-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Validate the Universal LLM API (<code>/models</code>) against every model exposed by the gateway</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>Immediately after backend onboarding to confirm the full model catalogue is reachable</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_1">What It Does</h4>
+<p>This notebook provisions a single access contract with <strong><code>allowedModels = ""</code></strong> (no model restriction), then dynamically discovers the live model catalogue via <code>GET /models/models</code> and exercises the appropriate OpenAI v1 operation for each model. It is the fastest way to confirm that every onboarded backend pool is end-to-end reachable through the Universal LLM API surface.</p>
+<h4 id="operations-exercised-per-model">Operations Exercised Per Model</h4>
+<table>
+<thead>
+<tr>
+<th>Model name pattern</th>
+<th>Operations exercised</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contains <code>embedding</code></td>
+<td><code>POST /models/embeddings</code></td>
+</tr>
+<tr>
+<td>Contains <code>gpt</code></td>
+<td><code>POST /models/chat/completions</code> <strong>and</strong> the full Responses API trio: <code>POST /models/responses</code>, <code>GET /models/responses/{response_id}</code>, <code>GET /models/responses/{response_id}/input_items?limit=20</code></td>
+</tr>
+<tr>
+<td>Anything else</td>
+<td><code>POST /models/chat/completions</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_1">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, location, API versions, and optional model cap</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover the Universal LLM API and supported models</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Provision access contract</strong> — Deploy a Bicep-generated APIM product + subscription with <code>allowedModels = ""</code> and a generous capacity allocation</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Retrieve API key</strong> — Get the subscription key for the unrestricted product</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Discover models</strong> — Call <code>GET /models/models</code> to enumerate the live model catalogue</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Per-model operation loop</strong> — Auto-classify each model and run chat / embeddings / Responses API operations</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Summary table</strong> — Aggregate per-model pass/fail across all exercised operations</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td><strong>Delete test products</strong> — Optionally remove the unrestricted access contract</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_1">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span>                      <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="n">targetInferenceApi</span>    <span class="o">=</span> <span class="s2">&quot;models&quot;</span>               <span class="c1"># Universal LLM API</span>
+<span class="n">inference_api_version</span> <span class="o">=</span> <span class="s2">&quot;2024-05-01-preview&quot;</span>
+<span class="n">openai_api_version</span>    <span class="o">=</span> <span class="s2">&quot;2024-12-01-preview&quot;</span>
+
+<span class="c1"># 0 = test every discovered model; set a positive int to cap for quick smoke tests</span>
+<span class="n">max_models_to_test</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># Delay between POST /responses and the subsequent GET /responses/{id} calls</span>
+<span class="n">responses_get_delay_seconds</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div>
+<h4 id="output_1">Output</h4>
+<ul>
+<li>One Bicep-deployed APIM product + subscription with no model RBAC restriction</li>
+<li>Live discovery of every gateway-configured model via <code>GET /models/models</code></li>
+<li>Per-model results for chat, embeddings, and (where applicable) Responses API operations</li>
+<li>Summary table highlighting any model that failed an expected operation</li>
+</ul>
+<hr />
+<h3 id="3-citadel-access-contracts-tests">3. Citadel Access Contracts Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-access-contracts-tests.ipynb"><code>citadel-access-contracts-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Create, deploy, and load-test multiple access contracts with different integration patterns</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After backend onboarding and the Universal LLM all-models smoke test</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_2">What It Does</h4>
+<p>This notebook provisions three distinct access contracts, each representing a different integration pattern. It generates the Bicep parameter files, deploys the contracts as APIM products with subscriptions, performs load testing, and visualizes throttling behavior and token bucket dynamics across all contracts.</p>
+<h4 id="access-contracts-created">Access Contracts Created</h4>
+<table>
+<thead>
+<tr>
+<th>Contract</th>
+<th>Business Unit</th>
+<th>Integration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sales-Assistant</strong></td>
+<td>Sales</td>
+<td>Key Vault only</td>
+<td>Secrets (endpoint + API key) resolved from Azure Key Vault</td>
+</tr>
+<tr>
+<td><strong>HR-ChatAgent</strong></td>
+<td>HR</td>
+<td>Key Vault + Foundry</td>
+<td>Optionally creates a Foundry project connection for agent integration</td>
+</tr>
+<tr>
+<td><strong>Support-Bot</strong></td>
+<td>Support</td>
+<td>Direct output</td>
+<td>No external integrations — uses direct APIM subscription output</td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_2">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, Key Vault, and Foundry settings</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover APIs and supported models</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Define contracts</strong> — Configure three access contracts with varying integration patterns</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Create parameter files</strong> — Generate <code>.bicepparam</code> files with policy XML for each contract</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Deploy contracts</strong> — Run Bicep deployments at subscription scope</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Retrieve API keys</strong> — Extract subscription keys for each deployed product</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Load test</strong> — Send concurrent API requests to each contract and record metrics</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Visualize results</strong> — Compare success/throttled/error rates across contracts</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Token bucket analysis</strong> — Simulate and visualize token bucket refill behavior</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td><strong>Delete test products</strong> — Optionally remove all created APIM products and subscriptions</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_2">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Optional integrations</span>
+<span class="n">use_keyvault_integration</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">keyvault_name</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="n">use_foundry_integration</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">foundry_account_name</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">foundry_project_name</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+</code></pre></div>
+<h4 id="output_2">Output</h4>
+<ul>
+<li>Three deployed APIM products with subscription keys</li>
+<li>Key Vault secrets populated (if enabled)</li>
+<li>Foundry connection created (if enabled)</li>
+<li>Performance charts comparing all contracts</li>
+<li>Token bucket behavior visualization</li>
+</ul>
+<hr />
+<h3 id="4-citadel-agent-frameworks-tests">4. Citadel Agent Frameworks Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-agent-frameworks-tests.ipynb"><code>citadel-agent-frameworks-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Validate real-world agent consumption of access contracts using three major frameworks</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After access contracts are deployed (notebook 3)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_3">What It Does</h4>
+<p>This notebook instantiates three AI agents — each using a different framework and integration pattern — and runs multi-turn conversations through the Citadel gateway. It measures token consumption, retry behavior, and call reliability, then produces comparative visualizations across all three frameworks.</p>
+<h4 id="agent-framework-matrix">Agent Framework Matrix</h4>
+<table>
+<thead>
+<tr>
+<th>Access Contract</th>
+<th>Agent Framework</th>
+<th>Integration Type</th>
+<th>Target Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sales-Assistant</strong></td>
+<td>Microsoft Agent Framework</td>
+<td>Azure Key Vault (endpoint + key)</td>
+<td>gpt-4.1</td>
+</tr>
+<tr>
+<td><strong>HR-ChatAgent</strong></td>
+<td>Microsoft Foundry Agent SDK</td>
+<td>Foundry Project Connection</td>
+<td>gpt-4o</td>
+</tr>
+<tr>
+<td><strong>Support-Bot</strong></td>
+<td>LangChain</td>
+<td>Local (direct endpoint + key)</td>
+<td>phi-4</td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_3">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, Key Vault, Foundry, and model settings</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover APIs and supported models</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Retrieve API keys</strong> — Fetch subscription keys for each access contract</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Install packages</strong> — Install agent framework dependencies (<code>agent-framework</code>, <code>azure-ai-projects</code>, <code>langchain</code>, <code>langchain-openai</code>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Microsoft Agent Framework</strong> — Sales conversation via Key Vault integration</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Foundry Agent SDK</strong> — HR conversation via Foundry project connection</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>LangChain</strong> — Support conversation via direct endpoint configuration</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Metrics comparison</strong> — Token consumption pie charts, calls vs. retries, retry rates</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Efficiency analysis</strong> — Token efficiency and call reliability per agent</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td>Managed by <code>citadel-access-contracts-tests.ipynb</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_3">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Key Vault (for Sales-Assistant)</span>
+<span class="n">keyvault_name</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Foundry (for HR-ChatAgent)</span>
+<span class="n">foundry_account_name</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">foundry_project_name</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">foundry_connection_name</span> <span class="o">=</span> <span class="s2">&quot;HR-ChatAgent-DEV-LLM&quot;</span>
+
+<span class="c1"># Models per agent</span>
+<span class="n">sales_model_name</span> <span class="o">=</span> <span class="s2">&quot;gpt-4.1&quot;</span>
+<span class="n">hr_model_name</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+<span class="n">support_model_name</span> <span class="o">=</span> <span class="s2">&quot;phi-4&quot;</span>
+</code></pre></div>
+<h4 id="output_3">Output</h4>
+<ul>
+<li>Multi-turn conversation logs for each agent</li>
+<li>Token usage metrics (prompt, completion, total) per framework</li>
+<li>Retry rate and reliability analysis</li>
+<li>Comparative visualizations saved as <code>agent_metrics_comparison.png</code></li>
+</ul>
+<hr />
+<h3 id="5-citadel-model-aliases-tests">5. Citadel Model Aliases Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-model-aliases-tests.ipynb"><code>citadel-model-aliases-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Validate the shared <code>resolve-model-alias</code> policy fragment across Universal LLM, Azure OpenAI, and Unified AI APIs</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After backend onboarding (notebook 1). Can be run independently of notebooks 3–4.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_4">What It Does</h4>
+<p>This notebook re-runs the LLM backend onboarding Bicep with a <code>modelAliases</code> parameter populated, which (re)deploys the shared <code>resolve-model-alias</code> policy fragment with the configured aliases inlined. It then provisions an access contract scoped to <strong>alias names only</strong> (least-privilege RBAC) and exercises the same aliases through all 3 LLM API surfaces, inspecting the <code>UAIG-*</code> debug response headers to verify the gateway's routing decisions end-to-end.</p>
+<p>Two alias strategies are validated:</p>
+<table>
+<thead>
+<tr>
+<th>Alias</th>
+<th>Strategy</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>adv-gpt</code></td>
+<td><code>priority</code></td>
+<td>First underlying model wins; remaining models act as cross-model fallback (deterministic per-call)</td>
+</tr>
+<tr>
+<td><code>gpt-blend</code></td>
+<td><code>weighted</code></td>
+<td>Random-weighted picking across underlying models — useful for A/B model swaps</td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_4">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Auto-load from <code>azd</code> env (<code>LLM_BACKEND_CONFIG</code>) or fill manually; define the two aliases and a direct-test model</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI &amp; APIM Client</strong> — Confirm subscription context and discover the APIM resource + managed identity</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Generate <code>.bicepparam</code></strong> — Write <code>llm-backends-aliases-validation.bicepparam</code> containing the full backend config + the two aliases</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Deploy onboarding</strong> — Re-run the LLM backend onboarding Bicep so the <code>resolve-model-alias</code> fragment is regenerated with the aliases inlined</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Create access contract</strong> — Deploy an APIM product whose <code>allowedModels</code> lists ONLY the alias names + <code>direct_test_model</code>, with <code>enableResponseHeaders=true</code> for <code>UAIG-*</code> debug headers</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Resolve API key</strong> — Pick the subscription created for the contract</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Discover endpoints</strong> — Universal LLM (<code>/models</code>), Azure OpenAI (<code>/openai</code>), Unified AI (<code>/unified-ai</code>)</td>
+</tr>
+<tr>
+<td>Discovery</td>
+<td><strong><code>GET /deployments</code> honors <code>allowedModels</code></strong> — Aliases appear as <code>type: "alias"</code> entries with descriptions; underlying real models that aren't in <code>allowedModels</code> are filtered out</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Direct model control test</strong> — Call <code>direct_test_model</code> on all 3 APIs; resolver should be a no-op (no <code>UAIG-Alias</code> header)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Priority alias test</strong> — Call <code>adv-gpt</code> on all 3 APIs; resolves deterministically to the first underlying model</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Weighted alias single call</strong> — Call <code>gpt-blend</code> once on each API</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Weighted distribution test</strong> — Send N=30 requests through <code>gpt-blend</code> and tally <code>UAIG-Resolved-Model</code> against configured weights</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Negative RBAC test</strong> — Send a model NOT in <code>allowedModels</code>; expect HTTP 403 <code>unauthorized_model_access</code></td>
+</tr>
+<tr>
+<td>Summary</td>
+<td><strong>Results overview</strong> — Cross-API consistency check + alias resolution observations</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td><strong>Delete access contract</strong> — <code>do_cleanup</code> flag (default <code>False</code>); LLM backends and the <code>resolve-model-alias</code> fragment are intentionally preserved</td>
+</tr>
+</tbody>
+</table>
+<h4 id="uaig-response-headers-inspected"><code>UAIG-*</code> Response Headers Inspected</h4>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UAIG-Model-Id</code></td>
+<td>Model that was actually routed to (post alias resolution)</td>
+</tr>
+<tr>
+<td><code>UAIG-Alias</code></td>
+<td>Original alias name the client sent (only present when alias was used)</td>
+</tr>
+<tr>
+<td><code>UAIG-Resolved-Model</code></td>
+<td>Real model the alias resolved to</td>
+</tr>
+<tr>
+<td><code>UAIG-Backend</code></td>
+<td>Backend pool / backend that served the request</td>
+</tr>
+<tr>
+<td><code>UAIG-API-Type</code></td>
+<td>Detected API type (Unified AI only)</td>
+</tr>
+<tr>
+<td><code>UAIG-Final-Path</code></td>
+<td>Reconstructed backend path (Unified AI only)</td>
+</tr>
+<tr>
+<td><code>UAIG-Auth-Type</code></td>
+<td>Auth method enforced by <code>security-handler</code> (Unified AI only)</td>
+</tr>
+<tr>
+<td><code>UAIG-Cache-Operation</code></td>
+<td><code>cache-hit</code> / <code>cache-miss</code> for <code>metadata-config</code></td>
+</tr>
+<tr>
+<td><code>UAIG-Request-Id</code></td>
+<td>APIM request id for log correlation</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_4">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>   <span class="c1"># or auto-loaded from azd</span>
+<span class="n">location</span>                      <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">llm_backends_config</span>           <span class="o">=</span> <span class="p">[]</span>          <span class="c1"># auto-loaded from LLM_BACKEND_CONFIG when init_from_azd=True</span>
+
+<span class="n">model_aliases</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;adv-gpt&quot;</span><span class="p">,</span>   <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gpt-5.2&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-5.4-mini&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4.1&quot;</span><span class="p">],</span> <span class="s2">&quot;strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;priority&quot;</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gpt-blend&quot;</span><span class="p">,</span> <span class="s2">&quot;models&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;gpt-5.4-mini&quot;</span><span class="p">,</span> <span class="s2">&quot;gpt-4.1&quot;</span><span class="p">],</span>            <span class="s2">&quot;strategy&quot;</span><span class="p">:</span> <span class="s2">&quot;weighted&quot;</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">70</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span> <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">direct_test_model</span>     <span class="o">=</span> <span class="s2">&quot;gpt-4.1&quot;</span>            <span class="c1"># control test (must exist in llm_backends_config)</span>
+<span class="n">inference_api_version</span> <span class="o">=</span> <span class="s2">&quot;2024-05-01-preview&quot;</span>
+</code></pre></div>
+<h4 id="output_4">Output</h4>
+<ul>
+<li>Re-deployed <code>resolve-model-alias</code> policy fragment with the two aliases inlined as a static <code>JObject</code></li>
+<li>Access contract scoped to alias names (proves alias-name RBAC works without exposing underlying real models)</li>
+<li>Per-API report of <code>UAIG-*</code> headers showing alias → real-model resolution</li>
+<li>Distribution table for the weighted alias compared against the configured weights</li>
+<li>Filtered <code>GET /deployments</code> response showing aliases as first-class entries with <code>properties.capabilities.description</code></li>
+<li>403 negative-test confirmation that unauthorized models are blocked at the gateway</li>
+</ul>
+<hr />
+<h3 id="6-citadel-pii-processing-tests">6. Citadel PII Processing Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-pii-processing-tests.ipynb"><code>citadel-pii-processing-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Verify PII anonymization, deanonymization, and blocking capabilities</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After the Governance Hub is deployed with PII policy fragments</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_5">What It Does</h4>
+<p>This notebook creates two specialized access contracts to test PII processing. The first contract enables PII anonymization and deanonymization with state saving (audit logging to Event Hub). The second contract enables PII blocking, which rejects any request containing detected PII. Both contracts support built-in PII categories and custom regex patterns for domain-specific identifiers.</p>
+<h4 id="use-cases-tested">Use Cases Tested</h4>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Mode</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PII Masking</strong></td>
+<td>Anonymization / Deanonymization</td>
+<td>PII in requests is replaced with placeholders (e.g., <code>&lt;Person_0&gt;</code>), sent to the LLM, then restored in the response</td>
+</tr>
+<tr>
+<td><strong>PII Blocking</strong></td>
+<td>Detection + Rejection</td>
+<td>Requests containing PII are rejected with HTTP 400 and a list of detected PII categories</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pii-types-covered">PII Types Covered</h4>
+<ul>
+<li>Person names, email addresses, phone numbers</li>
+<li>Physical addresses, IBANs</li>
+<li>Credit card numbers (custom regex)</li>
+<li>Passport numbers (custom regex)</li>
+<li>Emirates ID (custom regex)</li>
+<li>Multiple PII types in a single request</li>
+</ul>
+<h4 id="steps_5">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, location, and Key Vault settings</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover APIs and supported models</td>
+</tr>
+<tr>
+<td>3.1</td>
+<td><strong>Define masking contract</strong> — Configure PII anonymization with state saving</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td><strong>Create masking policy</strong> — Generate policy XML with anonymization, deanonymization, and regex patterns</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td><strong>Deploy masking contract</strong> — Deploy via Bicep with generated parameters</td>
+</tr>
+<tr>
+<td>3.4</td>
+<td><strong>Retrieve masking API key</strong> — Get the subscription key for the masking product</td>
+</tr>
+<tr>
+<td>3.5</td>
+<td><strong>Test PII masking</strong> — Send 6 test payloads with various PII types and verify deanonymization</td>
+</tr>
+<tr>
+<td>4.1</td>
+<td><strong>Define blocking contract</strong> — Configure PII detection and blocking</td>
+</tr>
+<tr>
+<td>4.2</td>
+<td><strong>Create blocking policy</strong> — Generate policy XML that detects PII and returns HTTP 400</td>
+</tr>
+<tr>
+<td>4.3</td>
+<td><strong>Deploy blocking contract</strong> — Deploy via Bicep with generated parameters</td>
+</tr>
+<tr>
+<td>4.4</td>
+<td><strong>Retrieve blocking API key</strong> — Get the subscription key for the blocking product</td>
+</tr>
+<tr>
+<td>4.5</td>
+<td><strong>Test PII blocking</strong> — Send 8 test payloads (5 with PII, 3 without) and verify correct blocking/allowing</td>
+</tr>
+<tr>
+<td>Summary</td>
+<td><strong>Results overview</strong> — Aggregate pass/fail across both use cases</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td><strong>Delete test products</strong> — Optionally remove PII access contracts and generated files</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_5">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># PII detection settings (configured in policy XML)</span>
+<span class="c1"># - Confidence threshold: 0.75–0.8</span>
+<span class="c1"># - Entity exclusions: PersonType</span>
+<span class="c1"># - Custom regex: Credit cards, passport numbers, Emirates ID</span>
+</code></pre></div>
+<h4 id="output_5">Output</h4>
+<ul>
+<li>Deployed PII masking and blocking APIM products</li>
+<li>Test results for 14 PII test payloads</li>
+<li>Validation of custom regex pattern detection</li>
+<li>Pass/fail summary for both anonymization and blocking modes</li>
+</ul>
+<hr />
+<h3 id="7-citadel-unified-ai-api-tests">7. Citadel Unified AI API Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-unified-ai-api-tests.ipynb"><code>citadel-unified-ai-api-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Validate the Unified AI Wildcard API across multiple LLM providers and API patterns</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After the Governance Hub is deployed with the Unified AI API enabled</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_6">What It Does</h4>
+<p>This notebook validates the Unified AI Wildcard API (<code>/unified-ai</code>) that enables API pattern flexibility across multiple LLM providers. It deploys a test access contract, then tests Azure OpenAI, AI Foundry inference, and Gemini routing patterns, validates model discovery endpoints, verifies API key authentication, and runs a load test with throttling visualization.</p>
+<h4 id="api-patterns-tested">API Patterns Tested</h4>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Path</th>
+<th>Provider</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure OpenAI</strong></td>
+<td><code>/unified-ai/openai/deployments/{model}/chat/completions</code></td>
+<td>Azure OpenAI</td>
+</tr>
+<tr>
+<td><strong>Foundry Inference</strong></td>
+<td><code>/unified-ai/models/chat/completions</code></td>
+<td>AI Foundry</td>
+</tr>
+<tr>
+<td><strong>Gemini OpenAI</strong></td>
+<td><code>/unified-ai/v1beta/openai/chat/completions</code></td>
+<td>Google Gemini (optional)</td>
+</tr>
+<tr>
+<td><strong>Deployment Discovery</strong></td>
+<td><code>GET /unified-ai/deployments</code></td>
+<td>All providers</td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_6">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, location, and model names per backend</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover Unified AI API and retrieve supported models</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Deploy access contract</strong> — Create and deploy a test APIM product with model-scoped policy via Bicep</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Retrieve API key</strong> — Get the subscription key and build endpoint URLs</td>
+</tr>
+<tr>
+<td>Test 1</td>
+<td><strong>Model discovery</strong> — <code>GET /unified-ai/deployments</code> to list available models</td>
+</tr>
+<tr>
+<td>Test 2</td>
+<td><strong>Azure OpenAI pattern</strong> — Chat completion via OpenAI-compatible path; expects 200</td>
+</tr>
+<tr>
+<td>Test 3</td>
+<td><strong>Foundry inference pattern</strong> — Chat completion via inference path with model in body; expects 200</td>
+</tr>
+<tr>
+<td>Test 4</td>
+<td><strong>Deployment queries</strong> — Get existing deployment (200) and non-existent deployment (404)</td>
+</tr>
+<tr>
+<td>Test 5</td>
+<td><strong>Gemini pattern</strong> — Chat completion via Gemini OpenAI-compatible path (if configured)</td>
+</tr>
+<tr>
+<td>Test 6</td>
+<td><strong>API key authentication</strong> — Valid key (200), missing key (401)</td>
+</tr>
+<tr>
+<td>Test 7</td>
+<td><strong>Load test</strong> — 30-second burst requests with throttling visualization</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td><strong>Delete test products</strong> — Optionally remove the access contract product</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_6">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Model configuration per backend</span>
+<span class="n">openai_model</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o&quot;</span>
+<span class="n">foundry_inference_model</span> <span class="o">=</span> <span class="s2">&quot;Mistral-Large-3&quot;</span>
+<span class="n">gemini_model</span> <span class="o">=</span> <span class="s2">&quot;gemini-2.5-flash-lite&quot;</span>
+
+<span class="c1"># Test toggles</span>
+<span class="n">test_gemini</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Set True if Gemini backend is configured</span>
+
+<span class="c1"># Load test</span>
+<span class="n">test_duration</span> <span class="o">=</span> <span class="mi">30</span>   <span class="c1"># Seconds</span>
+</code></pre></div>
+<h4 id="output_6">Output</h4>
+<ul>
+<li>Deployed test access contract with model-scoped policy</li>
+<li>Model discovery results from <code>GET /deployments</code></li>
+<li>Response validation across Azure OpenAI, Foundry, and Gemini patterns</li>
+<li>API key authentication enforcement</li>
+<li>Load test visualization (bar chart with 200/429 status codes over time)</li>
+</ul>
+<hr />
+<h3 id="8-citadel-jwt-authentication-tests">8. Citadel JWT Authentication Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-jwt-authentication-tests.ipynb"><code>citadel-jwt-authentication-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Validate JWT-based authentication and role-based access control (RBAC) across all LLM API endpoints</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After the Governance Hub is deployed with JWT configuration and Entra ID app registration</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_7">What It Does</h4>
+<p>This notebook tests dual authentication modes (API Key + JWT Bearer token) and role-based authorization using Entra ID app roles. It supports both service-to-service (client credentials) and interactive user (device code flow) token acquisition, and validates the unified <code>security-handler</code> fragment across all three API endpoint flavors (Azure OpenAI, Universal LLM, Unified AI).</p>
+<h4 id="use-cases-tested_1">Use Cases Tested</h4>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Mode</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>JWT-Enforced Access</strong></td>
+<td>API Key + JWT</td>
+<td>Requires both a valid subscription key and a valid JWT Bearer token</td>
+</tr>
+<tr>
+<td><strong>Role-Enforced Access</strong></td>
+<td>API Key + JWT + App Role</td>
+<td>Additionally requires a specific app role (e.g., <code>Models.Read</code>) in the JWT</td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_7">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group, location, Entra ID tenant/client IDs, and model settings</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover all 3 API endpoints and retrieve supported models</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Acquire JWT (Client Credentials)</strong> — Obtain a JWT token via client credentials grant from Entra ID</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Acquire JWT (Device Code Flow)</strong> — Optional interactive sign-in via MSAL for user token acquisition</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Inspect JWT tokens</strong> — Decode and display token header, payload, roles, and lifetime</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Select active token</strong> — Choose between client credentials or device flow token for tests</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Deploy JWT access contract</strong> — Create and deploy a JWT-enforced APIM product via Bicep</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Retrieve API key</strong> — Get the subscription key for the JWT-enforced product</td>
+</tr>
+<tr>
+<td>Test 1</td>
+<td><strong>API Key + JWT (Success)</strong> — Send requests with both credentials to all endpoints; expects 200</td>
+</tr>
+<tr>
+<td>Test 2</td>
+<td><strong>API Key Only (Fail)</strong> — Send requests without JWT; expects 401</td>
+</tr>
+<tr>
+<td>Test 3</td>
+<td><strong>Invalid JWT (Fail)</strong> — Send requests with invalid JWT; expects 401</td>
+</tr>
+<tr>
+<td>Test 4</td>
+<td><strong>JWT Only (Fail)</strong> — Send requests without API key; expects 401/403</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Deploy role-enforced contract</strong> — Create APIM product requiring <code>Models.Read</code> app role</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Retrieve role API key</strong> — Get the subscription key for the role-enforced product</td>
+</tr>
+<tr>
+<td>Test 5</td>
+<td><strong>Correct Role (Success)</strong> — Send requests with JWT containing <code>Models.Read</code>; expects 200</td>
+</tr>
+<tr>
+<td>Test 6</td>
+<td><strong>Missing Role (Fail)</strong> — Send requests without required role; expects 403</td>
+</tr>
+<tr>
+<td>Test 7</td>
+<td><strong>API Key Only on Role Product (Fail)</strong> — Send requests without JWT to role-enforced product; expects 401</td>
+</tr>
+<tr>
+<td>Summary</td>
+<td><strong>Results overview</strong> — Aggregate PASS/FAIL across all 7 tests and 4 endpoints</td>
+</tr>
+<tr>
+<td>Cleanup</td>
+<td><strong>Delete test products</strong> — Optionally remove JWT and role-enforced products</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_7">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Entra ID / OAuth</span>
+<span class="n">entra_tenant_id</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">entra_client_id</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">entra_client_secret</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Model and API versions</span>
+<span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;gpt-4.1&quot;</span>
+<span class="n">openai_api_version</span> <span class="o">=</span> <span class="s2">&quot;2024-12-01-preview&quot;</span>
+
+<span class="c1"># Token source: &quot;client_credentials&quot; or &quot;device_flow&quot;</span>
+<span class="n">token_source</span> <span class="o">=</span> <span class="s2">&quot;client_credentials&quot;</span>
+
+<span class="c1"># Role configuration</span>
+<span class="n">requiredRoles</span> <span class="o">=</span> <span class="s2">&quot;Models.Read&quot;</span>
+</code></pre></div>
+<h4 id="output_7">Output</h4>
+<ul>
+<li>Deployed JWT-enforced and role-enforced APIM products</li>
+<li>Test results for 7 scenarios across 4 API endpoints</li>
+<li>Decoded JWT token inspection (claims, roles, lifetime)</li>
+<li>PASS/FAIL summary table with overall pass rate</li>
+</ul>
+<hr />
+<h3 id="9-extended-providers-backend-onboarding-aws-bedrock-gcp-gemini-anthropic-claude">9. Extended Providers Backend Onboarding (AWS Bedrock + GCP Gemini + Anthropic Claude)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="llm-backend-onboarding-extended-providers-runner.ipynb"><code>llm-backend-onboarding-extended-providers-runner.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Onboard three non-Microsoft-Foundry LLM backends and validate native + OpenAI-compatible routing across both LLM API surfaces</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After backend onboarding (notebook 1). This notebook <strong>extends</strong> notebook 1 — it keeps the Foundry pipeline and adds the non-Azure backends.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_8">What It Does</h4>
+<p>This notebook extends the base LLM backend onboarding flow with three non-Azure backends authenticated by simple API keys (no AWS SigV4 or Workload Identity Federation required for validation). It generates a <code>.bicepparam</code> file with the new backend definitions, re-deploys the onboarding Bicep, provisions an access contract that allows every onboarded model, then validates each backend through its native API surface <strong>and</strong> its OpenAI-compatible surface. Each test cell self-skips when a provider's credentials are still <code>REPLACE_*</code>, so partial configurations never produce failures.</p>
+<h4 id="backends-onboarded">Backends Onboarded</h4>
+<table>
+<thead>
+<tr>
+<th>Backend type</th>
+<th>Auth</th>
+<th>Native path prefix</th>
+<th>OpenAI-compat surface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aws-bedrock</code></td>
+<td><code>api-key-bearer</code> (Bedrock API key)</td>
+<td><code>/unified-ai/bedrock/model/{modelId}/converse</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>aws-bedrock-mantle</code></td>
+<td><code>api-key-bearer</code></td>
+<td>—</td>
+<td><code>/models/chat/completions</code> and <code>/unified-ai/v1/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>gemini</code></td>
+<td><code>api-key-gemini</code> (<code>x-goog-api-key</code>)</td>
+<td><code>/unified-ai/gemini/v1beta/models/{model}:generateContent</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>gemini-openai</code></td>
+<td><code>api-key-bearer</code></td>
+<td>—</td>
+<td><code>/models/chat/completions</code> and <code>/unified-ai/v1/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>anthropic</code></td>
+<td><code>api-key-anthropic</code> (<code>x-api-key</code> + <code>anthropic-version</code>)</td>
+<td><code>/unified-ai/claude/v1/messages</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h4 id="api-surfaces-validated">API Surfaces Validated</h4>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Inbound path</th>
+<th>Surface</th>
+<th>Backends covered</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Universal LLM</strong></td>
+<td><code>/models/chat/completions</code></td>
+<td>OpenAI-compat</td>
+<td>Foundry, Bedrock-Mantle, Gemini-OpenAI</td>
+</tr>
+<tr>
+<td><strong>Unified AI</strong></td>
+<td><code>/unified-ai/v1/chat/completions</code></td>
+<td>OpenAI-compat</td>
+<td>Foundry, Bedrock-Mantle, Gemini-OpenAI</td>
+</tr>
+<tr>
+<td><strong>Unified AI</strong></td>
+<td><code>/unified-ai/bedrock/model/{modelId}/converse</code></td>
+<td>Native Bedrock Converse</td>
+<td><code>aws-bedrock</code></td>
+</tr>
+<tr>
+<td><strong>Unified AI</strong></td>
+<td><code>/unified-ai/gemini/v1beta/models/{model}:generateContent</code></td>
+<td>Native Gemini</td>
+<td><code>gemini</code></td>
+</tr>
+<tr>
+<td><strong>Unified AI</strong></td>
+<td><code>/unified-ai/claude/v1/messages</code></td>
+<td>Native Anthropic Messages</td>
+<td><code>anthropic</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="steps_8">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Configure resource group and per-provider credentials (inline secret or Key Vault URI); build the backend definitions and opt-in model aliases</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Connect to the existing Governance Hub deployment</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Extract current backends</strong> — Retrieve existing backend pools and routing configuration</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Discover managed identity</strong> — Auto-detect the APIM user-assigned managed identity</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Generate parameter file</strong> — Create a <code>.bicepparam</code> with the new backends, auth config, and aliases</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Deploy</strong> — Re-run the onboarding Bicep to add backends, pools, and policy fragments</td>
+</tr>
+<tr>
+<td>7–8</td>
+<td><strong>Verify deployment</strong> — Confirm backends, pools, and <code>get-available-models</code> fragment</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Provision access contract</strong> — Deploy an APIM product allowing every onboarded model + alias</td>
+</tr>
+<tr>
+<td>Test</td>
+<td><strong>Validate routing</strong> — OpenAI-compat (Universal LLM + Unified AI), native Bedrock / Gemini / Anthropic, and model-alias scenarios</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_8">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">init_from_azd</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># keeps REPLACE_* provider placeholders; set True to merge azd Foundry backends</span>
+
+<span class="n">governance_hub_resource_group</span> <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+<span class="n">location</span>                      <span class="o">=</span> <span class="s2">&quot;REPLACE&quot;</span>
+
+<span class="c1"># Provider credentials — leave as REPLACE_* to skip a backend&#39;s tests</span>
+<span class="n">aws_bedrock_region</span>           <span class="o">=</span> <span class="s2">&quot;eu-north-1&quot;</span>
+<span class="n">aws_bedrock_native_inline</span>    <span class="o">=</span> <span class="s2">&quot;REPLACE_AWS_BEDROCK_BEARER_VALUE&quot;</span>   <span class="c1"># full &quot;Bearer sk-...&quot;</span>
+<span class="n">gemini_native_inline</span>         <span class="o">=</span> <span class="s2">&quot;REPLACE_GEMINI_RAW_KEY&quot;</span>            <span class="c1"># raw key for x-goog-api-key</span>
+<span class="n">anthropic_inline</span>             <span class="o">=</span> <span class="s2">&quot;REPLACE_ANTHROPIC_RAW_KEY&quot;</span>         <span class="c1"># raw key for x-api-key</span>
+<span class="n">anthropic_version</span>            <span class="o">=</span> <span class="s2">&quot;2023-06-01&quot;</span>
+
+<span class="c1"># Optional Key Vault to hold provider secrets (recommended over inline values)</span>
+<span class="n">key_vault_name</span> <span class="o">=</span> <span class="s2">&quot;kv-REPLACE&quot;</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Secret format note:</strong> APIM substitutes <code>{{ namedValueKey }}</code> on a Backend resource only when it is the entire header value (no concatenation). Bearer-auth secrets must therefore store the <strong>complete</strong> header value (<code>Bearer sk-...</code>), while direct-key headers (<code>x-api-key</code>, <code>x-goog-api-key</code>) store the raw key. A provider with both a native and an OpenAI-compat surface (e.g. Gemini) needs two separate secrets.</p>
+</blockquote>
+<h4 id="output_8">Output</h4>
+<ul>
+<li>Three native + two OpenAI-compat backends onboarded alongside the existing Foundry backends</li>
+<li>Access contract allowing every onboarded model and alias</li>
+<li>Per-surface validation results (native and OpenAI-compat) with <code>UAIG-*</code> debug headers</li>
+<li>Optional model-alias scenarios (single-cloud weighted, cross-cloud OpenAI-compat, native Anthropic) that self-skip when members are unavailable</li>
+</ul>
+<hr />
+<h3 id="10-session-affinity-tests">10. Session Affinity Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-session-affinity-tests.ipynb"><code>citadel-session-affinity-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Validate backend-pool <strong>session affinity</strong> (sticky routing) for the stateful OpenAI <strong>Responses API</strong></td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After backend onboarding (notebook 1) and with the Unified AI API imported. Self-contained — creates its own access contract.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_9">What It Does</h4>
+<p>When a model is served by a <strong>pool</strong> (2+ backends) and flagged <code>sessionAwareModel: true</code>, APIM emits a <code>Set-Cookie: ai-gateway-affinity=…</code> header and routes any request that replays the cookie back to the <strong>same</strong> backend — required for the stateful Responses API, where a follow-up call (<code>previous_response_id</code>) must reach the backend that holds the conversation state.</p>
+<p>The notebook enables session affinity for the target model (regenerating the LLM backend onboarding into a <code>-local.bicepparam</code> with <code>sessionAwareModel: true</code> + <code>configureSessionAffinity</code>), provisions an access contract scoped to that model, then drives <strong>4 sessions × 3 requests</strong> with the <strong>OpenAI SDK</strong> over a per-session <strong><code>httpx</code> cookie jar</strong>. The first request in each session creates a response id; the two follow-ups reuse it. It visualizes the response id, responding backend, and session cookie for every request, and asserts that each session stuck to one backend.</p>
+<h4 id="steps_9">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Set <code>target_model</code> (default <code>gpt-5.2</code>), <code>num_sessions</code>, <code>requests_per_session</code>, and load backends from <code>azd</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client</strong> — Discover the Unified AI API, gateway URL, and managed identity</td>
+</tr>
+<tr>
+<td>2B</td>
+<td><strong>Enable session affinity</strong> — Mark <code>target_model</code> <code>sessionAwareModel: true</code> on every backend that serves it and redeploy the onboarding Bicep (<code>-local.bicepparam</code>)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Provision access contract</strong> — Deploy an APIM product/subscription scoped to the target model with <code>enableResponseHeaders</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Retrieve API key</strong> — Pull the contract's subscription key and build the OpenAI base URL (<code>/unified-ai/openai</code>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Session harness</strong> — One <code>httpx</code> cookie jar + OpenAI client per session; capture headers/id/cookie via <code>with_raw_response</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Run 4 × 3</strong> — Establish the sessions and requests</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Visualize</strong> — Per-request table of response id, backend (<code>UAIG-Backend</code> / <code>x-ms-region</code>), and affinity cookie</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Assertions</strong> — Response id reused, one backend per session, affinity cookie maintained</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Summary table</strong> — Per-session response id, backend, and cookie</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>Cleanup</strong> <em>(disabled)</em> — Delete only the access contract product; the backend onboarding is left intact</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_9">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">target_model</span> <span class="o">=</span> <span class="s2">&quot;gpt-5.2&quot;</span>     <span class="c1"># pooled across 2+ backends AND supports the stateful Responses API</span>
+<span class="n">num_sessions</span> <span class="o">=</span> <span class="mi">4</span>             <span class="c1"># independent sticky sessions</span>
+<span class="n">requests_per_session</span> <span class="o">=</span> <span class="mi">3</span>     <span class="c1"># 1 create + 2 follow-ups reusing the first response id</span>
+<span class="n">run_backend_onboarding</span> <span class="o">=</span> <span class="kc">True</span>    <span class="c1"># enable sessionAwareModel for target_model via the onboarding Bicep</span>
+<span class="n">cleanup_delete_contract</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># set True to delete the access contract at the end (never the backends)</span>
+</code></pre></div>
+<h4 id="output_9">Output</h4>
+<ul>
+<li>The target model onboarded with session affinity (pool emits the <code>ai-gateway-affinity</code> cookie)</li>
+<li>An access contract (product + subscription) scoped to the target model</li>
+<li>A per-request visualization and a per-session summary table (response id, backend, cookie)</li>
+<li>PASS/FAIL assertions confirming each session stuck to one backend with a maintained affinity cookie</li>
+</ul>
+<hr />
+<h3 id="11-gateway-alerting-tests">11. Gateway Alerting Tests</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Notebook</strong></td>
+<td><a href="citadel-alerting-tests.ipynb"><code>citadel-alerting-tests.ipynb</code></a></td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Trigger and validate the gateway's <strong>comprehensive alerting</strong> end-to-end by forcing <strong>two</strong> distinct events (throttling + quota-exceeded) and wiring Azure Monitor metric alerts</td>
+</tr>
+<tr>
+<td><strong>Run this</strong></td>
+<td>After backend onboarding (notebook 1). Self-contained — creates its own restrictive access contract and alert rules.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="what-it-does_10">What It Does</h4>
+<p>The <a href="../bicep/infra/modules/apim/policies/frag-raise-alert-events.xml"><code>raise-alert-events</code></a> policy fragment emits a single <code>AI Gateway Alert</code> custom metric (namespace <code>ai-gateway-alerts</code>, sliced by <code>alertType</code>) for throttling, quota-exceeded, backend, authorization, content-safety, and PII events. This notebook proves the path works by <em>actually firing</em> two alerts from the two <code>llm-token-limit</code> enforcement dimensions.</p>
+<p>It provisions a deliberately <strong>restrictive access contract</strong> (low <code>tokens-per-minute</code> <strong>and</strong> small <code>token-quota</code>), <strong>auto-selects a <code>gpt</code>-family model</strong> (excluding image / embedding / audio / non-Azure cloud models, with an override option), then drives load in two phases:</p>
+<ul>
+<li><strong>Phase 1 — throttling (429):</strong> a concurrent burst overshoots the per-minute token rate (TPM) → <code>throttling</code> alert metric.</li>
+<li><strong>Phase 2 — quota-exceeded (403):</strong> sustained load exhausts the long-term <code>token-quota</code> (<code>AITokenQuotaExceeded</code>) → <code>quota-exceeded</code> alert metric.</li>
+</ul>
+<p>It then deploys the <a href="../bicep/infra/app-insights-alert/README.md"><code>app-insights-alert</code></a> Bicep (one metric alert rule per <code>alertType</code> + an email action group, scoped to the probe contract) and verifies both metrics were emitted and both alert rules were created.</p>
+<h4 id="steps_10">Steps</h4>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><strong>Initialize variables</strong> — Governance hub, model-selection filters, alert email, restrictive capacity, and demo-tuned alert thresholds</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>Verify Azure CLI</strong> — Confirm authentication and subscription context</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Initialize APIM Client &amp; auto-select model</strong> — Read supported models and pick a <code>gpt</code>-family chat model (or honor <code>model_name_override</code>)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Define + deploy the restrictive contract</strong> — Low-TPM + low-quota access contract whose dynamic policy opts into <code>alertOnThrottling</code> / <code>alertOnAuthFailure</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Discover App Insights &amp; deploy alerts</strong> — Resolve the APIM Application Insights component and deploy the throttling + quota-exceeded rules + email action group</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Phase 1 — throttling</strong> — Burst concurrent requests to force HTTP 429</td>
+</tr>
+<tr>
+<td>5.1</td>
+<td><strong>Phase 2 — quota-exceeded</strong> — Sustained load until the token-quota is exhausted (HTTP 403)</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Verify</strong> — Query the <code>AI Gateway Alert</code> metric split by <code>alertType</code> and confirm both alert rules exist</td>
+</tr>
+<tr>
+<td>🧹</td>
+<td><strong>Cleanup</strong> <em>(disabled)</em> — Delete the alert rules, action group, probe contract, and generated parameter files</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-configuration_10">Key Configuration</h4>
+<div class="highlight"><pre><span></span><code><span class="n">model_name_override</span>      <span class="o">=</span> <span class="s2">&quot;&quot;</span>      <span class="c1"># empty = auto-select a gpt-family model</span>
+<span class="n">alert_email_address</span>      <span class="o">=</span> <span class="s2">&quot;REPLACE@example.com&quot;</span>   <span class="c1"># who receives the alert</span>
+<span class="n">probe_tokens_per_minute</span>  <span class="o">=</span> <span class="mi">500</span>     <span class="c1"># low TPM so a burst throttles (429)</span>
+<span class="n">probe_token_quota</span>        <span class="o">=</span> <span class="mi">1200</span>    <span class="c1"># small hourly quota so sustained load exhausts it (403)</span>
+<span class="n">quota_max_seconds</span>        <span class="o">=</span> <span class="mi">360</span>     <span class="c1"># Phase 2 time budget to reach the 403</span>
+</code></pre></div>
+<h4 id="output_10">Output</h4>
+<ul>
+<li>A restrictive access contract (APIM product + subscription) that throttles and then exhausts its quota</li>
+<li>Phase 1 producing HTTP 429 (<code>throttling</code>) and Phase 2 producing HTTP 403 (<code>quota-exceeded</code>)</li>
+<li>Azure Monitor metric alert rules (throttling + quota-exceeded) + an email action group (deployed via <code>app-insights-alert</code>)</li>
+<li>Verification that the <code>AI Gateway Alert</code> metric was emitted for both alertTypes and both rules are configured</li>
+<li>Alert emails once Azure Monitor next evaluates the crossed thresholds</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> Custom metrics can take ~3 minutes to first register, and metric alerts evaluate on a schedule (minimum <code>PT1M</code>), so the notification is not instantaneous.</p>
+</blockquote>
+<hr />
+<h2 id="recommended-execution-order">Recommended Execution Order</h2>
+<blockquote>
+<p><strong>Strongly recommended baseline:</strong> run notebooks <strong>1 → 4</strong> in order on every new Citadel Governance Hub deployment. Steps <strong>5 → 11</strong> are optional, scenario-specific validations that can be run independently afterwards.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>┌──────────────────────────────────────────────┐
+│  1. llm-backend-onboarding-runner            │  ⭐ Onboard LLM backends &amp; routing
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  2. citadel-universal-llm-api-all-models-    │  ⭐ Smoke-test EVERY onboarded model
+│     tests                                    │     (chat / embeddings / Responses API)
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  3. citadel-access-contracts-tests           │  ⭐ Create access contracts &amp; load test
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  4. citadel-agent-frameworks-tests           │  ⭐ Test agent frameworks
+│                                              │     (uses contracts from step 3)
+└──────────────┬───────────────────────────────┘
+               │   ── End of strongly recommended baseline ──
+               ▼
+┌──────────────────────────────────────────────┐
+│  5. citadel-model-aliases-tests              │  Optional: alias routing
+│                                              │     (priority + weighted strategies)
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  6. citadel-pii-processing-tests             │  Optional: PII masking &amp; blocking
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  7. citadel-unified-ai-api-tests             │  Optional: Unified AI wildcard API
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  8. citadel-jwt-authentication-tests         │  Optional: JWT auth &amp; RBAC
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│  9. llm-backend-onboarding-extended-         │  Optional: AWS Bedrock + GCP Gemini +
+│     providers-runner                         │     Anthropic Claude (native + OpenAI-compat)
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│ 10. citadel-session-affinity-tests           │  Optional: sticky routing for the stateful
+│                                              │     Responses API (per-session cookie jar)
+└──────────────┬───────────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────────┐
+│ 11. citadel-alerting-tests                   │  Optional: trigger throttling &amp; wire
+│                                              │     Azure Monitor alerts (email action group)
+└──────────────────────────────────────────────┘
+</code></pre></div>
+<blockquote>
+<p><strong>Note:</strong> Notebooks 5–11 create their own access contracts and can be run independently after backend onboarding. Notebook 5 re-deploys the LLM backend onboarding Bicep with <code>modelAliases</code> populated (the <code>resolve-model-alias</code> fragment is regenerated; full cross-API coverage requires the Unified AI API to be imported), notebook 6 requires PII policy fragments (<code>pii-anonymization</code>, <code>pii-deanonymization</code>, <code>pii-state-saving</code>), notebook 7 requires the Unified AI API (<code>unified-ai</code>) to be imported into APIM, notebook 8 requires JWT configuration plus an Entra ID app registration, notebook 9 extends backend onboarding with non-Azure providers (native <code>/bedrock/**</code>, <code>/gemini/**</code>, and <code>/claude/**</code> routing requires the Unified AI API to be imported), and notebook 10 re-deploys the onboarding Bicep to enable <code>sessionAwareModel</code> for the target model and requires the Unified AI API for the Responses API, and notebook 11 creates a restrictive-TPM access contract and deploys Azure Monitor alert rules (<code>app-insights-alert</code>) to trigger and validate throttling alerts.</p>
+</blockquote>
+<h2 id="shared-utilities">Shared Utilities</h2>
+<p>All notebooks import shared helper modules from the <a href="../shared/"><code>../shared/</code></a> directory:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>utils.py</code></td>
+<td>CLI command runner, formatted output helpers (<code>print_ok</code>, <code>print_error</code>, <code>print_info</code>)</td>
+</tr>
+<tr>
+<td><code>apimtools.py</code></td>
+<td><code>APIMClientTool</code> class for APIM discovery, API key retrieval, policy fragment parsing, and backend management</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cleanup">Cleanup</h2>
+<p>Each notebook includes an optional cleanup cell at the end that removes the APIM products and subscriptions created during testing. Cleanup is controlled by a <code>cleanup_enabled</code> flag (default: <code>True</code>).</p>
+<blockquote>
+<p><strong>Important:</strong> Cleanup does not remove Azure Key Vault secrets, Foundry connections, or LLM backend configurations. Those resources are managed separately.</p>
+</blockquote>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az account show</code> fails</td>
+<td>Run <code>az login</code> and set the correct subscription with <code>az account set --subscription &lt;id&gt;</code></td>
+</tr>
+<tr>
+<td>APIM Client Tool initialization fails</td>
+<td>Verify the <code>governance_hub_resource_group</code> is correct and your identity has Reader access</td>
+</tr>
+<tr>
+<td>Model not found in backend pool</td>
+<td>Run the backend onboarding notebook to register the model</td>
+</tr>
+<tr>
+<td>Key Vault access denied</td>
+<td>Ensure your identity has <code>Key Vault Secrets User</code> role on the Key Vault</td>
+</tr>
+<tr>
+<td>Foundry connection fails</td>
+<td>Verify the Foundry account, project, and connection names are correct</td>
+</tr>
+<tr>
+<td>PII detection not working</td>
+<td>Confirm the Azure AI Language Service is deployed and the managed identity has access</td>
+</tr>
+<tr>
+<td>429 Throttled responses</td>
+<td>Expected during load testing — the token bucket policy is working correctly</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -56,7 +56,7 @@ nav:
           - "Building Accelerators (Submodule Pattern)": ai-foundry-lz/bicep/accelerator-pattern.md
         - Terraform: ai-foundry-lz/terraform/readme.md
         - Portal: ai-foundry-lz/portal/readme.md
-  - AI Gateway Landing Zone:
+  - AI Gateway Landing Zone: ai-gateway-lz/bicep/readme.md
   - AI Container Landing Zone: ai-container-lz/readme.md
 
 

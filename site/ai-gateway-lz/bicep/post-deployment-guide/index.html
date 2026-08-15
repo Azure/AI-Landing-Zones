@@ -1,0 +1,1254 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🛠️ Post-Deployment Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#post-deployment-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🛠️ Post-Deployment Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Deployment Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-onboard-llm-backends-backend-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Onboard LLM Backends (Backend Contract)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-onboard-use-cases-access-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Onboard Use Cases (Access Contract)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-enable-entra-id-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Enable Entra ID Authentication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-activate-power-bi-usage-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Activate Power BI Usage Reporting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-go-multi-region-cosmos-db-multi-write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Go Multi-Region (Cosmos DB Multi-Write)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-upgrade-the-gateway-to-a-newer-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Upgrade the Gateway to a Newer Release
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="post-deployment-guide">🛠️ Post-Deployment Guide</h1>
+<p>Once the AI Citadel Governance Hub landing zone is provisioned (see the <a href="../full-deployment-guide/">Full Deployment Guide</a>), the gateway is running but <strong>not yet serving governed traffic</strong>. This guide covers the <strong>day-2 activities</strong> that turn a fresh landing zone into a production-ready governance hub, and how to <strong>upgrade an existing gateway</strong> to newer accelerator releases without re-provisioning.</p>
+<blockquote>
+<p><strong>Key principle:</strong> the primary deployment (<code>bicep/infra/main.bicep</code>) is for the <strong>initial implementation only</strong>. All configuration below is applied through <strong>independent submodules</strong> and, for version upgrades, through the <strong><a href="../bicep/infra/apim-gateway-upgrade/README.md">APIM Gateway Upgrade</a></strong> submodule — never by re-running <code>main.bicep</code>. See <a href="../release-version-management/">Release Version Management</a>.</p>
+</blockquote>
+<hr />
+<h2 id="contents">📖 Contents</h2>
+<ol>
+<li><a href="#1-onboard-llm-backends-backend-contract">Onboard LLM Backends (Backend Contract)</a></li>
+<li><a href="#2-onboard-use-cases-access-contract">Onboard Use Cases (Access Contract)</a></li>
+<li><a href="#3-enable-entra-id-authentication">Enable Entra ID Authentication</a></li>
+<li><a href="#4-activate-power-bi-usage-reporting">Activate Power BI Usage Reporting</a></li>
+<li><a href="#5-go-multi-region-cosmos-db-multi-write">Go Multi-Region (Cosmos DB Multi-Write)</a></li>
+<li><a href="#6-upgrade-the-gateway-to-a-newer-release">Upgrade the Gateway to a Newer Release</a></li>
+<li><a href="#7-validation">Validation</a></li>
+<li><a href="#8-related-guides">Related Guides</a></li>
+</ol>
+<hr />
+<h2 id="post-deployment-checklist">Post-Deployment Checklist</h2>
+<p>Work top-to-bottom. Steps 1–2 are <strong>required</strong> to serve traffic; the rest are enabled as needed.</p>
+<ul>
+<li>[ ] <strong>1. Backends onboarded</strong> — LLM backends, pools, routing, and circuit breakers configured → <a href="../bicep/infra/llm-backend-onboarding/README.md">Backend Contract</a></li>
+<li>[ ] <strong>2. Use cases onboarded</strong> — APIM products, subscriptions/keys, and per-use-case policies → <a href="../bicep/infra/citadel-access-contracts/README.md">Access Contract</a></li>
+<li>[ ] <strong>3. Authentication enabled</strong> <em>(optional)</em> — Entra ID JWT layered on top of API keys → <a href="../bicep/infra/entra-id-setup/README.md">Entra ID Setup</a></li>
+<li>[ ] <strong>4. Usage reporting activated</strong> <em>(recommended)</em> — Power BI dashboard connected to Cosmos DB → <a href="../power-bi-dashboard/">Power BI Dashboard</a></li>
+<li>[ ] <strong>5. Multi-region linked</strong> <em>(if global)</em> — Cosmos DB multi-write across regions → <a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md">Cosmos Global Sync</a></li>
+<li>[ ] <strong>6. Gateway upgraded</strong> <em>(as releases ship)</em> — new policies/APIs/backends applied in place → <a href="../bicep/infra/apim-gateway-upgrade/README.md">APIM Gateway Upgrade</a></li>
+</ul>
+<blockquote>
+<p>All submodules use versioned Bicep parameter files (<code>.bicepparam</code>) and are DevOps/CI-CD friendly. Keep customized copies under source control, separate from the accelerator's default files.</p>
+</blockquote>
+<hr />
+<h2 id="1-onboard-llm-backends-backend-contract">1. Onboard LLM Backends (Backend Contract)</h2>
+<p><strong>What:</strong> Register the actual LLM endpoints (Microsoft Foundry, Azure OpenAI, Amazon Bedrock, and other providers) the gateway routes to, and define load-balanced <strong>pools</strong>, <strong>failover</strong>, and <strong>circuit breakers</strong> — all as declarative configuration, without editing APIM policies.</p>
+<p><strong>Why first:</strong> an access contract can only grant use cases access to <strong>models/pools that already exist</strong>. Onboard backends before use cases.</p>
+<p><strong>How:</strong></p>
+<ol>
+<li>Edit the backend configuration <code>.bicepparam</code> (<code>llmBackendConfig</code>) — see the <a href="../bicep/infra/llm-backend-onboarding/README.md">Backend Contract README</a>.</li>
+<li>Ensure APIM's user-assigned managed identity has the required roles on each backend:<ul>
+<li><code>Cognitive Services OpenAI User</code> for Azure OpenAI</li>
+<li><code>Cognitive Services User</code> for Microsoft Foundry</li>
+</ul>
+</li>
+<li>Deploy the <code>llm-backend-onboarding</code> submodule.</li>
+</ol>
+<p>This also refreshes the <strong><code>backend-contract</code></strong> policy fragment, so the runtime endpoint <code>GET /version/backend-contract</code> immediately reflects the live routing configuration (see <a href="../release-version-management/#backend-contract-endpoint">Backend Contract Endpoint</a>).</p>
+<blockquote>
+<p><strong>Resiliency is configured here.</strong> Circuit breaker, session affinity, and failover defaults are applied during onboarding. For tuning guidance (per-backend overrides, alias fallback, session-aware models), see the <a href="../resiliency-guide/">Resiliency Guide</a>.</p>
+</blockquote>
+<p>📘 Module: <a href="../bicep/infra/llm-backend-onboarding/README.md"><code>bicep/infra/llm-backend-onboarding</code></a> · Concepts: <a href="../llm-access-guide/">LLM Access Guide</a></p>
+<hr />
+<h2 id="2-onboard-use-cases-access-contract">2. Onboard Use Cases (Access Contract)</h2>
+<p><strong>What:</strong> Create a governed <strong>APIM product</strong> per use case (<code>&lt;serviceCode&gt;-&lt;BU&gt;-&lt;UseCase&gt;-&lt;ENV&gt;</code>) with an auto-generated <strong>subscription key</strong>, attached APIs, and per-use-case policies (allowed models/pools, JWT requirement, PII, throttling, usage dimensions). Optionally stores the endpoint/key in <strong>Key Vault</strong> and creates a <strong>Microsoft Foundry connection</strong> for agents.</p>
+<p><strong>How:</strong></p>
+<ol>
+<li>Define the use case(s) in an access contract <code>.bicepparam</code> and (optionally) a policy <code>.xml</code> — see the <a href="../bicep/infra/citadel-access-contracts/README.md">Access Contract README</a>.</li>
+<li>Set access controls per product (e.g., <code>allowedModels</code>, <code>allowedBackendPools</code>, <code>jwtAuth.enabled</code>).</li>
+<li>Deploy the <code>citadel-access-contracts</code> submodule; distribute the generated API key (or Key Vault reference) to the consuming team.</li>
+</ol>
+<blockquote>
+<p><strong>Business continuity option.</strong> A single access contract can be <strong>mirrored across additional gateways, Key Vaults, and Foundry instances</strong> while <strong>reusing the same subscription <code>api-key</code></strong> — ideal behind a global load balancer. See <a href="../bicep/infra/citadel-access-contracts/access-contract-resiliency-guide.md">Access Contract resiliency</a> and the <a href="../business-continuity-dr-guide/">BC/DR Guide</a>.</p>
+</blockquote>
+<p>📘 Module: <a href="../bicep/infra/citadel-access-contracts/README.md"><code>bicep/infra/citadel-access-contracts</code></a></p>
+<hr />
+<h2 id="3-enable-entra-id-authentication">3. Enable Entra ID Authentication</h2>
+<p><strong>What:</strong> Layer <strong>Microsoft Entra ID (JWT)</strong> authentication on top of the always-required API key. When enabled, APIM validates a JWT Bearer token before routing to backends.</p>
+<p><strong>How (standalone — no redeployment of the landing zone):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>bicep/infra/entra-id-setup
+pwsh<span class="w"> </span>./setup.ps1
+</code></pre></div>
+<p>The script creates the Entra ID app registration + service principal, stores a client secret in Key Vault (<code>ENTRA-APP-CLIENT-SECRET</code>), and <strong>directly configures the APIM JWT named values</strong> (<code>JWT-TenantId</code>, <code>JWT-AppRegistrationId</code>, <code>JWT-Issuer</code>, <code>JWT-OpenIdConfigUrl</code>). APIM is JWT-ready immediately afterward.</p>
+<p><strong>Prerequisites:</strong> deployer needs <code>Application.ReadWrite.All</code> (or Application Developer role), <code>Key Vault Secrets Officer</code> on the hub Key Vault, and <code>API Management Service Contributor</code> on APIM. Key Vault public network access may need to be temporarily enabled to run the script.</p>
+<p>JWT is then <strong>enforced per use case</strong> by setting <code>jwtAuth.enabled: true</code> in the relevant access contract (Step 2).</p>
+<p>📘 Module: <a href="../bicep/infra/entra-id-setup/README.md"><code>bicep/infra/entra-id-setup</code></a> · Concepts: <a href="../entraid-auth-validation/">Entra ID Authentication</a> · <a href="../jwt-client-identity-permissions/">JWT Client Identity &amp; Permissions</a></p>
+<hr />
+<h2 id="4-activate-power-bi-usage-reporting">4. Activate Power BI Usage Reporting</h2>
+<p><strong>What:</strong> Turn the LLM usage telemetry streamed to Cosmos DB by the usage-ingestion pipeline into cost-attribution, chargeback, and FinOps dashboards.</p>
+<p><strong>How:</strong></p>
+<ol>
+<li>Install <strong>Power BI Desktop</strong> and ensure your machine can reach Cosmos DB (allow your public IP on the Cosmos DB firewall).</li>
+<li>Seed the <strong><code>model-pricing</code></strong> container using the sample <a href="../src/usage-reports/model-pricing-generated-extended.json">model-pricing-generated-extended.json</a>, then review/adjust prices for the models you actually use.</li>
+<li>Open the <code>Citadel-Governance-Hub-Usage-Dashboard-V1.1-Incremental.pbix</code> template and point it at your Cosmos DB account.</li>
+<li><em>(Optional)</em> Configure <code>customDimension1</code> / <code>customDimension2</code> per access contract to enrich reports — see <a href="../power-bi-dashboard/#activating-custom-dimensions">Activating custom dimensions</a>.</li>
+</ol>
+<p>📘 Guide: <a href="../power-bi-dashboard/">Power BI Dashboard</a></p>
+<hr />
+<h2 id="5-go-multi-region-cosmos-db-multi-write">5. Go Multi-Region (Cosmos DB Multi-Write)</h2>
+<p><strong>Only for global / multi-region deployments.</strong> If you deployed the hub in more than one region (BC/DR Option 1 — multiple full deployments), link each region's Cosmos DB account into a single <strong>multi-write, globally distributed</strong> topology so usage written in any region is globally readable for chargeback and reporting.</p>
+<p><strong>How:</strong></p>
+<ol>
+<li>Deploy an independent Governance Hub per region (repeat the <a href="../full-deployment-guide/">Full Deployment Guide</a>).</li>
+<li>Configure the secondary-region Logic Apps to use distinct <code>Export-Config</code> ids so regions don't overwrite each other's usage exports (see prerequisites in the module README).</li>
+<li>Deploy <a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md"><code>citadel-cosmos-global-multi-master-sync</code></a> to align all linked accounts to the same write-region set.</li>
+</ol>
+<p>This pairs with the <a href="../bicep/infra/citadel-access-contracts/access-contract-resiliency-guide.md">Access Contract resiliency feature</a> (same key across gateways) and per-region backend routing.</p>
+<p>📘 Module: <a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md"><code>bicep/infra/citadel-cosmos-global-multi-master-sync</code></a> · Guide: <a href="../business-continuity-dr-guide/">BC/DR Guide</a></p>
+<hr />
+<h2 id="6-upgrade-the-gateway-to-a-newer-release">6. Upgrade the Gateway to a Newer Release</h2>
+<p>As the accelerator evolves, adopt new releases on an <strong>already-provisioned</strong> gateway using the <strong>APIM Gateway Upgrade</strong> submodule — it applies new policies, APIs, backends, fragments, named values, and the <code>/version</code> manifest <strong>in place</strong>, without re-provisioning APIM or the surrounding landing zone.</p>
+<p><strong>Plan the upgrade using version tracks.</strong> The accelerator uses independent, component-scoped versions in <a href="../release.json"><code>release.json</code></a> (<code>master-version</code>, <code>routing-version</code>, <code>backend-contract-version</code>, <code>access-contract-version</code>, <code>publish-contract-version</code>, <code>gateway-upgrade-version</code>, <code>usage-ingestion-version</code>). Compare <strong>each</strong> track against what you run today and read the <a href="../release-version-management/">Release Version Management Guide</a> migration notes for any <code>MAJOR</code> bump or Preview track change.</p>
+<p><strong>Confirm what is deployed at runtime</strong> (no source inspection needed):</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>https://&lt;your-apim-gateway-host&gt;/version
+curl<span class="w"> </span>https://&lt;your-apim-gateway-host&gt;/version/backend-contract
+</code></pre></div>
+<p><strong>How:</strong></p>
+<ol>
+<li>Sync your local <code>original</code> branch with upstream and merge into your environment branch (via Pull Request).</li>
+<li>Review the <a href="../bicep/infra/apim-gateway-upgrade/README.md">APIM Gateway Upgrade README</a> — feature flags let you scope what is updated. Run against <strong>non-production first</strong>.</li>
+<li>If your gateway predates some supporting services (or the APIM was not created by this accelerator), first run the companion <code>supporting-services.bicep</code> — see <a href="../bicep/infra/apim-gateway-upgrade/gateway-ecosystem-upgrade-guide.md">gateway-ecosystem-upgrade-guide.md</a>.</li>
+<li>Deploy the upgrade, then re-run <a href="#1-onboard-llm-backends-backend-contract">Backend Contract onboarding</a> if routing fragments changed, and re-check <code>/version</code>.</li>
+</ol>
+<blockquote>
+<p>⚠️ The <code>gateway-upgrade-version</code> track is currently <code>-preview</code> — pin to an exact version in production and validate before upgrading.</p>
+<p>⚠️ The <code>publish-contract-version</code> track is also <code>-preview</code> — review and validate MCP/A2A contract changes before re-deploying published assets.</p>
+</blockquote>
+<p>📘 Module: <a href="../bicep/infra/apim-gateway-upgrade/README.md"><code>bicep/infra/apim-gateway-upgrade</code></a> · Guide: <a href="../release-version-management/">Release Version Management</a></p>
+<hr />
+<h2 id="7-validation">7. Validation</h2>
+<p>Use the validation notebooks under the <a href="../validation/"><code>/validation</code></a> folder to verify each step:</p>
+<table>
+<thead>
+<tr>
+<th>Notebook</th>
+<th>Validates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../validation/llm-backend-onboarding-runner.ipynb">llm-backend-onboarding-runner.ipynb</a></td>
+<td>Backend onboarding, routing, and connectivity</td>
+</tr>
+<tr>
+<td><a href="../validation/citadel-access-contracts-tests.ipynb">citadel-access-contracts-tests.ipynb</a></td>
+<td>Access contract behavior and model access</td>
+</tr>
+<tr>
+<td><a href="../validation/citadel-jwt-authentication-tests.ipynb">citadel-jwt-authentication-tests.ipynb</a></td>
+<td>Entra ID / JWT enforcement per use case</td>
+</tr>
+<tr>
+<td><a href="../validation/citadel-pii-processing-tests.ipynb">citadel-pii-processing-tests.ipynb</a></td>
+<td>PII detection / masking policies</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-related-guides">8. Related Guides</h2>
+<ul>
+<li><a href="../full-deployment-guide/">Full Deployment Guide</a> — provision the landing zone (prerequisite for this guide)</li>
+<li><a href="../citadel-sizing-guide/">Citadel Sizing Guide</a> — T-shirt sizing and SKU selection</li>
+<li><a href="../resiliency-guide/">Resiliency Guide</a> — circuit breaking, session affinity, failover, error handling</li>
+<li><a href="../business-continuity-dr-guide/">Business Continuity &amp; DR Guide</a> — multi-region topologies and recovery objectives</li>
+<li><a href="../release-version-management/">Release Version Management</a> — version tracks and migration planning</li>
+<li><a href="../llm-access-guide/">LLM Access Guide</a> · <a href="../pii-masking-apim/">PII Masking</a> · <a href="../throttling-events-handling/">Throttling Events Handling</a></li>
+</ul>
+<hr />
+<p><strong>Your AI Citadel Governance Hub is now serving governed AI traffic. Iterate on backends, use cases, and releases using the submodules above — never by re-provisioning the landing zone.</strong> 🎉</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

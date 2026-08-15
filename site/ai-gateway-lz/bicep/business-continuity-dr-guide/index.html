@@ -1,0 +1,1803 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🛡️ Business Continuity & Disaster Recovery (BC/DR) Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#business-continuity-disaster-recovery-bcdr-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🛡️ Business Continuity &amp; Disaster Recovery (BC/DR) Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-bcdr-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. BC/DR at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-planning-your-bcdr-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Planning your BC/DR strategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Planning your BC/DR strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-risk-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Risk assessment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-business-impact-analysis-bia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Business impact analysis (BIA)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-define-recovery-objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Define recovery objectives
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-choose-a-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Choose a topology
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-deployment-topologies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Deployment topologies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Deployment topologies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-recommended-multiple-full-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 (recommended) — Multiple full deployments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-single-deployment-with-premium-apim-multi-region" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2 — Single deployment with Premium APIM multi-region
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-global-routing-traffic-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Global routing &amp; traffic management
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Global routing &amp; traffic management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-health-probes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Health probes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-dns-endpoint-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 DNS / endpoint failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-routing-strategy-per-tier" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Routing strategy per tier
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-networking-through-an-enterprise-connectivity-hub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Networking through an Enterprise Connectivity Hub
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-devops-alignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. DevOps alignment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. DevOps alignment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-manual-az-commands-supported" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A — Manual az commands (supported)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-cicd-pipeline-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B — CI/CD pipeline (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-backend-resiliency-scope-boundary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Backend resiliency (scope boundary)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-reference-implementation-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Reference implementation walkthrough
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-operational-runbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Operational runbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-related-guides-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Related guides &amp; modules
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="business-continuity-disaster-recovery-bcdr-guide">🛡️ Business Continuity &amp; Disaster Recovery (BC/DR) Guide</h1>
+<blockquote>
+<p><strong>How to keep the Citadel Governance Hub — the governed front door in front of every LLM — available when a whole region, service, or control plane fails.</strong> This guide covers <strong>planning</strong> a BC/DR strategy, the <strong>two deployment topologies</strong> the accelerator supports, <strong>global routing and traffic management</strong>, <strong>DevOps alignment</strong>, and how this all connects to <strong>backend resiliency</strong>.</p>
+</blockquote>
+<p>This guide is about the <strong>resiliency of the Governance Hub itself</strong> (the gateway compute plane, its usage/data plane, and its configuration plane). It is deliberately scoped to the hub. It is <strong>not</strong> about the resiliency of the AI backends behind it (Azure OpenAI, Microsoft Foundry, AWS Bedrock, Google Gemini, Anthropic Claude, etc.). For that, pair this guide with the <a href="../resiliency-guide/">Resiliency Guide</a>, which covers circuit breaking, session affinity, automated failover, and error handling at the backend level.</p>
+<blockquote>
+<p><strong>Golden rule.</strong> A resilient gateway in front of a fragile backend still fails, and a resilient backend behind a single-region gateway is unreachable when that region goes down. <strong>You need both.</strong> Use this guide for the hub, and the <a href="../resiliency-guide/">Resiliency Guide</a> for the backends.</p>
+</blockquote>
+<hr />
+<h2 id="contents">📖 Contents</h2>
+<ol>
+<li><a href="#1-bcdr-at-a-glance">BC/DR at a glance</a></li>
+<li><a href="#2-planning-your-bcdr-strategy">Planning your BC/DR strategy</a></li>
+<li><a href="#3-deployment-topologies">Deployment topologies</a><ul>
+<li><a href="#option-1-recommended--multiple-full-deployments">Option 1 (recommended): Multiple full deployments</a></li>
+<li><a href="#option-2--single-deployment-with-premium-apim-multi-region">Option 2: Single deployment with Premium APIM multi-region</a></li>
+<li><a href="#option-comparison">Option comparison</a></li>
+</ul>
+</li>
+<li><a href="#4-global-routing--traffic-management">Global routing &amp; traffic management</a></li>
+<li><a href="#5-networking-through-an-enterprise-connectivity-hub">Networking through an Enterprise Connectivity Hub</a></li>
+<li><a href="#6-devops-alignment">DevOps alignment</a></li>
+<li><a href="#7-backend-resiliency-scope-boundary">Backend resiliency (scope boundary)</a></li>
+<li><a href="#8-reference-implementation-walkthrough">Reference implementation walkthrough</a></li>
+<li><a href="#9-operational-runbook">Operational runbook</a></li>
+<li><a href="#10-related-guides--modules">Related guides &amp; modules</a></li>
+</ol>
+<hr />
+<h2 id="1-bcdr-at-a-glance">1. BC/DR at a glance</h2>
+<p>The Governance Hub has <strong>three logical planes</strong>, and a BC/DR plan must address each one independently:</p>
+<table>
+<thead>
+<tr>
+<th>Plane</th>
+<th>What it is</th>
+<th>What fails if a region is lost</th>
+<th>Primary BC/DR mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compute / request plane</strong></td>
+<td>The APIM gateway that proxies, authenticates, and governs every LLM call.</td>
+<td>Clients can't reach a gateway to make governed calls.</td>
+<td>Multiple gateways (Option 1) <strong>or</strong> APIM Premium multi-region units (Option 2), fronted by a global load balancer.</td>
+</tr>
+<tr>
+<td><strong>Data / usage plane</strong></td>
+<td>The Cosmos DB account that stores usage/telemetry consolidation for chargeback, quotas, and reporting.</td>
+<td>Usage writes fail or telemetry is lost.</td>
+<td>Cosmos DB global replication with <strong>multiple write regions</strong> (Option 1) — see <a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md"><code>citadel-cosmos-global-multi-master-sync</code></a>.</td>
+</tr>
+<tr>
+<td><strong>Configuration / control plane</strong></td>
+<td>Access Contracts (products, subscriptions, keys), Backend Contracts (pools, routing), policies, named values, Key Vault, Foundry connections.</td>
+<td>You can't change configuration; in Option 2 the control plane is region-bound.</td>
+<td>Config-as-code re-applied per region (Option 1) <strong>or</strong> shared control plane pinned to the primary region (Option 2).</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart TD
+    C[Clients / Agents] --&gt; GLB{Global load balancer&lt;br/&gt;Front Door / Traffic Manager}
+    GLB --&gt;|healthy| R1[Region 1 Governance Hub&lt;br/&gt;APIM + Cosmos + KV + Foundry conn]
+    GLB --&gt;|healthy| R2[Region 2 Governance Hub&lt;br/&gt;APIM + Cosmos + KV + Foundry conn]
+    R1 &lt;--&gt;|multi-write replication| COSMOS[(Cosmos DB&lt;br/&gt;global, multi-master)]
+    R2 &lt;--&gt;|multi-write replication| COSMOS
+    R1 --&gt;|priority: local, failover: remote| BE[(AI Backends&lt;br/&gt;Foundry / OpenAI / Bedrock / ...)]
+    R2 --&gt;|priority: local, failover: remote| BE</code></pre>
+<p><strong>The three numbers every BC/DR plan needs:</strong></p>
+<ul>
+<li><strong>RTO (Recovery Time Objective)</strong> — how fast the gateway must be usable again after a region loss.</li>
+<li><strong>RPO (Recovery Point Objective)</strong> — how much usage/telemetry data you can afford to lose.</li>
+<li><strong>RLO (Recovery Level Objective)</strong> — what <em>degraded</em> service is acceptable (e.g., "requests still served, but no new use-case onboarding until the primary control plane returns").</li>
+</ul>
+<hr />
+<h2 id="2-planning-your-bcdr-strategy">2. Planning your BC/DR strategy</h2>
+<p>A credible BC/DR plan is built in four steps before any Bicep is deployed.</p>
+<h3 id="step-1-risk-assessment">Step 1 — Risk assessment</h3>
+<p>Enumerate the failure modes the hub must survive and their blast radius:</p>
+<table>
+<thead>
+<tr>
+<th>Failure mode</th>
+<th>Blast radius</th>
+<th>Addressed by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single AZ failure in a region</td>
+<td>One availability zone</td>
+<td>Zone-redundant APIM + <code>isZoneRedundant</code> Cosmos regions (both options).</td>
+</tr>
+<tr>
+<td>Full region outage</td>
+<td>An entire Azure region</td>
+<td><strong>Second region</strong> (Option 1) or Premium secondary unit (Option 2).</td>
+</tr>
+<tr>
+<td>APIM control-plane / management outage</td>
+<td>Gateway config changes</td>
+<td>Option 1 keeps each region's control plane independent; Option 2 degrades to data-plane-only in secondaries.</td>
+</tr>
+<tr>
+<td>Cosmos DB regional outage</td>
+<td>Usage/telemetry writes</td>
+<td>Multi-write regions with automatic failover.</td>
+</tr>
+<tr>
+<td>Monitoring / usage pipeline outage</td>
+<td>Telemetry accuracy</td>
+<td>Option 1 isolates per region; Option 2 concentrates risk in the primary (see RPO note).</td>
+</tr>
+<tr>
+<td>Backend/provider outage</td>
+<td>The LLM itself</td>
+<td><strong>Out of scope here</strong> → <a href="../resiliency-guide/">Resiliency Guide</a> (pools, failover, aliases).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-2-business-impact-analysis-bia">Step 2 — Business impact analysis (BIA)</h3>
+<p>For each onboarded use case (access contract), classify criticality and map it to RTO/RPO:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Example</th>
+<th>RTO target</th>
+<th>RPO target</th>
+<th>Topology fit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tier 0 — mission critical</strong></td>
+<td>Real-time customer-facing agent</td>
+<td>seconds → low minutes</td>
+<td>~0 (no usage loss tolerated)</td>
+<td>Option 1, active/active, multi-write Cosmos.</td>
+</tr>
+<tr>
+<td><strong>Tier 1 — business critical</strong></td>
+<td>Internal copilots, ticket triage</td>
+<td>minutes</td>
+<td>minutes</td>
+<td>Option 1 or Option 2 Premium.</td>
+</tr>
+<tr>
+<td><strong>Tier 2 — standard</strong></td>
+<td>Batch summarization, analytics</td>
+<td>hours</td>
+<td>hours</td>
+<td>Single region + zone redundancy may suffice.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-3-define-recovery-objectives">Step 3 — Define recovery objectives</h3>
+<p>Turn the BIA into explicit, testable targets, for example:</p>
+<ul>
+<li><strong>RTO ≤ 60s</strong> for Tier 0 → requires a global load balancer with automatic health-based failover (no manual DNS change).</li>
+<li><strong>RPO ≈ 0</strong> for usage data → requires Cosmos DB <strong>multi-write</strong> so a regional loss never blocks writes.</li>
+<li><strong>Control-plane RTO ≤ 15 min</strong> → requires config-as-code in a pipeline that can re-apply to a surviving region on demand (Option 1) or documented acceptance that control-plane edits wait for the primary region (Option 2).</li>
+</ul>
+<h3 id="step-4-choose-a-topology">Step 4 — Choose a topology</h3>
+<p>Map objectives → topology using the <a href="#option-comparison">comparison table</a>. As a rule of thumb: <strong>Tier 0 / RPO≈0 / independent control plane → Option 1</strong>; <strong>simpler operations, willing to run Premium, tolerant of primary-region control-plane dependency → Option 2</strong>.</p>
+<hr />
+<h2 id="3-deployment-topologies">3. Deployment topologies</h2>
+<h3 id="option-1-recommended-multiple-full-deployments">Option 1 (recommended) — Multiple full deployments</h3>
+<p>Deploy <strong>two (or more) complete, independent Citadel Governance Hub instances</strong> in different regions (e.g., Sweden Central + West Europe, or Sweden Central + East US 2). Each region has its own APIM, Cosmos DB, Key Vault, monitoring, and Foundry connections and runs autonomously.</p>
+<p><strong>Why this is recommended</strong></p>
+<ul>
+<li><strong>True regional autonomy</strong> — each region has its <strong>own control plane</strong>. A region loss (including its APIM management plane) does not stop you from onboarding use cases or changing routing in the surviving region.</li>
+<li><strong>Consolidated usage data</strong> — link the per-region Cosmos DB accounts into one <strong>global, multi-write</strong> topology so usage written in any region is globally readable for chargeback and reporting. This is exactly what <a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md"><code>citadel-cosmos-global-multi-master-sync</code></a> automates.</li>
+<li><strong>One logical access contract, many gateways</strong> — the <a href="../bicep/infra/citadel-access-contracts/access-contract-resiliency-guide.md">Access Contract resiliency feature</a> mirrors a single contract across additional gateways, Key Vaults, and Foundry instances while <strong>reusing the same subscription <code>api-key</code></strong>. Clients use one key regardless of which region serves them — ideal behind a global load balancer.</li>
+<li><strong>Cost-flexible tier</strong> — works on <strong>APIM Standard v2 or higher</strong>; you do <strong>not</strong> need Premium.</li>
+</ul>
+<p><strong>Per-region backend routing (priority + failover).</strong> Because each region owns its Backend Contract, you can bias routing so each region <strong>prefers local backends and fails over to the remote region's backends</strong>:</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph SE[Region 1 - Sweden Central gateway]
+      SE_BC[Backend Contract:&lt;br/&gt;priority 1 = SE backend PE&lt;br/&gt;priority 2 = WE backend PE]
+    end
+    subgraph WE[Region 2 - West Europe gateway]
+      WE_BC[Backend Contract:&lt;br/&gt;priority 1 = WE backend PE&lt;br/&gt;priority 2 = SE backend PE]
+    end
+    SE_BC --&gt;|prefer| SEBE[(SE backend / private endpoint)]
+    SE_BC -.failover.-&gt; WEBE[(WE backend / private endpoint)]
+    WE_BC --&gt;|prefer| WEBE
+    WE_BC -.failover.-&gt; SEBE</code></pre>
+<p>This uses the same backend-pool <strong>priority/weight</strong> mechanics documented in the <a href="../resiliency-guide/#3-automated-failover">Resiliency Guide → Automated Failover</a>: lower <code>priority</code> = preferred; on <code>429</code>/<code>5xx</code> APIM moves to the next member. The only difference is that the <em>ordering of priorities is inverted per region</em> so each region has a "local-first, remote-second" preference.</p>
+<p><strong>Data plane — Cosmos DB multi-write.</strong> Link each region's existing Cosmos account into one write-region set:</p>
+<div class="highlight"><pre><span></span><code>// citadel-cosmos-global-multi-master-sync/main.bicepparam
+param gatewayImplementations = [
+  { name: &#39;gateway-se&#39;, subscriptionId: &#39;&lt;sub&gt;&#39;, resourceGroupName: &#39;rg-aihub-se-prod&#39;, cosmosDbAccountName: &#39;cosmos-aihub-se-prod&#39;, region: &#39;swedencentral&#39; }
+  { name: &#39;gateway-we&#39;, subscriptionId: &#39;&lt;sub&gt;&#39;, resourceGroupName: &#39;rg-aihub-we-prod&#39;, cosmosDbAccountName: &#39;cosmos-aihub-we-prod&#39;, region: &#39;westeurope&#39; }
+]
+param systemManagedFailover = true   // automatic Cosmos regional failover
+param isZoneRedundant = true         // AZ resilience within each region
+</code></pre></div>
+<p>Deploy at subscription scope:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>citadel-cosmos-global-sync<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>swedencentral<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>main.bicepparam
+</code></pre></div>
+<p>With <code>enableMultipleWriteLocations</code> on, a regional gateway keeps <strong>writing usage locally</strong> even if the peer region is down, and the data becomes globally visible once replication catches up → <strong>RPO ≈ 0</strong> for usage telemetry.</p>
+<h3 id="option-2-single-deployment-with-premium-apim-multi-region">Option 2 — Single deployment with Premium APIM multi-region</h3>
+<p>Deploy a <strong>single</strong> Governance Hub whose APIM is on the <strong>Premium tier</strong>, and add <a href="https://learn.microsoft.com/azure/api-management/api-management-howto-deploy-multi-region">APIM's native multi-region gateway units</a>. One region is the <strong>primary</strong> (holds the control/management plane); other regions add <strong>gateway units</strong> that serve traffic.</p>
+<p><strong>Behavior during a failure</strong></p>
+<ul>
+<li><strong>Data plane stays up in every region.</strong> Each regional gateway unit continues <strong>proxying requests to backends</strong> independently. If the primary region is impacted, secondary regions <strong>keep serving traffic</strong>.</li>
+<li><strong>Shared control plane.</strong> All regions share <strong>one</strong> APIM configuration — simpler to manage (one contract set, one policy set). <strong>But</strong> control-plane operations (publishing config, editing products/policies, rotating keys through APIM) <strong>depend on the primary region's availability</strong>. If the primary region is down, secondaries continue serving the <em>last-published</em> configuration but you <strong>cannot push changes</strong> until it recovers.</li>
+<li><strong>Premium required.</strong> Multi-region deployment is a <strong>Premium-tier</strong> capability and carries <strong>higher cost</strong> than Standard v2.</li>
+<li><strong>⚠️ Usage-data caveat.</strong> Usage/telemetry <strong>processing still runs in the primary region</strong>. If the monitoring/usage pipeline in the primary region becomes unavailable, you can experience <strong>loss of usage telemetry</strong> (higher RPO for the data plane) even while requests are still being served. This is the key trade-off versus Option 1's multi-write Cosmos.</li>
+</ul>
+<pre class="mermaid"><code>flowchart TD
+    C[Clients] --&gt; GLB{Front Door / Traffic Manager}
+    GLB --&gt; P[Primary region gateway unit&lt;br/&gt;+ control plane + usage pipeline]
+    GLB --&gt; S[Secondary region gateway unit&lt;br/&gt;data plane only]
+    P --&gt; BE[(Backends)]
+    S --&gt; BE
+    P -.usage processing.-&gt; M[(Monitoring / Cosmos&lt;br/&gt;primary region)]
+    S -. telemetry routed to primary .-&gt; M
+    classDef risk fill:#fde7e9,stroke:#d13438;
+    class M risk;</code></pre>
+<h3 id="option-comparison">Option comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th><strong>Option 1 — Multiple full deployments</strong> <em>(recommended)</em></th>
+<th><strong>Option 2 — Premium multi-region</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APIM tier</td>
+<td><strong>Standard v2 or higher</strong></td>
+<td><strong>Premium only</strong></td>
+</tr>
+<tr>
+<td>Control plane</td>
+<td><strong>Independent per region</strong> (survives primary loss)</td>
+<td><strong>Shared</strong>, bound to primary region</td>
+</tr>
+<tr>
+<td>Data / usage plane</td>
+<td>Cosmos <strong>multi-write</strong>, per-region resilient (<strong>RPO≈0</strong>)</td>
+<td>Usage processing in <strong>primary region</strong> (<strong>telemetry loss risk</strong>)</td>
+</tr>
+<tr>
+<td>Config management</td>
+<td>Config-as-code applied per region (pipeline recommended)</td>
+<td>Single shared config (simpler day-to-day)</td>
+</tr>
+<tr>
+<td>Request-plane failover</td>
+<td>Global LB across independent gateways</td>
+<td>Native APIM multi-region + global LB</td>
+</tr>
+<tr>
+<td>Per-region backend bias</td>
+<td><strong>Yes</strong> — dedicated Backend Contract per region</td>
+<td>Shared backend config (less per-region nuance)</td>
+</tr>
+<tr>
+<td>Cost profile</td>
+<td>Pay per full stack per region, but cheaper APIM tier</td>
+<td>Premium units per region</td>
+</tr>
+<tr>
+<td>Operational complexity</td>
+<td>Higher (N stacks, needs pipeline discipline)</td>
+<td>Lower (one stack)</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Tier 0/1, strict RPO, control-plane autonomy</td>
+<td>Simpler ops, Premium-acceptable, tolerant of primary-region control-plane dependency</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-global-routing-traffic-management">4. Global routing &amp; traffic management</h2>
+<p>Regardless of topology, clients should hit <strong>one stable hostname</strong> that automatically routes to a <strong>healthy</strong> gateway. Use a global load balancer — <strong>Azure Front Door</strong> (recommended for HTTP(S): anycast, WAF, TLS offload, path routing) or <strong>Azure Traffic Manager</strong> (DNS-based, protocol-agnostic).</p>
+<h3 id="41-health-probes">4.1 Health probes</h3>
+<p>Configure the global LB to probe each gateway continuously and remove unhealthy regions from rotation automatically:</p>
+<ul>
+<li><strong>Probe target:</strong> a lightweight, unauthenticated health route on APIM (e.g., a <code>/status-0123456789abcdef</code> style health endpoint or a dedicated health API operation) that returns <code>200</code> only when the gateway can serve requests.</li>
+<li><strong>Interval / threshold:</strong> tune to your RTO. For Tier 0 (RTO ≤ 60s), use short intervals (e.g., 30s) and a low unhealthy threshold so failover is fast.</li>
+<li><strong>What "healthy" means:</strong> the probe should validate the gateway can actually reach at least one backend pool, not just that APIM's front end is up — otherwise you route to a gateway that 502s every call.</li>
+</ul>
+<h3 id="42-dns-endpoint-failover">4.2 DNS / endpoint failover</h3>
+<ul>
+<li><strong>Front Door:</strong> clients use the Front Door hostname; Front Door serves from the nearest <strong>healthy</strong> origin and fails over transparently — <strong>no DNS TTL wait</strong>.</li>
+<li><strong>Traffic Manager:</strong> uses DNS with <strong>Priority</strong> (active/passive) or <strong>Performance</strong> (latency-based, active/active) routing. Remember DNS <strong>TTL</strong> adds to effective RTO — keep TTL low (e.g., 30–60s) for fast failover.</li>
+<li><strong>Same key everywhere:</strong> with Option 1's <a href="../bicep/infra/citadel-access-contracts/access-contract-resiliency-guide.md">Access Contract resiliency</a>, the subscription <code>api-key</code> is identical across gateways, so a client redirected by the global LB <strong>authenticates unchanged</strong>. Record the global LB hostname as <code>globalGatewayUrl</code> so Key Vault secrets and Foundry connections hand out the <strong>global endpoint</strong> rather than a region-pinned one:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>// In the use-case access contract .bicepparam
+param globalGatewayUrl = &#39;https://ai-gateway.contoso.com&#39;   // Front Door / Traffic Manager hostname
+param additionalApimGateways = [
+  { subscriptionId: &#39;&lt;sub&gt;&#39;, resourceGroupName: &#39;rg-apim-westeurope&#39;, name: &#39;apim-aihub-westeurope&#39; }
+]
+</code></pre></div>
+<h3 id="43-routing-strategy-per-tier">4.3 Routing strategy per tier</h3>
+<table>
+<thead>
+<tr>
+<th>Client / tier</th>
+<th>Recommended global routing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier 0 active/active</td>
+<td>Front Door with latency routing + health probes → nearest healthy region.</td>
+</tr>
+<tr>
+<td>Tier 1 active/passive</td>
+<td>Traffic Manager <strong>Priority</strong> routing → primary until unhealthy, then secondary.</td>
+</tr>
+<tr>
+<td>Region-pinned client (data residency)</td>
+<td>Point the client (or a secondary Key Vault entry, <code>endpointSource: 'secondary:&lt;index&gt;'</code>) at a <strong>specific</strong> region's gateway.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-networking-through-an-enterprise-connectivity-hub">5. Networking through an Enterprise Connectivity Hub</h2>
+<p>In an <strong>Azure Enterprise Landing Zone</strong>, the 2+ gateway regions should be wired together through a <strong>central connectivity hub</strong> (hub-and-spoke or Azure Virtual WAN) rather than as isolated islands. This gives you one place to enforce firewalling, routing, and private DNS across regions. The accelerator's two network patterns (hub-based and hub-spoke-hub) are described in the <a href="../network-approach/">Network Architecture guide</a>; this section adds the <strong>multi-region</strong> dimension.</p>
+<p><strong>Principles:</strong></p>
+<ol>
+<li>
+<p><strong>Connect every gateway region to the connectivity hub.</strong> Each regional Governance Hub spoke peers to the (regional) hub VNet; the regional hubs interconnect via the enterprise backbone (Global VNet Peering or Virtual WAN). This lets agents in any spoke reach any gateway region, and lets gateways reach backends anywhere.</p>
+</li>
+<li>
+<p><strong>Backends must be reachable from <em>all</em> gateway regions.</strong> This is the most important networking rule for BC/DR. A gateway can only fail over to a remote backend if it can <em>reach</em> it on the network. <strong>Do not</strong> assume a backend is only reachable from its own region.</p>
+</li>
+<li>
+<p><strong>Private Endpoints per gateway region, independent of where the backend lives.</strong> A Foundry/Azure OpenAI resource deployed in <strong>one</strong> region can expose a <strong>private endpoint in each gateway region</strong>. For example:</p>
+<blockquote>
+<p>One Foundry account in <strong>Sweden Central</strong> can have <strong>two private endpoints</strong> — one in <strong>Sweden Central</strong> and one in <strong>West Europe</strong> — so <strong>both</strong> gateway regions reach the same Foundry privately. The Foundry resource does not need to be redeployed per region; you just add a private endpoint (and the matching Private DNS zone record) in each gateway region's network.</p>
+</blockquote>
+<pre class="mermaid"><code>flowchart LR
+  subgraph SEnet[Sweden Central network]
+    SEGW[APIM gateway SE] --&gt; SEPE[PE → Foundry SE]
+  end
+  subgraph WEnet[West Europe network]
+    WEGW[APIM gateway WE] --&gt; WEPE[PE → Foundry SE]
+  end
+  SEPE --&gt; FND[(Foundry account&lt;br/&gt;Sweden Central)]
+  WEPE --&gt; FND</code></pre>
+</li>
+<li>
+<p><strong>Different priority routing per region.</strong> Combine reachability with the <a href="#option-1-recommended--multiple-full-deployments">per-region Backend Contract priority</a>: each region <strong>prefers the network-closest backend private endpoint</strong> (lower latency, egress cost) and <strong>fails over</strong> to the remote one. So "reachable from all regions" + "prioritized per region" together give you both resilience <em>and</em> efficiency.</p>
+</li>
+<li>
+<p><strong>Private DNS consistency.</strong> Ensure the Private DNS zones (e.g., <code>privatelink.openai.azure.com</code>, <code>privatelink.cognitiveservices.azure.com</code>, Cosmos, Key Vault) resolve correctly in <strong>every</strong> gateway region — typically by linking the zones (or forwarding) through the connectivity hub. A failover is useless if the surviving region can't resolve the backend's private IP.</p>
+</li>
+</ol>
+<hr />
+<h2 id="6-devops-alignment">6. DevOps alignment</h2>
+<p>The Governance Hub is <strong>code-as-policy</strong>: everything — access contracts, backend contracts, policies, Cosmos linking — is expressed as Bicep parameter/config files and applied with simple <code>az deployment</code> commands. This means BC/DR configuration is <strong>inherently reproducible</strong>. You have two operating models:</p>
+<h3 id="option-a-manual-az-commands-supported">Option A — Manual <code>az</code> commands (supported)</h3>
+<p>You can absolutely run the deployments by hand, region by region:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Region 1</span>
+az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>onboard-sales-assistant-se<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>swedencentral<span class="w"> </span>--template-file<span class="w"> </span>main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>contracts/sales/assistant/prod/main.bicepparam
+</code></pre></div>
+<p>This is fine for small footprints, labs, or initial bring-up. It does <strong>not</strong> scale well to N regions and multiple use cases — it invites drift and human error at exactly the moment (a live incident) when you least want them.</p>
+<h3 id="option-b-cicd-pipeline-recommended">Option B — CI/CD pipeline (recommended)</h3>
+<p>For any production, multi-region footprint, drive all changes through a <strong>CI/CD pipeline</strong> (GitHub Actions or Azure DevOps). This is the recommended approach because it delivers <strong>consistency across regions</strong> and removes manual error during critical operations.</p>
+<p><strong>Recommended pipeline shape:</strong></p>
+<pre class="mermaid"><code>flowchart LR
+    PR[PR: change .bicepparam / policy] --&gt; V[Validate&lt;br/&gt;az bicep build + what-if]
+    V --&gt; A{Approve}
+    A --&gt; P1[Deploy Region 1&lt;br/&gt;primary first]
+    P1 --&gt; P2[Deploy Region 2..N&lt;br/&gt;additional gateways]
+    P2 --&gt; KVF[Deploy additional&lt;br/&gt;Key Vaults + Foundry conn]
+    KVF --&gt; COS[Sync Cosmos&lt;br/&gt;multi-master]
+    COS --&gt; T[Post-deploy smoke tests&lt;br/&gt;per region]</code></pre>
+<p>Pipeline best practices for BC/DR:</p>
+<ul>
+<li><strong>Primary-first ordering is built in.</strong> The Access Contract resiliency feature enforces "primary gateway → additional gateways → Key Vaults/Foundry" via Bicep output references and <code>dependsOn</code> — the pipeline just runs one deployment; the ordering is automatic (see the <a href="../bicep/infra/citadel-access-contracts/access-contract-resiliency-guide.md#-deployment-order">deployment order section</a>).</li>
+<li><strong><code>what-if</code> as a gate.</strong> Run <code>az deployment sub what-if</code> on every PR. For existing contracts it should show <strong>no diff</strong>, proving changes are backward-compatible before they reach production.</li>
+<li><strong>Zero-downtime key rotation.</strong> Subscription keys rotate in a deliberate 3-step flow (switch consumers to the standby key → confirm healthy → regenerate the now non-active key). Both keys are kept in sync across every region/gateway, so a client uses the same active key wherever it is served (see the <a href="../bicep/infra/citadel-access-contracts/access-contract-key-rotation-guide.md">Key Rotation Guide</a>).</li>
+<li><strong>One source of truth, per-region parameters.</strong> Keep a single repo; parameterize per region (endpoints, Cosmos account names, private-endpoint targets) so the <em>same</em> templates deploy every region. This is what prevents config drift between your primary and DR regions.</li>
+<li><strong>DR drills in the pipeline.</strong> Add a scheduled job that deploys/refreshes the secondary region and runs smoke tests, so your DR path is exercised continuously rather than discovered during a real outage.</li>
+</ul>
+<hr />
+<h2 id="7-backend-resiliency-scope-boundary">7. Backend resiliency (scope boundary)</h2>
+<p><strong>This guide stops at the gateway.</strong> Making the Governance Hub multi-region resilient ensures clients can always reach a <em>governed front door</em> — but that front door still needs healthy backends to route to.</p>
+<p>Backend-level resilience is a <strong>separate, complementary</strong> concern covered in depth by the <a href="../resiliency-guide/">Resiliency Guide</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Owned by</th>
+<th>Guide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gateway is reachable during a region loss</td>
+<td><strong>This guide</strong> (BC/DR)</td>
+<td><em>(here)</em></td>
+</tr>
+<tr>
+<td>Usage data survives a region loss</td>
+<td><strong>This guide</strong> (Cosmos multi-write)</td>
+<td><em>(here)</em></td>
+</tr>
+<tr>
+<td>A throttling/5xx backend is skipped</td>
+<td>Backend resiliency</td>
+<td><a href="../resiliency-guide/#1-circuit-breaker">Circuit Breaker</a></td>
+</tr>
+<tr>
+<td>Stateful conversations stick to a backend</td>
+<td>Backend resiliency</td>
+<td><a href="../resiliency-guide/#2-session-affinity">Session Affinity</a></td>
+</tr>
+<tr>
+<td>A request retries onto a healthy backend/provider</td>
+<td>Backend resiliency</td>
+<td><a href="../resiliency-guide/#3-automated-failover">Automated Failover</a></td>
+</tr>
+<tr>
+<td>Clients get diagnosable, retry-safe errors</td>
+<td>Backend resiliency</td>
+<td><a href="../resiliency-guide/#4-error-handling">Error Handling</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Always deploy both together.</strong> A BC/DR-hardened hub in front of a single-backend, single-region model still has an availability ceiling set by that backend. Model your <strong>backend pools, priorities, and cross-provider aliases</strong> (Resiliency Guide) <em>and</em> your <strong>multi-region hub</strong> (this guide) as one combined resiliency design.</p>
+</blockquote>
+<p>The <a href="#option-1-recommended--multiple-full-deployments">per-region backend priority</a> pattern in Option 1 is precisely where the two guides meet: BC/DR decides <em>which gateway</em> serves the client; backend resiliency decides <em>which backend</em> that gateway routes to and how it fails over.</p>
+<hr />
+<h2 id="8-reference-implementation-walkthrough">8. Reference implementation walkthrough</h2>
+<p>An end-to-end <strong>Option 1</strong> (two-region, active/active) bring-up. Adjust regions, names, and subscriptions to your environment.</p>
+<p><strong>Prerequisites</strong></p>
+<ul>
+<li>Two full accelerator deployments (Region 1 = Sweden Central, Region 2 = West Europe), each on APIM Standard v2+.</li>
+<li>A connectivity hub (hub-spoke or Virtual WAN) peering both gateway regions (<a href="../network-approach/">Network guide</a>).</li>
+<li>Backends reachable from both regions via <strong>per-region private endpoints</strong> + consistent Private DNS.</li>
+<li>A global load balancer (Front Door or Traffic Manager) hostname reserved (e.g., <code>ai-gateway.contoso.com</code>).</li>
+</ul>
+<p><strong>1. Consolidate the usage/data plane (Cosmos multi-write).</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>bicep/infra/citadel-cosmos-global-multi-master-sync
+<span class="c1"># edit main.bicepparam: list both gateway Cosmos accounts + systemManagedFailover=true + isZoneRedundant=true</span>
+az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>citadel-cosmos-global-sync<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>swedencentral<span class="w"> </span>--template-file<span class="w"> </span>main.bicep<span class="w"> </span>--parameters<span class="w"> </span>main.bicepparam
+</code></pre></div>
+<p>Run <code>what-if</code> first, and apply during a controlled window (region-list changes trigger account-level replication).</p>
+<p><strong>2. Onboard each backend per region with local-first priority.</strong> Using the <a href="../bicep/infra/llm-backend-onboarding/README.md">LLM Backend Onboarding</a> Backend Contract, in Region 1 give the local backend <code>priority: 1</code> and the remote one <code>priority: 2</code>; invert it in Region 2. Circuit breaker stays on (default) so a sick backend is parked and traffic sheds to the pool (see <a href="../resiliency-guide/#1-circuit-breaker">Resiliency Guide</a>).</p>
+<p><strong>3. Onboard the use case once, mirrored to both gateways</strong> (Access Contract resiliency):</p>
+<div class="highlight"><pre><span></span><code>// contracts/sales/assistant/prod/main.bicepparam
+param globalGatewayUrl = &#39;https://ai-gateway.contoso.com&#39;
+param additionalApimGateways = [
+  { subscriptionId: &#39;&lt;sub&gt;&#39;, resourceGroupName: &#39;rg-apim-westeurope&#39;, name: &#39;apim-aihub-westeurope&#39; }
+]
+param additionalKeyVaults = [
+  { subscriptionId: &#39;&lt;sub&gt;&#39;, resourceGroupName: &#39;rg-kv-westeurope&#39;, name: &#39;kv-aihub-westeurope&#39;, endpointSource: &#39;global&#39; }
+]
+param additionalFoundries = [
+  { subscriptionId: &#39;&lt;sub&gt;&#39;, resourceGroupName: &#39;rg-foundry-westeurope&#39;, accountName: &#39;foundry-westeurope&#39;, projectName: &#39;ai-project-dr&#39;, endpointSource: &#39;global&#39; }
+]
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>onboard-sales-assistant-prod<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>swedencentral<span class="w"> </span>--template-file<span class="w"> </span>main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>contracts/sales/assistant/prod/main.bicepparam
+</code></pre></div>
+<p>The primary gateway generates the subscription key; the additional gateway <strong>reuses the same key</strong>; Key Vault/Foundry store the <strong>global</strong> endpoint. Clients get one key + one hostname.</p>
+<p><strong>4. Configure the global load balancer.</strong> Add both APIM gateways as origins/endpoints, wire health probes, and publish <code>ai-gateway.contoso.com</code>.</p>
+<p><strong>5. Wire it into CI/CD.</strong> Commit all <code>.bicepparam</code> files; let the pipeline run <code>what-if</code> → deploy (primary-first ordering is automatic) → smoke test both regions.</p>
+<p><strong>6. Validate &amp; drill.</strong> Fail a region (disable an origin / stop the primary gateway) and confirm: clients still succeed via the surviving region on the <strong>same key</strong>, usage still writes to Cosmos, and telemetry consolidates globally.</p>
+<hr />
+<h2 id="9-operational-runbook">9. Operational runbook</h2>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Action</th>
+<th>Expected outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Region 1 request-plane outage</strong></td>
+<td>Global LB health probe fails Region 1 → routes to Region 2 automatically.</td>
+<td>Clients continue on the same hostname + key; RTO bounded by probe interval (+ DNS TTL for Traffic Manager).</td>
+</tr>
+<tr>
+<td><strong>Cosmos regional outage</strong></td>
+<td><code>systemManagedFailover</code> promotes a surviving write region.</td>
+<td>Usage writes continue; RPO ≈ 0.</td>
+</tr>
+<tr>
+<td><strong>Primary control plane down (Option 2)</strong></td>
+<td>Secondaries keep serving last-published config; <strong>defer</strong> config edits/key rotations.</td>
+<td>Data plane healthy; control-plane changes wait for primary recovery.</td>
+</tr>
+<tr>
+<td><strong>Primary control plane down (Option 1)</strong></td>
+<td>Operate the surviving region's independent control plane directly (onboard/route/rotate there).</td>
+<td>Full control retained in the surviving region.</td>
+</tr>
+<tr>
+<td><strong>Key rotation</strong></td>
+<td>Rotate on primary → re-run the same access-contract deployment (pipeline).</td>
+<td>Same key re-applied to all gateways, KVs, Foundry connections.</td>
+</tr>
+<tr>
+<td><strong>Backend/provider outage</strong></td>
+<td>Handled by backend resiliency (pool failover, alias fallback).</td>
+<td>See <a href="../resiliency-guide/#3-automated-failover">Resiliency Guide</a>.</td>
+</tr>
+<tr>
+<td><strong>Scheduled DR drill</strong></td>
+<td>Pipeline job refreshes secondary + runs smoke tests; optionally fail an origin.</td>
+<td>DR path proven before a real incident.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Testing cadence:</strong> run a full failover drill at least quarterly, and after any material change to topology, backends, or the global LB.</p>
+<hr />
+<h2 id="10-related-guides-modules">10. Related guides &amp; modules</h2>
+<ul>
+<li><a href="../resiliency-guide/">Resiliency Guide</a> — <strong>backend</strong> resiliency: circuit breaking, session affinity, automated failover, error handling. <strong>Pair this with the BC/DR guide.</strong></li>
+<li><a href="../network-approach/">Network Architecture</a> — hub-based vs hub-spoke-hub patterns, VNet/private-endpoint configuration.</li>
+<li><a href="../bicep/infra/citadel-access-contracts/README.md">Access Contracts README</a> — use-case onboarding.</li>
+<li><a href="../bicep/infra/citadel-access-contracts/access-contract-resiliency-guide.md">Access Contract Business Continuity &amp; Resiliency Guide</a> — mirror one contract across gateways/Key Vaults/Foundry with a shared key.</li>
+<li><a href="../bicep/infra/citadel-cosmos-global-multi-master-sync/README.md">Cosmos Global Multi-Master Sync</a> — link Cosmos accounts into a multi-write topology for consolidated usage data.</li>
+<li><a href="../bicep/infra/llm-backend-onboarding/README.md">LLM Backend Onboarding (Backend Contract)</a> — pools, priority/weight routing, circuit breaker, aliases.</li>
+<li><a href="../full-deployment-guide/">Full Deployment Guide</a> — deploying a complete Governance Hub instance (repeat per region for Option 1).</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/foundry/how-to/high-availability-resiliency">High availability and resiliency for Microsoft Foundry projects and Agent Services</a> — Foundry-specific high-availability guidance.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

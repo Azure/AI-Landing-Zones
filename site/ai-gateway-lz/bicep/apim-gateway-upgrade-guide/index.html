@@ -1,0 +1,1436 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Upgrading the Gateway Ecosystem (existing APIM + supporting services) - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#upgrading-the-gateway-ecosystem-existing-apim-supporting-services" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Upgrading the Gateway Ecosystem (existing APIM + supporting services)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#two-deployment-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two deployment modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#master-switch-and-per-service-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Master switch and per-service flags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configure-and-deploy-supporting-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Configure and deploy supporting services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-capture-the-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Capture the outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-deploy-the-apim-configuration-upgrade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Deploy the APIM configuration upgrade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#challenges-for-a-non-accelerator-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenges for a non-accelerator gateway
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Challenges for a non-accelerator gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-networking-and-dns-topology-is-unknown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Networking and DNS topology is unknown
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-managed-identity-model-differs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Managed identity model differs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-rbac-principal-replication-delays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. RBAC principal replication delays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-event-hub-access-during-provisioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Event Hub access during provisioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-existing-resource-naming-and-collisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Existing-resource naming and collisions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-logic-app-workflow-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Logic App workflow content
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-ai-foundry-as-a-backend-vs-full-model-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. AI Foundry as a backend vs full model host
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-idempotency-and-re-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Idempotency and re-runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="upgrading-the-gateway-ecosystem-existing-apim-supporting-services">Upgrading the Gateway Ecosystem (existing APIM + supporting services)</h1>
+<p>This guide covers the <strong><code>supporting-services.bicep</code></strong> deployment — the companion to
+<a href="./main.bicep"><code>main.bicep</code></a> in this folder. While <code>main.bicep</code> updates an existing API Management
+instance's <strong>configuration</strong> (policies, APIs, named values, backends), <code>supporting-services.bicep</code>
+provisions — or aligns an existing — <strong>ecosystem of services</strong> the gateway depends on:</p>
+<ul>
+<li>User-assigned <strong>managed identities</strong> (APIM + usage pipeline)</li>
+<li><strong>Monitoring</strong> — Log Analytics + Application Insights (APIM + Function/Logic App)</li>
+<li><strong>Key Vault</strong></li>
+<li><strong>Event Hub</strong> (usage + PII hubs and consumer groups)</li>
+<li><strong>Cosmos DB</strong> (usage database + containers)</li>
+<li><strong>Primary AI Foundry</strong> (Content Safety + PII / Language APIs)</li>
+<li><strong>Storage account + usage-ingestion Logic App</strong></li>
+</ul>
+<p>It exists for one scenario in particular: you have an <strong>API Management instance that was NOT
+created by this accelerator</strong> (for example a pre-existing enterprise APIM, or an APIM provisioned by
+an earlier version of the Citadel Governance Hub) and you want to bring it — and its surrounding
+services — in line with the current accelerator.</p>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>No network mutation guarantee.</strong> This deployment will <strong>not</strong> change any network configuration
+of your existing APIM or any <strong>bring-your-own (BYO)</strong> supporting service. For existing resources it
+only makes <em>additive</em> changes (new Cosmos containers, new Event Hub hubs/consumer groups, named
+values, RBAC role assignments, and consuming the Foundry endpoint). <code>publicNetworkAccess</code>, network
+ACLs/firewall rules, private endpoints, and VNet integration of existing resources are left
+untouched. Private-endpoint creation and public/private access settings apply <strong>only to resources
+this template creates</strong>.</p>
+</blockquote>
+<hr />
+<h2 id="two-deployment-modes">Two deployment modes</h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>What you set</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Provision everything (greenfield ecosystem)</strong></td>
+<td><code>provisionSupportingServices = true</code> and all <code>create*</code> flags <code>true</code></td>
+<td>Creates a fresh set of supporting services next to your existing APIM.</td>
+</tr>
+<tr>
+<td><strong>Bring-your-own (configure existing)</strong></td>
+<td><code>provisionSupportingServices = true</code> and selected <code>create*</code> flags <code>false</code></td>
+<td>References your existing services and applies only the additive accelerator configuration.</td>
+</tr>
+<tr>
+<td><strong>APIM-only (no supporting services)</strong></td>
+<td><code>provisionSupportingServices = false</code></td>
+<td>No-op for this template — use only <code>main.bicep</code>. This matches an environment where the supporting services already exist and are correctly configured (e.g. an earlier full accelerator deployment).</td>
+</tr>
+</tbody>
+</table>
+<p>You can mix per service — e.g. create a new Cosmos DB and Event Hub, but bring your own Key Vault and
+AI Foundry.</p>
+<hr />
+<h2 id="master-switch-and-per-service-flags">Master switch and per-service flags</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>provisionSupportingServices</code></td>
+<td><code>false</code></td>
+<td>Master on/off. When <code>false</code>, the template does nothing.</td>
+</tr>
+<tr>
+<td><code>createApimManagedIdentity</code></td>
+<td><code>false</code></td>
+<td><code>false</code> = reference the identity already attached to your existing APIM (BYO).</td>
+</tr>
+<tr>
+<td><code>deployMonitoring</code> / <code>createLogAnalytics</code> / <code>createAppInsights</code></td>
+<td><code>true</code></td>
+<td>Include monitoring; create vs BYO workspace/components.</td>
+</tr>
+<tr>
+<td><code>deployKeyVault</code> / <code>createKeyVault</code></td>
+<td><code>true</code></td>
+<td>Include Key Vault; create vs BYO.</td>
+</tr>
+<tr>
+<td><code>deployEventHub</code> / <code>createEventHub</code></td>
+<td><code>true</code></td>
+<td>Include Event Hub; create namespace vs add hubs to an existing namespace.</td>
+</tr>
+<tr>
+<td><code>deployCosmosDb</code> / <code>createCosmosDb</code></td>
+<td><code>true</code></td>
+<td>Include Cosmos DB; create account vs add database/containers to an existing account.</td>
+</tr>
+<tr>
+<td><code>deployFoundry</code> / <code>createFoundry</code></td>
+<td><code>true</code></td>
+<td>Include AI Foundry; create vs consume an existing endpoint.</td>
+</tr>
+<tr>
+<td><code>deployFoundryModels</code></td>
+<td><code>false</code></td>
+<td>Opt-in: add model deployments to the Foundry account (otherwise endpoint-only).</td>
+</tr>
+<tr>
+<td><code>deployLogicApp</code> / <code>createStorage</code></td>
+<td><code>true</code></td>
+<td>Include the usage Logic App (+ storage); create vs BYO storage.</td>
+</tr>
+<tr>
+<td><code>usePrivateEndpoints</code></td>
+<td><code>false</code></td>
+<td>Opt-in private endpoints for <strong>created</strong> resources only.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommended-workflow">Recommended workflow</h2>
+<pre class="mermaid"><code>flowchart LR
+  A[Deploy supporting-services.bicep] --&gt; B[Capture outputs]
+  B --&gt; C[Fill main.bicepparam&lt;br/&gt;foundryEndpoint, event hub,&lt;br/&gt;cosmos, managedIdentityName]
+  C --&gt; D[Deploy main.bicep&lt;br/&gt;APIM configuration upgrade]</code></pre>
+<h3 id="1-configure-and-deploy-supporting-services">1. Configure and deploy supporting services</h3>
+<p>Edit <a href="./supporting-services.bicepparam"><code>supporting-services.bicepparam</code></a>, then:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>group<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>ecosystem-upgrade-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d%H%M<span class="k">)</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span>&lt;your-resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>supporting-services.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>supporting-services.bicepparam
+</code></pre></div>
+<h3 id="2-capture-the-outputs">2. Capture the outputs</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>group<span class="w"> </span>show<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span>&lt;your-resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>&lt;deployment-name&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--query<span class="w"> </span>properties.outputs
+</code></pre></div>
+<p>Key outputs to carry into <code>main.bicepparam</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Feeds <code>main.bicep</code> parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>foundryEndpoint</code></td>
+<td><code>aiLanguageServiceUrl</code>, <code>contentSafetyServiceUrl</code></td>
+</tr>
+<tr>
+<td><code>managedIdentityName</code></td>
+<td><code>managedIdentityName</code></td>
+</tr>
+<tr>
+<td><code>eventHubName</code>, <code>eventHubPIIName</code>, <code>eventHubEndpoint</code>, <code>eventHubNamespaceName</code></td>
+<td>(used by APIM usage logging configuration)</td>
+</tr>
+<tr>
+<td><code>cosmosDbAccountName</code></td>
+<td>(used by the usage pipeline)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-deploy-the-apim-configuration-upgrade">3. Deploy the APIM configuration upgrade</h3>
+<p>Follow <a href="./README.md"><code>README.md</code></a> to run <code>main.bicep</code> with the captured values.</p>
+<hr />
+<h2 id="challenges-for-a-non-accelerator-gateway">Challenges for a non-accelerator gateway</h2>
+<p>Bringing an APIM that the accelerator did not create into alignment surfaces a number of issues that
+do not arise on a clean accelerator deployment. Plan for the following.</p>
+<h3 id="1-networking-and-dns-topology-is-unknown">1. Networking and DNS topology is unknown</h3>
+<p>The accelerator's own modules are <strong>private-endpoint-first</strong> and assume a known VNet, subnets, and
+private DNS zones. An arbitrary existing APIM may be public, internal (VNet-injected), behind a
+private endpoint, or in a hub-spoke topology you do not control.</p>
+<ul>
+<li>This template defaults to <strong>public network access</strong> for created services so it can run without a
+  VNet. This is the simplest path for a proof of concept but is <strong>not</strong> the accelerator's secure
+  posture.</li>
+<li>To match the secure posture, set <code>usePrivateEndpoints = true</code> and provide the existing
+  <code>vNetName</code> / <code>vNetRG</code> / <code>privateEndpointSubnetName</code> plus DNS zone resource IDs in
+  <code>existingPrivateDnsZones</code>. The subnet and DNS zones <strong>must already exist</strong> — this template does not
+  create VNets, subnets, or DNS zones.</li>
+<li><strong>APIM ↔ backend reachability:</strong> if your APIM is VNet-injected, created public services may not be
+  reachable (or vice versa). Ensure routing/firewall/private-endpoint connectivity between APIM and
+  each backend before relying on the gateway.</li>
+</ul>
+<h3 id="2-managed-identity-model-differs">2. Managed identity model differs</h3>
+<p>The accelerator wires a <strong>user-assigned</strong> identity to APIM (for Key Vault, Event Hub, and Cognitive
+Services access) and a separate <strong>system-assigned</strong> identity for Key Vault named-value resolution.</p>
+<ul>
+<li>Provide your existing APIM's user-assigned identity name via <code>apimManagedIdentityName</code>
+  (<code>createApimManagedIdentity = false</code>). This template grants that identity the Foundry / Key Vault
+  roles it needs.</li>
+<li>The <strong>system-assigned</strong> APIM identity only exists after APIM is created and is not discoverable
+  from this template. If you use Key-Vault-backed named values, pass its principal ID via
+  <code>apimSystemAssignedPrincipalId</code> so it is granted Secrets/Certificate User, or grant it manually.</li>
+</ul>
+<h3 id="3-rbac-principal-replication-delays">3. RBAC principal replication delays</h3>
+<p>Freshly created identities can take time to replicate in Microsoft Entra ID. Cosmos DB validates
+principals <strong>synchronously</strong> and has no <code>principalType</code> hint, so its data-plane role assignment is
+deployed in a <strong>separate stage</strong> (<code>cosmos-sql-role-assignment.bicep</code>) after the identity exists. If
+you still hit a transient <em>"principal ID … was not found in the AAD tenant"</em> error, simply re-run the
+deployment.</p>
+<h3 id="4-event-hub-access-during-provisioning">4. Event Hub access during provisioning</h3>
+<p>APIM (especially the v2 SKUs) may need the Event Hub namespace to allow access while the logger is
+established. When creating a namespace, this template leaves <code>eventHubPublicNetworkAccess = 'Enabled'</code>
+by default. Restrict it <strong>after</strong> the gateway logger is confirmed working — and remember that for a
+<strong>BYO</strong> namespace this template will never change that setting for you.</p>
+<h3 id="5-existing-resource-naming-and-collisions">5. Existing-resource naming and collisions</h3>
+<p>For BYO services you supply explicit names; for created services the template derives names from
+<code>abbreviations.json</code> + a <code>resourceToken</code> (hash of the resource group ID). If your environment already
+contains resources with conflicting names, override the relevant <code>*Name</code> parameters to avoid
+collisions or accidental references to the wrong resource.</p>
+<h3 id="6-logic-app-workflow-content">6. Logic App workflow content</h3>
+<p>This template provisions the usage-ingestion Logic App <strong>infrastructure</strong> (hosting plan, app
+settings, identity, RBAC, Azure Monitor connection) and points it at your storage, Cosmos DB, and
+Event Hub. The <strong>workflow definitions</strong> themselves are deployed separately (via <code>azd deploy</code>, the
+Logic App source under <code>src/</code>, or your own pipeline). VNet integration is optional — supply
+<code>logicAppSubnetId</code> to integrate, or leave it blank to run over public networking.</p>
+<h3 id="7-ai-foundry-as-a-backend-vs-full-model-host">7. AI Foundry as a backend vs full model host</h3>
+<p>For BYO Foundry the template consumes only the <strong>endpoint</strong> (for Content Safety and PII / Language)
+and grants APIM the Cognitive Services User role. It does <strong>not</strong> add model deployments unless you set
+<code>deployFoundryModels = true</code>. If your existing Foundry already hosts the models you route to, leave
+this off and configure those backends through <code>main.bicep</code>'s <code>llmBackendConfig</code>.</p>
+<h3 id="8-idempotency-and-re-runs">8. Idempotency and re-runs</h3>
+<p>The template is safe to re-run. RBAC assignments are deterministically named (<code>guid(...)</code>), and
+additive resources (containers, hubs, consumer groups) are upserted. Validate with a what-if first:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>group<span class="w"> </span>what-if<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span>&lt;your-resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>supporting-services.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>supporting-services.bicepparam
+</code></pre></div>
+<p>For BYO services, confirm the what-if shows <strong>only additive changes</strong> and <strong>no network property
+diffs</strong> on existing resources before applying.</p>
+<hr />
+<h2 id="file-structure">File structure</h2>
+<div class="highlight"><pre><span></span><code>apim-gateway-upgrade/
+├── main.bicep                          # APIM configuration upgrade (policies, APIs, named values)
+├── main.bicepparam
+├── supporting-services.bicep           # Gateway ecosystem provisioning / alignment (this guide)
+├── supporting-services.bicepparam
+├── services/                           # Upgrade-scoped wrapper modules (create-or-BYO, optional PE)
+│   ├── managed-identity.bicep
+│   ├── monitoring.bicep
+│   ├── key-vault.bicep
+│   ├── event-hub.bicep
+│   ├── cosmos-db.bicep
+│   ├── foundry.bicep
+│   ├── storage.bicep
+│   └── logic-app.bicep
+├── README.md                           # main.bicep reference
+└── gateway-ecosystem-upgrade-guide.md  # This guide
+</code></pre></div>
+<p>The wrapper modules under <code>services/</code> are intentionally <strong>separate</strong> from the shared accelerator
+modules in <code>bicep/infra/modules/</code>. The shared modules are private-endpoint-first and always create
+private endpoints; the wrappers add create-or-BYO behaviour and make private endpoints opt-in,
+without modifying (and therefore without risk to) the main accelerator deployment.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

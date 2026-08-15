@@ -1,0 +1,2990 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🚀 Governance Hub Backend Contract - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#governance-hub-backend-contract" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🚀 Governance Hub Backend Contract
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Gets Created
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-copy-the-parameter-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Copy the Parameter Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-your-backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure Your Backends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-configuration-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Configuration Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-object-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Object Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backend Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-ai-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry (ai-foundry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-openai-azure-openai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure OpenAI (azure-openai)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-external" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External (external)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-bedrock-aws-bedrock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon Bedrock (aws-bedrock)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-flux-azure-flux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure FLUX (azure-flux)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-mai-azure-mai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure MAI (azure-mai)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-ai-foundry-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single AI Foundry Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-balancing-across-regions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing Across Regions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mixed-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mixed Providers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-bedrock-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon Bedrock Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#circuit-breaker-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Circuit Breaker Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Circuit Breaker Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#global-defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global defaults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-backend-override" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-backend override
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#session-affinity-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Session Affinity Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Session Affinity Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#settings_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-resolves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it resolves
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#global-defaults_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global defaults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flag-a-stateful-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flag a stateful model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client-requirement-cookie-jar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client requirement (cookie jar)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client surface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provider-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provider routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flux-modelpath-one-time-onboarding-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FLUX modelPath (one-time onboarding step)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Aliases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Aliases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-scope-same-api-spec-routing-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Phase scope: same-API-spec routing only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aliases-are-virtual-backend-pools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aliases are virtual backend pools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reference-scenarios-from-the-extended-providers-validation-notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference scenarios (from the extended-providers validation notebook)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alias-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alias Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolution flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changes-for-direct-model-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changes for direct-model requests?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discovery-get-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discovery (GET /deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source of Truth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-available-models-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Available Models API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Get Available Models API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-insights-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Insights Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-not-supported-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Model not supported" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#403-forbidden-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "403 Forbidden" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#401-unauthorized-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "401 Unauthorized" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#500-awscredentialsnotconfigured-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "500 AWSCredentialsNotConfigured" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="governance-hub-backend-contract">🚀 Governance Hub Backend Contract</h1>
+<h2 id="overview">Overview</h2>
+<p>Automate the onboarding of LLM backends to your APIM-based AI Gateway with a streamlined, infrastructure-as-code approach using <strong>Bicep parameter files</strong> (<code>.bicepparam</code>).</p>
+<p>This package enables dynamic LLM backend routing without modifying APIM policies:</p>
+<ul>
+<li>📦 <strong>Automatic Backend Creation</strong>: Create APIM backends from configuration</li>
+<li>⚖️ <strong>Load Balancing</strong>: Distribute requests across multiple backends for the same model</li>
+<li>🔄 <strong>Automatic Failover</strong>: Route to healthy backends when others are unavailable</li>
+<li>🔌 <strong>Multi-Provider Support</strong>: Microsoft Foundry, Azure OpenAI, Amazon Bedrock, and external LLM providers</li>
+<li>📝 <strong>Declarative Configuration</strong>: Simple <code>.bicepparam</code> files for version control</li>
+</ul>
+<h2 id="what-gets-created">What Gets Created</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIM Backends</strong></td>
+<td>Individual backend resources for each LLM endpoint</td>
+</tr>
+<tr>
+<td><strong>Backend Pools</strong></td>
+<td>Load-balanced pools for models with multiple backends</td>
+</tr>
+<tr>
+<td><strong>Policy Fragments</strong></td>
+<td>Dynamic routing logic for model-based routing</td>
+</tr>
+<tr>
+<td><strong>Get Available Models Fragment</strong></td>
+<td>Returns available model deployments with capabilities (similar to Azure Cognitive Services API)</td>
+</tr>
+<tr>
+<td><strong>Metadata Config Fragment</strong></td>
+<td>Centralized model routing config for the Unified AI API — always deployed with backend onboarding to stay in sync</td>
+</tr>
+<tr>
+<td><strong>Resolve Model Alias Fragment</strong></td>
+<td>Resolves client-facing alias names (e.g. <code>adv-gpt</code> as an alias for gpt-5.2 and gpt-4.1) to actual underlying models — shared across Azure OpenAI, Universal LLM, and Unified AI APIs</td>
+</tr>
+<tr>
+<td><strong>Backend Contract Fragment</strong></td>
+<td><code>backend-contract</code> fragment returning the active routing contract as JSON: APIM target, full <code>llmBackendConfig</code> (per-model metadata), circuit breaker + session affinity configuration, model aliases, and derived pools. Regenerated on every onboarding run so the Release Version API <code>GET /version/backend-contract</code> operation always reflects the live contract</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>[!NOTE]
+<strong>Backend Contract endpoint.</strong> The primary accelerator deployment creates a <strong>Release Version API</strong>
+with a <code>GET /version/backend-contract</code> operation. That operation returns its response through the
+dynamically generated <code>backend-contract</code> policy fragment. Running this onboarding submodule
+<strong>refreshes that fragment</strong> from your full <code>llmBackendConfig</code> (plus circuit breaker, session
+affinity, and model alias settings), so the endpoint immediately reflects newly onboarded
+backends/models — no change to the API definition is required. Inline <code>authConfig.secretValue</code>
+entries are redacted (Key Vault references and named-value keys are preserved). See the
+<a href="../../../guides/release-version-management.md#backend-contract-endpoint">Release Version Management Guide</a>.</p>
+</blockquote>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Existing deployment of AI Citadel Governance Hub with:<ul>
+<li>User-assigned managed identity configured</li>
+<li>APIs for Universal LLM API and Azure OpenAI API</li>
+</ul>
+</li>
+<li>LLM backends deployed and accessible:<ul>
+<li>Microsoft Foundry with model deployments</li>
+<li>Azure OpenAI resources with model deployments</li>
+<li>Amazon Bedrock with foundation model access</li>
+<li>APIM can reach the target backends from network perspective</li>
+</ul>
+</li>
+<li>Verify APIM's user assigned managed identity has required roles:<ul>
+<li><code>Cognitive Services OpenAI User</code> for Azure OpenAI</li>
+<li><code>Cognitive Services User</code> for Microsoft Foundry</li>
+</ul>
+</li>
+<li>For Amazon Bedrock:<ul>
+<li>AWS IAM user with Bedrock access and access keys generated</li>
+<li>Provide <code>awsAccessKey</code>, <code>awsSecretKey</code>, and <code>awsRegion</code> parameters when deploying — these are stored as secret APIM named values (<code>aws-access-key</code>, <code>aws-secret-key</code>, <code>aws-region</code>)</li>
+<li>If these parameters are not provided, the named values are created with a <code>NOT_CONFIGURED</code> placeholder and the gateway returns a <code>500 AWSCredentialsNotConfigured</code> error at runtime when a Bedrock backend is invoked</li>
+</ul>
+</li>
+</ul>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="1-copy-the-parameter-template">1. Copy the Parameter Template</h3>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>main.bicepparam<span class="w"> </span>llm-backends-dev-local.bicepparam
+</code></pre></div>
+<h3 id="2-configure-your-backends">2. Configure Your Backends</h3>
+<p>Edit <code>llm-backends-dev-local.bicepparam</code>:</p>
+<div class="highlight"><pre><span></span><code>using &#39;main.bicep&#39;
+
+param apim = {
+  subscriptionId: &#39;00000000-0000-0000-0000-000000000000&#39; // Replace with your subscription ID
+  resourceGroupName: &#39;rg-citadel-governance-hub&#39;         // Replace with your APIM resource group
+  name: &#39;apim-citadel-governance-hub&#39;                    // Replace with your APIM name
+}
+
+param apimManagedIdentity = {
+  subscriptionId: &#39;00000000-0000-0000-0000-000000000000&#39; // Replace with your subscription ID
+  resourceGroupName: &#39;rg-citadel-governance-hub&#39;         // Replace with your identity resource group
+  name: &#39;id-apim-citadel&#39;                                // Replace with your managed identity name
+}
+
+param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-4o-mini&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-07-18&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4o&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-11-20&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4.1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2025-04-14&quot;, &quot;retirementDate&quot;: &quot;2026-10-14&quot;, &quot;apiVersion&quot;: &quot;2025-04-01-preview&quot;, &quot;timeout&quot;: 180 },
+      { &quot;name&quot;: &quot;DeepSeek-R1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;DeepSeek&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;Phi-4&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Microsoft&quot;, &quot;modelVersion&quot;: &quot;3&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;text-embedding-3-large&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2027-04-14&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+]
+</code></pre></div>
+<h3 id="3-deploy">3. Deploy</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>llm-backend-onboarding<span class="w"> </span>--location<span class="w"> </span>swedencentral<span class="w"> </span>--template-file<span class="w"> </span>main.bicep<span class="w"> </span>--parameters<span class="w"> </span>llm-backends-generated-local.bicepparam
+</code></pre></div>
+<h2 id="configuration-reference">Configuration Reference</h2>
+<h3 id="backend-configuration-properties">Backend Configuration Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backendId</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Unique identifier for the backend (usually the name of the backend resource)</td>
+</tr>
+<tr>
+<td><code>backendType</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><code>ai-foundry</code>, <code>azure-openai</code>, <code>aws-bedrock</code>, <code>aws-bedrock-mantle</code>, <code>gemini</code>, <code>gemini-openai</code>, <code>anthropic</code>, <code>azure-flux</code>, <code>azure-mai</code>, or <code>external</code></td>
+</tr>
+<tr>
+<td><code>endpoint</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Base URL of the LLM service</td>
+</tr>
+<tr>
+<td><code>authType</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>managed-identity</code>, <code>aws-sigv4</code>, <code>api-key-bearer</code>, <code>api-key-header</code>, <code>api-key-gemini</code>, <code>api-key-anthropic</code>, or <code>none</code>. When omitted, derived from <code>backendType</code> (ai-foundry/azure-openai → <code>managed-identity</code>)</td>
+</tr>
+<tr>
+<td><code>authConfig</code></td>
+<td>object</td>
+<td>No</td>
+<td><code>{ namedValueKey, keyVaultSecretUri?, secretValue? }</code> — required for <code>api-key-*</code> auth types</td>
+</tr>
+<tr>
+<td><code>authScheme</code></td>
+<td>string</td>
+<td>No</td>
+<td><strong>Legacy</strong> — <code>managedIdentity</code>, <code>apiKey</code>, or <code>token</code>. Superseded by <code>authType</code>; still tolerated for backward compatibility</td>
+</tr>
+<tr>
+<td><code>supportedModels</code></td>
+<td>array</td>
+<td>Yes</td>
+<td>Array of model objects (see Model Object Properties below)</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td>number</td>
+<td>No</td>
+<td>1-5, default 1 (lower = higher priority)</td>
+</tr>
+<tr>
+<td><code>weight</code></td>
+<td>number</td>
+<td>No</td>
+<td>1-1000, default 100 (load balancing weight)</td>
+</tr>
+<tr>
+<td><code>circuitBreaker</code></td>
+<td>object</td>
+<td>No</td>
+<td>Per-backend circuit breaker override (shallow-merged over <code>circuitBreakerDefaults</code>). Supports <code>failureCount</code>, <code>failureInterval</code>, <code>tripDuration</code>, <code>acceptRetryAfter</code>, <code>errorReasons</code>, <code>statusCodeRanges</code>, and <code>enabled</code>. See <a href="#circuit-breaker-configuration">Circuit Breaker Configuration</a></td>
+</tr>
+<tr>
+<td><code>sessionAffinity</code></td>
+<td>object</td>
+<td>No</td>
+<td>Per-backend session affinity override (shallow-merged over <code>sessionAffinityDefaults</code>). Supports <code>cookieName</code> and <code>source</code>. Applies to the session-aware model pools this backend joins. See <a href="#session-affinity-configuration">Session Affinity Configuration</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="model-object-properties">Model Object Properties</h3>
+<p>Each model in the <code>supportedModels</code> array has these properties:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Model name (e.g., <code>gpt-4o</code>, <code>DeepSeek-R1</code>, <code>Phi-4</code>)</td>
+</tr>
+<tr>
+<td><code>sku</code></td>
+<td>string</td>
+<td>No</td>
+<td>SKU name for the deployment (default: <code>Standard</code>). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>capacity</code></td>
+<td>number</td>
+<td>No</td>
+<td>Capacity/TPM quota (default: 100). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>modelFormat</code></td>
+<td>string</td>
+<td>No</td>
+<td>Model format identifier, e.g., <code>OpenAI</code>, <code>DeepSeek</code>, <code>Microsoft</code> (default: <code>OpenAI</code>). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>modelVersion</code></td>
+<td>string</td>
+<td>No</td>
+<td>Version of the model (default: <code>1</code>). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>retirementDate</code></td>
+<td>string (date)</td>
+<td>No</td>
+<td>Optional retirement date for the model. Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>apiVersion</code></td>
+<td>string</td>
+<td>No</td>
+<td>API version for OpenAI-type requests (default: <code>2024-02-15-preview</code>). Used by Unified AI API for backend routing</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>number</td>
+<td>No</td>
+<td>Request timeout in seconds (default: <code>120</code>). Used by Unified AI API for per-model timeout configuration</td>
+</tr>
+<tr>
+<td><code>inferenceApiVersion</code></td>
+<td>string</td>
+<td>No</td>
+<td>API version for inference-type requests (e.g., <code>2024-05-01-preview</code>). Used by Unified AI API for non-OpenAI models</td>
+</tr>
+<tr>
+<td><code>sessionAwareModel</code></td>
+<td>bool</td>
+<td>No</td>
+<td>Default <code>false</code>. Marks a <strong>stateful</strong> model (e.g., OpenAI Responses / Assistants). When such a model is served by a multi-backend pool, the pool is given session affinity so follow-up requests replaying the affinity cookie stick to the same backend. See <a href="#session-affinity-configuration">Session Affinity Configuration</a></td>
+</tr>
+<tr>
+<td><code>modelPath</code></td>
+<td>string</td>
+<td>No</td>
+<td>Provider-specific model slug used in the backend URL path. <strong>Required for <code>azure-flux</code></strong> models, where the BFL slug differs from the model name (e.g. model <code>FLUX.2-pro</code> -&gt; <code>modelPath</code> <code>flux-2-pro</code>, <code>FLUX.1-Kontext-pro</code> -&gt; <code>flux-kontext-pro</code>). When omitted, the gateway falls back to the model name. Set once at onboarding; see <a href="#image-models">Image Models</a>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="backend-types">Backend Types</h3>
+<h4 id="ai-foundry-ai-foundry">AI Foundry (<code>ai-foundry</code>)</h4>
+<ul>
+<li>Uses Azure AI Foundry project endpoints</li>
+<li>Endpoint format: <code>https://&lt;resource&gt;.cognitiveservices.azure.com/</code></li>
+<li>Authentication: Managed identity with Cognitive Services scope</li>
+<li>No URL rewriting required</li>
+</ul>
+<h4 id="azure-openai-azure-openai">Azure OpenAI (<code>azure-openai</code>)</h4>
+<ul>
+<li>Uses Azure OpenAI Service endpoints</li>
+<li>Endpoint format: <code>https://&lt;resource&gt;.openai.azure.com/</code></li>
+<li>Authentication: Managed identity with Cognitive Services scope</li>
+<li>Automatic URL rewriting to include <code>/deployments/{model}/</code></li>
+</ul>
+<h4 id="external-external">External (<code>external</code>)</h4>
+<ul>
+<li>Uses external LLM provider endpoints</li>
+<li>Authentication: API key or backend credentials</li>
+<li>No URL rewriting</li>
+</ul>
+<h4 id="amazon-bedrock-aws-bedrock">Amazon Bedrock (<code>aws-bedrock</code>)</h4>
+<ul>
+<li>Uses Amazon Bedrock runtime endpoints</li>
+<li>Endpoint format: <code>https://bedrock-runtime.&lt;aws-region&gt;.amazonaws.com</code></li>
+<li>Authentication: AWS Signature Version 4 (SigV4) using IAM access keys stored as APIM named values</li>
+<li>Path construction: <code>/model/{model-id}/converse</code></li>
+<li>Requires additional parameters: <code>awsAccessKey</code>, <code>awsSecretKey</code>, <code>awsRegion</code></li>
+<li>See <a href="https://learn.microsoft.com/en-us/azure/api-management/amazon-bedrock-passthrough-llm-api">Microsoft Learn: Import Amazon Bedrock API</a> for detailed APIM integration guidance</li>
+</ul>
+<h4 id="azure-flux-azure-flux">Azure FLUX (<code>azure-flux</code>)</h4>
+<ul>
+<li>Black Forest Labs FLUX image models hosted on a Microsoft Foundry resource (native BFL surface)</li>
+<li>Endpoint format: <code>https://&lt;resource&gt;.services.ai.azure.com/</code> (or <code>https://&lt;resource&gt;.api.cognitive.microsoft.com/</code>)</li>
+<li>Authentication: Managed identity with Cognitive Services scope (same as <code>ai-foundry</code>)</li>
+<li>Path construction: <code>/providers/blackforestlabs/v1/{modelPath}?api-version=preview</code> — <strong>each model must set <code>modelPath</code></strong> (the BFL slug, e.g. <code>flux-2-pro</code>)</li>
+<li>Image generation/edit only; reached via the unified <code>/v1/images/generations</code> and <code>/v1/images/edits</code> surfaces. See <a href="#image-models">Image Models</a>.</li>
+</ul>
+<h4 id="azure-mai-azure-mai">Azure MAI (<code>azure-mai</code>)</h4>
+<ul>
+<li>Microsoft MAI image models hosted on a Microsoft Foundry resource (native MAI surface)</li>
+<li>Endpoint format: <code>https://&lt;resource&gt;.services.ai.azure.com/</code></li>
+<li>Authentication: Managed identity with Cognitive Services scope (override to <code>api-key-header</code> if using a key)</li>
+<li>Path construction: <code>/mai/v1/images/generations</code> and <code>/mai/v1/images/edits</code> (model travels in the request body)</li>
+<li>Image generation/edit only; reached via the unified <code>/v1/images/generations</code> and <code>/v1/images/edits</code> surfaces. See <a href="#image-models">Image Models</a>.</li>
+</ul>
+<h2 id="example-configurations">Example Configurations</h2>
+<h3 id="single-ai-foundry-backend">Single AI Foundry Backend</h3>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-4o-mini&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-07-18&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4o&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-11-20&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4.1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2025-04-14&quot;, &quot;retirementDate&quot;: &quot;2026-10-14&quot;, &quot;apiVersion&quot;: &quot;2025-04-01-preview&quot;, &quot;timeout&quot;: 180 },
+      { &quot;name&quot;: &quot;DeepSeek-R1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;DeepSeek&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;Phi-4&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Microsoft&quot;, &quot;modelVersion&quot;: &quot;3&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;text-embedding-3-large&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2027-04-14&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+]
+</code></pre></div>
+<h3 id="load-balancing-across-regions">Load Balancing Across Regions</h3>
+<p>As <code>DeepSeek-R1</code> is available in 2 different backends, the onboarding script will automatically create a backend pool for <code>DeepSeek-R1</code> and distribute traffic based on the specified priority/weights.</p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-4o-mini&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-07-18&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4o&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-11-20&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4.1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2025-04-14&quot;, &quot;retirementDate&quot;: &quot;2026-10-14&quot;, &quot;apiVersion&quot;: &quot;2025-04-01-preview&quot;, &quot;timeout&quot;: 180 },
+      { &quot;name&quot;: &quot;DeepSeek-R1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;DeepSeek&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;Phi-4&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Microsoft&quot;, &quot;modelVersion&quot;: &quot;3&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;text-embedding-3-large&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2027-04-14&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+  {
+    backendId: &#39;aif-citadel-secondary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-1.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-5&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 50, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2027-02-05&quot; },
+      { &quot;name&quot;: &quot;DeepSeek-R1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;DeepSeek&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; }
+    ]
+    priority: 2
+    weight: 50
+  }
+]
+</code></pre></div>
+<h3 id="mixed-providers">Mixed Providers</h3>
+<p>This is mixing Azure OpenAI and Microsoft Foundry backends. Common models across providers will be automatically load balanced (like <code>DeepSeek-R1</code> and <code>text-embedding-3-large</code> in the below example), while unique models will be routed to their specific backend.</p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-4o-mini&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-07-18&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4o&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-11-20&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; },
+      { &quot;name&quot;: &quot;gpt-4.1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2025-04-14&quot;, &quot;retirementDate&quot;: &quot;2026-10-14&quot;, &quot;apiVersion&quot;: &quot;2025-04-01-preview&quot;, &quot;timeout&quot;: 180 },
+      { &quot;name&quot;: &quot;DeepSeek-R1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;DeepSeek&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;Phi-4&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Microsoft&quot;, &quot;modelVersion&quot;: &quot;3&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;text-embedding-3-large&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2027-04-14&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+  {
+    backendId: &#39;aoai-eastus-gpt4&#39;
+    backendType: &#39;azure-openai&#39;
+    endpoint: &#39;https://YOUR-AOAI-RESOURCE.openai.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-5&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2025-08-07&quot;, &quot;retirementDate&quot;: &quot;2027-02-05&quot; },
+      { &quot;name&quot;: &quot;DeepSeek-R1&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;DeepSeek&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot;, &quot;inferenceApiVersion&quot;: &quot;2024-05-01-preview&quot; },
+      { &quot;name&quot;: &quot;text-embedding-3-large&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2027-04-14&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+]
+</code></pre></div>
+<h3 id="amazon-bedrock-backend">Amazon Bedrock Backend</h3>
+<p>This example adds an Amazon Bedrock backend alongside Azure backends. The <code>aws-bedrock</code> backend type uses AWS SigV4 authentication via IAM access keys stored as APIM named values.</p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-4o&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 100, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;2024-11-20&quot;, &quot;retirementDate&quot;: &quot;2026-09-30&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+  {
+    backendId: &#39;bedrock-us-east-1&#39;
+    backendType: &#39;aws-bedrock&#39;
+    endpoint: &#39;https://bedrock-runtime.us-east-1.amazonaws.com&#39;
+    authType: &#39;aws-sigv4&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;us.anthropic.claude-3-5-haiku-20241022-v1:0&quot;, &quot;sku&quot;: &quot;OnDemand&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Anthropic&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+      { &quot;name&quot;: &quot;us.anthropic.claude-3-5-sonnet-20241022-v2:0&quot;, &quot;sku&quot;: &quot;OnDemand&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Anthropic&quot;, &quot;modelVersion&quot;: &quot;2&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+      { &quot;name&quot;: &quot;us.amazon.nova-pro-v1:0&quot;, &quot;sku&quot;: &quot;OnDemand&quot;, &quot;capacity&quot;: 1, &quot;modelFormat&quot;: &quot;Amazon&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+]
+
+// AWS credentials for Bedrock authentication
+param awsAccessKey = &#39;&lt;your-aws-access-key-id&gt;&#39;
+param awsSecretKey = &#39;&lt;your-aws-secret-access-key&gt;&#39;
+param awsRegion = &#39;us-east-1&#39;
+</code></pre></div>
+<blockquote>
+<p><strong>Important</strong>: Store AWS access keys securely. Consider using Azure Key Vault references for the APIM named values in production. See <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access-key-self-managed.html#Using_CreateAccessKey">Create IAM user access keys</a> for generating AWS access keys.</p>
+</blockquote>
+<h2 id="circuit-breaker-configuration">Circuit Breaker Configuration</h2>
+<p>Each APIM backend can be protected by a <a href="https://learn.microsoft.com/azure/api-management/backends#circuit-breaker">circuit breaker</a> that temporarily stops routing to a backend once it starts failing, and automatically probes it back into rotation after a cool-off. Circuit breaking is controlled at two levels:</p>
+<ol>
+<li><strong><code>configureCircuitBreaker</code></strong> (bool, default <code>true</code>) — the master toggle. When <code>false</code>, no backend gets a circuit breaker.</li>
+<li><strong><code>circuitBreakerDefaults</code></strong> (object) — the default rule applied to <strong>every</strong> backend when the master toggle is on.</li>
+<li><strong>Per-backend <code>circuitBreaker</code></strong> (object, optional) — added to an individual <code>llmBackendConfig</code> entry to override a subset of the defaults for that one backend, or to disable it entirely.</li>
+</ol>
+<h3 id="settings">Settings</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>failureCount</code></td>
+<td>number</td>
+<td><code>3</code></td>
+<td>Number of failures within <code>failureInterval</code> that trips the breaker</td>
+</tr>
+<tr>
+<td><code>failureInterval</code></td>
+<td>string (ISO 8601)</td>
+<td><code>PT5M</code></td>
+<td>Rolling window used to count failures</td>
+</tr>
+<tr>
+<td><code>tripDuration</code></td>
+<td>string (ISO 8601)</td>
+<td><code>PT1M</code></td>
+<td>How long the breaker stays open once tripped</td>
+</tr>
+<tr>
+<td><code>acceptRetryAfter</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>Honor an upstream <code>Retry-After</code> header when tripping</td>
+</tr>
+<tr>
+<td><code>errorReasons</code></td>
+<td>string[]</td>
+<td><code>['Server errors']</code></td>
+<td>Failure reasons that count toward the breaker</td>
+</tr>
+<tr>
+<td><code>statusCodeRanges</code></td>
+<td>object[]</td>
+<td><code>429</code> and <code>500-503</code></td>
+<td>HTTP status ranges (<code>{ min, max }</code>) counted as failures</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>Per-backend only — set <code>false</code> to disable the breaker for that backend even when the master toggle is on</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The built-in defaults match the previously hard-coded rule, so existing deployments behave identically when no new parameters are supplied.</p>
+</blockquote>
+<h3 id="global-defaults">Global defaults</h3>
+<p>Tune the rule applied to all backends by supplying <code>circuitBreakerDefaults</code> in your <code>.bicepparam</code> file:</p>
+<div class="highlight"><pre><span></span><code>param configureCircuitBreaker = true
+
+param circuitBreakerDefaults = {
+  failureCount: 5
+  failureInterval: &#39;PT1M&#39;
+  tripDuration: &#39;PT30S&#39;
+  acceptRetryAfter: true
+  errorReasons: [ &#39;Server errors&#39; ]
+  statusCodeRanges: [
+    { min: 429, max: 429 }
+    { min: 500, max: 503 }
+  ]
+}
+</code></pre></div>
+<h3 id="per-backend-override">Per-backend override</h3>
+<p>Add a <code>circuitBreaker</code> object to any backend entry. Only the keys you set change; the rest fall back to <code>circuitBreakerDefaults</code>:</p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [ /* ... */ ]
+    priority: 1
+    weight: 100
+    // Trip faster than the global default for this backend only
+    circuitBreaker: {
+      failureCount: 5
+      failureInterval: &#39;PT1M&#39;
+      tripDuration: &#39;PT30S&#39;
+    }
+  }
+  {
+    backendId: &#39;aif-citadel-secondary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-1.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [ /* ... */ ]
+    priority: 2
+    weight: 50
+    // Disable the circuit breaker for this backend only
+    circuitBreaker: { enabled: false }
+  }
+]
+</code></pre></div>
+<blockquote>
+<p><strong>Backward compatible.</strong> <code>circuitBreakerDefaults</code> and per-backend <code>circuitBreaker</code> are both optional. With neither supplied, every backend gets the same rule as before (<code>failureCount: 3</code>, <code>PT5M</code> window, <code>PT1M</code> trip, on <code>429</code> + <code>500-503</code>).</p>
+</blockquote>
+<h2 id="session-affinity-configuration">Session Affinity Configuration</h2>
+<p>When the same model is served by <strong>multiple backends</strong>, the onboarding creates an APIM <a href="https://learn.microsoft.com/azure/api-management/backends#load-balanced-pool">backend pool</a> that load-balances requests across them by priority/weight. For <strong>stateless</strong> models this is ideal. For <strong>stateful</strong> models — where follow-up calls must land on the same backend that holds the conversation/thread state (e.g., the OpenAI <strong>Responses API</strong> and <strong>Assistants API</strong>) — pure load balancing breaks the session.</p>
+<p><strong>Session affinity</strong> (session-aware load balancing) solves this: APIM sets a session cookie on the first response and, when the client replays that cookie on subsequent requests, routes them back to the <strong>same backend</strong> in the pool.</p>
+<p>Session affinity is controlled at two levels, and enablement is <strong>per-model</strong>:</p>
+<ol>
+<li><strong><code>sessionAwareModel</code></strong> (bool on each model object, default <code>false</code>) — the opt-in. Only pools whose model is flagged session-aware receive affinity. A single backend can freely mix stateful (<code>sessionAwareModel: true</code>, e.g. <code>gpt-4.1</code> used with the Responses API) and stateless (default, e.g. <code>Phi-4</code>) models — only the flagged models' pools become sticky.</li>
+<li><strong><code>configureSessionAffinity</code></strong> (bool, default <code>true</code>) — a global kill-switch. Leaving it <code>true</code> is safe because no pool gets affinity unless a model is flagged. Set it <code>false</code> to force affinity off everywhere.</li>
+<li><strong><code>sessionAffinityDefaults</code></strong> (object) — the cookie settings applied to every session-aware pool.</li>
+<li><strong>Per-backend <code>sessionAffinity</code></strong> (object, optional) — added to an <code>llmBackendConfig</code> entry to override the cookie settings for the session-aware pools that backend joins.</li>
+</ol>
+<h3 id="settings_1">Settings</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cookieName</code></td>
+<td>string</td>
+<td><code>ai-gateway-affinity</code></td>
+<td>Name of the affinity cookie APIM sets/reads. The non-generic default avoids clashing with other cookies used by the client or backend</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>string</td>
+<td><code>Cookie</code></td>
+<td>Where APIM reads the session id from. Only <code>Cookie</code> is supported today</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Backward compatible.</strong> <code>sessionAwareModel</code> defaults to <code>false</code>, so existing configs produce identical pools with <strong>no</strong> session affinity. Affinity only appears once you flag a model.</p>
+</blockquote>
+<h3 id="how-it-resolves">How it resolves</h3>
+<ul>
+<li>A pool becomes session-aware if <strong>any</strong> member backend flags that model <code>sessionAwareModel: true</code> (the flag is ORed across the pool).</li>
+<li>The pool's cookie config is <code>sessionAffinityDefaults</code> shallow-merged with the <strong>first</strong> pool member that supplies a per-backend <code>sessionAffinity</code> override (else just the defaults).</li>
+<li>Single-backend (non-pooled) models are unaffected — affinity is only meaningful when there are 2+ backends to choose between.</li>
+</ul>
+<h3 id="global-defaults_1">Global defaults</h3>
+<div class="highlight"><pre><span></span><code>param configureSessionAffinity = true
+
+param sessionAffinityDefaults = {
+  cookieName: &#39;ai-gateway-affinity&#39;
+  source: &#39;Cookie&#39;
+}
+</code></pre></div>
+<h3 id="flag-a-stateful-model">Flag a stateful model</h3>
+<p>Add <code>sessionAwareModel: true</code> to the model on every backend that serves it (flagging one member is enough, but flagging all keeps intent explicit):</p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      // Stateful — used with the OpenAI Responses API; its pool becomes sticky
+      { name: &#39;gpt-4.1&#39;, modelFormat: &#39;OpenAI&#39;, modelVersion: &#39;2025-04-14&#39;, sessionAwareModel: true }
+      // Stateless — stays pure load-balanced
+      { name: &#39;Phi-4&#39;, modelFormat: &#39;Microsoft&#39;, modelVersion: &#39;3&#39; }
+    ]
+    priority: 1
+    weight: 100
+    // Optional per-backend cookie override for this backend&#39;s session-aware pools
+    // sessionAffinity: { cookieName: &#39;ai-gateway-affinity&#39;, source: &#39;Cookie&#39; }
+  }
+  {
+    backendId: &#39;aif-citadel-secondary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-1.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { name: &#39;gpt-4.1&#39;, modelFormat: &#39;OpenAI&#39;, modelVersion: &#39;2025-04-14&#39;, sessionAwareModel: true }
+    ]
+    priority: 2
+    weight: 50
+  }
+]
+</code></pre></div>
+<h3 id="client-requirement-cookie-jar">Client requirement (cookie jar)</h3>
+<p>Affinity only works if the <strong>client replays the cookie</strong>. APIM returns the affinity cookie in a <code>Set-Cookie</code> header; the client must persist it and send it on every follow-up request in the same session:</p>
+<ul>
+<li>Use a <strong>single, shared HTTP client with a cookie container</strong> (cookie jar) for all requests belonging to one logical session/conversation.</li>
+<li>Most SDKs and browsers do this automatically when you reuse the same client instance; raw HTTP callers must capture <code>Set-Cookie</code> and echo it back on subsequent calls.</li>
+<li>Different sessions should use separate cookie jars so they can be balanced independently.</li>
+</ul>
+<blockquote>
+<p><strong>Notes / limits.</strong> Affinity is best-effort across gateway units (APIM's distributed nature). It only applies to pooled (multi-backend) session-aware models. If a stuck backend trips its circuit breaker, traffic still fails over to another pool member.</p>
+</blockquote>
+<h2 id="image-models">Image Models</h2>
+<p>The Unified AI API routes image-generation and image-edit models (Azure OpenAI <strong>gpt-image</strong>, Black Forest Labs <strong>FLUX</strong>, Microsoft <strong>MAI</strong>) through a single OpenAI-style images surface. All three providers return OpenAI-shaped responses (<code>data[].b64_json</code>), so clients use one consistent contract regardless of provider.</p>
+<h3 id="client-surface">Client surface</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Model location</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /unified-ai/v1/images/generations</code></td>
+<td><code>model</code> in JSON body</td>
+<td>Generation (gpt-image, FLUX, MAI)</td>
+</tr>
+<tr>
+<td><code>POST /unified-ai/openai/deployments/{model}/images/generations</code></td>
+<td><code>{model}</code> in URL</td>
+<td>Generation (Azure OpenAI SDK style)</td>
+</tr>
+<tr>
+<td><code>POST /unified-ai/openai/deployments/{model}/images/edits</code></td>
+<td><code>{model}</code> in URL</td>
+<td>Edits (multipart) — <strong>recommended</strong></td>
+</tr>
+<tr>
+<td><code>POST /unified-ai/v1/images/edits</code></td>
+<td><code>x-ai-model</code> <strong>header</strong></td>
+<td>Edits (multipart) when not using the deployments path</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Image edits are multipart/form-data.</strong> The model can't be read from a multipart form field, so on <code>POST /unified-ai/v1/images/edits</code> you must pass the model in the <code>x-ai-model</code> request header. Prefer the <code>/openai/deployments/{model}/images/edits</code> form, which carries the model in the URL. A missing model returns <code>400 missing_model_parameter</code> with guidance.</p>
+</blockquote>
+<h3 id="provider-routing">Provider routing</h3>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th><code>backendType</code></th>
+<th>Backend path built by the gateway</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure OpenAI / Foundry gpt-image</td>
+<td><code>ai-foundry</code> / <code>azure-openai</code></td>
+<td><code>/openai/v1/images/generations</code> | <code>/openai/v1/images/edits</code></td>
+<td>Managed identity</td>
+</tr>
+<tr>
+<td>Black Forest Labs FLUX</td>
+<td><code>azure-flux</code></td>
+<td><code>/providers/blackforestlabs/v1/{modelPath}?api-version=preview</code></td>
+<td>Managed identity</td>
+</tr>
+<tr>
+<td>Microsoft MAI</td>
+<td><code>azure-mai</code></td>
+<td><code>/mai/v1/images/generations</code> | <code>/mai/v1/images/edits</code></td>
+<td>Managed identity</td>
+</tr>
+</tbody>
+</table>
+<h3 id="flux-modelpath-one-time-onboarding-step">FLUX <code>modelPath</code> (one-time onboarding step)</h3>
+<p>FLUX's URL slug isn't derivable from the model name, so <strong>every <code>azure-flux</code> model must set <code>modelPath</code></strong> to the BFL slug. This is a one-time onboarding value; once set, the gateway routes correctly:</p>
+<table>
+<thead>
+<tr>
+<th>Model name</th>
+<th><code>modelPath</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FLUX.2-pro</code></td>
+<td><code>flux-2-pro</code></td>
+</tr>
+<tr>
+<td><code>FLUX.2-flex</code></td>
+<td><code>flux-2-flex</code></td>
+</tr>
+<tr>
+<td><code>FLUX.1-Kontext-pro</code></td>
+<td><code>flux-kontext-pro</code></td>
+</tr>
+<tr>
+<td><code>FLUX-1.1-pro</code></td>
+<td><code>flux-pro-1.1</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-configuration">Example configuration</h3>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  // gpt-image rides the existing Foundry/Azure OpenAI backend (no new backend needed)
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    backendType: &#39;ai-foundry&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;gpt-image-1.5&quot;, &quot;sku&quot;: &quot;GlobalStandard&quot;, &quot;capacity&quot;: 10, &quot;modelFormat&quot;: &quot;OpenAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+  // FLUX — native BFL surface; each model sets its modelPath slug
+  {
+    backendId: &#39;aif-citadel-flux&#39;
+    backendType: &#39;azure-flux&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.services.ai.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;FLUX.2-pro&quot;, &quot;modelPath&quot;: &quot;flux-2-pro&quot;, &quot;modelFormat&quot;: &quot;BlackForestLabs&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+      { &quot;name&quot;: &quot;FLUX.1-Kontext-pro&quot;, &quot;modelPath&quot;: &quot;flux-kontext-pro&quot;, &quot;modelFormat&quot;: &quot;BlackForestLabs&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+  // MAI — native MAI surface; model travels in the request body
+  {
+    backendId: &#39;aif-citadel-mai&#39;
+    backendType: &#39;azure-mai&#39;
+    endpoint: &#39;https://aif-RESOURCE_TOKEN-0.services.ai.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { &quot;name&quot;: &quot;MAI-Image-2.5-Flash&quot;, &quot;modelFormat&quot;: &quot;MAI&quot;, &quot;modelVersion&quot;: &quot;1&quot;, &quot;retirementDate&quot;: &quot;2099-12-30&quot; }
+    ]
+    priority: 1
+    weight: 100
+  }
+]
+</code></pre></div>
+<blockquote>
+<p><strong>Backward compatible.</strong> Image routing is isolated behind a new <code>image</code> api-type (<code>/v1/images</code>) plus the new <code>azure-flux</code>/<code>azure-mai</code> pool types. Existing chat, embeddings, responses, and native Bedrock/Gemini/Anthropic surfaces are unaffected. Token-usage metrics are unchanged (image responses simply emit zero token usage).</p>
+</blockquote>
+<h2 id="request-flow">Request Flow</h2>
+<div class="highlight"><pre><span></span><code>1. Client → APIM Gateway
+   POST /models/chat/completions
+   Body: { &quot;model&quot;: &quot;gpt-4o&quot;, &quot;messages&quot;: [...] }
+
+2. Extract Model
+   → requestedModel = &quot;gpt-4o&quot;
+
+3. Find Backend Pool
+   → matches &quot;gpt-4o-backend-pool&quot; (load balanced)
+   or direct backend if single provider
+
+4. Authenticate
+   → Get managed identity token
+   → Set Authorization header
+
+5. Route to Backend
+   → Forward to healthy backend in pool
+
+6. Return Response
+   → Client receives response with usage headers
+</code></pre></div>
+<h2 id="model-aliases">Model Aliases</h2>
+<p>Model aliases let you expose a single client-facing model name (for example <code>multi-cloud-openai</code>) that the gateway resolves at runtime to one of several underlying real models. Clients keep using the alias even when the underlying line-up changes — the gateway abstracts away the migration <strong>and</strong> transparently load-balances / fails over across the underlying members.</p>
+<h3 id="phase-scope-same-api-spec-routing-only">⚠️ Phase scope: same-API-spec routing only</h3>
+<p>This phase of the accelerator does <strong>not</strong> translate between API protocols. Every alias must therefore front backends that share the <strong>same wire-level API spec</strong> — same path, same request/response shape, same auth contract. Inbound requests are routed unchanged to the picked member's underlying pool; only the JSON body's <code>model</code> field is rewritten to the resolved real model name.</p>
+<table>
+<thead>
+<tr>
+<th>Allowed (same spec)</th>
+<th>Not allowed (different specs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundry + Bedrock-Mantle + Gemini-OpenAI under one alias served via OpenAI <code>/v1/chat/completions</code> ✅</td>
+<td>Anthropic Messages + Bedrock Converse under one alias ❌ — different request shapes</td>
+</tr>
+<tr>
+<td>Multiple Anthropic backends (regions, tenants) under one alias served via <code>/claude/v1/messages</code> ✅</td>
+<td>Foundry OpenAI-compat + Anthropic Messages under one alias ❌ — different paths and bodies</td>
+</tr>
+<tr>
+<td>Multiple Foundry models (gpt-5 + Mistral + Phi-4) under one weighted alias ✅</td>
+<td>Gemini <code>generateContent</code> + OpenAI <code>/v1/chat/completions</code> under one alias ❌</td>
+</tr>
+</tbody>
+</table>
+<p>A future phase will add <strong>protocol-passthrough backend types</strong> (e.g. <code>aws-bedrock-anthropic-passthrough</code> exposing Bedrock-hosted Claude under the Anthropic Messages spec, and <code>foundry-anthropic-passthrough</code> for Foundry-hosted Claude). When those land, an alias spanning Anthropic + Bedrock + Foundry over a single <code>/v1/messages</code> surface becomes possible without any caller-side change. The alias data model already supports this — only the per-protocol passthrough backend types are pending.</p>
+<h3 id="aliases-are-virtual-backend-pools">Aliases are virtual backend pools</h3>
+<p>As of the alias-as-virtual-pool refactor, every entry in <code>modelAliases</code> becomes a <strong>virtual pool entry inside the same <code>backendPools</code> JArray that real model pools live in</strong>. APIM cannot natively put pools inside pools, so the gateway materialises this with a deploy-time-resolved JObject that carries each member's underlying poolName / poolType / authType. Alias resolution and member fallback then ride on the same <code>set-target-backend-pool</code> + retry pipeline that real models use. You get:</p>
+<ul>
+<li><strong>Same-spec load balancing and fallback</strong> — the alias resolves to a member that's compatible with the inbound API surface (filtered by <code>compatiblePoolTypes</code>); on 429/5xx the retry block walks the remaining members in resolution order. When the alias spans multiple clouds for a single shared spec (e.g. OpenAI-compat across Foundry + Bedrock-Mantle + Gemini-OpenAI), this is <strong>transparent cross-cloud fallback</strong>.</li>
+<li><strong>Routing strategies</strong> — <code>priority</code> (deterministic order with implicit fallback) or <code>weighted</code> (probabilistic distribution) configured per alias.</li>
+<li><strong>Backend path templates preserved</strong> — once a member is picked, the request takes the same code paths a direct call to that real model would have taken (URL rewrite, auth, body forwarding).</li>
+<li><strong>Consistent across the LLM API surfaces</strong> — Azure OpenAI API, Universal LLM API, and Unified AI API all resolve aliases the same way using the shared <code>set-target-backend-pool</code> fragment.</li>
+<li><strong>Compatible-pool-types filtering</strong> — when the inbound API surface restricts pool types (e.g. Universal LLM = OpenAI-compat-only, <code>/claude/</code> = anthropic-only), alias members with no compatible underlying pool are skipped automatically. An alias with no member compatible with the surface returns a clear <code>alias_no_compatible_member</code> 400.</li>
+<li><strong>Direct-model routing untouched</strong> — aliases are opt-in. Customers who never declare <code>modelAliases</code> see exactly the same direct-pool behaviour as before.</li>
+</ul>
+<h3 id="reference-scenarios-from-the-extended-providers-validation-notebook">Reference scenarios (from the extended-providers validation notebook)</h3>
+<p>The extended-providers validation notebook (<code>validation/llm-backend-onboarding-extended-providers-runner.ipynb</code>) builds three opt-in alias scenarios from the configured backends. Each one only materialises when its underlying members exist:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Alias</th>
+<th>API spec</th>
+<th>Members today</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. Foundry weighted</strong></td>
+<td><code>foundry-weighted-mix</code></td>
+<td>OpenAI <code>/v1/chat/completions</code> (single cloud)</td>
+<td>Up to 3 Microsoft Foundry models, weighted (e.g. 50/30/20)</td>
+<td>A/B testing a new model, blended traffic across the Foundry catalog</td>
+</tr>
+<tr>
+<td><strong>B. Cross-cloud OpenAI-compat</strong></td>
+<td><code>multi-cloud-openai</code></td>
+<td>OpenAI <code>/v1/chat/completions</code> (multi-cloud)</td>
+<td>First model from each of: Foundry, Bedrock-Mantle, Gemini-OpenAI</td>
+<td>Multi-cloud failover for OpenAI-compat workloads</td>
+</tr>
+<tr>
+<td><strong>C. Native Anthropic Messages</strong></td>
+<td><code>multi-cloud-claude</code></td>
+<td>Anthropic <code>/v1/messages</code></td>
+<td>Anthropic API-key members today; Bedrock-Anthropic + Foundry-Anthropic passthroughs are planned</td>
+<td>Single Anthropic abstraction across regions / tenants today, multi-cloud once passthroughs ship</td>
+</tr>
+</tbody>
+</table>
+<h3 id="configuration">Configuration</h3>
+<p>Add a <code>modelAliases</code> array to your <code>.bicepparam</code> file alongside <code>llmBackendConfig</code>. Pick the scenarios that match your backend mix:</p>
+<div class="highlight"><pre><span></span><code>param modelAliases = [
+  // Scenario A — Foundry weighted load-balance (single cloud, OpenAI-compat).
+  // All members must be in `ai-foundry` pools. Use weights to drive the
+  // random-by-weight pick on each call.
+  {
+    name: &#39;foundry-weighted-mix&#39;
+    models: [ &#39;gpt-5&#39;, &#39;mistral-large&#39;, &#39;Phi-4&#39; ]
+    strategy: &#39;weighted&#39;
+    weights: [ 50, 30, 20 ]
+  }
+  // Scenario B — Cross-cloud OpenAI-compat (multi-cloud, same /v1/chat/completions spec).
+  // Members must be OpenAI-compat-capable: ai-foundry, aws-bedrock-mantle, gemini-openai.
+  // Priority strategy gives a primary + transparent cross-cloud fallback.
+  {
+    name: &#39;multi-cloud-openai&#39;
+    models: [
+      &#39;gpt-4.1&#39;                  // ai-foundry
+      &#39;openai.gpt-oss-120b&#39;      // aws-bedrock-mantle
+      &#39;gemini-2.5-flash-lite&#39;    // gemini-openai
+    ]
+    strategy: &#39;priority&#39;
+  }
+  // Scenario C — Native Anthropic Messages alias (/v1/messages spec).
+  // Today the only backend type that natively serves /v1/messages is `anthropic`,
+  // so alias members are limited to direct Anthropic API keys. Once the planned
+  // `aws-bedrock-anthropic-passthrough` and `foundry-anthropic-passthrough`
+  // backend types ship, add their Claude model names here and the same alias
+  // will fan across clouds with no caller-side change.
+  {
+    name: &#39;multi-cloud-claude&#39;
+    models: [ &#39;claude-sonnet-4-6&#39;, &#39;claude-haiku-4-5&#39; ]
+    strategy: &#39;priority&#39;
+  }
+]
+</code></pre></div>
+<h3 id="alias-properties">Alias Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Client-facing alias name. Must NOT collide with any real model name in <code>llmBackendConfig</code>.</td>
+</tr>
+<tr>
+<td><code>models</code></td>
+<td>string[]</td>
+<td>Yes</td>
+<td>Ordered list of underlying real models the alias may resolve to. Each must exist as a <code>name</code> in some backend's <code>supportedModels</code>. May span any mix of providers.</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>priority</code> (default) — first compatible member wins, the rest form the fallback list; <code>weighted</code> — random selection by weights, the rest form the fallback list (round-walk after the picked one).</td>
+</tr>
+<tr>
+<td><code>weights</code></td>
+<td>int[]</td>
+<td>No</td>
+<td>Required when <code>strategy</code> is <code>weighted</code>. Same length as <code>models</code>. Higher weight = more traffic. Used at deploy time to render the alias virtual pool entry; runtime selection is random-weighted.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="resolution-flow">Resolution flow</h3>
+<div class="highlight"><pre><span></span><code>1. Client calls e.g. POST /unified-ai/v1/chat/completions with `&quot;model&quot;: &quot;multi-cloud-openai&quot;`.
+
+2. validate-model-access: RBAC check on the alias name (`allowedModels` in the
+   product policy controls alias access — admins do NOT need to enumerate the
+   underlying real models).
+
+3. set-backend-pools: Loads the gateway&#39;s `backendPools` JArray. The alias appears
+   as a virtual pool entry with `isAlias=true`, `aliasName=&quot;multi-cloud-openai&quot;`,
+   `members=[ {model, weight, pools[]}, ... ]`. Each member&#39;s `pools[]` carries
+   the resolved poolName / poolType / authType for every underlying pool that
+   hosts the member model.
+
+4. set-target-backend-pool: Detects the alias. Filters members by the inbound
+   API surface&#39;s `compatiblePoolTypes` (so e.g. /v1/chat/completions only
+   considers OpenAI-compat-capable pool types). Picks one member based on
+   `strategy`. Sets:
+     - is-alias = true
+     - original-model-alias = &quot;multi-cloud-openai&quot;
+     - requestedModel = picked member&#39;s real model name
+     - targetBackendPool = picked member&#39;s poolName
+     - targetPoolType / targetAuthType / targetAuthConfigNamedValue
+     - alias-fallback-members = JArray of remaining members in walk order,
+       each pre-resolved to its compatible poolName / poolType / authType /
+       authConfigNamedValue.
+   Same-spec discipline: every member here is OpenAI-compat-capable, so the
+   downstream stages can forward the request unchanged regardless of which
+   member won the pick.
+
+5. resolve-model-alias: Slim post-resolution body rewrite. Replaces the JSON
+   body&#39;s `model` field with `requestedModel` so backends see the real name.
+   No-op when `is-alias=false`.
+
+6. set-backend-authorization + path-builder: Operate on the resolved real model
+   exactly like a direct request would.
+
+7. Backend retry block: If the request returns 429 or 5xx (pre-stream), the
+   API policy walks `alias-fallback-members` one entry at a time, swapping
+   targetBackendPool / requestedModel / authType in place and re-invoking
+   resolve-model-alias + set-backend-authorization (+ path-builder for Unified
+   AI). Cross-cloud fallback (Foundry → Bedrock-Mantle → Gemini-OpenAI) is
+   transparent to the client. Once streaming has started, fallback is no
+   longer possible.
+</code></pre></div>
+<h3 id="what-changes-for-direct-model-requests">What changes for direct-model requests?</h3>
+<p>Nothing. When <code>requestedModel</code> does not match any alias entry, <code>set-target-backend-pool</code> falls through to its existing model→pool match logic. Direct routing is unchanged.</p>
+<h3 id="access-control">Access Control</h3>
+<p><code>validate-model-access</code> runs <strong>before</strong> <code>set-target-backend-pool</code>, so the access contract's <code>allowedModels</code> list controls access to the <strong>alias name</strong>, not the underlying members. Granting <code>allowedModels = "multi-cloud-openai"</code> lets the client invoke the alias without having to also list <code>gpt-4.1</code> / <code>openai.gpt-oss-120b</code> / <code>gemini-2.5-flash-lite</code> separately. The alias becomes the contract-level abstraction.</p>
+<h3 id="discovery-get-deployments">Discovery (<code>GET /deployments</code>)</h3>
+<p>Aliases also appear in the model discovery responses (<code>get-available-models</code> fragment, used by <code>GET /deployments</code> and <code>GET /deployments/{deployment-id}</code> on the Universal LLM, Azure OpenAI, and Unified AI APIs) <strong>as first-class entries alongside real models</strong>. This means clients (including Microsoft Foundry's deployment picker) can discover and use an alias without the backend implementation leaking out.</p>
+<p>Each alias entry returned by discovery looks like:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alias&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;alias&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multi-cloud-openai&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;sku&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Standard&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alias&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;multi-cloud-openai&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;chatCompletion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Alias for: gpt-4.1, openai.gpt-oss-120b, gemini-2.5-flash-lite (strategy: priority)&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;provisioningState&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Succeeded&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The <code>description</code> field under <code>capabilities</code> exposes which underlying models the alias maps to and which strategy is in use (with the configured weights when <code>strategy: weighted</code>). The discovery filter (<code>allowedModels</code> from the access contract) matches by <code>name</code>, so RBAC works for aliases identically to real models.</p>
+<h3 id="source-of-truth">Source of Truth</h3>
+<p>Aliases are emitted in two places by the same Bicep parameter (<code>modelAliases</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Fragment</th>
+<th>Used By</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set-backend-pools</code> (virtual pool entries inside the <code>backendPools</code> JArray)</td>
+<td>All 3 APIs (alias resolution + retry fallback)</td>
+<td>Generated <code>aliasPoolsCode</code> block</td>
+</tr>
+<tr>
+<td><code>get-available-models</code></td>
+<td>All 3 APIs (<code>GET /deployments</code>)</td>
+<td>Inline <code>JObject</code> entry per alias with description</td>
+</tr>
+<tr>
+<td><code>metadata-config</code> (<code>model-aliases</code> JSON section)</td>
+<td>Unified AI API (informational / cached config)</td>
+<td><code>modelAliasesCode</code> JSON block</td>
+</tr>
+</tbody>
+</table>
+<p>All three are regenerated on every onboarding deployment, so the views stay in sync. The runtime resolution exclusively reads from the <code>set-backend-pools</code> virtual entries — <code>metadata-config</code> keeps a parallel copy for tooling that introspects the cached config.</p>
+<h3 id="errors">Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alias_no_compatible_member</code> (400)</td>
+<td>The alias was matched but every member's underlying pool is incompatible with the inbound API surface (filtered out by <code>compatiblePoolTypes</code>). The error body includes the alias name, requested CSV of compatible pool types, and total member count.</td>
+</tr>
+<tr>
+<td><code>unauthorized_model_access</code> (403)</td>
+<td>The alias name is not in the access contract's <code>allowedModels</code> list.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="get-available-models-api">Get Available Models API</h2>
+<p>The <code>get-available-models</code> policy fragment enables an API endpoint that returns all available model deployments with their capabilities, similar to the Azure Cognitive Services deployment list API.</p>
+<p>This policy fragment is designed to support Microsoft Foundry integration with Citadel Governance Hub, allowing clients to query available models dynamically from Foundry portal experience.</p>
+<blockquote>
+<p>NOTE: This policy fragment is included in the <code>/deployments</code> get operation of the Universal LLM API by default. Currently this Microsoft Foundry feature is in <code>preview</code> and may change in future releases.</p>
+</blockquote>
+<h3 id="usage">Usage</h3>
+<p>Include the policy fragment in any API operation to return available models:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;inbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;include-fragment</span><span class="w"> </span><span class="na">fragment-id=</span><span class="s">&quot;get-available-models&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/inbound&gt;</span>
+</code></pre></div>
+<h3 id="response-format">Response Format</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aif-citadel-primary&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ai-foundry&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;sku&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GlobalStandard&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenAI&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-11-20&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;chatCompletion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;provisioningState&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Succeeded&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aif-citadel-primary&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ai-foundry&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;sku&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GlobalStandard&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenAI&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2024-11-20&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;capabilities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;chatCompletion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;provisioningState&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Succeeded&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The response is dynamically generated based on the <code>llmBackendConfig</code> parameter, using the optional metadata fields (<code>sku</code>, <code>capacity</code>, <code>modelFormat</code>, <code>modelVersion</code>).</p>
+<h2 id="monitoring">Monitoring</h2>
+<h3 id="key-metrics">Key Metrics</h3>
+<p>Connected Application Insights to APIM provides insights into backend performance:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application Map</td>
+<td>Visual representation of dependencies performance</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>For both operations and dependencies</td>
+</tr>
+<tr>
+<td>Failures</td>
+<td>Failures by backend</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Response time per backend</td>
+</tr>
+</tbody>
+</table>
+<h3 id="application-insights-query">Application Insights Query</h3>
+<div class="highlight"><pre><span></span><code><span class="c">// this query calculates LLM backend duration percentiles and count by target</span>
+<span class="n">let</span><span class="w"> </span><span class="n">start</span><span class="p">=</span><span class="n">ago</span><span class="p">(</span><span class="mi">24</span><span class="n">h</span><span class="p">);</span>
+<span class="n">let</span><span class="w"> </span><span class="n">end</span><span class="p">=</span><span class="n">now</span><span class="p">();</span>
+<span class="n">let</span><span class="w"> </span><span class="n">timeGrain</span><span class="p">=</span><span class="mi">5</span><span class="n">m</span><span class="p">;</span>
+
+<span class="n">let</span><span class="w"> </span><span class="n">dataset</span><span class="p">=</span><span class="n">dependencies</span>
+<span class="c">// additional filters can be applied here</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="n">end</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">client_Type</span><span class="w"> </span><span class="p">!=</span><span class="w"> </span><span class="s">&quot;Browser&quot;</span>
+<span class="p">;</span>
+<span class="c">// calculate duration percentiles and count for all dependencies (overall)</span>
+<span class="n">dataset</span>
+<span class="p">|</span><span class="w"> </span><span class="k">summarize</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">duration</span><span class="p">)/</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">),</span><span class="w"> </span><span class="n">percentiles</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">),</span><span class="w"> </span><span class="n">count_</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">project</span><span class="w"> </span><span class="n">operation_Name</span><span class="p">=</span><span class="s">&quot;Overall&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">,</span><span class="w"> </span><span class="n">percentile_duration_50</span><span class="p">,</span><span class="w"> </span><span class="n">percentile_duration_95</span><span class="p">,</span><span class="w"> </span><span class="n">percentile_duration_99</span><span class="p">,</span><span class="w"> </span><span class="n">count_</span>
+<span class="p">|</span><span class="w"> </span><span class="k">union</span><span class="p">(</span><span class="n">dataset</span>
+<span class="c">// change &#39;target&#39; on the below line to segment by a different property</span>
+<span class="p">|</span><span class="w"> </span><span class="k">summarize</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">duration</span><span class="p">)/</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">),</span><span class="w"> </span><span class="n">percentiles</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">),</span><span class="w"> </span><span class="n">count_</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">target</span>
+<span class="p">|</span><span class="w"> </span><span class="k">sort</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">avg_duration</span><span class="w"> </span><span class="n">desc</span><span class="p">,</span><span class="w"> </span><span class="n">count_</span><span class="w"> </span><span class="n">desc</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="model-not-supported-error">"Model not supported" Error</h3>
+<ol>
+<li>Check model name in <code>supportedModels</code> array (case-insensitive)</li>
+<li>Verify backend pool was created in APIM</li>
+<li>Review policy fragment deployment</li>
+</ol>
+<h3 id="403-forbidden-error">"403 Forbidden" Error</h3>
+<ol>
+<li>Check <code>allowedBackendPools</code> policy variable</li>
+<li>Verify RBAC configuration</li>
+<li>Review product/subscription access</li>
+</ol>
+<h3 id="401-unauthorized-error">"401 Unauthorized" Error</h3>
+<ol>
+<li>Verify APIM's managed identity has required roles:<ul>
+<li><code>Cognitive Services OpenAI User</code> for Azure OpenAI</li>
+<li><code>Cognitive Services User</code> for AI Foundry</li>
+</ul>
+</li>
+<li>For Amazon Bedrock: Verify AWS IAM access keys are valid and stored as named values (<code>aws-access-key</code>, <code>aws-secret-key</code>, <code>aws-region</code>)</li>
+<li><code>Unauthorized model access</code> indicates used access contract product is restricted for the model</li>
+<li>Check named value <code>uami-client-id</code> is set correctly to APIM's managed identity client ID</li>
+</ol>
+<h3 id="500-awscredentialsnotconfigured-error">"500 AWSCredentialsNotConfigured" Error</h3>
+<p>This error means an <code>aws-bedrock</code> backend was matched but the AWS credentials named values are still set to the <code>NOT_CONFIGURED</code> placeholder. To fix:</p>
+<ol>
+<li>Redeploy with the <code>awsAccessKey</code>, <code>awsSecretKey</code>, and <code>awsRegion</code> parameters set to valid values, <strong>or</strong></li>
+<li>Manually update the APIM named values <code>aws-access-key</code>, <code>aws-secret-key</code>, and <code>aws-region</code> in the Azure Portal</li>
+</ol>
+<h2 id="files">Files</h2>
+<div class="highlight"><pre><span></span><code>llm-backend-onboarding/
+├── main.bicep                    # Main deployment template
+├── main.bicepparam               # Parameter file template
+├── README.md                     # This file
+└── modules/
+    ├── llm-backends.bicep        # Creates APIM backend resources
+    ├── llm-backend-pools.bicep   # Creates load-balanced pools
+    ├── llm-policy-fragments.bicep # Generates routing policy fragments
+    ├── universal-llm-api.bicep   # Creates Universal LLM API
+    └── policies/
+        ├── frag-set-backend-pools.xml
+        ├── frag-set-backend-authorization.xml
+        ├── frag-set-target-backend-pool.xml
+        ├── frag-set-llm-requested-model.xml
+        ├── frag-set-llm-usage.xml
+        ├── frag-get-available-models.xml
+        ├── frag-metadata-config.xml          # Unified AI API metadata (always deployed)
+        ├── frag-resolve-model-alias.xml      # Shared alias resolution (Azure OpenAI / Universal LLM / Unified AI)
+        ├── universal-llm-api-policy.xml
+        ├── universal-llm-openapi.json
+        └── models-inference-openapi.json
+</code></pre></div>
+<h2 id="related-guides">Related Guides</h2>
+<ul>
+<li><a href="../citadel-access-contracts/README.md">Citadel Access Contracts</a> - Configure use case access to governance hub</li>
+<li><a href="../../../guides/llm-access-guide.md">LLM Access Guide</a> - Unified LLM access patterns and detailed routing architecture</li>
+<li><a href="../../../guides/resiliency-guide.md">Resiliency Guide</a> - Circuit breaker, session affinity, automated failover, and error handling — what to configure and when</li>
+<li><a href="../../../guides/full-deployment-guide.md">Full Deployment Guide</a> - Complete Citadel deployment guide</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
