@@ -41,7 +41,7 @@ nav:
   - What's New: whatisnew.md
   - FAQ: faq.md
   - AI Foundry Landing Zone:
-      - "Design Checklist": architecture/design-checklist.md
+      - "Design Checklist": ai-foundry-lz/design-checklist.md
       - Implementation:
         - Bicep:
           - "Overview": ai-foundry-lz/bicep/overview.md
@@ -57,7 +57,7 @@ nav:
         - Terraform: ai-foundry-lz/terraform/readme.md
         - Portal: ai-foundry-lz/portal/readme.md
   - AI Gateway Landing Zone:
-  - AI Container Landing Zone:
+  - AI Container Landing Zone: ai-container-lz/readme.md
 
 
 
