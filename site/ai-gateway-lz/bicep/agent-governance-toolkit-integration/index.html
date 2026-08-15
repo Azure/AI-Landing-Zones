@@ -1,0 +1,1531 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Agent Governance Toolkit (AGT) Integration Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agent-governance-toolkit-agt-integration-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agent Governance Toolkit (AGT) Integration Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-integrate-agt-with-citadel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Integrate AGT with Citadel?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-agt-maps-to-citadels-4-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How AGT Maps to Citadel's 4 Layers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How AGT Maps to Citadel&#39;s 4 Layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layer-1-governance-hub" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 1: Governance Hub
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-2-ai-control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 2: AI Control Plane
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-3-agent-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 3: Agent Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layer-4-security-fabric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 4: Security Fabric
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Started
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Started">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-install-agt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Install AGT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-the-citadel-audit-exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure the Citadel audit exporter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-load-a-policy-bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Load a policy bundle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-export-governance-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Export governance events
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-end-to-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. End-to-end example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Boundaries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Failure Modes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Glossary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="agent-governance-toolkit-agt-integration-guide">Agent Governance Toolkit (AGT) Integration Guide</h1>
+<p>This guide explains how to integrate the <a href="https://github.com/microsoft/agent-governance-toolkit">Agent Governance Toolkit (AGT)</a> with Citadel Governance Hub to add <strong>agent-level governance</strong> on top of gateway-level controls.</p>
+<p><strong>Related guides:</strong>
+- <a href="../quick-deployment-guide/">Quick Deployment Guide</a>: Deploy Citadel Governance Hub
+- <a href="../bicep/infra/citadel-access-contracts/README.md">Access Contracts README</a>: Configure agent-to-hub contracts
+- <a href="https://aka.ms/foundry-citadel">Foundry Citadel Platform</a>: Full 4-layer architecture overview</p>
+<hr />
+<h2 id="why-integrate-agt-with-citadel">Why Integrate AGT with Citadel?</h2>
+<p>Citadel Governance Hub governs the <strong>infrastructure perimeter</strong>: which models, tools, and agents can be accessed, at what rate, with what safety filters. This is essential, but insufficient for production agent deployments where agents make dozens of tool calls per interaction.</p>
+<p>AGT governs the <strong>agent behavior itself</strong>: what actions the agent takes, whether it follows its policies, trust relationships between agents, and tamper-evident audit logging. These are complementary enforcement boundaries, not competing approaches.</p>
+<p><strong>Use AGT alongside Citadel when you need:</strong>
+- Per-action tool call allow/deny inside the agent runtime (not just at the gateway)
+- Continuous trust scoring (0-1000) that adapts based on agent behavior
+- Cryptographic agent identity (Ed25519 / SPIFFE) for inter-agent trust
+- Tamper-evident audit logs with hash-chain evidence preservation</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Citadel (Gateway)</th>
+<th>AGT (Agent Runtime)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Enforcement point</strong></td>
+<td>APIM gateway (centralized)</td>
+<td>Agent runtime library (in-process)</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>Network hop through gateway</td>
+<td>Sub-millisecond (&lt;0.1 ms per evaluation)</td>
+</tr>
+<tr>
+<td><strong>Policy granularity</strong></td>
+<td>Rate limits, content filters, quotas</td>
+<td>Per-action allow/deny, caller restrictions, justification requirements</td>
+</tr>
+<tr>
+<td><strong>Identity</strong></td>
+<td>Entra ID / subscription keys</td>
+<td>Ed25519 / SPIFFE cryptographic identity</td>
+</tr>
+<tr>
+<td><strong>Trust model</strong></td>
+<td>Binary (authenticated or not)</td>
+<td>Continuous scoring (0-1000) with automatic credential revocation</td>
+</tr>
+<tr>
+<td><strong>Audit</strong></td>
+<td>APIM request logs</td>
+<td>Hash-chain tamper-evident governance events</td>
+</tr>
+</tbody>
+</table>
+<p>Together, they provide defense-in-depth: Citadel enforces coarse-grained rules at the perimeter, AGT enforces fine-grained rules at the agent. Both must pass for an action to proceed.</p>
+<hr />
+<h2 id="how-agt-maps-to-citadels-4-layers">How AGT Maps to Citadel's 4 Layers</h2>
+<p>AGT is not confined to a single Citadel layer. It provides capabilities that complement each layer:</p>
+<h3 id="layer-1-governance-hub">Layer 1: Governance Hub</h3>
+<p><a href="../bicep/infra/citadel-access-contracts/README.md">Citadel Access Contracts</a> can reference <strong>AGT policy bundles</strong> that are loaded into agent environments at deployment time. The gateway enforces infrastructure policies (rate limits, content safety, JWT validation). AGT enforces agent-level policies (action restrictions, justification requirements, caller ACLs) inside the runtime.</p>
+<p><strong>Policy precedence:</strong> Gateway rules are evaluated first (at the network boundary). AGT rules are evaluated second (inside the agent process). Both must allow an action for it to proceed. This means a denied action at either layer is blocked, regardless of the other layer's decision.</p>
+<blockquote>
+<p>[!NOTE]
+Access Contract-based policy injection is a reference pattern. Today, policy bundles are loaded by the agent application at startup (from file, Key Vault, or URL). Full declarative contract binding is a planned enhancement.</p>
+</blockquote>
+<h3 id="layer-2-ai-control-plane">Layer 2: AI Control Plane</h3>
+<p>AGT exports governance telemetry (policy decisions, trust score changes, action interceptions) to Azure Event Hub and Application Insights via the <code>CitadelAuditExporter</code>. These events include <strong>correlation IDs</strong> linking AGT decisions to APIM request traces and Foundry execution traces, enabling unified observability dashboards.</p>
+<p>The <code>apim_request_id</code> correlation field comes from the APIM response header (<code>x-ms-request-id</code>), which the agent captures and includes in its governance events.</p>
+<h3 id="layer-3-agent-identity">Layer 3: Agent Identity</h3>
+<p><a href="https://learn.microsoft.com/en-us/entra/id-governance/agent-id-governance-overview">Entra ID / Agent 365</a> remains the authoritative source for enterprise agent identity. AGT's Ed25519/SPIFFE identities handle runtime cryptographic credentials for agent-to-agent trust. The integration is <strong>attestation-based federation</strong>: AGT trust scores surface as risk labels in telemetry, not as primary Entra metadata. The <code>EntraIdentityBridge</code> binds AGT agent identities to Entra object IDs without write-back.</p>
+<h3 id="layer-4-security-fabric">Layer 4: Security Fabric</h3>
+<p>AGT's <code>data_classification</code> policy labels align with <a href="https://learn.microsoft.com/en-us/purview/sensitivity-labels">Purview sensitivity labels</a>. AGT trust scores can surface as risk signals in Defender for AI through the Event Hub telemetry pipeline.</p>
+<hr />
+<h2 id="integration-architecture">Integration Architecture</h2>
+<div class="highlight"><pre><span></span><code>Agent Runtime (Spoke)                Citadel Hub                    Azure Monitor
+┌──────────────────────┐            ┌──────────────────┐          ┌──────────────┐
+│                      │            │                  │          │              │
+│  Agent Application   │   LLM     │  APIM Gateway    │          │  App Insights│
+│  ┌────────────────┐  │  request  │  ┌────────────┐  │          │              │
+│  │ AGT Policy     ├──┼──────────►│  │ Rate Limit │──┼────►LLM  │  Event Hub   │
+│  │ Engine         │  │           │  │ Content    │  │          │              │
+│  │                │  │  response │  │ JWT Auth   │  │          │  Log         │
+│  │ allow/deny     │◄─┼──────────┼──│ Cost Attr  │  │          │  Analytics   │
+│  └──────┬─────────┘  │  (incl.  │  └────────────┘  │          └──────┬───────┘
+│         │            │  x-ms-   │                   │                 │
+│         │            │  request- │                   │                 │
+│  ┌──────▼─────────┐  │  id)     ├──────────────────┐│                 │
+│  │ Citadel Audit  ├──┼─────────►│  Event Hub /     │├─────────────────┘
+│  │ Exporter       │  │  events  │  App Insights    ││
+│  │ (correlation)  │  │  with    └──────────────────┘│
+│  └────────────────┘  │  corr ID                     │
+└──────────────────────┘                              │
+</code></pre></div>
+<p><strong>Data flow:</strong>
+1. Agent receives a task and evaluates it against the AGT policy engine (sub-millisecond).
+2. If allowed, the agent sends the LLM request through the Citadel APIM gateway.
+3. APIM applies gateway policies (rate limit, content safety, JWT validation) and returns the response with <code>x-ms-request-id</code>.
+4. The agent captures the APIM request ID and includes it as a correlation field in the AGT governance event.
+5. The <code>CitadelAuditExporter</code> batches and sends events to Event Hub / App Insights, preserving the hash-chain evidence from AGT's audit system.</p>
+<hr />
+<h2 id="getting-started">Getting Started</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>A deployed <a href="../quick-deployment-guide/">Citadel Governance Hub</a> (or mock mode for local testing)</li>
+<li>Python 3.10+</li>
+</ul>
+<h3 id="1-install-agt">1. Install AGT</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Core governance toolkit</span>
+pip<span class="w"> </span>install<span class="w"> </span>agent-governance-toolkit
+
+<span class="c1"># Azure integration (required for production; not needed for mock mode)</span>
+pip<span class="w"> </span>install<span class="w"> </span>azure-eventhub<span class="w"> </span>azure-monitor-opentelemetry-exporter<span class="w"> </span>azure-keyvault-secrets<span class="w"> </span>azure-identity
+</code></pre></div>
+<h3 id="2-configure-the-citadel-audit-exporter">2. Configure the Citadel audit exporter</h3>
+<p>Set the following environment variables in your agent spoke:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Required for audit export to Azure</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_EVENTHUB_CONNECTION_STRING</span><span class="o">=</span><span class="s2">&quot;Endpoint=sb://your-namespace.servicebus.windows.net/;...&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_APPINSIGHTS_CONNECTION_STRING</span><span class="o">=</span><span class="s2">&quot;InstrumentationKey=your-key;IngestionEndpoint=...&quot;</span>
+
+<span class="c1"># Optional tuning</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_EVENTHUB_NAME</span><span class="o">=</span><span class="s2">&quot;agt-governance-events&quot;</span><span class="w">    </span><span class="c1"># Default: agt-governance-events</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_EXPORT_BATCH_SIZE</span><span class="o">=</span><span class="s2">&quot;50&quot;</span><span class="w">                    </span><span class="c1"># Default: 50</span>
+</code></pre></div>
+<h3 id="3-load-a-policy-bundle">3. Load a policy bundle</h3>
+<p>AGT policy bundles define agent-level governance rules (which actions are allowed, which require justification, which are blocked). They can be loaded from a file, Azure Key Vault, or a URL:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">agent_os.integrations.citadel</span> <span class="kn">import</span> <span class="n">PolicyBundleResolver</span>
+
+<span class="n">resolver</span> <span class="o">=</span> <span class="n">PolicyBundleResolver</span><span class="p">()</span>
+
+<span class="c1"># From a local file (development)</span>
+<span class="n">bundle</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">resolve_from_file</span><span class="p">(</span><span class="s2">&quot;policies/agent-policy.yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># From Key Vault (production)</span>
+<span class="n">bundle</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">resolve_from_keyvault</span><span class="p">(</span>
+    <span class="n">vault_url</span><span class="o">=</span><span class="s2">&quot;https://myvault.vault.azure.net&quot;</span><span class="p">,</span>
+    <span class="n">secret_name</span><span class="o">=</span><span class="s2">&quot;agt-policy-bundle-customer-support&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>A policy bundle YAML looks like this:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># policies/agent-policy.yaml</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">customer-support-policy</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0&quot;</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query_customer_database&quot;</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="w">    </span><span class="nt">conditions</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">caller_trust_score_min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;delete_*&quot;</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deny</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
+</code></pre></div>
+<h3 id="4-export-governance-events">4. Export governance events</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">agent_os.exporters</span> <span class="kn">import</span> <span class="n">CitadelAuditExporter</span>
+<span class="kn">from</span> <span class="nn">agent_os.exporters.citadel_exporter</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GovernanceEvent</span><span class="p">,</span>
+    <span class="n">GovernanceEventType</span><span class="p">,</span>
+    <span class="n">Decision</span><span class="p">,</span>
+    <span class="n">CorrelationContext</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">exporter</span> <span class="o">=</span> <span class="n">CitadelAuditExporter</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+
+<span class="n">event</span> <span class="o">=</span> <span class="n">GovernanceEvent</span><span class="p">(</span>
+    <span class="n">event_type</span><span class="o">=</span><span class="n">GovernanceEventType</span><span class="o">.</span><span class="n">POLICY_DECISION</span><span class="p">,</span>
+    <span class="n">agent_id</span><span class="o">=</span><span class="s2">&quot;customer-support-agent-01&quot;</span><span class="p">,</span>
+    <span class="n">action</span><span class="o">=</span><span class="s2">&quot;query_customer_database&quot;</span><span class="p">,</span>
+    <span class="n">decision</span><span class="o">=</span><span class="n">Decision</span><span class="o">.</span><span class="n">ALLOW</span><span class="p">,</span>
+    <span class="n">policy_name</span><span class="o">=</span><span class="s2">&quot;customer-support-policy&quot;</span><span class="p">,</span>
+    <span class="n">trust_score</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span>
+    <span class="n">correlation</span><span class="o">=</span><span class="n">CorrelationContext</span><span class="p">(</span>
+        <span class="n">apim_request_id</span><span class="o">=</span><span class="s2">&quot;abc-123&quot;</span><span class="p">,</span>  <span class="c1"># From APIM response header: x-ms-request-id</span>
+        <span class="n">agt_decision_id</span><span class="o">=</span><span class="s2">&quot;def-456&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">exporter</span><span class="o">.</span><span class="n">export_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+<span class="c1"># Flush sends buffered events to Event Hub / App Insights</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">exporter</span><span class="o">.</span><span class="n">flush</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="5-end-to-end-example">5. End-to-end example</h3>
+<p>For a complete working example with mock mode for local testing, see the <a href="https://github.com/microsoft/agent-governance-toolkit/tree/main/examples/citadel-governed-agent">Citadel Governed Agent example</a> in the AGT repository.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Local mode (no Azure required)</span>
+pip<span class="w"> </span>install<span class="w"> </span>agent-governance-toolkit
+python<span class="w"> </span>examples/citadel-governed-agent/src/agent.py<span class="w"> </span>--mock
+
+<span class="c1"># With Citadel gateway</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_GATEWAY_URL</span><span class="o">=</span>https://your-apim.azure-api.net
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_API_KEY</span><span class="o">=</span>your-subscription-key
+<span class="nb">export</span><span class="w"> </span><span class="nv">CITADEL_EVENTHUB_CONNECTION_STRING</span><span class="o">=</span><span class="nv">Endpoint</span><span class="o">=</span>sb://...
+python<span class="w"> </span>examples/citadel-governed-agent/src/agent.py
+</code></pre></div>
+<hr />
+<h2 id="coverage-boundaries">Coverage Boundaries</h2>
+<p>Understanding what each system handles avoids duplication and clarifies where to configure each policy:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Handled By</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LLM model access control</td>
+<td>Citadel Layer 1 (APIM products/subscriptions)</td>
+</tr>
+<tr>
+<td>Token rate limiting</td>
+<td>Citadel Layer 1 (APIM policies)</td>
+</tr>
+<tr>
+<td>Content safety filtering</td>
+<td>Citadel Layer 1 (Azure Content Safety)</td>
+</tr>
+<tr>
+<td>PII detection at gateway</td>
+<td>Citadel Layer 1 (Azure Language Service)</td>
+</tr>
+<tr>
+<td>Per-action policy evaluation</td>
+<td>AGT Policy Engine</td>
+</tr>
+<tr>
+<td>Tool call allow/deny</td>
+<td>AGT Capability Model</td>
+</tr>
+<tr>
+<td>Agent-to-agent trust</td>
+<td>AGT Trust Layer (Ed25519, SPIFFE)</td>
+</tr>
+<tr>
+<td>Trust scoring (0-1000)</td>
+<td>AGT AgentMesh</td>
+</tr>
+<tr>
+<td>Tamper-evident audit logs</td>
+<td>AGT Audit System</td>
+</tr>
+<tr>
+<td>Correlated fleet observability</td>
+<td>Citadel Layer 2 + AGT Exporter</td>
+</tr>
+<tr>
+<td>Agent enterprise identity</td>
+<td>Citadel Layer 3 (Entra ID)</td>
+</tr>
+<tr>
+<td>Threat detection</td>
+<td>Citadel Layer 4 (Defender)</td>
+</tr>
+<tr>
+<td>Data governance labels</td>
+<td>Citadel Layer 4 (Purview) + AGT <code>data_classification</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="failure-modes">Failure Modes</h2>
+<table>
+<thead>
+<tr>
+<th>Component Unavailable</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure Event Hub / App Insights</td>
+<td>AGT continues operating normally. Events are buffered in memory and retried on the next flush cycle. Events are lost if the process exits before connectivity is restored.</td>
+</tr>
+<tr>
+<td>Citadel APIM Gateway</td>
+<td>Agent cannot reach LLM/tools through the gateway. AGT policy engine continues to evaluate actions locally.</td>
+</tr>
+<tr>
+<td>AGT Policy Engine</td>
+<td>Configurable: fail-open (actions proceed ungoverned) or fail-closed (all actions blocked). Default is fail-closed.</td>
+</tr>
+<tr>
+<td>Key Vault (policy bundle source)</td>
+<td>Agent cannot load or refresh policy bundles. The last successfully loaded bundle remains active.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="glossary">Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Access Contract</strong></td>
+<td>A Citadel deployment artifact that declares which AI services, models, tools, and agents a spoke environment can access, along with policy bindings. See <a href="../bicep/infra/citadel-access-contracts/README.md">Access Contracts Guide</a>.</td>
+</tr>
+<tr>
+<td><strong>Policy Bundle</strong></td>
+<td>A YAML file defining AGT governance rules (allow/deny per action, trust score requirements, caller restrictions).</td>
+</tr>
+<tr>
+<td><strong>Trust Score</strong></td>
+<td>A continuous value (0-1000) that AGT assigns to each agent based on behavior, policy compliance, and peer attestations. Scores below configurable thresholds trigger automatic credential revocation.</td>
+</tr>
+<tr>
+<td><strong>SPIFFE</strong></td>
+<td><a href="https://spiffe.io/">Secure Production Identity Framework for Everyone</a>. AGT uses SPIFFE Verifiable Identity Documents (SVIDs) for runtime agent identity.</td>
+</tr>
+<tr>
+<td><strong>Agent 365</strong></td>
+<td>Microsoft's agent identity platform built on Entra ID. Provides enterprise-grade identity, lifecycle management, and access packages for AI agents.</td>
+</tr>
+<tr>
+<td><strong><code>data_classification</code></strong></td>
+<td>An AGT policy label that maps to Purview sensitivity labels, enabling data governance enforcement at the agent level.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://github.com/microsoft/agent-governance-toolkit">Agent Governance Toolkit</a>: Full documentation and source code</li>
+<li><a href="https://github.com/microsoft/agent-governance-toolkit/blob/main/docs/integrations/citadel-integration.md">AGT + Citadel Integration Architecture</a>: Detailed architecture reference</li>
+<li><a href="https://github.com/microsoft/agent-governance-toolkit/tree/main/examples/citadel-governed-agent">End-to-End Example</a>: Working example with mock mode for local testing</li>
+<li><a href="https://aka.ms/foundry-citadel">Foundry Citadel Platform</a>: Full 4-layer architecture overview</li>
+<li><a href="https://github.com/microsoft/agent-governance-toolkit/blob/main/docs/quickstart.md">AGT Quickstart</a>: Zero to governed agents in 10 minutes</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

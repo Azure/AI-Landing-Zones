@@ -1,0 +1,2402 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>📜 Citadel Access Contracts — Use-case onboarding (Terraform) - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#citadel-access-contracts-use-case-onboarding-terraform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              📜 Citadel Access Contracts — Use-case onboarding (Terraform)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Gets Created
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deployment-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtime-request-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime Request Flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#azure-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissions Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tooling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configure-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Configure variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#naming-convention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Naming convention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-code-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service code mapping
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service code mapping">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-custom-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding custom APIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-service-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-service bundles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#top-level-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Top-level variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-object-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service object properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-connection-config-foundry_config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry connection config (foundry_config)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secret-management-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secret Management Options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Secret Management Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-azure-key-vault-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Azure Key Vault (Recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-direct-output-cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Direct Output (CI/CD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-microsoft-foundry-connections" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Microsoft Foundry Connections
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Option 3: Microsoft Foundry Connections">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#combined-targets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combined targets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-custom-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating Custom Policies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating Custom Policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-the-default-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using the default policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-custom-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating a custom policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-services-in-one-use-case" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple services in one use case
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jwt-authentication-for-access-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JWT Authentication for Access Contracts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JWT Authentication for Access Contracts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-jwt-via-a-custom-product-policy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling JWT via a custom product policy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acquiring-a-jwt-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acquiring a JWT token
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Outputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-using-key-vault-use_target_key_vault-true" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When using Key Vault (use_target_key_vault = true)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-not-using-key-vault-use_target_key_vault-false" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When NOT using Key Vault (use_target_key_vault = false)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cross-subscription-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-subscription resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-script-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy script options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-script-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test script options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-the-main-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to the main deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Support
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="citadel-access-contracts-use-case-onboarding-terraform">📜 Citadel Access Contracts — Use-case onboarding (Terraform)</h1>
+<p>Standalone Terraform deployment that onboards an AI <strong>use-case</strong> to an existing AI Citadel Governance Hub APIM instance — creating per-service APIM products, subscriptions, inbound policies, and (optionally) Key Vault secrets and Azure AI Foundry connections.</p>
+<h2 id="overview">Overview</h2>
+<p>Automate the onboarding of AI use cases to your APIM-based AI Gateway with a streamlined, infrastructure-as-code approach using Terraform variable files (<code>terraform.tfvars</code>).</p>
+<p>This module eliminates manual APIM configuration by providing:</p>
+<ul>
+<li>📦 <strong>Automated Product Creation</strong>: Per-service APIM products with naming <code>&lt;serviceCode&gt;-&lt;BU&gt;-&lt;UseCase&gt;-&lt;ENV&gt;</code></li>
+<li>🔌 <strong>API Integration</strong>: Automatic API attachment to the product with custom or default policies</li>
+<li>🔑 <strong>Subscription Management</strong>: Auto-generated subscription with secure API keys</li>
+<li>🔐 <strong>Flexible Secret Storage</strong>: Optional Azure Key Vault integration or direct credential output</li>
+<li>🤖 <strong>Microsoft Foundry Integration</strong>: Optional APIM connection creation for Foundry agents</li>
+<li>🛡️ <strong>JWT Authentication</strong>: Optional layered API Key + JWT Bearer token authentication per product</li>
+<li>📝 <strong>Declarative Configuration</strong>: Simple <code>terraform.tfvars</code> &amp; <code>.xml</code> files for version control</li>
+</ul>
+<blockquote>
+<p>This module is a Terraform port of the Bicep <a href="https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator/tree/citadel-v1/bicep/infra/citadel-access-contracts"><code>citadel-access-contracts</code></a> module (<code>main.bicep</code> + <code>apimOnboardService.bicep</code> + <code>kvSecrets.bicep</code> + <code>foundryConnection.bicep</code>), packaged as an independently-applyable root module — the same pattern as <code>../llm-backend-onboarding</code>.</p>
+</blockquote>
+<h2 id="what-gets-created">What Gets Created</h2>
+<p>For each service <code>code</code> you onboard, this module creates:</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Naming Pattern</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIM Product</strong></td>
+<td><code>&lt;code&gt;-&lt;BU&gt;-&lt;UseCase&gt;-&lt;ENV&gt;</code></td>
+<td>Product per service (e.g. <code>LLM-Finance-CustomerSupport-DEV</code>) with attached APIs and policies</td>
+</tr>
+<tr>
+<td><strong>Product → API links</strong></td>
+<td>—</td>
+<td>Attaches the already-published APIs from <code>api_name_mapping[code]</code> to the product</td>
+</tr>
+<tr>
+<td><strong>Product Policy</strong></td>
+<td>—</td>
+<td>Inbound policy applied to the product (per-service XML or the bundled default)</td>
+</tr>
+<tr>
+<td><strong>APIM Subscription</strong></td>
+<td><code>&lt;product&gt;-SUB-01</code></td>
+<td>Subscription with primary/secondary API keys</td>
+</tr>
+<tr>
+<td><strong>Key Vault Secrets</strong> <em>(optional)</em></td>
+<td><code>&lt;secret_name&gt;</code></td>
+<td>Endpoint URL + subscription key per service (<code>use_target_key_vault = true</code>)</td>
+</tr>
+<tr>
+<td><strong>Foundry Connection</strong> <em>(optional)</em></td>
+<td><code>&lt;prefix&gt;-&lt;code&gt;</code></td>
+<td>One connection per service pointing at the APIM gateway (<code>use_target_foundry = true</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Naming examples:</p>
+<ul>
+<li>Product: <code>LLM-Finance-CustomerSupport-DEV</code></li>
+<li>Subscription: <code>LLM-Finance-CustomerSupport-DEV-SUB-01</code></li>
+<li>Foundry Connection: <code>Hub-Finance-CustomerSupport-DEV-LLM</code></li>
+</ul>
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li>✨ <strong>Simplified Inputs</strong>: No need for full resource IDs — just API names</li>
+<li>🔄 <strong>Optional Key Vault</strong>: Choose between Key Vault storage or direct output</li>
+<li>🤖 <strong>Optional Foundry Integration</strong>: Create APIM connections for AI agents</li>
+<li>📋 <strong>Policy Templates</strong>: Pre-built default policy for common LLM use cases</li>
+<li>🎯 <strong>Multi-Service Support</strong>: Onboard multiple AI services in one apply</li>
+<li>🔒 <strong>Secure by Default</strong>: Credentials stored in Key Vault or marked as sensitive outputs</li>
+<li>📊 <strong>Production Ready</strong>: Designed for scale and aligned with DevOps practices</li>
+</ul>
+<h2 id="architecture-overview">Architecture Overview</h2>
+<h3 id="deployment-flow">Deployment Flow</h3>
+<div class="highlight"><pre><span></span><code>  📥 INPUTS                         🚀 DEPLOYMENT                        📤 OUTPUTS
+┌────────────────┐          ┌──────────────────────────┐
+│ terraform.tfvars│         │ terraform apply          │
+│ Policy XML files│ ───────▶│   │                      │
+└────────────────┘          │   ▼                      │
+                            │ Create Products ─────────┼────────────▶ Products Created
+                            │   │                      │
+                            │   ▼                      │
+                            │ Attach APIs to Products  │
+                            │   │                      │
+                            │   ▼                      │
+                            │ Apply Policies           │
+                            │   │                      │
+                            │   ▼                      │
+                            │ Create Subscriptions ────┼────────────▶ Subscription Keys
+                            │   │                      │
+                            │   ├──▶ Use Key Vault?    │
+                            │   │     ├─ Yes ──▶ Store ┼────────────▶ KV Secret Names
+                            │   │     │   Secrets in KV│
+                            │   │     └─ No  ──▶ Output┼────────────▶ Direct Credentials
+                            │   │         Credentials  │
+                            │   │                      │
+                            │   └──▶ Use Foundry?      │
+                            │         └─ Yes ──▶ Create┼────────────▶ Foundry Connections
+                            │             Connections  │
+                            └──────────────────────────┘
+</code></pre></div>
+<h3 id="runtime-request-flow">Runtime Request Flow</h3>
+<p>Suggested flow for client applications (i.e. agents) interacting with the onboarded services via the access contract:</p>
+<div class="highlight"><pre><span></span><code> AI Agent/App      Entra ID        Key Vault       Foundry        AI Gateway      AI Services
+      │                │               │              │                │               │
+      │  ── Credential acquisition (choose one) ──────────────────────────────────     │
+      │                │               │              │                │               │
+      │ [Key Vault]    │  Get endpoint + API key      │                │               │
+      │ ──────────────────────────────▶               │                │               │
+      │ ◀──────────────────────────────  secrets      │                │               │
+      │                │               │              │                │               │
+      │ [Foundry]      │  Use APIM connection (credentials stored)     │               │
+      │ ─────────────────────────────────────────────▶                 │               │
+      │                │               │              │                │               │
+      │ [Direct]       Use credentials from terraform output           │               │
+      │                │               │              │                │               │
+      │  ── (optional) JWT authentication ────────────────────────────────────────     │
+      │  Request JWT token (client credentials)       │                │               │
+      │ ───────────────▶               │              │                │               │
+      │ ◀───────────────  Bearer token │              │                │               │
+      │                │               │              │                │               │
+      │  HTTPS request: api-key + optional Bearer token                │               │
+      │ ──────────────────────────────────────────────────────────────▶                │
+      │                │      Validate subscription key (always required)              │
+      │                │      Apply product policy (check jwtRequired)  │              │
+      │                │      [if jwtRequired] Validate JWT via security-handler       │
+      │                │               │              │   Forward to backend service   │
+      │                │               │              │                │ ─────────────▶│
+      │                │               │              │                │ ◀─────────────│
+      │                │               │              │     Logs &amp; metrics             │
+      │ ◀──────────────────────────────────────────────────────────────                │
+      │                  Response with usage headers  │                │               │
+</code></pre></div>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="azure-resources">Azure Resources</h3>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Requirement</th>
+<th>How to Verify</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Citadel-compliant APIM instance</strong></td>
+<td>With published APIs matching your <code>api_name_mapping</code></td>
+<td><code>az apim api list -g &lt;rg&gt; -n &lt;apim-name&gt;</code></td>
+</tr>
+<tr>
+<td><strong>Azure Key Vault</strong></td>
+<td>Accessible with secret-set permissions (if using KV)</td>
+<td><code>az keyvault show -n &lt;kv-name&gt;</code></td>
+</tr>
+<tr>
+<td><strong>Microsoft Foundry</strong></td>
+<td>Account and project must exist (if using Foundry)</td>
+<td><code>az cognitiveservices account show -n &lt;account-name&gt; -g &lt;rg&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="permissions-required">Permissions Required</h3>
+<p>The deploying principal needs:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Role</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APIM resource group</td>
+<td><code>API Management Service Contributor</code></td>
+<td>Create products, subscriptions, and policies</td>
+</tr>
+<tr>
+<td>Target Key Vault <em>(if used)</em></td>
+<td><code>Key Vault Secrets Officer</code></td>
+<td>Write secrets</td>
+</tr>
+<tr>
+<td>Foundry resource group <em>(if used)</em></td>
+<td><code>Contributor</code></td>
+<td>Create connections</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td><code>Reader</code></td>
+<td>Reference existing resources</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tooling">Tooling</h3>
+<ul>
+<li>Terraform &gt;= 1.5 and Azure CLI installed</li>
+<li>Authenticated to Azure (<code>az login</code>)</li>
+</ul>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="1-configure-variables">1. Configure variables</h3>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>terraform.tfvars.example<span class="w"> </span>terraform.tfvars
+<span class="c1"># Edit terraform.tfvars with your values</span>
+</code></pre></div>
+<p>A minimal configuration looks like:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">apim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">subscription_id</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-SUBSCRIPTION-ID&quot;</span>
+<span class="w">  </span><span class="na">resource_group_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-APIM-RESOURCE-GROUP&quot;</span>
+<span class="w">  </span><span class="na">name</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-APIM-NAME&quot;</span>
+<span class="p">}</span>
+
+<span class="nb">use_case</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">business_unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Finance&quot;</span>
+<span class="w">  </span><span class="na">use_case_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;CustomerSupport&quot;</span>
+<span class="w">  </span><span class="na">environment</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DEV&quot;</span><span class="c1"> # DEV, TEST, PROD</span>
+<span class="p">}</span>
+
+<span class="c1"># Verify these API names exist in your APIM</span>
+<span class="nb">api_name_mapping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">LLM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;azure-openai-api&quot;, &quot;universal-llm-api&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="na">DOC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;document-intelligence-api&quot;, &quot;document-intelligence-api-legacy&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="na">services</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LLM&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_ENDPOINT&quot;</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_API_KEY&quot;</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot; # &quot;&quot; = default policy, or file(&quot;policies/my-policy.xml&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+
+<span class="na">use_target_key_vault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="c1"> # false to return credentials as outputs</span>
+
+<span class="nb">key_vault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">subscription_id</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-SUBSCRIPTION-ID&quot;</span>
+<span class="w">  </span><span class="na">resource_group_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-KV-RESOURCE-GROUP&quot;</span>
+<span class="w">  </span><span class="na">name</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-KV-NAME&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="2-deploy">2. Deploy</h3>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p>Or manually:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>init
+terraform<span class="w"> </span>plan<span class="w">  </span>-var-file<span class="o">=</span>terraform.tfvars
+terraform<span class="w"> </span>apply<span class="w"> </span>-var-file<span class="o">=</span>terraform.tfvars
+</code></pre></div>
+<h3 id="3-test">3. Test</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># When use_target_key_vault = false, keys come from terraform output:</span>
+./scripts/test.sh
+
+<span class="c1"># When keys are stored in Key Vault, pass one explicitly:</span>
+./scripts/test.sh<span class="w"> </span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;subscription-key&gt;&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c"># When use_target_key_vault = false, keys come from terraform output:</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">test</span><span class="p">.</span><span class="n">ps1</span>
+
+<span class="c"># When keys are stored in Key Vault, pass one explicitly:</span>
+<span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">test</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-ApiKey</span> <span class="s2">&quot;&lt;subscription-key&gt;&quot;</span>
+</code></pre></div>
+<p>You can also use the <a href="../validation/citadel-access-contracts-tests.ipynb"><code>citadel-access-contracts-tests</code></a> notebook to validate end-to-end connectivity of the newly created access contract.</p>
+<h2 id="configuration">Configuration</h2>
+<h3 id="naming-convention">Naming convention</h3>
+<p>All resources are named from <code>use_case</code>:</p>
+<div class="highlight"><pre><span></span><code>&lt;code&gt;-&lt;business_unit&gt;-&lt;use_case_name&gt;-&lt;environment&gt;
+</code></pre></div>
+<p>For <code>use_case = { business_unit = "Finance", use_case_name = "CustomerSupport", environment = "DEV" }</code>
+and a <code>LLM</code> service, you get product <code>LLM-Finance-CustomerSupport-DEV</code> and subscription <code>LLM-Finance-CustomerSupport-DEV-SUB-01</code>.</p>
+<h3 id="service-code-mapping">Service code mapping</h3>
+<p>Map service codes (a short acronym that represents the category of services) to their API names in APIM:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">api_name_mapping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">LLM</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;azure-openai-api&quot;, &quot;universal-llm-api&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="na">OAIRT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;openai-realtime-ws-api&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="na">DOC</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;document-intelligence-api&quot;, &quot;document-intelligence-api-legacy&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="na">SRCH</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;azure-ai-search-index-api&quot;</span><span class="p">]</span>
+<span class="c1">  # ... add more services</span>
+<span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Note</strong>: Each API name must already exist in your APIM instance. The apply will fail if an API name is not found.</p>
+</blockquote>
+<h4 id="adding-custom-apis">Adding custom APIs</h4>
+<p>You can onboard any number of additional APIs to support custom services — add the new API names to the mapping accordingly.</p>
+<h4 id="multi-service-bundles">Multi-service bundles</h4>
+<p>Mappings are typically focused on a specific category of services (e.g. LLM, Document Intelligence). You can create mappings that mix different service types under one bundle if needed — this requires the product policy to be aware of that mix so it applies the correct limits per service type (e.g. token-per-minute limits for LLM and request-per-minute limits for Document Intelligence).</p>
+<h3 id="top-level-variables">Top-level variables</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apim</code></td>
+<td>object</td>
+<td>Yes</td>
+<td><code>{ subscription_id, resource_group_name, name }</code> of the target APIM. The provider is pinned to this subscription.</td>
+</tr>
+<tr>
+<td><code>use_case</code></td>
+<td>object</td>
+<td>Yes</td>
+<td><code>{ business_unit, use_case_name, environment }</code> — drives naming.</td>
+</tr>
+<tr>
+<td><code>api_name_mapping</code></td>
+<td>map(list(string))</td>
+<td>Yes</td>
+<td>Service code → list of <strong>existing</strong> APIM API names.</td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td>list(object)</td>
+<td>Yes</td>
+<td>Services to onboard (see below).</td>
+</tr>
+<tr>
+<td><code>product_terms</code></td>
+<td>string</td>
+<td>No</td>
+<td>Terms of service shown to subscribers.</td>
+</tr>
+<tr>
+<td><code>use_target_key_vault</code></td>
+<td>bool</td>
+<td>No</td>
+<td>Write endpoint + key secrets to Key Vault (default <code>true</code>).</td>
+</tr>
+<tr>
+<td><code>key_vault</code></td>
+<td>object</td>
+<td>If KV</td>
+<td><code>{ subscription_id, resource_group_name, name }</code>. May be in another subscription/RG.</td>
+</tr>
+<tr>
+<td><code>use_target_foundry</code></td>
+<td>bool</td>
+<td>No</td>
+<td>Create a Foundry connection per service (default <code>false</code>).</td>
+</tr>
+<tr>
+<td><code>foundry</code></td>
+<td>object</td>
+<td>If Foundry</td>
+<td><code>{ subscription_id, resource_group_name, account_name, project_name }</code>.</td>
+</tr>
+<tr>
+<td><code>foundry_config</code></td>
+<td>object</td>
+<td>No</td>
+<td>Advanced Foundry connection options (see below).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="service-object-properties">Service object properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>code</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Service code; must be a key in <code>api_name_mapping</code> (e.g. <code>LLM</code>, <code>DOC</code>, <code>SRCH</code>).</td>
+</tr>
+<tr>
+<td><code>endpoint_secret_name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Key Vault secret name for the gateway endpoint URL. Underscores are lower-cased to hyphens.</td>
+</tr>
+<tr>
+<td><code>api_key_secret_name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Key Vault secret name for the subscription key. Underscores are lower-cased to hyphens.</td>
+</tr>
+<tr>
+<td><code>policy_xml</code></td>
+<td>string</td>
+<td>No</td>
+<td>Inbound product policy XML. Empty (<code>""</code>) applies <code>policies/default-ai-product-policy.xml</code>. Use <code>file("policies/your-policy.xml")</code> for a custom one.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="foundry-connection-config-foundry_config">Foundry connection config (<code>foundry_config</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connection_name_prefix</code></td>
+<td><code>""</code></td>
+<td>Empty → <code>Hub-&lt;business_unit&gt;-&lt;use_case_name&gt;-&lt;environment&gt;</code>. Connection name = <code>&lt;prefix&gt;-&lt;code&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>connection_category</code></td>
+<td><code>ApiManagement</code></td>
+<td><code>ApiManagement</code> or <code>ModelGateway</code>.</td>
+</tr>
+<tr>
+<td><code>deployment_in_path</code></td>
+<td><code>"false"</code></td>
+<td><code>"true"</code> = model in URL path; <code>"false"</code> = model in request body.</td>
+</tr>
+<tr>
+<td><code>is_shared_to_all</code></td>
+<td><code>false</code></td>
+<td>Share the connection with all project users.</td>
+</tr>
+<tr>
+<td><code>inference_api_version</code></td>
+<td><code>""</code></td>
+<td>API version for inference calls. Empty = APIM defaults.</td>
+</tr>
+<tr>
+<td><code>deployment_api_version</code></td>
+<td><code>""</code></td>
+<td>API version for deployment discovery. Empty = APIM defaults.</td>
+</tr>
+<tr>
+<td><code>static_models</code></td>
+<td><code>[]</code></td>
+<td>Static model list (skips dynamic discovery).</td>
+</tr>
+<tr>
+<td><code>list_models_endpoint</code></td>
+<td><code>""</code></td>
+<td>Custom list-models endpoint. Empty = APIM defaults.</td>
+</tr>
+<tr>
+<td><code>get_model_endpoint</code></td>
+<td><code>""</code></td>
+<td>Custom get-model endpoint. Empty = APIM defaults.</td>
+</tr>
+<tr>
+<td><code>deployment_provider</code></td>
+<td><code>""</code></td>
+<td><code>""</code>, <code>AzureOpenAI</code>, or <code>OpenAI</code> (used with custom discovery).</td>
+</tr>
+<tr>
+<td><code>custom_headers</code></td>
+<td><code>{}</code></td>
+<td>Extra request headers (always emitted; <code>{}</code> when empty).</td>
+</tr>
+<tr>
+<td><code>auth_config</code></td>
+<td><code>{}</code></td>
+<td>Custom auth configuration object.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="secret-management-options">Secret Management Options</h2>
+<p>The module supports three (non-exclusive) ways to deliver credentials to consuming applications.</p>
+<h3 id="option-1-azure-key-vault-recommended">Option 1: Azure Key Vault (Recommended)</h3>
+<p>Set <code>use_target_key_vault = true</code> and provide a <code>key_vault</code> block. Endpoint URLs and subscription keys are written as Key Vault secrets:</p>
+<div class="highlight"><pre><span></span><code><span class="na">use_target_key_vault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+
+<span class="nb">key_vault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">subscription_id</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-SUBSCRIPTION-ID&quot;</span>
+<span class="w">  </span><span class="na">resource_group_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-KV-RESOURCE-GROUP&quot;</span>
+<span class="w">  </span><span class="na">name</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-KV-NAME&quot;</span>
+<span class="p">}</span>
+
+<span class="na">services</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LLM&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_ENDPOINT&quot;</span><span class="c1"> # → openai-endpoint in Key Vault</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="c1">  # → openai-api-key in Key Vault</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Naming</strong>: <code>endpoint_secret_name</code> / <code>api_key_secret_name</code> are normalized for Key Vault — underscores become hyphens and the value is lower-cased (<code>OPENAI_API_KEY</code> → <code>openai-api-key</code>).</p>
+</blockquote>
+<p>Consuming the secret from Python:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">azure.identity</span> <span class="kn">import</span> <span class="n">DefaultAzureCredential</span>
+<span class="kn">from</span> <span class="nn">azure.keyvault.secrets</span> <span class="kn">import</span> <span class="n">SecretClient</span>
+<span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">AzureOpenAI</span>
+
+<span class="n">kv</span> <span class="o">=</span> <span class="n">SecretClient</span><span class="p">(</span><span class="n">vault_url</span><span class="o">=</span><span class="s2">&quot;https://YOUR-KV-NAME.vault.azure.net&quot;</span><span class="p">,</span> <span class="n">credential</span><span class="o">=</span><span class="n">DefaultAzureCredential</span><span class="p">())</span>
+<span class="n">endpoint</span> <span class="o">=</span> <span class="n">kv</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="s2">&quot;openai-endpoint&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span class="n">api_key</span>  <span class="o">=</span> <span class="n">kv</span><span class="o">.</span><span class="n">get_secret</span><span class="p">(</span><span class="s2">&quot;openai-api-key&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">AzureOpenAI</span><span class="p">(</span><span class="n">azure_endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">api_version</span><span class="o">=</span><span class="s2">&quot;2024-10-21&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="option-2-direct-output-cicd">Option 2: Direct Output (CI/CD)</h3>
+<p>Set <code>use_target_key_vault = false</code> to skip Key Vault. Credentials are returned in the (sensitive) <code>endpoints</code> output for use in pipelines:</p>
+<div class="highlight"><pre><span></span><code><span class="na">use_target_key_vault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">false</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Retrieve the sensitive endpoints output as JSON</span>
+terraform<span class="w"> </span>output<span class="w"> </span>-json<span class="w"> </span>endpoints
+</code></pre></div>
+<blockquote>
+<p><strong>Security note</strong>: The <code>endpoints</code> output contains live subscription keys. It is marked <code>sensitive</code>; store it securely (environment variables, CI/CD secrets) and prefer Key Vault for production.</p>
+</blockquote>
+<h3 id="option-3-microsoft-foundry-connections">Option 3: Microsoft Foundry Connections</h3>
+<p>Set <code>use_target_foundry = true</code> to create one APIM connection per service inside a Foundry project, so agents can call the gateway without managing keys directly:</p>
+<div class="highlight"><pre><span></span><code><span class="na">use_target_foundry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+
+<span class="nb">foundry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">subscription_id</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-SUBSCRIPTION-ID&quot;</span>
+<span class="w">  </span><span class="na">resource_group_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-FOUNDRY-RESOURCE-GROUP&quot;</span>
+<span class="w">  </span><span class="na">account_name</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-FOUNDRY-ACCOUNT&quot;</span>
+<span class="w">  </span><span class="na">project_name</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-FOUNDRY-PROJECT&quot;</span>
+<span class="p">}</span>
+
+<span class="nb">foundry_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">connection_name_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;              # &quot;&quot;</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="err">Hub-&lt;BU&gt;-&lt;UseCase&gt;-&lt;ENV&gt;</span>
+<span class="w">  </span><span class="na">connection_category</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ApiManagement&quot; # or &quot;ModelGateway&quot;</span>
+<span class="w">  </span><span class="na">deployment_in_path</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;false&quot;</span>
+<span class="w">  </span><span class="na">is_shared_to_all</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="no">false</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="combined-targets">Combined targets</h4>
+<p>The options are not mutually exclusive — you can write to Key Vault <strong>and</strong> create Foundry connections in the same apply:</p>
+<div class="highlight"><pre><span></span><code><span class="na">use_target_key_vault</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="nb">key_vault</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="cm"> /* ... */</span><span class="w"> </span><span class="p">}</span>
+
+<span class="na">use_target_foundry</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<span class="nb">foundry</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="cm"> /* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="nb">foundry_config</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="cm"> /* ... */</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<h2 id="creating-custom-policies">Creating Custom Policies</h2>
+<h3 id="using-the-default-policy">Using the default policy</h3>
+<p>Leave <code>policy_xml = ""</code> to apply the bundled <code>policies/default-ai-product-policy.xml</code>. The default policy provides:</p>
+<ul>
+<li>🎯 <strong>Model restrictions</strong> — allowed models: <code>gpt-4o</code>, <code>deepseek-r1</code>, <code>gpt-4.1</code>, <code>gpt-5.4-mini</code></li>
+<li>⏱️ <strong>Token limits</strong> — <code>1000</code> tokens/minute and a <code>100,000</code> token monthly quota per subscription</li>
+<li>📊 <strong>Advanced response headers</strong> — usage headers enabled for observability</li>
+</ul>
+<h3 id="creating-a-custom-policy">Creating a custom policy</h3>
+<p>Add your XML under <code>policies/</code> and reference it from the service with <code>file(...)</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="na">services</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LLM&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_ENDPOINT&quot;</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_API_KEY&quot;</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="nf">file</span><span class="p">(</span><span class="s2">&quot;policies/finance-llm-policy.xml&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>A minimal product policy:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;policies&gt;</span>
+<span class="w">    </span><span class="nt">&lt;inbound&gt;</span>
+<span class="w">        </span><span class="nt">&lt;base</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;include-fragment</span><span class="w"> </span><span class="na">fragment-id=</span><span class="s">&quot;set-llm-requested-model&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;allowedModels&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;gpt-4o,gpt-4.1&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;llm-token-limit</span><span class="w"> </span><span class="na">counter-key=</span><span class="s">&quot;@(context.Subscription.Id)&quot;</span>
+<span class="w">                         </span><span class="na">tokens-per-minute=</span><span class="s">&quot;2000&quot;</span>
+<span class="w">                         </span><span class="na">estimate-prompt-tokens=</span><span class="s">&quot;false&quot;</span>
+<span class="w">                         </span><span class="na">token-quota=</span><span class="s">&quot;200000&quot;</span>
+<span class="w">                         </span><span class="na">token-quota-period=</span><span class="s">&quot;Monthly&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;enableResponseHeaders&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;@(true)&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/inbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;backend&gt;&lt;base</span><span class="w"> </span><span class="nt">/&gt;&lt;/backend&gt;</span>
+<span class="w">    </span><span class="nt">&lt;outbound&gt;&lt;base</span><span class="w"> </span><span class="nt">/&gt;&lt;/outbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;on-error&gt;&lt;base</span><span class="w"> </span><span class="nt">/&gt;&lt;/on-error&gt;</span>
+<span class="nt">&lt;/policies&gt;</span>
+</code></pre></div>
+<blockquote>
+<p>Policy fragments such as <code>set-llm-requested-model</code> are provisioned by the Governance Hub / <code>llm-backend-onboarding</code> deployments and must exist in the target APIM instance.</p>
+</blockquote>
+<h2 id="advanced-scenarios">Advanced Scenarios</h2>
+<h3 id="multiple-services-in-one-use-case">Multiple services in one use case</h3>
+<p>Onboard several AI services for a single use case in a single apply:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">use_case</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">business_unit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Finance&quot;</span>
+<span class="w">  </span><span class="na">use_case_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DocProcessing&quot;</span>
+<span class="w">  </span><span class="na">environment</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;PROD&quot;</span>
+<span class="p">}</span>
+
+<span class="nb">api_name_mapping</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">LLM</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;azure-openai-api&quot;, &quot;universal-llm-api&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="na">DOC</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;document-intelligence-api&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="na">SRCH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;azure-ai-search-index-api&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="na">services</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LLM&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_ENDPOINT&quot;</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_API_KEY&quot;</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DOC&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DOCINTELL_ENDPOINT&quot;</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;DOCINTELL_API_KEY&quot;</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="nf">file</span><span class="p">(</span><span class="s2">&quot;policies/doc-intel-policy.xml&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;SRCH&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;SEARCH_ENDPOINT&quot;</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;SEARCH_API_KEY&quot;</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>This produces three products (<code>LLM-Finance-DocProcessing-PROD</code>, <code>DOC-Finance-DocProcessing-PROD</code>, <code>SRCH-Finance-DocProcessing-PROD</code>), each with its own subscription, policy, and — depending on the secret options — Key Vault secrets and/or Foundry connections.</p>
+<h2 id="jwt-authentication-for-access-contracts">JWT Authentication for Access Contracts</h2>
+<p>By default, products are protected with the APIM <strong>subscription key</strong> (<code>api-key</code> header). You can add a second layer of <strong>JWT Bearer token</strong> validation so that callers must present <em>both</em> a valid subscription key and a valid Microsoft Entra ID token.</p>
+<h3 id="how-it-works">How it works</h3>
+<p>The Citadel policy fragments support a <code>jwtRequired</code> flag. When a product policy sets this flag to <code>true</code>, the security handler validates the incoming <code>Authorization: Bearer &lt;token&gt;</code> against your configured Microsoft Entra ID application before the request is forwarded to the backend.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Mechanism</th>
+<th>Always Required?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subscription</td>
+<td>APIM <code>api-key</code> header</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>Identity</td>
+<td>Microsoft Entra ID JWT Bearer token</td>
+<td>Only when <code>jwtRequired = true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enabling-jwt-via-a-custom-product-policy">Enabling JWT via a custom product policy</h3>
+<p>Because this Terraform module applies the product policy XML you provide, enabling JWT is done by setting <code>jwtRequired</code> in your <code>policy_xml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;policies&gt;</span>
+<span class="w">    </span><span class="nt">&lt;inbound&gt;</span>
+<span class="w">        </span><span class="nt">&lt;base</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="cm">&lt;!-- Require a valid JWT in addition to the subscription key --&gt;</span>
+<span class="w">        </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;jwtRequired&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;@(true)&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;include-fragment</span><span class="w"> </span><span class="na">fragment-id=</span><span class="s">&quot;set-llm-requested-model&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;allowedModels&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;gpt-4o,gpt-4.1&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">        </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;enableResponseHeaders&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;@(true)&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/inbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;backend&gt;&lt;base</span><span class="w"> </span><span class="nt">/&gt;&lt;/backend&gt;</span>
+<span class="w">    </span><span class="nt">&lt;outbound&gt;&lt;base</span><span class="w"> </span><span class="nt">/&gt;&lt;/outbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;on-error&gt;&lt;base</span><span class="w"> </span><span class="nt">/&gt;&lt;/on-error&gt;</span>
+<span class="nt">&lt;/policies&gt;</span>
+</code></pre></div>
+<p>Reference it from the service:</p>
+<div class="highlight"><pre><span></span><code><span class="na">services</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">code</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;LLM&quot;</span>
+<span class="w">    </span><span class="na">endpoint_secret_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_ENDPOINT&quot;</span>
+<span class="w">    </span><span class="na">api_key_secret_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;OPENAI_API_KEY&quot;</span>
+<span class="w">    </span><span class="na">policy_xml</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="nf">file</span><span class="p">(</span><span class="s2">&quot;policies/jwt-llm-policy.xml&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<blockquote>
+<p>The JWT validation fragments and the Microsoft Entra ID application configuration are provisioned by the Governance Hub deployment. This module only opts a product into JWT enforcement via the <code>jwtRequired</code> flag in its policy.</p>
+</blockquote>
+<h3 id="acquiring-a-jwt-token">Acquiring a JWT token</h3>
+<p>Clients obtain a token from Microsoft Entra ID using the client-credentials flow, then send it alongside the subscription key:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">TOKEN</span><span class="o">=</span><span class="k">$(</span>az<span class="w"> </span>account<span class="w"> </span>get-access-token<span class="w"> </span>--resource<span class="w"> </span><span class="s2">&quot;&lt;api-app-id-uri&gt;&quot;</span><span class="w"> </span>--query<span class="w"> </span>accessToken<span class="w"> </span>-o<span class="w"> </span>tsv<span class="k">)</span>
+
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://YOUR-APIM.azure-api.net/openai/deployments/gpt-4o/chat/completions?api-version=2024-10-21&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;api-key: &lt;subscription-key&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;Hello&quot;}]}&#39;</span>
+</code></pre></div>
+<p>You can validate JWT-enabled access contracts using the <a href="../gitignore/citadel-jwt-authentication-tests.ipynb"><code>citadel-jwt-authentication-tests</code></a> notebook.</p>
+<h2 id="outputs">Outputs</h2>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apim_gateway_url</code></td>
+<td>Base URL of the APIM gateway.</td>
+</tr>
+<tr>
+<td><code>use_key_vault</code></td>
+<td>Whether secrets were written to Key Vault.</td>
+</tr>
+<tr>
+<td><code>products</code></td>
+<td>Map of service code → <code>{ product_id, display_name }</code>.</td>
+</tr>
+<tr>
+<td><code>subscriptions</code></td>
+<td>Per-service subscription metadata (Key Vault secret names when KV is used).</td>
+</tr>
+<tr>
+<td><code>endpoints</code></td>
+<td><strong>(sensitive)</strong> Per-service <code>{ endpoint, api_key }</code>. Only populated when <code>use_target_key_vault = false</code>.</td>
+</tr>
+<tr>
+<td><code>use_foundry</code></td>
+<td>Whether Foundry connections were created.</td>
+</tr>
+<tr>
+<td><code>foundry_connections</code></td>
+<td>Map of service code → created Foundry connection metadata.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Security note:</strong> When <code>use_target_key_vault = false</code>, the <code>endpoints</code> output contains live subscription keys. It is marked <code>sensitive</code>; handle it securely (environment variables, CI/CD secrets) and prefer Key Vault for production.</p>
+</blockquote>
+<h3 id="when-using-key-vault-use_target_key_vault-true">When using Key Vault (<code>use_target_key_vault = true</code>)</h3>
+<p><code>subscriptions</code> returns the Key Vault secret references rather than raw keys, and <code>endpoints</code> is empty:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>output<span class="w"> </span>subscriptions
+<span class="c1"># {</span>
+<span class="c1">#   &quot;LLM&quot; = {</span>
+<span class="c1">#     &quot;name&quot;                           = &quot;LLM-Finance-CustomerSupport-DEV-SUB-01&quot;</span>
+<span class="c1">#     &quot;product_id&quot;                     = &quot;LLM-Finance-CustomerSupport-DEV&quot;</span>
+<span class="c1">#     &quot;key_vault_endpoint_secret_name&quot; = &quot;openai-endpoint&quot;</span>
+<span class="c1">#     &quot;key_vault_api_key_secret_name&quot;  = &quot;openai-api-key&quot;</span>
+<span class="c1">#   }</span>
+<span class="c1"># }</span>
+</code></pre></div>
+<h3 id="when-not-using-key-vault-use_target_key_vault-false">When NOT using Key Vault (<code>use_target_key_vault = false</code>)</h3>
+<p>The raw endpoint + key are exposed in the sensitive <code>endpoints</code> output:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>output<span class="w"> </span>-json<span class="w"> </span>endpoints
+<span class="c1"># {</span>
+<span class="c1">#   &quot;LLM&quot;: {</span>
+<span class="c1">#     &quot;product_id&quot;:        &quot;LLM-Finance-CustomerSupport-DEV&quot;,</span>
+<span class="c1">#     &quot;subscription_name&quot;: &quot;LLM-Finance-CustomerSupport-DEV-SUB-01&quot;,</span>
+<span class="c1">#     &quot;endpoint&quot;:          &quot;https://YOUR-APIM.azure-api.net/openai&quot;,</span>
+<span class="c1">#     &quot;api_key&quot;:           &quot;&lt;subscription-key&gt;&quot;</span>
+<span class="c1">#   }</span>
+<span class="c1"># }</span>
+</code></pre></div>
+<h2 id="cross-subscription-resources">Cross-subscription resources</h2>
+<p>The Terraform provider is pinned to <code>apim.subscription_id</code>. Key Vault and Foundry are referenced by <strong>fully-qualified resource IDs</strong> built from their <code>subscription_id</code> objects, so they may live in different subscriptions/resource groups — as long as the authenticated principal has access there.</p>
+<h2 id="scripts">Scripts</h2>
+<blockquote>
+<p>Each script ships in two interchangeable flavours — Bash (<code>.sh</code>) and PowerShell (<code>.ps1</code>) — with identical functionality. Use whichever suits your shell.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/deploy.sh</code> / <code>scripts/deploy.ps1</code></td>
+<td>Init, import existing resources, plan, and apply.</td>
+</tr>
+<tr>
+<td><code>scripts/import-existing.sh</code> / <code>scripts/import-existing.ps1</code></td>
+<td>Import pre-existing APIM products/policies/subscriptions/API-links into state (idempotent re-runs). Called automatically by the deploy script.</td>
+</tr>
+<tr>
+<td><code>scripts/test.sh</code> / <code>scripts/test.ps1</code></td>
+<td>Smoke-test the onboarded services through the APIM gateway.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deploy-script-options">Deploy script options</h3>
+<p>Bash (<code>deploy.sh</code>):</p>
+<div class="highlight"><pre><span></span><code>--auto-approve    Skip interactive confirmation
+--plan-only       Show plan without applying
+--destroy         Remove the onboarded use-case resources
+--var-file FILE   Custom .tfvars file (default: terraform.tfvars)
+</code></pre></div>
+<p>PowerShell (<code>deploy.ps1</code>):</p>
+<div class="highlight"><pre><span></span><code>-AutoApprove      Skip interactive confirmation
+-PlanOnly         Show plan without applying
+-Destroy          Remove the onboarded use-case resources
+-VarFile FILE     Custom .tfvars file (default: terraform.tfvars)
+</code></pre></div>
+<h3 id="test-script-options">Test script options</h3>
+<p>Bash (<code>test.sh</code>):</p>
+<div class="highlight"><pre><span></span><code>--api-key KEY       APIM subscription key (required when keys are in Key Vault)
+--gateway-url URL   Override the auto-detected gateway URL
+--path PATH         Probe a specific API path
+--verbose           Show response bodies
+</code></pre></div>
+<p>PowerShell (<code>test.ps1</code>):</p>
+<div class="highlight"><pre><span></span><code>-ApiKey KEY         APIM subscription key (required when keys are in Key Vault)
+-GatewayUrl URL     Override the auto-detected gateway URL
+-Path PATH          Probe a specific API path
+-Verbose            Show response bodies
+</code></pre></div>
+<h2 id="file-structure">File structure</h2>
+<div class="highlight"><pre><span></span><code>citadel-access-contracts/
+├── main.tf                    # Products, product-APIs, policies, subscriptions, KV secrets, Foundry connection
+├── variables.tf               # Input variables
+├── outputs.tf                 # Output values
+├── versions.tf                # Terraform &amp; provider versions
+├── providers.tf               # Provider configuration (pinned to apim.subscription_id)
+├── terraform.tfvars.example   # Example configuration
+├── policies/
+│   └── default-ai-product-policy.xml   # Default inbound product policy
+├── scripts/
+│   ├── deploy.sh
+│   ├── deploy.ps1
+│   ├── import-existing.sh
+│   ├── import-existing.ps1
+│   ├── test.sh
+│   └── test.ps1
+└── README.md
+</code></pre></div>
+<h2 id="relationship-to-the-main-deployment">Relationship to the main deployment</h2>
+<p>This module is <strong>independent</strong> from the main Citadel Terraform deployment (<code>../main.tf</code>) and from the reusable <code>../modules/access-contracts</code> module. Use it to onboard new use-cases against an already-deployed Governance Hub without a full infrastructure redeploy — for example when a platform team owns the hub and product teams onboard their own use-cases.</p>
+<p>The reusable <code>../modules/access-contracts</code> module performs the same role inside the full stack; this standalone root resolves the APIM gateway URL, API paths, Key Vault ID, and Foundry project ID from the structured inputs and applies the resources directly.</p>
+<h2 id="support">Support</h2>
+<ul>
+<li>Review the parent <a href="../README.md">AI Citadel Governance Hub README</a> and the <a href="../DEPLOYMENT_GUIDE.md">Deployment Guide</a> for hub-level context.</li>
+<li>See the companion <a href="../llm-backend-onboarding/README.md"><code>llm-backend-onboarding</code></a> module for onboarding LLM backends to the gateway.</li>
+<li>Validate onboarded contracts with the notebooks under <a href="../validation/"><code>../validation</code></a>.</li>
+<li>For the original Bicep implementation this module is ported from, see the <a href="https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator/tree/citadel-v1/bicep/infra/citadel-access-contracts">ai-hub-gateway-solution-accelerator</a> (citadel-v1 branch).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

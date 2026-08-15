@@ -1,0 +1,2629 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../../../ai-foundry-lz/portal/readme/">
+      
+      
+        <link rel="next" href="../../../ai-container-lz/readme/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>AI Gateway Landing Zone - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#citadel-governance-hub" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AI Gateway Landing Zone
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-of-the-ai-citadel-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏛️ Part of the AI Citadel Blueprint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌟 Benefits (Summary)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-in-this-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧩 What's in This Repo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        �🏗️ Architecture Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="�🏗️ Architecture Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#networking-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking approach
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Networking approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#part-of-spoke-network-peered-to-a-hub-vnet-in-the-connectivity-subscription" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part of spoke network (peered to a hub VNet in the connectivity subscription)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#part-of-the-enterprise-network-hub-usually-in-connectivity-subscription" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part of the enterprise network hub (usually in Connectivity subscription)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#citadel-governance-hub-components-central-runtime-control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Citadel Governance Hub Components - Central Runtime Control Plane
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Citadel Governance Hub Components - Central Runtime Control Plane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security &amp; Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agents-onboarding-for-existing-and-new-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Agents Onboarding - for existing and new agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 Agents Onboarding - for existing and new agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-contracts-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Publish Contracts (Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#existing-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-agents-ai-landing-zone-for-microsoft-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New agents (AI Landing Zone for Microsoft Foundry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governance-hub-operations-contract-driven-governance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 Governance Hub Operations - Contract-Driven Governance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Governance Hub Operations - Contract-Driven Governance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-contracts-onboard-llm-backends-and-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔌 Backend Contracts — Onboard LLM backends and models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-contracts-onboard-use-cases-and-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Access Contracts — Onboard use cases and agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-contracts-preview_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📤 Publish Contracts (Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-contract-driven-governance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Why Contract-Driven Governance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-prerequisites-basicfast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Deployment Prerequisites (Basic/Fast)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Quick Deploy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Quick Deploy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transient-deployment-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transient deployment issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-notebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Validation Notebooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comprehensive-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Comprehensive Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 Comprehensive Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#concepts-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Concepts &amp; Benefits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-service-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 AI Service Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operations-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Operations Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-compliance_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛡️ Security &amp; Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finops-observability-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 FinOps, Observability &amp; Analytics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ Architecture &amp; configurations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏷️ Release Version
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤝 Contributing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📞 Support &amp; Community
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📄 License
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#part-of-the-ai-citadel-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏛️ Part of the AI Citadel Blueprint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benefits-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌟 Benefits (Summary)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-in-this-repo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧩 What's in This Repo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        �🏗️ Architecture Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="�🏗️ Architecture Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#networking-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking approach
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Networking approach">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#part-of-spoke-network-peered-to-a-hub-vnet-in-the-connectivity-subscription" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part of spoke network (peered to a hub VNet in the connectivity subscription)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#part-of-the-enterprise-network-hub-usually-in-connectivity-subscription" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Part of the enterprise network hub (usually in Connectivity subscription)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#citadel-governance-hub-components-central-runtime-control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Citadel Governance Hub Components - Central Runtime Control Plane
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Citadel Governance Hub Components - Central Runtime Control Plane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security &amp; Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional Components
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agents-onboarding-for-existing-and-new-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Agents Onboarding - for existing and new agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌐 Agents Onboarding - for existing and new agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-contracts-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Publish Contracts (Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#existing-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-agents-ai-landing-zone-for-microsoft-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        New agents (AI Landing Zone for Microsoft Foundry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governance-hub-operations-contract-driven-governance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔄 Governance Hub Operations - Contract-Driven Governance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔄 Governance Hub Operations - Contract-Driven Governance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-contracts-onboard-llm-backends-and-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔌 Backend Contracts — Onboard LLM backends and models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-contracts-onboard-use-cases-and-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Access Contracts — Onboard use cases and agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publish-contracts-preview_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📤 Publish Contracts (Preview)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-contract-driven-governance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Why Contract-Driven Governance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-prerequisites-basicfast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Deployment Prerequisites (Basic/Fast)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Quick Deploy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Quick Deploy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#transient-deployment-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Transient deployment issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-notebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Validation Notebooks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comprehensive-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 Comprehensive Documentation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📚 Comprehensive Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#concepts-benefits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📖 Concepts &amp; Benefits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai-service-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 AI Service Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operations-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Operations Contracts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-compliance_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛡️ Security &amp; Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#finops-observability-analytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 FinOps, Observability &amp; Analytics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ Architecture &amp; configurations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏷️ Release Version
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🤝 Contributing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#support-community" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📞 Support &amp; Community
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📄 License
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="citadel-governance-hub">🏰 Citadel Governance Hub</h1>
+<div align="center">
+    <img src="./assets/citadel-logo-v2.PNG" alt="Citadel Logo" width="120" style="margin-bottom: 10px;">
+    <br>
+    <strong>Enterprise AI Landing Zone</strong>
+    <br>
+    <em>A comprehensive solution accelerator for governing, observing, and accelerating AI deployments at scale with unified security, compliance, and intelligent orchestration.</em>
+</div>
+
+<hr />
+<h2 id="overview">🚀 Overview</h2>
+<p>Citadel Governance Hub is an <strong>enterprise-grade AI landing zone</strong> that provides a centralized, governable, and observable gateway plane for AI consumption across teams and environments.</p>
+<p>This repository is a <strong>solution accelerator</strong> that helps you deploy and operate the hub using:</p>
+<ul>
+<li>Infrastructure-as-code (Bicep, Terraform)</li>
+<li>A unified AI gateway pattern (Azure API Management)</li>
+<li>Usage ingestion components (Logic Apps + Event Hub + Cosmos DB)</li>
+<li>Validation notebooks and operational guides</li>
+</ul>
+<h2 id="part-of-the-ai-citadel-blueprint">🏛️ Part of the AI Citadel Blueprint</h2>
+<blockquote>
+<p>[!IMPORTANT]
+This accelerator is the <strong>reference implementation of Layer 1 – Governance Hub</strong> in the <a href="https://aka.ms/foundry-citadel">AI Citadel Blueprint</a> layered security architecture.</p>
+</blockquote>
+<p>The <strong>AI Citadel Blueprint</strong> is a unified, layered approach to AI security and compliance, designed to enable enterprises to scale AI innovation while maintaining trust, security, and regulatory alignment. The blueprint is composed of four interlocking layers:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Name</th>
+<th>Responsibility</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔷 <strong>Layer 1</strong></td>
+<td><strong>Governance Hub</strong></td>
+<td>Runtime enforcement — unified AI gateway, policy-as-code, identity validation, token rate limiting, content filtering, cost attribution</td>
+<td><strong>👉 This Accelerator</strong> (<a href="https://aka.ms/ai-hub-gateway">aka.ms/ai-hub-gateway</a>)</td>
+</tr>
+<tr>
+<td>🔶 <strong>Layer 2</strong></td>
+<td><strong>Agent Operations</strong></td>
+<td>Agent runtime, observability &amp; compliance — agent traces, AI evaluations, fleet operations, automated compliance checks</td>
+<td><a href="https://learn.microsoft.com/en-us/azure/ai-foundry/control-plane/overview">Microsoft Foundry Agents &amp; Control Plane</a></td>
+</tr>
+<tr>
+<td>🟢 <strong>Layer 3</strong></td>
+<td><strong>Agent Management</strong></td>
+<td>Agent identity &amp; lifecycle governance and security — unique agent identities, blueprints, shadow agent detection, sponsorship model, access packages</td>
+<td><a href="https://learn.microsoft.com/en-us/microsoft-agent-365/">Governing Agent Identities with Agent 365</a></td>
+</tr>
+<tr>
+<td>🛡️ <strong>Layer 4</strong></td>
+<td><strong>Security Foundation</strong></td>
+<td>Unified protection — <code>Microsoft Defender</code> for AI threat intelligence, <code>Purview</code> for data governance, <code>Entra</code> for authentication and authorization</td>
+<td>Microsoft Defender, Purview &amp; Entra</td>
+</tr>
+</tbody>
+</table>
+<p>The layers are not isolated silos — they form an integrated architecture grounded in the principle of <strong>separation of concerns with unified oversight</strong>.</p>
+<p><strong>Layer 1: Governance Hub</strong> (this accelerator) acts as the runtime gateway through a hub-and-spoke deployment where a centrally managed AI gateway (Azure API Management) enforces runtime policies, while <strong>Layer 2: Agent Operations</strong> spoke environments give each business unit autonomous development within guardrails.
+Adding <strong>Layer 3: Agent Management</strong> ensures that every agent has a unique, governable identity, while <strong>Layer 4: Security Foundation</strong> provides unified threat protection and data governance across the entire architecture.</p>
+<blockquote>
+<p>📎 For the full Citadel Blueprint approach and guidance, visit: <a href="https://aka.ms/foundry-citadel">aka.ms/foundry-citadel</a></p>
+</blockquote>
+<hr />
+<h2 id="benefits-summary">🌟 Benefits (Summary)</h2>
+<p>Citadel Governance Hub helps you standardize AI governance while maintaining developer velocity:</p>
+<ul>
+<li><strong>Governance &amp; security</strong>: consistent access control, identity patterns, policy enforcement</li>
+<li><strong>Observability &amp; compliance</strong>: central logging/metrics and near real-time usage analytics</li>
+<li><strong>Developer velocity</strong>: repeatable onboarding patterns and contract-driven configuration</li>
+</ul>
+<p>For a detailed stakeholder- and capability-level breakdown, see <a href="./guides/governance-hub-benefits.md">Governance Hub Benefits</a>.</p>
+<hr />
+<h2 id="whats-in-this-repo">🧩 What's in This Repo</h2>
+<p>At a high level, the accelerator includes:</p>
+<ul>
+<li><a href="./bicep/infra">bicep/infra</a>: main IaC entrypoint and modules for provisioning the hub in addition to submodules for operational processes.</li>
+<li><a href="./src/usage-ingestion-logicapp">src/usage-ingestion-logicapp</a>: Logic App workflows for processing usage/log streams and other governance workflows.</li>
+<li><a href="./validation">validation</a>: Jupyter notebooks for post-deployment validation and onboarding.</li>
+<li><a href="./guides">guides</a>: operational and architecture documentation.</li>
+</ul>
+<blockquote>
+<p><strong>Terraform support</strong> is now available in the <a href="https://github.com/Azure/terraform-ai-gateway-landing-zone">github.com/Azure/terraform-ai-gateway-landing-zone</a> repo, with a parallel structure to the Bicep implementation.</p>
+</blockquote>
+<h2 id="architecture-overview">�🏗️ Architecture Overview</h2>
+<p>AI Citadel Governance Hub follows a <strong>Central-Control-Plane</strong> with decentralized <strong>Agent-Execution-Plane</strong> architecture** that integrates seamlessly with your existing <code>Azure Enterprise Landing Zone</code> network topology:</p>
+<p><img alt="Citadel Governance Hub" src="./assets/citadel-governance-hub-v1.png" /></p>
+<h3 id="networking-approach">Networking approach</h3>
+<p>Detailed networking approach guidance for Citadel Governance Hub can be found in the <a href="./guides/network-approach.md">Network Approach Guide</a>.</p>
+<p>Below is a high-level overview of the two supported deployment approaches:</p>
+<h4 id="part-of-spoke-network-peered-to-a-hub-vnet-in-the-connectivity-subscription">Part of spoke network (peered to a hub VNet in the connectivity subscription)</h4>
+<p>In this approach, the Citadel Governance Hub is deployed within a dedicated spoke VNet that connects to the hub VNet via VNet peering.</p>
+<p>Agentic workloads in other spokes are routed first to the hub network firewall through direct peering, then forwarded to the Citadel Governance Hub gateway network.</p>
+<p>This provides an additional layer of isolation for AI workloads while still enabling secure communication with other enterprise resources in the hub.</p>
+<p>This is the recommended approach for large enterprises with strict network segmentation requirements or those who want to isolate AI workloads from other enterprise resources.</p>
+<h4 id="part-of-the-enterprise-network-hub-usually-in-connectivity-subscription">Part of the enterprise network hub (usually in Connectivity subscription)</h4>
+<p>In this approach, the Citadel Governance Hub is deployed within the existing enterprise hub virtual network (VNet) of your Azure Enterprise Landing Zone.</p>
+<p>This allows for direct communication between the unified AI gateway and connected agentic spokes (as the hub already peered with all spoke networks), leveraging existing networking configurations.</p>
+<p>This approach is suitable for enterprises that prefer to integrate the governance hub within their existing network architecture without additional segmentation.</p>
+<h3 id="citadel-governance-hub-components-central-runtime-control-plane">🎯 <strong>Citadel Governance Hub Components</strong> - Central Runtime Control Plane</h3>
+<p>The central governance layer with unified AI Gateway that all AI workloads route through.</p>
+<h4 id="core-components">Core Components</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Classification</th>
+<th>Purpose</th>
+<th>Enterprise Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🚪 API Management</strong></td>
+<td>Required</td>
+<td>Unified AI gateway</td>
+<td>LLM governance, AI resiliency, AI registry gateway</td>
+</tr>
+<tr>
+<td><strong>📘 API Center</strong></td>
+<td>Recommended</td>
+<td>Universal AI Registry</td>
+<td>Discovery of available AI tools, agents and AI services</td>
+</tr>
+<tr>
+<td><strong>🔍 Microsoft Foundry</strong></td>
+<td>Required</td>
+<td>Control Plane/Models/Observability</td>
+<td>Platform LLMs, Control Plane &amp; AI Evaluations</td>
+</tr>
+<tr>
+<td><strong>📊 Log Analytics</strong></td>
+<td>Required</td>
+<td>Logs, metrics &amp; audits</td>
+<td>Scalable enterprise telemetry ingestion and storage</td>
+</tr>
+<tr>
+<td><strong>📊 Application Insights</strong></td>
+<td>Required</td>
+<td>Platform monitoring</td>
+<td>Performance dashboards, automated alerts</td>
+</tr>
+<tr>
+<td><strong>📨 Event Hub</strong></td>
+<td>Required</td>
+<td>Usage data streaming</td>
+<td>Real-time usage streaming, custom logging</td>
+</tr>
+<tr>
+<td><strong>🗄️ Cosmos DB</strong></td>
+<td>Required</td>
+<td>Usage analytics</td>
+<td>Long-term storage of usage, automatic scaling</td>
+</tr>
+<tr>
+<td><strong>⚡ Logic App</strong></td>
+<td>Required</td>
+<td>Event processing</td>
+<td>Workflow-based processing of usage/logs &amp; AI Eval</td>
+</tr>
+<tr>
+<td><strong>🔗 Virtual Network</strong></td>
+<td>Required</td>
+<td>Private connectivity</td>
+<td>BYO-VNET support, private endpoints</td>
+</tr>
+</tbody>
+</table>
+<h4 id="security-compliance">Security &amp; Compliance</h4>
+<p>AI Gateway security &amp; compliance enforcements components:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Classification</th>
+<th>Purpose</th>
+<th>Enterprise Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>🔐 Managed Identity</strong></td>
+<td>Required</td>
+<td>Zero-credential auth</td>
+<td>Secure service-to-service communication</td>
+</tr>
+<tr>
+<td><strong>🛡️ Content Safety</strong></td>
+<td>Required</td>
+<td>LLM protection</td>
+<td>Prompt Shield and Content Safety protections (served from the <strong>primary Microsoft Foundry / AI Services</strong> account)</td>
+</tr>
+<tr>
+<td><strong>💳 Language Service</strong></td>
+<td>Required</td>
+<td>PII detection</td>
+<td>Natural language and RegEx based PII entity detection with anonymization support (served from the <strong>primary Microsoft Foundry / AI Services</strong> account)</td>
+</tr>
+<tr>
+<td><strong>🔍 Microsoft Foundry</strong></td>
+<td>Recommended</td>
+<td>Control Plane</td>
+<td>Control plane, responsible AI, registration of external agents</td>
+</tr>
+</tbody>
+</table>
+<p>Supported by subscription wide security services:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Classification</th>
+<th>Purpose</th>
+<th>Enterprise Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Defender for AI</strong></td>
+<td>Recommended</td>
+<td>Threat protection</td>
+<td>AI workload security posture management</td>
+</tr>
+<tr>
+<td><strong>Purview</strong></td>
+<td>Recommended</td>
+<td>Data governance</td>
+<td>Sensitivity labeling, data classification</td>
+</tr>
+<tr>
+<td><strong>Entra ID</strong></td>
+<td>Required</td>
+<td>Identity &amp; access management</td>
+<td>Zero Trust architecture, conditional access</td>
+</tr>
+</tbody>
+</table>
+<h4 id="ai-services">AI Services</h4>
+<p>Optionally you can deploy one or more generative AI services as part of the Citadel Governance Hub to provide fully functional gateway with LLMs already integrated:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Classification</th>
+<th>Purpose</th>
+<th>Enterprise Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Microsoft Foundry</strong></td>
+<td>Required</td>
+<td>Model Catalog</td>
+<td>Access to rich foundational model catalog with variety of deployment options and required for Azure Language and Azure Content Safety services</td>
+</tr>
+</tbody>
+</table>
+<h4 id="optional-components">Optional Components</h4>
+<p>Pluggable components to enhance AI Citadel Governance capabilities:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Classification</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure Managed Redis</strong></td>
+<td>Optional</td>
+<td>Semantic caching layer for high-throughput AI workloads</td>
+</tr>
+</tbody>
+</table>
+<h3 id="agents-onboarding-for-existing-and-new-agents">🌐 <strong>Agents Onboarding</strong> - for existing and new agents</h3>
+<p>To govern AI agents through Citadel Governance Hub, agents must communicate with AI backends (central LLMs, tools and agents) through the Citadel's unified AI gateway.</p>
+<h4 id="access-contracts">Access Contracts</h4>
+<p>Leverage <strong>Citadel Access Contracts</strong> to declare the required access to LLMs, tools and agents through the gateway along with precise governance policies.</p>
+<p><a href="bicep\infra\citadel-access-contracts\README.md">Access contracts</a> are infrastructure-as-code declarations of the access requirements and governance policies for an agent, which are then automatically enforced at runtime by the gateway.</p>
+<blockquote>
+<p>NOTE: Recommendation is to create one contract per business-unit/use-case/environment to allow for precise governance policies and better observability in the hub.</p>
+</blockquote>
+<h4 id="publish-contracts-preview">Publish Contracts (Preview)</h4>
+<p>Leverage <strong>Citadel Publish Contracts</strong> to onboard and publish centrally protected AI assets — <strong>Tools (MCP)</strong> and <strong>Agents (A2A)</strong> — through the gateway with per-asset backends, resiliency, baseline policies, usage tracking, and optional API Center registration.</p>
+<p><a href="bicep\infra\citadel-publish-contracts\README.md">Publish contracts</a> are infrastructure-as-code declarations of the AI assets published on the gateway. See the <a href="bicep\infra\citadel-publish-contracts\publish-contract-guide.md">Publish Contract Guide</a> for asset types, backend/auth options, and Foundry A2A publishing.</p>
+<blockquote>
+<p>NOTE: Publish Contracts and Foundry-hosted A2A publishing are available in Preview (<code>publish-contract-version: 1.0.0-preview</code>). Publishing an asset does not grant access to it — governed access (products/subscriptions) is handled by Access Contracts.</p>
+</blockquote>
+<h4 id="existing-agents">Existing agents</h4>
+<p>Guidance to bring existing agents is through updating endpoint and credentials to access central LLMs, tools and agents through the <strong>unified gateway</strong> endpoint and credentials that are produced by the access contract provisioning for each agent.</p>
+<blockquote>
+<p>NOTE: Recommendation is to use Azure Key Vault to store these information due to its sensitivity when the agent is running on Azure.</p>
+</blockquote>
+<h4 id="new-agents-ai-landing-zone-for-microsoft-foundry">New agents (AI Landing Zone for Microsoft Foundry)</h4>
+<p>Building new agents is accelerated through the <strong>AI Landing Zone for Microsoft Foundry</strong> guidance, which helps enterprises adopt AI faster by offering a governed, secure, and repeatable foundation for deploying AI applications and agents on Azure at scale.</p>
+<p>For detailed guidance and technical implementation, see <a href="https://github.com/Azure/AI-Landing-Zones">AI App Landing Zone Repo</a>.</p>
+<p><strong>Deployment Approach:</strong>
+- <strong>One Agent Execution Plane per business unit or use case</strong> - Deploy dedicated Foundry landing zone environments for each business unit, such as insurance claims processing, customer support automation, or other agentic scenarios
+- <strong>Flexible runtime options</strong> - with Microsoft Foundry Agents (fully managed agent runtime) you get to choose between native Foundry agents or bring-your-own agent container frameworks like LangChain, Microsoft Agent Framework, or custom implementations while still benefiting from the unified governance and security of the hub
+- <strong>Pre-configured infrastructure</strong> - Automated deployment via Bicep or Terraform with all networking, security, and monitoring built-in
+- <strong>Hub integration</strong> - Seamless connection to Citadel Governance Hub through <strong>Citadel Access Contracts</strong></p>
+<p><strong>Deployment Patterns:</strong>
+- <strong>Greenfield (Standalone with New Resources)</strong> - Creates all infrastructure from scratch with new VNet and Log Analytics workspace
+- <strong>Brownfield (Standalone with Existing Resources)</strong> - Integrates with existing enterprise landing zones, reusing VNets and centralized monitoring</p>
+<blockquote>
+<p>NOTE: As per Citadel Blueprint principles for <strong>Layer 2: Agents Operations</strong>, this landing zone provides a standardized foundation for enterprise AI workloads, with implementation options in Terraform and Bicep deployment. By activating <strong>Access Contracts</strong>, agents deployed in this landing zone can seamlessly integrate with the Citadel Governance Hub for unified runtime governance and observability.</p>
+</blockquote>
+<hr />
+<h2 id="governance-hub-operations-contract-driven-governance">🔄 Governance Hub Operations - Contract-Driven Governance</h2>
+<p>Day-to-day operation of the Citadel Governance Hub is <strong>contract-driven</strong>: every change to what the gateway serves and who can consume it is declared as version-controlled infrastructure-as-code (<code>.bicepparam</code> files) rather than manual portal configuration. Three complementary contract types govern the gateway lifecycle:</p>
+<ul>
+<li><strong>🔌 Backend Contracts</strong> — govern the <strong>supply side</strong>: which LLM backends and models the gateway can route to.</li>
+<li><strong>📤 Publish Contracts (Preview)</strong> — govern which Tools (MCP) and Agents (A2A) are published through the gateway.</li>
+<li><strong>📝 Access Contracts</strong> — govern the <strong>demand side</strong>: which use cases and agents can consume those models, and under which policies.</li>
+</ul>
+<p>Together they create a clean separation of concerns: platform teams curate AI capacity and published assets, while business units onboard use cases against those governed assets without touching gateway internals.</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Supply["🔌 Backend Contracts (Supply)"]
+        B1[LLM Backends &amp; Models]
+        B2[Load Balancing &amp; Failover]
+        B3[Model Aliases]
+    end
+    subgraph Publishing["📤 Publish Contracts (Preview)"]
+        P1[Tools / MCP]
+        P2[Agents / A2A]
+    end
+    subgraph Gateway["🚪 AI Gateway (APIM)"]
+        G1[Routing &amp; Policy Engine]
+    end
+    subgraph Demand["📝 Access Contracts (Demand)"]
+        A1[Products &amp; Subscriptions]
+        A2[Per-use-case Policies]
+        A3[Foundry / Key Vault Credentials]
+    end
+    Supply --&gt; Gateway
+    Publishing --&gt; Gateway
+    Gateway --&gt; Demand</code></pre>
+<h3 id="backend-contracts-onboard-llm-backends-and-models">🔌 Backend Contracts — Onboard LLM backends and models</h3>
+<p>Declares the <strong>governed AI capacity</strong> the gateway can route to, enabling dynamic backend routing without modifying APIM policies:
+- Multi-provider backends (Microsoft Foundry, Azure OpenAI, Amazon Bedrock, external/OpenAI-compatible providers)
+- Automatic load balancing and failover across backends serving the same model
+- Model aliases that abstract a client-facing name over multiple underlying models (with priority/weighted routing)
+- Dynamic model discovery (<code>GET /deployments</code>) so clients and Microsoft Foundry can enumerate available models</p>
+<blockquote>
+<p>🔗 <strong>Learn More:</strong> <a href="./bicep/infra/llm-backend-onboarding/README.md">Governance Hub Backend Contract Guide</a></p>
+</blockquote>
+<h3 id="access-contracts-onboard-use-cases-and-agents">📝 Access Contracts — Onboard use cases and agents</h3>
+<p>Declares the governed dependencies an agent or use case needs—LLMs, AI services, tools, and reusable agents—along with precise access policies enforced at runtime by the gateway:
+- Model selection and capacity allocation (scoped to the curated backend capacity)
+- Per-use-case APIM product, subscription, and policy (one contract per business-unit / use-case / environment)
+- Safety and security guardrails (content safety, PII handling, layered API key + JWT authentication, OAuth scopes)
+- Usage quotas, cost limits, and flexible credential delivery (Key Vault, Microsoft Foundry connection, or direct output)</p>
+<blockquote>
+<p>🔗 <strong>Learn More:</strong> <a href="./bicep/infra/citadel-access-contracts/README.md">AI Citadel Access Contracts Guide</a></p>
+</blockquote>
+<h3 id="publish-contracts-preview_1">📤 Publish Contracts (Preview)</h3>
+<p>Publishes Tools (MCP) and Agents (A2A) through the gateway with declarative endpoint and backend configuration, baseline policies, usage tracking, resiliency for supported backend types, and optional Azure API Center registration. Foundry-hosted agents can be exposed as A2A endpoints.</p>
+<blockquote>
+<p>NOTE: This capability is available in Preview (<code>publish-contract-version: 1.0.0-preview</code>). Its contract surface may change before general availability. See the <a href="./bicep/infra/citadel-publish-contracts/publish-contract-guide.md">Publish Contract Guide</a>.</p>
+</blockquote>
+<h3 id="why-contract-driven-governance">✅ Why Contract-Driven Governance</h3>
+<ul>
+<li>✅ <strong>Separation of concerns</strong> — platform teams manage backends; business units manage their own access contracts</li>
+<li>✅ <strong>Audit-ready traceability</strong> — every backend and access change is captured as reviewable infrastructure-as-code</li>
+<li>✅ <strong>Faster release cycles</strong> — repeatable, declarative onboarding with automated approvals via DevOps pipelines</li>
+<li>✅ <strong>Reduced manual effort</strong> — no manual gateway configuration for onboarding models or use cases</li>
+<li>✅ <strong>Continuous policy compliance</strong> — guardrails are enforced consistently at runtime for every request</li>
+</ul>
+<hr />
+<h2 id="deployment-prerequisites-basicfast">📋 Deployment Prerequisites (Basic/Fast)</h2>
+<p>For fast deployment, ensure you have the following prerequisites in place:</p>
+<p><strong>Azure Requirements:</strong>
+- <strong>Azure CLI</strong> and <strong>Azure Developer CLI</strong> installed and signed in
+- <strong>Owner</strong> or <strong>Contributor + User Access Administrator</strong> permissions on the subscription
+- All required subscription resource providers registered (providers are outlined in the <a href="./guides/full-deployment-guide.md">Full Deployment Guide</a>).</p>
+<p><strong>Tools:</strong>
+Although it is recommended to have the below tools installed on a local machine or through DevOps agents to conduct the provisioning, you still can leverage Azure Cloud Shell (mounted to storage account) as an alternative which has all the tools pre-installed.
+- <a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd">Azure Developer CLI (azd)</a>
+- <a href="https://learn.microsoft.com/en-us/cli/azure/install-azure-cli">Azure CLI</a>
+- <a href="https://code.visualstudio.com/Download">VS Code</a> (optional)</p>
+<blockquote>
+<p>NOTE: Azure Cloud Shell is a great option for quick deployment without local setup, but for ongoing development and operations, having the tools installed locally or in your DevOps environment along with a git-repo will provide a better experience especially when it comes to production deployments.</p>
+</blockquote>
+<hr />
+<h2 id="quick-deploy">🚀 Quick Deploy</h2>
+<p>Deploy your Citadel Governance Hub in minutes with Azure Developer CLI:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Authenticate and setup environment</span>
+azd<span class="w"> </span>auth<span class="w"> </span>login
+
+<span class="c1"># in a new folder, initialize the template (i.e. folder name: ai-hub-citadel-dev)</span>
+azd<span class="w"> </span>init<span class="w"> </span>--template<span class="w"> </span>Azure-Samples/ai-hub-gateway-solution-accelerator<span class="w"> </span>-e<span class="w"> </span>ai-hub-citadel-dev<span class="w"> </span>--branch<span class="w"> </span>citadel-v1
+
+<span class="c1"># Deploy Citadel Governance Hub</span>
+azd<span class="w"> </span>up
+</code></pre></div>
+<blockquote>
+<p>💡 <strong>Tip</strong>: Use Azure Cloud Shell to avoid local setup. This accelerator is setup by default to deploy ready to use Governance Hub. Review <a href="./bicep/infra/main.bicepparam">main.bicepparam</a> configuration in case your need adjustments before deployment.</p>
+</blockquote>
+<h3 id="transient-deployment-issues">Transient deployment issues</h3>
+<p>During deployment, you might encounter transient errors related to resource provisioning, which are common in complex deployments. If you encounter errors, please try to rerun the <code>azd up</code> command. If the issue persists, please check the error message for specific details and ensure that all prerequisites are met.</p>
+<blockquote>
+<p>TIP: For bicep deployments, a full list of deployed resources and status can be found in the Azure Portal under the resource group created -&gt; Deployments.</p>
+</blockquote>
+<h3 id="validation-notebooks">🧪 Validation Notebooks</h3>
+<p>After successful deployment, validate your Citadel Governance Hub setup using our interactive notebooks.</p>
+<p>Detailed list and guidance of the available notebooks can be found in the <a href="./validation/README.md">Validation Notebooks Guide</a>, which includes step-by-step instructions to test key functionalities.</p>
+<hr />
+<h2 id="comprehensive-documentation">📚 Comprehensive Documentation</h2>
+<p>Master AI Citadel Governance Hub implementation and operations with our detailed guides:</p>
+<h3 id="concepts-benefits">📖 <strong>Concepts &amp; Benefits</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./guides/governance-hub-benefits.md"><strong>🆕 Governance Hub Benefits</strong></a></td>
+<td>Detailed benefits and stakeholder value of adopting Citadel Governance Hub</td>
+</tr>
+<tr>
+<td><a href="./guides/citadel-sizing-guide.md"><strong>🆕 Citadel Sizing Guide</strong></a></td>
+<td>Guidance on sizing the Citadel Governance Hub based on workloads and environments</td>
+</tr>
+<tr>
+<td><a href="./guides/put-estimation-guide.md"><strong>🆕 PTU Estimation Guide</strong></a></td>
+<td>Azure OpenAI / Foundry LLM sizing guide for PTU vs Pay-as-you-Go capacity planning</td>
+</tr>
+<tr>
+<td>### 🏗️ <strong>Landing zone deployment</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./guides/quick-deployment-guide.md"><strong>🆕 Quick Deployment Guide</strong></a></td>
+<td>Fast deployment for non-production environments</td>
+</tr>
+<tr>
+<td><a href="./guides/full-deployment-guide.md"><strong>🆕 Full Deployment Guide</strong></a></td>
+<td>Comprehensive guide for dev, staging, and production</td>
+</tr>
+<tr>
+<td><a href="./guides/post-deployment-guide.md"><strong>🆕 Post-Deployment Guide</strong></a></td>
+<td>Day-2 activities: onboard backends &amp; use cases, enable Entra ID, activate Power BI, go multi-region, and upgrade the gateway</td>
+</tr>
+<tr>
+<td><a href="./guides/parameters-usage-guide.md"><strong>🆕 Parameters Deployment Guide</strong></a></td>
+<td>Comprehensive Bicep parameter file usage</td>
+</tr>
+<tr>
+<td><a href="./guides/network-approach.md"><strong>🆕 Network Approach Guide</strong></a></td>
+<td>Detailed networking approach for Citadel Governance Hub deployment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ai-service-integration">🔧 <strong>AI Service Integration</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./bicep/infra/llm-backend-onboarding/README.md"><strong>🆕 LLM Backend Onboarding Guide</strong></a></td>
+<td>Independent LLM backend routing deployment with load balancing and failover</td>
+</tr>
+<tr>
+<td><a href="./bicep/infra/apim-gateway-upgrade/README.md"><strong>🆕 APIM Gateway Upgrade Guide</strong></a></td>
+<td>Update gateway policies, APIs, backends, diagnostics, and named values on an existing APIM instance without re-provisioning infrastructure</td>
+</tr>
+<tr>
+<td><a href="./guides/release-version-management.md"><strong>🆕 Release Version Management</strong></a></td>
+<td>Versioning model of the accelerator, the <code>/version</code> runtime endpoint, and how to plan and implement migrations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="operations-contracts">🔧 <strong>Operations Contracts</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./bicep/infra/citadel-access-contracts/README.md"><strong>🆕 AI Citadel Access Contracts Guide</strong></a></td>
+<td>Guide on integrating new/existing AI apps &amp; agents with AI Citadel Governance Hub</td>
+</tr>
+<tr>
+<td><a href="./bicep/infra/citadel-access-contracts/citadel-access-contracts-policy.md"><strong>🆕 AI Citadel Access Contracts Policies</strong></a></td>
+<td>Deep dive into policy configurations for AI Citadel Access Contracts</td>
+</tr>
+<tr>
+<td><a href="./bicep/infra/citadel-publish-contracts/README.md"><strong>🆕 AI Citadel Publish Contracts Guide (Preview)</strong></a></td>
+<td>Guide on publishing Tools (MCP) and Agents (A2A) through the gateway with optional Foundry A2A publishing</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-compliance_1">🛡️ <strong>Security &amp; Compliance</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./guides/pii-masking-apim.md"><strong>🆕 PII Detection &amp; Masking</strong></a></td>
+<td>Automated sensitive data protection</td>
+</tr>
+<tr>
+<td><a href="./guides/entraid-auth-validation.md"><strong>🆕 Entra ID Authentication</strong></a></td>
+<td>JWT validation and Zero Trust implementation</td>
+</tr>
+<tr>
+<td><a href="./guides/jwt-client-identity-permissions.md"><strong>🆕 JWT Client Identity &amp; Permissions</strong></a></td>
+<td>Configure client app identities, group-based access management, and permissions for JWT-protected endpoints</td>
+</tr>
+</tbody>
+</table>
+<h3 id="finops-observability-analytics">📊 <strong>FinOps, Observability &amp; Analytics</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./guides/platform-observability-guide.md"><strong>🆕 Platform Observability Guide</strong></a></td>
+<td>Layered observability: APIM Analytics dashboard, Application Insights, Log Analytics LLM logs (with optional prompt/response auditing), and Cosmos DB + Power BI</td>
+</tr>
+<tr>
+<td><a href="./guides/power-bi-dashboard.md"><strong>🆕 Power BI Dashboard</strong></a></td>
+<td>Usage analytics and cost allocation dashboards</td>
+</tr>
+</tbody>
+</table>
+<h3 id="architecture-configurations">🏗️ <strong>Architecture &amp; configurations</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Guide</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./guides/llm-access-guide.md"><strong>🆕 LLM Access Guide</strong></a></td>
+<td>Unified reference for the three LLM APIs and two access patterns, with a deep technical dive into model/backend routing</td>
+</tr>
+<tr>
+<td><a href="./guides/LLM-Backend-Onboarding-Guide.md"><strong>🆕 LLM Backend Onboarding Guide</strong></a></td>
+<td>How to onboard LLM backends (Azure OpenAI, Foundry, external providers) with dynamic routing and load balancing</td>
+</tr>
+<tr>
+<td><a href="./guides/resiliency-guide.md"><strong>🆕 Resiliency Guide</strong></a></td>
+<td>Circuit breaker, session affinity, automated failover, error handling, and alerting — what each does, how it works, and when to configure it</td>
+</tr>
+<tr>
+<td><a href="./guides/throttling-events-handling.md"><strong>🆕 Throttling &amp; Critical Event Alerting</strong></a></td>
+<td>Comprehensive, opt-in alerting on throttling, backend, authorization, content-safety, and PII events per use case, model, and backend</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="release-version">🏷️ Release Version</h2>
+<p>The accelerator tracks its release state in a single source-of-truth manifest at the repository
+root — <a href="./release.json"><code>release.json</code></a>. Instead of one monolithic version, it uses <strong>independent,
+component-scoped version tracks</strong> so a change in one subsystem does not force re-versioning of
+unrelated ones:</p>
+<table>
+<thead>
+<tr>
+<th>Track</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>master-version</code></td>
+<td>Umbrella accelerator release version</td>
+</tr>
+<tr>
+<td><code>routing-version</code></td>
+<td>LLM request routing logic (backend pools, model resolution, failover)</td>
+</tr>
+<tr>
+<td><code>backend-contract-version</code></td>
+<td>Shape of the <code>llmBackendConfig</code> backend onboarding contract</td>
+</tr>
+<tr>
+<td><code>access-contract-version</code></td>
+<td>Shape of the Citadel Access Contract (products &amp; access policies)</td>
+</tr>
+<tr>
+<td><code>gateway-upgrade-version</code></td>
+<td>In-place APIM Gateway Upgrade tooling (currently <code>-preview</code>)</td>
+</tr>
+<tr>
+<td><code>usage-ingestion-version</code></td>
+<td>Usage ingestion pipeline (Logic App + Function)</td>
+</tr>
+</tbody>
+</table>
+<p>The deployed manifest is exposed at runtime through the <strong>Release Version API</strong> in API Management:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>https://&lt;your-apim-gateway-host&gt;/version
+</code></pre></div>
+<p>This <code>GET /version</code> endpoint returns <code>release.json</code>. It is created automatically by the <strong>primary deployment</strong> and created/updated
+by the <strong>APIM Gateway Upgrade</strong>, so the endpoint always reflects the currently deployed release.</p>
+<p>The same API also exposes <code>GET /version/backend-contract</code>, which returns the <strong>active LLM backend
+routing contract</strong> — a detailed projection of the effective onboarding configuration (APIM target,
+full <code>llmBackendConfig</code> with per-model metadata, circuit breaker and session affinity settings, model
+aliases, and derived pools), plus the <code>backend-contract-version</code>:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>https://&lt;your-apim-gateway-host&gt;/version/backend-contract
+</code></pre></div>
+<blockquote>
+<p>[!IMPORTANT]
+The primary deployment (<code>main.bicep</code>) is used for the <strong>initial implementation</strong> only. After the
+hub is live, the <strong><a href="./bicep/infra/apim-gateway-upgrade/README.md">APIM Gateway Upgrade</a></strong> submodule
+is the standard way to move the accelerator to new releases — applying the new version in place
+without re-provisioning the APIM service or landing-zone infrastructure.</p>
+<p>📎 For version-track semantics, SemVer rules, and per-track migration guidance, see the
+<a href="./guides/release-version-management.md"><strong>Release Version Management Guide</strong></a>.</p>
+</blockquote>
+<hr />
+<h2 id="contributing">🤝 Contributing</h2>
+<p>We welcome contributions from the community! Whether it's:
+- 🐛 Bug reports and fixes
+- 📖 Documentation improvements
+- 💡 Feature requests and enhancements</p>
+<p>Please see our <a href="./CONTRIBUTING.md">Contributing Guide</a> for details.</p>
+<hr />
+<h2 id="support-community">📞 Support &amp; Community</h2>
+<ul>
+<li><strong>🐛 Issues</strong>: <a href="https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator/issues">GitHub Issues</a></li>
+</ul>
+<hr />
+<h2 id="license">📄 License</h2>
+<p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p>
+<hr />
+<div align="center">
+
+**Citadel Governance Hub** - Your organization's fortress in the new world of AI
+
+*Providing protection, structure, and strength as you scale new heights with enterprise AI*
+
+[🚀 Deploy Now](./guides/quick-deployment-guide.md) | [📚 Documentation](./guides/) | [🤝 Contribute](#-contributing)
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

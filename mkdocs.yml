@@ -1,5 +1,5 @@
-site_name: Azure AI Landing Zones
-site_description: Documentation for Azure AI Landing Zones
+site_name: AI Landing Zones
+site_description: Documentation for AI Landing Zones
 site_author: Microsoft
 repo_url: https://github.com/Azure/AI-Landing-Zones
 theme:
@@ -14,9 +14,10 @@ theme:
     - content.icon
     - content.iconify
     - navigation.tracking
-    - toc.integrate
     - content.code.annotate
     - navigation.top
+    # Remove:
+    # - toc.integrate
 plugins:
   - search
   - macros
@@ -38,23 +39,27 @@ markdown_extensions:
 nav:
   - Home: index.md
   - What's New: whatisnew.md
-  - Architecture:
-      - "Design Checklist": architecture/design-checklist.md
-      - "Cost Guide": architecture/cost-guide.md
-      - "FAQ": architecture/faq.md
-  - Bicep Implementation:
-      - "Overview": bicep/overview.md
-      - "Deployed Resources & Cost": bicep/deployed-resources.md
-      - "How to Deploy": bicep/how-to-deploy.md
-      - "Deploy with Azure DevOps": bicep/deploy-with-azure-devops.md
-      - "Regional Considerations": bicep/regional-considerations.md
-      - "Hub-and-Spoke Topology": bicep/hub-and-spoke.md
-      - "Public Ingress (App Gateway)": bicep/public-ingress.md
-      - "Permissions": bicep/permissions.md
-      - "Parameterization": bicep/parameterization.md
-      - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
-  - Terraform Implementation: terraform/index.md
-  - Portal installation: portal/index.md  
+  - FAQ: faq.md
+  - AI Foundry Landing Zone:
+      - "Design Checklist": ai-foundry-lz/design-checklist.md
+      - Implementation:
+        - Bicep:
+          - "Overview": ai-foundry-lz/bicep/overview.md
+          - "Deployed Resources & Cost": ai-foundry-lz/bicep/deployed-resources.md
+          - "How to Deploy": ai-foundry-lz/bicep/how-to-deploy.md
+          - "Deploy with Azure DevOps": ai-foundry-lz/bicep/deploy-with-azure-devops.md
+          - "Regional Considerations": ai-foundry-lz/bicep/regional-considerations.md
+          - "Hub-and-Spoke Topology": ai-foundry-lz/bicep/hub-and-spoke.md
+          - "Public Ingress (App Gateway)": ai-foundry-lz/bicep/public-ingress.md
+          - "Permissions": ai-foundry-lz/bicep/permissions.md
+          - "Parameterization": ai-foundry-lz/bicep/parameterization.md
+          - "Building Accelerators (Submodule Pattern)": ai-foundry-lz/bicep/accelerator-pattern.md
+        - Terraform: ai-foundry-lz/terraform/readme.md
+        - Portal: ai-foundry-lz/portal/readme.md
+  - AI Gateway Landing Zone: ai-gateway-lz/bicep/readme.md
+  - AI Container Landing Zone: ai-container-lz/readme.md
+
+
 
 # These pages are intentionally kept out of the left navigation. The ACA
 # design article is a standalone reference, and the bicep v2 migration page is

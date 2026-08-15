@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "ai-foundry-connection-search",
+    "description": "Creates an Azure AI Search connection in Azure AI Foundry. Mirrors modules/ai-foundry/connection-ai-search.bicep from bicep-ptn-aiml-landing-zone."
+  },
+  "parameters": {
+    "aiFoundryName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Azure AI Foundry (Cognitive Services) account."
+      }
+    },
+    "aiProjectName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Azure AI Foundry project."
+      }
+    },
+    "connectedResourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Azure AI Search service to connect."
+      }
+    },
+    "connectionName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('connectedResourceName'), '-connection')]",
+      "metadata": {
+        "description": "Optional. The name to assign to the AI Search connection."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts/connections",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(parameters('aiFoundryName'), '/', parameters('connectionName'))]",
+      "properties": {
+        "category": "CognitiveSearch",
+        "target": "[reference(resourceId('Microsoft.Search/searchServices', parameters('connectedResourceName')), '2025-02-01-preview').endpoint]",
+        "authType": "AAD",
+        "isSharedToAll": true,
+        "metadata": {
+          "ApiType": "Azure",
+          "ResourceId": "[resourceId('Microsoft.Search/searchServices', parameters('connectedResourceName'))]",
+          "location": "[reference(resourceId('Microsoft.Search/searchServices', parameters('connectedResourceName')), '2025-02-01-preview', 'full').location]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "searchConnectionId": {
+      "type": "string",
+      "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.CognitiveServices/accounts/', parameters('aiFoundryName'), '/projects/', parameters('aiProjectName'), '/connections/', parameters('connectionName'))]"
+    },
+    "connectionName": {
+      "type": "string",
+      "value": "[parameters('connectionName')]"
+    }
+  }
+}

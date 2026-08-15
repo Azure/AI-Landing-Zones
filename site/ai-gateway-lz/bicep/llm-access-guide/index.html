@@ -1,0 +1,2774 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>LLM Access Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#llm-access-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LLM Access Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#executive-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executive Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Executive Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-llm-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three LLM APIs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#two-access-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two access patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quick-recommendations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick recommendations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-route-llm-access-through-the-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Route LLM Access Through the Gateway?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-three-llm-apis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Three LLM APIs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Three LLM APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#azure-openai-api-openaideploymentsdeployment-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure OpenAI API — /openai/deployments/{deployment-id}/*
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#universal-llm-api-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Universal LLM API — /models/*
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unified-ai-api-unified-ai-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unified AI API — /unified-ai/* ⭐ Recommended
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-two-access-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Two Access Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Two Access Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openai-compatible-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenAI-Compatible Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenAI-Compatible Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-the-openai-python-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using the OpenAI Python SDK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-curl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using curl
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#llm-provider-native-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM Provider-Native Access
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLM Provider-Native Access">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bedrock-native-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bedrock native example
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-what" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use What
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Image Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client-surface" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client surface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provider-routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provider routing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="llm-access-guide">LLM Access Guide</h1>
+<blockquote>
+<p><strong>Unified reference for accessing LLMs through the Citadel Governance Hub.</strong> This guide consolidates the three LLM API surfaces and the two access patterns into a single decision and implementation reference. </p>
+</blockquote>
+<p>It opens with an executive summary for architects and platform owners, then dives into the deep technical routing internals for engineers.</p>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>The Citadel Governance Hub exposes every LLM — Azure OpenAI (legacy), Microsoft Foundry Models, AWS Bedrock, Google Gemini, Anthropic Claude, and other providers — through <strong>Azure API Management (APIM)</strong> acting as a single, governed front door. </p>
+<p>Instead of distributing master keys and letting each team call provider endpoints directly, all traffic flows through one control plane that enforces security, RBAC, cost attribution, load balancing, failover, and observability on every call.</p>
+<h3 id="three-llm-apis">Three LLM APIs</h3>
+<p>Citadel Governance Hub offers <strong>three distinct API surfaces</strong> to accommodate different client needs and integration scenarios. Each API supports one or both of the two access patterns (OpenAI-Compatible and Provider-Native) described in the next section.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Path</th>
+<th>Access pattern(s)</th>
+<th>Primary use case</th>
+<th>Validation notebook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure OpenAI API</strong></td>
+<td><code>/openai/deployments/{deployment-id}/*</code></td>
+<td>OpenAI-Compatible (Azure OpenAI SDK shape)</td>
+<td><strong>Legacy integration only</strong> — existing code built on the Azure OpenAI SDK that pins the <code>/openai/deployments/...</code> URL shape.</td>
+<td><a href="../validation/citadel-access-contracts-tests.ipynb">citadel-access-contracts-tests.ipynb</a></td>
+</tr>
+<tr>
+<td><strong>Universal LLM API</strong></td>
+<td><code>/models/*</code></td>
+<td>OpenAI-Compatible (OpenAI v1 spec)</td>
+<td>OpenAI-compatible access across many models/providers via a single stable path.</td>
+<td><a href="../validation/citadel-universal-llm-api-all-models-tests.ipynb">citadel-universal-llm-api-all-models-tests.ipynb</a></td>
+</tr>
+<tr>
+<td><strong>Unified AI API</strong> ⭐</td>
+<td><code>/unified-ai/*</code></td>
+<td>OpenAI-Compatible <strong>and</strong> Provider-Native</td>
+<td><strong>Recommended</strong> single wildcard endpoint that serves OpenAI-compatible <em>and</em> every provider-native pattern with dynamic routing.</td>
+<td><a href="../validation/citadel-unified-ai-api-tests.ipynb">citadel-unified-ai-api-tests.ipynb</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="two-access-patterns">Two access patterns</h3>
+<p>Every way a client can call a model collapses into one of two patterns:</p>
+<table>
+<thead>
+<tr>
+<th>Access pattern</th>
+<th>What it is</th>
+<th>Surfaces that support it</th>
+<th>Recommended for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenAI-Compatible access</strong></td>
+<td>Standard OpenAI request/response shapes (<code>/chat/completions</code>, <code>/embeddings</code>, <code>/responses</code>, <code>/v1/*</code>). Clients use stock OpenAI SDKs and the gateway routes transparently to whichever backend hosts the model.</td>
+<td><strong>All three APIs</strong> (Azure OpenAI API, Universal LLM API, Unified AI API)</td>
+<td>The default for <strong>new</strong> integrations and any code that already speaks OpenAI.</td>
+</tr>
+<tr>
+<td><strong>LLM Provider-Native access</strong></td>
+<td>The provider's own wire format — Bedrock Converse (<code>/model/{id}/converse</code>), Gemini (<code>/models/{id}:generateContent</code>), Anthropic Messages (<code>/v1/messages</code>). Clients use the provider's native SDK and get provider-specific features.</td>
+<td><strong>Unified AI API only</strong></td>
+<td>Workloads that need provider-exclusive capabilities or must run an existing provider-native SDK unchanged.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="quick-recommendations">Quick recommendations</h3>
+<pre class="mermaid"><code>flowchart TD
+    A[New or existing LLM integration?] --&gt;|New build| B{Need provider-native&lt;br/&gt;features or SDK?}
+    A --&gt;|Existing Azure OpenAI SDK code| L[Azure OpenAI API&lt;br/&gt;/openai/deployments/...]
+    B --&gt;|No — standard chat/embeddings/responses| C[Unified AI API&lt;br/&gt;OpenAI-compatible path&lt;br/&gt;/unified-ai/v1/*]
+    B --&gt;|Yes — Bedrock / Gemini / Anthropic native| D[Unified AI API&lt;br/&gt;native path&lt;br/&gt;/unified-ai/bedrock|gemini|claude/*]
+    C -.OpenAI-compatible alt.-&gt; E[Universal LLM API&lt;br/&gt;/models/*]
+    L:::legacy
+    classDef legacy fill:#ffe8e8,stroke:#cc0000;</code></pre>
+<ul>
+<li><strong>Starting fresh and speaking OpenAI?</strong> Use the <strong>Unified AI API</strong> OpenAI-compatible path (<code>/unified-ai/v1/*</code>). It gives you the broadest backend reach plus a clean upgrade path to native features later. The <strong>Universal LLM API</strong> (<code>/models/*</code>) is an equally valid OpenAI-compatible alternative when you want a dedicated, OpenAI-v1-only surface.</li>
+<li><strong>Need a provider's exclusive feature or native SDK?</strong> Use the <strong>Unified AI API</strong> native paths (<code>/unified-ai/bedrock/...</code>, <code>/unified-ai/gemini/...</code>, <code>/unified-ai/claude/...</code>).</li>
+<li><strong>Migrating existing Azure OpenAI SDK code?</strong> Point it at the <strong>Azure OpenAI API</strong> (<code>/openai/deployments/...</code>) — it preserves the exact URL shape. Treat this as <strong>legacy compatibility</strong>, not the target state for new work.</li>
+</ul>
+<blockquote>
+<p>Regardless of which API or pattern you pick, the <strong>same governance, RBAC, cost attribution, model aliases, and observability</strong> apply — that is the entire point of routing through the gateway.</p>
+</blockquote>
+<hr />
+<h2 id="why-route-llm-access-through-the-gateway">Why Route LLM Access Through the Gateway?</h2>
+<p>Direct, key-per-team access to provider endpoints creates unpredictable cost, no central policy, no failover, and no audit trail. The gateway turns every LLM call into a governed, observable, and resilient operation. These benefits apply uniformly to <strong>all three APIs and both access patterns</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>What the gateway provides</th>
+<th>Where it shows up technically</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Managed credentials</strong></td>
+<td>Scoped, revocable APIM subscription keys (and optional JWT) replace master provider keys. Backends authenticate via managed identity / SigV4 / provider keys held by the gateway, never by the client.</td>
+<td><a href="#step-4-security-handler-security-handler">Security Handler</a>, <a href="#step-4-authentication--routing-set-backend-authorization">Authentication &amp; Routing</a></td>
+</tr>
+<tr>
+<td><strong>Model-based routing</strong></td>
+<td>Clients ask for a <em>model</em>; the gateway maps it to the right backend/pool — no hard-coded endpoints.</td>
+<td><a href="#step-3-target-pool-selection-set-target-backend-pool">Target Pool Selection</a></td>
+</tr>
+<tr>
+<td><strong>Load balancing &amp; failover</strong></td>
+<td>Multiple backends serving the same model form a pool with priority/weight and automatic retry on 429/5xx.</td>
+<td><a href="#backend-pool-types">Backend Pool Types</a>, <a href="#retry-logic">Retry Logic</a>, <a href="#circuit-breaker-protection">Circuit Breaker</a></td>
+</tr>
+<tr>
+<td><strong>Model aliases</strong></td>
+<td>One client-facing name (e.g. <code>adv-gpt</code>) resolves at runtime to one of several real models, possibly across providers — enabling upgrades, A/B tests, and cross-provider fallback transparently.</td>
+<td><a href="#model-aliases">Model Aliases</a></td>
+</tr>
+<tr>
+<td><strong>Multi-cloud reach</strong></td>
+<td>Azure OpenAI, Foundry, Bedrock, Gemini, and Anthropic all behind one front door, callable OpenAI-style or provider-native.</td>
+<td><a href="#the-two-access-patterns">The Two Access Patterns</a></td>
+</tr>
+<tr>
+<td><strong>RBAC / access contracts</strong></td>
+<td>Per-product <code>allowedModels</code> and <code>allowedBackendPools</code> decide which use case can reach which model/pool.</td>
+<td><a href="#rbac-integration">RBAC Integration</a>, <a href="../validation/citadel-access-contracts-tests.ipynb">Access Contracts notebook</a></td>
+</tr>
+<tr>
+<td><strong>Cost attribution &amp; usage metrics</strong></td>
+<td>Token usage is emitted per product / model / backend / app for chargeback and FinOps.</td>
+<td><a href="#usage-metrics-collection">Usage Metrics Collection</a>, <a href="../power-bi-dashboard/">Power BI Dashboard</a></td>
+</tr>
+<tr>
+<td><strong>Content safety &amp; PII</strong></td>
+<td>Prompt shields, harmful-content detection, and PII anonymization can be enforced in policy without app changes.</td>
+<td><a href="../pii-masking-apim/">PII Masking</a>, <a href="../validation/citadel-pii-processing-tests.ipynb">PII notebook</a></td>
+</tr>
+<tr>
+<td><strong>Stateful-resource isolation</strong></td>
+<td>Responses API <code>response_id</code> values are owned per subscription and product — cross-owner access is blocked for 30 days.</td>
+<td><a href="#step-15-responses-api-id-security-responses-id-security--responses-id-cache-store">Responses API ID Security</a></td>
+</tr>
+<tr>
+<td><strong>Observability</strong></td>
+<td>Central App Insights / Azure Monitor metrics plus optional <code>UAIG-*</code> debug headers expose every routing decision.</td>
+<td><a href="#step-10-response-headers-set-response-headers">Response Headers</a>, <a href="../governance-hub-benefits/">Governance Hub Benefits</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="the-three-llm-apis">The Three LLM APIs</h2>
+<p>All three APIs share the same underlying routing fragments and backend pool infrastructure. They differ in the <strong>URL shape they expose to clients</strong> and <strong>which access patterns they support</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Path</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unified AI API</strong></td>
+<td><code>/unified-ai/*</code></td>
+<td><strong>RECOMMENDED</strong> — single wildcard endpoint supporting all API types (OpenAI, Inference, Responses, Gemini, OpenAI-Compatible, and provider-native Bedrock/Gemini/Anthropic) with dynamic routing</td>
+</tr>
+<tr>
+<td><strong>Universal LLM API</strong></td>
+<td><code>/models/*</code></td>
+<td>OpenAI-compatible inference endpoints supporting many models across providers</td>
+</tr>
+<tr>
+<td><strong>Azure OpenAI API</strong></td>
+<td><code>/openai/deployments/{deployment-id}/*</code></td>
+<td>Azure OpenAI SDK compatibility (legacy integration)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="azure-openai-api-openaideploymentsdeployment-id">Azure OpenAI API — <code>/openai/deployments/{deployment-id}/*</code></h3>
+<p>Preserves the exact Azure OpenAI SDK URL shape, where the model is a <code>{deployment-id}</code> path parameter. Use it <strong>only</strong> to keep existing Azure-OpenAI-SDK code working unchanged. New integrations should prefer the Unified AI or Universal LLM OpenAI-compatible surfaces, which decouple the client from the Azure-specific deployment path.</p>
+<ul>
+<li><strong>Access pattern:</strong> OpenAI-Compatible (Azure OpenAI SDK dialect)</li>
+<li><strong>Model location:</strong> <code>{deployment-id}</code> URL path parameter</li>
+<li><strong>Validation:</strong> <a href="../validation/citadel-access-contracts-tests.ipynb">citadel-access-contracts-tests.ipynb</a> exercises this surface as part of access-contract provisioning.</li>
+</ul>
+<h3 id="universal-llm-api-models">Universal LLM API — <code>/models/*</code></h3>
+<p>Implements the <strong>OpenAI v1 spec</strong> (chat completions, embeddings, and the full Responses API trio in addition to other operations outlined in OpenAI V1 spec) behind a single stable <code>/models</code> path. The model travels in the request body (or the <code>/deployments/{model}/</code> segment for AOAI passthrough), so a single client URL can reach many models across Azure OpenAI, Foundry, Bedrock-Mantle, and Gemini-OpenAI backends — as long as those backends expose an OpenAI-compatible surface.</p>
+<ul>
+<li><strong>Access pattern:</strong> OpenAI-Compatible (OpenAI v1)</li>
+<li><strong>Compatible pool types:</strong> <code>azure-openai</code>, <code>ai-foundry</code>, <code>aws-bedrock-mantle</code>, <code>gemini-openai</code> (native-only pools are excluded — see <a href="#step-3-target-pool-selection-set-target-backend-pool"><code>compatiblePoolTypes</code></a>)</li>
+<li><strong>Validation:</strong> <a href="../validation/citadel-universal-llm-api-all-models-tests.ipynb">citadel-universal-llm-api-all-models-tests.ipynb</a> discovers every gateway model via <code>GET /models/models</code> and runs chat / embeddings / Responses against each.</li>
+</ul>
+<blockquote>
+<p>You can consider this layer if you want to maintain access to all OpenAI specific operations beyond the standard chat, embedding and responses patterns keeping in mind that the underlying backend must support those operations. For example, Azure OpenAI and Foundry support the full OpenAI v1 spec and are accessible through this API, but AWS Bedrock and Google Gemini only support a subset of OpenAI-compatible operations and are better accessed through the Unified AI API.</p>
+</blockquote>
+<h3 id="unified-ai-api-unified-ai-recommended">Unified AI API — <code>/unified-ai/*</code> ⭐ Recommended</h3>
+<p>A single wildcard (<code>/*</code>) catch-all that dynamically detects the API type from the request path and reconstructs the backend URI. One endpoint serves <strong>both</strong> access patterns:</p>
+<ul>
+<li><strong>OpenAI-Compatible:</strong> <code>/unified-ai/v1/*</code>, <code>/unified-ai/openai/...</code>, <code>/unified-ai/models/...</code>, <code>/unified-ai/openai/responses</code></li>
+<li><strong>Provider-Native:</strong> <code>/unified-ai/bedrock/...</code> (Converse), <code>/unified-ai/gemini/...</code> (<code>generateContent</code>), <code>/unified-ai/claude/...</code> (Messages)</li>
+</ul>
+<p>This is the strategic target surface because it adds dynamic path-based routing, centralized config caching, model aliases across providers, and multi-API-type support on top of the shared routing core.</p>
+<ul>
+<li><strong>Access patterns:</strong> OpenAI-Compatible <strong>and</strong> Provider-Native</li>
+<li><strong>Validation:</strong> <a href="../validation/citadel-unified-ai-api-tests.ipynb">citadel-unified-ai-api-tests.ipynb</a> (routing patterns) and <a href="../validation/llm-backend-onboarding-extended-providers-runner.ipynb">llm-backend-onboarding-extended-providers-runner.ipynb</a> (native Bedrock/Gemini/Anthropic onboarding).</li>
+</ul>
+<hr />
+<h2 id="the-two-access-patterns">The Two Access Patterns</h2>
+<h3 id="openai-compatible-access">OpenAI-Compatible Access</h3>
+<p>Clients send standard OpenAI request/response shapes and use stock OpenAI SDKs. The gateway transparently routes each request to the correct backend (Azure AI Foundry, Azure OpenAI, AWS Bedrock Mantle, Google Gemini, etc.) based on the model in the request — the client never changes code per provider.</p>
+<p>Supported operations on the OpenAI-compatible surfaces:</p>
+<ul>
+<li><code>POST /v1/chat/completions</code> — Chat completions</li>
+<li><code>POST /v1/embeddings</code> — Text embeddings</li>
+<li><code>POST /v1/responses</code> — Responses API</li>
+<li><code>POST /v1/images/generations</code> — Image generation</li>
+<li><code>GET  /v1/models</code> — List available models</li>
+</ul>
+<p><strong>Supported by all three APIs.</strong> The <code>openai-compat</code> path (<code>/unified-ai/v1/*</code>) uses <strong>backend-path-templates</strong> to construct the correct backend URL based on backend type, so the same client request routes to completely different backend paths:</p>
+<table>
+<thead>
+<tr>
+<th>Backend Type</th>
+<th>Client Path</th>
+<th>Backend Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ai-foundry</code></td>
+<td><code>/v1/chat/completions</code></td>
+<td><code>/openai/v1/chat/completions</code> (model in body)</td>
+</tr>
+<tr>
+<td><code>azure-openai</code></td>
+<td><code>/v1/chat/completions</code></td>
+<td><code>/openai/v1/chat/completions</code> (model in body)</td>
+</tr>
+<tr>
+<td><code>aws-bedrock-mantle</code></td>
+<td><code>/v1/chat/completions</code></td>
+<td><code>/v1/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>gemini-openai</code></td>
+<td><code>/v1/chat/completions</code></td>
+<td><code>/v1beta/openai/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>aws-bedrock</code></td>
+<td><code>/v1/chat/completions</code></td>
+<td><code>/model/{model}/converse</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="using-the-openai-python-sdk">Using the OpenAI Python SDK</h4>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;&lt;apim-subscription-key&gt;&quot;</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://&lt;apim-gateway&gt;/unified-ai/v1&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-5.1&quot;</span><span class="p">,</span>  <span class="c1"># Any model configured in the gateway</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello!&quot;</span><span class="p">}],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="using-curl">Using curl</h4>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://&lt;apim-gateway&gt;/unified-ai/v1/chat/completions&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;api-key: &lt;subscription-key&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;model&quot;: &quot;gpt-5.1&quot;,</span>
+<span class="s1">    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;}]</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Azure OpenAI API is OpenAI-compatible too, but legacy.</strong> The <code>/openai/deployments/{id}/...</code> shape is also OpenAI-compatible, but it pins the Azure-specific deployment URL. Prefer <code>/unified-ai/v1/*</code> or <code>/models/*</code> for new work and reserve <code>/openai/deployments/...</code> for existing Azure OpenAI SDK code.</p>
+</blockquote>
+<p><strong>Validation:</strong> <a href="../validation/citadel-universal-llm-api-all-models-tests.ipynb">citadel-universal-llm-api-all-models-tests.ipynb</a> (every model, OpenAI-compatible chat/embeddings/responses) and <a href="../validation/citadel-agent-frameworks-tests.ipynb">citadel-agent-frameworks-tests.ipynb</a> (real agent SDKs consuming the OpenAI-compatible surface).</p>
+<h3 id="llm-provider-native-access">LLM Provider-Native Access</h3>
+<p>Clients speak the provider's own wire protocol and use the provider's native SDK, gaining access to provider-exclusive features that have no OpenAI equivalent. <strong>Supported by the Unified AI API only</strong>, via dedicated path prefixes:</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Native path</th>
+<th>Wire format</th>
+<th>Model location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AWS Bedrock</strong></td>
+<td><code>/unified-ai/bedrock/model/{id}/converse</code></td>
+<td>Bedrock Converse</td>
+<td><code>/model/{id}/</code> segment (URL-decoded; supports inference-profile ARNs)</td>
+</tr>
+<tr>
+<td><strong>Google Gemini</strong></td>
+<td><code>/unified-ai/gemini/v1beta/models/{id}:generateContent</code></td>
+<td>Gemini native</td>
+<td><code>/models/{id}:</code> segment</td>
+</tr>
+<tr>
+<td><strong>Anthropic Claude</strong></td>
+<td><code>/unified-ai/claude/v1/messages</code></td>
+<td>Anthropic Messages</td>
+<td>request body <code>model</code> field</td>
+</tr>
+</tbody>
+</table>
+<p>Each native prefix declares a <code>compatible-pool-types</code> value (<code>aws-bedrock</code>, <code>gemini</code>, <code>anthropic</code>) so the gateway routes <strong>only</strong> to the matching native pool — even when the same model id also exists on an OpenAI-compatible (<code>aws-bedrock-mantle</code> / <code>gemini-openai</code>) pool. See <a href="#pool-isolation-compatible-pool-types">Pool isolation</a>.</p>
+<h4 id="bedrock-native-example">Bedrock native example</h4>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://&lt;apim-gateway&gt;/unified-ai/bedrock/model/us.anthropic.claude-3-5-haiku-20241022-v1:0/converse&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;api-key: &lt;subscription-key&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{</span>
+<span class="s1">    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;text&quot;: &quot;Hello&quot;}]}],</span>
+<span class="s1">    &quot;inferenceConfig&quot;: {&quot;maxTokens&quot;: 512, &quot;temperature&quot;: 0.5, &quot;topP&quot;: 0.9}</span>
+<span class="s1">  }&#39;</span>
+</code></pre></div>
+<p><strong>Validation:</strong> <a href="../validation/llm-backend-onboarding-extended-providers-runner.ipynb">llm-backend-onboarding-extended-providers-runner.ipynb</a> onboards and validates AWS Bedrock, GCP Gemini, and Anthropic Claude through native (and OpenAI-compatible) routing; <a href="../validation/citadel-unified-ai-api-tests.ipynb">citadel-unified-ai-api-tests.ipynb</a> exercises the native path patterns.</p>
+<hr />
+<h2 id="when-to-use-what">When to Use What</h2>
+<table>
+<thead>
+<tr>
+<th>Your situation</th>
+<th>Recommended API</th>
+<th>Pattern</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New build, standard chat/embeddings/responses</td>
+<td><strong>Unified AI API</strong> (<code>/unified-ai/v1/*</code>)</td>
+<td>OpenAI-Compatible</td>
+<td>Broadest backend reach + clean upgrade path to native features; one endpoint for everything.</td>
+</tr>
+<tr>
+<td>New build, want a dedicated OpenAI-v1-only surface</td>
+<td><strong>Universal LLM API</strong> (<code>/models/*</code>)</td>
+<td>OpenAI-Compatible</td>
+<td>Stable single path, OpenAI-compatible pools only, simpler mental model.</td>
+</tr>
+<tr>
+<td>Need a provider-exclusive feature or native SDK</td>
+<td><strong>Unified AI API</strong> (<code>/unified-ai/bedrock|gemini|claude/*</code>)</td>
+<td>Provider-Native</td>
+<td>Only surface that speaks the provider's own protocol.</td>
+</tr>
+<tr>
+<td>Existing Azure OpenAI SDK code</td>
+<td><strong>Azure OpenAI API</strong> (<code>/openai/deployments/...</code>)</td>
+<td>OpenAI-Compatible (legacy)</td>
+<td>Preserves the exact URL shape with zero client change.</td>
+</tr>
+<tr>
+<td>Cross-provider fallback / model upgrades without client change</td>
+<td>Any API + <strong>model alias</strong></td>
+<td>Either</td>
+<td>Alias resolves to real models at runtime with priority/weighted strategy.</td>
+</tr>
+<tr>
+<td>Multi-team governance, per-use-case model restrictions</td>
+<td>Any API + <strong>access contract</strong></td>
+<td>Either</td>
+<td><code>allowedModels</code> / <code>allowedBackendPools</code> enforced per product.</td>
+</tr>
+<tr>
+<td>Generate or edit images (gpt-image, FLUX, MAI)</td>
+<td><strong>Unified AI API</strong> (<code>/unified-ai/v1/images/*</code>)</td>
+<td>OpenAI-Compatible</td>
+<td>One OpenAI-style images endpoint; gateway builds each provider's path internally. See <a href="#image-models">Image Models</a>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Rule of thumb:</strong> default to the <strong>Unified AI API</strong>. Drop to the <strong>Universal LLM API</strong> when you want an OpenAI-v1-only surface, and to the <strong>Azure OpenAI API</strong> only for legacy compatibility.</p>
+</blockquote>
+<hr />
+<h2 id="image-models">Image Models</h2>
+<p>The Unified AI API also routes <strong>image-generation and image-edit</strong> models — Azure OpenAI <strong>gpt-image</strong>, Black Forest Labs <strong>FLUX</strong>, and Microsoft <strong>MAI</strong> — through a single OpenAI-style images surface. Because all three providers return OpenAI-shaped responses (<code>data[].b64_json</code>), the gateway needs <strong>no response translation</strong>: it only builds the correct provider path per backend type. Image traffic is isolated behind a dedicated <code>image</code> api-type and new pool types, so chat/embeddings/responses and the native provider surfaces are unaffected.</p>
+<h3 id="client-surface">Client surface</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Model location</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /unified-ai/v1/images/generations</code></td>
+<td><code>model</code> in JSON body</td>
+<td>Generation (any image model)</td>
+</tr>
+<tr>
+<td><code>POST /unified-ai/openai/deployments/{model}/images/generations</code></td>
+<td><code>{model}</code> in URL</td>
+<td>Generation (Azure OpenAI SDK style)</td>
+</tr>
+<tr>
+<td><code>POST /unified-ai/openai/deployments/{model}/images/edits</code></td>
+<td><code>{model}</code> in URL</td>
+<td>Edits (multipart) — <strong>recommended</strong></td>
+</tr>
+<tr>
+<td><code>POST /unified-ai/v1/images/edits</code></td>
+<td><code>x-ai-model</code> <strong>header</strong></td>
+<td>Edits (multipart) without the deployments path</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Image <strong>edits</strong> are <code>multipart/form-data</code>, and the model can't be read from a multipart form field. Use the <code>/openai/deployments/{model}/images/edits</code> form (model in URL), or set the <code>x-ai-model</code> header on <code>POST /v1/images/edits</code>. A missing model returns <code>400 missing_model_parameter</code> with explicit guidance.</p>
+</blockquote>
+<h3 id="provider-routing">Provider routing</h3>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Backend type</th>
+<th>Backend path the gateway builds</th>
+<th>Model location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure OpenAI / Foundry gpt-image</td>
+<td><code>ai-foundry</code> / <code>azure-openai</code></td>
+<td><code>/openai/v1/images/{generations\|edits}</code></td>
+<td>Body / URL</td>
+</tr>
+<tr>
+<td>Black Forest Labs FLUX</td>
+<td><code>azure-flux</code></td>
+<td><code>/providers/blackforestlabs/v1/{modelPath}?api-version=preview</code></td>
+<td>Body (slug from <code>modelPath</code>)</td>
+</tr>
+<tr>
+<td>Microsoft MAI</td>
+<td><code>azure-mai</code></td>
+<td><code>/mai/v1/images/{generations\|edits}</code></td>
+<td>Body</td>
+</tr>
+</tbody>
+</table>
+<p>FLUX requires a one-time <code>modelPath</code> slug per model (e.g. <code>FLUX.2-pro</code> -&gt; <code>flux-2-pro</code>) because the URL slug isn't derivable from the model name. Example generation request:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;https://&lt;apim-gateway&gt;/unified-ai/v1/images/generations&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;api-key: &lt;subscription-key&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">&#39;{ &quot;model&quot;: &quot;FLUX.2-pro&quot;, &quot;prompt&quot;: &quot;A red fox in an autumn forest&quot;, &quot;n&quot;: 1, &quot;size&quot;: &quot;1024x1024&quot; }&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.data[0].b64_json&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode<span class="w"> </span>&gt;<span class="w"> </span>out.png
+</code></pre></div>
+<p>RBAC, model aliases, cost attribution, and access contracts apply to image models exactly as they do to LLMs (<code>allowedModels</code> matches the image model name). Token-usage metrics are unchanged — image responses simply emit zero token usage. Full onboarding details and example <code>.bicepparam</code> config are in <a href="../bicep/infra/llm-backend-onboarding/README.md#image-models">LLM Backend Onboarding — Image Models</a>.</p>
+<hr />
+<h1 id="deep-technical-reference-routing-architecture">Deep Technical Reference — Routing Architecture</h1>
+<p>The remainder of this guide is the engineering deep dive: the policy fragments, request flows, and per-step internals that implement the access patterns above.</p>
+<h2 id="approach">Approach</h2>
+<p>Routing relies on <strong>APIM Policy Fragments</strong> to implement dynamic routing logic without modifying the main API policies. Fragments keep the logic modular and reusable across all three APIs.</p>
+<p><strong>Shared fragments</strong> (used by all three APIs):
+- <code>set-backend-pools</code>: Loads backend pool configurations including supported models per backend
+- <code>set-target-backend-pool</code>: Matches the requested model to a backend pool (extended with <code>apiTypeOverrideBackend</code> for Unified AI)
+- <code>set-backend-authorization</code>: Configures authentication for the target backend (respects <code>skipBackendUrlRewrite</code> for Unified AI)
+- <code>set-llm-usage</code>: Collects token usage metrics
+- <code>validate-model-access</code>: Model access control per product
+- <code>resolve-model-alias</code>: Resolves a client-facing alias (e.g. <code>adv-gpt</code>) to an actual model based on <code>priority</code> or <code>weighted</code> strategy</p>
+<p><strong>Shared fragment</strong> (Universal LLM and Azure OpenAI only):
+- <code>set-llm-requested-model</code>: Extracts the requested model from the request path or body</p>
+<p><strong>Unified AI-specific fragments:</strong>
+- <code>metadata-config</code>: Centralized JSON configuration for models, API types, and timeout settings
+- <code>central-cache-manager</code>: Caches and parses the metadata configuration with TTL-based expiry
+- <code>request-processor</code>: Analyzes request paths to detect API type and extract model (replaces <code>set-llm-requested-model</code>)
+- <code>security-handler</code>: Unified authentication (API Key + optional JWT per product)
+- <code>path-builder</code>: Reconstructs backend URIs based on API type
+- <code>set-response-headers</code>: Injects <code>UAIG-*</code> debug headers when enabled</p>
+<h2 id="architecture-overview">Architecture Overview</h2>
+<h3 id="universal-llm-api-azure-openai-api">Universal LLM API / Azure OpenAI API</h3>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                           Client Request                                    │
+│   POST /models/chat/completions  OR  POST /openai/deployments/gpt-4o/...    │
+└────────────────────────────────────┬────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        APIM Gateway (Inbound)                               │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │ 1. Authentication (Entra ID / API Key)                                │  │
+│  │ 2. Extract Model (from body or deployment-id path)                    │  │
+│  │ 3. Load Backend Pools Configuration                                   │  │
+│  │ 4. Match Model → Backend Pool                                         │  │
+│  │ 5. Validate RBAC (allowed pools check)                                │  │
+│  │ 6. Set Authorization (Managed Identity)                               │  │
+│  │ 7. Route to Backend Pool                                              │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                         Backend Pool Selection                             │
+│                                                                            │
+│   ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐        │
+│   │  gpt-4o-pool    │    │ deepseek-r1-pool│    │ Direct Backend  │        │
+│   │  ┌───────────┐  │    │  ┌───────────┐  │    │                 │        │
+│   │  │ Backend 1 │  │    │  │ Backend 1 │  │    │  Single backend │        │
+│   │  │(P:1,W:100)│  │    │  │(P:1,W:100)│  │    │  for unique     │        │
+│   │  └───────────┘  │    │  └───────────┘  │    │  models         │        │
+│   │  ┌───────────┐  │    │  ┌───────────┐  │    │                 │        │
+│   │  │ Backend 2 │  │    │  │ Backend 2 │  │    └─────────────────┘        │
+│   │  │ (P:2,W:50)│  │    │  │ (P:2,W:50)│  │                               │
+│   │  └───────────┘  │    │  └───────────┘  │                               │
+│   └─────────────────┘    └─────────────────┘                               │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                          LLM Backend Targets                               │
+│                                                                            │
+│   ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌───────────┐  │
+│   │   Foundry   │      │ Azure OpenAI│      │   Amazon    │      │ External  │  │
+│   │  Endpoint   │      │  Endpoint   │      │  Bedrock    │      │ Provider  │  │
+│   └─────────────┘      └─────────────┘      └─────────────┘      └───────────┘  │
+└────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h3 id="unified-ai-api">Unified AI API</h3>
+<p>The Unified AI API uses a wildcard catch-all (<code>/*</code>) to handle all request patterns through a single endpoint, with dynamic API-type detection and path reconstruction.</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                           Client Request                                    │
+│  POST /unified-ai/openai/deployments/gpt-4o/chat/completions                │
+│  POST /unified-ai/models/chat/completions (body: model)                     │
+│  POST /unified-ai/v1beta/openai/chat/completions (Gemini)                   │
+│  POST /unified-ai/openai/responses (Responses API)                          │
+│  GET  /unified-ai/deployments (Model Discovery)                             │
+└────────────────────────────────────┬────────────────────────────────────────┘
+                                     │
+                                     ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    APIM Gateway (Unified AI Inbound)                        │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │ 1. Load Metadata Config (models, api-types, timeouts)                 │  │
+│  │ 2. Cache Manager (version-keyed cache with 300s TTL)                  │  │
+│  │ 3. Request Processor (detect api-type from path, extract model)       │  │
+│  │ 4. Security Handler (API Key + optional JWT per product)              │  │
+│  │ 5. Validate Model Access (per product allowedModels)                  │  │
+│  │ 6. Load Backend Pools Configuration                   [SHARED]        │  │
+│  │ 7. Match Model → Backend Pool (with api-type override)[SHARED]        │  │
+│  │ 8. Set Authorization (Managed Identity)               [SHARED]        │  │
+│  │ 9. Path Builder (reconstruct backend URI per api-type)                │  │
+│  │ 10. Token Usage Metrics                               [SHARED]        │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────┬────────────────────────────────────────┘
+                                     │
+                              ┌──────┴──────┐
+                              │ API Type    │
+                              │ Detection   │
+                              └──────┬──────┘
+            ┌─────────┬──────────┬───┴───┬──────────┬────────────┬────────────┐
+            ▼         ▼          ▼       ▼          ▼            ▼            ▼
+       ┌─────────┐┌────────┐┌────────┐┌────────┐┌──────────┐┌──────────┐┌──────────┐
+       │ openai  ││infer-  ││respon- ││respon- ││openai-v1 ││gemini-   ││bedrock   │
+       │         ││ence    ││ses     ││ses-v1  ││          ││openai    ││          │
+       │/openai/ ││/models/││/openai/││/openai/││/openai/  ││/v1beta/  ││/model/   │
+       │deploy...││chat/.. ││respon..││v1/resp.││v1/deploy.││openai/.. ││converse  │
+       └────┬────┘└───┬────┘└───┬────┘└───┬────┘└────┬─────┘└────┬─────┘└────┬─────┘
+            └─────────┴─────────┴────┬────┴──────────┴────────────┴───────────┘
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                         Backend Pool Selection                             │
+│           (same pool infrastructure as other APIs)                         │
+└────────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                                     ▼
+┌────────────────────────────────────────────────────────────────────────────┐
+│                          LLM Backend Targets                               │
+│   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│   │   Foundry   │  │ Azure OpenAI│  │   Amazon    │  │ External    │         │
+│   │  Endpoint   │  │  Endpoint   │  │  Bedrock    │  │ Provider    │         │
+│   └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘         │
+└────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<h2 id="routing-flow-details">Routing Flow Details</h2>
+<h3 id="universal-llm-api-azure-openai-api-flow">Universal LLM API / Azure OpenAI API Flow</h3>
+<p>These two APIs use shared fragments for a straightforward model → backend pool → backend routing flow.</p>
+<h4 id="step-1-model-extraction-set-llm-requested-model">Step 1: Model Extraction (set-llm-requested-model)</h4>
+<p>The <code>set-llm-requested-model</code> policy fragment extracts the model from the request. It is also invoked by <strong>Citadel access-contract product policies</strong> (<code>bicep/infra/citadel-access-contracts/policies/default-ai-product-policy.xml</code>), so it must recognize <strong>every provider's</strong> model-location convention so that <code>validate-model-access</code> can enforce <code>allowedModels</code> regardless of which API surface the call lands on.</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Pattern</th>
+<th>Example</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GET/DELETE request</strong></td>
+<td>Any GET or DELETE operation</td>
+<td>Returns <code>"non-llm-request"</code> (skips model extraction)</td>
+<td>All APIs</td>
+</tr>
+<tr>
+<td><strong><code>deployment-id</code> path parameter</strong></td>
+<td><code>/deployments/{deployment-id}/...</code> (named operation)</td>
+<td><code>/openai/deployments/gpt-4o/chat/completions</code></td>
+<td>Azure OpenAI API</td>
+</tr>
+<tr>
+<td><strong><code>/deployments/{model}/</code> segment</strong></td>
+<td>Wildcard operation, model between <code>/deployments/</code> and next <code>/</code></td>
+<td><code>/openai/deployments/gpt-4o/chat/completions</code> (Universal LLM AOAI passthrough)</td>
+<td>Universal LLM, Unified AI <code>/openai/...</code></td>
+</tr>
+<tr>
+<td><strong><code>/model/{modelId}/</code> segment</strong> (singular)</td>
+<td>AWS Bedrock Converse / Invoke; model between <code>/model/</code> and the LAST <code>/</code> (operation suffix); URL-decoded. Supports inference-profile ARNs containing <code>/</code></td>
+<td><code>/unified-ai/bedrock/model/eu.amazon.nova-lite-v1:0/converse</code></td>
+<td>Unified AI native Bedrock</td>
+</tr>
+<tr>
+<td><strong><code>/models/{modelId}:method</code> segment</strong> (plural with <code>:</code>)</td>
+<td>Gemini native; model between <code>/models/</code> and <code>:</code></td>
+<td><code>/unified-ai/gemini/v1beta/models/gemini-2.5-flash:generateContent</code></td>
+<td>Unified AI native Gemini</td>
+</tr>
+<tr>
+<td><strong>Request body <code>model</code> field</strong></td>
+<td>OpenAI-compat / Anthropic Messages / Inference body</td>
+<td><code>{"model": "claude-haiku-4-5", ...}</code></td>
+<td>Universal LLM, Anthropic Messages, OpenAI-compat surfaces</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Logic (evaluated in order, first match wins):</strong></p>
+<ol>
+<li><strong>GET/DELETE request</strong> → returns <code>"non-llm-request"</code> (skips model validation; Responses API id-security may later hydrate <code>requestedModel</code> from cache).</li>
+<li><strong><code>deployment-id</code> path parameter</strong> (Azure OpenAI named operations).</li>
+<li><strong><code>/deployments/{model}/</code> segment</strong> (Azure OpenAI wildcard, Universal LLM <code>/openai/deployments/...</code> passthrough).</li>
+<li><strong><code>/model/{modelId}/</code> segment</strong> (AWS Bedrock native <code>/model/{id}/converse|invoke</code>). Model id is URL-decoded — Bedrock model ids contain <code>:</code> (e.g. <code>eu.amazon.nova-lite-v1:0</code>) which clients typically percent-encode.</li>
+<li><strong><code>/models/{modelId}:method</code> segment</strong> (Gemini native <code>/models/{id}:generateContent|streamGenerateContent|embedContent</code>). Model id is URL-decoded.</li>
+<li><strong>Request body <code>model</code> field</strong> (OpenAI-compat including <code>/v1/chat/completions</code>, Anthropic Messages, Bedrock OpenAI-compat).</li>
+</ol>
+<p>If none match, returns 400 <code>missing_model_parameter</code>.</p>
+<p><strong>Why all APIs need universal extraction.</strong> The default access-contract product policy <code>&lt;include-fragment fragment-id="set-llm-requested-model" /&gt;</code> and then <code>validate-model-access</code> against the contract's <code>allowedModels</code> CSV. When a contract is bound to a product that exposes Universal LLM, Azure OpenAI, <strong>and</strong> Unified AI, the same fragment must extract the model name for OpenAI-compat (body), Azure deployments (path param), Bedrock native (<code>/model/{id}/</code>), and Gemini native (<code>/models/{id}:</code>). A missing pattern would either let unauthorized models through (extraction returns empty → 400 instead of 403) or block native paths entirely.</p>
+<h4 id="step-15-responses-api-id-security-responses-id-security-responses-id-cache-store">Step 1.5: Responses API ID Security (<code>responses-id-security</code> / <code>responses-id-cache-store</code>)</h4>
+<p>The OpenAI <strong>Responses API</strong> (<code>POST /responses</code>, <code>GET /responses/{response_id}</code>, <code>GET /responses/{response_id}/input_items</code>, <code>DELETE /responses/{response_id}</code>) is stateful: a <code>response_id</code> returned by the backend can be re-used by the client to fetch or chain (<code>previous_response_id</code>) prior outputs. To prevent <strong>cross-subscription and cross-product access</strong> to those server-side conversations, the gateway adds a single shared pair of fragments wired into all three API surfaces:</p>
+<table>
+<thead>
+<tr>
+<th>Fragment</th>
+<th>Stage</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>responses-id-security</code></td>
+<td>inbound</td>
+<td>Detects <code>/responses*</code> routes, resolves the <code>response_id</code> (URL path or <code>previous_response_id</code> body), looks up its owner in APIM cache, returns <strong>403</strong> when either the subscription or product differs and <strong>404</strong> when no cache entry exists for a GET/DELETE. For GET/DELETE it also <strong>hydrates <code>requestedModel</code></strong> from the cache so model-based routing keeps working for those previously model-less operations.</td>
+</tr>
+<tr>
+<td><code>responses-id-cache-store</code></td>
+<td>outbound</td>
+<td>After a successful <code>POST /responses</code>, parses the response body, extracts <code>id</code>, and writes <code>key=response-id-{id}</code> → <code>value=&lt;subscriptionId&gt;\|&lt;productId&gt;\|&lt;requestedModel&gt;\|&lt;userId&gt;</code> to APIM internal cache for <strong>30 days</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p>Cache contract:</p>
+<div class="highlight"><pre><span></span><code>key   = &quot;response-id-&quot; + response_id
+value = &quot;&lt;subscriptionId&gt;|&lt;productId&gt;|&lt;requestedModel&gt;|&lt;userId&gt;&quot;
+ttl   = 2592000 seconds (30 days)
+</code></pre></div>
+<p><code>productId</code> is normalized to <code>NA</code> when APIM has no product context, such as a master subscription that can access APIs directly. Both the subscription ID and normalized product ID must match on subsequent requests. The 30-day mapping lifetime aligns with the default OpenAI Responses API retention period, so the gateway keeps ownership and routing metadata for the same default window as the stored response.</p>
+<p>Routing impact on <code>set-target-backend-pool</code>:</p>
+<ul>
+<li>For <code>POST /responses</code>, model-based routing is unchanged (model is in body or path).</li>
+<li>For <code>GET /responses/{id}</code> and <code>DELETE /responses/{id}</code>, the inbound fragment hydrates <code>requestedModel</code> from the cache, so <code>set-target-backend-pool</code> resolves the <strong>same backend pool</strong> that served the original <code>POST</code> — guaranteeing consistent per-conversation backend affinity without any new branches in <code>set-target-backend-pool</code> itself.</li>
+<li>For Unified AI, an <code>apiTypeOverrideBackend</code> may also be configured for the <code>responses</code> api-type; the override still wins, but the ownership check runs first.</li>
+</ul>
+<p>Diagnostic outputs:</p>
+<ul>
+<li><code>x-aihub-response-id-cached</code> response header echoes the just-cached id after a successful POST.</li>
+<li>Trace source <code>Responses-API-Security</code> logs hydration, ownership mismatches, and cache misses.</li>
+</ul>
+<p><strong>Validation:</strong> the Responses API trio (create → get → input_items) and id-security behaviour are exercised in <a href="../validation/citadel-universal-llm-api-all-models-tests.ipynb">citadel-universal-llm-api-all-models-tests.ipynb</a> and <a href="../validation/citadel-unified-ai-api-tests.ipynb">citadel-unified-ai-api-tests.ipynb</a>.</p>
+<h4 id="step-2-backend-pool-configuration-set-backend-pools">Step 2: Backend Pool Configuration (set-backend-pools)</h4>
+<p>The <code>set-backend-pools</code> fragment loads all available backend pools.</p>
+<p><strong>Expected Input Variables:</strong>
+- <code>requestedModel</code>: The model name extracted from the request payload
+- <code>defaultBackendPool</code>: Default backend pool to use when model is not mapped (empty string = error for unmapped models)
+- <code>allowedBackendPools</code>: Comma-separated list of allowed backend pool IDs (empty string = all pools allowed)</p>
+<p><strong>Output Variables:</strong>
+- <code>backendPools</code>: JArray containing all backend pool configurations</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Example pool configuration (auto-generated from Bicep)</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">pool_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JObject</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;poolName&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DeepSeek-R1-backend-pool&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;poolType&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ai-foundry&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;supportedModels&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JArray</span><span class="p">(</span><span class="s">&quot;DeepSeek-R1&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">backendPools</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">pool_0</span><span class="p">);</span>
+<span class="c1">// Pool: aif-citadel-primary (Type: ai-foundry)</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">pool_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JObject</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;poolName&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;aif-citadel-primary&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;poolType&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ai-foundry&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">&quot;supportedModels&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">JArray</span><span class="p">(</span><span class="s">&quot;gpt-4o&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">backendPools</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">pool_1</span><span class="p">);</span>
+</code></pre></div>
+<p>Notes:
+- Each backend supporting multiple models has multiple pool entries (one per model).
+- Backends supporting the same model are grouped into a single load-balanced pool.
+- This fragment can be gateway-region aware to support different routing pools per region (e.g. a self-hosted gateway routing only to on-premises LLMs).
+- A default backend pool can be returned if no matching model is found.</p>
+<h4 id="step-3-target-pool-selection-set-target-backend-pool">Step 3: Target Pool Selection (set-target-backend-pool)</h4>
+<p>The <code>set-target-backend-pool</code> fragment matches the requested model to a backend.</p>
+<p><strong>Expected Input Variables:</strong>
+- <code>requestedModel</code>: The model name (or <code>"non-llm-request"</code> for GET operations)
+- <code>defaultBackendPool</code>: Default backend pool when model is not mapped
+- <code>allowedBackendPools</code>: Comma-separated list of allowed backend pool IDs (empty = all)
+- <code>compatiblePoolTypes</code>: Comma-separated list of <code>poolType</code> values the API surface accepts (empty = all). When set, pools whose <code>poolType</code> is not in the list are skipped during model matching. Used by the <strong>Universal LLM API</strong> (<code>azure-openai,ai-foundry,aws-bedrock-mantle,gemini-openai</code>) and the Unified AI <code>inference</code> api-type to enforce OpenAI-compatible routing only — preventing a <code>/models/chat/completions</code> call from landing on a native <code>aws-bedrock</code>, <code>gemini</code>, or <code>anthropic</code> pool that has no <code>/chat/completions</code> surface.
+- <code>backendPools</code>: JArray of all backend pool configurations</p>
+<p><strong>Output Variables:</strong>
+- <code>targetBackendPool</code>: The selected backend pool name, <code>"non-llm-request"</code>, or error code (<code>ERROR_NO_MODEL</code>, <code>ERROR_NO_ALLOWED_POOLS</code>)
+- <code>targetPoolType</code>: The type of the selected backend pool</p>
+<blockquote>
+<p><strong>Why the <code>compatiblePoolTypes</code> filter matters.</strong> When the same model id is registered against both a native pool and an OpenAI-compat pool — e.g. <code>eu.amazon.nova-lite-v1:0</code> on both an <code>aws-bedrock</code> (Converse) and an <code>aws-bedrock-mantle</code> (<code>/v1/chat/completions</code>) backend — unfiltered first-match-wins can route an OpenAI-compat request to the native pool. The native pool has no <code>/chat/completions</code> rewrite branch, so the unrewritten path reaches AWS Bedrock and produces <code>com.amazon.coral.service#UnknownOperationException</code>. Setting <code>compatiblePoolTypes</code> makes the gateway skip incompatible pools and pick the right one.</p>
+</blockquote>
+<h4 id="step-4-authentication-routing-set-backend-authorization">Step 4: Authentication &amp; Routing (set-backend-authorization)</h4>
+<p>The <code>set-backend-authorization</code> fragment configures backend-specific authentication and URL rewriting.</p>
+<p><strong>Expected Input Variables:</strong>
+- <code>targetPoolType</code>, <code>targetBackendPool</code>, <code>requestedModel</code></p>
+<p><strong>Expected Named Values:</strong>
+- <code>uami-client-id</code>: User-assigned managed identity client ID</p>
+<p><strong>Side Effects:</strong>
+- Sets <code>Authorization</code> header with managed identity token
+- Rewrites request URL for Azure OpenAI to include the deployment path
+- Sets backend service to the target backend pool
+- For <code>non-llm-request</code>: skips authentication and routing (handled by operation-specific policy)</p>
+<table>
+<thead>
+<tr>
+<th>Backend Type</th>
+<th>Authentication</th>
+<th>URL Rewriting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>non-llm-request</code></td>
+<td>Skipped (operation-specific)</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>ai-foundry</code></td>
+<td>APIM Managed Identity → Cognitive Services</td>
+<td>None (or <code>/models/</code> prefix when <code>skipBackendUrlRewrite</code> is not set)</td>
+</tr>
+<tr>
+<td><code>azure-openai</code></td>
+<td>APIM Managed Identity → Cognitive Services</td>
+<td>Injects <code>/deployments/{model}/</code> (skipped when <code>skipBackendUrlRewrite</code> is set)</td>
+</tr>
+<tr>
+<td><code>aws-bedrock-mantle</code></td>
+<td>Native backend authorization (API key on backend resource)</td>
+<td>Rewrites Universal LLM <code>/models/{op}</code> → <code>/v1/{op}</code></td>
+</tr>
+<tr>
+<td><code>gemini-openai</code></td>
+<td>Native backend authorization (API key on backend resource)</td>
+<td>Rewrites Universal LLM <code>/models/{op}</code> → <code>/v1beta/openai/{op}</code></td>
+</tr>
+<tr>
+<td><code>aws-bedrock</code></td>
+<td>AWS SigV4 (IAM access keys via named values)</td>
+<td>Path constructed as <code>/model/{model}/converse</code> by path-builder (Unified AI only)</td>
+</tr>
+<tr>
+<td><code>gemini</code></td>
+<td>API key (query parameter)</td>
+<td>Path constructed by path-builder (Unified AI only)</td>
+</tr>
+<tr>
+<td><code>anthropic</code></td>
+<td>API key (<code>x-api-key</code> header)</td>
+<td>Path forwarded as-is (Unified AI <code>/claude/...</code>)</td>
+</tr>
+<tr>
+<td><code>external</code></td>
+<td>Backend credentials</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> When the Unified AI API sets <code>skipBackendUrlRewrite</code>, <code>set-backend-authorization</code> skips URL rewriting because the <code>path-builder</code> fragment handles URI construction instead.</p>
+</blockquote>
+<h3 id="unified-ai-api-routing-flow">Unified AI API Routing Flow</h3>
+<p>Instead of relying on APIM named path parameters, the Unified AI API uses wildcard operations (<code>/*</code>) and dynamically detects the API type from the request path, letting a single endpoint serve OpenAI, Inference, Responses, Gemini, and provider-native patterns.</p>
+<h4 id="supported-api-types">Supported API Types</h4>
+<p>The <code>metadata-config</code> fragment defines the supported API types with their path patterns:</p>
+<table>
+<thead>
+<tr>
+<th>API Type</th>
+<th>Base Path</th>
+<th>Path Segment</th>
+<th>Default API Version</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>openai</code></td>
+<td><code>/openai</code></td>
+<td><code>/deployments</code></td>
+<td><code>2024-02-15-preview</code></td>
+<td>Azure OpenAI chat completions</td>
+</tr>
+<tr>
+<td><code>inference</code></td>
+<td><code>/models</code></td>
+<td><code>/models</code></td>
+<td><code>2024-05-01-preview</code></td>
+<td>AI Foundry inference models</td>
+</tr>
+<tr>
+<td><code>responses</code></td>
+<td><code>/openai/responses</code></td>
+<td><code>/responses</code></td>
+<td><code>2025-03-01-preview</code></td>
+<td>OpenAI Responses API</td>
+</tr>
+<tr>
+<td><code>responses-v1</code></td>
+<td><code>/openai/v1/responses</code></td>
+<td><code>/openai/v1/responses</code></td>
+<td><code>v1</code></td>
+<td>OpenAI Responses API (v1)</td>
+</tr>
+<tr>
+<td><code>openai-v1</code></td>
+<td><code>/openai/v1</code></td>
+<td><code>/deployments</code></td>
+<td><code>v1</code></td>
+<td>OpenAI v1 completions</td>
+</tr>
+<tr>
+<td><code>geminiopenai</code></td>
+<td><code>/v1beta/openai</code></td>
+<td><code>/v1beta/openai</code></td>
+<td><code>v1beta</code></td>
+<td>Google Gemini OpenAI-compatible</td>
+</tr>
+<tr>
+<td><code>bedrock</code></td>
+<td><code>/model</code></td>
+<td><code>/model</code></td>
+<td><code>bedrock-2024-04-15</code></td>
+<td>Amazon Bedrock Converse API</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td><code>/v1/images</code></td>
+<td><em>(none)</em></td>
+<td><code>v1</code></td>
+<td>Image generation/edit (gpt-image, FLUX, MAI)</td>
+</tr>
+</tbody>
+</table>
+<p>Each API type can optionally define a <code>backend</code> property to override pool-based model routing and route to a specific backend directly (via <code>apiTypeOverrideBackend</code>).</p>
+<h4 id="step-1-metadata-configuration-metadata-config">Step 1: Metadata Configuration (metadata-config)</h4>
+<p>Loads the centralized JSON configuration containing model definitions, API type specs, cache settings, and timeout settings.</p>
+<p><strong>Output Variable:</strong> <code>metadata-config</code> — raw JSON string with the full configuration. The models section is dynamically generated from <code>llmBackendConfig</code> during Bicep deployment; API types, cache, and timeout settings are static.</p>
+<h4 id="step-2-cache-management-central-cache-manager">Step 2: Cache Management (central-cache-manager)</h4>
+<p>Parses the <code>metadata-config</code> JSON and manages caching using APIM's internal cache.</p>
+<p><strong>Cache Behavior:</strong>
+- Cache key: <code>metadata-config-v{config-version}</code> (e.g. <code>metadata-config-v1.0.0</code>)
+- TTL: configurable via <code>cache-settings.ttl-seconds</code> (default 300s)
+- Bypass: send <code>UAIG-Config-Cache-Bypass: true</code> header to force a cache miss</p>
+<p><strong>Output Variables:</strong> <code>config-models</code>, <code>config-api-types</code>, <code>config-timeout-settings</code>, <code>cache-operation</code> (<code>cache-hit</code> / <code>cache-miss</code>).</p>
+<h4 id="step-3-request-processing-request-processor">Step 3: Request Processing (request-processor)</h4>
+<p>Analyzes the incoming request to detect API type and extract the model. Replaces <code>set-llm-requested-model</code> for the Unified AI API.</p>
+<p><strong>API Type Detection:</strong>
+1. Removes the API path prefix (<code>/unified-ai</code>) from the request URL.
+2. Matches the remaining path against configured <code>base-path</code> patterns using <strong>case-insensitive prefix matching (<code>StartsWith</code>)</strong>, selecting the <strong>longest matching base-path</strong> so nested prefixes (e.g. <code>/openai/v1/responses</code> vs <code>/openai/v1</code> vs <code>/openai</code>) always resolve to the most specific api-type independent of declaration order.
+3. Rejects unrecognized paths with <code>403 Forbidden</code> (<code>PathNotAllowed</code>). E.g. <code>/v2/openai/chat/completions</code> does <strong>not</strong> match <code>/openai</code> and is rejected.</p>
+<p><strong>Model Extraction</strong> (priority order):
+1. <strong>GET requests, and DELETE on <code>/responses*</code></strong>: returns <code>"non-llm-request"</code>. For <code>/responses/{id}</code> GET/DELETE the model is later <strong>hydrated from the response-id ownership cache</strong> by <code>responses-id-security</code>.
+2. <strong>Request body</strong>: extracts <code>model</code> from JSON body.
+3. <strong>URL path segment</strong>: extracts model using <code>api-path-segment</code> (e.g. <code>/openai/deployments/{model}/...</code>).</p>
+<blockquote>
+<p><strong>Note:</strong> <code>request-processor</code> does not short-circuit GET/DELETE — <code>api-type</code>, <code>api-base-path</code>, <code>apiTypeOverrideBackend</code>, and <code>skipBackendUrlRewrite</code> are always populated so <code>path-builder</code> can construct backend paths like <code>{api-base-path}/{response-id}</code> for Responses API GET/DELETE after hydration.</p>
+</blockquote>
+<p><strong>Output Variables:</strong> <code>api-type</code>, <code>requestedModel</code>, <code>routing-processed-path</code>, <code>response-id</code>, <code>parsed-request-body</code>, <code>selected-api-version</code>, <code>is-streaming</code>, <code>apiTypeOverrideBackend</code>, <code>skipBackendUrlRewrite</code> (always <code>"true"</code>).</p>
+<h4 id="step-4-security-handler-security-handler">Step 4: Security Handler (security-handler)</h4>
+<p>Unified authentication across all endpoints.</p>
+<ul>
+<li><strong>API Key</strong>: always required (APIM subscription validation)</li>
+<li><strong>JWT</strong>: optionally enforced per product via the <code>jwtRequired</code> context variable</li>
+<li><strong>App Roles</strong>: optionally enforced when <code>requiredRoles</code> is set in the product policy</li>
+</ul>
+<p><strong>Output Variables:</strong> <code>auth-type</code> (<code>api-key</code> / <code>jwt</code> / <code>api-key-jwt</code> / <code>none</code>), <code>user-id</code>, <code>jwt-roles</code>.</p>
+<p><strong>Validation:</strong> <a href="../validation/citadel-jwt-authentication-tests.ipynb">citadel-jwt-authentication-tests.ipynb</a> validates JWT-enforced and role-based access across all API endpoints.</p>
+<h4 id="steps-58-shared-fragment-execution">Steps 5–8: Shared Fragment Execution</h4>
+<p>Steps 5–8 use the same shared fragments as the other APIs:
+- <strong>validate-model-access</strong>: checks <code>allowedModels</code> per product (runs against the alias name when used).
+- <strong>set-backend-pools</strong>: loads the <code>backendPools</code> JArray (real pools + alias virtual pool entries).
+- <strong>set-target-backend-pool</strong>: alias resolution + direct model→pool match. For Unified AI also checks <code>apiTypeOverrideBackend</code>.
+- <strong>resolve-model-alias</strong>: post-resolution body rewrite of the <code>model</code> field. No-op when <code>is-alias=false</code>.
+- <strong>set-backend-authorization</strong>: managed identity token / api-key header / SigV4 signing, then <code>set-backend-service</code>. Skips URL rewriting because <code>skipBackendUrlRewrite</code> is set.</p>
+<h4 id="step-9-path-builder-path-builder">Step 9: Path Builder (path-builder)</h4>
+<p>Reconstructs the backend URI from known components based on the detected API type.</p>
+<table>
+<thead>
+<tr>
+<th>API Type</th>
+<th>Backend Path Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>openai</code> (default)</td>
+<td><code>{api-base-path}/deployments/{model}/{operation}</code> (operation from path; defaults to <code>chat/completions</code>)</td>
+</tr>
+<tr>
+<td><code>inference</code></td>
+<td><code>{api-base-path}/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>geminiopenai</code></td>
+<td><code>{api-base-path}/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>openai-v1</code></td>
+<td><code>{api-base-path}/chat/completions</code></td>
+</tr>
+<tr>
+<td><code>responses</code> / <code>responses-v1</code></td>
+<td><code>{api-base-path}</code> or <code>{api-base-path}/{response-id}</code></td>
+</tr>
+<tr>
+<td><code>bedrock</code></td>
+<td><code>/model/{model}/converse</code></td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td><code>backend-path-templates[poolType][images/generations\|images/edits]</code> with <code>{model}</code>/<code>{modelPath}</code> resolved (e.g. FLUX <code>/providers/blackforestlabs/v1/{modelPath}</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Additional behavior:
+- Auto-injects <code>api-version</code> query parameter for <code>responses</code> and <code>inference</code> types; for <code>image</code> it injects <code>v1</code> (ai-foundry/azure-openai), <code>preview</code> (azure-flux), or none (azure-mai).
+- Adds <code>model</code> field to request body if not present (for <code>openai</code> type, <strong>chat/completions only</strong> — image bodies are never rewritten, preserving multipart edits).
+- Non-LLM requests (GET/DELETE) skip path building entirely.</p>
+<h4 id="step-10-response-headers-set-response-headers">Step 10: Response Headers (set-response-headers)</h4>
+<p>Injects <code>UAIG-*</code> debug headers when <code>enableResponseHeaders</code> is <code>true</code> in the product policy.</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UAIG-Auth-Type</code></td>
+<td>security-handler</td>
+<td>Authentication method used</td>
+</tr>
+<tr>
+<td><code>UAIG-User-Id</code></td>
+<td>security-handler</td>
+<td>User identifier</td>
+</tr>
+<tr>
+<td><code>UAIG-Subscription</code></td>
+<td>security-handler</td>
+<td>Subscription name</td>
+</tr>
+<tr>
+<td><code>UAIG-Model-Id</code></td>
+<td>request-processor</td>
+<td>Requested model</td>
+</tr>
+<tr>
+<td><code>UAIG-API-Type</code></td>
+<td>request-processor</td>
+<td>Detected API type</td>
+</tr>
+<tr>
+<td><code>UAIG-Processed-Path</code></td>
+<td>request-processor</td>
+<td>Path after prefix removal</td>
+</tr>
+<tr>
+<td><code>UAIG-API-Version</code></td>
+<td>request-processor</td>
+<td>API version sent to backend</td>
+</tr>
+<tr>
+<td><code>UAIG-Is-Streaming</code></td>
+<td>request-processor</td>
+<td>Whether request is streaming</td>
+</tr>
+<tr>
+<td><code>UAIG-Backend</code></td>
+<td>set-target-backend-pool</td>
+<td>Backend that served the request</td>
+</tr>
+<tr>
+<td><code>UAIG-Final-Path</code></td>
+<td>path-builder</td>
+<td>Reconstructed backend path</td>
+</tr>
+<tr>
+<td><code>UAIG-Cache-Operation</code></td>
+<td>central-cache-manager</td>
+<td><code>cache-hit</code> or <code>cache-miss</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="unified-ai-deployment-discovery">Unified AI Deployment Discovery</h3>
+<p>The Unified AI API includes named operations for model discovery that bypass wildcard routing:</p>
+<ul>
+<li><strong><code>GET /unified-ai/deployments</code></strong> — Lists all available models the subscription can access (filtered by product policy)</li>
+<li><strong><code>GET /unified-ai/deployments/{deployment-id}</code></strong> — Returns details for a specific model, or <code>404</code> if not found</li>
+</ul>
+<p>These use the shared <code>get-available-models</code> fragment and operation-level policies, not the wildcard catch-all.</p>
+<h2 id="model-aliases">Model Aliases</h2>
+<p>Model aliases expose a single client-facing name (e.g. <code>adv-gpt</code>, <code>multi-cloud-claude</code>) that the gateway resolves at runtime to one of several real underlying models — possibly across different cloud providers. Clients depend only on the alias, enabling graceful model retirements, A/B testing, and <strong>cross-provider load balancing / fallback transparent to the client</strong>.</p>
+<h3 id="aliases-are-virtual-backend-pools">Aliases are virtual backend pools</h3>
+<p>Each entry in <code>modelAliases</code> becomes a <strong>virtual pool entry inside the same <code>backendPools</code> JArray that real pools live in</strong>. Runtime alias resolution and the retry-time member walk both ride on the same <code>set-target-backend-pool</code> + retry pipeline real models use.</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Direct model</th>
+<th>Alias</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pool matching</td>
+<td><code>set-target-backend-pool</code> walks <code>backendPools</code> for a match on the model name.</td>
+<td>Same fragment, but matches the alias's virtual pool entry first (entries with <code>isAlias=true</code>).</td>
+</tr>
+<tr>
+<td>Strategy</td>
+<td>Pool members use APIM-native priority/weight.</td>
+<td>Alias members use <strong>policy-level</strong> priority/weight encoded into the alias virtual pool entry.</td>
+</tr>
+<tr>
+<td>Retry / fallback</td>
+<td>APIM-native pool-level retry on 429/5xx.</td>
+<td>Pool-level retry <strong>plus</strong> alias-fallback walk across remaining members on 429/5xx — supported on all three APIs.</td>
+</tr>
+<tr>
+<td>Cross-provider</td>
+<td>Locked to that model's pool.</td>
+<td>Members can mix Azure OpenAI, Bedrock, Gemini, Anthropic, etc. — fallback walks across providers.</td>
+</tr>
+<tr>
+<td>Compatible-pool-types filter</td>
+<td>Applied at pool selection.</td>
+<td>Applied at member selection — an alias spanning native + OpenAI-compat surfaces only resolves to members compatible with the inbound surface.</td>
+</tr>
+</tbody>
+</table>
+<p>The same alias map is honored across <strong>all three LLM endpoints</strong>:
+- <strong>Azure OpenAI API</strong> — <code>/openai/deployments/{alias}/chat/completions</code> (members must be <code>azure-openai</code> or <code>ai-foundry</code>).
+- <strong>Universal LLM API</strong> — <code>/models/chat/completions</code> with <code>"model": "{alias}"</code> (members must be OpenAI-compat pool types).
+- <strong>Unified AI API</strong> — <code>/unified-ai/v1/chat/completions</code> and native prefixes (each restricts members to its own pool type).</p>
+<h3 id="resolution-flow">Resolution flow</h3>
+<div class="highlight"><pre><span></span><code>1. validate-model-access      → RBAC against alias name (if used)
+2. set-backend-pools           → loads `backendPools` (real pools + alias virtual pools)
+3. set-target-backend-pool     → ALIAS RESOLUTION + member pick + targeting variables
+                                  + alias-fallback-members for retry
+4. resolve-model-alias         → body rewrite (model field) when is-alias=true; no-op otherwise
+5. set-backend-authorization   → header/SigV4/managed-identity per resolved poolType
+6. path-builder (Unified AI)   → URL rewrite per resolved poolType + operation
+backend retry                  → walks alias-fallback-members on 429/5xx (pre-stream only)
+</code></pre></div>
+<p>When the requested model is <strong>not</strong> an alias, step 3 falls through to its existing model→pool match and step 4 is a no-op.</p>
+<h3 id="resolution-strategies">Resolution Strategies</h3>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Behavior</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>priority</code> (default)</td>
+<td>The first compatible member in <code>models</code> is always chosen; the rest form the fallback list in order.</td>
+<td>Production routing with a preferred primary and well-defined hot-spares.</td>
+</tr>
+<tr>
+<td><code>weighted</code></td>
+<td>A compatible member is picked at random proportional to <code>weights</code>; the rest form a fallback list (round-walk).</td>
+<td>A/B testing, controlled rollout, blended traffic.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cross-model-cross-provider-fallback">Cross-Model / Cross-Provider Fallback</h3>
+<p>The <code>&lt;retry&gt;</code> block in all three API policies is alias-aware. When <code>is-alias</code> is <code>true</code>, the retry budget is extended by the size of <code>alias-fallback-members</code>. On a transient failure (429/5xx) from the current member, the policy reads the next pre-resolved entry from <code>alias-fallback-members</code>, sets the targeting variables directly (no second pool match), and re-runs <code>resolve-model-alias</code> + <code>set-backend-authorization</code> (+ <code>path-builder</code> for Unified AI).</p>
+<blockquote>
+<p><strong>Pre-stream only.</strong> Once the response stream has started, the body is committed and cross-model fallback is not possible.</p>
+</blockquote>
+<h3 id="compatible-pool-types-filter-on-alias-members">Compatible-pool-types filter on alias members</h3>
+<p>Each API surface advertises <code>compatiblePoolTypes</code>. Alias resolution applies this filter to the alias's <code>members[]</code> and skips incompatible members. If no member is compatible, the request returns <code>400 alias_no_compatible_member</code> with diagnostics.</p>
+<h3 id="access-control">Access Control</h3>
+<p><code>validate-model-access</code> runs <strong>before</strong> <code>set-target-backend-pool</code>, so the product's <code>allowedModels</code> controls access to the <strong>alias name</strong> (the contract-level identifier), not the underlying models. Granting <code>allowedModels = "multi-cloud-claude"</code> exposes only the alias.</p>
+<p><strong>Validation:</strong> <a href="../validation/citadel-model-aliases-tests.ipynb">citadel-model-aliases-tests.ipynb</a> validates the shared <code>resolve-model-alias</code> fragment across all three LLM APIs (priority + weighted strategies, RBAC, discovery).</p>
+<h3 id="configuration">Configuration</h3>
+<p>Aliases are declared in the <code>modelAliases</code> array of the LLM Backend Onboarding <code>.bicepparam</code> file. Each onboarding deployment regenerates the <code>set-backend-pools</code> virtual pool entries, <code>get-available-models</code> entries, and the <code>metadata-config</code> <code>model-aliases</code> section. See <a href="../bicep/infra/llm-backend-onboarding/README.md#model-aliases">LLM Backend Onboarding — Model Aliases</a>.</p>
+<h2 id="backend-pool-types">Backend Pool Types</h2>
+<h3 id="single-backend-direct-routing">Single Backend (Direct Routing)</h3>
+<p>When a model is only available on one backend, requests route directly:</p>
+<div class="highlight"><pre><span></span><code>Model: &quot;Phi-4&quot; → Backend: &quot;aif-citadel-primary&quot;
+</code></pre></div>
+<h3 id="backend-pool-load-balanced">Backend Pool (Load Balanced)</h3>
+<p>When multiple backends support the same model, a pool is created:</p>
+<div class="highlight"><pre><span></span><code>Model: &quot;gpt-4o&quot; → Pool: &quot;gpt-4o-backend-pool&quot;
+                    ├── Backend 1 (Priority: 1, Weight: 100)
+                    └── Backend 2 (Priority: 2, Weight: 50)
+</code></pre></div>
+<p><strong>Load Balancing Behavior:</strong>
+- <strong>Priority</strong>: lower value = higher priority (1 is highest)
+- <strong>Weight</strong>: traffic distribution ratio among same-priority backends
+- <strong>Failover</strong>: automatic retry to next backend on 429/503 errors</p>
+<h3 id="session-affinity-sticky-routing-for-stateful-models">Session affinity (sticky routing for stateful models)</h3>
+<p>Pure load balancing assumes every request is independent. <strong>Stateful</strong> models — where a follow-up call must reach the same backend that holds the conversation/thread state (the OpenAI <strong>Responses API</strong> and <strong>Assistants API</strong>) — break under round-robin routing. Session affinity makes a pool sticky: APIM sets a session cookie on the first response, and when the client replays it, routes the request back to the <strong>same</strong> pool member.</p>
+<p>Enablement is <strong>per-model</strong>, so a single backend can mix stateful and stateless models:</p>
+<ul>
+<li>Flag the stateful model with <code>sessionAwareModel: true</code> in its model object. Only that model's pool becomes sticky; stateless models on the same backend stay purely load-balanced.</li>
+<li><code>configureSessionAffinity</code> (default <code>true</code>) is a global kill-switch; <code>sessionAffinityDefaults</code> sets the cookie (<code>cookieName</code> default <code>ai-gateway-affinity</code>, <code>source</code> <code>Cookie</code>). A per-backend <code>sessionAffinity</code> object overrides the cookie for that backend's session-aware pools.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>Model: &quot;gpt-4.1&quot; (sessionAwareModel: true) → Pool: &quot;gpt41-...-backend-pool&quot;
+                    ├── Backend 1 (Priority: 1, Weight: 100)   ← first request lands here,
+                    └── Backend 2 (Priority: 2, Weight: 50)       cookie pins the session to it
+</code></pre></div>
+<p><strong>Client requirement:</strong> the client must persist and replay the affinity cookie. Reuse a <strong>single HTTP client with a shared cookie jar (cookie container)</strong> for all requests in one session so the <code>Set-Cookie</code> value is echoed back on every follow-up call; use separate cookie jars for separate sessions. Affinity is best-effort across gateway units and applies only to pooled (multi-backend) session-aware models — a tripped circuit breaker still fails over to another member. See <a href="../bicep/infra/llm-backend-onboarding/README.md#session-affinity-configuration">LLM Backend Onboarding — Session Affinity Configuration</a>.</p>
+<h3 id="pool-isolation-compatible-pool-types">Pool isolation: <code>compatible-pool-types</code></h3>
+<p>Each api-type in <code>frag-metadata-config.xml</code> can declare a <code>compatible-pool-types</code> CSV. The pool resolver in <code>frag-set-target-backend-pool.xml</code> skips any pool whose <code>poolType</code> is not in that list <strong>before</strong> matching on model name. This lets the same model id appear in two pools — e.g. <code>claude-3-5-haiku-20241022</code> on both an <code>aws-bedrock</code> (native Converse) pool and an <code>aws-bedrock-mantle</code> (OpenAI-compat) pool — without suffix tricks: <code>/bedrock/...</code> only routes to <code>aws-bedrock</code>, <code>/v1/chat/completions</code> only routes to OpenAI-compat pools.</p>
+<h2 id="circuit-breaker-protection">Circuit Breaker Protection</h2>
+<p>Each backend has circuit breaker configuration:</p>
+<div class="highlight"><pre><span></span><code>circuitBreaker: {
+  rules: [{
+    failureCondition: {
+      count: 3              // Failures before tripping
+      interval: &#39;PT5M&#39;      // Time window
+      statusCodeRanges: [
+        { min: 429, max: 429 },  // Throttling
+        { min: 500, max: 503 }   // Server errors
+      ]
+    }
+    tripDuration: &#39;PT1M&#39;    // Circuit open duration
+    acceptRetryAfter: true  // Honor Retry-After headers
+  }]
+}
+</code></pre></div>
+<h2 id="retry-logic">Retry Logic</h2>
+<p>All APIs implement automatic retry on transient failures:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;retry</span><span class="w"> </span><span class="na">count=</span><span class="s">&quot;2&quot;</span><span class="w"> </span><span class="na">interval=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">first-fast-retry=</span><span class="s">&quot;true&quot;</span>
+<span class="w">       </span><span class="na">condition=</span><span class="s">&quot;@(context.Response.StatusCode == 429 ||</span>
+<span class="s">                    context.Response.StatusCode &gt;= 500)&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;forward-request</span><span class="w"> </span><span class="na">buffer-request-body=</span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/retry&gt;</span>
+</code></pre></div>
+<p>The Unified AI API extends this with configurable timeouts from <code>metadata-config</code>:
+- <strong>Base timeout</strong>: 120 seconds (or model-specific value)
+- <strong>Streaming multiplier</strong>: 3x (configurable via <code>timeout-settings.streaming-multiplier</code>)
+- Model-specific timeouts are defined in the <code>models</code> section of <code>metadata-config</code></p>
+<h2 id="rbac-integration">RBAC Integration</h2>
+<p>Access contracts (applied at product level) can restrict which backend pools a client can use:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;allowedBackendPools&quot;</span>
+<span class="w">              </span><span class="na">value=</span><span class="s">&quot;gpt-4o-backend-pool,aif-citadel-primary&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requestedModel = "non-llm-request"</code></td>
+<td>Access control bypassed (GET operations)</td>
+</tr>
+<tr>
+<td><code>allowedBackendPools = ""</code></td>
+<td>All pools accessible</td>
+</tr>
+<tr>
+<td><code>allowedBackendPools = "pool1,pool2"</code></td>
+<td>Only listed pools accessible</td>
+</tr>
+<tr>
+<td>Model supported but pool blocked</td>
+<td>403 Forbidden</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation:</strong> <a href="../validation/citadel-access-contracts-tests.ipynb">citadel-access-contracts-tests.ipynb</a> provisions per-team access contracts and verifies <code>allowedModels</code> / <code>allowedBackendPools</code> enforcement.</p>
+<h3 id="non-llm-request-handling">Non-LLM Request Handling</h3>
+<p>GET operations (e.g. listing models) are identified as <code>"non-llm-request"</code> and bypass model validation, backend pool routing, token usage metrics, and model-based access control — allowing auxiliary endpoints to function without a model parameter.</p>
+<h2 id="usage-metrics-collection">Usage Metrics Collection</h2>
+<p>The <code>set-llm-usage</code> fragment emits token metrics for monitoring:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;llm-emit-token-metric</span><span class="w"> </span><span class="na">namespace=</span><span class="s">&quot;llm-usage&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;productName&quot;</span><span class="w"> </span><span class="nt">/&gt;</span><span class="w">      </span><span class="cm">&lt;!-- Use case identifier --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;deploymentName&quot;</span><span class="w"> </span><span class="nt">/&gt;</span><span class="w">   </span><span class="cm">&lt;!-- Model requested --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;Backend ID&quot;</span><span class="w"> </span><span class="nt">/&gt;</span><span class="w">       </span><span class="cm">&lt;!-- Backend that served request --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;dimension</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;appId&quot;</span><span class="w"> </span><span class="nt">/&gt;</span><span class="w">            </span><span class="cm">&lt;!-- Client identifier --&gt;</span>
+<span class="nt">&lt;/llm-emit-token-metric&gt;</span>
+</code></pre></div>
+<p>See <a href="../power-bi-dashboard/">Power BI Dashboard</a> for turning these metrics into cost-attribution reports.</p>
+<h2 id="policy-fragments-reference">Policy Fragments Reference</h2>
+<h3 id="shared-fragments-all-apis">Shared Fragments (All APIs)</h3>
+<table>
+<thead>
+<tr>
+<th>Fragment</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set-backend-pools</code></td>
+<td>Loads backend pool configurations</td>
+</tr>
+<tr>
+<td><code>set-target-backend-pool</code></td>
+<td>Matches model to backend pool with RBAC (extended with <code>apiTypeOverrideBackend</code> for Unified AI)</td>
+</tr>
+<tr>
+<td><code>set-backend-authorization</code></td>
+<td>Sets authentication and backend service (respects <code>skipBackendUrlRewrite</code> for Unified AI)</td>
+</tr>
+<tr>
+<td><code>set-llm-usage</code></td>
+<td>Collects token usage metrics</td>
+</tr>
+<tr>
+<td><code>validate-model-access</code></td>
+<td>Model access control per product</td>
+</tr>
+<tr>
+<td><code>resolve-model-alias</code></td>
+<td>Resolves a client-facing alias to an actual model (priority/weighted). No-op when not an alias.</td>
+</tr>
+<tr>
+<td><code>get-available-models</code></td>
+<td>Returns filtered list of models for deployment discovery</td>
+</tr>
+<tr>
+<td><code>ai-foundry-compatibility</code></td>
+<td>CORS configuration for AI Foundry</td>
+</tr>
+<tr>
+<td><code>raise-alert-events</code></td>
+<td>Emits critical-event alert metrics (throttling, backend, auth, content-safety, PII); opt-in per category</td>
+</tr>
+<tr>
+<td><code>raise-throttling-events</code></td>
+<td><em>(legacy)</em> Sends throttling-only metrics on errors; superseded by <code>raise-alert-events</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="universal-llm-azure-openai-only">Universal LLM / Azure OpenAI Only</h3>
+<table>
+<thead>
+<tr>
+<th>Fragment</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set-llm-requested-model</code></td>
+<td>Extracts model from request body, URL path parameter, or URL path segment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="unified-ai-specific-fragments">Unified AI-Specific Fragments</h3>
+<table>
+<thead>
+<tr>
+<th>Fragment</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>metadata-config</code></td>
+<td>Centralized JSON config for models, API types, cache, and timeout settings</td>
+</tr>
+<tr>
+<td><code>central-cache-manager</code></td>
+<td>Caches and parses metadata config with version-keyed TTL</td>
+</tr>
+<tr>
+<td><code>request-processor</code></td>
+<td>Detects API type from path, extracts model, sets routing variables</td>
+</tr>
+<tr>
+<td><code>security-handler</code></td>
+<td>Unified authentication (API Key required + optional JWT per product)</td>
+</tr>
+<tr>
+<td><code>path-builder</code></td>
+<td>Reconstructs backend URI based on detected API type</td>
+</tr>
+<tr>
+<td><code>set-response-headers</code></td>
+<td>Injects <code>UAIG-*</code> debug headers when enabled</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example-request-flows">Example Request Flows</h2>
+<h3 id="universal-llm-api-request-openai-compatible">Universal LLM API Request (OpenAI-Compatible)</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/models/chat/completions</span>
+<span class="err">Content-Type: application/json</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;model&quot;: &quot;gpt-4o&quot;, &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot;}] }</span>
+</code></pre></div>
+<ol>
+<li>Extract model <code>"gpt-4o"</code> from body → 2. Find pool <code>"gpt-4o-backend-pool"</code> → 3. Pool type <code>"ai-foundry"</code> → 4. Authenticate (managed identity) → 5. Forward to healthy backend.</li>
+</ol>
+<h3 id="azure-openai-api-request-openai-compatible-legacy">Azure OpenAI API Request (OpenAI-Compatible, legacy)</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/openai/deployments/gpt-4o/chat/completions?api-version=2024-02-01</span>
+<span class="err">Content-Type: application/json</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot;}] }</span>
+</code></pre></div>
+<ol>
+<li>Extract model <code>"gpt-4o"</code> from URL path param → 2. Inject model into body → 3. Rewrite URL → 4. Find pool → 5. Authenticate &amp; route.</li>
+</ol>
+<h3 id="unified-ai-api-openai-pattern">Unified AI API — OpenAI Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/unified-ai/openai/deployments/gpt-4o/chat/completions</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot;}] }</span>
+</code></pre></div>
+<ol>
+<li>Load &amp; cache metadata → 2. api-type <code>"openai"</code> → 3. Extract model from path segment → 4. Security handler → 5. Find pool → 6. Authenticate (URL rewrite skipped) → 7. path-builder constructs <code>/openai/deployments/gpt-4o/chat/completions</code> → 8. Forward with <code>api-version</code>.</li>
+</ol>
+<h3 id="unified-ai-api-inference-pattern-foundry">Unified AI API — Inference Pattern (Foundry)</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/unified-ai/models/chat/completions</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;model&quot;: &quot;DeepSeek-R1&quot;, &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot;}] }</span>
+</code></pre></div>
+<ol>
+<li>api-type <code>"inference"</code> → 2. Extract model from body → 3. Find pool <code>"DeepSeek-R1-backend-pool"</code> → 4. path-builder <code>/models/chat/completions</code> → 5. Forward with <code>api-version=2024-05-01-preview</code>.</li>
+</ol>
+<h3 id="unified-ai-api-bedrock-native-pattern">Unified AI API — Bedrock Native Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/unified-ai/bedrock/model/us.anthropic.claude-3-5-haiku-20241022-v1:0/converse</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;text&quot;: &quot;Hello&quot;}]}],</span>
+<span class="err">  &quot;inferenceConfig&quot;: {&quot;maxTokens&quot;: 512, &quot;temperature&quot;: 0.5, &quot;topP&quot;: 0.9} }</span>
+</code></pre></div>
+<ol>
+<li>api-type <code>"bedrock-native"</code> (<code>compatible-pool-types: 'aws-bedrock'</code>) → 2. Extract model from <code>/model/{id}/</code> segment → 3. Pool resolver filters to <code>poolType == 'aws-bedrock'</code> → 4. Auth: AWS SigV4 (or <code>api-key-bearer</code>) → 5. path-builder strips <code>/bedrock</code> prefix → 6. Forward to Bedrock runtime.</li>
+</ol>
+<h3 id="unified-ai-api-gemini-native-pattern">Unified AI API — Gemini Native Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/unified-ai/gemini/v1beta/models/gemini-2.5-flash:generateContent</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;contents&quot;: [{ &quot;role&quot;: &quot;user&quot;, &quot;parts&quot;: [{ &quot;text&quot;: &quot;Hello&quot; }] }],</span>
+<span class="err">  &quot;generationConfig&quot;: { &quot;maxOutputTokens&quot;: 64 } }</span>
+</code></pre></div>
+<ol>
+<li>api-type <code>"gemini-native"</code> (<code>compatible-pool-types: 'gemini'</code>) → 2. Extract model from <code>/models/{id}:</code> segment → 3. Filter to <code>poolType == 'gemini'</code> → 4. Auth sets <code>x-goog-api-key</code> → 5. path-builder strips <code>/gemini</code> prefix → 6. Forward to <code>generativelanguage.googleapis.com</code>.</li>
+</ol>
+<h3 id="unified-ai-api-anthropic-claude-native-pattern">Unified AI API — Anthropic Claude Native Pattern</h3>
+<div class="highlight"><pre><span></span><code><span class="err">POST APIM_GATEWAY/unified-ai/claude/v1/messages</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+
+<span class="err">{ &quot;model&quot;: &quot;claude-3-5-haiku-20241022&quot;, &quot;max_tokens&quot;: 64,</span>
+<span class="err">  &quot;messages&quot;: [{ &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello&quot; }] }</span>
+</code></pre></div>
+<ol>
+<li>api-type <code>"claude-native"</code> (<code>compatible-pool-types: 'anthropic'</code>) → 2. Extract model from body → 3. Filter to <code>poolType == 'anthropic'</code> → 4. Auth sets <code>x-api-key</code> + <code>anthropic-version</code> → 5. path-builder forces <code>/v1/messages</code> → 6. Forward to <code>api.anthropic.com</code>.</li>
+</ol>
+<h3 id="unified-ai-api-model-discovery">Unified AI API — Model Discovery</h3>
+<div class="highlight"><pre><span></span><code><span class="err">GET APIM_GATEWAY/unified-ai/deployments</span>
+<span class="err">api-key: &lt;subscription-key&gt;</span>
+</code></pre></div>
+<ol>
+<li>Identified as <code>"non-llm-request"</code> (GET) → 2. Operation-level policy handles directly → 3. <code>get-available-models</code> returns filtered model list → 4. Returns JSON array of deployments.</li>
+</ol>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400: Model could not be detected</code></td>
+<td>No model in body or URL</td>
+<td>Include <code>"model"</code> in request body or path</td>
+</tr>
+<tr>
+<td><code>400: Model 'x' is not supported</code></td>
+<td>No backend supports model</td>
+<td>Check backend configuration</td>
+</tr>
+<tr>
+<td><code>400: alias_no_compatible_member</code></td>
+<td>Alias has no member compatible with the inbound surface</td>
+<td>Add a compatible member or call via a compatible surface</td>
+</tr>
+<tr>
+<td><code>403: backend_pool_access_forbidden</code></td>
+<td>RBAC blocks pool access</td>
+<td>Update product's <code>allowedBackendPools</code></td>
+</tr>
+<tr>
+<td><code>403: PathNotAllowed</code></td>
+<td>Unified AI request path doesn't match any configured API type</td>
+<td>Check <code>metadata-config</code> api-types base-paths</td>
+</tr>
+<tr>
+<td><code>403: response_id_forbidden</code></td>
+<td>Cross-subscription or cross-product Responses API access</td>
+<td>Use the subscription and product pair that created the <code>response_id</code></td>
+</tr>
+<tr>
+<td><code>404: response_id_not_found</code></td>
+<td>Unknown or expired <code>response_id</code> mapping (30-day retention)</td>
+<td>Re-create the response</td>
+</tr>
+<tr>
+<td><code>401: product_required</code></td>
+<td>Request not associated with a product subscription</td>
+<td>Provide a valid <code>api-key</code> header</td>
+</tr>
+<tr>
+<td><code>429: Too Many Requests</code></td>
+<td>All backends throttling</td>
+<td>Wait for retry-after or add capacity</td>
+</tr>
+<tr>
+<td><code>503: Backend pool unavailable</code></td>
+<td>Circuit breaker open</td>
+<td>Wait for trip duration to expire</td>
+</tr>
+<tr>
+<td><code>403: AWS SigV4 auth failure</code></td>
+<td>Invalid AWS credentials for Bedrock</td>
+<td>Verify <code>aws-access-key</code>, <code>aws-secret-key</code>, <code>aws-region</code> named values</td>
+</tr>
+<tr>
+<td><code>500: AWSCredentialsNotConfigured</code></td>
+<td>AWS named values still placeholder defaults</td>
+<td>Redeploy with <code>awsAccessKey</code>, <code>awsSecretKey</code>, <code>awsRegion</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Debug Headers:</strong> When <code>enableResponseHeaders</code> is <code>true</code>, headers like <code>UAIG-API-Type</code>, <code>UAIG-Backend</code>, and <code>UAIG-Final-Path</code> help trace routing decisions.</p>
+<hr />
+<h2 id="validation-notebook-map">Validation Notebook Map</h2>
+<table>
+<thead>
+<tr>
+<th>Topic in this guide</th>
+<th>Validation notebook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Universal LLM API (OpenAI-compatible, all models, Responses trio)</td>
+<td><a href="../validation/citadel-universal-llm-api-all-models-tests.ipynb">citadel-universal-llm-api-all-models-tests.ipynb</a></td>
+</tr>
+<tr>
+<td>Unified AI API routing patterns (OpenAI-compat + native)</td>
+<td><a href="../validation/citadel-unified-ai-api-tests.ipynb">citadel-unified-ai-api-tests.ipynb</a></td>
+</tr>
+<tr>
+<td>Provider-native onboarding (Bedrock / Gemini / Anthropic)</td>
+<td><a href="../validation/llm-backend-onboarding-extended-providers-runner.ipynb">llm-backend-onboarding-extended-providers-runner.ipynb</a></td>
+</tr>
+<tr>
+<td>Backend pools &amp; routing fragment deployment</td>
+<td><a href="../validation/llm-backend-onboarding-runner.ipynb">llm-backend-onboarding-runner.ipynb</a></td>
+</tr>
+<tr>
+<td>Access contracts &amp; RBAC (<code>allowedModels</code> / <code>allowedBackendPools</code>)</td>
+<td><a href="../validation/citadel-access-contracts-tests.ipynb">citadel-access-contracts-tests.ipynb</a></td>
+</tr>
+<tr>
+<td>Model aliases (priority / weighted / cross-provider fallback)</td>
+<td><a href="../validation/citadel-model-aliases-tests.ipynb">citadel-model-aliases-tests.ipynb</a></td>
+</tr>
+<tr>
+<td>JWT auth &amp; app-role RBAC (security-handler)</td>
+<td><a href="../validation/citadel-jwt-authentication-tests.ipynb">citadel-jwt-authentication-tests.ipynb</a></td>
+</tr>
+<tr>
+<td>PII anonymization / deanonymization / blocking</td>
+<td><a href="../validation/citadel-pii-processing-tests.ipynb">citadel-pii-processing-tests.ipynb</a></td>
+</tr>
+<tr>
+<td>Agent SDK consumption (OpenAI-compatible)</td>
+<td><a href="../validation/citadel-agent-frameworks-tests.ipynb">citadel-agent-frameworks-tests.ipynb</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="related-guides">Related Guides</h2>
+<ul>
+<li><a href="../openai-compatible-api-guide/">OpenAI-Compatible API Guide</a> — SDK usage and aliases for the <code>/unified-ai/v1/*</code> surface</li>
+<li><a href="../unified-ai-api-type-onboarding/">Onboarding New API Types</a> — Add new backend types to the Unified AI API</li>
+<li><a href="../bicep/infra/llm-backend-onboarding/README.md">LLM Backend Onboarding</a> — Backend configuration reference</li>
+<li><a href="../governance-hub-benefits/">Citadel Governance Hub Benefits</a> — Why a centralized AI gateway</li>
+<li><a href="../jwt-client-identity-permissions/">JWT Client Identity &amp; Permissions</a> — Client app identities and group-based access</li>
+<li><a href="../pii-masking-apim/">PII Detection &amp; Masking</a> — Sensitive data protection in policy</li>
+<li><a href="../power-bi-dashboard/">Power BI Dashboard</a> — Usage analytics and cost allocation</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

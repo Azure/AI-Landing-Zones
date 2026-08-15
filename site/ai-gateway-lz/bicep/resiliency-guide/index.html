@@ -1,0 +1,2006 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Resiliency Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#resiliency-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Resiliency Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resiliency-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resiliency at a Glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-circuit-breaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Circuit Breaker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Circuit Breaker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-session-affinity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Session Affinity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Session Affinity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-automated-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Automated Failover
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Automated Failover">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to react
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-tune" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to tune
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-alerting-on-critical-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Alerting on Critical Events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Alerting on Critical Events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#putting-it-together" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Putting It Together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="resiliency-guide">Resiliency Guide</h1>
+<blockquote>
+<p><strong>How the Citadel Governance Hub keeps LLM traffic flowing when backends throttle, fail, or hold state.</strong> This guide covers the five resiliency dimensions the gateway handles — <strong>circuit breaking</strong>, <strong>session affinity</strong>, <strong>automated failover</strong>, <strong>error handling</strong>, and <strong>alerting</strong> — and, for each, answers <em>what</em> it is, <em>how</em> it works, and <em>when</em> to configure it.</p>
+</blockquote>
+<p>The gateway is a single, governed front door in front of every LLM (Azure OpenAI, Microsoft Foundry, AWS Bedrock, Google Gemini, Anthropic Claude, and more). Because every call is proxied through Azure API Management (APIM), resiliency is enforced centrally in policy and backend configuration — clients get transparent protection without changing a line of app code.</p>
+<hr />
+<h2 id="resiliency-at-a-glance">Resiliency at a Glance</h2>
+<p>The four dimensions work as <strong>layers</strong>. A single request can benefit from all of them at once: session affinity picks the <em>right</em> backend, load balancing spreads traffic across a pool, retry/failover moves off a failing member, and the circuit breaker takes a persistently unhealthy backend out of rotation (temporarily).</p>
+<pre class="mermaid"><code>flowchart TD
+    A[Client request] --&gt; B{Session-aware model&lt;br/&gt;with affinity cookie?}
+    B --&gt;|Yes| C[Pin to same pool member]
+    B --&gt;|No| D[Load-balance across pool&lt;br/&gt;by priority / weight]
+    C --&gt; E[Selected backend]
+    D --&gt; E
+    E --&gt; F{Response 429 / 5xx?}
+    F --&gt;|No| G[Return to client]
+    F --&gt;|Yes, pre-stream| H[Retry / failover&lt;br/&gt;to next member or alias]
+    H --&gt; E
+    F --&gt;|Repeated failures| I[Circuit breaker trips&lt;br/&gt;backend removed for cool-off]
+    I --&gt; H
+    H --&gt;|No healthy target| J[Structured error response]</code></pre>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>What it protects against</th>
+<th>Default</th>
+<th>Configure when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="#1-circuit-breaker">Circuit Breaker</a></strong></td>
+<td>A persistently unhealthy backend dragging down latency and burning retries.</td>
+<td><strong>On</strong> (<code>configureCircuitBreaker: true</code>)</td>
+<td>Almost always in production. Tune per-backend for noisy neighbours or strict SLAs.</td>
+</tr>
+<tr>
+<td><strong><a href="#2-session-affinity">Session Affinity</a></strong></td>
+<td>Stateful conversations (Responses/Assistants API) breaking when a follow-up lands on the wrong pool member.</td>
+<td><strong>Off per model</strong> (<code>sessionAwareModel: false</code>)</td>
+<td>A stateful model is served by a <strong>pool</strong> (2+ backends).</td>
+</tr>
+<tr>
+<td><strong><a href="#3-automated-failover">Automated Failover</a></strong></td>
+<td>Transient throttling/5xx on one backend or provider causing a hard client failure.</td>
+<td><strong>On</strong> (retry + pools; alias fallback when configured)</td>
+<td>Whenever a model runs on ≥2 backends, or you want cross-provider fallback via aliases.</td>
+</tr>
+<tr>
+<td><strong><a href="#4-error-handling">Error Handling</a></strong></td>
+<td>Opaque failures that clients can't diagnose or safely retry.</td>
+<td><strong>On</strong> (structured JSON errors on every policy branch)</td>
+<td>No config needed — use the <a href="#error-catalog">error catalog</a> to interpret and react.</td>
+</tr>
+<tr>
+<td><strong><a href="#5-alerting-on-critical-events">Alerting</a></strong></td>
+<td>Silent degradation — throttling, backend faults, auth failures, content-safety blocks, or PII failures going unnoticed.</td>
+<td><strong>On</strong> for throttling &amp; backend failures; other categories <strong>opt-in</strong></td>
+<td>Enable extra categories per mission-critical access contract; wire Azure Monitor alert rules.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Terminology.</strong> "Resiliency" here spans both <strong>availability</strong> (staying up during transient faults via failover and circuit breaking) and <strong>correctness under state</strong> (session affinity). Error handling is the observability surface that ties them together, and alerting turns that surface into proactive notification.</p>
+</blockquote>
+<hr />
+<h2 id="1-circuit-breaker">1. Circuit Breaker</h2>
+<h3 id="what">What</h3>
+<p>A circuit breaker temporarily <strong>stops routing to a backend once it starts failing</strong>, then automatically probes it back into rotation after a cool-off. It prevents a sick backend from absorbing traffic, inflating latency, and wasting the retry budget — the classic <em>fail-fast</em> pattern applied per APIM backend.</p>
+<p>The state machine is the standard three states:</p>
+<ul>
+<li><strong>Closed</strong> — healthy, traffic flows normally.</li>
+<li><strong>Open (tripped)</strong> — failure threshold breached; the backend is skipped for <code>tripDuration</code>. In a pool, traffic shifts to the remaining members.</li>
+<li><strong>Half-open</strong> — after the cool-off, APIM lets a probe through; success closes the circuit, failure re-opens it.</li>
+</ul>
+<h3 id="how">How</h3>
+<p>Every LLM backend created by <code>Backend Contract</code> onboarding gets a circuit breaker attached natively (not in policy). The rule is defined in <a href="../bicep/infra/llm-backend-onboarding/modules/llm-backends.bicep">llm-backends.bicep</a> and controlled by three parameters in the <a href="../bicep/infra/llm-backend-onboarding/README.md#circuit-breaker-configuration">LLM Backend Onboarding</a> <code>.bicepparam</code>:</p>
+<ol>
+<li><strong><code>configureCircuitBreaker</code></strong> (bool, default <code>true</code>) — master toggle. When <code>false</code>, no backend gets a breaker.</li>
+<li><strong><code>circuitBreakerDefaults</code></strong> (object) — the rule applied to <strong>every</strong> backend when the toggle is on.</li>
+<li><strong>Per-backend <code>circuitBreaker</code></strong> (object, optional) — overrides a subset of the defaults for one backend, or disables it with <code>enabled: false</code>.</li>
+</ol>
+<blockquote>
+<p><strong>Published assets use the same model.</strong> Backends created for remote MCP servers and A2A agents by the <a href="../bicep/infra/citadel-publish-contracts/publish-contract-guide.md#3-resiliency">Publish Contract</a> reuse the identical <code>configureCircuitBreaker</code> / <code>circuitBreakerDefaults</code> / per-asset <code>backend.circuitBreaker</code> parameters, so tool and agent endpoints get the same fail-fast protection as LLM backends.</p>
+</blockquote>
+<p>The default rule (backward-compatible with the original hard-coded values):</p>
+<div class="highlight"><pre><span></span><code>param configureCircuitBreaker = true
+
+param circuitBreakerDefaults = {
+  failureCount: 3                 // trip after 3 failures...
+  failureInterval: &#39;PT5M&#39;         // ...within a rolling 5-minute window
+  tripDuration: &#39;PT1M&#39;            // stay open for 1 minute
+  acceptRetryAfter: true          // honor an upstream Retry-After header
+  errorReasons: [ &#39;Server errors&#39; ]
+  statusCodeRanges: [
+    { min: 429, max: 429 }        // throttling
+    { min: 500, max: 503 }        // server errors
+  ]
+}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>failureCount</code></td>
+<td><code>3</code></td>
+<td>Failures within the window that trip the breaker.</td>
+</tr>
+<tr>
+<td><code>failureInterval</code></td>
+<td><code>PT5M</code></td>
+<td>Rolling window used to count failures.</td>
+</tr>
+<tr>
+<td><code>tripDuration</code></td>
+<td><code>PT1M</code></td>
+<td>How long the breaker stays open once tripped.</td>
+</tr>
+<tr>
+<td><code>acceptRetryAfter</code></td>
+<td><code>true</code></td>
+<td>Honor an upstream <code>Retry-After</code> header when tripping.</td>
+</tr>
+<tr>
+<td><code>errorReasons</code></td>
+<td><code>['Server errors']</code></td>
+<td>Failure reasons counted toward the breaker.</td>
+</tr>
+<tr>
+<td><code>statusCodeRanges</code></td>
+<td><code>429</code>, <code>500-503</code></td>
+<td>HTTP status ranges (<code>{ min, max }</code>) treated as failures.</td>
+</tr>
+<tr>
+<td><code>enabled</code></td>
+<td><code>true</code></td>
+<td>Per-backend only — set <code>false</code> to exempt one backend even when the master toggle is on.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Per-backend override</strong> — trip a flaky backend faster, or exempt a special one:</p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    // ...
+    circuitBreaker: { failureCount: 5, failureInterval: &#39;PT1M&#39;, tripDuration: &#39;PT30S&#39; }
+  }
+  {
+    backendId: &#39;aif-citadel-secondary&#39;
+    // ...
+    circuitBreaker: { enabled: false }   // never trip this backend
+  }
+]
+</code></pre></div>
+<h3 id="when">When</h3>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Production, any topology</strong></td>
+<td>Keep <code>configureCircuitBreaker: true</code>. This is the safe default.</td>
+</tr>
+<tr>
+<td><strong>Model on a single backend</strong></td>
+<td>The breaker still fires — but with no pool member to fail over to, requests fail fast during the cool-off. Pair single-backend critical models with an <a href="#cross-provider-fallback-via-aliases">alias fallback</a>.</td>
+</tr>
+<tr>
+<td><strong>Backend behind strict latency SLA</strong></td>
+<td>Lower <code>tripDuration</code> and <code>failureCount</code> so a degraded backend is shed quickly.</td>
+</tr>
+<tr>
+<td><strong>Noisy backend that self-recovers fast</strong></td>
+<td>Raise <code>failureCount</code> / shorten <code>failureInterval</code> to avoid tripping on brief blips.</td>
+</tr>
+<tr>
+<td><strong>Backend under load test or intentionally saturated</strong></td>
+<td>Set <code>enabled: false</code> for that backend so 429s don't remove it from rotation.</td>
+</tr>
+<tr>
+<td><strong><code>Retry-After</code>-aware provider (Azure OpenAI, Foundry)</strong></td>
+<td>Keep <code>acceptRetryAfter: true</code> so the breaker honors the provider's back-pressure signal.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Because the breaker counts <code>429</code> as a failure, a heavily throttled backend is automatically parked, letting the pool's remaining members absorb traffic — this is the primary interplay between circuit breaking and <a href="#3-automated-failover">failover</a>.</p>
+</blockquote>
+<hr />
+<h2 id="2-session-affinity">2. Session Affinity</h2>
+<h3 id="what_1">What</h3>
+<p>Load balancing assumes every request is independent. <strong>Stateful</strong> models break that assumption: with the OpenAI <strong>Responses API</strong> and <strong>Assistants API</strong>, a follow-up call (e.g. referencing a <code>previous_response_id</code>) must reach the <strong>same backend</strong> that holds the conversation/thread state. Under round-robin pool routing it might not.</p>
+<p>Session affinity (session-aware load balancing) makes a pool <strong>sticky</strong>: APIM sets a session cookie on the first response, and when the client replays it, routes the request back to the <strong>same</strong> pool member.</p>
+<h3 id="how_1">How</h3>
+<p>Enablement is <strong>per-model</strong>, so one backend can freely mix stateful and stateless models. Configuration lives in the <a href="../bicep/infra/llm-backend-onboarding/README.md#session-affinity-configuration">LLM Backend Onboarding</a> <code>.bicepparam</code>:</p>
+<ol>
+<li><strong><code>sessionAwareModel</code></strong> (bool on each model object, default <code>false</code>) — the opt-in. Only pools whose model is flagged become sticky.</li>
+<li><strong><code>configureSessionAffinity</code></strong> (bool, default <code>true</code>) — a global kill-switch. Safe to leave <code>true</code>, since nothing gets affinity until a model is flagged.</li>
+<li><strong><code>sessionAffinityDefaults</code></strong> (object) — cookie settings (<code>cookieName</code> default <code>ai-gateway-affinity</code>, <code>source</code> <code>Cookie</code>).</li>
+<li><strong>Per-backend <code>sessionAffinity</code></strong> (object, optional) — overrides the cookie for the session-aware pools that backend joins.</li>
+</ol>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: &#39;aif-citadel-primary&#39;
+    // ...
+    supportedModels: [
+      // Stateful — used with the OpenAI Responses API; its pool becomes sticky
+      { name: &#39;gpt-4.1&#39;, modelFormat: &#39;OpenAI&#39;, modelVersion: &#39;2025-04-14&#39;, sessionAwareModel: true }
+      // Stateless — stays pure load-balanced
+      { name: &#39;Phi-4&#39;, modelFormat: &#39;Microsoft&#39;, modelVersion: &#39;3&#39; }
+    ]
+    priority: 1
+    weight: 100
+  }
+  {
+    backendId: &#39;aif-citadel-secondary&#39;
+    // ...
+    supportedModels: [
+      { name: &#39;gpt-4.1&#39;, modelFormat: &#39;OpenAI&#39;, modelVersion: &#39;2025-04-14&#39;, sessionAwareModel: true }
+    ]
+    priority: 2
+    weight: 50
+  }
+]
+</code></pre></div>
+<p><strong>Resolution rules:</strong></p>
+<ul>
+<li>A pool becomes session-aware if <strong>any</strong> member flags that model <code>sessionAwareModel: true</code> (the flag is ORed across the pool).</li>
+<li>Cookie config = <code>sessionAffinityDefaults</code> shallow-merged with the <strong>first</strong> member supplying a <code>sessionAffinity</code> override.</li>
+<li>Single-backend (non-pooled) models are unaffected — affinity only matters when there are 2+ backends to choose between.</li>
+</ul>
+<p><strong>Client requirement — the cookie jar.</strong> Affinity only works if the client <strong>persists and replays</strong> the cookie. Use a <strong>single HTTP client with a shared cookie jar (cookie container)</strong> for all requests in one session, and separate jars for separate sessions:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">httpx</span>
+<span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="c1"># One cookie jar per logical session — APIM&#39;s Set-Cookie is echoed back on every follow-up call.</span>
+<span class="n">session_client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>  <span class="c1"># persists Set-Cookie across requests</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://&lt;apim-host&gt;/unified-ai/openai&quot;</span><span class="p">,</span> <span class="n">http_client</span><span class="o">=</span><span class="n">session_client</span><span class="p">)</span>
+
+<span class="n">first</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">responses</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4.1&quot;</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;Hello&quot;</span><span class="p">)</span>        <span class="c1"># lands on backend A, sets cookie</span>
+<span class="n">follow</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">responses</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4.1&quot;</span><span class="p">,</span>
+                                 <span class="n">previous_response_id</span><span class="o">=</span><span class="n">first</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                 <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;Continue&quot;</span><span class="p">)</span>                      <span class="c1"># cookie replays -&gt; backend A</span>
+</code></pre></div>
+<h3 id="when_1">When</h3>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Stateful model (Responses / Assistants API) on a pool</strong></td>
+<td><strong>Required.</strong> Flag the model <code>sessionAwareModel: true</code>. Without it, follow-up calls can hit the wrong backend and fail to find the conversation.</td>
+</tr>
+<tr>
+<td><strong>Stateful model on a single backend</strong></td>
+<td>Not needed — there's only one target. Affinity is a no-op.</td>
+</tr>
+<tr>
+<td><strong>Stateless chat/completions/embeddings</strong></td>
+<td>Leave <code>sessionAwareModel: false</code>. Pure load balancing gives better spread and resilience.</td>
+</tr>
+<tr>
+<td><strong>Client can't hold a cookie jar</strong></td>
+<td>Affinity can't work; keep the conversation on a single-backend model, or make each call self-contained.</td>
+</tr>
+<tr>
+<td><strong>You must force affinity off everywhere</strong></td>
+<td>Set <code>configureSessionAffinity: false</code> (global kill-switch).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Affinity is best-effort, not a hard pin.</strong> It's honored per gateway unit and yields to resilience: if a session's backend trips its <a href="#1-circuit-breaker">circuit breaker</a>, the request still fails over to another member (and may lose that backend's in-memory state). Design stateful flows to tolerate an occasional re-anchor.</p>
+</blockquote>
+<p><strong>Validation:</strong> <a href="../validation/citadel-session-affinity-tests.ipynb">citadel-session-affinity-tests.ipynb</a>.</p>
+<hr />
+<h2 id="3-automated-failover">3. Automated Failover</h2>
+<h3 id="what_2">What</h3>
+<p>Failover keeps a request alive when the first-choice target returns a <strong>transient</strong> error (throttling or server error). The gateway retries against a healthy alternative — another backend in the same pool, or (with model aliases) a different model or even a different cloud — transparently to the client.</p>
+<p>Three mechanisms combine:</p>
+<ol>
+<li><strong>Backend pools + load balancing</strong> — the set of targets to fail over <em>to</em>.</li>
+<li><strong>Retry logic</strong> — the policy that triggers the failover on <code>429</code>/<code>5xx</code>.</li>
+<li><strong>Cross-provider alias fallback</strong> — extends the retry budget across models/providers.</li>
+</ol>
+<h3 id="how_2">How</h3>
+<p><strong>Backend pools.</strong> When multiple backends support the same model, the onboarding creates a load-balanced pool:</p>
+<div class="highlight"><pre><span></span><code>Model: &quot;gpt-4o&quot; -&gt; Pool: &quot;gpt-4o-backend-pool&quot;
+                    ├── Backend 1 (Priority: 1, Weight: 100)   ← preferred
+                    └── Backend 2 (Priority: 2, Weight: 50)    ← failover target
+</code></pre></div>
+<ul>
+<li><strong>Priority</strong> — lower value = higher priority (<code>1</code> is highest). APIM sends traffic to the lowest-priority-number healthy members first.</li>
+<li><strong>Weight</strong> — traffic ratio among members of the <em>same</em> priority.</li>
+<li><strong>Failover</strong> — on <code>429</code>/<code>503</code> from a member, APIM automatically moves to the next member. A member removed by its <a href="#1-circuit-breaker">circuit breaker</a> is skipped entirely.</li>
+</ul>
+<p>Single-backend models route directly (no pool); their resilience comes from the circuit breaker + any alias fallback.</p>
+<p><strong>Retry logic.</strong> Every API policy retries transient failures before giving up:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;retry</span><span class="w"> </span><span class="na">count=</span><span class="s">&quot;2&quot;</span><span class="w"> </span><span class="na">interval=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="na">first-fast-retry=</span><span class="s">&quot;true&quot;</span>
+<span class="w">       </span><span class="na">condition=</span><span class="s">&quot;@(context.Response.StatusCode == 429 ||</span>
+<span class="s">                    context.Response.StatusCode &gt;= 500)&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;forward-request</span><span class="w"> </span><span class="na">buffer-request-body=</span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/retry&gt;</span>
+</code></pre></div>
+<p>The Unified AI API layers configurable timeouts from <code>metadata-config</code> on top:
+- <strong>Base timeout</strong> 120s (or model-specific).
+- <strong>Streaming multiplier</strong> 3× (via <code>timeout-settings.streaming-multiplier</code>).</p>
+<p><strong>Cross-provider fallback via aliases.</strong> A <a href="../llm-access-guide/#model-aliases">model alias</a> exposes one client-facing name (e.g. <code>adv-gpt</code>) that resolves at runtime to one of several real models, possibly across providers. The <code>&lt;retry&gt;</code> block is <strong>alias-aware</strong>: when <code>is-alias</code> is true, the retry budget is extended by the number of <code>alias-fallback-members</code>. On each transient failure it swaps in the next member (model + backend pool + auth) and re-runs resolution — enabling transparent <strong>Foundry → Bedrock → Gemini</strong> fallback.</p>
+<div class="highlight"><pre><span></span><code>param modelAliases = [
+  {
+    name: &#39;adv-gpt&#39;
+    models: [&#39;gpt-5&#39;, &#39;gpt-4.1&#39;, &#39;gpt-4o&#39;]   // priority order = failover order
+    strategy: &#39;priority&#39;                      // or &#39;weighted&#39; for A/B / blended traffic
+  }
+]
+</code></pre></div>
+<blockquote>
+<p><strong>Pre-stream only.</strong> Once the response stream has started, the body is committed — cross-model/cross-backend fallback is no longer possible. This applies to both pool failover and alias fallback.</p>
+</blockquote>
+<h3 id="when_2">When</h3>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>High-availability for a model</strong></td>
+<td>Deploy it on <strong>2+ backends</strong> (different instances/regions). The pool + retry gives automatic failover with no client change.</td>
+</tr>
+<tr>
+<td><strong>Preferred primary + hot spare</strong></td>
+<td>Give the primary <code>priority: 1</code> and the spare <code>priority: 2</code>. Traffic sticks to the primary until it fails.</td>
+</tr>
+<tr>
+<td><strong>Blended / A-B traffic across backends</strong></td>
+<td>Give members the <strong>same priority</strong> and split with <code>weight</code>.</td>
+</tr>
+<tr>
+<td><strong>Provider-level outage tolerance</strong></td>
+<td>Define a cross-provider <strong>alias</strong> (<code>strategy: 'priority'</code>) so a Foundry outage transparently fails over to Bedrock/Gemini.</td>
+</tr>
+<tr>
+<td><strong>Controlled rollout of a new model</strong></td>
+<td>Use an alias with <code>strategy: 'weighted'</code>.</td>
+</tr>
+<tr>
+<td><strong>Streaming workloads</strong></td>
+<td>Understand failover only helps <strong>before</strong> the first token. For critical streamed calls, keep the primary backend healthy (tuned circuit breaker) and consider client-side retry of the whole request.</td>
+</tr>
+<tr>
+<td><strong>Single-backend model you can't scale out</strong></td>
+<td>Add an alias fallback to a comparable model so throttling has somewhere to go.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Validation:</strong> <a href="../validation/citadel-model-aliases-tests.ipynb">citadel-model-aliases-tests.ipynb</a>; background in the <a href="../llm-access-guide/#retry-logic">LLM Access Guide — Retry Logic</a>.</p>
+<hr />
+<h2 id="4-error-handling">4. Error Handling</h2>
+<h3 id="what_3">What</h3>
+<p>Every policy branch that rejects or fails a request returns a <strong>structured JSON error</strong> in the OpenAI error shape, so clients can diagnose and react programmatically:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;error&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Human-readable explanation&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;invalid_request_error | access_error | ...&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;machine_readable_code&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;param&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;model&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The key resiliency question for any error is: <strong>is it transient?</strong> Transient errors (throttling, upstream 5xx, dependency unavailable) are safe to retry — often the gateway already retried for you. Non-transient errors (auth, RBAC, malformed request) will fail identically on retry and need a client- or config-side fix.</p>
+<h3 id="error-catalog">Error catalog</h3>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th><code>code</code></th>
+<th>Emitted by</th>
+<th>Transient?</th>
+<th>Meaning &amp; how to address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>401</strong></td>
+<td><code>unauthorized</code></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-security-handler.xml">security-handler</a></td>
+<td>No</td>
+<td>No valid subscription key. Send a valid key in the <code>api-key</code> header (also accepted as <code>Ocp-Apim-Subscription-Key</code>).</td>
+</tr>
+<tr>
+<td><strong>401</strong></td>
+<td><code>jwt_required</code></td>
+<td>security-handler</td>
+<td>No</td>
+<td>Product requires a JWT but no Bearer token was sent. Add <code>Authorization: Bearer &lt;token&gt;</code>. See <a href="../jwt-client-identity-permissions/">JWT client identity</a>.</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td><em>(model access forbidden)</em></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-validate-model-access.xml">validate-model-access</a></td>
+<td>No</td>
+<td>Requested model isn't in the product's <code>allowedModels</code>. Grant it in the access contract or call a permitted model.</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td><code>backend_pool_access_forbidden</code></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-set-target-backend-pool.xml">set-target-backend-pool</a></td>
+<td>No</td>
+<td>Client has no access to any backend pool serving the model (<code>allowedBackendPools</code>). Update the access contract.</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td><code>response_id_forbidden</code></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-responses-id-security.xml">responses-id-security</a></td>
+<td>No</td>
+<td>The <code>response_id</code> was created by a <strong>different subscription or product</strong>. Only the owning subscription/product pair can read or continue it during the 30-day ownership window — expected isolation, not a bug.</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td><code>PathNotAllowed</code></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-request-processor.xml">request-processor</a></td>
+<td>No</td>
+<td>The requested path isn't permitted for this API surface. Use a supported route (see <a href="../llm-access-guide/">LLM Access Guide</a>).</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td><code>missing_model_parameter</code></td>
+<td>set-target-backend-pool / <a href="../bicep/infra/modules/apim/policies/frag-set-llm-requested-model.xml">set-llm-requested-model</a></td>
+<td>No</td>
+<td>No <code>model</code> in the body/path. Include the model name.</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td><code>unsupported_model</code></td>
+<td>set-target-backend-pool</td>
+<td>No</td>
+<td>Model isn't hosted by any pool on this surface. Response lists <code>supported_models</code>. Onboard the model or pick a listed one.</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td><code>model_not_available_on_this_surface</code></td>
+<td>set-target-backend-pool</td>
+<td>No</td>
+<td>Model exists, but on a pool type this API surface can't route to (e.g. a native-only model called from the OpenAI-compat path). Use the correct surface — a native <code>/bedrock</code>, <code>/gemini</code>, or <code>/claude</code> path on the Unified AI API.</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td><em>(alias no compatible member)</em></td>
+<td>set-target-backend-pool (<code>ERROR_ALIAS_NO_COMPATIBLE_MEMBER</code>)</td>
+<td>No</td>
+<td>The alias has no member compatible with this surface's <code>compatible-pool-types</code>. Fix the alias definition or call a compatible surface.</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td><em>(image op unsupported)</em></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-path-builder.xml">path-builder</a></td>
+<td>No</td>
+<td>Image operation not supported for the resolved backend type. Route the image request to a backend that supports it.</td>
+</tr>
+<tr>
+<td><strong>500</strong></td>
+<td><code>AWSCredentialsNotConfigured</code></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-set-backend-authorization.xml">set-backend-authorization</a></td>
+<td>No (config)</td>
+<td>Bedrock backend selected but <code>aws-access-key</code> / <code>aws-secret-key</code> / <code>aws-region</code> named values are missing. Set them (Key Vault-backed) and redeploy.</td>
+</tr>
+<tr>
+<td><strong>502</strong></td>
+<td><code>PIIAnonymizationFailed</code></td>
+<td><a href="../bicep/infra/modules/apim/policies/frag-pii-anonymization.xml">pii-anonymization</a></td>
+<td><strong>Yes</strong></td>
+<td>PII service is unavailable and <code>continueOnNLPError</code> is off, so the request was blocked (fail-closed) to prevent unmasked content reaching the backend. Retry; if acceptable, set <code>continueOnNLPError: true</code> to fail-open. See <a href="../pii-masking-apim/">PII Masking</a>.</td>
+</tr>
+<tr>
+<td><strong>429</strong></td>
+<td><em>(provider throttling)</em></td>
+<td>Upstream backend</td>
+<td><strong>Yes</strong></td>
+<td>Backend out of capacity or a capacity-control limit was hit. The gateway already retried/failed over across the pool; honor <code>Retry-After</code> and back off. Counts toward the <a href="#1-circuit-breaker">circuit breaker</a> and is captured as a metric — see <a href="../throttling-events-handling/">Throttling Events Handling</a>.</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td><code>AITokenQuotaExceeded</code></td>
+<td><a href="../llm-access-guide/">llm-token-limit</a> (access contract)</td>
+<td>No (until reset)</td>
+<td>The use case exhausted its long-term <code>token-quota</code> for the period; <strong>every</strong> further call is blocked until the quota window resets. Not transient — raise the contract's <code>token-quota</code> / shorten <code>token-quota-period</code>, or treat as an intentional hard cap. Emitted as the <code>quota-exceeded</code> alert — see <a href="../throttling-events-handling/">Throttling &amp; Critical Event Alerting</a>.</td>
+</tr>
+<tr>
+<td><strong>500–503</strong></td>
+<td><em>(provider server error)</em></td>
+<td>Upstream backend</td>
+<td><strong>Yes</strong></td>
+<td>Transient backend failure. Retried automatically and counted toward the circuit breaker; if it persists past the retry budget, the breaker parks the backend and the pool sheds traffic to healthy members.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-to-react">How to react</h3>
+<ul>
+<li><strong>Transient (<code>429</code>, <code>500–503</code>, <code>502 PIIAnonymizationFailed</code>):</strong> the gateway retries and fails over where possible. On the client, add bounded exponential backoff and honor <code>Retry-After</code>. Sustained transient errors indicate a <strong>capacity or health</strong> problem — add pool members, tune the circuit breaker, or define an <a href="#cross-provider-fallback-via-aliases">alias fallback</a>.</li>
+<li><strong>Non-transient (<code>400</code>, <code>401</code>, <code>403</code>, config <code>500</code>):</strong> do <strong>not</strong> retry blindly — fix the request, credentials, or <a href="../llm-access-guide/#rbac-integration">access contract</a>. The <code>message</code> and <code>code</code> tell you exactly what to change.</li>
+<li><strong>Observability.</strong> Service-impacting events (throttling, backend faults, auth failures, content-safety blocks, PII failures) are emitted as the <code>AI Gateway Alert</code> custom metric per product/model/backend/app for alerting — see <a href="#5-alerting-on-critical-events">section 5</a> and the <a href="../throttling-events-handling/">Throttling &amp; Critical Event Alerting</a> guide. PII degradation and <code>response_id</code> mismatches are traced. Use <code>UAIG-*</code> debug headers to see routing decisions per call.</li>
+</ul>
+<h3 id="when-to-tune">When to tune</h3>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frequent <code>429</code> on one model</td>
+<td>Add backend(s) to its pool (failover) and/or an alias fallback; review capacity allocation.</td>
+</tr>
+<tr>
+<td>A backend repeatedly trips the breaker</td>
+<td>Investigate the backend; consider lowering its priority or <code>enabled: false</code> until healthy.</td>
+</tr>
+<tr>
+<td>Intermittent <code>502 PIIAnonymizationFailed</code></td>
+<td>Confirm PII service health; decide fail-closed (secure) vs <code>continueOnNLPError: true</code> (available).</td>
+</tr>
+<tr>
+<td>Clients report lost conversation state</td>
+<td>Verify the stateful model is <code>sessionAwareModel: true</code> <strong>and</strong> the client uses a shared cookie jar.</td>
+</tr>
+<tr>
+<td>Clients retry non-transient <code>4xx</code></td>
+<td>Educate clients to branch on <code>error.code</code>; only <code>429</code>/<code>5xx</code> are safe to retry.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-alerting-on-critical-events">5. Alerting on Critical Events</h2>
+<h3 id="what_4">What</h3>
+<p>Error handling (<a href="#4-error-handling">section 4</a>) makes failures <em>diagnosable</em>; alerting makes them <em>noticed</em>. The gateway emits a single Application Insights custom metric — <strong><code>AI Gateway Alert</code></strong> (namespace <code>ai-gateway-alerts</code>) — whenever a service-impacting event occurs, so you can build Azure Monitor alert rules that page the right team before users complain.</p>
+<p>The design deliberately favors <strong>signal over noise</strong>: only the platform-health categories (throttling, quota-exceeded, backend-failure) fire by default; everything else is opt-in per use case, so mission-critical access contracts get rich alerting while low-value traffic (sandboxes, experiments) stays quiet.</p>
+<table>
+<thead>
+<tr>
+<th><code>alertType</code> dimension</th>
+<th>Trigger</th>
+<th>Toggle</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>throttling</code></td>
+<td>HTTP <code>429</code> — per-minute token rate (TPM) exceeded, or backend rate limit</td>
+<td><code>alertOnThrottling</code></td>
+<td><strong>On</strong></td>
+</tr>
+<tr>
+<td><code>quota-exceeded</code></td>
+<td>HTTP <code>403</code> — long-term <code>token-quota</code> exhausted (<code>AITokenQuotaExceeded</code>)</td>
+<td><code>alertOnQuotaExceeded</code></td>
+<td><strong>On</strong></td>
+</tr>
+<tr>
+<td><code>backend-failure</code></td>
+<td>HTTP <code>5xx</code> — backend fault or connectivity error</td>
+<td><code>alertOnBackendFailure</code></td>
+<td><strong>On</strong></td>
+</tr>
+<tr>
+<td><code>auth-failure</code></td>
+<td>HTTP <code>401</code>/<code>403</code> — missing/invalid key, missing/invalid JWT, insufficient role, model-access denied</td>
+<td><code>alertOnAuthFailure</code></td>
+<td>Off</td>
+</tr>
+<tr>
+<td><code>content-safety</code></td>
+<td><code>llm-content-safety</code> blocked the prompt/completion</td>
+<td><code>alertOnContentSafety</code></td>
+<td>Off</td>
+</tr>
+<tr>
+<td><code>pii-failure</code></td>
+<td>PII anonymization failed (fail-closed <code>502</code>)</td>
+<td><code>alertOnPiiFailure</code></td>
+<td>Off</td>
+</tr>
+</tbody>
+</table>
+<p>Every event carries the dimensions <code>alertType</code>, <code>statusCode</code>, <code>productName</code>, <code>deploymentName</code>, and <code>backendId</code> (the selected backend / pool; <code>NA</code> before routing runs), so one metric powers many precisely-scoped alert rules. <code>emit-metric</code> supports at most 5 custom dimensions.</p>
+<h3 id="how_3">How</h3>
+<p>A single fragment, <a href="../bicep/infra/modules/apim/policies/frag-raise-alert-events.xml"><code>raise-alert-events</code></a>, does the work. It runs in two complementary modes:</p>
+<ul>
+<li><strong>Auto mode</strong> — included in the <code>outbound</code> and <code>on-error</code> sections of the three inference APIs (Azure OpenAI, Universal LLM, Unified AI). It derives the category from <code>context.Response.StatusCode</code> and <code>context.LastError</code>, capturing backend <code>429</code>/<code>5xx</code>, content-safety blocks, JWT validation failures, and PII failures.</li>
+<li><strong>Explicit mode</strong> — because authorization rejections short-circuit the pipeline with <code>&lt;return-response&gt;</code> (which bypasses <code>outbound</code>/<code>on-error</code>), the <code>security-handler</code> and <code>validate-model-access</code> fragments call <code>raise-alert-events</code> at the point of rejection with an explicit <code>alertEventType</code>, so <code>auth-failure</code> events are never missed.</li>
+</ul>
+<p><strong>Two scopes to configure alerting:</strong></p>
+<ol>
+<li>
+<p><strong>API level (all use cases).</strong> The default wiring already emits <code>throttling</code>, <code>quota-exceeded</code>, and <code>backend-failure</code> for every request across all three APIs — no per-product setup required. To change the platform-wide baseline, adjust the toggles where the fragment is included in the API policies.</p>
+</li>
+<li>
+<p><strong>Access contract level (per use case).</strong> Opt a specific mission-critical use case into additional categories by setting the toggle in that product policy's <code>inbound</code> section (before <code>&lt;base/&gt;</code>), so it is in scope when the fragment runs later:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;inbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;base</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="cm">&lt;!-- This use case is mission-critical: alert on auth + content-safety too --&gt;</span>
+<span class="w">    </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;alertOnAuthFailure&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;alertOnContentSafety&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/inbound&gt;</span>
+</code></pre></div>
+<p>Or silence a category for a noisy, non-critical use case:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;inbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;base</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">&quot;alertsEnabled&quot;</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;false&quot;</span><span class="w"> </span><span class="nt">/&gt;</span><span class="w">   </span><span class="cm">&lt;!-- suppress ALL alerts for this contract --&gt;</span>
+<span class="nt">&lt;/inbound&gt;</span>
+</code></pre></div>
+</li>
+</ol>
+<p><strong>Wiring the Azure Monitor alert rule:</strong> deploy the action group + one rule per category with the <a href="../bicep/infra/app-insights-alert/README.md"><code>bicep/infra/app-insights-alert</code></a> module. It <strong>defaults to log-search (scheduled query) alerts</strong> on the <code>customMetrics</code> table so alerting works immediately — the pre-aggregated <code>ai-gateway-alerts</code> <strong>metric</strong> namespace only registers after the metric is first emitted (so metric alerts, <code>alertMode: 'metric'</code>, are an opt-in for later). Filter each rule by <code>alertType</code> (and optionally <code>productName</code>, <code>backendId</code>) and set a threshold that represents a <em>meaningful</em> signal. Manual walkthrough in <a href="../throttling-events-handling/#creating-alerts-in-azure-monitor">Throttling &amp; Critical Event Alerting</a>.</p>
+<h3 id="when_3">When</h3>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Any production gateway</strong></td>
+<td>Keep the default <code>throttling</code> / <code>quota-exceeded</code> / <code>backend-failure</code> metrics on; create Azure Monitor rules on <code>alertType = throttling</code>, <code>alertType = quota-exceeded</code>, and <code>alertType = backend-failure</code> scoped to your platform.</td>
+</tr>
+<tr>
+<td><strong>Capacity-managed use case</strong></td>
+<td>Watch <code>quota-exceeded</code> (HTTP <code>403</code>) — it means a use case has burned its long-term <code>token-quota</code> and is now blocked until the window resets. Raise the contract's <code>token-quota</code> / shorten the period, or treat it as an intentional hard cap.</td>
+</tr>
+<tr>
+<td><strong>Mission-critical use case</strong></td>
+<td>Enable <code>alertOnAuthFailure</code> / <code>alertOnContentSafety</code> / <code>alertOnPiiFailure</code> in that access contract so its specific risks are covered.</td>
+</tr>
+<tr>
+<td><strong>Security-sensitive contract</strong></td>
+<td>Turn on <code>alertOnAuthFailure</code> to detect credential misconfiguration, token abuse, or probing (spikes in <code>401</code>/<code>403</code>).</td>
+</tr>
+<tr>
+<td><strong>Compliance / PII contract</strong></td>
+<td>Turn on <code>alertOnPiiFailure</code> so a fail-closed PII outage (<code>502</code>) pages the team — this is an availability event, not just a security one.</td>
+</tr>
+<tr>
+<td><strong>Content-moderated contract</strong></td>
+<td>Turn on <code>alertOnContentSafety</code> to track how often prompts/completions are being blocked.</td>
+</tr>
+<tr>
+<td><strong>Noisy sandbox / demo</strong></td>
+<td>Set <code>alertsEnabled = false</code>, or disable specific categories, so experiments don't drown real signals.</td>
+</tr>
+<tr>
+<td><strong>High-traffic contract</strong></td>
+<td>Be deliberate about <code>deploymentName</code> cardinality — high cardinality raises custom-metric cost (and <code>emit-metric</code> allows at most 5 custom dimensions); aggregate or scope opt-in categories accordingly.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Alerting is the proactive complement to the <a href="#1-circuit-breaker">circuit breaker</a> and <a href="#3-automated-failover">failover</a>.</strong> Those keep traffic flowing automatically; alerting tells you <em>why</em> they had to — e.g. a backend that keeps tripping its breaker shows up as a <code>backend-failure</code> spike for a specific <code>backendId</code>, <code>throttling</code> on a model signals you need more pool capacity or an <a href="#cross-provider-fallback-via-aliases">alias fallback</a>, and <code>quota-exceeded</code> signals a use case has hit its long-term token budget.</p>
+</blockquote>
+<p><strong>Reference:</strong> <a href="../throttling-events-handling/">Throttling &amp; Critical Event Alerting</a> · alert rules Bicep in <a href="../bicep/infra/app-insights-alert/README.md">app-insights-alert</a> · end-to-end validation in <a href="../validation/citadel-alerting-tests.ipynb">citadel-alerting-tests.ipynb</a> · access-contract configuration in <a href="../bicep/infra/citadel-access-contracts/citadel-access-contracts-policy.md#configuring-alerts-policy">AI Citadel Access Contracts Policy — Configuring Alerts</a>.</p>
+<hr />
+<h2 id="putting-it-together">Putting It Together</h2>
+<p>A resilient production onboarding for a critical model typically combines all four dimensions:</p>
+<div class="highlight"><pre><span></span><code>param configureCircuitBreaker = true        // fail-fast on unhealthy backends
+param configureSessionAffinity = true       // enable stickiness where flagged
+
+param llmBackendConfig = [
+  {
+    backendId: &#39;aif-primary&#39;
+    endpoint: &#39;https://aif-primary.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { name: &#39;gpt-4.1&#39;, modelFormat: &#39;OpenAI&#39;, modelVersion: &#39;2025-04-14&#39;, sessionAwareModel: true }
+    ]
+    priority: 1                              // preferred
+    weight: 100
+  }
+  {
+    backendId: &#39;aif-secondary&#39;
+    endpoint: &#39;https://aif-secondary.cognitiveservices.azure.com/&#39;
+    authType: &#39;managed-identity&#39;
+    supportedModels: [
+      { name: &#39;gpt-4.1&#39;, modelFormat: &#39;OpenAI&#39;, modelVersion: &#39;2025-04-14&#39;, sessionAwareModel: true }
+    ]
+    priority: 2                              // failover target -&gt; forms a pool with aif-primary
+    weight: 50
+  }
+]
+
+param modelAliases = [
+  { name: &#39;adv-gpt&#39;, models: [&#39;gpt-4.1&#39;, &#39;gpt-4o&#39;], strategy: &#39;priority&#39; }  // cross-model fallback
+]
+</code></pre></div>
+<p>This yields: a <strong>load-balanced pool</strong> for <code>gpt-4.1</code> (priority failover), <strong>session affinity</strong> for its stateful Responses-API traffic, a <strong>circuit breaker</strong> on each backend, and an <strong>alias</strong> giving cross-model fallback — all transparent to clients, with <strong>structured errors</strong> whenever a request can't be served. Pair this with <strong>alerting</strong> (<a href="#5-alerting-on-critical-events">section 5</a>) on the access contract — for a mission-critical model, enable <code>alertOnAuthFailure</code> / <code>alertOnContentSafety</code> / <code>alertOnPiiFailure</code> so every risk dimension pages the team, on top of the always-on throttling and backend-failure metrics.</p>
+<hr />
+<h2 id="related-guides">Related Guides</h2>
+<ul>
+<li><a href="../llm-access-guide/">LLM Access Guide</a> — routing internals, backend pools, retry logic, model aliases.</li>
+<li><a href="../throttling-events-handling/">Throttling &amp; Critical Event Alerting</a> — the <code>AI Gateway Alert</code> metric, event categories, and setting up alert rules in Azure Monitor.</li>
+<li><a href="../pii-masking-apim/">PII Masking with APIM</a> — PII anonymization fail-closed vs fail-open behavior.</li>
+<li><a href="../jwt-client-identity-permissions/">JWT Client Identity &amp; Permissions</a> — auth errors and access contracts.</li>
+<li><a href="../bicep/infra/llm-backend-onboarding/README.md">LLM Backend Onboarding</a> — full circuit-breaker and session-affinity parameter reference.</li>
+<li><a href="https://learn.microsoft.com/en-us/azure/foundry/how-to/high-availability-resiliency">High availability and resiliency for Microsoft Foundry projects and Agent Services</a> — Foundry-specific high-availability guidance.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

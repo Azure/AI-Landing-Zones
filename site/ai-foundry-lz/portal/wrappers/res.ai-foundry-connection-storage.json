@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "ai-foundry-connection-storage",
+    "description": "Creates a Storage Account connection in Azure AI Foundry. Mirrors modules/ai-foundry/connection-storage-account.bicep from bicep-ptn-aiml-landing-zone."
+  },
+  "parameters": {
+    "aiFoundryName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Azure AI Foundry (Cognitive Services) account."
+      }
+    },
+    "connectedResourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the Storage Account to connect."
+      }
+    },
+    "connectionName": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('connectedResourceName'), '-storage-connection')]",
+      "metadata": {
+        "description": "Optional. The name to assign to the Storage connection."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts/connections",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(parameters('aiFoundryName'), '/', parameters('connectionName'))]",
+      "properties": {
+        "category": "AzureStorageAccount",
+        "target": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('connectedResourceName')), '2024-01-01').primaryEndpoints.blob]",
+        "authType": "AAD",
+        "isSharedToAll": true,
+        "metadata": {
+          "ApiType": "Azure",
+          "ResourceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('connectedResourceName'))]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "connectionName": {
+      "type": "string",
+      "value": "[parameters('connectionName')]"
+    }
+  }
+}

@@ -1,0 +1,315 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "3234659933642366788"
+    }
+  },
+  "definitions": {
+    "wafPolicyDefinitionsType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Name of the Application Gateway WAF policy."
+          }
+        },
+        "policySettings": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "allowedValues": [
+                "Disabled",
+                "Enabled"
+              ],
+              "metadata": {
+                "description": "Required. WAF policy state."
+              }
+            },
+            "mode": {
+              "type": "string",
+              "allowedValues": [
+                "Detection",
+                "Prevention"
+              ],
+              "metadata": {
+                "description": "Required. WAF mode (Prevention or Detection)."
+              }
+            },
+            "requestBodyCheck": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enable request body inspection."
+              }
+            },
+            "maxRequestBodySizeInKb": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Maximum request body size (KB)."
+              }
+            },
+            "fileUploadLimitInMb": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. File upload size limit (MB)."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Policy settings (state, mode, size limits)."
+          }
+        },
+        "managedRules": {
+          "type": "object",
+          "properties": {
+            "exclusions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "matchVariable": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Match variable to exclude (e.g., RequestHeaderNames)."
+                    }
+                  },
+                  "selector": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Selector value for the match variable."
+                    }
+                  },
+                  "selectorMatchOperator": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Selector match operator (e.g., Equals, Contains)."
+                    }
+                  },
+                  "excludedRuleSet": {
+                    "type": "object",
+                    "properties": {
+                      "ruleSetType": {
+                        "type": "string",
+                        "metadata": {
+                          "description": "Required. Rule set type (e.g., OWASP)."
+                        }
+                      },
+                      "ruleSetVersion": {
+                        "type": "string",
+                        "metadata": {
+                          "description": "Required. Rule set version (e.g., 3.2)."
+                        }
+                      },
+                      "ruleGroup": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Rule groups to exclude."
+                        }
+                      }
+                    },
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Specific managed rule set exclusion details."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Exclusions for specific rules or variables."
+              }
+            },
+            "managedRuleSets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ruleSetType": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Rule set type (e.g., OWASP)."
+                    }
+                  },
+                  "ruleSetVersion": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Rule set version."
+                    }
+                  },
+                  "ruleGroupOverrides": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ruleGroupName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "Required. Name of the rule group."
+                          }
+                        },
+                        "rule": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "metadata": {
+                                  "description": "Required. Rule ID."
+                                }
+                              },
+                              "action": {
+                                "type": "string",
+                                "metadata": {
+                                  "description": "Required. Action to take (e.g., Allow, Block, Log)."
+                                }
+                              },
+                              "enabled": {
+                                "type": "bool",
+                                "metadata": {
+                                  "description": "Required. Whether the rule is enabled."
+                                }
+                              }
+                            }
+                          },
+                          "metadata": {
+                            "description": "Required. Rule overrides within the group."
+                          }
+                        }
+                      }
+                    },
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Overrides for specific rule groups."
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "description": "Required. Managed rule sets to apply."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Managed rules configuration (rule sets and exclusions)."
+          }
+        },
+        "customRules": {
+          "type": "array",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Custom rules inside the policy."
+          }
+        },
+        "enableTelemetry": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable or disable usage telemetry for the module. Default is true."
+          }
+        },
+        "location": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Location for all resources. Default is resourceGroup().location."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource tags."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Web Application Firewall (WAF) Policy to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../common/types.bicep"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "wafPolicy": {
+      "$ref": "#/definitions/wafPolicyDefinitionsType",
+      "metadata": {
+        "description": "Required. Web Application Firewall (WAF) policy configuration object."
+      }
+    }
+  },
+  "resources": {
+    "wafPolicyDeployment": {
+      "type": "Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies",
+      "apiVersion": "2024-01-01",
+      "name": "[parameters('wafPolicy').name]",
+      "location": "[coalesce(tryGet(parameters('wafPolicy'), 'location'), resourceGroup().location)]",
+      "tags": "[tryGet(parameters('wafPolicy'), 'tags')]",
+      "properties": {
+        "policySettings": "[coalesce(tryGet(parameters('wafPolicy'), 'policySettings'), createObject('requestBodyCheck', true(), 'maxRequestBodySizeInKb', 128, 'fileUploadLimitInMb', 100, 'state', 'Enabled', 'mode', 'Prevention'))]",
+        "customRules": "[coalesce(tryGet(parameters('wafPolicy'), 'customRules'), createArray())]",
+        "managedRules": {
+          "copy": [
+            {
+              "name": "managedRuleSets",
+              "count": "[length(parameters('wafPolicy').managedRules.managedRuleSets)]",
+              "input": {
+                "ruleSetType": "[parameters('wafPolicy').managedRules.managedRuleSets[copyIndex('managedRuleSets')].ruleSetType]",
+                "ruleSetVersion": "[parameters('wafPolicy').managedRules.managedRuleSets[copyIndex('managedRuleSets')].ruleSetVersion]"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "metadata": {
+        "description": "WAF Policy resource ID."
+      },
+      "value": "[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', parameters('wafPolicy').name)]"
+    },
+    "name": {
+      "type": "string",
+      "metadata": {
+        "description": "WAF Policy name."
+      },
+      "value": "[parameters('wafPolicy').name]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "WAF Policy resource group name."
+      },
+      "value": "[resourceGroup().name]"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "WAF Policy location."
+      },
+      "value": "[reference('wafPolicyDeployment', '2024-01-01', 'full').location]"
+    }
+  }
+}

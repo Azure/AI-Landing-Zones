@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "name": "cosmos-data-plane-role-assignment",
+    "description": "Assigns Cosmos DB data-plane SQL role to an identity. Mirrors modules/security/cosmos-data-plane-role-assignment.bicep from bicep-ptn-aiml-landing-zone."
+  },
+  "parameters": {
+    "cosmosDbAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Name of the Cosmos DB account."
+      }
+    },
+    "principalId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Object ID of the principal to assign."
+      }
+    },
+    "roleDefinitionGuid": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Role definition GUID (e.g., 00000000-0000-0000-0000-000000000002 for Built-in Data Contributor)."
+      }
+    },
+    "scopePath": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Fully qualified resource path of the target container or database."
+      }
+    }
+  },
+  "variables": {
+    "roleDefinitionId": "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions', parameters('cosmosDbAccountName'), parameters('roleDefinitionGuid'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments",
+      "apiVersion": "2022-05-15",
+      "name": "[concat(parameters('cosmosDbAccountName'), '/', guid(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbAccountName')), parameters('principalId'), variables('roleDefinitionId'), parameters('scopePath')))]",
+      "properties": {
+        "principalId": "[parameters('principalId')]",
+        "roleDefinitionId": "[variables('roleDefinitionId')]",
+        "scope": "[parameters('scopePath')]"
+      }
+    }
+  ]
+}

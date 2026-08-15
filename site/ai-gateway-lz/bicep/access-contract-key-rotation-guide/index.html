@@ -1,0 +1,1341 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>🔑 Access Contract Key Rotation Guide - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#access-contract-key-rotation-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              🔑 Access Contract Key Rotation Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Foundry Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Foundry Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2_1" id="__nav_4_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/terraform/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-foundry-lz/portal/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ai-container-lz/readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Container Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#core-concept-two-keys-one-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧠 Core concept: two keys, one active
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧠 Core concept: two keys, one active">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#can-bicep-regenerate-an-apim-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can Bicep regenerate an APIM key?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔩 Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-3-step-zero-downtime-rotation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚦 The 3-step zero-downtime rotation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚦 The 3-step zero-downtime rotation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-baseline-primary-active" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Baseline (primary active)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-switch-consumers-to-the-secondary-key-no-downtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Switch consumers to the secondary key (no downtime)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-regenerate-the-now-non-active-primary-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Regenerate the (now non-active) primary key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rotating-the-secondary-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔁 Rotating the secondary key
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-gateway-behavior-resiliency-contracts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌐 Multi-gateway behavior (resiliency contracts)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚠️ Notes &amp; troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔗 Related
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="access-contract-key-rotation-guide">🔑 Access Contract Key Rotation Guide</h1>
+<p>This guide explains the <strong>optional, zero-downtime subscription key rotation</strong> capability of Citadel Access Contracts. It lets you rotate the APIM subscription key handed to a use case <strong>without any service interruption</strong>, across the primary gateway and every mirrored gateway, Key Vault, and Foundry connection.</p>
+<blockquote>
+<p><strong>Backward compatibility promise</strong>: Key rotation is 100% opt-in. The new parameters default to <code>usePrimaryKey = true</code> and <code>keyRotationEnabled = false</code>, which reproduce the existing behavior exactly (primary key active, nothing regenerated). <strong>If you do nothing, nothing changes.</strong></p>
+</blockquote>
+<hr />
+<h2 id="core-concept-two-keys-one-active">🧠 Core concept: two keys, one active</h2>
+<p>Every APIM subscription has <strong>two keys</strong> — a <strong>primary</strong> and a <strong>secondary</strong>. Both are always valid; a client can authenticate with either. The access contract treats one of them as the <strong>active key</strong> — the value that gets pushed to consumers (Key Vault secrets, Foundry connections, and any additional gateways).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>usePrimaryKey = true</code> (default)</td>
+<td><strong>Active = primary</strong>, non-active = secondary</td>
+</tr>
+<tr>
+<td><code>usePrimaryKey = false</code></td>
+<td><strong>Active = secondary</strong>, non-active = primary</td>
+</tr>
+</tbody>
+</table>
+<p>The other key — the <strong>non-active</strong> key — is the one that gets regenerated during rotation. Because consumers are only ever handed the <em>active</em> key, regenerating the <em>non-active</em> key never disrupts them.</p>
+<h3 id="can-bicep-regenerate-an-apim-key">Can Bicep regenerate an APIM key?</h3>
+<p>ARM/Bicep has <strong>no native "regenerate key" action</strong> for APIM subscriptions. Instead, this package regenerates a key <strong>declaratively</strong>: it assigns a <strong>fresh value</strong> to the non-active key slot (<code>primaryKey</code> / <code>secondaryKey</code>) on the subscription resource. Assigning a new value invalidates the old one — functionally equivalent to a regenerate, with the added benefit that the exact same value can be mirrored to every additional gateway so keys stay in sync.</p>
+<p>The fresh value is derived from <code>rotationKeySeed</code> (which defaults to <code>newGuid()</code>, so every rotation deployment produces a new key) or supplied verbatim via <code>rotationKeyOverride</code>.</p>
+<hr />
+<h2 id="parameters">🔩 Parameters</h2>
+<p>Add these to your use-case <code>.bicepparam</code> file as needed. All are optional.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>usePrimaryKey</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>Which key is <strong>active</strong> (handed to consumers). <code>true</code> = primary, <code>false</code> = secondary.</td>
+</tr>
+<tr>
+<td><code>keyRotationEnabled</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td>When <code>true</code>, regenerate (overwrite) the <strong>non-active</strong> key, invalidating its old value.</td>
+</tr>
+<tr>
+<td><code>rotationKeySeed</code></td>
+<td>string</td>
+<td><code>newGuid()</code></td>
+<td>Seed used to derive a fresh 64-char rotation key. New value every deployment. Ignored if <code>rotationKeyOverride</code> is set.</td>
+</tr>
+<tr>
+<td><code>rotationKeyOverride</code></td>
+<td>secure string</td>
+<td><code>''</code></td>
+<td>Explicit rotation key value for deterministic re-runs. Empty = derive from <code>rotationKeySeed</code>.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Which key gets regenerated is determined by <code>usePrimaryKey</code>: with <code>usePrimaryKey = false</code>, the <strong>primary</strong> is the non-active key and therefore the one rotated; with <code>usePrimaryKey = true</code>, the <strong>secondary</strong> is rotated.</p>
+</blockquote>
+<hr />
+<h2 id="the-3-step-zero-downtime-rotation">🚦 The 3-step zero-downtime rotation</h2>
+<p>The whole point of rotating in <strong>three deliberate steps</strong> is that <strong>the active key never changes underneath a running consumer</strong>. You switch consumers onto the standby key first, confirm they are healthy, and only then invalidate the old key.</p>
+<p>The example below rotates the <strong>primary</strong> key (the currently active one). To rotate the secondary, simply mirror the steps (see <a href="#-rotating-the-secondary-key">Rotating the secondary key</a>).</p>
+<pre class="mermaid"><code>flowchart LR
+    S1["Step 1&lt;br/&gt;usePrimaryKey=true&lt;br/&gt;(baseline: primary active)"] --&gt; S2["Step 2&lt;br/&gt;usePrimaryKey=false&lt;br/&gt;(switch to secondary)"]
+    S2 --&gt; C{"Owners confirm&lt;br/&gt;healthy on secondary?"}
+    C --&gt;|Yes| S3["Step 3&lt;br/&gt;usePrimaryKey=false&lt;br/&gt;keyRotationEnabled=true&lt;br/&gt;(regenerate primary)"]
+    C --&gt;|No| R["Roll back:&lt;br/&gt;redeploy usePrimaryKey=true"]</code></pre>
+<h3 id="step-1-baseline-primary-active">Step 1 — Baseline (primary active)</h3>
+<p>This is the normal deployed state of the contract. The <strong>primary</strong> key is active and stored in Key Vault / Foundry; both keys are valid.</p>
+<div class="highlight"><pre><span></span><code>param usePrimaryKey = true
+param keyRotationEnabled = false
+</code></pre></div>
+<h3 id="step-2-switch-consumers-to-the-secondary-key-no-downtime">Step 2 — Switch consumers to the secondary key (no downtime)</h3>
+<p>Redeploy with <code>usePrimaryKey = false</code>. This <strong>pushes the secondary key</strong> to every target — Key Vault secrets, Foundry connections, and all additional gateways — while the <strong>primary key is still fully valid</strong>.</p>
+<div class="highlight"><pre><span></span><code>param usePrimaryKey = false
+param keyRotationEnabled = false
+</code></pre></div>
+<p>Result:
+- All in-contract services are now updated to the <strong>secondary</strong> key.
+- The <strong>primary</strong> key still works, so any consumer that hasn't picked up the new secret yet keeps running. <strong>No downtime.</strong></p>
+<p>➡️ <strong>Wait here.</strong> Have the use-case owners confirm their applications have picked up the secondary key and are healthy (they may cache the old secret, or need a restart / secret-refresh cycle). This confirmation gate is what makes the rotation safe.</p>
+<h3 id="step-3-regenerate-the-now-non-active-primary-key">Step 3 — Regenerate the (now non-active) primary key</h3>
+<p>Once owners confirm everyone is on the secondary key, redeploy <strong>again</strong> with <code>usePrimaryKey = false</code> <strong>and</strong> <code>keyRotationEnabled = true</code>. This <strong>regenerates the primary</strong> key (the non-active one), invalidating its old value.</p>
+<div class="highlight"><pre><span></span><code>param usePrimaryKey = false
+param keyRotationEnabled = true
+</code></pre></div>
+<p>Result:
+- The old primary key is <strong>now invalid</strong>.
+- Only the (active) secondary key works — rotation is complete, still with <strong>no downtime</strong>.</p>
+<blockquote>
+<p>After Step 3 you can leave the contract on the secondary key indefinitely, or run the reverse sequence later to rotate back to the primary.</p>
+</blockquote>
+<hr />
+<h2 id="rotating-the-secondary-key">🔁 Rotating the secondary key</h2>
+<p>To rotate the <strong>secondary</strong> key instead, keep the primary as the active key throughout:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Parameters</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Baseline</td>
+<td><code>usePrimaryKey = true</code>, <code>keyRotationEnabled = false</code></td>
+<td>Primary active (normal state)</td>
+</tr>
+<tr>
+<td>2. Confirm consumers on primary</td>
+<td><code>usePrimaryKey = true</code>, <code>keyRotationEnabled = false</code></td>
+<td>Ensure everyone uses the primary key</td>
+</tr>
+<tr>
+<td>3. Regenerate secondary</td>
+<td><code>usePrimaryKey = true</code>, <code>keyRotationEnabled = true</code></td>
+<td>Non-active (secondary) key regenerated</td>
+</tr>
+</tbody>
+</table>
+<p>Because the secondary is already the non-active key when <code>usePrimaryKey = true</code>, rotating it is a single-step regeneration once you've confirmed consumers are on the primary.</p>
+<hr />
+<h2 id="multi-gateway-behavior-resiliency-contracts">🌐 Multi-gateway behavior (resiliency contracts)</h2>
+<p>When your contract mirrors across <a href="../access-contract-resiliency-guide/">additional APIM gateways</a>, the primary gateway <strong>owns both keys</strong> and both the primary and secondary keys are <strong>synced verbatim to every additional gateway</strong>. This is essential: if only the primary key were synced, switching to the secondary (Step 2) would break requests hitting the additional gateways.</p>
+<ul>
+<li>The primary gateway generates and, when rotating, regenerates the keys.</li>
+<li>Additional gateways receive <strong>both</strong> keys explicitly (<code>explicitPrimaryKey</code> + <code>explicitSecondaryKey</code>), so a client uses the <strong>same active key</strong> regardless of which gateway serves the request — including after rotation.</li>
+<li>Deployment order is unchanged: primary first, additional gateways next (reusing the keys), then additional Key Vaults / Foundry connections.</li>
+</ul>
+<hr />
+<h2 id="verification">✅ Verification</h2>
+<p>After each step, verify the deployment outputs and the live keys:</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Deployment outputs report which key is active and whether rotation ran</span>
+<span class="n">az</span> <span class="n">deployment</span> <span class="n">sub</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="p">&lt;</span><span class="n">deployment-name</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">outputs</span><span class="p">.</span><span class="n">activeKeySlot</span><span class="p">.</span><span class="n">value</span>
+<span class="n">az</span> <span class="n">deployment</span> <span class="n">sub</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="p">&lt;</span><span class="n">deployment-name</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">outputs</span><span class="p">.</span><span class="n">keyRotationApplied</span><span class="p">.</span><span class="n">value</span>
+
+<span class="c"># Compare the live APIM subscription keys (primary + secondary)</span>
+<span class="n">az</span> <span class="n">apim</span> <span class="n">subscription</span> <span class="n">show</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-resource-group</span> <span class="p">&lt;</span><span class="n">apim-rg</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-service-name</span> <span class="p">&lt;</span><span class="n">apim-name</span><span class="p">&gt;</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-subscription-id</span> <span class="p">&lt;</span><span class="n">serviceCode</span><span class="p">&gt;-&lt;</span><span class="n">BU</span><span class="p">&gt;-&lt;</span><span class="n">UseCase</span><span class="p">&gt;-&lt;</span><span class="n">ENV</span><span class="p">&gt;</span><span class="n">-SUB</span><span class="p">-</span><span class="n">01</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;{primary: primaryKey, secondary: secondaryKey}&quot;</span> <span class="n">-o</span> <span class="n">json</span>
+
+<span class="c"># Confirm the Key Vault secret now holds the ACTIVE key</span>
+<span class="n">az</span> <span class="n">keyvault</span> <span class="n">secret</span> <span class="n">show</span> <span class="p">-</span><span class="n">-vault-name</span> <span class="p">&lt;</span><span class="n">kv-name</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-name</span> <span class="p">&lt;</span><span class="n">api-key-secret-name</span><span class="p">&gt;</span> <span class="p">-</span><span class="n">-query</span> <span class="n">value</span> <span class="n">-o</span> <span class="n">tsv</span>
+</code></pre></div>
+<p>Expected results per step:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th><code>activeKeySlot</code></th>
+<th>Active key value</th>
+<th>Non-active key value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (baseline)</td>
+<td><code>primary</code></td>
+<td>primary (unchanged)</td>
+<td>secondary (unchanged)</td>
+</tr>
+<tr>
+<td>2 (switch)</td>
+<td><code>secondary</code></td>
+<td>secondary (unchanged)</td>
+<td>primary (<strong>still valid</strong>)</td>
+</tr>
+<tr>
+<td>3 (rotate)</td>
+<td><code>secondary</code></td>
+<td>secondary (unchanged)</td>
+<td>primary (<strong>changed / old value invalid</strong>)</td>
+</tr>
+</tbody>
+</table>
+<p>For multi-gateway contracts, run the <code>az apim subscription show</code> check against <strong>each</strong> gateway and confirm the primary/secondary key values are identical everywhere.</p>
+<hr />
+<h2 id="notes-troubleshooting">⚠️ Notes &amp; troubleshooting</h2>
+<ul>
+<li><strong>Idempotency of Step 3</strong>: with <code>keyRotationEnabled = true</code> and the default <code>rotationKeySeed = newGuid()</code>, <strong>every</strong> redeploy regenerates the non-active key again (a new value each run). This is intended — Step 3 is a deliberate, one-time action. To make re-runs deterministic (same value), set <code>rotationKeyOverride</code> to an explicit value.</li>
+<li><strong>Return to a "both keys valid" state</strong>: after completing rotation, do a maintenance deploy with <code>keyRotationEnabled = false</code> so subsequent deployments don't keep regenerating the non-active key.</li>
+<li><strong>Rollback during Step 2</strong>: if owners report problems on the secondary key before Step 3, simply redeploy with <code>usePrimaryKey = true</code> (rotation disabled). Since the primary was never invalidated, consumers fall back instantly.</li>
+<li><strong>Consumer secret caching</strong>: applications that cache the api-key must refresh it (restart, Key Vault reference refresh, or managed cache TTL) to pick up the switched key in Step 2. Confirm this <strong>before</strong> Step 3.</li>
+<li><strong>Key length / format</strong>: the derived rotation key is a 64-character lowercase hex string, well within APIM's subscription-key length limits. A custom <code>rotationKeyOverride</code> must be 1–256 characters.</li>
+<li><strong>Non-active key only</strong>: rotation never touches the active key, guaranteeing continuity. To rotate <em>both</em> keys, run the full 3-step flow once, then run the reverse flow.</li>
+</ul>
+<hr />
+<h2 id="related">🔗 Related</h2>
+<ul>
+<li><a href="./README.md">Access Contracts README</a></li>
+<li><a href="../access-contract-resiliency-guide/">Business Continuity &amp; Resiliency Guide</a></li>
+<li><a href="./contract-quick-reference-guide.md">Contract Quick Reference Guide</a></li>
+<li><a href="./citadel-access-contracts-policy.md">Access Contract Policy Guide</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
