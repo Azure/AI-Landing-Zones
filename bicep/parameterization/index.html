@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -201,9 +201,7 @@
 
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
       
@@ -1128,6 +1126,297 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#environment-and-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Environment and location
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#identity-and-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identity and access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#feature-toggles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature toggles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deploy-toggles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy toggles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource naming
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resource-name-overrides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource name overrides
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#existing-resource-ids-byo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing resource IDs (BYO)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Existing resource IDs (BYO)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#workload-data-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workload data services
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hub-jumpbox-bastion-nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hub jumpbox / Bastion / NAT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-dns-zones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private DNS zones
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hub-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hub integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dns-zone-link-suffix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNS zone link suffix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#virtual-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Virtual Machine
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complex-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complex objects
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complex objects">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model deployments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#workload-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workload profiles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-account-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Storage account containers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#database-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Database containers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#container-apps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Container apps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -1884,35 +2173,35 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <h2 id="complex-objects">Complex objects</h2>
 <h3 id="model-deployments">Model deployments</h3>
 <p>The <code>modelDeploymentList</code> parameter defines which AI models to deploy in the Foundry account.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;modelDeploymentList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"modelDeploymentList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;chat&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenAI&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gpt-5-nano&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-08-07&quot;</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"chat"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"model"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OpenAI"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-5-nano"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-08-07"</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;sku&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;GlobalStandard&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span>
+<span class="w">      </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GlobalStandard"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"capacity"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;canonical_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CHAT_DEPLOYMENT_NAME&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;apiVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-12-01-preview&quot;</span>
+<span class="w">      </span><span class="nt">"canonical_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CHAT_DEPLOYMENT_NAME"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-12-01-preview"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text-embedding&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OpenAI&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;text-embedding-3-large&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1&quot;</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text-embedding"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"model"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OpenAI"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text-embedding-3-large"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;sku&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Standard&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;capacity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span>
+<span class="w">      </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Standard"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"capacity"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;canonical_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;EMBEDDING_DEPLOYMENT_NAME&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;apiVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2025-12-01-preview&quot;</span>
+<span class="w">      </span><span class="nt">"canonical_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EMBEDDING_DEPLOYMENT_NAME"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"apiVersion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2025-12-01-preview"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -1961,17 +2250,17 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </table>
 <h3 id="workload-profiles">Workload profiles</h3>
 <p>The <code>workloadProfiles</code> parameter defines the Container Apps Environment workload profiles.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;workloadProfiles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"workloadProfiles"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Consumption&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;workloadProfileType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Consumption&quot;</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Consumption"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"workloadProfileType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Consumption"</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;workloadProfileType&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;D4&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;minimumCount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;maximumCount&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">      </span><span class="nt">"workloadProfileType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"D4"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"minimumCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"maximumCount"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
@@ -2004,53 +2293,53 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </table>
 <h3 id="storage-account-containers">Storage account containers</h3>
 <p>The <code>storageAccountContainersList</code> parameter defines blob containers to create in the solution storage account.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;storageAccountContainersList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"storageAccountContainersList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;documents&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;canonical_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;DOCUMENTS_STORAGE_CONTAINER&quot;</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"documents"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"canonical_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DOCUMENTS_STORAGE_CONTAINER"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="database-containers">Database containers</h3>
 <p>The <code>databaseContainersList</code> parameter defines containers to create in the Cosmos DB database.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;databaseContainersList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"databaseContainersList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;conversations&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;canonical_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CONVERSATIONS_DATABASE_CONTAINER&quot;</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"conversations"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"canonical_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONVERSATIONS_DATABASE_CONTAINER"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
 <h3 id="container-apps">Container apps</h3>
 <p>The <code>containerAppsList</code> parameter defines the container apps to deploy and their RBAC roles.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;containerAppsList&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">"containerAppsList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;external&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;target_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;service_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;orchestrator&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;profile_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;min_replicas&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;max_replicas&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;canonical_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ORCHESTRATOR_APP&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;dapr&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;appId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;orchestrator&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;appPort&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"external"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"target_port"</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"service_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"orchestrator"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"profile_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"main"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"min_replicas"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"max_replicas"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"canonical_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ORCHESTRATOR_APP"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"dapr"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"appId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"orchestrator"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"appPort"</span><span class="p">:</span><span class="w"> </span><span class="mi">8080</span>
 <span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;roles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="s2">&quot;AppConfigurationDataReader&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;CognitiveServicesUser&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;CognitiveServicesOpenAIUser&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;AcrPull&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;CosmosDBBuiltInDataContributor&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;SearchIndexDataReader&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;StorageBlobDataReader&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="s2">&quot;KeyVaultSecretsUser&quot;</span>
+<span class="w">      </span><span class="nt">"roles"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">"AppConfigurationDataReader"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"CognitiveServicesUser"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"CognitiveServicesOpenAIUser"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"AcrPull"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"CosmosDBBuiltInDataContributor"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"SearchIndexDataReader"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"StorageBlobDataReader"</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">"KeyVaultSecretsUser"</span>
 <span class="w">      </span><span class="p">]</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">]</span>
@@ -2180,10 +2469,10 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

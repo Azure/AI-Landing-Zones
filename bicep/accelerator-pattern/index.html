@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -201,9 +201,7 @@
 
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
       
@@ -951,6 +949,120 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-this-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use this pattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-pattern-in-one-picture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The pattern in one picture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#required-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-happens-during-azd-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What happens during azd provision
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upgrade-and-local-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade and local workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-agent-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code agent checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references-and-next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References and next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -1014,7 +1126,7 @@
 <p>The pattern is made of five small pieces.</p>
 <p><strong>1. <code>.gitmodules</code></strong></p>
 <p>Declares the AI Landing Zone repository as a submodule and records the version the accelerator expects.</p>
-<div class="highlight"><pre><span></span><code><span class="k">[submodule &quot;infra&quot;]</span>
+<div class="highlight"><pre><span></span><code><span class="k">[submodule "infra"]</span>
 <span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
 <span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
 <span class="w">    </span><span class="na">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">v2.0.2</span>
@@ -1082,16 +1194,16 @@
 <p>This file lives in the accelerator repository root. During <code>preprovision</code>, it replaces the submodule's <code>infra/main.parameters.json</code>.</p>
 <p>Use it to set the accelerator defaults:</p>
 <div class="highlight"><pre><span></span><code>{
-  &quot;$schema&quot;: &quot;https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#&quot;,
-  &quot;contentVersion&quot;: &quot;1.0.0.0&quot;,
-  &quot;parameters&quot;: {
-    &quot;environmentName&quot;: { &quot;value&quot;: &quot;${AZURE_ENV_NAME}&quot; },
-    &quot;location&quot;: { &quot;value&quot;: &quot;${AZURE_LOCATION}&quot; },
-    &quot;principalId&quot;: { &quot;value&quot;: &quot;${AZURE_PRINCIPAL_ID}&quot; },
-    &quot;appConfigLabel&quot;: { &quot;value&quot;: &quot;my-accelerator&quot; },
-    &quot;networkIsolation&quot;: { &quot;value&quot;: &quot;${NETWORK_ISOLATION=false}&quot; },
-    &quot;deployContainerApps&quot;: { &quot;value&quot;: &quot;true&quot; },
-    &quot;deploySearchService&quot;: { &quot;value&quot;: &quot;true&quot; }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": { "value": "${AZURE_ENV_NAME}" },
+    "location": { "value": "${AZURE_LOCATION}" },
+    "principalId": { "value": "${AZURE_PRINCIPAL_ID}" },
+    "appConfigLabel": { "value": "my-accelerator" },
+    "networkIsolation": { "value": "${NETWORK_ISOLATION=false}" },
+    "deployContainerApps": { "value": "true" },
+    "deploySearchService": { "value": "true" }
   }
 }
 </code></pre></div>
@@ -1102,10 +1214,10 @@
 <p><strong>5. <code>manifest.json</code> (optional)</strong></p>
 <p>Use this only when you want to record release metadata, such as the accelerator tag and the AI Landing Zone tag it was tested with.</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v0.1.0&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;repo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/myorg/my-accelerator.git&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;ailz_tag&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;v2.0.2&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;components&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">  </span><span class="nt">"tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.1.0"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"repo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/myorg/my-accelerator.git"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"ailz_tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v2.0.2"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
 <span class="p">}</span>
 </code></pre></div>
 <h2 id="what-happens-during-azd-provision">What happens during <code>azd provision</code></h2>
@@ -1139,10 +1251,10 @@
 <p>This is about the values an accelerator passes into the AI Landing Zone Bicep module. If the accelerator parameterizes a boolean field that lives inside an AI Landing Zone <code>object</code> parameter, configure that conversion in the accelerator's <code>preProvision</code> hook with <code>nestedBooleanRewrites</code>. The hook runs after <code>main.parameters.json</code> is copied into <code>infra/</code> and before preflight checks, so the deployment receives a real JSON boolean instead of the string produced by environment-variable substitution.</p>
 <p>For example, this accelerator parameterizes the nested <code>enabled</code> field:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;publicIngress&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${PUBLIC_INGRESS_ENABLED=false}&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;frontendHostName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}&quot;</span>
+<span class="w">  </span><span class="nt">"publicIngress"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${PUBLIC_INGRESS_ENABLED=false}"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"frontendHostName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}"</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -1151,22 +1263,22 @@
 <p>PowerShell starter:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$nestedBooleanRewrites</span> <span class="p">=</span> <span class="p">@(</span>
     <span class="p">@{</span>
-        <span class="k">Parameter</span> <span class="p">=</span> <span class="s1">&#39;publicIngress&#39;</span>
-        <span class="n">PropertyPath</span> <span class="p">=</span> <span class="p">@(</span><span class="s1">&#39;enabled&#39;</span><span class="p">)</span>
-        <span class="n">EnvironmentVariable</span> <span class="p">=</span> <span class="s1">&#39;PUBLIC_INGRESS_ENABLED&#39;</span>
+        <span class="k">Parameter</span> <span class="p">=</span> <span class="s1">'publicIngress'</span>
+        <span class="n">PropertyPath</span> <span class="p">=</span> <span class="p">@(</span><span class="s1">'enabled'</span><span class="p">)</span>
+        <span class="n">EnvironmentVariable</span> <span class="p">=</span> <span class="s1">'PUBLIC_INGRESS_ENABLED'</span>
         <span class="k">Default</span> <span class="p">=</span> <span class="nv">$false</span>
     <span class="p">}</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Shell starter:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">NESTED_BOOLEAN_REWRITES</span><span class="o">=</span><span class="s1">&#39;[</span>
+<div class="highlight"><pre><span></span><code><span class="nv">NESTED_BOOLEAN_REWRITES</span><span class="o">=</span><span class="s1">'[</span>
 <span class="s1">  {</span>
-<span class="s1">    &quot;parameter&quot;: &quot;publicIngress&quot;,</span>
-<span class="s1">    &quot;propertyPath&quot;: [&quot;enabled&quot;],</span>
-<span class="s1">    &quot;environmentVariable&quot;: &quot;PUBLIC_INGRESS_ENABLED&quot;,</span>
-<span class="s1">    &quot;default&quot;: false</span>
+<span class="s1">    "parameter": "publicIngress",</span>
+<span class="s1">    "propertyPath": ["enabled"],</span>
+<span class="s1">    "environmentVariable": "PUBLIC_INGRESS_ENABLED",</span>
+<span class="s1">    "default": false</span>
 <span class="s1">  }</span>
-<span class="s1">]&#39;</span>
+<span class="s1">]'</span>
 </code></pre></div>
 <p>Leave the configuration empty when the accelerator does not parameterize this kind of nested boolean field.</p>
 <h2 id="step-by-step-setup">Step-by-step setup</h2>
@@ -1175,7 +1287,7 @@
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>-b<span class="w"> </span>v2.0.2<span class="w"> </span>https://github.com/Azure/bicep-ptn-aiml-landing-zone.git<span class="w"> </span>infra
 </code></pre></div>
 <p>Then edit <code>.gitmodules</code> and add <code>ignore = dirty</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">[submodule &quot;infra&quot;]</span>
+<div class="highlight"><pre><span></span><code><span class="k">[submodule "infra"]</span>
 <span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
 <span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
 <span class="w">    </span><span class="na">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">v2.0.2</span>
@@ -1221,7 +1333,7 @@ azd<span class="w"> </span>provision
 </code></pre></div>
 <p>During provisioning, the script should print messages similar to:</p>
 <div class="highlight"><pre><span></span><code>Initializing infrastructure submodule...
-Pinning infra submodule to &#39;v2.0.2&#39;...
+Pinning infra submodule to 'v2.0.2'...
 Applying project main.parameters.json to infra...
 Running landing-zone preflight checks...
 </code></pre></div>
@@ -1240,7 +1352,7 @@ git<span class="w"> </span>fetch<span class="w"> </span>--tags
 git<span class="w"> </span>checkout<span class="w"> </span>v2.1.0
 <span class="nb">cd</span><span class="w"> </span>..
 git<span class="w"> </span>add<span class="w"> </span>infra<span class="w"> </span>.gitmodules<span class="w"> </span>main.parameters.json<span class="w"> </span>manifest.json
-git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Bump AI Landing Zone to v2.1.0&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Bump AI Landing Zone to v2.1.0"</span>
 </code></pre></div>
 <p>For local development:</p>
 <ul>
@@ -1264,9 +1376,9 @@ git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </sp
 </ol>
 <p>Validation checks:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">test</span><span class="w"> </span>-f<span class="w"> </span>infra/main.bicep
-grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;bicep-ptn-aiml-landing-zone&#39;</span><span class="w"> </span>.gitmodules
-grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;path: infra&#39;</span><span class="w"> </span>azure.yaml
-grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;preprovision:&#39;</span><span class="w"> </span>azure.yaml
+grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'bicep-ptn-aiml-landing-zone'</span><span class="w"> </span>.gitmodules
+grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'path: infra'</span><span class="w"> </span>azure.yaml
+grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'preprovision:'</span><span class="w"> </span>azure.yaml
 jq<span class="w"> </span>.<span class="w"> </span>main.parameters.json<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
 </code></pre></div>
 <p>Invariants to preserve:</p>
@@ -1336,10 +1448,10 @@ jq<span class="w"> </span>.<span class="w"> </span>main.parameters.json<span cla
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

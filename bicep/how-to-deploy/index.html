@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -201,9 +201,7 @@
 
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
       
@@ -946,6 +944,115 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#basic-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#zero-trust-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Zero Trust Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Zero Trust Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-the-jumpbox-vm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using the Jumpbox VM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-public-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional public endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-landing-zone-integrated-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Landing Zone Integrated Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -1039,12 +1146,12 @@ azd<span class="w"> </span>auth<span class="w"> </span>login
 </code></pre></div>
 <p><strong>2. Set the topology preset and hub integration</strong></p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>ailz-integrated
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_VNET_RESOURCE_ID<span class="w"> </span><span class="s2">&quot;/subscriptions/&lt;sub&gt;/resourceGroups/&lt;rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EGRESS_NEXT_HOP_IP<span class="w"> </span><span class="s2">&quot;&lt;hub firewall private IP&gt;&quot;</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_VNET_RESOURCE_ID<span class="w"> </span><span class="s2">"/subscriptions/&lt;sub&gt;/resourceGroups/&lt;rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;"</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EGRESS_NEXT_HOP_IP<span class="w"> </span><span class="s2">"&lt;hub firewall private IP&gt;"</span>
 </code></pre></div>
 <p>You'll typically also bring your own observability and DNS zones:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_ID<span class="w"> </span><span class="s2">&quot;/subscriptions/.../workspaces/&lt;law&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_ID<span class="w">    </span><span class="s2">&quot;/subscriptions/.../components/&lt;ai&gt;&quot;</span>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_ID<span class="w"> </span><span class="s2">"/subscriptions/.../workspaces/&lt;law&gt;"</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_ID<span class="w">    </span><span class="s2">"/subscriptions/.../components/&lt;ai&gt;"</span>
 <span class="c1"># Plus per-zone EXISTING_PRIVATE_DNS_ZONE_* IDs as needed — see Parameterization</span>
 </code></pre></div>
 <p><strong>3. Sign in and provision</strong></p>
@@ -1109,10 +1216,10 @@ azd<span class="w"> </span>provision
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -201,9 +201,7 @@
 
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
       
@@ -929,6 +927,98 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-this-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to use this topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-spoke-creates-vs-consumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the spoke creates vs. consumes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#minimum-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minimum parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-planning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network planning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -1028,18 +1118,18 @@
 <h2 id="minimum-parameters">Minimum parameters</h2>
 <p>For an AI LZ Integrated deployment:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w">                  </span>ailz-integrated
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_VNET_RESOURCE_ID<span class="w">             </span><span class="s2">&quot;/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EGRESS_NEXT_HOP_IP<span class="w">               </span><span class="s2">&quot;&lt;hub firewall private IP&gt;&quot;</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HUB_VNET_RESOURCE_ID<span class="w">             </span><span class="s2">"/subscriptions/&lt;sub&gt;/resourceGroups/&lt;hub-rg&gt;/providers/Microsoft.Network/virtualNetworks/&lt;hub-vnet&gt;"</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EGRESS_NEXT_HOP_IP<span class="w">               </span><span class="s2">"&lt;hub firewall private IP&gt;"</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w">                </span><span class="nb">true</span>
 
 <span class="c1"># Recommended: reuse hub observability</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_ID<span class="w"> </span><span class="s2">&quot;/subscriptions/.../workspaces/&lt;law&gt;&quot;</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_ID<span class="w">    </span><span class="s2">&quot;/subscriptions/.../components/&lt;ai&gt;&quot;</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_LOG_ANALYTICS_WORKSPACE_ID<span class="w"> </span><span class="s2">"/subscriptions/.../workspaces/&lt;law&gt;"</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_APPLICATION_INSIGHTS_ID<span class="w">    </span><span class="s2">"/subscriptions/.../components/&lt;ai&gt;"</span>
 </code></pre></div>
 <p>If your hub also hosts the standard Private DNS zones, set each <code>EXISTING_PRIVATE_DNS_ZONE_*</code> variable to its hub resource ID. See <a href="../parameterization/">Parameterization</a> for the complete list of 15 zone parameters.</p>
 <h2 id="network-planning">Network planning</h2>
 <p>The spoke VNet address space must not overlap with the hub VNet. The default spoke prefix (<code>10.0.0.0/22</code>) is safe for a hub on <code>10.100.0.0/16</code>. If your hub uses a different prefix, set:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>VNET_ADDRESS_PREFIXES<span class="w"> </span><span class="s2">&quot;[\&quot;10.200.0.0/22\&quot;]&quot;</span>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>VNET_ADDRESS_PREFIXES<span class="w"> </span><span class="s2">"[\"10.200.0.0/22\"]"</span>
 </code></pre></div>
 <p>Subnet minimums enforced by the pre-flight script:</p>
 <table>
@@ -1141,10 +1231,10 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

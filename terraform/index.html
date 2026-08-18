@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -201,9 +201,7 @@
 
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
       
@@ -1010,6 +1008,181 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-this-deployment-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What This Deployment Does
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-deployment-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Deployment Instructions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step Deployment Instructions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-interactive-login-easiest-for-getting-started" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A: Interactive Login (Easiest for Getting Started)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-service-principal-authentication-for-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B: Service Principal Authentication (For Automation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Making Changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean-up-destroy-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clean Up / Destroy Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting Common Issues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-the-terraform-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding the Terraform Files
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps-after-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps After Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Help
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -1058,7 +1231,7 @@
 <span class="n">az</span> <span class="n">feature</span> <span class="n">register</span> <span class="p">-</span><span class="n">-name</span> <span class="n">EncryptionAtHost</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Compute</span>
 </code></pre></div>
 <p><strong>Note:</strong> Provider registration can take 5-10 minutes. Check status with:
-<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">provider</span> <span class="n">show</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">CognitiveServices</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">&quot;registrationState&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">provider</span> <span class="n">show</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">CognitiveServices</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">"registrationState"</span>
 </code></pre></div></p>
 <hr />
 <h2 id="step-by-step-deployment-instructions">Step-by-Step Deployment Instructions</h2>
@@ -1077,7 +1250,7 @@
 <span class="n">az</span> <span class="n">account</span> <span class="n">list</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
 
 <span class="c"># Set the subscription you want to use</span>
-<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="s2">&quot;&lt;YOUR_SUBSCRIPTION_ID_OR_NAME&gt;&quot;</span>
+<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="s2">"&lt;YOUR_SUBSCRIPTION_ID_OR_NAME&gt;"</span>
 
 <span class="c"># Verify the correct subscription is selected</span>
 <span class="n">az</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
@@ -1094,56 +1267,56 @@
 </code></pre></div></p>
 <p><strong>Step 2: Create the Service Principal</strong>
 <div class="highlight"><pre><span></span><code><span class="c"># Replace &lt;SUBSCRIPTION_ID&gt; with your actual subscription ID</span>
-<span class="c"># Replace &lt;SP_NAME&gt; with a descriptive name (e.g., &quot;terraform-ai-landing-zone-sp&quot;)</span>
+<span class="c"># Replace &lt;SP_NAME&gt; with a descriptive name (e.g., "terraform-ai-landing-zone-sp")</span>
 <span class="c"># The below command creates a Service Principal and assigns contributor role to the subscription</span>
-<span class="n">az</span> <span class="n">ad</span> <span class="nb">sp </span><span class="n">create-for-rbac</span> <span class="p">-</span><span class="n">-name</span> <span class="s2">&quot;&lt;SP_NAME&gt;&quot;</span> <span class="p">-</span><span class="n">-role</span><span class="p">=</span><span class="s2">&quot;Contributor&quot;</span> <span class="p">-</span><span class="n">-scopes</span><span class="p">=</span><span class="s2">&quot;/subscriptions/&lt;SUBSCRIPTION_ID&gt;&quot;</span>
+<span class="n">az</span> <span class="n">ad</span> <span class="nb">sp </span><span class="n">create-for-rbac</span> <span class="p">-</span><span class="n">-name</span> <span class="s2">"&lt;SP_NAME&gt;"</span> <span class="p">-</span><span class="n">-role</span><span class="p">=</span><span class="s2">"Contributor"</span> <span class="p">-</span><span class="n">-scopes</span><span class="p">=</span><span class="s2">"/subscriptions/&lt;SUBSCRIPTION_ID&gt;"</span>
 </code></pre></div></p>
 <p><strong>Example output:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;appId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;12345678-1234-1234-1234-123456789abc&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;displayName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;terraform-ai-landing-zone-sp&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;abcdefgh-1234-5678-90ab-cdefghijklmn&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;tenant&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;87654321-4321-4321-4321-210987654321&quot;</span>
+<span class="w">  </span><span class="nt">"appId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345678-1234-1234-1234-123456789abc"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"displayName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"terraform-ai-landing-zone-sp"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"password"</span><span class="p">:</span><span class="w"> </span><span class="s2">"abcdefgh-1234-5678-90ab-cdefghijklmn"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"tenant"</span><span class="p">:</span><span class="w"> </span><span class="s2">"87654321-4321-4321-4321-210987654321"</span>
 <span class="p">}</span>
 </code></pre></div>
 <p><strong>Save these values securely!</strong> You won't be able to see the password again.</p>
 <p><strong>Add role assignment to Service Principal</strong></p>
-<p><div class="highlight"><pre><span></span><code><span class="c"># To grant Key Vault permissions, the Service Principal must have either &quot;Owner&quot; or &quot;User Access Administrator&quot;. </span>
-<span class="c"># Following least privilege principle, assign &quot;User Access Administrator&quot;. </span>
+<p><div class="highlight"><pre><span></span><code><span class="c"># To grant Key Vault permissions, the Service Principal must have either "Owner" or "User Access Administrator". </span>
+<span class="c"># Following least privilege principle, assign "User Access Administrator". </span>
 <span class="c"># Replace &lt;SP_AppId&gt; with the Application ID from the output above. </span>
 <span class="c"># Assign the role:</span>
-<span class="n">az</span> <span class="n">role</span> <span class="n">assignment</span> <span class="n">create</span> <span class="p">-</span><span class="n">-assignee</span> <span class="s2">&quot;&lt;SP_AppID&gt;&quot;</span> <span class="p">-</span><span class="n">-role</span><span class="p">=</span><span class="s2">&quot;User Access Administrator&quot;</span> <span class="p">-</span><span class="n">-scope</span><span class="p">=</span><span class="s2">&quot;/subscriptions/&lt;SUBSCRIPTION_ID&gt;&quot;</span>
+<span class="n">az</span> <span class="n">role</span> <span class="n">assignment</span> <span class="n">create</span> <span class="p">-</span><span class="n">-assignee</span> <span class="s2">"&lt;SP_AppID&gt;"</span> <span class="p">-</span><span class="n">-role</span><span class="p">=</span><span class="s2">"User Access Administrator"</span> <span class="p">-</span><span class="n">-scope</span><span class="p">=</span><span class="s2">"/subscriptions/&lt;SUBSCRIPTION_ID&gt;"</span>
 </code></pre></div>
 <strong>Step 3: Set Environment Variables</strong></p>
 <p>In PowerShell, set these environment variables (they must be named exactly as shown):</p>
 <div class="highlight"><pre><span></span><code><span class="c"># Set environment variables for the current session</span>
-<span class="nv">$env:ARM_CLIENT_ID</span><span class="p">=</span><span class="s2">&quot;&lt;appId from output&gt;&quot;</span>
-<span class="nv">$env:ARM_CLIENT_SECRET</span><span class="p">=</span><span class="s2">&quot;&lt;password from output&gt;&quot;</span>
-<span class="nv">$env:ARM_TENANT_ID</span><span class="p">=</span><span class="s2">&quot;&lt;tenant from output&gt;&quot;</span>
-<span class="nv">$env:ARM_SUBSCRIPTION_ID</span><span class="p">=</span><span class="s2">&quot;&lt;your subscription ID&gt;&quot;</span>
+<span class="nv">$env:ARM_CLIENT_ID</span><span class="p">=</span><span class="s2">"&lt;appId from output&gt;"</span>
+<span class="nv">$env:ARM_CLIENT_SECRET</span><span class="p">=</span><span class="s2">"&lt;password from output&gt;"</span>
+<span class="nv">$env:ARM_TENANT_ID</span><span class="p">=</span><span class="s2">"&lt;tenant from output&gt;"</span>
+<span class="nv">$env:ARM_SUBSCRIPTION_ID</span><span class="p">=</span><span class="s2">"&lt;your subscription ID&gt;"</span>
 <span class="nv">$env:ARM_USE_AZUREAD</span><span class="p">=</span><span class="n">true</span>
 
-<span class="c"># Verify they&#39;re set</span>
-<span class="nb">echo </span><span class="s2">&quot;Client ID: $env:ARM_CLIENT_ID&quot;</span>
-<span class="nb">echo </span><span class="s2">&quot;Tenant ID: $env:ARM_TENANT_ID&quot;</span>
-<span class="nb">echo </span><span class="s2">&quot;Subscription ID: $env:ARM_SUBSCRIPTION_ID&quot;</span>
-<span class="nb">echo </span><span class="s2">&quot;Client Secret is set: </span><span class="p">$(</span><span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="o">-ne</span> <span class="nv">$null</span><span class="p">)</span><span class="s2">&quot;</span>
-<span class="nb">echo </span><span class="s2">&quot;Use Azure AD: $env:ARM_USE_AZUREAD&quot;</span>
+<span class="c"># Verify they're set</span>
+<span class="nb">echo </span><span class="s2">"Client ID: $env:ARM_CLIENT_ID"</span>
+<span class="nb">echo </span><span class="s2">"Tenant ID: $env:ARM_TENANT_ID"</span>
+<span class="nb">echo </span><span class="s2">"Subscription ID: $env:ARM_SUBSCRIPTION_ID"</span>
+<span class="nb">echo </span><span class="s2">"Client Secret is set: </span><span class="p">$(</span><span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="o">-ne</span> <span class="nv">$null</span><span class="p">)</span><span class="s2">"</span>
+<span class="nb">echo </span><span class="s2">"Use Azure AD: $env:ARM_USE_AZUREAD"</span>
 </code></pre></div>
 <p><strong>To make these permanent (persist across PowerShell sessions):</strong>
 <div class="highlight"><pre><span></span><code><span class="c"># Set user environment variables (permanent)</span>
-<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;appId&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_SECRET&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;password&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_TENANT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;tenant&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_SUBSCRIPTION_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;subscription_id&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_USE_AZUREAD&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_CLIENT_ID'</span><span class="p">,</span> <span class="s1">'&lt;appId&gt;'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_CLIENT_SECRET'</span><span class="p">,</span> <span class="s1">'&lt;password&gt;'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_TENANT_ID'</span><span class="p">,</span> <span class="s1">'&lt;tenant&gt;'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_SUBSCRIPTION_ID'</span><span class="p">,</span> <span class="s1">'&lt;subscription_id&gt;'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="no">[System.Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_USE_AZUREAD'</span><span class="p">,</span> <span class="s1">'true'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
 
 <span class="c"># Refresh your current session to load the variables</span>
-<span class="nv">$env:ARM_CLIENT_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_CLIENT_SECRET&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="nv">$env:ARM_TENANT_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_TENANT_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="nv">$env:ARM_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_SUBSCRIPTION_ID&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
-<span class="nv">$env:ARM_USE_AZUREAD</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">&#39;ARM_USE_AZUREAD&#39;</span><span class="p">,</span> <span class="s1">&#39;User&#39;</span><span class="p">)</span>
+<span class="nv">$env:ARM_CLIENT_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_CLIENT_ID'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="nv">$env:ARM_CLIENT_SECRET</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_CLIENT_SECRET'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="nv">$env:ARM_TENANT_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_TENANT_ID'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="nv">$env:ARM_SUBSCRIPTION_ID</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_SUBSCRIPTION_ID'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
+<span class="nv">$env:ARM_USE_AZUREAD</span> <span class="p">=</span> <span class="no">[System.Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s1">'ARM_USE_AZUREAD'</span><span class="p">,</span> <span class="s1">'User'</span><span class="p">)</span>
 </code></pre></div></p>
 <p><strong>Step 4: Test the Service Principal</strong>
 <div class="highlight"><pre><span></span><code><span class="c"># Login using the service principal</span>
@@ -1174,10 +1347,10 @@ Terraform stores information about your infrastructure in a "state file". By def
 <p><strong>Option B: Use Azure Storage Backend (Recommended for Production)</strong></p>
 <p>First, create the backend resources:</p>
 <div class="highlight"><pre><span></span><code><span class="c"># Set variables (customize these)</span>
-<span class="nv">$RESOURCE_GROUP_NAME</span><span class="p">=</span><span class="s2">&quot;tfstate-rg&quot;</span>
-<span class="nv">$STORAGE_ACCOUNT_NAME</span><span class="p">=</span><span class="s2">&quot;tfstate</span><span class="p">$(</span><span class="nb">Get-Random</span> <span class="n">-Minimum</span> <span class="n">10000</span> <span class="n">-Maximum</span> <span class="n">99999</span><span class="p">)</span><span class="s2">&quot;</span>  <span class="c"># Must be globally unique</span>
-<span class="nv">$CONTAINER_NAME</span><span class="p">=</span><span class="s2">&quot;tfstate&quot;</span>
-<span class="nv">$LOCATION</span><span class="p">=</span><span class="s2">&quot;eastus&quot;</span>
+<span class="nv">$RESOURCE_GROUP_NAME</span><span class="p">=</span><span class="s2">"tfstate-rg"</span>
+<span class="nv">$STORAGE_ACCOUNT_NAME</span><span class="p">=</span><span class="s2">"tfstate</span><span class="p">$(</span><span class="nb">Get-Random</span> <span class="n">-Minimum</span> <span class="n">10000</span> <span class="n">-Maximum</span> <span class="n">99999</span><span class="p">)</span><span class="s2">"</span>  <span class="c"># Must be globally unique</span>
+<span class="nv">$CONTAINER_NAME</span><span class="p">=</span><span class="s2">"tfstate"</span>
+<span class="nv">$LOCATION</span><span class="p">=</span><span class="s2">"eastus"</span>
 
 <span class="c"># Create resource group</span>
 <span class="n">az</span> <span class="nb">group </span><span class="n">create</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$RESOURCE_GROUP_NAME</span> <span class="p">-</span><span class="n">-location</span> <span class="nv">$LOCATION</span>
@@ -1190,11 +1363,11 @@ Terraform stores information about your infrastructure in a "state file". By def
 </code></pre></div>
 <p><strong>Then create a file named <code>backend.tf</code> in the terraform directory:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="nb">terraform</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="kr">backend</span><span class="w"> </span><span class="nv">&quot;azurerm&quot;</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="na">resource_group_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tfstate-rg&quot;</span>
-<span class="w">    </span><span class="na">storage_account_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tfstate12345&quot;</span><span class="c1">  # Use the name from above</span>
-<span class="w">    </span><span class="na">container_name</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;tfstate&quot;</span>
-<span class="w">    </span><span class="na">key</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ai-landing-zone.tfstate&quot;</span>
+<span class="w">  </span><span class="kr">backend</span><span class="w"> </span><span class="nv">"azurerm"</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="na">resource_group_name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"tfstate-rg"</span>
+<span class="w">    </span><span class="na">storage_account_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"tfstate12345"</span><span class="c1">  # Use the name from above</span>
+<span class="w">    </span><span class="na">container_name</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">"tfstate"</span>
+<span class="w">    </span><span class="na">key</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-landing-zone.tfstate"</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1202,7 +1375,7 @@ Terraform stores information about your infrastructure in a "state file". By def
 <p><strong>Step 4: Configure Variables (Optional)</strong></p>
 <p>The code has default values, but you can customize them by creating a <code>terraform.tfvars</code> file:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># terraform.tfvars</span>
-<span class="na">enable_telemetry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="c1">  # Set to false if you don&#39;t want to send telemetry to Microsoft</span>
+<span class="na">enable_telemetry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span><span class="c1">  # Set to false if you don't want to send telemetry to Microsoft</span>
 </code></pre></div>
 <p><strong>Note:</strong> The location and resource names are hardcoded in <code>main.tf</code>. If you want to change them, edit <code>main.tf</code> directly:
 - Look for <code>location = "swedencentral"</code> (line ~17)
@@ -1215,8 +1388,8 @@ Terraform stores information about your infrastructure in a "state file". By def
 <p><strong>Expected output:</strong>
 <div class="highlight"><pre><span></span><code>Initializing the backend...
 Initializing provider plugins...
-- Finding hashicorp/azurerm versions matching &quot;~&gt; 4.21&quot;...
-- Finding hashicorp/http versions matching &quot;~&gt; 3.4&quot;...
+- Finding hashicorp/azurerm versions matching "~&gt; 4.21"...
+- Finding hashicorp/http versions matching "~&gt; 3.4"...
 - Installing hashicorp/azurerm v4.21.x...
 - Installed hashicorp/azurerm v4.21.x
 
@@ -1324,7 +1497,7 @@ Apply complete! Resources: XX added, 0 changed, 0 destroyed.
 <p><strong>Solution:</strong>
 <div class="highlight"><pre><span></span><code><span class="c"># Re-authenticate</span>
 <span class="n">az</span> <span class="n">login</span>
-<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="s2">&quot;&lt;YOUR_SUBSCRIPTION_ID&gt;&quot;</span>
+<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="s2">"&lt;YOUR_SUBSCRIPTION_ID&gt;"</span>
 </code></pre></div></p>
 <p><strong>Issue: "Error: insufficient quota"</strong></p>
 <p><strong>Solution:</strong>
@@ -1475,10 +1648,10 @@ Apply complete! Resources: XX added, 0 changed, 0 destroyed.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

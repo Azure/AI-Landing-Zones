@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../media/logo.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -201,9 +201,7 @@
 
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
       
@@ -973,6 +971,142 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What gets created
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operating-states" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operating states
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-enable-the-gateway-skeleton" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: enable the gateway skeleton
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-prepare-the-hostname-and-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: prepare the hostname and certificate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-point-dns-at-application-gateway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: point DNS at Application Gateway
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-switch-to-live-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: switch to live mode
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-validate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: validate
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameter-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#useful-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Useful outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#teardown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teardown
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -1056,9 +1190,9 @@
 <p>This keeps the post-provision configuration in source control instead of relying on portal edits that can be overwritten later.</p>
 <h2 id="step-1-enable-the-gateway-skeleton">Step 1: enable the gateway skeleton</h2>
 <p>In <code>main.parameters.json</code>, enable Public Ingress:</p>
-<div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
-  &quot;value&quot;: {
-    &quot;enabled&quot;: true
+<div class="highlight"><pre><span></span><code>"publicIngress": {
+  "value": {
+    "enabled": true
   }
 }
 </code></pre></div>
@@ -1097,12 +1231,12 @@
 <p>Wait for DNS propagation before validating the endpoint.</p>
 <h2 id="step-4-switch-to-live-mode">Step 4: switch to live mode</h2>
 <p>Update <code>main.parameters.json</code> with the hostname, certificate secret URI, and source CIDRs that are allowed to reach the gateway:</p>
-<div class="highlight"><pre><span></span><code>&quot;publicIngress&quot;: {
-  &quot;value&quot;: {
-    &quot;enabled&quot;: true,
-    &quot;frontendHostName&quot;: &quot;app.contoso.com&quot;,
-    &quot;sslCertSecretId&quot;: &quot;https://&lt;key-vault-name&gt;.vault.azure.net/secrets/&lt;certificate-name&gt;&quot;,
-    &quot;allowedSourceAddressPrefixes&quot;: [&quot;203.0.113.0/24&quot;]
+<div class="highlight"><pre><span></span><code>"publicIngress": {
+  "value": {
+    "enabled": true,
+    "frontendHostName": "app.contoso.com",
+    "sslCertSecretId": "https://&lt;key-vault-name&gt;.vault.azure.net/secrets/&lt;certificate-name&gt;",
+    "allowedSourceAddressPrefixes": ["203.0.113.0/24"]
   }
 }
 </code></pre></div>
@@ -1145,7 +1279,7 @@ curl<span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
   frontendHostName: string?
   sslCertSecretId: string?
   allowedSourceAddressPrefixes: string[]?
-  wafMode: (&#39;Prevention&#39; | &#39;Detection&#39;)?
+  wafMode: ('Prevention' | 'Detection')?
   wafCustomRules: object[]?
   capacity: object?
   sslPolicy: object?
@@ -1298,10 +1432,10 @@ curl<span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
