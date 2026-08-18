@@ -14,7 +14,7 @@ theme:
     - content.icon
     - content.iconify
     - navigation.tracking
-    - toc.integrate
+    # - toc.integrate
     - content.code.annotate
     - navigation.top
 plugins:
