@@ -430,6 +430,11 @@ FodyWeavers.xsd
 *.msp
 
 # Agent instructions and configuration
-# .github/
-# /context/
-# /bicep-only-no-portal.md
+.github/
+/context/
+
+
+# Portal-specific tracking files (local only)
+/bicep-only-no-portal.md
+/PORTAL_BICEP_ALIGNMENT_ANALYSIS.md
+/PORTAL_BICEP_PRIORITY_GAP_REPORT.md
