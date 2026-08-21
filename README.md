@@ -30,6 +30,13 @@ The below diagram represents the reference architecture of the AI Gateway Landin
 ## Extensible Implementations
 
 The table represents the various reference implementations of the AI Landing Zone based on the service inventory & configuration
+
+### Foundry Modules
+| Type | Description |
+| ----------- | ----------- |
+| Terraform | [Repo](https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest) |
+| Bicep | [Repo](https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry) |
+
 ### AI Foundry Landing Zone
 | Type | Description |
 | ----------- | ----------- |
