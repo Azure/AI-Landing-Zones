@@ -409,7 +409,7 @@
     "jumpVMConcat": "[concat('vm-', parameters('baseName'), '-jmp')]",
     "jumpVMName": "[if(greater(length(variables('jumpVMConcat')), 15), toLower(substring(variables('jumpVMConcat'), 0, 15)), toLower(variables('jumpVMConcat')))]",
 
-    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/portalbicepalignment/portal/",
+    "baseTemplateUri": "https://raw.githubusercontent.com/Azure/AI-Landing-Zones/refs/heads/main/portal/",
     "artifactsLocationSasToken": "",
     "networkSecurityGroupTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.network-security-group.json', variables('artifactsLocationSasToken')))]",
     "virtualNetworkTemplateUri": "[uri(variables('baseTemplateUri'), concat('wrappers/avm.res.network.virtual-network.json', variables('artifactsLocationSasToken')))]",
