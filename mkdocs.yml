@@ -53,8 +53,9 @@ nav:
       - "Permissions": bicep/permissions.md
       - "Parameterization": bicep/parameterization.md
       - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
+      - "Hosted-Agent Prerequisites": bicep/hosted-agent.md
   - Terraform Implementation: terraform/index.md
-  - Portal installation: portal/index.md  
+  - Portal installation: portal/index.md
 
 # These pages are intentionally kept out of the left navigation. The ACA
 # design article is a standalone reference, and the bicep v2 migration page is

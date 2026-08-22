@@ -43,6 +43,12 @@ When network isolation is enabled, the deployment additionally provisions:
 
 Every service can be individually toggled on or off via deploy parameters. See [Parameterization](parameterization.md) for the full reference.
 
+## Hosted-agent deployment prerequisites (opt-in)
+
+The `deployHostedAgent` flag (off by default) is an accelerator-neutral opt-in that adds only the infrastructure prerequisites for a Microsoft Foundry hosted-agent deployment — two RBAC assignments and a typed output handoff. It does not create Container Apps, agent versions, or any other new resources, and it does not modify existing workload resources.
+
+See [Hosted-Agent Prerequisites](hosted-agent.md) for the full parameter reference, output shape, and downstream `azd deploy` guidance.
+
 ## Role assignments
 
 The deployment configures role-based access control (RBAC) for service-to-service communication using managed identities. See [Permissions](permissions.md) for the complete list of role assignments.
@@ -70,3 +76,4 @@ A handful of other quality-of-life additions:
 - [Public Ingress with Application Gateway](public-ingress.md) — Publish a private Container App through Application Gateway WAF v2
 - [Parameterization](parameterization.md) — Full parameter reference
 - [Permissions](permissions.md) — Role assignments provisioned by the template
+- [Hosted-Agent Prerequisites](hosted-agent.md) — Opt-in RBAC and typed handoff for a Foundry hosted-agent deployment

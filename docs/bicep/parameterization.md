@@ -65,9 +65,39 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 | `deployBastion` | `null` (inherits from preset) | Azure Bastion host |
 | `deployNatGateway` | `null` (inherits from preset) | NAT Gateway for outbound traffic |
 | `deploySoftware` | `true` | Pre-install development tools on the Jumpbox VM |
+| `deployHostedAgent` | `false` | Enable accelerator-neutral prerequisites (RBAC + typed handoff) for a Microsoft Foundry hosted agent. Requires `deployAiFoundry=true`. See [Hosted-Agent Prerequisites](hosted-agent.md). |
 
 !!! note "Jumpbox, Bastion, and NAT Gateway"
     These components are controlled independently with `deployJumpbox`, `deployBastion`, and `deployNatGateway`, so each topology can choose only the pieces it needs.
+
+## Hosted-agent deployment contract
+
+These parameters are consumed only when `deployHostedAgent=true`. They define the typed handoff passed to the downstream `azure.ai.agent` service during `azd deploy`. See [Hosted-Agent Prerequisites](hosted-agent.md) for the full workflow.
+
+### Boolean toggle
+
+| Parameter | Default | Description |
+|---|---|---|
+| `deployHostedAgent` | `false` | Enable hosted-agent RBAC prerequisites and output handoff. No Container Apps or data resources are created. |
+
+### Typed agent input
+
+| Parameter | Default | Description |
+|---|---|---|
+| `hostedAgent.name` | `''` | Stable hosted-agent name. Reusing this name creates a new immutable version. |
+| `hostedAgent.image` | `''` | Repository path inside the selected ACR, without tag or digest (e.g. `agents/my-agent`). |
+| `hostedAgent.version` | `''` | Immutable OCI digest in `sha256:<64 hex characters>` form. Mutable tags are rejected by preflight. |
+| `hostedAgent.startupCommand` | `''` | Command that starts the agent server. Optional per the `azure.ai.agent` service contract. Maps to `startupCommand` in the downstream service definition. |
+| `hostedAgent.runtime.cpu` | `'1'` | CPU allocation in cores (range 0.25–4.0, e.g. `0.5` or `1`). Maps to `container.resources`. |
+| `hostedAgent.runtime.memory` | `'1Gi'` | Memory allocation (range 0.5Gi–8Gi, e.g. `0.5Gi` or `1Gi`). Maps to `container.resources`. |
+| `hostedAgent.protocols` | `[{ protocol: 'responses', version: '2.0.0' }]` | Invocation protocols. Each entry has a `protocol` (`responses` \| `invocations` \| `invocations_ws` \| `a2a`) and an optional `version` string. |
+
+### Existing ACR (when `deployContainerRegistry=false`)
+
+| Parameter | Default | Description |
+|---|---|---|
+| `hostedAgentContainerRegistryResourceId` | `''` | Resource ID of an existing ACR. The deploying principal must be able to create role assignments at this scope. |
+| `hostedAgentContainerRegistryEndpoint` | `''` | Login endpoint of the existing ACR (e.g. `contoso.azurecr.io`). Private endpoint, DNS, and network connectivity remain the consumer's responsibility. |
 
 ## Resource naming
 
