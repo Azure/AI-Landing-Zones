@@ -1,51 +1,101 @@
 # Bicep and Terraform feature parity
 
-The AI Landing Zone has two separate infrastructure-as-code implementations:
+The AI Landing Zone is a reusable set of files and guidance for deploying a
+standard Azure environment for AI workloads. It can be deployed with
+**infrastructure as code**, which means text files describe the Azure resources
+and settings so that a deployment can be reviewed and repeated.
+
+**Bicep** and **Terraform** are two infrastructure-as-code languages. Bicep is
+designed for Azure deployments. Terraform can deploy Azure resources through
+its Azure integration and uses its own configuration format and tools.
+
+The AI Landing Zone has one implementation in each language:
 
 - [Bicep implementation](https://github.com/Azure/bicep-ptn-aiml-landing-zone)
 - [Terraform implementation](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone)
 
-Both implementations describe the same AI Landing Zone, but they are maintained
-in different repositories and can change at different times. The feature parity
-initiative provides a reviewed process for finding differences, preparing
-focused Terraform updates, and collecting evidence that both implementations
-behave as expected.
+They live in separate repositories because each language has its own files,
+modules, tests, review process, and release process. The repositories can change
+at different times, so a capability may be added to one implementation before
+the other or may behave differently.
+
+**Equivalent behavior** means that, for the same supported deployment scenario,
+both implementations provide the same intended capabilities, access controls,
+network behavior, settings and values that users and applications depend on,
+and working deployed result. It does not mean that the Bicep and Terraform
+source code must look the same.
+
+The feature parity initiative detects and manages differences through human
+review, focused Terraform updates, and recorded deployment evidence.
+
+## Deployment scenarios used for comparison
+
+A **deployment scenario** is an approved combination of options that is tested
+as one case. The current parity work assesses two scenarios:
+
+- **`standalone-standard`** is the standard standalone deployment.
+- **`standalone-network-isolated`** is the standalone deployment with network
+  isolation and private connectivity.
+
+The scenarios are assessed independently because network isolation changes how
+services connect, resolve names, route traffic, and enforce access. A successful
+standard deployment does not prove that private connectivity works, and a
+successful network-isolated deployment does not replace testing the standard
+deployment.
 
 ## Key terms
 
 | Term | Meaning |
 | --- | --- |
+| **Capability** | A feature the deployment supports, such as using an existing Azure resource or using private connectivity. |
 | **Parity** | Bicep and Terraform support the same approved capability and observable behavior for a named deployment scenario. |
 | **Parity assessment** | A reviewed decision about whether a merged Bicep change requires Terraform work. |
 | **Handoff** | An approved, immutable record that tells the Terraform repository which behavior, constraints, scenarios, and checks are in scope. Immutable means the record is read from one specific commit and cannot be changed during delivery. |
-| **Proposal PR** | A draft Terraform pull request created for maintainers to review. It is not an approval to merge, deploy, or release. |
+| **Proposal pull request (PR)** | A draft Terraform change created for maintainers to review. It is not an approval to merge, deploy, or release. |
+| **Terraform request receiver** | A workflow in the Terraform repository that validates an approved handoff and starts the process for one draft proposal pull request. |
 | **Evidence** | Reviewed records that show what was compared, which checks passed, what was deployed, and how deployed behavior was verified. |
 
-Parity requires more than creating the same Azure resources. The comparison
-also covers parameters, default values, outputs, managed identities, networking,
-runtime configuration, and deployed behavior. A matching resource list by
-itself is not enough to establish parity.
+## What is compared
+
+A matching list of Azure resources is not enough to establish parity. The
+comparison also covers:
+
+- **Parameters and defaults:** the choices users can provide and the values used
+  when they do not provide a choice.
+- **Outputs:** the information returned after deployment for people, scripts,
+  and other systems to use.
+- **Identity and role-based access control (RBAC):** the managed identities and
+  permissions used by services and people.
+- **Networking:** public or private access, private endpoints, name resolution,
+  and traffic routing.
+- **Runtime configuration:** the settings that deployed services and
+  applications use while running.
+- **Deployed behavior:** what actually works after the resources are created,
+  not only whether the source files pass static checks.
 
 ## The two phases
 
 ```mermaid
 flowchart TB
-    subgraph Initial["Initial equalization"]
-        A["Inventory capabilities"] --> B["Find gaps"]
-        B --> C["Focused proposals"]
-        C --> D["Test both scenarios"]
-        D --> E["Record evidence"]
+    subgraph P1["Phase 1: Initial equalization - one-time baseline"]
+        direction LR
+        A["Inventory Bicep and<br/>Terraform capabilities"] --> B["Identify gaps<br/>per scenario"]
+        B --> C["Open focused Terraform<br/>proposal PRs"]
+        C --> D["Review and merge<br/>each proposal"]
+        D --> E["Deploy both scenarios<br/>and record evidence"]
     end
 
-    subgraph Ongoing["Continuous maintenance"]
-        F["Bicep merge"] --> G["Assess change"]
-        G --> H["Approved handoff"]
-        H --> I["Draft Terraform PR"]
-        I --> J["Review and evidence"]
-        J --> F
+    subgraph P2["Phase 2: Continuous maintenance - for each relevant Bicep merge"]
+        direction LR
+        F["Bicep pull request<br/>is merged"] --> G{"Does the change<br/>affect Terraform?"}
+        G -- No --> N["Record a<br/>no-change decision"]
+        G -- Yes --> H["Human approves<br/>the handoff"]
+        H --> I["Send an immutable handoff<br/>to the Terraform repository"]
+        I --> J["Open one draft Terraform<br/>proposal pull request"]
+        J --> K["Review, deploy, and<br/>record evidence"]
     end
 
-    E --> F
+    P1 --> P2
 ```
 
 ### Phase 1: Initial feature equalization
@@ -53,17 +103,14 @@ flowchart TB
 The initial phase establishes a reviewed baseline:
 
 1. Inventory the current capabilities in Bicep and Terraform.
-2. Identify gaps for each supported scenario.
-3. Create focused Terraform proposal PRs for approved gaps.
-4. Review and merge each proposal through the Terraform repository's normal
-   process.
-5. Deploy both `standalone-standard` and
-   `standalone-network-isolated` in approved test environments.
-6. Record deployment and behavior evidence before claiming parity for a
+2. Identify gaps separately for `standalone-standard` and
+   `standalone-network-isolated`.
+3. Open focused Terraform proposal pull requests for approved gaps.
+4. Have Terraform maintainers review each proposal and decide whether to merge
+   it.
+5. Deploy both scenarios in approved test environments.
+6. Record deployment and behavior evidence before claiming parity for any
    capability or scenario.
-
-The two standalone scenarios are assessed separately. A successful deployment
-of one scenario does not prove the other scenario.
 
 ### Phase 2: Continuous maintenance
 
@@ -71,37 +118,45 @@ After the baseline work, each relevant Bicep merge is handled as a smaller
 change:
 
 1. Create a pending parity assessment for the merged Bicep pull request.
-2. Have a reviewer classify the impact and record the reason.
-3. Require human approval before Terraform work can be requested.
-4. Publish an immutable handoff for approved Terraform work.
-5. Let the Terraform receiver validate the request and start one draft proposal
-   PR for review.
-6. Keep merge, deployment, evidence, and parity decisions under human control.
+2. Have a human reviewer decide whether the change affects Terraform and record
+   the reason.
+3. If it does not affect Terraform, record the no-change decision and stop. No
+   handoff or Terraform proposal is created.
+4. If Terraform work is required, classify it as `proposal-required` and require
+   human approval of the assessment and handoff.
+5. Send the approved, immutable handoff to the Terraform repository.
+6. Have the Terraform request receiver validate the handoff and start one draft
+   proposal pull request for review.
+7. Keep merge, deployment, evidence, and parity decisions under human control.
+
+Not every Bicep merge produces Terraform work. Only an approved
+`proposal-required` assessment can create a handoff and start a Terraform
+proposal.
 
 ```mermaid
 sequenceDiagram
     participant B as Bicep
     participant A as Assessment
-    actor H as Human reviewer
-    participant P as Publisher
+    actor H as Parity reviewer
     participant R as Terraform receiver
     participant T as Draft PR
-    actor M as Terraform maintainer
+    actor M as TF maintainer
 
-    B->>A: Report merged PR
-    A->>H: Create pending assessment
-    H->>H: Classify impact
-    alt No Terraform change
-        H->>A: Record decision
-    else Terraform change
-        H->>P: Approve assessment and handoff
-        P->>R: Dispatch immutable handoff
+    B->>A: Bicep PR merged
+    A->>H: Pending assessment
+    H->>H: Assess Terraform impact
+    alt No Terraform impact
+        H->>A: Record no-change decision
+    else Approved proposal required
+        H->>A: Approve assessment and handoff
+        H->>B: Approve sending the handoff
+        B->>R: Send immutable handoff
         R->>R: Validate request
-        R->>T: Start draft proposal
+        R->>T: Start one draft proposal
         T->>M: Request review
         M->>T: Review and decide
         M->>M: Approve test deployment
-        M->>A: Record evidence
+        M->>M: Record deployment evidence
     end
 ```
 
@@ -112,14 +167,15 @@ the approved contract. It can:
 
 - create a pending assessment after an eligible Bicep merge;
 - validate records, commit references, approvals, and duplicate requests;
-- publish an approved handoff to the Terraform repository; and
-- start the process that produces one draft Terraform proposal PR.
+- send a handoff only after the required human approvals; and
+- validate the handoff in the Terraform repository and start the process that
+  produces one draft Terraform proposal pull request.
 
 Humans still decide:
 
 - whether a Bicep change affects Terraform;
 - whether an assessment and handoff are approved;
-- whether publication is approved;
+- whether sending the handoff is approved;
 - whether a Terraform proposal is correct and should merge;
 - whether and where test deployments may run; and
 - whether the recorded evidence is sufficient for a parity decision.
@@ -145,7 +201,7 @@ in the Bicep repository. Initial draft Terraform proposals were created for
 and
 [application platform](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/pull/164),
 and the
-[Terraform receiver is also a draft proposal](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/pull/170).
+[Terraform request receiver is also a draft proposal](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/pull/170).
 
 These proposals and the receiver remain subject to repository review. Approved
 test deployments and recorded behavior evidence are still required before any
@@ -160,4 +216,3 @@ and does not contain operator credentials or secret values.
 - [Bicep parity process guide](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/terraform-parity-process.md)
 - [Ownership and operations runbook](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/terraform-parity-ownership.md)
 - [Generated capability inventory](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/docs/terraform-parity.md)
-
