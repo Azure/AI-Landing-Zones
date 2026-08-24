@@ -73,49 +73,23 @@ comparison also covers:
 - **Deployed behavior:** what actually works after the resources are created,
   not only whether the source files pass static checks.
 
-## The two phases
+## How continuous parity maintenance works
+
+After the starting baseline is established, this is the permanent process for
+each relevant Bicep merge. Not every Bicep merge produces Terraform work.
 
 ```mermaid
-flowchart TB
-    subgraph P1["Phase 1: Initial equalization - one-time baseline"]
-        direction LR
-        A["Inventory Bicep and<br/>Terraform capabilities"] --> B["Identify gaps<br/>per scenario"]
-        B --> C["Open focused Terraform<br/>proposal PRs"]
-        C --> D["Review and merge<br/>each proposal"]
-        D --> E["Deploy both scenarios<br/>and record evidence"]
-    end
-
-    subgraph P2["Phase 2: Continuous maintenance - for each relevant Bicep merge"]
-        direction LR
-        F["Bicep pull request<br/>is merged"] --> G{"Does the change<br/>affect Terraform?"}
-        G -- No --> N["Record a<br/>no-change decision"]
-        G -- Yes --> H["Human approves<br/>the handoff"]
-        H --> I["Send an immutable handoff<br/>to the Terraform repository"]
-        I --> J["Open one draft Terraform<br/>proposal pull request"]
-        J --> K["Review, deploy, and<br/>record evidence"]
-    end
-
-    P1 --> P2
+%%{init: {"flowchart": {"nodeSpacing": 10, "rankSpacing": 12, "curve": "linear"}}}%%
+flowchart LR
+    A["Bicep PR<br/>merged"] --> B{"Terraform<br/>affected?"}
+    B -- No --> C["Record<br/>no change"]
+    B -- Yes --> D["Human approves<br/>handoff"]
+    D --> E["Immutable handoff<br/>to Terraform repo"]
+    E --> F["Draft<br/>Terraform PR"]
+    F --> G["Human<br/>review"]
+    G --> H["Approved deployment<br/>of both scenarios"]
+    H --> I["Record<br/>evidence"]
 ```
-
-### Phase 1: Initial feature equalization
-
-The initial phase establishes a reviewed baseline:
-
-1. Inventory the current capabilities in Bicep and Terraform.
-2. Identify gaps separately for `standalone-standard` and
-   `standalone-network-isolated`.
-3. Open focused Terraform proposal pull requests for approved gaps.
-4. Have Terraform maintainers review each proposal and decide whether to merge
-   it.
-5. Deploy both scenarios in approved test environments.
-6. Record deployment and behavior evidence before claiming parity for any
-   capability or scenario.
-
-### Phase 2: Continuous maintenance
-
-After the baseline work, each relevant Bicep merge is handled as a smaller
-change:
 
 1. Create a pending parity assessment for the merged Bicep pull request.
 2. Have a human reviewer decide whether the change affects Terraform and record
@@ -127,11 +101,29 @@ change:
 5. Send the approved, immutable handoff to the Terraform repository.
 6. Have the Terraform request receiver validate the handoff and start one draft
    proposal pull request for review.
-7. Keep merge, deployment, evidence, and parity decisions under human control.
+7. Have Terraform maintainers review the proposal and decide whether to merge
+   it.
+8. For accepted work, approve deployments of both relevant scenarios in
+   approved test environments.
+9. Record deployment and behavior evidence before making a parity decision.
 
-Not every Bicep merge produces Terraform work. Only an approved
-`proposal-required` assessment can create a handoff and start a Terraform
-proposal.
+Only an approved `proposal-required` assessment can create a handoff and start
+a Terraform proposal. A merged proposal pull request is not proof of parity.
+
+!!! note "Initial equalization establishes the starting baseline once"
+
+    Before continuous maintenance can handle smaller changes, maintainers
+    inventory the current Bicep and Terraform capabilities and identify gaps
+    separately for `standalone-standard` and
+    `standalone-network-isolated`. They open focused Terraform proposal pull
+    requests for approved gaps, review and merge each accepted proposal, deploy
+    both scenarios in approved test environments, and record evidence.
+
+    Initial equalization is a one-time initiative. After the baseline is
+    established, the continuous process above handles new differences from
+    relevant Bicep merges.
+
+## Detailed continuous workflow
 
 ```mermaid
 sequenceDiagram
@@ -155,7 +147,7 @@ sequenceDiagram
         R->>T: Start one draft proposal
         T->>M: Request review
         M->>T: Review and decide
-        M->>M: Approve test deployment
+        M->>M: Approve both scenario deployments
         M->>M: Record deployment evidence
     end
 ```
