@@ -54,7 +54,7 @@ nav:
       - "Parameterization": bicep/parameterization.md
       - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
   - Terraform Implementation: terraform/index.md
-  - Bicep and Terraform feature parity: terraform-parity.md
+  - Terraform parity: terraform-parity.md
   - Portal installation: portal/index.md  
 
 # These pages are intentionally kept out of the left navigation. The ACA
