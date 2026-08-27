@@ -49,10 +49,10 @@ If your hub also hosts the standard Private DNS zones, set each `EXISTING_PRIVAT
 
 ## Network planning
 
-The spoke VNet address space must not overlap with the hub VNet. The default spoke prefix (`10.0.0.0/22`) is safe for a hub on `10.100.0.0/16`. If your hub uses a different prefix, set:
+The spoke VNet address space must not overlap with the hub VNet. If your deployment includes the Azure AI Foundry delegated subnet, avoid `10.0.0.0/8` for the spoke address space and choose a prefix within `172.16.0.0/12` or `192.168.0.0/16` instead. For example, a spoke on `172.20.0.0/22` is safe for a hub on `10.100.0.0/16` because the delegated subnet is created in the spoke, not the hub. If your hub uses a different prefix, set:
 
 ```bash
-azd env set VNET_ADDRESS_PREFIXES "[\"10.200.0.0/22\"]"
+azd env set VNET_ADDRESS_PREFIXES "[\"172.20.0.0/22\"]"
 ```
 
 Subnet minimums enforced by the pre-flight script:
