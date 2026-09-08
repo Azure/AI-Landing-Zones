@@ -1,0 +1,1210 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for Azure AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../how-to-deploy/">
+      
+      
+        <link rel="next" href="../regional-considerations/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Deploy with Azure DevOps - Azure AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deploy-with-azure-devops" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Azure AI Landing Zones" class="md-header__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Azure AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deploy with Azure DevOps
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    Azure AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-pipelines-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the pipelines do
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What the pipelines do">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deployment-stages-and-gating" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment stages and gating
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reusable-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reusable templates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-wire-it-up-in-azure-devops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to wire it up in Azure DevOps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-the-pre-flight-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to the pre-flight checks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="deploy-with-azure-devops">Deploy with Azure DevOps</h1>
+<p>This guide explains how to deploy the AI Landing Zone (Bicep) from Azure DevOps
+Pipelines. It covers what the pipelines do, what you need to set up first, how to
+wire everything together in your project, and how the pipelines relate to the
+pre-flight checks that run before each deployment.</p>
+<p>Use this when you want repeatable, gated deployments to Dev, Test, and Prod
+instead of running <code>azd provision</code> by hand. If you only need a one-off local
+deployment, see <a href="../how-to-deploy/">How to Deploy</a> instead.</p>
+<p>The pipeline assets live in the landing zone repository under
+<code>pipelines/azuredevops/</code>. This page is the source of truth for setup and usage;
+the YAML files in that folder are the assets it references.</p>
+<h2 id="what-the-pipelines-do">What the pipelines do</h2>
+<p>There are two pipelines that work together.</p>
+<p><strong>CI pipeline (<code>ci-pipeline.yml</code>)</strong> validates the Bicep templates. It runs on
+pull requests and on pushes to <code>main</code>, filtered to the paths that affect the
+deployment (<code>*.bicep</code>, <code>*.json</code>, <code>modules/</code>, <code>constants/</code>, and
+<code>pipelines/azuredevops/</code>). It has a single <code>Validate</code> stage that:</p>
+<ul>
+<li>installs the Bicep CLI,</li>
+<li>compiles the template with <code>az bicep build</code>,</li>
+<li>lints the template with <code>az bicep lint</code>,</li>
+<li>publishes the repository as a pipeline artifact named <code>bicep-templates</code>.</li>
+</ul>
+<p>No Azure sign-in or provisioning happens in CI. It only proves the templates are
+well formed, and it hands a validated artifact to the CD pipeline.</p>
+<p><strong>CD pipeline (<code>cd-pipeline.yml</code>)</strong> deploys the landing zone. It does not trigger
+automatically (<code>trigger: none</code> and <code>pr: none</code>); you run it on demand and choose
+which environments to promote to. It consumes the artifact produced by CI rather
+than rebuilding from source, then promotes through Dev, Test, and Prod with
+manual approval gates on the environments you choose to protect.</p>
+<pre class="mermaid"><code>flowchart LR
+  PR[PR or push to main] --&gt; CI[CI pipeline\nbuild + lint]
+  CI --&gt; ART[(bicep-templates\nartifact)]
+  ART --&gt; CD[CD pipeline\non demand]
+  CD --&gt; Dev[DEV]
+  Dev --&gt; Test[TEST]
+  Test --&gt; Prod[PROD]</code></pre>
+<h3 id="deployment-stages-and-gating">Deployment stages and gating</h3>
+<p>When you queue the CD pipeline, you pick the environments to deploy with three
+boolean parameters: <code>Deploy to DEV</code>, <code>Deploy to TEST</code>, and <code>Deploy to PROD</code>. All
+default to off, so a run deploys only what you opt into.</p>
+<p>The stages run in a fixed order through stage dependencies: Dev depends on the
+artifact download, Test depends on Dev, and Prod depends on Test. If a selected
+environment fails, the later environments are skipped. Each environment deploys
+with the reusable <code>deploy-bicep.yml</code> template, which runs <code>azd provision</code> against
+that environment.</p>
+<pre class="mermaid"><code>flowchart LR
+  Build[Download CI artifact] --&gt; Dev[DEV\nno approval]
+  Dev --&gt; Test[TEST\napproval gate]
+  Test --&gt; Prod[PROD\napproval gate]</code></pre>
+<p>Approvals are not defined in YAML. They live on the Azure DevOps Environment
+resource, so you control them from the portal without editing the pipeline. The
+recommended setup is no approval on <code>dev</code> and a required approval on <code>test</code> and
+<code>prod</code>. When an approval is configured, the pipeline pauses before that stage
+until an approver allows it to continue.</p>
+<h3 id="reusable-templates">Reusable templates</h3>
+<p>The pipelines are built from small templates under
+<code>pipelines/azuredevops/templates/</code>:</p>
+<ul>
+<li><code>validate-bicep.yml</code> compiles and lints the template and publishes the
+  artifact. Used by CI.</li>
+<li><code>deploy-bicep.yml</code> installs <code>azd</code> and the Bicep CLI, resolves the deploying
+  principal, sets the azd environment, and runs <code>azd provision</code> with an optional
+  retry loop. Used by each CD stage.</li>
+<li><code>preview-bicep.yml</code> runs <code>azd provision --preview</code> (a what-if) against a target
+  environment. It is provided for teams that want a preview step before deploy.</li>
+<li><code>variables.yml</code> holds the shared values you fill in for your environment.</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before the first run, set up the following in Azure DevOps.</p>
+<p><strong>1. Service connections.</strong> Create one Azure Resource Manager service connection
+per environment you plan to use (Dev, Test, Prod). Each service principal needs
+<code>Contributor</code> and <code>User Access Administrator</code> on the target subscription, because
+the landing zone creates resources and assigns roles. You will reference these
+connection names in <code>variables.yml</code>.</p>
+<p><strong>2. Environments.</strong> Create Azure DevOps Environments named <code>dev</code>, <code>test</code>, and
+<code>prod</code>. Add an approval check on <code>test</code> and <code>prod</code> so deployments to those
+environments pause for a human. Leave <code>dev</code> without an approval for fast
+iteration.</p>
+<p><strong>3. Variable group.</strong> Create a variable group named <code>ailz-secrets</code> and add a
+secret variable <code>secretOrRandomPassword</code>. This value is used as the jumpbox VM
+admin password in Zero Trust deployments. Link the group to the CD pipeline.</p>
+<p><strong>4. Fill in <code>variables.yml</code>.</strong> Edit
+<code>pipelines/azuredevops/templates/variables.yml</code> and set the values for your
+environment:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What to set</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>azureServiceConnectionDev</code></td>
+<td>Name of the Dev ARM service connection</td>
+</tr>
+<tr>
+<td><code>azureServiceConnectionTest</code></td>
+<td>Name of the Test ARM service connection</td>
+</tr>
+<tr>
+<td><code>azureServiceConnectionProd</code></td>
+<td>Name of the Prod ARM service connection</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>Azure region for the deployment, for example <code>eastus2</code></td>
+</tr>
+<tr>
+<td><code>environmentName</code></td>
+<td>Base azd environment name, default <code>ailz-bicep</code></td>
+</tr>
+<tr>
+<td><code>deploymentMode</code></td>
+<td><code>zeroTrust</code> for network isolation, or <code>basic</code> for public networking</td>
+</tr>
+<tr>
+<td><code>agentPool</code></td>
+<td><code>ubuntu-latest</code> for Microsoft-hosted agents, or your self-hosted pool name</td>
+</tr>
+<tr>
+<td><code>deployRetryCount</code></td>
+<td>Extra <code>azd provision</code> attempts on transient Azure failures, default <code>0</code></td>
+</tr>
+<tr>
+<td><code>templateFile</code></td>
+<td>Bicep entry point, default <code>main.bicep</code></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>deploymentMode</code> value maps directly to network isolation. <code>zeroTrust</code> sets
+<code>NETWORK_ISOLATION true</code> (VNet, private endpoints, Bastion), and <code>basic</code> sets it
+to <code>false</code> for public networking. This is the same toggle described in
+<a href="../how-to-deploy/">How to Deploy</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The pipelines deploy with the Azure Developer CLI (<code>azd provision</code>), which
+handles resource group creation, parameter filtering, and principal ID
+resolution. You do not need to pre-create the resource group.</p>
+</div>
+<h2 id="how-to-wire-it-up-in-azure-devops">How to wire it up in Azure DevOps</h2>
+<p><strong>1. Create the CI pipeline.</strong> In your Azure DevOps project, go to Pipelines, New
+pipeline, point it at this repository, and select
+<code>pipelines/azuredevops/ci-pipeline.yml</code>. Name it exactly <code>AI Landing Zone - CI</code>.
+The CD pipeline references the CI pipeline by that name to pull its artifact, so
+the name must match.</p>
+<p><strong>2. Create the CD pipeline.</strong> Create a second pipeline from
+<code>pipelines/azuredevops/cd-pipeline.yml</code>. Link the <code>ailz-secrets</code> variable group
+to it (Edit, Variables, Variable groups).</p>
+<p><strong>3. Run a deployment.</strong> Run the CD pipeline manually. Turn on <code>Deploy to DEV</code>
+to start, and add <code>Deploy to TEST</code> or <code>Deploy to PROD</code> when you are ready to
+promote. The run downloads the CI-validated artifact, then deploys to each
+selected environment in order, pausing at any environment that has an approval
+gate.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For strict promotion where Test must wait for a successful Dev run, change
+the Test stage condition to require <code>succeeded('Dev')</code>. The default condition
+uses <code>not(failed())</code>, which lets you deploy directly to Test or Prod without
+deploying Dev first.</p>
+</div>
+<h2 id="relationship-to-the-pre-flight-checks">Relationship to the pre-flight checks</h2>
+<p>Every deployment runs the repository pre-flight script,
+<code>scripts/Invoke-PreflightChecks.ps1</code>, through the <code>azd</code> preprovision hook before
+anything reaches Azure Resource Manager. The pipelines do not call the script
+directly. They run <code>azd provision</code>, and azd runs the hook.</p>
+<p>The script is read-only and never changes Azure state. It catches the common
+topology mistakes that otherwise surface as deep, late ARM errors, such as
+conflicting Private DNS settings, mutually exclusive hub-integration parameters,
+invalid IP allow-list shapes, subnet prefixes that overflow or overlap, subnets
+too small for the services that use them, and bring-your-own resources that were
+promised but do not exist. It also checks regional readiness, including provider
+registration, jumpbox VM SKU availability, and AI model quota.</p>
+<p>If a check fails, the deployment stops before ARM is called, and the pipeline
+reports the failure. You can narrow or skip checks with the script switches and
+environment variables documented in the script header, for example
+<code>LZ_PREFLIGHT_REGIONAL_SKIP</code> to skip only the regional block, or
+<code>PREFLIGHT_SKIP</code> as an emergency escape hatch. Skipping is meant for unblocking,
+not for normal runs.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p><strong>The CD pipeline cannot find the CI artifact.</strong> Confirm the CI pipeline is named
+exactly <code>AI Landing Zone - CI</code> and that it has run successfully at least once, so
+the <code>bicep-templates</code> artifact exists.</p>
+<p><strong>Deployment fails with a missing password error.</strong> Confirm the <code>ailz-secrets</code>
+variable group is linked to the CD pipeline and contains a secret variable named
+<code>secretOrRandomPassword</code>.</p>
+<p><strong>Deployment fails resolving the deployment principal.</strong> Set the
+<code>AZURE_PRINCIPAL_ID</code> pipeline variable to the Entra object ID of the deploying
+identity. The deploy template tries to resolve it automatically from the service
+connection, but you can set it explicitly if resolution fails.</p>
+<p><strong>Role assignment errors during provisioning.</strong> Confirm the service principal
+behind the environment's service connection has both <code>Contributor</code> and
+<code>User Access Administrator</code> on the target subscription.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "toc.integrate", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
