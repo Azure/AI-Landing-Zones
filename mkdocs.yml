@@ -56,7 +56,70 @@ nav:
           - "Building Accelerators (Submodule Pattern)": ai-foundry-lz/bicep/accelerator-pattern.md
         - Terraform: ai-foundry-lz/terraform/readme.md
         - Portal: ai-foundry-lz/portal/readme.md
-  - AI Gateway Landing Zone: ai-gateway-lz/bicep/readme.md
+  - AI Gateway Landing Zone:
+      - "What's New": ai-gateway-lz/bicep/citadel-v1-ga-announcement.md
+      - "Overview": ai-gateway-lz/bicep/readme.md
+      - "Benefits": ai-gateway-lz/bicep/governance-hub-benefits.md
+      - "Plan": 
+          - "Infrastructure": 
+              - "Parameters": ai-gateway-lz/bicep/parameters-usage-guide.md
+              - "Network Approach": ai-gateway-lz/bicep/network-approach.md
+          - Capacity Planning:
+              - "Citadel Sizing Guide": ai-gateway-lz/bicep/citadel-sizing-guide.md
+              - "PTU Estimation Guide": ai-gateway-lz/bicep/ptu-estimation-guide.md
+              - "AI Search Cost Estimation Logic": ai-gateway-lz/bicep/ai-search-cost-estimation-logic.md
+          - Resilience/Business Continuouity:
+              - "Resiliency Guide": ai-gateway-lz/bicep/resiliency-guide.md
+              - "Business Continuity DR Guide": ai-gateway-lz/bicep/business-continuity-dr-guide.md
+              - "Throttling Events Handling": ai-gateway-lz/bicep/throttling-events-handling.md
+              - "App Insights Alert": ai-gateway-lz/bicep/app-insights-alert.md
+              - "Cosmos Global Multi-Master Sync": ai-gateway-lz/bicep/cosmos-global-multi-master-sync.md
+      - "Deploy":
+          - Bicep:
+              - "Quick Deployment Guide": ai-gateway-lz/bicep/quick-deployment-guide.md
+              - "Full Deployment Guide": ai-gateway-lz/bicep/full-deployment-guide.md
+              - "Post Deployment":
+                  - "Post Deployment Guide": ai-gateway-lz/bicep/post-deployment-guide.md
+                  - "Validation Notebook Setup Guide": ai-gateway-lz/bicep/validation-notebook-setup-guide.md
+                  - "Validation": ai-gateway-lz/bicep/validation.md
+          - Terraform:
+              - "Quick Start": ai-gateway-lz/terraform/quick-start.md
+              - "Variables Guide": ai-gateway-lz/terraform/variables.md
+              - "Full Deployment Guide": ai-gateway-lz/terraform/deployment-guide.md
+              - "Post Deployment":
+                  - "Validation": ai-gateway-lz/terraform/validation.md
+      - Operate:
+          - Observe:
+              - "Platform Observability Guide": ai-gateway-lz/bicep/platform-observability-guide.md
+              - "Power BI Dashboard": ai-gateway-lz/bicep/power-bi-dashboard.md
+          - Backend Contracts:
+              - Bicep:
+                  - "LLM Backend Onboarding": ai-gateway-lz/bicep/llm-backend-onboarding.md
+                  - "Unified AI API Type Onboarding": ai-gateway-lz/bicep/unified-ai-api-type-onboarding.md
+              - Terraform:
+                  - "LLM Backend Onboarding": ai-gateway-lz/terraform/llm-backend-onboarding.md
+          - Access Contracts:
+              - Overview: ai-gateway-lz/bicep/access-contract.md
+              - Reference Guide: ai-gateway-lz/bicep/access-contract-quick-reference-guide.md
+              - Access Contract Policies: ai-gateway-lz/bicep/access-contract-policy.md
+              - Resiliency Guide: ai-gateway-lz/bicep/access-contract-resiliency-guide.md
+              - LLM Access Guide: ai-gateway-lz/bicep/llm-access-guide.md
+              - Key Rotation Guide: ai-gateway-lz/bicep/access-contract-key-rotation-guide.md
+              - Entra ID Setup: ai-gateway-lz/bicep/entra-id-setup.md
+              - Entra ID Auth Validation: ai-gateway-lz/bicep/entraid-auth-validation.md
+              - JWT Client Identity Permissions: ai-gateway-lz/bicep/jwt-client-identity-permissions.md
+              - PII Anonymization & Deanonymization: ai-gateway-lz/bicep/pii-masking-apim.md
+              - Terraform:
+                  - Operate Access Contracts: ai-gateway-lz/terraform/access-contracts.md
+          - Publish Contracts:
+              - Overview: ai-gateway-lz/bicep/publish-contract.md
+              - Publish Contract Guide: ai-gateway-lz/bicep/publish-contract-guide.md
+          - Gateway Upgrade:
+              - APIM Gateway Upgrade Guide: ai-gateway-lz/bicep/apim-gateway-upgrade-guide.md
+              - APIM Gateway Upgrade: ai-gateway-lz/bicep/apim-gateway-upgrade.md
+              - Release Version Management: ai-gateway-lz/bicep/release-version-management.md
+
+
   - AI Container Landing Zone: ai-container-lz/readme.md
 
 
