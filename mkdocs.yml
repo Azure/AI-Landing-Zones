@@ -55,7 +55,7 @@ nav:
       - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
   - Terraform Implementation: terraform/index.md
   - Terraform parity: terraform-parity.md
-  - Portal installation: portal/index.md  
+  - Portal installation: portal/readme.md  
 
 # These pages are intentionally kept out of the left navigation. The ACA
 # design article is a standalone reference, and the bicep v2 migration page is
