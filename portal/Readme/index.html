@@ -1,0 +1,2244 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for Azure AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>AI Landing Zone — Portal Deployment Guide - Azure AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai-landing-zone-portal-deployment-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Azure AI Landing Zones" class="md-header__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Azure AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AI Landing Zone — Portal Deployment Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Azure AI Landing Zones" class="md-nav__button md-logo" aria-label="Azure AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    Azure AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Implementation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployed Resources & Cost
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/how-to-deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to Deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/regional-considerations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Regional Considerations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-Spoke Topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/public-ingress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Public Ingress (App Gateway)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/permissions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/parameterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/accelerator-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building Accelerators (Submodule Pattern)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform Implementation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform-parity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform parity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readme.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wizard-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wizard Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-basic-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Basic Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Basic Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform-landing-zone-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform Landing Zone Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defender-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defender Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-ai-services-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: AI Services Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: AI Services Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-ai-services-connect-to-ai-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How AI Services connect to AI Foundry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-application-services-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Application Services Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Application Services Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app-configuration-population" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        App Configuration Population
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-devops-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: DevOps Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 4: DevOps Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#visibility-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visibility Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-vm-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build VM Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jump-vm-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jump VM Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maintenance-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintenance Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-monitoring-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Monitoring Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Monitoring Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependency-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Chain
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-network-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Network Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 6: Network Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Networking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#existing-vnet-subnet-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing VNet Subnet Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-dns-zones-platform-landing-zone-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private DNS Zones (Platform Landing Zone Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-network-architecture-deploy-vnet-yes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Network Architecture (Deploy VNet = Yes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Tags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-interaction-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option Interaction Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-deployment-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Deployment Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Deployment Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-full-standalone-greenfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Full Standalone (Greenfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-platform-landing-zone-integration-brownfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Platform Landing Zone Integration (Brownfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-minimal-ai-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Minimal AI Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-existing-network-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Existing Network Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accessing-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing the Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Configurations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managed-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managed Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-deployment-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Deployment Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimated-deployment-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Deployment Time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="ai-landing-zone-portal-deployment-guide">AI Landing Zone — Portal Deployment Guide</h1>
+<h2 id="overview">Overview</h2>
+<p>The Portal-based AI Landing Zone deploys a secure, enterprise-ready AI/ML infrastructure on Azure through a guided wizard experience in the Azure Portal. It uses ARM linked templates backed by <a href="https://aka.ms/AVM">Azure Verified Modules (AVM)</a> and deploys resources including Azure AI Foundry, networking, security, monitoring, and application services.</p>
+<p><strong>Deploy to Azure:</strong></p>
+<p><a href="https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fmain%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fmain%2Fportal%2Fform.json"><img alt="Deploy To Azure" src="https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg" /></a></p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>An Azure subscription with <strong>Contributor</strong> role (or <strong>Owner</strong> if enabling Microsoft Defender)</li>
+<li>A resource group in a <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models#model-summary-table-and-region-availability">supported region</a></li>
+<li>If using Platform Landing Zone mode: existing Private DNS Zones for the services being deployed</li>
+<li>Sufficient quota for the selected VM sizes and AI model deployments</li>
+</ul>
+<hr />
+<h2 id="wizard-steps">Wizard Steps</h2>
+<p>The deployment wizard consists of <strong>7 tabs</strong>, described in detail below.</p>
+<hr />
+<h2 id="step-1-basic-configuration">Step 1: Basic Configuration</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Resource Group / Location</strong></td>
+<td>—</td>
+<td>Target resource group and Azure region for all resources</td>
+</tr>
+<tr>
+<td><strong>Base Name</strong></td>
+<td><code>ailz</code></td>
+<td>2–12 character prefix (lowercase letters + numbers only) used to name all deployed resources</td>
+</tr>
+<tr>
+<td><strong>Platform Landing Zone Integration</strong></td>
+<td>No</td>
+<td>Whether you're deploying into an existing enterprise platform landing zone</td>
+</tr>
+<tr>
+<td><strong>Enable Defender for AI</strong></td>
+<td>No</td>
+<td>Enables Microsoft Defender for AI and Storage (with malware scanning and sensitive data discovery) at subscription level</td>
+</tr>
+<tr>
+<td><strong>Enable Defender for Key Vault</strong></td>
+<td>No</td>
+<td>Enables Defender for Key Vault at subscription level</td>
+</tr>
+<tr>
+<td><strong>Enable Telemetry</strong></td>
+<td>Yes</td>
+<td>Sends anonymous usage telemetry to Microsoft</td>
+</tr>
+</tbody>
+</table>
+<h3 id="base-name">Base Name</h3>
+<p>The base name seeds the naming convention for all resources. For example, with <code>baseName = ailz</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual Network</td>
+<td><code>vnet-ailz</code></td>
+</tr>
+<tr>
+<td>Key Vault</td>
+<td><code>kv-ailz</code></td>
+</tr>
+<tr>
+<td>Storage Account</td>
+<td><code>stailz</code></td>
+</tr>
+<tr>
+<td>Build VM</td>
+<td><code>vm-ailz-bld</code></td>
+</tr>
+<tr>
+<td>Jump VM</td>
+<td><code>vm-ailz-jmp</code></td>
+</tr>
+<tr>
+<td>Container App</td>
+<td><code>ca-ailz-orchestrator</code></td>
+</tr>
+<tr>
+<td>Log Analytics</td>
+<td><code>law-ailz</code></td>
+</tr>
+<tr>
+<td>App Insights</td>
+<td><code>appi-ailz</code></td>
+</tr>
+<tr>
+<td>Container Registry</td>
+<td><code>acrailz</code></td>
+</tr>
+<tr>
+<td>Cosmos DB</td>
+<td><code>db-ailz</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="platform-landing-zone-integration">Platform Landing Zone Integration</h3>
+<p>This is the <strong>most significant architectural toggle</strong> in the deployment. It controls whether the landing zone is self-contained or integrates with centrally managed enterprise infrastructure.</p>
+<p><strong>When set to "Yes":</strong></p>
+<table>
+<thead>
+<tr>
+<th>What happens</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Azure Firewall is <strong>hidden/not deployed</strong></td>
+<td>Egress filtering is managed by the platform team</td>
+</tr>
+<tr>
+<td>Application Gateway is <strong>hidden/not deployed</strong></td>
+<td>Ingress is managed centrally</td>
+</tr>
+<tr>
+<td>API Management is <strong>hidden/not deployed</strong></td>
+<td>AI Gateway is managed centrally</td>
+</tr>
+<tr>
+<td>Bastion Host is <strong>not deployed</strong></td>
+<td>Secure access is provided by the platform</td>
+</tr>
+<tr>
+<td>Private DNS Zone creation is <strong>skipped</strong></td>
+<td>You must select existing DNS zones for each service</td>
+</tr>
+<tr>
+<td>WAF Policy is <strong>not deployed</strong></td>
+<td>Managed at platform level</td>
+</tr>
+<tr>
+<td>Associated Public IPs and NSGs are <strong>not deployed</strong></td>
+<td>Not needed without the above resources</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When set to "No" (default):</strong>
+- All networking, security, and DNS resources are deployed as a self-contained environment
+- A Bastion Host is automatically deployed for secure VM access
+- Private DNS Zones are created and linked to the VNet</p>
+<h3 id="defender-options">Defender Options</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Visibility</th>
+<th>What it enables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Defender for AI</strong></td>
+<td>Always visible</td>
+<td>Subscription-level Defender for AI + Storage (malware scanning, sensitive data discovery)</td>
+</tr>
+<tr>
+<td><strong>Defender for Key Vault</strong></td>
+<td>Only if Defender for AI = Yes</td>
+<td>Subscription-level threat detection for Key Vault operations</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> Defender enablement is a subscription-scoped operation and requires Owner or Security Admin permissions.</p>
+</blockquote>
+<hr />
+<h2 id="step-2-ai-services-configuration">Step 2: AI Services Configuration</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Impact When Disabled</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deploy AI Search</strong></td>
+<td>Yes</td>
+<td>No Azure AI Search service; AI Foundry won't have a search connection</td>
+</tr>
+<tr>
+<td><strong>Deploy Bing Grounding</strong></td>
+<td>Yes</td>
+<td>No Bing Search grounding capability for AI agents</td>
+</tr>
+<tr>
+<td><strong>Deploy Cosmos DB</strong></td>
+<td>Yes</td>
+<td>No Cosmos DB; no private endpoint or role assignments for database access</td>
+</tr>
+<tr>
+<td><strong>Deploy Key Vault</strong></td>
+<td>Yes</td>
+<td>No Key Vault; Defender for Key Vault becomes irrelevant</td>
+</tr>
+<tr>
+<td><strong>Deploy Storage Account</strong></td>
+<td>Yes</td>
+<td>No Storage Account; AI Foundry won't have a storage connection</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Important:</strong> Azure AI Foundry (the core AI hub/project) is <strong>always deployed</strong> — it is not optional. These services complement it. The deployment automatically provisions two AI models:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Version</th>
+<th>SKU</th>
+<th>Capacity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>gpt-5-mini</td>
+<td>2025-08-07</td>
+<td>GlobalStandard</td>
+<td>10</td>
+</tr>
+<tr>
+<td>text-embedding-3-large</td>
+<td>v1</td>
+<td>Standard</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<h3 id="how-ai-services-connect-to-ai-foundry">How AI Services connect to AI Foundry</h3>
+<p>When enabled, each service is automatically connected to the AI Foundry hub:
+- <strong>AI Search</strong> → Foundry connection for RAG (Retrieval-Augmented Generation) scenarios
+- <strong>Storage Account</strong> → Foundry connection for data storage and file uploads
+- <strong>App Insights</strong> → Foundry connection for telemetry and tracing</p>
+<hr />
+<h2 id="step-3-application-services-configuration">Step 3: Application Services Configuration</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Visibility</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deploy Azure Container Registry</strong></td>
+<td>Yes</td>
+<td>Always</td>
+<td>Premium-tier ACR for storing container images</td>
+</tr>
+<tr>
+<td><strong>Deploy Container Apps Environment</strong></td>
+<td>Yes</td>
+<td>Always</td>
+<td>Managed environment for running containerized workloads</td>
+</tr>
+<tr>
+<td><strong>Deploy Container App (Orchestrator)</strong></td>
+<td>Yes</td>
+<td>Only if Container Apps Env = Yes</td>
+<td>Deploys a placeholder orchestrator container app</td>
+</tr>
+<tr>
+<td><strong>Deploy App Configuration</strong></td>
+<td>Yes</td>
+<td>Always</td>
+<td>Centralized configuration store populated with service endpoints</td>
+</tr>
+<tr>
+<td><strong>Deploy Azure API Management</strong></td>
+<td>Yes</td>
+<td>Only if Platform LZ = No</td>
+<td>APIM as an AI Gateway for model governance</td>
+</tr>
+<tr>
+<td><strong>Deploy Application Gateway</strong></td>
+<td>Yes</td>
+<td>Only if Platform LZ = No</td>
+<td>L7 load balancer with WAF for ingress</td>
+</tr>
+<tr>
+<td><strong>Deploy App Gateway Public IP</strong></td>
+<td>Yes</td>
+<td>Only if App Gateway = Yes AND Platform LZ = No</td>
+<td>Public-facing IP for the Application Gateway</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-dependencies">Key Dependencies</h3>
+<div class="highlight"><pre><span></span><code>Container Apps Environment ──► Container App (Orchestrator)
+                                (hidden if Env is disabled)
+
+Application Gateway ──► Application Gateway Public IP
+                        (hidden if App GW is disabled)
+
+Platform Landing Zone = Yes ──► Hides: APIM, App Gateway, App GW PIP
+</code></pre></div>
+<h3 id="app-configuration-population">App Configuration Population</h3>
+<p>When App Configuration is enabled, the deployment automatically populates it with connection information for all deployed services, providing a single source of truth for application settings.</p>
+<hr />
+<h2 id="step-4-devops-configuration">Step 4: DevOps Configuration</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deploy Build VM</strong></td>
+<td>Yes</td>
+<td>Linux (Ubuntu 22.04 LTS) VM for CI/CD pipelines</td>
+</tr>
+<tr>
+<td><strong>Deploy Jump VM</strong></td>
+<td>Yes</td>
+<td>Windows Server 2022 VM for RDP-based management</td>
+</tr>
+<tr>
+<td><strong>Admin Username</strong></td>
+<td><code>adminuser</code></td>
+<td>Shared admin username for both VMs</td>
+</tr>
+<tr>
+<td><strong>Admin Password</strong></td>
+<td>—</td>
+<td>Must meet Azure complexity: 8+ chars, upper + lower + number + special</td>
+</tr>
+<tr>
+<td><strong>Jump VM Size</strong></td>
+<td>Standard_D4as_v5</td>
+<td>Interactive SKU selector (Windows-compatible)</td>
+</tr>
+<tr>
+<td><strong>Enable Jump VM Maintenance</strong></td>
+<td>No</td>
+<td>Automated patching: Saturdays at 22:00 UTC, weekly</td>
+</tr>
+<tr>
+<td><strong>Build VM Size</strong></td>
+<td>Standard_D4as_v5</td>
+<td>Interactive SKU selector (Linux-compatible)</td>
+</tr>
+<tr>
+<td><strong>Enable Build VM Maintenance</strong></td>
+<td>No</td>
+<td>Automated patching: Sundays at 22:00 UTC, weekly</td>
+</tr>
+</tbody>
+</table>
+<h3 id="visibility-rules">Visibility Rules</h3>
+<ul>
+<li><strong>Admin Username/Password</strong>: Only visible when at least one VM is enabled</li>
+<li><strong>Jump VM Size / Maintenance</strong>: Only visible when Jump VM = Yes</li>
+<li><strong>Build VM Size / Maintenance</strong>: Only visible when Build VM = Yes</li>
+</ul>
+<h3 id="build-vm-details">Build VM Details</h3>
+<p>The Linux Build VM is provisioned with a Custom Script Extension that installs:
+- Docker
+- Azure CLI
+- kubectl
+- Other common CI/CD tooling</p>
+<p>This VM is intended to serve as a self-hosted build agent (Azure DevOps or GitHub Actions) within the private network.</p>
+<h3 id="jump-vm-details">Jump VM Details</h3>
+<p>The Windows Jump VM provides RDP access to the private environment through Azure Bastion (deployed automatically in standalone mode). Use it for:
+- Accessing AI Foundry Studio via a private browser session
+- Managing resources within the private VNet
+- Debugging and testing from within the network perimeter</p>
+<h3 id="maintenance-configuration">Maintenance Configuration</h3>
+<p>When enabled, creates an Azure Maintenance Configuration resource with:
+- <strong>Scope</strong>: In-guest patching
+- <strong>Reboot setting</strong>: If required
+- <strong>Duration</strong>: 3 hours
+- <strong>Schedule</strong>: Weekly (Saturday for Jump VM, Sunday for Build VM)
+- <strong>Time zone</strong>: UTC</p>
+<hr />
+<h2 id="step-5-monitoring-configuration">Step 5: Monitoring Configuration</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Visibility</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deploy Log Analytics</strong></td>
+<td>Yes</td>
+<td>Always</td>
+<td>Central Log Analytics workspace for all diagnostic logs</td>
+</tr>
+<tr>
+<td><strong>Deploy Application Insights</strong></td>
+<td>Yes</td>
+<td>Only if Log Analytics = Yes</td>
+<td>APM telemetry, connected to AI Foundry</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dependency-chain">Dependency Chain</h3>
+<div class="highlight"><pre><span></span><code>Log Analytics Workspace
+    └── Application Insights (requires Log Analytics)
+            └── Private Link Scope (for private telemetry ingestion)
+                    └── AI Foundry Connection (automatic when both are deployed)
+</code></pre></div>
+<p>Disabling Log Analytics will <strong>automatically hide</strong> the Application Insights option since App Insights requires a workspace.</p>
+<hr />
+<h2 id="step-6-network-configuration">Step 6: Network Configuration</h2>
+<h3 id="core-networking">Core Networking</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Visibility</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deploy Azure Firewall</strong></td>
+<td>Yes</td>
+<td>Platform LZ = No</td>
+<td>L4 egress filtering with a Firewall Policy</td>
+</tr>
+<tr>
+<td><strong>Deploy Firewall Public IP</strong></td>
+<td>Yes</td>
+<td>Firewall = Yes AND Platform LZ = No</td>
+<td>Required for outbound SNAT and DNAT rules</td>
+</tr>
+<tr>
+<td><strong>Deploy Virtual Network</strong></td>
+<td>Yes</td>
+<td>Always</td>
+<td>Creates a new VNet with pre-calculated subnets</td>
+</tr>
+<tr>
+<td><strong>VNet Base Address</strong></td>
+<td><code>192.168.0.0</code></td>
+<td>Deploy VNet = Yes</td>
+<td>Base of the /16 address space (format: <code>x.x.0.0</code>)</td>
+</tr>
+<tr>
+<td><strong>Select Existing VNet</strong></td>
+<td>—</td>
+<td>Deploy VNet = No</td>
+<td>Pick an existing VNet from your subscription</td>
+</tr>
+<tr>
+<td><strong>Deploy Subnets</strong></td>
+<td>Yes</td>
+<td>Deploy VNet = No</td>
+<td>Create subnets in the existing VNet, or map existing ones</td>
+</tr>
+<tr>
+<td><strong>App Gateway Private IP</strong></td>
+<td><code>192.168.0.200</code></td>
+<td>App Gateway = Yes AND Platform LZ = No</td>
+<td>Static frontend IP</td>
+</tr>
+<tr>
+<td><strong>Peer to existing VNet</strong></td>
+<td>No</td>
+<td>Always</td>
+<td>Bi-directional peering (e.g., to a hub network)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="existing-vnet-subnet-mapping">Existing VNet Subnet Mapping</h3>
+<p>When using an existing VNet without creating new subnets, you must map subnets for:</p>
+<table>
+<thead>
+<tr>
+<th>Subnet Purpose</th>
+<th>Required When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent Subnet</td>
+<td>Always</td>
+</tr>
+<tr>
+<td>Private Endpoint Subnet</td>
+<td>Always</td>
+</tr>
+<tr>
+<td>Azure Bastion Subnet</td>
+<td>Platform LZ = No</td>
+</tr>
+<tr>
+<td>Azure Firewall Subnet</td>
+<td>Firewall = Yes AND Platform LZ = No</td>
+</tr>
+<tr>
+<td>App Gateway Subnet</td>
+<td>App Gateway = Yes AND Platform LZ = No</td>
+</tr>
+<tr>
+<td>APIM Subnet</td>
+<td>APIM = Yes AND Platform LZ = No</td>
+</tr>
+<tr>
+<td>Jump Box Subnet</td>
+<td>Jump VM = Yes</td>
+</tr>
+<tr>
+<td>Container Apps Environment Subnet</td>
+<td>Container Apps Env = Yes</td>
+</tr>
+<tr>
+<td>DevOps Agents Subnet</td>
+<td>Build VM = Yes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="private-dns-zones-platform-landing-zone-mode">Private DNS Zones (Platform Landing Zone Mode)</h3>
+<p>When Platform Landing Zone = Yes, you must select existing Private DNS Zones for:</p>
+<table>
+<thead>
+<tr>
+<th>DNS Zone</th>
+<th>Required When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cognitive Services</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>OpenAI</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>AI Services</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>Azure AI Search</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>Cosmos DB (SQL)</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>Blob Storage</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>Key Vault</td>
+<td>Always (PLZ mode)</td>
+</tr>
+<tr>
+<td>App Configuration</td>
+<td>App Config = Yes</td>
+</tr>
+<tr>
+<td>Container Apps</td>
+<td>Container Apps Env = Yes</td>
+</tr>
+<tr>
+<td>Container Registry</td>
+<td>ACR = Yes</td>
+</tr>
+<tr>
+<td>Application Insights</td>
+<td>App Insights = Yes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="automatic-network-architecture-deploy-vnet-yes">Automatic Network Architecture (Deploy VNet = Yes)</h3>
+<p>When deploying a new VNet, the template automatically creates:
+- A /16 VNet with pre-calculated subnet allocations
+- NSGs for each subnet with appropriate security rules
+- A NAT Gateway for outbound internet access
+- Azure Bastion for secure VM access (standalone mode only)
+- Private DNS Zones linked to the VNet (standalone mode only)
+- Private Endpoints for all PaaS services</p>
+<hr />
+<h2 id="step-7-tags">Step 7: Tags</h2>
+<p>Apply Azure resource tags to deployed resources. The wizard supports tagging:
+- <code>Microsoft.Storage/storageAccounts</code>
+- <code>Microsoft.Compute/virtualMachines</code></p>
+<p>The following <strong>default tags</strong> are applied to all resources automatically:</p>
+<table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Project</code></td>
+<td>AI-ML-Landing-Zone</td>
+</tr>
+<tr>
+<td><code>DeployedBy</code></td>
+<td>UI-Form</td>
+</tr>
+<tr>
+<td><code>BaseName</code></td>
+<td><em>your chosen base name</em></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="option-interaction-map">Option Interaction Map</h2>
+<p>The diagram below shows how key options affect the visibility and deployment of other features:</p>
+<pre class="mermaid"><code>graph TD
+    PLZ["Platform Landing Zone = Yes"] --&gt;|Hides| FW[Azure Firewall]
+    PLZ --&gt;|Hides| APIM[API Management]
+    PLZ --&gt;|Hides| AppGW[Application Gateway]
+    PLZ --&gt;|Hides| Bastion[Bastion Host]
+    PLZ --&gt;|Hides| WAF[WAF Policy]
+    PLZ --&gt;|Requires| DNS[Select Existing DNS Zones]
+    PLZ --&gt;|Skips| PDNS[Private DNS Zone Creation]
+
+    LA["Log Analytics = No"] --&gt;|Hides| AI[Application Insights]
+    CAE["Container App Env = No"] --&gt;|Hides| CA[Container App Orchestrator]
+    FW2["Firewall = No"] --&gt;|Hides| FWPIP[Firewall Public IP]
+    AppGW2["App Gateway = No"] --&gt;|Hides| AGPIP[App Gateway Public IP]
+
+    VM["Build/Jump VM = No"] --&gt;|Hides| Creds[Admin Credentials]
+    VM --&gt;|Hides| Maint[Maintenance Config]
+    VM --&gt;|Hides| Size[VM Size Selector]
+
+    VNet["Deploy VNet = No"] --&gt;|Shows| ExVNet[Existing VNet Selector]
+    ExVNet --&gt;|Shows| SubMap[Subnet Mapping Dropdowns]
+
+    DefAI["Defender for AI = No"] --&gt;|Hides| DefKV[Defender for Key Vault]</code></pre>
+<hr />
+<h2 id="common-deployment-scenarios">Common Deployment Scenarios</h2>
+<h3 id="1-full-standalone-greenfield">1. Full Standalone (Greenfield)</h3>
+<p><strong>Settings:</strong> All defaults, Platform LZ = No</p>
+<p>Deploys the complete reference architecture with:
+- Full networking stack (VNet, Firewall, Bastion, NAT Gateway, NSGs)
+- All AI services (Foundry, Search, Cosmos DB, Storage, Key Vault)
+- Application platform (Container Apps, ACR, App Config, APIM, App Gateway)
+- DevOps infrastructure (Build VM, Jump VM)
+- Full monitoring (Log Analytics, App Insights, Private Link Scope)
+- All Private DNS Zones and Private Endpoints</p>
+<p><strong>Best for:</strong> New projects, PoCs, isolated environments, teams without existing platform infrastructure.</p>
+<hr />
+<h3 id="2-platform-landing-zone-integration-brownfield">2. Platform Landing Zone Integration (Brownfield)</h3>
+<p><strong>Settings:</strong> Platform LZ = Yes, select existing DNS zones</p>
+<p>Deploys AI and application services without centrally-managed infrastructure:
+- Skips: Firewall, Bastion, App Gateway, APIM, WAF, DNS Zones
+- Requires: Existing Private DNS Zones, peering to hub network
+- Deploys: AI Foundry, AI services, Container Apps, VMs, monitoring</p>
+<p><strong>Best for:</strong> Enterprise environments with existing hub-spoke networking, central DNS management, and shared security appliances.</p>
+<hr />
+<h3 id="3-minimal-ai-development">3. Minimal AI Development</h3>
+<p><strong>Settings:</strong> Disable Firewall, APIM, App Gateway, Build VM, Jump VM, Cosmos DB, Bing Grounding</p>
+<p>Deploys a lightweight environment with:
+- AI Foundry with models
+- VNet with Private Endpoints
+- Storage, Key Vault, AI Search
+- Container Apps for application hosting
+- Monitoring stack</p>
+<p><strong>Best for:</strong> Development/test environments, quick experimentation, cost-conscious deployments.</p>
+<hr />
+<h3 id="4-existing-network-integration">4. Existing Network Integration</h3>
+<p><strong>Settings:</strong> Deploy VNet = No → select existing VNet → map subnets</p>
+<p>Deploys all services into your pre-existing network topology. Useful when:
+- Network team has pre-provisioned VNets with specific address spaces
+- Compliance requires specific subnet configurations
+- Integrating with existing network security appliances</p>
+<hr />
+<h2 id="post-deployment">Post-Deployment</h2>
+<h3 id="accessing-the-environment">Accessing the Environment</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Jump VM (RDP)</strong></td>
+<td>Connect via Azure Bastion in the Azure Portal → find the Jump VM → Connect → Bastion</td>
+</tr>
+<tr>
+<td><strong>AI Foundry Studio</strong></td>
+<td>From the Jump VM browser, navigate to <a href="https://ai.azure.com">https://ai.azure.com</a></td>
+</tr>
+<tr>
+<td><strong>Build VM (SSH)</strong></td>
+<td>Connect via Azure Bastion → find the Build VM → Connect → Bastion (SSH)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="automatic-configurations">Automatic Configurations</h3>
+<p>The deployment automatically completes these post-provisioning steps:</p>
+<ol>
+<li><strong>AI Foundry Connections</strong> — Search, Storage, and App Insights are wired to the Foundry hub</li>
+<li><strong>App Configuration Population</strong> — All service endpoints written to App Config</li>
+<li><strong>RBAC Role Assignments</strong> — Managed identity granted access to AI services, Cosmos DB, Storage, Key Vault</li>
+<li><strong>Cosmos DB Role Assignment</strong> — Data plane RBAC for the managed identity</li>
+<li><strong>Build VM Software Installation</strong> — Custom Script Extension installs Docker, Azure CLI, kubectl</li>
+<li><strong>Private Endpoint DNS</strong> — All PaaS services accessible via private DNS names within the VNet</li>
+</ol>
+<h3 id="managed-identity">Managed Identity</h3>
+<p>A User-Assigned Managed Identity is created and granted the following roles across deployed services:
+- Cognitive Services Contributor (AI Foundry)
+- Search Index Data Contributor (AI Search)
+- Storage Blob Data Contributor (Storage Account)
+- Key Vault Secrets User (Key Vault)
+- Cosmos DB Built-in Data Contributor (Cosmos DB)</p>
+<p>This identity is assigned to the Container Apps and can be used by your applications for passwordless authentication.</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-deployment-failures">Common Deployment Failures</h3>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Cause</th>
+<th>Resolution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quota exceeded</td>
+<td>Insufficient vCPU or model quota in the region</td>
+<td>Check quotas in the Azure Portal or select a different region</td>
+</tr>
+<tr>
+<td>Name conflict</td>
+<td>Base name produces a globally non-unique name</td>
+<td>Choose a different base name</td>
+</tr>
+<tr>
+<td>DNS zone not found</td>
+<td>Platform LZ mode but DNS zone doesn't exist</td>
+<td>Create the required Private DNS Zones first</td>
+</tr>
+<tr>
+<td>Subnet conflict</td>
+<td>Existing VNet subnets have overlapping address spaces</td>
+<td>Ensure subnets don't overlap and meet minimum size requirements</td>
+</tr>
+<tr>
+<td>APIM timeout</td>
+<td>APIM provisioning takes ~20-30 minutes</td>
+<td>Wait for completion; do not cancel</td>
+</tr>
+</tbody>
+</table>
+<h3 id="getting-support">Getting Support</h3>
+<ul>
+<li>File issues at <a href="https://github.com/azure/ai-landing-zones">https://github.com/azure/ai-landing-zones</a></li>
+<li>Include the <strong>correlation ID</strong> from the deployment (found in Deployments blade of the resource group)</li>
+<li>See <a href="SUPPORT.md">SUPPORT.md</a> for the full support policy</li>
+</ul>
+<hr />
+<h2 id="estimated-deployment-time">Estimated Deployment Time</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Approximate Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full deployment (all services)</td>
+<td>30–45 minutes</td>
+</tr>
+<tr>
+<td>Without APIM</td>
+<td>15–25 minutes</td>
+</tr>
+<tr>
+<td>Minimal (AI + networking only)</td>
+<td>10–15 minutes</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> APIM is the longest-running resource at ~20-30 minutes. All other resources typically deploy within 5-10 minutes.</p>
+</blockquote>
+<hr />
+<h2 id="related-resources">Related Resources</h2>
+<ul>
+<li><a href="https://azure.github.io/AI-Landing-Zones/architecture/design-checklist/">AI Landing Zone Design Checklist</a></li>
+<li><a href="https://azure.github.io/AI-Landing-Zones/architecture/faq/">FAQ</a></li>
+<li><a href="https://aka.ms/ailz/bicep">Bicep Implementation</a></li>
+<li><a href="https://aka.ms/ailz/terraform">Terraform Implementation</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/">Cloud Adoption Framework - AI Scenario</a></li>
+<li><a href="https://learn.microsoft.com/en-us/azure/well-architected/ai/">Well-Architected Framework - AI Workloads</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
