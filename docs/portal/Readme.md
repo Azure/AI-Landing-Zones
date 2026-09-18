@@ -423,7 +423,7 @@ This identity is assigned to the Container Apps and can be used by your applicat
 
 - File issues at [https://github.com/azure/ai-landing-zones](https://github.com/azure/ai-landing-zones)
 - Include the **correlation ID** from the deployment (found in Deployments blade of the resource group)
-- See [SUPPORT.md](SUPPORT.md) for the full support policy
+- See [SUPPORT.md](https://github.com/Azure/AI-Landing-Zones/blob/main/SUPPORT.md) for the full support policy
 
 ---
 
