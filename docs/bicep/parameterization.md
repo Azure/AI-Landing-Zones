@@ -39,6 +39,75 @@ azd env set NETWORK_ISOLATION true
 | `greenFieldDeployment` | `true` | — | Green-field deployment (creates all resources from scratch) |
 | `publicIngress` | `{ enabled: false }` | — | Optional Application Gateway WAF v2 public endpoint for a private Container App. See [Public Ingress with Application Gateway](public-ingress.md). |
 
+## Solution Storage controls
+
+!!! warning "Available in v2.7.0 - live Azure validation not verified"
+    These inputs are available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0) for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). Use a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.
+
+These three inputs apply **only to the solution Storage account** controlled by `deployStorageAccount`, not auxiliary AI Foundry Storage, VM storage, or other services. The Storage AVM dependency remains `br/public:avm/res/storage/storage-account:0.26.2`.
+
+| Parameter | Bicep type | Default | Description |
+|---|---|---|---|
+| `storageAccountNetworkAclsBypass` | String-literal union | `'AzureServices'` | Value passed to the solution account's `networkAcls.bypass`. Only the exact strings listed below are accepted. |
+| `storageAccountResourceAccessRules` | Array of sealed objects with required `resourceId: string` and `tenantId: string` fields | `[]` | Complete desired list of resource-instance network rules passed to `networkAcls.resourceAccessRules`. Additional object properties are not accepted. |
+| `storageAccountAllowSharedKeyAccess` | `bool` | `true` | Value passed to `allowSharedKeyAccess`. Disabling Shared Key authorization is an explicit, compatibility-sensitive opt-in. |
+
+The bypass union accepts exactly these eight values, with the spelling, comma-space separators, and ordering shown:
+
+- `'None'`
+- `'AzureServices'`
+- `'Logging'`
+- `'Metrics'`
+- `'AzureServices, Logging'`
+- `'AzureServices, Metrics'`
+- `'AzureServices, Logging, Metrics'`
+- `'Logging, Metrics'`
+
+Do not combine `None` with another value or use a differently ordered or unspaced string.
+
+### Native parameter values and defaults
+
+These inputs use native JSON values in `main.parameters.json`: a string, an array of objects, and a boolean. They do **not** introduce environment-variable substitutions, environment-variable names, or JSON-string aliases. In particular, do not quote booleans or serialize the rules array into a string.
+
+!!! note "Top-level null selects defaults"
+    Bicep `0.42.1` treats an explicit top-level `null` for these defaulted parameters as omission/default selection: `AzureServices`, `[]`, and `true`, respectively. This is [compiler behavior](https://github.com/Azure/bicep/blob/v0.42.1/src/Bicep.Core/Semantics/SemanticModel.cs), not a new runtime fallback or a change to product defaults. For the stricter profile, explicitly set bypass to `None` and Shared Key access to `false`, not `null`; use `[]` when no resource-instance exceptions are desired.
+
+This top-level behavior does not permit malformed nested rule fields. Each rule still requires non-empty string `resourceId` and `tenantId` fields; missing fields, nested `null`, wrong types, empty strings, and extra properties are invalid. Wrong bypass enum values and other wrong parameter types remain invalid.
+
+Omitting all three inputs from a compatible parameter file uses the defaults. The equivalent explicit defaults are shown below as a fragment of the file's `parameters` object, not as a complete deployment parameter file:
+
+```json
+{
+  "storageAccountNetworkAclsBypass": {
+    "value": "AzureServices"
+  },
+  "storageAccountResourceAccessRules": {
+    "value": []
+  },
+  "storageAccountAllowSharedKeyAccess": {
+    "value": true
+  }
+}
+```
+
+Keep customizations in your reviewed, version-controlled parameter-file overlay. With the [accelerator submodule pattern](accelerator-pattern.md), the overlay replaces the parameter file; it is not a JSON merge and must remain complete for the pinned ALZ revision. Do not patch generated infrastructure or change the pinned AVM to apply these settings. See the [deployment and migration guidance](how-to-deploy.md#solution-storage-profile).
+
+### Network rules are desired state, not discovered exceptions
+
+`storageAccountResourceAccessRules` declares the **entire desired rules list**. A redeployment removes resource-instance rules not included in it, including undesired or manually added exceptions. An empty array, including the omitted-input default, does not preserve rules that exist on the live account. There is no live-state merge or automatic discovery of Defender scanner exceptions.
+
+Each entry must use the exact, approved, existing Azure resource's full ARM resource ID and its tenant ID. Do not use wildcards, tenant/subscription/resource-group-wide scopes, or a synthesized scanner ID. Resource instances must belong to the **same Microsoft Entra tenant** as the Storage account, although their subscriptions can differ. A sealed object validates the input shape, not the resource's existence, supported type, tenant eligibility, or permissions; those remain Azure-side checks. A [resource-instance network rule](https://learn.microsoft.com/azure/storage/common/storage-network-security-resource-instances) provides network eligibility, **not data permissions**. The resource's managed identity still needs the appropriate data-plane authorization, managed separately.
+
+These inputs do not change the existing `networkIsolation`, public network access (PNA), `allowedIpRanges`, `defaultAction`, or private-endpoint behavior. Bypass `None` alone does not make an account private. Conversely, PNA `Disabled` does **not** make trusted-service or resource-instance exceptions irrelevant: previously configured exceptions can remain effective. Review them explicitly using the [Storage firewall limitations](https://learn.microsoft.com/azure/storage/common/storage-network-security-limitations) and [network access rules](https://learn.microsoft.com/azure/storage/common/storage-network-security).
+
+An approved existing Defender scanner can be included explicitly in the rules list when needed. These inputs do not enable a Defender plan or create a scanner, its managed identity, or role assignments. Defender's own configuration is a separate prerequisite; see [resources deployed by malware scanning](https://learn.microsoft.com/azure/defender-for-cloud/introduction-malware-scanning#resources-deployed-by-malware-scanning).
+
+### Shared Key compatibility boundary
+
+Before opting into `storageAccountAllowSharedKeyAccess=false`, inventory and migrate all account-key clients, key-based connection strings, service SAS and account SAS consumers, and Azure Files clients and tools. Validate each required protocol and workflow before rollout. Microsoft Entra authorization and **Blob user delegation SAS** are distinct from key-signed service/account SAS; disabling Shared Key does not disable the former, but they still require suitable network access and data permissions. See [prevent Shared Key authorization](https://learn.microsoft.com/azure/storage/common/shared-key-authorization-prevent).
+
+This is a data-plane authorization control, not a promise of a key-free management-plane deployment. AVM `0.26.2` retains secure outputs that use `listKeys`; setting this input to `false` does not remove those outputs or their management-plane requirements.
+
 ## Deploy toggles
 
 Each toggle controls whether a specific service is provisioned. Set to `true` to deploy or `false` to skip.
