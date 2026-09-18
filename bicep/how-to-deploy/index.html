@@ -644,6 +644,78 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#private-build-pool-ordering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private build pool ordering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solution-storage-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solution Storage profile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution Storage profile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#omitted-inputs-or-compatible-defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Omitted inputs or compatible defaults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicit-no-bypass-profile-without-defender-scanning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit no-bypass profile without Defender scanning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-approved-existing-scanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional approved existing scanner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-and-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration and rollback
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -944,7 +1016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../portal/readme.md" class="md-nav__link">
+      <a href="../../portal/Readme/" class="md-nav__link">
         
   
   
@@ -1046,6 +1118,78 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#private-build-pool-ordering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private build pool ordering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solution-storage-profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solution Storage profile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solution Storage profile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#omitted-inputs-or-compatible-defaults" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Omitted inputs or compatible defaults
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicit-no-bypass-profile-without-defender-scanning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit no-bypass profile without Defender scanning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-approved-existing-scanner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional approved existing scanner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-and-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration and rollback
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1133,7 +1277,7 @@ azd<span class="w"> </span>auth<span class="w"> </span>login
 <p>You can change parameter values in <code>main.parameters.json</code> or set them using <code>azd env set</code> before running <code>azd provision</code>. The latter applies only to parameters that support environment variable substitution. See <a href="../parameterization/">Parameterization</a> for the full reference.</p>
 </div>
 <h2 id="zero-trust-deployment">Zero Trust Deployment</h2>
-<p>For deployments that <strong>require network isolation</strong>. All services communicate through private endpoints and public access is disabled (unless you supplement with an <code>allowedIpRanges</code> list, see below).</p>
+<p>For deployments that <strong>require network isolation</strong>. The network-isolated configuration uses private endpoints and disables public network access unless an <code>allowedIpRanges</code> list is configured. For Storage, review trusted-service and resource-instance exceptions separately: public network access <code>Disabled</code> does not necessarily remove their access. See <a href="https://learn.microsoft.com/azure/storage/common/storage-network-security-limitations">Storage firewall limitations</a>.</p>
 <p><strong>1. Initialize the project</strong></p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>azure/bicep-ptn-aiml-landing-zone
 </code></pre></div>
@@ -1165,6 +1309,67 @@ azd<span class="w"> </span>auth<span class="w"> </span>login
    - Enter the credentials you set in step 1</p>
 <h3 id="optional-public-endpoint">Optional public endpoint</h3>
 <p>If a private Container App must be reachable through a controlled public endpoint, use <a href="../public-ingress/">Public Ingress with Application Gateway</a>. The template first provisions an inert Application Gateway skeleton, then you complete the hostname, certificate, DNS, and allowed-source configuration.</p>
+<h3 id="private-build-pool-ordering">Private build pool ordering</h3>
+<div class="admonition warning">
+<p class="admonition-title">Available in v2.7.0 - live cold-start validation not verified</p>
+<p>The ordering change for <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/159">Azure/bicep-ptn-aiml-landing-zone#159</a> is available in <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0">Bicep implementation v2.7.0</a>. Release availability and successful CI do not establish that a live cold-start deployment has succeeded; collect the first-attempt evidence described below.</p>
+</div>
+<p>The private Container Registry build agent pool has an explicit <code>dependsOn</code> on the <strong>conditionally deployed BYO-VNet subnet module</strong>. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.</p>
+<p>The existing <code>networkIsolation</code>, <code>useExistingVNet</code>, <code>deploySubnets</code>, <code>deployNsgs</code>, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When <code>deploySubnets=false</code>, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.</p>
+<p>For a cold-start verification, record that the target build subnet is <strong>absent before the first attempt</strong> in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and <code>countSucceeded</code>, counting only operations that actually reached <code>Succeeded</code>. A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.</p>
+<h2 id="solution-storage-profile">Solution Storage profile</h2>
+<div class="admonition warning">
+<p class="admonition-title">Available in v2.7.0 - live Azure validation not verified</p>
+<p>The inputs used in these examples are available in <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0">Bicep implementation v2.7.0</a> for <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160">Azure/bicep-ptn-aiml-landing-zone#160</a>. They require a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.</p>
+</div>
+<p>The <a href="../parameterization/#solution-storage-controls">parameter reference</a> defines the three inputs and exact bypass union. They affect <strong>solution Storage only</strong> and retain Storage AVM <code>0.26.2</code>. They do not redesign Firewall, VPN, Network Security Perimeter (NSP), VM, or auxiliary AI Foundry Storage, or change deployment defaults.</p>
+<p>Use a reviewed, version-controlled <code>main.parameters.json</code> overlay for the pinned ALZ revision. The JSON examples below are fragments of its <code>parameters</code> object, not complete files. Preserve the rest of the compatible parameter file. These settings take native strings, arrays, and booleans; there are no new environment substitutions, environment names, or JSON-string aliases to set with <code>azd env set</code>. Follow the existing <a href="../accelerator-pattern/">overlay and version-pin workflow</a>, not edits to generated infrastructure.</p>
+<h3 id="omitted-inputs-or-compatible-defaults">Omitted inputs or compatible defaults</h3>
+<p>Omit the three inputs to retain bypass <code>AzureServices</code>, an empty resource-instance rules list (<code>[]</code>), and Shared Key access enabled (<code>true</code>), or use the <a href="../parameterization/#native-parameter-values-and-defaults">explicit default fragment</a>. These are compatibility defaults, not a private-only profile. On redeployment, the empty desired list can remove existing manual or Defender-added resource-instance rules; omission is not a request to preserve live exceptions.</p>
+<p>With Bicep <code>0.42.1</code>, an explicit top-level <code>null</code> for any of these defaulted parameters also selects its default. Do not use <code>null</code> to request a stricter profile: set bypass to <code>None</code> and Shared Key access to <code>false</code> explicitly, and supply the complete rules array (<code>[]</code> when no exceptions are desired). This does not allow nested <code>null</code>, missing required rule fields, empty strings, wrong types, or invalid bypass values; see the <a href="../parameterization/#native-parameter-values-and-defaults">parameter contract</a>. No runtime fallback or product-default change is introduced.</p>
+<h3 id="explicit-no-bypass-profile-without-defender-scanning">Explicit no-bypass profile without Defender scanning</h3>
+<p>For a deployment that does not require a Defender scanner exception or any other resource-instance exception, explicitly select <code>None</code>, <code>false</code>, and <code>[]</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"storageAccountNetworkAclsBypass"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"storageAccountResourceAccessRules"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"storageAccountAllowSharedKeyAccess"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Complete the client inventory and migration below <strong>before</strong> disabling Shared Key. This fragment does not disable an existing Defender plan, and must not be used to remove a required scanner exception unintentionally. It neither enables network isolation nor changes existing PNA, IP rules, <code>defaultAction</code>, or private endpoints. Bypass <code>None</code> is not sufficient to make an account private, and PNA <code>Disabled</code> is not sufficient to disregard configured trusted-service/resource-instance exceptions.</p>
+<h3 id="optional-approved-existing-scanner">Optional approved existing scanner</h3>
+<p>If Defender malware scanning is already configured and must be retained, obtain the <strong>exact existing scanner ARM resource ID</strong> and its tenant ID from the approved configuration. Review them with the resource owner. Replace both placeholders below; they are illustrative text, not deployable IDs. Do not construct a scanner scope from a Storage account ID, guess its resource group or name, use a wildcard, or broaden the rule to all resources in a scope.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"storageAccountNetworkAclsBypass"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"None"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"storageAccountResourceAccessRules"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"resourceId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;approved-existing-scanner-arm-resource-id&gt;"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"tenantId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;approved-scanner-tenant-id&gt;"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"storageAccountAllowSharedKeyAccess"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This example assumes that the scanner is the <strong>only</strong> approved resource-instance exception. If others are required, include every approved entry in the reviewed list. The list is complete desired state: redeployment removes undesired or manual entries not listed, without merging live rules. Azure checks resource eligibility, existence, and the same-tenant requirement; input shape checks alone are not evidence that the scanner can access data.</p>
+<p>The rule grants network eligibility, not data permissions. The scanner's managed identity and data-plane roles, Defender plan, and scanning configuration must already be managed separately. No scanner, plan, or role assignment is created by these inputs. Consult <a href="https://learn.microsoft.com/azure/defender-for-cloud/introduction-malware-scanning#resources-deployed-by-malware-scanning">Defender malware scanning prerequisites and resources</a> and <a href="https://learn.microsoft.com/azure/storage/common/storage-network-security-resource-instances">Storage resource-instance rules</a>. Verify scanning after an approved deployment rather than inferring it from a successful Storage resource update.</p>
+<h3 id="migration-and-rollback">Migration and rollback</h3>
+<ol>
+<li><strong>Inventory and prepare clients.</strong> Identify account-key clients, key-based connection strings, service SAS, account SAS, and Azure Files clients and tools. Migrate and verify required workflows before opting into <code>storageAccountAllowSharedKeyAccess=false</code>. Microsoft Entra authentication and Blob user delegation SAS are separate from key-signed SAS; they still need network connectivity and appropriate data-plane permissions. Review <a href="https://learn.microsoft.com/azure/storage/common/shared-key-authorization-prevent">Shared Key compatibility guidance</a>, including file-client constraints. Do not assume all SAS traffic is key-based or that every file client can migrate unchanged.</li>
+<li><strong>Review the pin and overlay together.</strong> Select a normal, compatible ALZ revision with the v2.7.0 contract, then update the complete parameter-file overlay. Review the full desired resource-instance rules list, including any required approved scanner entry, and obtain approval for the intended access changes. Keep the previous pin and overlay for rollback; do not patch generated infrastructure or change AVM <code>0.26.2</code>.</li>
+<li><strong>Verify the effective configuration and consumers.</strong> After an approved deployment, check the solution account's bypass, complete resource-instance rules list, and Shared Key setting, along with the unchanged PNA, IP, <code>defaultAction</code>, and private-endpoint behavior. Test migrated clients and, if required, the existing scanner. The change does not remove AVM's secure <code>listKeys</code> outputs, so it is not a key-free management-plane deployment guarantee. Local documentation checks do not supply this live evidence.</li>
+<li><strong>Rollback through the same pin/overlay workflow.</strong> Review the intended access state before reverting. An older implementation may reject the new inputs, restore bypass <code>AzureServices</code>, or drop approved resource-instance rules; match its parameter contract and assess those effects first. Restoring wider bypass or enabling keys again requires explicit approval, not an automatic fallback. Preserve approved exceptions on a compatible revision where possible and verify effective settings and consumers after rollback.</li>
+</ol>
 <h2 id="ai-landing-zone-integrated-deployment">AI Landing Zone Integrated Deployment</h2>
 <p>For deployments that <strong>plug into an existing Azure Landing Zone</strong> — i.e. the spoke peers to a corporate hub that already provides Bastion, Firewall, Private DNS zones, and Log Analytics.</p>
 <p>This topology assumes you (or another team) already operate a hub VNet and shared platform services. The AI Landing Zone spoke consumes them rather than re-creating them.</p>

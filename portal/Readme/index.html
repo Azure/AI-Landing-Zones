@@ -13,6 +13,8 @@
       
       
       
+        <link rel="prev" href="../../terraform-parity/">
+      
       
       
         
@@ -23,7 +25,7 @@
     
     
       
-        <title>AI Landing Zone — Portal Deployment Guide - Azure AI Landing Zones</title>
+        <title>Portal installation - Azure AI Landing Zones</title>
       
     
     
@@ -109,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AI Landing Zone — Portal Deployment Guide
+              Portal installation
             
           </span>
         </div>
@@ -805,10 +807,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../readme.md" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal installation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -824,6 +853,520 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wizard-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Wizard Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-basic-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Basic Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Basic Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Base Name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform-landing-zone-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform Landing Zone Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defender-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defender Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-ai-services-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: AI Services Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: AI Services Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-ai-services-connect-to-ai-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How AI Services connect to AI Foundry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-application-services-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Application Services Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Application Services Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#app-configuration-population" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        App Configuration Population
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-devops-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: DevOps Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 4: DevOps Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#visibility-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visibility Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-vm-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build VM Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jump-vm-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jump VM Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maintenance-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintenance Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-monitoring-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Monitoring Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Monitoring Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependency-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Chain
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-6-network-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Network Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 6: Network Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Networking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#existing-vnet-subnet-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing VNet Subnet Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-dns-zones-platform-landing-zone-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private DNS Zones (Platform Landing Zone Mode)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-network-architecture-deploy-vnet-yes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Network Architecture (Deploy VNet = Yes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-7-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Tags
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#option-interaction-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option Interaction Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-deployment-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Deployment Scenarios
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Deployment Scenarios">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-full-standalone-greenfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Full Standalone (Greenfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-platform-landing-zone-integration-brownfield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Platform Landing Zone Integration (Brownfield)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-minimal-ai-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Minimal AI Development
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-existing-network-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Existing Network Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Post-Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#accessing-the-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing the Environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Configurations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#managed-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Managed Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-deployment-failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Deployment Failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getting-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Getting Support
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimated-deployment-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimated Deployment Time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2148,7 +2691,7 @@ Platform Landing Zone = Yes ──► Hides: APIM, App Gateway, App GW PIP
 <ul>
 <li>File issues at <a href="https://github.com/azure/ai-landing-zones">https://github.com/azure/ai-landing-zones</a></li>
 <li>Include the <strong>correlation ID</strong> from the deployment (found in Deployments blade of the resource group)</li>
-<li>See <a href="SUPPORT.md">SUPPORT.md</a> for the full support policy</li>
+<li>See <a href="https://github.com/Azure/AI-Landing-Zones/blob/main/SUPPORT.md">SUPPORT.md</a> for the full support policy</li>
 </ul>
 <hr />
 <h2 id="estimated-deployment-time">Estimated Deployment Time</h2>
