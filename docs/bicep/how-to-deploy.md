@@ -101,23 +101,23 @@ After a Zero Trust deployment, use the Jumpbox VM to access services inside the 
 
 If a private Container App must be reachable through a controlled public endpoint, use [Public Ingress with Application Gateway](public-ingress.md). The template first provisions an inert Application Gateway skeleton, then you complete the hostname, certificate, DNS, and allowed-source configuration.
 
-### Private build pool ordering (proposed)
+### Private build pool ordering
 
-!!! warning "Unreleased contract - documentation draft"
-    This guidance describes the proposed change for [Azure/bicep-ptn-aiml-landing-zone#159](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/159). It does not claim that the change is released or that CI or a live cold-start deployment has succeeded.
+!!! warning "Available in v2.7.0 - live cold-start validation not verified"
+    The ordering change for [Azure/bicep-ptn-aiml-landing-zone#159](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/159) is available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0). Release availability and successful CI do not establish that a live cold-start deployment has succeeded; collect the first-attempt evidence described below.
 
-The proposed private Container Registry build agent pool change adds an explicit `dependsOn` on the **conditionally deployed BYO-VNet subnet module**. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.
+The private Container Registry build agent pool has an explicit `dependsOn` on the **conditionally deployed BYO-VNet subnet module**. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.
 
 The existing `networkIsolation`, `useExistingVNet`, `deploySubnets`, `deployNsgs`, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When `deploySubnets=false`, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.
 
 For a cold-start verification, record that the target build subnet is **absent before the first attempt** in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and `countSucceeded`, counting only operations that actually reached `Succeeded`. A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.
 
-## Solution Storage profile (proposed)
+## Solution Storage profile
 
-!!! warning "Unreleased contract - documentation draft"
-    The following examples describe the expected contract for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). They require a compatible implementation revision and are not a claim of a released feature, successful CI, or live deployment.
+!!! warning "Available in v2.7.0 - live Azure validation not verified"
+    The inputs used in these examples are available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0) for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). They require a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.
 
-The [parameter reference](parameterization.md#solution-storage-controls-proposed) defines the three inputs and exact bypass union. They affect **solution Storage only** and retain Storage AVM `0.26.2`. They do not redesign Firewall, VPN, Network Security Perimeter (NSP), VM, or auxiliary AI Foundry Storage, or change deployment defaults.
+The [parameter reference](parameterization.md#solution-storage-controls) defines the three inputs and exact bypass union. They affect **solution Storage only** and retain Storage AVM `0.26.2`. They do not redesign Firewall, VPN, Network Security Perimeter (NSP), VM, or auxiliary AI Foundry Storage, or change deployment defaults.
 
 Use a reviewed, version-controlled `main.parameters.json` overlay for the pinned ALZ revision. The JSON examples below are fragments of its `parameters` object, not complete files. Preserve the rest of the compatible parameter file. These settings take native strings, arrays, and booleans; there are no new environment substitutions, environment names, or JSON-string aliases to set with `azd env set`. Follow the existing [overlay and version-pin workflow](accelerator-pattern.md), not edits to generated infrastructure.
 
@@ -177,7 +177,7 @@ The rule grants network eligibility, not data permissions. The scanner's managed
 ### Migration and rollback
 
 1. **Inventory and prepare clients.** Identify account-key clients, key-based connection strings, service SAS, account SAS, and Azure Files clients and tools. Migrate and verify required workflows before opting into `storageAccountAllowSharedKeyAccess=false`. Microsoft Entra authentication and Blob user delegation SAS are separate from key-signed SAS; they still need network connectivity and appropriate data-plane permissions. Review [Shared Key compatibility guidance](https://learn.microsoft.com/azure/storage/common/shared-key-authorization-prevent), including file-client constraints. Do not assume all SAS traffic is key-based or that every file client can migrate unchanged.
-2. **Review the pin and overlay together.** Select a normal, compatible ALZ revision that implements the proposed contract, then update the complete parameter-file overlay. Review the full desired resource-instance rules list, including any required approved scanner entry, and obtain approval for the intended access changes. Keep the previous pin and overlay for rollback; do not patch generated infrastructure or change AVM `0.26.2`.
+2. **Review the pin and overlay together.** Select a normal, compatible ALZ revision with the v2.7.0 contract, then update the complete parameter-file overlay. Review the full desired resource-instance rules list, including any required approved scanner entry, and obtain approval for the intended access changes. Keep the previous pin and overlay for rollback; do not patch generated infrastructure or change AVM `0.26.2`.
 3. **Verify the effective configuration and consumers.** After an approved deployment, check the solution account's bypass, complete resource-instance rules list, and Shared Key setting, along with the unchanged PNA, IP, `defaultAction`, and private-endpoint behavior. Test migrated clients and, if required, the existing scanner. The change does not remove AVM's secure `listKeys` outputs, so it is not a key-free management-plane deployment guarantee. Local documentation checks do not supply this live evidence.
 4. **Rollback through the same pin/overlay workflow.** Review the intended access state before reverting. An older implementation may reject the new inputs, restore bypass `AzureServices`, or drop approved resource-instance rules; match its parameter contract and assess those effects first. Restoring wider bypass or enabling keys again requires explicit approval, not an automatic fallback. Preserve approved exceptions on a compatible revision where possible and verify effective settings and consumers after rollback.
 

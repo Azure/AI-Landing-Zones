@@ -39,14 +39,14 @@ azd env set NETWORK_ISOLATION true
 | `greenFieldDeployment` | `true` | — | Green-field deployment (creates all resources from scratch) |
 | `publicIngress` | `{ enabled: false }` | — | Optional Application Gateway WAF v2 public endpoint for a private Container App. See [Public Ingress with Application Gateway](public-ingress.md). |
 
-## Solution Storage controls (proposed)
+## Solution Storage controls
 
-!!! warning "Unreleased contract - documentation draft"
-    This section describes the proposed inputs for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). It is not a released-version reference or evidence of successful CI or live deployment. Use these inputs only with an implementation revision that supports them.
+!!! warning "Available in v2.7.0 - live Azure validation not verified"
+    These inputs are available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0) for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). Use a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.
 
 These three inputs apply **only to the solution Storage account** controlled by `deployStorageAccount`, not auxiliary AI Foundry Storage, VM storage, or other services. The Storage AVM dependency remains `br/public:avm/res/storage/storage-account:0.26.2`.
 
-| Parameter | Proposed Bicep type | Default | Description |
+| Parameter | Bicep type | Default | Description |
 |---|---|---|---|
 | `storageAccountNetworkAclsBypass` | String-literal union | `'AzureServices'` | Value passed to the solution account's `networkAcls.bypass`. Only the exact strings listed below are accepted. |
 | `storageAccountResourceAccessRules` | Array of sealed objects with required `resourceId: string` and `tenantId: string` fields | `[]` | Complete desired list of resource-instance network rules passed to `networkAcls.resourceAccessRules`. Additional object properties are not accepted. |
@@ -74,7 +74,7 @@ These inputs use native JSON values in `main.parameters.json`: a string, an arra
 
 This top-level behavior does not permit malformed nested rule fields. Each rule still requires non-empty string `resourceId` and `tenantId` fields; missing fields, nested `null`, wrong types, empty strings, and extra properties are invalid. Wrong bypass enum values and other wrong parameter types remain invalid.
 
-Omitting all three inputs from a compatible parameter file uses the proposed defaults. The equivalent explicit defaults are shown below as a fragment of the file's `parameters` object, not as a complete deployment parameter file:
+Omitting all three inputs from a compatible parameter file uses the defaults. The equivalent explicit defaults are shown below as a fragment of the file's `parameters` object, not as a complete deployment parameter file:
 
 ```json
 {
@@ -90,7 +90,7 @@ Omitting all three inputs from a compatible parameter file uses the proposed def
 }
 ```
 
-Keep customizations in your reviewed, version-controlled parameter-file overlay. With the [accelerator submodule pattern](accelerator-pattern.md), the overlay replaces the parameter file; it is not a JSON merge and must remain complete for the pinned ALZ revision. Do not patch generated infrastructure or change the pinned AVM to apply these settings. See the [proposed deployment and migration guidance](how-to-deploy.md#solution-storage-profile-proposed).
+Keep customizations in your reviewed, version-controlled parameter-file overlay. With the [accelerator submodule pattern](accelerator-pattern.md), the overlay replaces the parameter file; it is not a JSON merge and must remain complete for the pinned ALZ revision. Do not patch generated infrastructure or change the pinned AVM to apply these settings. See the [deployment and migration guidance](how-to-deploy.md#solution-storage-profile).
 
 ### Network rules are desired state, not discovered exceptions
 
