@@ -655,6 +655,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#byo-vnet-bastion-subnet-nsg-patch-v271" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BYO VNet Bastion subnet NSG patch (v2.7.1)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1129,6 +1140,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#byo-vnet-bastion-subnet-nsg-patch-v271" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BYO VNet Bastion subnet NSG patch (v2.7.1)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1317,6 +1339,9 @@ azd<span class="w"> </span>auth<span class="w"> </span>login
 <p>The private Container Registry build agent pool has an explicit <code>dependsOn</code> on the <strong>conditionally deployed BYO-VNet subnet module</strong>. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.</p>
 <p>The existing <code>networkIsolation</code>, <code>useExistingVNet</code>, <code>deploySubnets</code>, <code>deployNsgs</code>, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When <code>deploySubnets=false</code>, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.</p>
 <p>For a cold-start verification, record that the target build subnet is <strong>absent before the first attempt</strong> in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and <code>countSucceeded</code>, counting only operations that actually reached <code>Succeeded</code>. A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.</p>
+<h3 id="byo-vnet-bastion-subnet-nsg-patch-v271">BYO VNet Bastion subnet NSG patch (v2.7.1)</h3>
+<p>The <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.1">v2.7.1 patch</a> targets <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/168">Azure/bicep-ptn-aiml-landing-zone#168</a>: BYO-VNet subnet creation with <code>useExistingVNet=true</code>, <code>deploySubnets=true</code>, <code>deployNsgs=true</code>, and <code>deployBastion=false</code> could fail because the reserved <code>AzureBastionSubnet</code> received a generic NSG. The patch still creates the reserved subnet but excludes it from generic NSG attachment. When Bastion is enabled, its explicit, dedicated Bastion-compliant NSG takes precedence and is preserved. Deployment gates, outputs, defaults, and resource creation are unchanged.</p>
+<p>New deployments using the patch do not need the subnet-renaming workaround. For an existing workaround, do not automatically rename subnets, renumber <code>subnetCidr</code> entries, or move their assigned address prefixes. Plan migration explicitly to avoid prefix overlap and disruption to existing subnets. Confirm the source release/tag is published before selecting the patch; documentation CI does not establish live Azure validation.</p>
 <h2 id="solution-storage-profile">Solution Storage profile</h2>
 <div class="admonition warning">
 <p class="admonition-title">Available in v2.7.0 - live Azure validation not verified</p>
