@@ -112,6 +112,12 @@ The existing `networkIsolation`, `useExistingVNet`, `deploySubnets`, `deployNsgs
 
 For a cold-start verification, record that the target build subnet is **absent before the first attempt** in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and `countSucceeded`, counting only operations that actually reached `Succeeded`. A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.
 
+### BYO VNet Bastion subnet NSG patch (v2.7.1)
+
+The [v2.7.1 patch](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.1) targets [Azure/bicep-ptn-aiml-landing-zone#168](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/168): BYO-VNet subnet creation with `useExistingVNet=true`, `deploySubnets=true`, `deployNsgs=true`, and `deployBastion=false` could fail because the reserved `AzureBastionSubnet` received a generic NSG. The patch still creates the reserved subnet but excludes it from generic NSG attachment. When Bastion is enabled, its explicit, dedicated Bastion-compliant NSG takes precedence and is preserved. Deployment gates, outputs, defaults, and resource creation are unchanged.
+
+New deployments using the patch do not need the subnet-renaming workaround. For an existing workaround, do not automatically rename subnets, renumber `subnetCidr` entries, or move their assigned address prefixes. Plan migration explicitly to avoid prefix overlap and disruption to existing subnets. Confirm the source release/tag is published before selecting the patch; documentation CI does not establish live Azure validation.
+
 ## Solution Storage profile
 
 !!! warning "Available in v2.7.0 - live Azure validation not verified"
