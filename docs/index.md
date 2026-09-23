@@ -9,15 +9,15 @@ The AI Landing Zone provides an enterprise-scale production ready reference arch
 - The AI Landing Zone is able to cover both generative and non-generative scenario per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
 - Given the pace of innovation and change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.
 
-The AI Landing Zones comprises of an AI Foundry Landing Zone and an AI Gateway Landing Zone, both of them can be deployed together or independently based on the needs of the organization and the use case.
+The AI Landing Zones comprises of an Agent Landing Zone and an AI Gateway Landing Zone, both of them can be deployed together or independently based on the needs of the organization and the use case.
 
 ![image](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone.png)
 
 ## Reference Architectures
 
-### AI Foundry Landing Zone
+### Agent Landing Zone
 
-The below diagram represents the reference architecture of the AI Foundry Landing Zone which leverages the Foundry for AI Apps & Agents workloads.
+The below diagram represents the reference architecture of the Agent Landing Zone which leverages the Foundry for AI Apps & Agents workloads.
 
 ![image](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone-Foundry.png)
 
@@ -37,7 +37,7 @@ The table represents the various reference implementations of the AI Landing Zon
 | Terraform | [Repo](https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest) |
 | Bicep | [Repo](https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry) |
 
-### AI Foundry Landing Zone
+### Agent Landing Zone
 | Type | Description |
 | ----------- | ----------- |
 | Terraform | [Repo](https://aka.ms/ailz/terraform) |
