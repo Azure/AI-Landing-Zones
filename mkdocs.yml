@@ -1,5 +1,5 @@
-site_name: Azure AI Landing Zones
-site_description: Documentation for Azure AI Landing Zones
+site_name: AI Landing Zones
+site_description: Documentation for AI Landing Zones
 site_author: Microsoft
 repo_url: https://github.com/Azure/AI-Landing-Zones
 theme:
