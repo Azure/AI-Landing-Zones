@@ -41,6 +41,7 @@ nav:
   - Architecture:
       - "Design Checklist": architecture/design-checklist.md
       - "Cost Guide": architecture/cost-guide.md
+      - "UK South Run Cost": architecture/cost-guide-uk-south.md
       - "FAQ": architecture/faq.md
   - Bicep Implementation:
       - "Overview": bicep/overview.md
