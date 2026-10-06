@@ -55,7 +55,7 @@ nav:
       - "Building Accelerators (Submodule Pattern)": bicep/accelerator-pattern.md
   - Terraform Implementation: terraform/index.md
   - Terraform parity: terraform-parity.md
-  - Agent Landing Zone (azd accelerator):
+  - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
       - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
       - "Deploy infra only": agent-landing-zone/deploy-infra-only.md

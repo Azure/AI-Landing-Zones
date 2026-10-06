@@ -16,7 +16,7 @@ azd provision
 
 ## Platform outputs
 
-After provisioning, the accelerator publishes the platform outputs that an application needs. They are stored as one JSON document in the `azd` environment variable `AGENTLZ_PLATFORM_OUTPUTS`, validated against `contracts/platform-outputs-v1.schema.json`, and also exposed as flat keys:
+After provisioning, the Agent Landing Zone publishes the platform outputs that an application needs. They are stored as one JSON document in the `azd` environment variable `AGENTLZ_PLATFORM_OUTPUTS`, validated against `contracts/platform-outputs-v1.schema.json`, and also exposed as flat keys:
 
 | Flat key | JSON path |
 | --- | --- |
