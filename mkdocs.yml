@@ -46,12 +46,12 @@ nav:
       - "Overview": agent-landing-zone/index.md
       - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
       - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
-      - "Deploy with Bicep": agent-landing-zone/deploy-bicep.md
-      - "Deploy with Terraform": agent-landing-zone/deploy-terraform.md
-      - "Configuration": agent-landing-zone/configuration.md
-      - "Hosted agents": agent-landing-zone/hosted-agents.md
       - "Network isolation": agent-landing-zone/network-isolation.md
-      - "Build your own app": agent-landing-zone/build-your-own-app.md
+      - "Hosted agents": agent-landing-zone/hosted-agents.md
+      - "Configuration": agent-landing-zone/configuration.md
+      - "Custom applications": agent-landing-zone/build-your-own-app.md
+      - "Deploy with Bicep": agent-landing-zone/deploy-bicep.md
+      - "Terraform implementation status": agent-landing-zone/deploy-terraform.md
       - "Operations": agent-landing-zone/operations.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
   - Terraform Implementation: terraform/index.md

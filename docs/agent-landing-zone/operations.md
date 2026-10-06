@@ -1,86 +1,172 @@
 # Operations
 
-This page covers day-two tasks: upgrading, redeploying components, permissions, monitoring and teardown.
+This page covers day-2 tasks for a running Agent Landing Zone environment: upgrades, redeployments, identity and roles, monitoring, and routine runbooks.
 
-## Upgrading
+!!! note "Repository names"
+    The repositories were renamed. GitHub redirects the old URLs, but update existing clones so tooling and scripts use the current names:
 
-### From GPT-RAG
+    | Previous name | Current name |
+    | --- | --- |
+    | `Azure/GPT-RAG` | `Azure/agent-landing-zone` |
+    | `Azure/gpt-rag-ui` | `Azure/agent-app-ui` |
+    | `Azure/gpt-rag-orchestrator` | `Azure/agent-app-orchestrator` |
+    | `Azure/gpt-rag-ingestion` | `Azure/agent-app-ingestion` |
 
-Agent Landing Zone is the new name for GPT-RAG, starting with release v4.0.0. The repositories were renamed:
+    ```bash
+    git remote set-url origin https://github.com/Azure/agent-landing-zone.git
+    ```
 
-| Before | Now |
-| --- | --- |
-| `Azure/GPT-RAG` | [`Azure/agent-landing-zone`](https://github.com/Azure/agent-landing-zone) |
-| `Azure/gpt-rag-ui` | [`Azure/agent-app-ui`](https://github.com/Azure/agent-app-ui) |
-| `Azure/gpt-rag-orchestrator` | [`Azure/agent-app-orchestrator`](https://github.com/Azure/agent-app-orchestrator) |
-| `Azure/gpt-rag-ingestion` | [`Azure/agent-app-ingestion`](https://github.com/Azure/agent-app-ingestion) |
+## Upgrade to a new release
 
-GitHub redirects the old repository URLs, but update your remotes:
+Each release pins a validated combination of infrastructure and application components in `manifest.json`. Upgrade by moving the whole environment to a new release tag, not by upgrading components individually.
 
-```bash
-git remote set-url origin https://github.com/Azure/agent-landing-zone.git
-```
+1. Read the release notes for the target version on the [releases page](https://github.com/Azure/agent-landing-zone/releases). Check the **Component versions** table and any breaking changes.
+2. Check out the release tag in your clone:
 
-!!! warning "No in-place upgrade from GPT-RAG v3"
-    Environments created with GPT-RAG v3 cannot be upgraded in place. Resource names, App Configuration labels and environment variables changed. Deploy a new environment with Agent Landing Zone and migrate your data (documents, search indexes and conversation history) to it.
+    ```bash
+    git fetch --tags
+    git checkout vX.Y.Z
+    ```
 
-Components still read runtime settings with the legacy `gpt-rag` label as a fallback, so custom settings you copy over keep working. Prefer the `agent-lz` label for new settings. See [Runtime settings](configuration.md#runtime-settings).
+3. Select the environment and run the full workflow:
 
-### Between Agent Landing Zone releases
+    ```bash
+    azd env select <environment>
+    azd up
+    ```
 
-1. Check out the new release tag.
-2. Read the release notes and the changelog for parameter changes.
-3. Run `azd up`. The platform is updated in place, and each component is redeployed at the version pinned in `manifest.json`.
+    `azd up` re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every pinned component.
 
-## Redeploying components
+!!! warning "Environments created with GPT-RAG v3"
+    Environments created with GPT-RAG v3.x cannot be upgraded in place to Agent Landing Zone v4. Deploy a new environment, then migrate documents, search indexes, and conversation history from the old one. Remove the old environment only after you validate the new one.
 
-To redeploy the application components without reprovisioning the platform, run from the repository root:
+## Redeploy applications only
+
+When the infrastructure is unchanged and you only need to push the pinned application components again (for example, after a failed deployment or a configuration change that requires new revisions):
 
 ```bash
 azd deploy
 ```
 
-This redeploys every selected component at the version pinned in `manifest.json`. For each component, the deploy step clones the component repository into a sibling folder of the landing zone checkout (for example `../gpt-rag-orchestrator`), or reuses that folder after checking that it is at the pinned commit. It then runs the component's own `scripts/deploy.ps1` (Windows) or `scripts/deploy.sh` (Linux and macOS). Logs are written to `.logs/` inside each component folder.
+`azd deploy` runs the `predeploy` hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each component at the tag and commit pinned in `manifest.json`. Deployment logs for each component are written to `<component>/.logs` in the sibling checkout.
 
-### Redeploying one component
+## Identity and roles
 
-To redeploy a single component, run its deploy script from its sibling folder:
+Every application uses its own user-assigned managed identity. No keys or connection strings are stored in application settings.
 
-```bash
-cd ../gpt-rag-orchestrator
-./scripts/deploy.sh   # or .\scripts\deploy.ps1 on Windows
-```
+All applications receive these base roles:
 
-!!! note "Stale component folders"
-    If a sibling folder is at a different commit than the one pinned in `manifest.json`, the deploy stops with the message "Remove or relocate the stale sibling checkout". Delete or rename that folder and run `azd deploy` again.
+| Role | Scope | Purpose |
+| --- | --- | --- |
+| App Configuration Data Reader | App Configuration store | Read runtime settings |
+| AcrPull | Container registry | Pull container images |
+| Key Vault Secrets User | Key Vault | Resolve Key Vault references |
 
-## Role assignments (classic topology)
+Additional roles come from the capability profiles declared for each component. The default application uses these profiles:
 
-With `DEPLOYMENT_TOPOLOGY=classic`, each Container App uses its own managed identity. The landing zone assigns the roles each component needs:
-
-| Component | Roles |
+| Component | Capability profiles |
 | --- | --- |
-| UI | App Configuration Data Reader, AcrPull, Key Vault Secrets User, Storage Blob Data Reader, Storage Blob Delegator |
-| Orchestrator | App Configuration Data Reader, AcrPull, Key Vault Secrets User, Cognitive Services User, Cognitive Services OpenAI User, Search Index Data Reader, Storage Blob Data Reader, Cosmos DB Built-in Data Contributor |
-| Ingestion | App Configuration Data Reader, AcrPull, Key Vault Secrets User, Cognitive Services User, Cognitive Services OpenAI User, Search Index Data Contributor, Storage Blob Data Contributor, Cosmos DB Built-in Data Contributor |
+| Agent App UI | `blob-delegator` |
+| Agent App Orchestrator | `model-user`, `retrieval-reader`, `conversation-store` |
+| Agent App Ingestion | `model-user`, `conversation-store`, `ingestion-writer` |
 
-For hosted topologies, the hosted agent identity is configured by the access bootstrap. See [Hosted agents](hosted-agents.md#access-bootstrap).
-
-For custom applications, roles come from capability profiles. See [Capability profiles](build-your-own-app.md#capability-profiles).
+For what each profile grants and how to use them in your own application, see [Capability profiles](build-your-own-app.md#capability-profiles).
 
 ## Monitoring
 
-- **Application Insights** collects traces, requests and dependencies from every component.
-- **Log Analytics** stores Container Apps console and system logs. Query them with the `ContainerAppConsoleLogs_CL` and `ContainerAppSystemLogs_CL` tables.
-- Hosted agents send OpenTelemetry traces to the same Application Insights resource. See [Telemetry content capture](hosted-agents.md#telemetry-content-capture).
+Agent Landing Zone sends telemetry to Application Insights and Log Analytics, both deployed with the infrastructure.
 
-## Teardown
+- **Application Insights**: requests, dependencies, exceptions, and traces from each component. Use **Transaction search** to follow a single request from the UI through the orchestrator to model and search calls.
+- **Log Analytics**: container output and platform events.
 
-To delete the environment and purge soft-deleted resources (Key Vault, Azure AI services, App Configuration):
+Useful Log Analytics queries:
+
+```kusto
+// Recent errors from all container apps
+ContainerAppConsoleLogs_CL
+| where TimeGenerated > ago(1h)
+| where Log_s has_any ("ERROR", "Exception", "Traceback")
+| project TimeGenerated, ContainerAppName_s, Log_s
+| order by TimeGenerated desc
+```
+
+```kusto
+// Revision, scaling, and startup events
+ContainerAppSystemLogs_CL
+| where TimeGenerated > ago(1h)
+| project TimeGenerated, ContainerAppName_s, Reason_s, Log_s
+| order by TimeGenerated desc
+```
+
+## Runbooks
+
+### Check application health
+
+```bash
+az containerapp list -g <resource-group> \
+  --query "[].{name:name, state:properties.runningStatus, revision:properties.latestReadyRevisionName}" -o table
+```
+
+A healthy app shows `Running` and a ready revision. If a revision fails to start, check `ContainerAppSystemLogs_CL` for the reason.
+
+### Stream logs from a container app
+
+```bash
+az containerapp logs show -g <resource-group> -n <container-app-name> --follow
+```
+
+### Change a runtime setting
+
+Runtime settings live in Azure App Configuration under the label `agent-lz`.
+
+1. Update the key:
+
+    ```bash
+    az appconfig kv set --endpoint <app-config-endpoint> --auth-mode login \
+      --key <KEY> --value <value> --label agent-lz --yes
+    ```
+
+2. Restart the active revision of each affected app so it reads the new value:
+
+    ```bash
+    az containerapp revision restart -g <resource-group> -n <container-app-name> \
+      --revision <revision-name>
+    ```
+
+For the available settings, see [Configuration](configuration.md).
+
+!!! note
+    With network isolation enabled, App Configuration is reachable only from the private network. Run these commands from a VPN- or VNet-connected host.
+
+### Rotate a secret
+
+Secrets are stored in Key Vault and referenced from App Configuration. To rotate one, add a new version of the Key Vault secret, then restart the revisions of the apps that use it. No App Configuration change is needed because the reference points to the secret, not to a specific version.
+
+### Roll back to a previous release
+
+Roll back by redeploying the previous validated combination:
+
+```bash
+git checkout v<previous-version>
+azd deploy
+```
+
+If the newer release changed infrastructure, run `azd up` instead so that provisioning, configuration, and application deployment stay consistent with the older pins. Check the release notes for changes that cannot be reverted, such as data migrations.
+
+### Complete a deferred post-provision
+
+When post-provision configuration was deferred (for example, provisioning ran from a host without private network access), the environment is not fully configured. From a VPN- or VNet-connected host, run:
+
+```bash
+azd hooks run postprovision
+```
+
+See [Post-provision can be deferred](network-isolation.md#post-provision-can-be-deferred).
+
+### Remove an environment
 
 ```bash
 azd down --purge
 ```
 
-!!! warning
-    This deletes all data in the environment, including documents, indexes and conversation history.
+`--purge` also permanently deletes soft-deleted resources such as Key Vault and Azure AI services accounts, so their names can be reused. Export any data you want to keep first.

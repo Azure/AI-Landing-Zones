@@ -1,87 +1,78 @@
-# Build your own application
+# Custom applications
 
-Agent Landing Zone deploys the reference application (UI, orchestrator,
-ingestion) by default, but the platform is not tied to it. You can deploy your
-own application on the same landing zone by describing it in an
-**application definition**: a JSON file validated against
-`contracts/app-definition-v1.schema.json`.
+Agent Landing Zone deploys the default application (Agent App UI, Agent App Orchestrator, and Agent App Ingestion) unless you select a different one. You can deploy your own application on the same platform by describing it in an **application definition**: a JSON file validated against `contracts/app-definition-v1.schema.json`.
 
-The definition declares *what* to deploy and *which capabilities* each
-component needs. The platform decides *how*: it provisions the hosting,
-assigns least-privilege Azure roles from capability profiles, and publishes
-your settings to App Configuration. Your application never names Azure roles,
-remote URLs, or lifecycle hooks.
+The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.
+
+## How it works
+
+1. You write an application definition and an `azure.yaml` that describes how to build each component.
+2. You point an azd environment at the definition with `AGENTLZ_APP_DEFINITION`.
+3. `azd up` provisions the platform, validates the definition, binds it to the environment, assigns roles from the declared capability profiles, and deploys each component.
 
 !!! note
-    One azd environment hosts exactly one application. To try a custom
-    application, use a **new** azd environment.
+    One azd environment hosts exactly one application. To deploy a different application, create a new azd environment.
 
-## Application definition schema
+## Application definition
 
-### Top level
-
-| Field | Required | Description |
-| --- | --- | --- |
-| `schemaVersion` | Yes | Always `1`. |
-| `id` | Yes | Stable identifier of the application. |
-| `displayName` | Yes | Human-readable name. |
-| `components` | Yes | One or more deployable components. |
-| `settings` | No | Application settings published to App Configuration. |
-
-### Components
-
-| Field | Required | Description |
-| --- | --- | --- |
-| `name` | Yes | Lowercase, starts with a letter, 2–24 characters (`^[a-z][a-z0-9-]{1,23}$`). |
-| `kind` | Yes | `containerapp` (Azure Container Apps) or `azure.ai.agent` (Microsoft Foundry hosted agent). |
-| `path` | Yes | Relative folder containing the component and its own `azure.yaml`. Must not contain `..`. |
-| `source` | Yes | Exactly one of `{ "commit": "<40 hex characters>" }` or `{ "imageDigest": "sha256:<64 hex characters>" }`. |
-| `profiles` | Yes | Capability profiles (see below). May be empty. |
-| `ingress` | No | `external` or `internal` (default `internal`). `containerapp` only. |
-| `resources` | No | `cpu` (0.25, 0.5, 0.75, 1.0, 1.5, 2.0; default 0.5) and `memory` (0.5Gi, 1.0Gi, 1.5Gi, 2.0Gi, 3.0Gi, 4.0Gi; default 1.0Gi). `containerapp` only. |
-
-`azure.ai.agent` components must not set `ingress` or `resources`; Foundry
-manages their hosting.
-
-### Settings
-
-| Field | Required | Description |
-| --- | --- | --- |
-| `key` | Yes | Uppercase, 2–64 characters, must not start with `AGENTLZ_` (reserved for the platform). |
-| `value` | One of | Plain value published with label `agent-lz`. |
-| `secret` | One of | `true` to declare a secret stored in Key Vault and exposed as a Key Vault reference. Never combine with `value`. |
-
-### Example
+Minimal Container App example, taken from `samples/custom-app/containerapp/app-definition.json`:
 
 ```json
 {
-  "$schema": "../../../contracts/app-definition-v1.schema.json",
   "schemaVersion": 1,
   "id": "sample-containerapp",
   "displayName": "Sample custom application (Container App)",
+  "source": { "commit": "0000000000000000000000000000000000000000" },
   "components": [
     {
       "name": "web",
       "kind": "containerapp",
       "path": "src",
-      "source": { "commit": "0000000000000000000000000000000000000000" },
       "profiles": [],
       "ingress": "external",
-      "resources": { "cpu": 0.5, "memory": "1.0Gi" }
+      "resources": { "cpu": 0.5, "memory": "1.0Gi" },
+      "settings": {
+        "SAMPLE_GREETING": { "value": "Hello from Agent Landing Zone" }
+      }
     }
-  ],
-  "settings": [
-    { "key": "SAMPLE_GREETING", "value": "Hello from the sample application" }
   ]
 }
 ```
 
+The all-zero commit is a placeholder. Replace it with the commit you deploy (see [Source pinning](#source-pinning)).
+
+### Fields
+
+| Field | Required | Rules |
+| --- | --- | --- |
+| `schemaVersion` | Yes | Must be `1`. |
+| `id` | Yes | Application identifier. |
+| `displayName` | No | Human-readable name. |
+| `source` | Yes | Either `commit` (40 hex characters) or `imageDigest` (`sha256:` followed by 64 hex characters). |
+| `components[].name` | Yes | Matches `^[a-z][a-z0-9-]{1,23}$`. Must match the service name in `azure.yaml`. |
+| `components[].kind` | Yes | `containerapp` or `azure.ai.agent`. |
+| `components[].path` | Yes | Relative path to the component source. Must not contain `..`. |
+| `components[].profiles` | No | Capability profiles. See [Capability profiles](#capability-profiles). |
+| `components[].ingress` | No | `external` or `internal`. Default `internal`. Container Apps only. |
+| `components[].resources.cpu` | No | `0.25`, `0.5`, `0.75`, `1.0`, `1.5`, or `2.0`. Default `0.5`. Container Apps only. |
+| `components[].resources.memory` | No | `0.5Gi` to `4.0Gi`. Default `1.0Gi`. Container Apps only. |
+| `components[].settings` | No | Keys are uppercase, 2–64 characters, and must not start with `AGENTLZ_`. Each entry has either `value` or `secret`. |
+
+Components of kind `azure.ai.agent` run as Foundry hosted agents and cannot set `ingress` or `resources`. The hosted sample in `samples/custom-app/hosted/app-definition.json` defines one component named `agent` with `profiles: ["model-user"]`.
+
+Settings are validated against the schema. They are not published to App Configuration by the platform.
+
+### What a definition cannot contain
+
+- Lifecycle hooks.
+- Remote repository URLs. Code is always read from the local working tree.
+- Azure role names. Permissions come only from capability profiles.
+
 ## Capability profiles
 
-Profiles are the only way a component obtains permissions. Each profile maps
-to a fixed set of Azure built-in roles scoped to the landing-zone resources.
+Every component receives the `base` profile. Add the others only when the component needs them.
 
-| Profile | Roles granted |
+| Profile | Roles assigned to the component identity |
 | --- | --- |
 | `base` (always applied) | App Configuration Data Reader, AcrPull, Key Vault Secrets User |
 | `model-user` | Cognitive Services User, Cognitive Services OpenAI User |
@@ -90,65 +81,76 @@ to a fixed set of Azure built-in roles scoped to the landing-zone resources.
 | `blob-delegator` | Storage Blob Data Reader, Storage Blob Delegator |
 | `ingestion-writer` | Search Index Data Contributor, Storage Blob Data Contributor |
 
-The default reference application uses them as follows:
+For reference, the default application uses these profiles:
 
 | Component | Profiles |
 | --- | --- |
-| `ui` | `blob-delegator` |
-| `orchestrator` | `model-user`, `retrieval-reader`, `conversation-store` |
-| `ingestion` | `model-user`, `conversation-store`, `ingestion-writer` |
+| UI | `blob-delegator` |
+| Orchestrator | `model-user`, `retrieval-reader`, `conversation-store` |
+| Ingestion | `model-user`, `conversation-store`, `ingestion-writer` |
 
-## Reading platform outputs
+## Folder layout and `azure.yaml`
 
-Every component receives `APP_CONFIG_ENDPOINT`. From App Configuration (label
-`agent-lz`), read `AGENTLZ_PLATFORM_OUTPUTS` to discover the Foundry project
-endpoint, Search, Storage, Cosmos DB, and other landing-zone resources. Your
-own `settings` are published under the same label. Authenticate with the
-component's managed identity.
+The folder that contains the definition must also contain a root `azure.yaml` with one service per component. Service names must equal component names, and the file must not declare hooks.
 
-## Samples
+```yaml
+name: sample-containerapp
+services:
+  web:
+    host: containerapp
+    project: ./src
+    language: docker
+    docker:
+      remoteBuild: true
+```
 
-The Agent Landing Zone repository ships two minimal samples in
-[`samples/custom-app/`](https://github.com/Azure/agent-landing-zone/tree/main/samples/custom-app):
+## Source pinning
 
-| Folder | Hosting | What it does |
-| --- | --- | --- |
-| `containerapp/` | Azure Container Apps | Exposes `GET /health` and `GET /`, which returns the platform outputs. |
-| `hosted/` | Microsoft Foundry hosted agent | Answers the responses protocol using the Foundry project endpoint (profile `model-user`). |
+- **`source.commit`**: must equal the `HEAD` commit of the local folder that contains the definition. Nothing is cloned; the platform builds from your working tree and refuses to deploy if `HEAD` differs.
+- **`source.imageDigest`**: deploys a prebuilt image. Provide the digest through `AGENTLZ_IMAGE_DIGEST`.
 
-## Deploy your application
+## Reading platform outputs at runtime
 
-1. Copy a sample folder into your own repository and replace each component
-   `source.commit` with the commit you deploy. The all-zero value is a
-   placeholder and is rejected at deploy time.
-2. Validate the definition from the Agent Landing Zone repository root:
+Components find platform resources through App Configuration. Each component receives `APP_CONFIG_ENDPOINT` and reads the `AGENTLZ_PLATFORM_OUTPUTS` key with label `agent-lz`. Both samples show the pattern: the Container App sample serves `GET /health` and `GET /`, and the hosted sample answers the Responses protocol.
+
+## Deploy a custom application
+
+Run these commands from the root of the Agent Landing Zone repository.
+
+1. Validate the definition:
 
     ```bash
-    python -m config.appdefinition --validate <folder>
+    python -m config.appdefinition --validate path/to/your-app
     ```
 
-3. In a new azd environment, point the platform at your definition and deploy:
+2. Create a new environment and select the definition:
 
     ```bash
     azd env new my-custom-app
-    azd env set AGENTLZ_APP_DEFINITION <folder>
+    azd env set AGENTLZ_APP_DEFINITION path/to/your-app/app-definition.json
+    ```
+
+3. Deploy:
+
+    ```bash
     azd up
     ```
 
-    When `AGENTLZ_APP_DEFINITION` is not set, the platform uses the default
-    `app-definition.json` (the reference application).
+During `azd up`, the pre-deploy hook validates the definition and checks that it is bound to the environment. A mismatch stops the deployment with exit code 2.
 
-During `azd deploy`, the `predeploy` hook validates the definition, checks
-network prerequisites, and deploys each component: `containerapp` components
-through `azd deploy`, and `azure.ai.agent` components through
-`azd deploy <name>` followed by an `azd ai agent invoke` smoke test.
+## `config.appdefinition` reference
 
-## Rules
+| Option | Description |
+| --- | --- |
+| `--validate [PATH]` | Validate a definition file or folder. Without a path, validates the definition selected for the environment. |
+| `--bind` | Bind the selected definition to the environment. |
+| `--check-binding` | Verify that the environment is bound to the selected definition. Cannot be combined with `--bind`. |
+| `--assign-roles` | Assign capability-profile roles to the identities of `containerapp` components. |
+| `--env-name NAME` | azd environment. Defaults to `AZURE_ENV_NAME` or the azd default environment. |
+| `--azure-dir PATH` | azd folder. Defaults to `<repo>/.azure`. |
 
-- No lifecycle hooks in component `azure.yaml` files.
-- No remote URLs: components are referenced by relative `path` and pinned
-  `source`.
-- No role names: request permissions only through capability profiles.
-- Setting keys must not use the reserved `AGENTLZ_` prefix.
-- With network isolation enabled, the same build prerequisites apply as for
-  the reference application. See [Network isolation](network-isolation.md).
+## Related pages
+
+- [Deploy infra only](deploy-infra-only.md)
+- [Hosted agents](hosted-agents.md)
+- [Configuration](configuration.md)

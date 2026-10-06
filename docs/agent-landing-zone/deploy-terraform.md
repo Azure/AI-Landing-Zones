@@ -1,23 +1,40 @@
-# Terraform platform
+# Terraform implementation status
 
-The automated Agent Landing Zone path (`azd up`) uses the Bicep platform. If your organization standardizes on Terraform, you can deploy the AI Landing Zone platform with Terraform and then run the applications on it.
+Agent Landing Zone deploys with Bicep through `azd`. A Terraform implementation
+of the same infrastructure exists in AI Landing Zone, but the Agent Landing
+Zone deployment flow does not use it yet.
 
-!!! note
-    This path is not automated by `azd`. Expect manual steps.
+## What is available today
 
-## Deploy the platform
+| Area | Bicep | Terraform |
+| --- | --- | --- |
+| Infrastructure | Supported through `azd up` and `azd provision` | Available as the AI Landing Zone Terraform implementation |
+| Post-provision configuration (roles, App Configuration, Search, Foundry) | Runs automatically | Not wired |
+| Application deploy | `azd deploy` | Not validated |
 
-Use the AI Landing Zone Terraform module: [aka.ms/ailz/terraform](https://aka.ms/ailz/terraform). See also:
+## How parity is kept
 
-- [Terraform](../terraform/index.md)
-- [Terraform parity](../terraform-parity.md) for differences from the Bicep pattern.
+The Bicep and Terraform implementations are kept at the same infrastructure
+level through automated synchronization followed by human review. The
+`infra-terraform-parity.yml` workflow reports differences, and maintainers
+review each change before it is merged. See
+[Terraform parity](../terraform-parity.md) for the current status.
 
-## Run the applications on it
+## Using Terraform for the infrastructure
 
-1. Deploy the Terraform platform with the same services the Bicep platform provides: Azure AI Foundry, Azure AI Search, Cosmos DB, Storage, Key Vault, App Configuration, Container Registry and a Container Apps environment.
-2. Create an `azd` environment in the Agent Landing Zone repository and set the variables that point to the existing resources, matching the [platform outputs](deploy-infra-only.md#platform-outputs).
-3. Grant the application identities the roles they need. See [Role assignments](operations.md#role-assignments-classic-topology).
-4. Run the post-provision configuration (`scripts/postProvision`) so App Configuration is populated.
-5. Run `azd deploy`.
+You can deploy the infrastructure with the AI Landing Zone Terraform
+implementation and then deploy the applications yourself. This path is not
+validated. You must provide the same outputs that the Bicep deployment
+publishes, run the post-provision configuration, and run `azd deploy` against
+an environment that contains those values. Expect to debug missing settings.
 
-If the platform outputs are missing, `azd deploy` stops with the foundation-missing error. See [Troubleshooting](troubleshooting.md).
+If you need a supported path today, use Bicep:
+
+- [Deploy full stack](deploy-full-stack.md)
+- [Deploy infra only](deploy-infra-only.md)
+
+## Reference
+
+- [Terraform implementation](../terraform/index.md)
+- [Terraform parity](../terraform-parity.md)
+- [Terraform module](https://aka.ms/ailz/terraform)
