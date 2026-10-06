@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#agent-landing-zone-azd-accelerator" class="md-skip">
+        <a href="#agent-landing-zone" class="md-skip">
           Skip to content
         </a>
       
@@ -832,7 +832,7 @@
   <span class="md-ellipsis">
     
   
-    Agent Landing Zone (azd accelerator)
+    Agent Landing Zone
   
 
     
@@ -848,7 +848,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    Agent Landing Zone (azd accelerator)
+    Agent Landing Zone
   
 
           </label>
@@ -1355,17 +1355,13 @@
   
 
 
-<h1 id="agent-landing-zone-azd-accelerator">Agent Landing Zone (azd accelerator)</h1>
-<p>The <strong>Agent Landing Zone</strong> is an <code>azd</code> accelerator built on the AI Landing Zones reference architecture. One template deploys two layers:</p>
+<h1 id="agent-landing-zone">Agent Landing Zone</h1>
+<p>The <strong>Agent Landing Zone</strong> is an enterprise-ready, secure foundation for building and running AI agent applications on Azure, based on the AI Landing Zones reference architecture. It deploys two layers:</p>
 <ul>
 <li>the <strong>infrastructure layer</strong> (the platform), from the Bicep implementation of AI Landing Zones;</li>
 <li>an optional <strong>application layer</strong>, made of agent and retrieval components that run on that platform.</li>
 </ul>
 <p>Source repository: <a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a>.</p>
-<div class="admonition note">
-<p class="admonition-title">Formerly GPT-RAG</p>
-<p>The Agent Landing Zone was previously published as <strong>GPT-RAG</strong>. Starting with v4.0.0 every resource, component, configuration label, and repository uses the Agent Landing Zone naming. v4.0.0 supports <strong>new deployments only</strong>; there is no in-place upgrade from a GPT-RAG v3 environment. See <a href="operations/#upgrading">Operations</a>.</p>
-</div>
 <h2 id="layers">Layers</h2>
 <table>
 <thead>
@@ -1390,7 +1386,7 @@
 </table>
 <p><code>azd up</code> runs both. You can also deploy the infrastructure alone and add an application later. See <a href="deploy-infra-only/">Deploy the infrastructure only</a>.</p>
 <h2 id="default-application">Default application</h2>
-<p>When you do not supply your own application definition, the accelerator deploys three components:</p>
+<p>When you do not supply your own application definition, the Agent Landing Zone deploys three components:</p>
 <table>
 <thead>
 <tr>
@@ -1417,7 +1413,7 @@
 </tr>
 </tbody>
 </table>
-<p>The exact versions of each release are pinned in <code>manifest.json</code> in the accelerator repository and listed in each <a href="https://github.com/Azure/agent-landing-zone/releases">GitHub Release</a>.</p>
+<p>The exact versions of each release are pinned in <code>manifest.json</code> in the <a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a> repository and listed in each <a href="https://github.com/Azure/agent-landing-zone/releases">GitHub Release</a>.</p>
 <h2 id="choose-a-path">Choose a path</h2>
 <table>
 <thead>
