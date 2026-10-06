@@ -1,14 +1,14 @@
-# Deploy the full stack
+# Deploy full stack
 
-This guide deploys the infrastructure layer and the default application (`agent-app-ui`, `agent-app-orchestrator`, `agent-app-ingestion`) with a single `azd up`.
+This guide deploys the infrastructure layer and the default application (Agent App UI, Agent App Orchestrator and Agent App Ingestion) into a new environment with public endpoints. For private networking, read this page and then [Network isolation](network-isolation.md).
 
 ## Prerequisites
 
 **Azure permissions**
 
-- **Contributor** and **User Access Administrator** (or **Owner**) on the target subscription or resource group. The deployment creates role assignments for managed identities.
-- The Responsible AI terms accepted for Azure AI services in the subscription.
-- Model quota in the target region for the model deployments configured in `infra/main.parameters.json`.
+- **Owner**, or **Contributor** plus **User Access Administrator**, on the target subscription. The deployment creates role assignments for managed identities.
+- Responsible AI terms accepted for Azure AI services in the subscription.
+- Quota in the target region for the model deployments configured in `infra/main.parameters.json`.
 
 **Tools**
 
@@ -16,56 +16,96 @@ This guide deploys the infrastructure layer and the default application (`agent-
 | --- | --- |
 | [Azure Developer CLI (`azd`)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd) | Latest version |
 | [Azure CLI (`az`)](https://learn.microsoft.com/cli/azure/install-azure-cli) | Used by the lifecycle hooks |
-| PowerShell 7 or Bash | Hooks run in PowerShell on Windows and Bash on Linux and macOS |
-| Git | Used to fetch the pinned application components |
-| Python 3.12 | Used by the post-provision configuration |
+| PowerShell 7 or Bash | Hooks run in PowerShell on Windows and in Bash on Linux and macOS |
+| Git | Fetches the pinned application components |
+| Python 3.12 | Runs the post-provision configuration |
+| Docker (optional) | Builds images locally. Without Docker, images are built remotely in Azure Container Registry |
 
-Docker is not required: container images are built in Azure Container Registry with ACR Tasks.
-
-## Deploy
+## Step 1: Get the code
 
 ```bash
 azd init -t azure/agent-landing-zone
-az login
-azd auth login
-azd env set NETWORK_ISOLATION false
-azd up
 ```
 
-`azd up` asks for the environment name, subscription, and region. `infra/main.parameters.json` ships with the template; you do not create it.
+To pin a specific release, clone the repository at its tag instead:
 
-To deploy with private networking, set `NETWORK_ISOLATION true` and follow [Network isolation](network-isolation.md).
+```bash
+git clone --branch v4.2.0 https://github.com/Azure/agent-landing-zone.git
+cd agent-landing-zone
+```
 
-## What `azd up` does
+`infra/main.parameters.json` ships with the repository. You do not create or edit it; set parameters with `azd env set` instead (see [Configuration](configuration.md)).
 
-| Stage | What happens |
-| --- | --- |
-| Preflight | Checks region availability and quota for the selected services. Set `AGENTLZ_REGIONAL_PREFLIGHT_SKIP=true` to skip it. |
-| Provision | Deploys the infrastructure layer from `infra/` (Bicep). |
-| Post-provision | Configures Foundry, Azure AI Search, Container Apps, and role assignments, and publishes runtime settings to Azure App Configuration with the label `agent-lz`. |
-| Deploy | Builds each component image with ACR Tasks and deploys it to Container Apps or, for the hosted topology, to Foundry Agent Service. |
+## Step 2: Sign in and create an environment
 
-## Choose a topology
+```bash
+az login
+azd auth login
+azd env new <environment-name>
+azd env set AZURE_LOCATION <region>
+azd env set NETWORK_ISOLATION false
+```
 
-`DEPLOYMENT_TOPOLOGY` controls how the orchestrator runs:
+## Step 3: Choose a topology
 
-| Value | Orchestrator | Administrative panel |
-| --- | --- | --- |
-| `hosted-no-panel` (default) | Foundry hosted agent | Not deployed |
-| `hosted-panel` | Foundry hosted agent | Deployed |
-| `classic` | Container App | Not applicable |
+`DEPLOYMENT_TOPOLOGY` controls where the orchestrator runs.
+
+| Value | Orchestrator | Administrative panel | Cosmos DB |
+| --- | --- | --- | --- |
+| `hosted-no-panel` (default for new environments) | Foundry hosted agent | Not deployed | Not deployed |
+| `hosted-panel` | Foundry hosted agent | Deployed | Deployed |
+| `classic` | Container App | Not applicable | Deployed |
 
 ```bash
 azd env set DEPLOYMENT_TOPOLOGY classic
 ```
 
-The legacy flags `DEPLOY_HOSTED_AGENT_ORCHESTRATION` and `DEPLOY_ADMINISTRATIVE_PANEL` still work: hosted orchestration `false` selects `classic`; hosted `true` with the panel `true` selects `hosted-panel`. When `DEPLOYMENT_TOPOLOGY` is set, it takes precedence. See [Hosted agents](hosted-agents.md) for the hosted requirements.
+The legacy flags still work when `DEPLOYMENT_TOPOLOGY` is not set: `DEPLOY_HOSTED_AGENT_ORCHESTRATION=false` selects `classic`, and `DEPLOY_HOSTED_AGENT_ORCHESTRATION=true` with `DEPLOY_ADMINISTRATIVE_PANEL=true` selects `hosted-panel`. An explicit `DEPLOYMENT_TOPOLOGY` always wins.
+
+## Step 4: Deploy
+
+**Classic topology**
+
+```bash
+azd up
+```
+
+**Hosted topologies (`hosted-no-panel`, `hosted-panel`)**
+
+The hosted agent needs an image digest before it can be created, so the first deployment has an extra preparation step:
+
+```bash
+azd provision
+pwsh scripts/prepareHostedDeployment.ps1   # or: ./scripts/prepareHostedDeployment.sh
+azd provision
+azd deploy
+```
+
+See [Hosted agents](hosted-agents.md) for what each step does. Later deployments of the same environment only need `azd deploy`.
+
+## What happens during the deployment
+
+| Stage | Hook | What happens |
+| --- | --- | --- |
+| Preflight | `preprovision` | Checks that the region offers the required services and that quota is available. |
+| Provision | — | Deploys the infrastructure from `infra/` (Bicep). |
+| Post-provision | `postprovision` | Configures Foundry, Azure AI Search, Container Apps and role assignments, and publishes runtime settings to App Configuration with the label `agent-lz`. |
+| Deploy | `predeploy` | Validates the environment, clones each component at the commit pinned in `manifest.json`, builds its image and deploys it. |
 
 ## Verify
 
-1. Run `azd show` and open the `agent-app-ui` endpoint.
-2. Upload a document to the `documents` container of the storage account. The ingestion component indexes it on its next run.
-3. Ask a question about the document in the UI.
+1. Run `azd env get-value AZURE_RESOURCE_GROUP` and open the resource group in the Azure portal.
+2. Open the Container App whose name ends with `frontend` and browse to its URL.
+3. Upload a document to the `documents` container of the storage account. The ingestion component indexes it on its next run.
+4. Ask a question about the document in the UI.
+
+## Clean up
+
+```bash
+azd down --purge
+```
+
+This deletes the environment and all of its data.
 
 ## Next steps
 
