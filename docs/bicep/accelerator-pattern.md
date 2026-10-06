@@ -404,7 +404,7 @@ Invariants to preserve:
 
 Reference accelerators:
 
-- [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone) - Agent Landing Zone accelerator (formerly GPT-RAG); it now incorporates the landing zone directly under `infra/` instead of using a submodule. See the [Agent Landing Zone docs](../agent-landing-zone/index.md).
+- [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone) - Agent Landing Zone accelerator; it now incorporates the landing zone directly under `infra/` instead of using a submodule. See the [Agent Landing Zone docs](../agent-landing-zone/index.md).
 - [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) - useful when you need an example of nested boolean rewriting.
 
 Related documentation:
