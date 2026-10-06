@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../build-your-own-app/">
+        <link rel="prev" href="../deploy-terraform/">
       
       
         <link rel="next" href="../troubleshooting/">
@@ -557,70 +557,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-bicep/" class="md-nav__link">
+      <a href="../network-isolation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Bicep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-terraform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
+    Network isolation
   
 
     
@@ -669,14 +613,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../network-isolation/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Configuration
   
 
     
@@ -704,7 +648,63 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
   
 
     
@@ -785,77 +785,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#upgrading" class="md-nav__link">
+  <a href="#upgrade-to-a-new-release" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Upgrading
+        Upgrade to a new release
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Upgrading">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#from-gpt-rag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From GPT-RAG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#between-agent-landing-zone-releases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Between Agent Landing Zone releases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#redeploying-components" class="md-nav__link">
+  <a href="#redeploy-applications-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redeploying components
+        Redeploy applications only
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Redeploying components">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#redeploying-one-component" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Redeploying one component
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#role-assignments-classic-topology" class="md-nav__link">
+  <a href="#identity-and-roles" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Role assignments (classic topology)
+        Identity and roles
       
     </span>
   </a>
@@ -874,13 +829,96 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#teardown" class="md-nav__link">
+  <a href="#runbooks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Teardown
+        Runbooks
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Runbooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-application-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check application health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stream-logs-from-a-container-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stream logs from a container app
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-a-runtime-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change a runtime setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate-a-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotate a secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roll-back-to-a-previous-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Roll back to a previous release
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-a-deferred-post-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete a deferred post-provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-an-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove an environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1009,77 +1047,32 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#upgrading" class="md-nav__link">
+  <a href="#upgrade-to-a-new-release" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Upgrading
+        Upgrade to a new release
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Upgrading">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#from-gpt-rag" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        From GPT-RAG
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#between-agent-landing-zone-releases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Between Agent Landing Zone releases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#redeploying-components" class="md-nav__link">
+  <a href="#redeploy-applications-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redeploying components
+        Redeploy applications only
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Redeploying components">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#redeploying-one-component" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Redeploying one component
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#role-assignments-classic-topology" class="md-nav__link">
+  <a href="#identity-and-roles" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Role assignments (classic topology)
+        Identity and roles
       
     </span>
   </a>
@@ -1098,13 +1091,96 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#teardown" class="md-nav__link">
+  <a href="#runbooks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Teardown
+        Runbooks
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Runbooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#check-application-health" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check application health
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stream-logs-from-a-container-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stream logs from a container app
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#change-a-runtime-setting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change a runtime setting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotate-a-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotate a secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#roll-back-to-a-previous-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Roll back to a previous release
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#complete-a-deferred-post-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete a deferred post-provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-an-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove an environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1129,104 +1205,186 @@
 
 
 <h1 id="operations">Operations</h1>
-<p>This page covers day-two tasks: upgrading, redeploying components, permissions, monitoring and teardown.</p>
-<h2 id="upgrading">Upgrading</h2>
-<h3 id="from-gpt-rag">From GPT-RAG</h3>
-<p>Agent Landing Zone is the new name for GPT-RAG, starting with release v4.0.0. The repositories were renamed:</p>
+<p>This page covers day-2 tasks for a running Agent Landing Zone environment: upgrades, redeployments, identity and roles, monitoring, and routine runbooks.</p>
+<div class="admonition note">
+<p class="admonition-title">Repository names</p>
+<p>The repositories were renamed. GitHub redirects the old URLs, but update existing clones so tooling and scripts use the current names:</p>
 <table>
 <thead>
 <tr>
-<th>Before</th>
-<th>Now</th>
+<th>Previous name</th>
+<th>Current name</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>Azure/GPT-RAG</code></td>
-<td><a href="https://github.com/Azure/agent-landing-zone"><code>Azure/agent-landing-zone</code></a></td>
+<td><code>Azure/agent-landing-zone</code></td>
 </tr>
 <tr>
 <td><code>Azure/gpt-rag-ui</code></td>
-<td><a href="https://github.com/Azure/agent-app-ui"><code>Azure/agent-app-ui</code></a></td>
+<td><code>Azure/agent-app-ui</code></td>
 </tr>
 <tr>
 <td><code>Azure/gpt-rag-orchestrator</code></td>
-<td><a href="https://github.com/Azure/agent-app-orchestrator"><code>Azure/agent-app-orchestrator</code></a></td>
+<td><code>Azure/agent-app-orchestrator</code></td>
 </tr>
 <tr>
 <td><code>Azure/gpt-rag-ingestion</code></td>
-<td><a href="https://github.com/Azure/agent-app-ingestion"><code>Azure/agent-app-ingestion</code></a></td>
+<td><code>Azure/agent-app-ingestion</code></td>
 </tr>
 </tbody>
 </table>
-<p>GitHub redirects the old repository URLs, but update your remotes:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>remote<span class="w"> </span>set-url<span class="w"> </span>origin<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
 </code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">No in-place upgrade from GPT-RAG v3</p>
-<p>Environments created with GPT-RAG v3 cannot be upgraded in place. Resource names, App Configuration labels and environment variables changed. Deploy a new environment with Agent Landing Zone and migrate your data (documents, search indexes and conversation history) to it.</p>
 </div>
-<p>Components still read runtime settings with the legacy <code>gpt-rag</code> label as a fallback, so custom settings you copy over keep working. Prefer the <code>agent-lz</code> label for new settings. See <a href="../configuration/#runtime-settings">Runtime settings</a>.</p>
-<h3 id="between-agent-landing-zone-releases">Between Agent Landing Zone releases</h3>
+<h2 id="upgrade-to-a-new-release">Upgrade to a new release</h2>
+<p>Each release pins a validated combination of infrastructure and application components in <code>manifest.json</code>. Upgrade by moving the whole environment to a new release tag, not by upgrading components individually.</p>
 <ol>
-<li>Check out the new release tag.</li>
-<li>Read the release notes and the changelog for parameter changes.</li>
-<li>Run <code>azd up</code>. The platform is updated in place, and each component is redeployed at the version pinned in <code>manifest.json</code>.</li>
+<li>Read the release notes for the target version on the <a href="https://github.com/Azure/agent-landing-zone/releases">releases page</a>. Check the <strong>Component versions</strong> table and any breaking changes.</li>
+<li>
+<p>Check out the release tag in your clone:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>--tags
+git<span class="w"> </span>checkout<span class="w"> </span>vX.Y.Z
+</code></pre></div>
+</li>
+<li>
+<p>Select the environment and run the full workflow:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="k">select</span><span class="w"> </span>&lt;environment&gt;
+azd<span class="w"> </span>up
+</code></pre></div>
+<p><code>azd up</code> re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every pinned component.</p>
+</li>
 </ol>
-<h2 id="redeploying-components">Redeploying components</h2>
-<p>To redeploy the application components without reprovisioning the platform, run from the repository root:</p>
+<div class="admonition warning">
+<p class="admonition-title">Environments created with GPT-RAG v3</p>
+<p>Environments created with GPT-RAG v3.x cannot be upgraded in place to Agent Landing Zone v4. Deploy a new environment, then migrate documents, search indexes, and conversation history from the old one. Remove the old environment only after you validate the new one.</p>
+</div>
+<h2 id="redeploy-applications-only">Redeploy applications only</h2>
+<p>When the infrastructure is unchanged and you only need to push the pinned application components again (for example, after a failed deployment or a configuration change that requires new revisions):</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>This redeploys every selected component at the version pinned in <code>manifest.json</code>. For each component, the deploy step clones the component repository into a sibling folder of the landing zone checkout (for example <code>../gpt-rag-orchestrator</code>), or reuses that folder after checking that it is at the pinned commit. It then runs the component's own <code>scripts/deploy.ps1</code> (Windows) or <code>scripts/deploy.sh</code> (Linux and macOS). Logs are written to <code>.logs/</code> inside each component folder.</p>
-<h3 id="redeploying-one-component">Redeploying one component</h3>
-<p>To redeploy a single component, run its deploy script from its sibling folder:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>../gpt-rag-orchestrator
-./scripts/deploy.sh<span class="w">   </span><span class="c1"># or .\scripts\deploy.ps1 on Windows</span>
-</code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Stale component folders</p>
-<p>If a sibling folder is at a different commit than the one pinned in <code>manifest.json</code>, the deploy stops with the message "Remove or relocate the stale sibling checkout". Delete or rename that folder and run <code>azd deploy</code> again.</p>
-</div>
-<h2 id="role-assignments-classic-topology">Role assignments (classic topology)</h2>
-<p>With <code>DEPLOYMENT_TOPOLOGY=classic</code>, each Container App uses its own managed identity. The landing zone assigns the roles each component needs:</p>
+<p><code>azd deploy</code> runs the <code>predeploy</code> hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each component at the tag and commit pinned in <code>manifest.json</code>. Deployment logs for each component are written to <code>&lt;component&gt;/.logs</code> in the sibling checkout.</p>
+<h2 id="identity-and-roles">Identity and roles</h2>
+<p>Every application uses its own user-assigned managed identity. No keys or connection strings are stored in application settings.</p>
+<p>All applications receive these base roles:</p>
 <table>
 <thead>
 <tr>
-<th>Component</th>
-<th>Roles</th>
+<th>Role</th>
+<th>Scope</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>UI</td>
-<td>App Configuration Data Reader, AcrPull, Key Vault Secrets User, Storage Blob Data Reader, Storage Blob Delegator</td>
+<td>App Configuration Data Reader</td>
+<td>App Configuration store</td>
+<td>Read runtime settings</td>
 </tr>
 <tr>
-<td>Orchestrator</td>
-<td>App Configuration Data Reader, AcrPull, Key Vault Secrets User, Cognitive Services User, Cognitive Services OpenAI User, Search Index Data Reader, Storage Blob Data Reader, Cosmos DB Built-in Data Contributor</td>
+<td>AcrPull</td>
+<td>Container registry</td>
+<td>Pull container images</td>
 </tr>
 <tr>
-<td>Ingestion</td>
-<td>App Configuration Data Reader, AcrPull, Key Vault Secrets User, Cognitive Services User, Cognitive Services OpenAI User, Search Index Data Contributor, Storage Blob Data Contributor, Cosmos DB Built-in Data Contributor</td>
+<td>Key Vault Secrets User</td>
+<td>Key Vault</td>
+<td>Resolve Key Vault references</td>
 </tr>
 </tbody>
 </table>
-<p>For hosted topologies, the hosted agent identity is configured by the access bootstrap. See <a href="../hosted-agents/#access-bootstrap">Hosted agents</a>.</p>
-<p>For custom applications, roles come from capability profiles. See <a href="../build-your-own-app/#capability-profiles">Capability profiles</a>.</p>
+<p>Additional roles come from the capability profiles declared for each component. The default application uses these profiles:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Capability profiles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent App UI</td>
+<td><code>blob-delegator</code></td>
+</tr>
+<tr>
+<td>Agent App Orchestrator</td>
+<td><code>model-user</code>, <code>retrieval-reader</code>, <code>conversation-store</code></td>
+</tr>
+<tr>
+<td>Agent App Ingestion</td>
+<td><code>model-user</code>, <code>conversation-store</code>, <code>ingestion-writer</code></td>
+</tr>
+</tbody>
+</table>
+<p>For what each profile grants and how to use them in your own application, see <a href="../build-your-own-app/#capability-profiles">Capability profiles</a>.</p>
 <h2 id="monitoring">Monitoring</h2>
+<p>Agent Landing Zone sends telemetry to Application Insights and Log Analytics, both deployed with the infrastructure.</p>
 <ul>
-<li><strong>Application Insights</strong> collects traces, requests and dependencies from every component.</li>
-<li><strong>Log Analytics</strong> stores Container Apps console and system logs. Query them with the <code>ContainerAppConsoleLogs_CL</code> and <code>ContainerAppSystemLogs_CL</code> tables.</li>
-<li>Hosted agents send OpenTelemetry traces to the same Application Insights resource. See <a href="../hosted-agents/#telemetry-content-capture">Telemetry content capture</a>.</li>
+<li><strong>Application Insights</strong>: requests, dependencies, exceptions, and traces from each component. Use <strong>Transaction search</strong> to follow a single request from the UI through the orchestrator to model and search calls.</li>
+<li><strong>Log Analytics</strong>: container output and platform events.</li>
 </ul>
-<h2 id="teardown">Teardown</h2>
-<p>To delete the environment and purge soft-deleted resources (Key Vault, Azure AI services, App Configuration):</p>
+<p>Useful Log Analytics queries:</p>
+<div class="highlight"><pre><span></span><code><span class="c">// Recent errors from all container apps</span>
+<span class="n">ContainerAppConsoleLogs_CL</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="n">ago</span><span class="p">(</span><span class="mi">1</span><span class="n">h</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">Log_s</span><span class="w"> </span><span class="n">has_any</span><span class="w"> </span><span class="p">(</span><span class="s">"ERROR"</span><span class="p">,</span><span class="w"> </span><span class="s">"Exception"</span><span class="p">,</span><span class="w"> </span><span class="s">"Traceback"</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">project</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="p">,</span><span class="w"> </span><span class="n">ContainerAppName_s</span><span class="p">,</span><span class="w"> </span><span class="n">Log_s</span>
+<span class="p">|</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="w"> </span><span class="n">desc</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c">// Revision, scaling, and startup events</span>
+<span class="n">ContainerAppSystemLogs_CL</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="n">ago</span><span class="p">(</span><span class="mi">1</span><span class="n">h</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">project</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="p">,</span><span class="w"> </span><span class="n">ContainerAppName_s</span><span class="p">,</span><span class="w"> </span><span class="n">Reason_s</span><span class="p">,</span><span class="w"> </span><span class="n">Log_s</span>
+<span class="p">|</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="w"> </span><span class="n">desc</span>
+</code></pre></div>
+<h2 id="runbooks">Runbooks</h2>
+<h3 id="check-application-health">Check application health</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name, state:properties.runningStatus, revision:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
+</code></pre></div>
+<p>A healthy app shows <code>Running</code> and a ready revision. If a revision fails to start, check <code>ContainerAppSystemLogs_CL</code> for the reason.</p>
+<h3 id="stream-logs-from-a-container-app">Stream logs from a container app</h3>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>logs<span class="w"> </span>show<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;container-app-name&gt;<span class="w"> </span>--follow
+</code></pre></div>
+<h3 id="change-a-runtime-setting">Change a runtime setting</h3>
+<p>Runtime settings live in Azure App Configuration under the label <code>agent-lz</code>.</p>
+<ol>
+<li>
+<p>Update the key:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--endpoint<span class="w"> </span>&lt;app-config-endpoint&gt;<span class="w"> </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="w"> </span>&lt;KEY&gt;<span class="w"> </span>--value<span class="w"> </span>&lt;value&gt;<span class="w"> </span>--label<span class="w"> </span>agent-lz<span class="w"> </span>--yes
+</code></pre></div>
+</li>
+<li>
+<p>Restart the active revision of each affected app so it reads the new value:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>revision<span class="w"> </span>restart<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;container-app-name&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--revision<span class="w"> </span>&lt;revision-name&gt;
+</code></pre></div>
+</li>
+</ol>
+<p>For the available settings, see <a href="../configuration/">Configuration</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>With network isolation enabled, App Configuration is reachable only from the private network. Run these commands from a VPN- or VNet-connected host.</p>
+</div>
+<h3 id="rotate-a-secret">Rotate a secret</h3>
+<p>Secrets are stored in Key Vault and referenced from App Configuration. To rotate one, add a new version of the Key Vault secret, then restart the revisions of the apps that use it. No App Configuration change is needed because the reference points to the secret, not to a specific version.</p>
+<h3 id="roll-back-to-a-previous-release">Roll back to a previous release</h3>
+<p>Roll back by redeploying the previous validated combination:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>v&lt;previous-version&gt;
+azd<span class="w"> </span>deploy
+</code></pre></div>
+<p>If the newer release changed infrastructure, run <code>azd up</code> instead so that provisioning, configuration, and application deployment stay consistent with the older pins. Check the release notes for changes that cannot be reverted, such as data migrations.</p>
+<h3 id="complete-a-deferred-post-provision">Complete a deferred post-provision</h3>
+<p>When post-provision configuration was deferred (for example, provisioning ran from a host without private network access), the environment is not fully configured. From a VPN- or VNet-connected host, run:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>postprovision
+</code></pre></div>
+<p>See <a href="../network-isolation/#post-provision-can-be-deferred">Post-provision can be deferred</a>.</p>
+<h3 id="remove-an-environment">Remove an environment</h3>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>down<span class="w"> </span>--purge
 </code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This deletes all data in the environment, including documents, indexes and conversation history.</p>
-</div>
+<p><code>--purge</code> also permanently deletes soft-deleted resources such as Key Vault and Azure AI services accounts, so their names can be reused. Export any data you want to keep first.</p>
 
 
 

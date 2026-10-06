@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../deploy-terraform/">
+        <link rel="prev" href="../hosted-agents/">
       
       
-        <link rel="next" href="../hosted-agents/">
+        <link rel="next" href="../build-your-own-app/">
       
       
         
@@ -557,14 +557,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-bicep/" class="md-nav__link">
+      <a href="../network-isolation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Bicep
+    Network isolation
   
 
     
@@ -585,14 +585,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-terraform/" class="md-nav__link">
+      <a href="../hosted-agents/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Terraform
+    Hosted agents
   
 
     
@@ -685,10 +685,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#required" class="md-nav__link">
+  <a href="#values-set-by-azd-or-by-you" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required
+        Values set by azd or by you
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inputs-without-a-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs without a default
       
     </span>
   </a>
@@ -707,10 +718,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#retrieval-and-foundry-iq" class="md-nav__link">
+  <a href="#retrieval" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Retrieval and Foundry IQ
+        Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network and security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network and security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hub-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hub integration
       
     </span>
   </a>
@@ -718,6 +757,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#existing-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#hosted-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -727,31 +782,15 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#network-and-services" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#deployment-controls" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Network and services
+        Deployment controls
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lifecycle-switches" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Lifecycle switches
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -782,62 +821,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../hosted-agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Hosted agents
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../network-isolation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Network isolation
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../build-your-own-app/" class="md-nav__link">
         
   
@@ -845,7 +828,63 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
   
 
     
@@ -1015,10 +1054,21 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#required" class="md-nav__link">
+  <a href="#values-set-by-azd-or-by-you" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required
+        Values set by azd or by you
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inputs-without-a-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs without a default
       
     </span>
   </a>
@@ -1037,10 +1087,38 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#retrieval-and-foundry-iq" class="md-nav__link">
+  <a href="#retrieval" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Retrieval and Foundry IQ
+        Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network and security
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network and security">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hub-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hub integration
       
     </span>
   </a>
@@ -1048,6 +1126,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#existing-resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#hosted-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1057,31 +1151,15 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#network-and-services" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#deployment-controls" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Network and services
+        Deployment controls
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#lifecycle-switches" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Lifecycle switches
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1117,53 +1195,85 @@
 
 
 <h1 id="configuration">Configuration</h1>
-<p>Configuration has two parts:</p>
+<p>Agent Landing Zone has two kinds of configuration:</p>
 <ul>
-<li><strong>Deployment parameters</strong> — <code>azd</code> environment variables read by <code>infra/main.parameters.json</code> at provision time.</li>
-<li><strong>Runtime settings</strong> — keys in Azure App Configuration that the application components read at run time.</li>
+<li><strong>Deployment parameters</strong> are <code>azd</code> environment variables. They are read when you run <code>azd provision</code> or <code>azd up</code> and decide which Azure resources are created and how.</li>
+<li><strong>Runtime settings</strong> are Azure App Configuration keys. The applications read them at startup.</li>
 </ul>
+<p>Set a deployment parameter with <code>azd env set &lt;NAME&gt; &lt;value&gt;</code> before you run <code>azd up</code>. Run <code>azd env get-values</code> to see the current values of the selected environment.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>infra/main.parameters.json</code> maps <code>azd</code> environment variables to Bicep parameters. It ships with the repository and is rewritten by the <code>preprovision</code> hook. You do not need to edit it, and local changes to it are hidden from <code>git status</code> automatically.</p>
+</div>
 <h2 id="deployment-parameters">Deployment parameters</h2>
-<p>Set a parameter with <code>azd env set &lt;NAME&gt; &lt;value&gt;</code> before <code>azd provision</code> or <code>azd up</code>.</p>
-<h3 id="required">Required</h3>
+<h3 id="values-set-by-azd-or-by-you">Values set by azd or by you</h3>
 <table>
 <thead>
 <tr>
 <th>Variable</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>AZURE_ENV_NAME</code></td>
-<td>Set by <code>azd</code></td>
+<td>Environment name. Set by <code>azd env new</code>. Used to derive resource names.</td>
 </tr>
 <tr>
 <td><code>AZURE_LOCATION</code></td>
-<td>Primary region</td>
-</tr>
-<tr>
-<td><code>AZURE_AI_FOUNDRY_LOCATION</code></td>
-<td>Region for Foundry</td>
-</tr>
-<tr>
-<td><code>AZURE_COSMOS_LOCATION</code></td>
-<td>Region for Cosmos DB</td>
+<td>Primary Azure region. <code>azd</code> asks for it on the first <code>azd up</code>.</td>
 </tr>
 <tr>
 <td><code>AZURE_PRINCIPAL_ID</code></td>
-<td>Set by <code>azd</code>; receives data-plane roles</td>
+<td>Object ID of the identity that receives data-plane roles for testing. Set by <code>azd</code> from your signed-in account.</td>
 </tr>
+</tbody>
+</table>
+<h3 id="inputs-without-a-default">Inputs without a default</h3>
+<p>These values have no default in <code>main.parameters.json</code>. When they are not set, Bicep uses the default defined in the template.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>NETWORK_ISOLATION</code></td>
-<td><code>true</code> or <code>false</code></td>
+<td><code>true</code> deploys private endpoints, a private virtual network, a jumpbox and Bastion. See <a href="../network-isolation/">Network isolation</a>.</td>
+</tr>
+<tr>
+<td><code>AZURE_AI_FOUNDRY_LOCATION</code></td>
+<td>Region for the Microsoft Foundry account, when it must differ from <code>AZURE_LOCATION</code>.</td>
+</tr>
+<tr>
+<td><code>AZURE_COSMOS_LOCATION</code></td>
+<td>Region for Azure Cosmos DB, when it must differ from <code>AZURE_LOCATION</code>.</td>
 </tr>
 <tr>
 <td><code>USE_UAI</code></td>
-<td>Use user-assigned managed identities</td>
+<td><code>true</code> uses user-assigned managed identities instead of system-assigned identities.</td>
 </tr>
 <tr>
 <td><code>ENABLE_AGENTIC_RETRIEVAL</code></td>
-<td>Enable agentic retrieval</td>
+<td>Enables agentic retrieval in Azure AI Search.</td>
+</tr>
+<tr>
+<td><code>USE_EXISTING_VNET</code></td>
+<td><code>true</code> deploys into a virtual network you already have.</td>
+</tr>
+<tr>
+<td><code>EXISTING_VNET_RESOURCE_ID</code></td>
+<td>Resource ID of that virtual network.</td>
+</tr>
+<tr>
+<td><code>DEPLOY_SUBNETS</code></td>
+<td>Whether to create subnets in the existing virtual network.</td>
+</tr>
+<tr>
+<td><code>SIDE_BY_SIDE</code></td>
+<td>Deploys next to an existing landing zone in the same virtual network.</td>
 </tr>
 </tbody>
 </table>
@@ -1173,333 +1283,369 @@
 <tr>
 <th>Variable</th>
 <th>Default</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>AZURE_PRINCIPAL_TYPE</code></td>
 <td><code>User</code></td>
-<td><code>ServicePrincipal</code> for pipelines</td>
+<td>Type of <code>AZURE_PRINCIPAL_ID</code>. Use <code>ServicePrincipal</code> in pipelines.</td>
 </tr>
 <tr>
 <td><code>DEPLOYMENT_MODE</code></td>
 <td><code>standalone</code></td>
-<td><code>ailz-integrated</code> attaches to an existing hub; see <a href="../network-isolation/">Network isolation</a></td>
+<td><code>standalone</code> creates everything. <code>ailz-integrated</code> attaches to an existing AI Landing Zone.</td>
 </tr>
 <tr>
 <td><code>RESOURCE_NAMING_MODE</code></td>
 <td><code>caf</code></td>
-<td><code>legacy</code> keeps the pre-v4 naming</td>
+<td><code>caf</code> uses Cloud Adoption Framework prefixes. <code>legacy</code> keeps the naming of older environments.</td>
 </tr>
 <tr>
 <td><code>USE_CAPP_API_KEY</code></td>
 <td><code>false</code></td>
-<td></td>
+<td>Protects the Container Apps with an API key in addition to Entra ID.</td>
 </tr>
 <tr>
 <td><code>APP_RUNTIME_CONFIGURATION_MODE</code></td>
 <td><code>appConfig</code></td>
-<td></td>
+<td>Applications read runtime settings from App Configuration.</td>
 </tr>
 <tr>
 <td><code>ENABLE_COSMOS_ANALYTICAL_STORAGE</code></td>
 <td><code>false</code></td>
-<td></td>
+<td>Enables the Cosmos DB analytical store.</td>
 </tr>
 <tr>
-<td><code>AZURE_SEARCH_LOCATION</code>, <code>AZURE_SPEECH_LOCATION</code></td>
-<td>empty</td>
-<td>Defaults to <code>AZURE_LOCATION</code></td>
+<td><code>AZURE_SEARCH_LOCATION</code></td>
+<td>Empty</td>
+<td>Region for Azure AI Search. Leave empty to use the deployment region.</td>
 </tr>
 <tr>
-<td><code>AZURE_PE_LOCATION</code>, <code>AZURE_PE_RESOURCE_GROUP_NAME</code></td>
-<td>empty</td>
-<td>Private endpoint placement</td>
+<td><code>AZURE_SPEECH_LOCATION</code></td>
+<td>Empty</td>
+<td>Region for Azure AI Speech. Leave empty to use the deployment region.</td>
 </tr>
 <tr>
-<td><code>EXISTING_*_RESOURCE_ID</code></td>
-<td>empty</td>
-<td>Reuse existing resources</td>
+<td><code>AZURE_PE_LOCATION</code></td>
+<td>Empty</td>
+<td>Region for private endpoints. Leave empty to use the deployment region.</td>
+</tr>
+<tr>
+<td><code>AZURE_PE_RESOURCE_GROUP_NAME</code></td>
+<td>Empty</td>
+<td>Resource group for private endpoints. Leave empty to use the deployment resource group.</td>
 </tr>
 <tr>
 <td><code>EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING</code></td>
-<td>empty</td>
-<td></td>
+<td>None</td>
+<td>Sends telemetry to an Application Insights resource you already have.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="retrieval-and-foundry-iq">Retrieval and Foundry IQ</h3>
+<p>Parameters that start with <code>EXISTING_</code> reuse a resource instead of creating one. They are listed in <a href="#network-and-security">Network and security</a>.</p>
+<h3 id="retrieval">Retrieval</h3>
 <table>
 <thead>
 <tr>
 <th>Variable</th>
 <th>Default</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>RETRIEVAL_BACKEND</code></td>
 <td><code>foundry_iq</code></td>
+<td>Retrieval implementation used by the orchestrator.</td>
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_PATTERN</code></td>
 <td><code>azureBlob</code></td>
+<td>Foundry IQ pattern.</td>
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND</code></td>
 <td><code>azureBlob</code></td>
+<td>Kind of knowledge source.</td>
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_API_VERSION</code></td>
 <td><code>2026-05-01-preview</code></td>
-</tr>
-<tr>
-<td><code>FOUNDRY_IQ_KNOWLEDGE_RETRIEVAL_BILLING_PLAN</code></td>
-<td><code>free</code></td>
-</tr>
-<tr>
-<td><code>KNOWLEDGE_BASE_NAME</code></td>
-<td><code>knowledge-base</code></td>
-</tr>
-<tr>
-<td><code>KNOWLEDGE_BASE_CONNECTION_NAME</code></td>
-<td><code>knowledge-base-connection</code></td>
-</tr>
-<tr>
-<td><code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME</code></td>
-<td><code>knowledge-base-blob-ks</code></td>
-</tr>
-<tr>
-<td><code>FOUNDRY_IQ_SEARCH_INDEX_NAME</code></td>
-<td><code>agent-lz-index</code></td>
-</tr>
-<tr>
-<td><code>FOUNDRY_IQ_SEMANTIC_CONFIGURATION_NAME</code></td>
-<td><code>default</code></td>
-</tr>
-<tr>
-<td><code>FOUNDRY_IQ_SECURITY_FIELD_NAME</code></td>
-<td><code>metadata_security_id</code></td>
-</tr>
-<tr>
-<td><code>FOUNDRY_IQ_STORAGE_CONTAINER_NAME</code></td>
-<td><code>documents</code></td>
+<td>Azure AI Search API version used for Foundry IQ objects.</td>
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_IS_ADLS_GEN2</code></td>
 <td><code>false</code></td>
+<td><code>true</code> when the source storage account has a hierarchical namespace.</td>
 </tr>
 <tr>
-<td><code>FOUNDRY_IQ_CONTENT_EXTRACTION_MODE</code></td>
-<td><code>standard</code></td>
+<td><code>KNOWLEDGE_BASE_NAME</code></td>
+<td><code>knowledge-base</code></td>
+<td>Knowledge base name.</td>
 </tr>
 <tr>
-<td><code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS</code></td>
-<td><code>["rbacScope"]</code></td>
+<td><code>KNOWLEDGE_BASE_CONNECTION_NAME</code></td>
+<td><code>knowledge-base-connection</code></td>
+<td>Foundry project connection to the knowledge base.</td>
 </tr>
 <tr>
-<td><code>FOUNDRY_IQ_FILTER_ADD_ON_ENABLED</code></td>
-<td><code>false</code></td>
+<td><code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME</code></td>
+<td><code>knowledge-base-blob-ks</code></td>
+<td>Knowledge source name.</td>
+</tr>
+<tr>
+<td><code>FOUNDRY_IQ_SEARCH_INDEX_NAME</code></td>
+<td><code>agent-lz-index</code></td>
+<td>Search index name.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="hosted-agent">Hosted agent</h3>
+<p>Other retrieval defaults: billing plan <code>free</code>, semantic configuration <code>default</code>, security field <code>metadata_security_id</code>, storage container <code>documents</code>, content extraction mode <code>standard</code>, ingestion permission options <code>["rbacScope"]</code>, and the filter add-on disabled.</p>
+<h2 id="network-and-security">Network and security</h2>
+<p>These parameters matter mostly when <code>NETWORK_ISOLATION=true</code>. Read <a href="../network-isolation/">Network isolation</a> first.</p>
 <table>
 <thead>
 <tr>
 <th>Variable</th>
 <th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DEPLOYMENT_TOPOLOGY</code></td>
-<td><code>hosted-no-panel</code></td>
-</tr>
-<tr>
-<td><code>DEPLOY_AAF_AGENT_SVC</code></td>
-<td><code>true</code></td>
-</tr>
-<tr>
-<td><code>PREPARE_HOSTED_AGENT</code></td>
-<td><code>false</code></td>
-</tr>
-<tr>
-<td><code>DEPLOY_HOSTED_AGENT</code></td>
-<td><code>false</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_NAME</code></td>
-<td><code>agent-app-orchestrator</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_IMAGE</code></td>
-<td><code>agent-app-orchestrator</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_CONTAINER_CPU</code></td>
-<td><code>2</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_CONTAINER_MEMORY</code></td>
-<td><code>4Gi</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_RESPONSES_PROTOCOL_VERSION</code></td>
-<td><code>2.0.0</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_INVOCATIONS_PROTOCOL_VERSION</code></td>
-<td><code>1.0.0</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_CONVERSATION_OWNER_BINDING</code></td>
-<td><code>delegated</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_CONVERSATION_CAPABILITY_KEY_ID</code></td>
-<td><code>v1</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_CONVERSATION_CAPABILITY_TTL_SECONDS</code></td>
-<td><code>900</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_HISTORY_MAX_ITEMS</code></td>
-<td><code>100</code></td>
-</tr>
-<tr>
-<td><code>HOSTED_HISTORY_MAX_TOKENS</code></td>
-<td><code>32000</code></td>
-</tr>
-</tbody>
-</table>
-<p>See <a href="../hosted-agents/">Hosted agents</a> for the validation rules.</p>
-<h3 id="network-and-services">Network and services</h3>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Default</th>
-<th>Notes</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>DEPLOY_AZURE_FIREWALL</code></td>
 <td><code>true</code></td>
-<td>Only with isolation</td>
+<td>Deploys Azure Firewall for egress control.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_ACR_TASK_AGENT_POOL</code></td>
 <td><code>true</code></td>
-<td>The pool is created only when <code>NETWORK_ISOLATION=true</code></td>
+<td>Deploys an Azure Container Registry agent pool inside the virtual network so images can be built without a local Docker host. The pool is created only when <code>NETWORK_ISOLATION=true</code>.</td>
 </tr>
 <tr>
-<td><code>DEPLOY_JUMPBOX</code>, <code>DEPLOY_BASTION</code>, <code>DEPLOY_NAT_GATEWAY</code></td>
-<td>derived</td>
-<td>Follow <code>NETWORK_ISOLATION</code> unless set</td>
+<td><code>DEPLOY_JUMPBOX</code></td>
+<td>Same as <code>NETWORK_ISOLATION</code></td>
+<td>Deploys a Windows jumpbox virtual machine.</td>
+</tr>
+<tr>
+<td><code>DEPLOY_BASTION</code></td>
+<td>Same as <code>NETWORK_ISOLATION</code></td>
+<td>Deploys Azure Bastion.</td>
 </tr>
 <tr>
 <td><code>BASTION_SKU_NAME</code></td>
 <td><code>Standard</code></td>
-<td></td>
+<td>Bastion SKU.</td>
 </tr>
 <tr>
-<td><code>BASTION_ENABLE_TUNNELING</code></td>
-<td><code>false</code></td>
-<td></td>
+<td><code>DEPLOY_NAT_GATEWAY</code></td>
+<td>Same as <code>NETWORK_ISOLATION</code></td>
+<td>Deploys a NAT gateway.</td>
 </tr>
 <tr>
 <td><code>ENABLE_ACS_MEDIA_EGRESS</code></td>
 <td><code>false</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_EGRESS_NEXT_HOP_IP</code></td>
-<td>empty</td>
-<td><code>ailz-integrated</code> only</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code></td>
-<td>empty</td>
-<td><code>ailz-integrated</code> only</td>
+<td>Opens firewall egress for Azure Communication Services media.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_GROUNDING_WITH_BING</code></td>
 <td><code>false</code></td>
-<td></td>
+<td>Deploys Grounding with Bing Search.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_KEY_VAULT</code></td>
 <td><code>true</code></td>
-<td></td>
+<td>Deploys the application Key Vault.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_VM_KEY_VAULT</code></td>
 <td><code>false</code></td>
-<td></td>
+<td>Deploys a separate Key Vault for the jumpbox.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_LOG_ANALYTICS</code></td>
 <td><code>true</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>ENABLE_PRIVATE_LOG_ANALYTICS</code></td>
-<td><code>true</code></td>
-<td></td>
+<td>Deploys a Log Analytics workspace. Private access is enabled by default.</td>
 </tr>
 <tr>
 <td><code>ALLOW_MIXED_OBSERVABILITY_WORKSPACES</code></td>
 <td><code>false</code></td>
-<td></td>
+<td>Allows Application Insights and Log Analytics from different sources.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_SEARCH_SERVICE</code></td>
 <td><code>true</code></td>
-<td></td>
+<td>Deploys Azure AI Search.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_SPEECH_SERVICE</code></td>
 <td><code>false</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>SPEECH_SERVICE_SKU</code></td>
-<td><code>S0</code></td>
-<td></td>
+<td>Deploys Azure AI Speech (SKU <code>S0</code>).</td>
 </tr>
 <tr>
 <td><code>DEPLOY_STORAGE_ACCOUNT</code></td>
 <td><code>true</code></td>
-<td></td>
+<td>Deploys the document storage account.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="lifecycle-switches">Lifecycle switches</h3>
+<p>Bastion tunneling is disabled by default.</p>
+<h3 id="hub-integration">Hub integration</h3>
+<p>Use these parameters to connect the spoke virtual network to an existing hub. See <a href="../network-isolation/#integrate-with-an-existing-hub">Integrate with an existing hub</a>.</p>
 <table>
 <thead>
 <tr>
 <th>Variable</th>
-<th>Effect</th>
+<th>Default</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>HUB_INTEGRATION_HUB_VNET_RESOURCE_ID</code></td>
+<td>None</td>
+<td>Resource ID of the hub virtual network.</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_CREATE_HUB_PEERING</code></td>
+<td><code>true</code></td>
+<td>Creates the peering from the hub side.</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT</code></td>
+<td><code>false</code></td>
+<td>Allows gateway transit on the peering.</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_PEERING_USE_REMOTE_GATEWAYS</code></td>
+<td><code>false</code></td>
+<td>Uses the hub gateways from the spoke.</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_EGRESS_NEXT_HOP_IP</code></td>
+<td>None</td>
+<td>Private IP of the hub firewall used as the default route.</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code></td>
+<td>None</td>
+<td>Route table to attach instead of creating one.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="existing-resources">Existing resources</h3>
+<p>Set any of these to reuse a resource instead of creating it:</p>
+<ul>
+<li><code>EXISTING_VNET_RESOURCE_ID</code></li>
+<li><code>EXISTING_JUMPBOX_RESOURCE_ID</code></li>
+<li><code>EXISTING_BASTION_RESOURCE_ID</code></li>
+<li><code>EXISTING_NAT_GATEWAY_RESOURCE_ID</code></li>
+<li><code>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID</code></li>
+<li><code>EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID</code></li>
+</ul>
+<p>To use private DNS zones that already exist (for example, in a hub subscription), set <code>EXISTING_PRIVATE_DNS_ZONE_&lt;ZONE&gt;_RESOURCE_ID</code>, where <code>&lt;ZONE&gt;</code> is one of:</p>
+<p><code>COGSVCS</code>, <code>OPENAI</code>, <code>AISERVICES</code>, <code>SEARCH</code>, <code>COSMOS</code>, <code>BLOB</code>, <code>KEYVAULT</code>, <code>APPCONFIG</code>, <code>CONTAINERAPPS</code>, <code>ACR</code>, <code>AZUREMONITOR</code>, <code>OMSOPSINSIGHTS</code>, <code>ODSOPSINSIGHTS</code>, <code>AZUREAUTOMATION</code>, <code>APPINSIGHTS</code>.</p>
+<h2 id="hosted-agent">Hosted agent</h2>
+<p>These parameters apply when the orchestrator runs as a Foundry hosted agent. See <a href="../hosted-agents/">Hosted agents</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOYMENT_TOPOLOGY</code></td>
+<td><code>hosted-no-panel</code></td>
+<td>Application topology. See <a href="../hosted-agents/#topologies">Topologies</a>.</td>
+</tr>
+<tr>
+<td><code>DEPLOY_AAF_AGENT_SVC</code></td>
+<td><code>true</code></td>
+<td>Enables the Foundry Agent Service capability host.</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_NAME</code></td>
+<td><code>agent-app-orchestrator</code></td>
+<td>Name of the hosted agent in the Foundry project.</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_IMAGE</code></td>
+<td><code>agent-app-orchestrator</code></td>
+<td>Repository name of the agent image in Container Registry.</td>
+</tr>
+<tr>
+<td><code>HOSTED_CONVERSATION_OWNER_BINDING</code></td>
+<td><code>delegated</code></td>
+<td>How conversation ownership is bound to the caller.</td>
+</tr>
+<tr>
+<td><code>HOSTED_CONTINUITY_ENABLED</code></td>
+<td><code>false</code></td>
+<td>Enables the conversation continuity endpoints. Requires a hosted topology with <code>CHAT_BACKEND=hosted_agent</code>.</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS</code></td>
+<td><code>60</code></td>
+<td>Idle timeout for streamed responses.</td>
+</tr>
+<tr>
+<td><code>PRESERVE_CLASSIC_RUNTIME</code></td>
+<td><code>false</code></td>
+<td>Keeps the classic orchestrator Container App while an existing environment moves to hosted.</td>
+</tr>
+</tbody>
+</table>
+<p>Other hosted defaults: CPU <code>2</code>, memory <code>4Gi</code>, Responses protocol <code>2.0.0</code>, Invocations protocol <code>1.0.0</code>, capability key ID <code>v1</code>, capability TTL <code>900</code> seconds, and history limits of <code>100</code> messages and <code>32000</code> characters.</p>
+<p><code>PREPARE_HOSTED_AGENT</code>, <code>HOSTED_AGENT_PREPARED</code> and <code>DEPLOY_HOSTED_AGENT</code> are managed by the deployment scripts. Do not set them by hand.</p>
+<h2 id="deployment-controls">Deployment controls</h2>
+<p>These variables change how the hooks behave. They do not change the deployed resources.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BUILD_MODE</code></td>
+<td><code>local</code> builds images with Docker on the current host. When unset, images are built with Azure Container Registry tasks.</td>
+</tr>
+<tr>
+<td><code>RUN_FROM_JUMPBOX</code></td>
+<td><code>false</code> defers post-provision configuration in an isolated deployment. It is not a connectivity bypass. See <a href="../network-isolation/#post-provision-can-be-deferred">Post-provision can be deferred</a>.</td>
+</tr>
+<tr>
+<td><code>AZURE_SKIP_NETWORK_ISOLATION_WARNING</code></td>
+<td><code>true</code> also defers post-provision configuration in an isolated deployment.</td>
+</tr>
+<tr>
+<td><code>PREFLIGHT_SKIP</code></td>
+<td><code>true</code> skips all preflight checks.</td>
+</tr>
+<tr>
 <td><code>AGENTLZ_REGIONAL_PREFLIGHT_SKIP</code></td>
-<td><code>true</code> skips the regional preflight</td>
+<td><code>true</code> skips only the regional quota and availability check.</td>
 </tr>
 <tr>
 <td><code>AGENTLZ_APP_DEFINITION</code></td>
-<td>Path of the application definition (default <code>app-definition.json</code>)</td>
+<td>Path to a custom application definition. See <a href="../build-your-own-app/">Custom applications</a>.</td>
 </tr>
 </tbody>
 </table>
 <h2 id="runtime-settings">Runtime settings</h2>
-<p>Post-provision publishes runtime settings to Azure App Configuration with the label <strong><code>agent-lz</code></strong>. Components read <code>agent-lz</code> first and fall back to the legacy <code>gpt-rag</code> label, so settings written by earlier versions continue to work during the transition.</p>
-<p>To change a runtime setting, edit the key in App Configuration (label <code>agent-lz</code>) and restart the affected Container App revision. To add settings for your own application, declare them in <code>settings[]</code> of the <a href="../build-your-own-app/">application definition</a>; secret settings are stored as Key Vault references.</p>
+<p>Post-provision publishes runtime settings to Azure App Configuration with the label <code>agent-lz</code>. The applications read only that label.</p>
+<p>To change a runtime setting:</p>
+<ol>
+<li>Update the key in App Configuration with the label <code>agent-lz</code>.</li>
+<li>Restart the active revision of the affected Container App so it reads the new value.</li>
+</ol>
+<p>Settings declared by a custom application definition are validated but not published. Publish them yourself.</p>
 
 
 

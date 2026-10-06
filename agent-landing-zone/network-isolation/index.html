@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../hosted-agents/">
+        <link rel="prev" href="../deploy-infra-only/">
       
       
-        <link rel="next" href="../build-your-own-app/">
+        <link rel="next" href="../hosted-agents/">
       
       
         
@@ -554,118 +554,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-bicep/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Bicep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-terraform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hosted-agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Hosted agents
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -729,10 +617,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-changes" class="md-nav__link">
+  <a href="#what-changes-with-isolation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What changes
+        What changes with isolation
       
     </span>
   </a>
@@ -740,10 +628,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
+  <a href="#enable-isolation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deploy
+        Enable isolation
       
     </span>
   </a>
@@ -751,10 +639,66 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#check-connectivity" class="md-nav__link">
+  <a href="#reach-the-private-network" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Check connectivity
+        Reach the private network
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reach the private network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-the-jumpbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use the jumpbox
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-the-deployment-from-a-connected-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete the deployment from a connected host
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete the deployment from a connected host">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-provision-can-be-deferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-provision can be deferred
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-builds-in-isolated-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image builds in isolated deployments
       
     </span>
   </a>
@@ -762,10 +706,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#integrate-with-an-existing-hub-ailz-integrated" class="md-nav__link">
+  <a href="#verify-private-connectivity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integrate with an existing hub (ailz-integrated)
+        Verify private connectivity
       
     </span>
   </a>
@@ -773,10 +717,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#related-pages" class="md-nav__link">
+  <a href="#integrate-with-an-existing-hub" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Related pages
+        Integrate with an existing hub
       
     </span>
   </a>
@@ -799,6 +743,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hosted agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../build-your-own-app/" class="md-nav__link">
         
   
@@ -806,7 +806,63 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
   
 
     
@@ -964,10 +1020,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-changes" class="md-nav__link">
+  <a href="#what-changes-with-isolation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What changes
+        What changes with isolation
       
     </span>
   </a>
@@ -975,10 +1031,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
+  <a href="#enable-isolation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deploy
+        Enable isolation
       
     </span>
   </a>
@@ -986,10 +1042,66 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#check-connectivity" class="md-nav__link">
+  <a href="#reach-the-private-network" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Check connectivity
+        Reach the private network
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reach the private network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-the-jumpbox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use the jumpbox
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-the-deployment-from-a-connected-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete the deployment from a connected host
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete the deployment from a connected host">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-provision-can-be-deferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-provision can be deferred
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-builds-in-isolated-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Image builds in isolated deployments
       
     </span>
   </a>
@@ -997,10 +1109,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#integrate-with-an-existing-hub-ailz-integrated" class="md-nav__link">
+  <a href="#verify-private-connectivity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integrate with an existing hub (ailz-integrated)
+        Verify private connectivity
       
     </span>
   </a>
@@ -1008,10 +1120,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#related-pages" class="md-nav__link">
+  <a href="#integrate-with-an-existing-hub" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Related pages
+        Integrate with an existing hub
       
     </span>
   </a>
@@ -1039,122 +1151,201 @@
 
 
 <h1 id="network-isolation">Network isolation</h1>
-<p>Set <code>NETWORK_ISOLATION=true</code> to deploy Agent Landing Zone with private endpoints and no public data-plane access. This page explains what changes, how to deploy, and how to check that the network works.</p>
-<h2 id="what-changes">What changes</h2>
-<p>When network isolation is on:</p>
+<p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone deploys every data-plane service behind private endpoints. Public network access is disabled, and the services resolve through private DNS zones linked to the landing zone virtual network.</p>
+<p>This page explains what changes when isolation is on, how to reach the private network, and how to complete a deployment from a connected host.</p>
+<h2 id="what-changes-with-isolation">What changes with isolation</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th><code>NETWORK_ISOLATION=false</code></th>
+<th><code>NETWORK_ISOLATION=true</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data-plane access</td>
+<td>Public endpoints, protected by Microsoft Entra ID</td>
+<td>Private endpoints only</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>Public DNS</td>
+<td>Private DNS zones linked to the VNet</td>
+</tr>
+<tr>
+<td>Jumpbox, Azure Bastion, NAT gateway</td>
+<td>Not deployed</td>
+<td>Deployed by default</td>
+</tr>
+<tr>
+<td>Container image builds</td>
+<td>Regular ACR Tasks</td>
+<td>ACR Task agent pool inside the VNet</td>
+</tr>
+<tr>
+<td>Post-provision and deploy</td>
+<td>Run from any workstation</td>
+<td>Run from a host connected to the VNet</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The ACR Task agent pool is created only for isolated deployments. When isolation is off, images are built with regular ACR Tasks and no pool is created, even if <code>DEPLOY_ACR_TASK_AGENT_POOL</code> is <code>true</code>.</p>
+</div>
+<h2 id="enable-isolation">Enable isolation</h2>
+<p>Set the flag before the first provision:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>up
+</code></pre></div>
+<p><code>azd provision</code> succeeds from any workstation, because Azure Resource Manager is a public control plane. The steps that follow (post-provision configuration and <code>azd deploy</code>) talk to data-plane endpoints and must run from a host that can reach the private network.</p>
+<h2 id="reach-the-private-network">Reach the private network</h2>
+<p>Use one of these options:</p>
 <ul>
-<li>Data-plane services (Azure AI Foundry, Azure AI Search, Cosmos DB, Storage, Key Vault, App Configuration and Container Registry) are reachable only through private endpoints in the landing zone virtual network.</li>
-<li>Private DNS zones resolve service names to private (RFC 1918) addresses.</li>
-<li>A jumpbox virtual machine and Azure Bastion are deployed so you can run the steps that need private network access.</li>
-<li>An <strong>Azure Container Registry Tasks agent pool</strong> is created inside the virtual network. Application images are built there, so you do not need Docker on your workstation or on the jumpbox.</li>
+<li><strong>Point-to-site or site-to-site VPN</strong> into the landing zone VNet, or into a hub that is peered with it.</li>
+<li><strong>A VM or build agent inside the VNet</strong>, or inside a peered VNet with access to the private DNS zones.</li>
+<li><strong>The jumpbox VM</strong> deployed by the landing zone, reached through Azure Bastion.</li>
 </ul>
-<p>When <code>NETWORK_ISOLATION=false</code>, none of these network resources are created and images are built with regular ACR Tasks.</p>
-<h2 id="deploy">Deploy</h2>
-<p>Provisioning runs from your workstation. Application configuration and deployment must run from inside the network, because they call private endpoints.</p>
+<h3 id="use-the-jumpbox">Use the jumpbox</h3>
+<p>The jumpbox is a Windows VM. Its administrator user is <code>testvmuser</code>. The password is not stored in Key Vault, so set one before your first sign-in:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>vm<span class="w"> </span>user<span class="w"> </span>update<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--resource-group<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>&lt;jumpbox-vm-name&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--username<span class="w"> </span>testvmuser<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--password<span class="w"> </span><span class="s1">'&lt;new-password&gt;'</span>
+</code></pre></div>
+<p>Connect through Azure Bastion from the Azure portal, then install the <a href="../deploy-full-stack/#prerequisites">deployment prerequisites</a>. Docker is not installed on the jumpbox by default, and it is not required: image builds run in the ACR Task agent pool.</p>
+<h2 id="complete-the-deployment-from-a-connected-host">Complete the deployment from a connected host</h2>
+<p>On the connected host, clone the repository at the same release tag you provisioned with, then select the environment:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span>&lt;release-tag&gt;<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<span class="nb">cd</span><span class="w"> </span>agent-landing-zone
+
+az<span class="w"> </span>login<span class="w">                     </span><span class="c1"># or: az login --identity</span>
+azd<span class="w"> </span>auth<span class="w"> </span>login<span class="w">               </span><span class="c1"># or: azd auth login --managed-identity</span>
+
+azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;<span class="w">        </span><span class="c1"># same name as the provisioned environment</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;location&gt;
+azd<span class="w"> </span>env<span class="w"> </span>refresh
+</code></pre></div>
+<p><code>azd env refresh</code> reloads the provisioning outputs (endpoints, resource names) into the local environment.</p>
+<p>Then run post-provision and deploy. On Windows, use <code>./scripts/postProvision.ps1</code> instead of the shell script.</p>
+<div class="highlight"><pre><span></span><code>./scripts/postProvision.sh
+azd<span class="w"> </span>deploy
+</code></pre></div>
+<h3 id="post-provision-can-be-deferred">Post-provision can be deferred</h3>
+<p>When provisioning runs from a host without private network access, post-provision can be <strong>deferred</strong> instead of failing. This happens when <code>RUN_FROM_JUMPBOX</code> is set to <code>false</code> (or <code>0</code>, <code>no</code>, <code>skip</code>) or when <code>AZURE_SKIP_NETWORK_ISOLATION_WARNING</code> is <code>true</code>. You then see:</p>
+<div class="highlight"><pre><span></span><code>Post-provision configuration explicitly deferred; application setup is incomplete.
+</code></pre></div>
+<p><code>azd provision</code> still reports success, but the application is <strong>not</strong> configured. Clear the deferral setting and rerun post-provision from a connected host:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RUN_FROM_JUMPBOX<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SKIP_NETWORK_ISOLATION_WARNING<span class="w"> </span><span class="nb">false</span>
+./scripts/postProvision.sh<span class="w">      </span><span class="c1"># or ./scripts/postProvision.ps1</span>
+</code></pre></div>
+<p>When the deferral settings are not set and the private endpoints cannot be reached, post-provision fails with:</p>
+<div class="highlight"><pre><span></span><code>Private post-provision prerequisites failed. Connect through VPN/VNet and rerun postProvision; configuration has not started.
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>RUN_FROM_JUMPBOX</code> only controls whether post-provision is deferred. It does not provide connectivity. <code>azd deploy</code> always checks private reachability, and fails with "Private deployment prerequisites failed" when the host cannot reach the endpoints.</p>
+</div>
+<h2 id="image-builds-in-isolated-deployments">Image builds in isolated deployments</h2>
+<p>Container registries in an isolated deployment reject public build agents, so images are built in an <strong>ACR Task agent pool</strong> that runs inside the VNet. It is created by default (<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code>).</p>
+<p>If the pool is missing, <code>azd deploy</code> stops before building and offers two fixes:</p>
 <ol>
 <li>
-<p>From your workstation, provision the platform:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
+<p><strong>Create the pool (recommended):</strong></p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_ACR_TASK_AGENT_POOL<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>provision
+azd<span class="w"> </span>deploy
 </code></pre></div>
 </li>
 <li>
-<p>Connect to the jumpbox through Azure Bastion (or through a VPN gateway connected to the virtual network). The jumpbox user is <code>testvmuser</code>; the password is stored in the landing zone Key Vault.</p>
-</li>
-<li>
-<p>On the jumpbox, clone the repository at the same release tag and sign in with the virtual machine's managed identity:</p>
-<div class="highlight"><pre><span></span><code>az<span class="w"> </span>login<span class="w"> </span>--identity
-azd<span class="w"> </span>auth<span class="w"> </span>login<span class="w"> </span>--managed-identity
-azd<span class="w"> </span>env<span class="w"> </span>refresh<span class="w"> </span>-e<span class="w"> </span>&lt;environment-name&gt;
+<p><strong>Build locally:</strong> on a VNet-connected host with Docker installed, run:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>BUILD_MODE<span class="w"> </span><span class="nb">local</span>
+azd<span class="w"> </span>deploy
 </code></pre></div>
-</li>
-<li>
-<p>Run the post-provision configuration:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># PowerShell</span>
-./scripts/postProvision.ps1
-<span class="c1"># Bash</span>
-./scripts/postProvision.sh
-</code></pre></div>
-</li>
-<li>
-<p>Deploy the applications:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
-</code></pre></div>
-<p>Images are built by the ACR Tasks agent pool inside the virtual network.</p>
 </li>
 </ol>
-<div class="admonition note">
-<p class="admonition-title">Local builds on the jumpbox</p>
-<p>Building images locally on the jumpbox is a fallback only. Use it if the agent pool cannot be used in your subscription. It requires Docker on the jumpbox and is slower.</p>
-</div>
-<h2 id="check-connectivity">Check connectivity</h2>
-<p>Run these checks from the jumpbox before you deploy applications.</p>
+<h2 id="verify-private-connectivity">Verify private connectivity</h2>
+<p>Run these checks from the host you will deploy from. Use the endpoint host names from <code>azd env get-value &lt;NAME&gt;</code>, for example <code>APP_CONFIG_ENDPOINT</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Check</th>
-<th>How</th>
+<th>Command</th>
 <th>Expected result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>DNS</td>
-<td><code>nslookup &lt;service&gt;.privatelink...</code> or <code>nslookup &lt;service-hostname&gt;</code></td>
-<td>The name resolves to a private address (10.x, 172.16–31.x or 192.168.x)</td>
+<td><code>nslookup &lt;service-host&gt;</code></td>
+<td>A private address (10.x, 172.16–31.x or 192.168.x)</td>
 </tr>
 <tr>
 <td>TCP</td>
-<td><code>Test-NetConnection &lt;service-hostname&gt; -Port 443</code></td>
+<td><code>Test-NetConnection &lt;service-host&gt; -Port 443</code></td>
 <td><code>TcpTestSucceeded : True</code></td>
 </tr>
 <tr>
 <td>TLS</td>
-<td><code>curl -sv https://&lt;service-hostname&gt;/ -o /dev/null</code></td>
-<td>TLS handshake completes; HTTP 401 or 403 is fine</td>
+<td><code>curl -sv https://&lt;service-host&gt;/ -o /dev/null</code></td>
+<td>TLS handshake completes. HTTP 401 or 403 is fine.</td>
 </tr>
 </tbody>
 </table>
-<p>If a name resolves to a public address, the private DNS zone is not linked to the virtual network the jumpbox uses. See <a href="../troubleshooting/">Troubleshooting</a>.</p>
-<h2 id="integrate-with-an-existing-hub-ailz-integrated">Integrate with an existing hub (<code>ailz-integrated</code>)</h2>
-<p>To place the workload in a spoke that uses an existing hub network, set <code>DEPLOYMENT_MODE=ailz-integrated</code> and provide the hub resources:</p>
+<p>If DNS returns a public address, the host is not using the private DNS zones. Check the VNet link of the zone, or the DNS forwarder on your VPN or hub.</p>
+<h2 id="integrate-with-an-existing-hub">Integrate with an existing hub</h2>
+<p>To place the landing zone in an existing hub-and-spoke network, use the <code>ailz-integrated</code> deployment mode:</p>
 <table>
 <thead>
 <tr>
-<th>Variable</th>
+<th>Setting</th>
 <th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>DEPLOYMENT_MODE=ailz-integrated</code></td>
+<td>Deploy as a spoke of an existing hub</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_HUB_VNET_RESOURCE_ID</code></td>
+<td>Hub VNet to peer with</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_CREATE_HUB_PEERING</code></td>
+<td>Create the peering (default <code>true</code>)</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT</code></td>
+<td>Allow gateway transit (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>HUB_INTEGRATION_PEERING_USE_REMOTE_GATEWAYS</code></td>
+<td>Use the hub gateway (default <code>false</code>)</td>
+</tr>
+<tr>
 <td><code>HUB_INTEGRATION_EGRESS_NEXT_HOP_IP</code></td>
-<td>Private IP of the hub firewall used as the next hop for egress</td>
+<td>Next hop for egress, for example the hub firewall</td>
 </tr>
 <tr>
 <td><code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code></td>
-<td>Existing route table to attach to the spoke subnets</td>
+<td>Existing route table to attach</td>
 </tr>
 <tr>
-<td><code>AZURE_PE_RESOURCE_GROUP_NAME</code></td>
-<td>Resource group where private endpoints are created</td>
+<td><code>AZURE_PE_RESOURCE_GROUP_NAME</code>, <code>AZURE_PE_LOCATION</code></td>
+<td>Where to place private endpoints</td>
 </tr>
 <tr>
-<td><code>AZURE_PE_LOCATION</code></td>
-<td>Region for the private endpoints</td>
-</tr>
-<tr>
-<td><code>EXISTING_*</code> resource IDs</td>
-<td>Existing virtual network, subnets and private DNS zones to reuse</td>
+<td><code>EXISTING_*</code></td>
+<td>Reuse the existing VNet, private DNS zones, jumpbox, Bastion, NAT gateway or monitoring resources</td>
 </tr>
 </tbody>
 </table>
-<p>For the hub-and-spoke design itself, see <a href="../../bicep/hub-and-spoke/">Hub and spoke</a>.</p>
-<h2 id="related-pages">Related pages</h2>
-<ul>
-<li><a href="../configuration/#deployment-parameters">Configuration</a></li>
-<li><a href="../deploy-full-stack/">Deploy the full stack</a></li>
-<li><a href="../troubleshooting/">Troubleshooting</a></li>
-</ul>
+<p>See <a href="../configuration/#network-and-security">Configuration</a> for the full list, and the <a href="../../bicep/hub-and-spoke/">hub-and-spoke guide</a> for the network design.</p>
 
 
 

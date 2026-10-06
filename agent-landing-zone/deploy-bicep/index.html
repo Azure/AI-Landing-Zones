@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../deploy-infra-only/">
+        <link rel="prev" href="../build-your-own-app/">
       
       
         <link rel="next" href="../deploy-terraform/">
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bicep-platform" class="md-skip">
+        <a href="#deploy-with-bicep" class="md-skip">
           Skip to content
         </a>
       
@@ -554,6 +554,118 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hosted agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -617,6 +729,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-azd-uses-bicep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How azd uses Bicep
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#change-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#resource-naming" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -628,10 +762,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
+  <a href="#do-not-call-bicep-directly" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Parameters
+        Do not call Bicep directly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
       
     </span>
   </a>
@@ -661,119 +817,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../hosted-agents/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Hosted agents
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../network-isolation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Network isolation
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../build-your-own-app/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Build your own app
+    Terraform implementation status
   
 
     
@@ -931,6 +975,28 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#how-azd-uses-bicep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How azd uses Bicep
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#change-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#resource-naming" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -942,10 +1008,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
+  <a href="#do-not-call-bicep-directly" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Parameters
+        Do not call Bicep directly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
       
     </span>
   </a>
@@ -972,36 +1060,81 @@
   
 
 
-<h1 id="bicep-platform">Bicep platform</h1>
-<p>Agent Landing Zone deploys its platform with Bicep. The <code>infra/</code> folder in <a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a> was incorporated from the AI Landing Zone Bicep pattern release v2.7.3 and is now owned and maintained in the Agent Landing Zone repository. The exact source release is recorded in <code>manifest.json</code> under <code>infra.source</code>.</p>
-<p><code>azd provision</code> deploys this Bicep template. You do not need to run Bicep commands yourself.</p>
+<h1 id="deploy-with-bicep">Deploy with Bicep</h1>
+<p>Agent Landing Zone uses Bicep for its infrastructure. The Bicep source lives in
+the <code>infra/</code> folder of the repository, and <code>azd</code> calls it for you. This page
+explains how that works, what you can change, and why you should not call the
+Bicep template directly.</p>
+<h2 id="how-azd-uses-bicep">How <code>azd</code> uses Bicep</h2>
+<p>When you run <code>azd provision</code> or <code>azd up</code>, three things happen in order:</p>
+<ol>
+<li>The <code>preprovision</code> hook validates your environment, runs the preflight
+   checks, and composes <code>infra/main.parameters.json</code> from your <code>azd</code>
+   environment values.</li>
+<li><code>azd</code> deploys <code>infra/main.bicep</code> with those parameters.</li>
+<li>The <code>postprovision</code> hook assigns roles, publishes runtime settings to Azure
+   App Configuration (label <code>agent-lz</code>), and configures Azure AI Search and
+   Microsoft Foundry.</li>
+</ol>
+<p><code>azd deploy</code> then builds and deploys the application components.</p>
+<h2 id="change-parameters">Change parameters</h2>
+<p>Set values in your <code>azd</code> environment, then provision again:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>eastus2
+azd<span class="w"> </span>provision
+</code></pre></div>
+<p>You do not need to edit <code>infra/main.parameters.json</code>. The <code>preprovision</code> hook
+rewrites it from your environment on every run. See
+<a href="../configuration/">Configuration</a> for the full list of parameters and their
+defaults.</p>
 <h2 id="resource-naming">Resource naming</h2>
-<p><code>RESOURCE_NAMING_MODE</code> controls how resources are named:</p>
 <table>
 <thead>
 <tr>
-<th>Value</th>
+<th><code>RESOURCE_NAMING_MODE</code></th>
 <th>Behavior</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>caf</code> (default)</td>
-<td>Names follow Cloud Adoption Framework abbreviations</td>
+<td>Names follow Cloud Adoption Framework abbreviations, for example <code>ca-&lt;token&gt;-orchestrator</code>.</td>
 </tr>
 <tr>
 <td><code>legacy</code></td>
-<td>Names follow the scheme used by earlier releases</td>
+<td>Keeps the naming scheme used by earlier GPT-RAG releases. Use it only when you must match existing resource names.</td>
 </tr>
 </tbody>
 </table>
-<p>Set it before the first provision. Changing it on an existing environment creates new resources with the new names.</p>
-<h2 id="parameters">Parameters</h2>
-<p>Agent Landing Zone sets the Bicep parameters from <code>azd</code> environment variables. See <a href="../configuration/#deployment-parameters">Configuration</a> for the list.</p>
-<p>For the meaning of the underlying AI Landing Zone parameters, see:</p>
+<h2 id="do-not-call-bicep-directly">Do not call Bicep directly</h2>
+<p>Avoid <code>az deployment group create</code> or <code>az deployment sub create</code> against
+<code>infra/main.bicep</code>. A direct deployment skips:</p>
 <ul>
-<li><a href="../../bicep/how-to-deploy/">How to deploy the Bicep pattern</a></li>
-<li><a href="../../bicep/parameterization/">Parameterization</a></li>
+<li>environment composition and the preflight checks;</li>
+<li>the hosted agent state;</li>
+<li>role assignments;</li>
+<li>App Configuration publishing;</li>
+<li>the application deploy.</li>
+</ul>
+<p>The result is infrastructure that the application cannot use.</p>
+<div class="admonition warning">
+<p class="admonition-title">Do not use <code>what-if</code> with <code>main.parameters.json</code></p>
+<p><code>infra/main.parameters.json</code> contains <code>${...}</code> substitutions and secret
+placeholders that only <code>azd</code> resolves. Passing it to <code>az deployment ... what-if</code>
+produces wrong or failing results. Use <code>azd provision --preview</code> instead.</p>
+</div>
+<h2 id="reference">Reference</h2>
+<p>The Bicep modules and their parameters are documented in the AI Landing Zone
+pages:</p>
+<ul>
+<li><a href="../../bicep/how-to-deploy/">How to deploy the Bicep implementation</a></li>
+<li><a href="../../bicep/parameterization/">Bicep parameterization</a></li>
+</ul>
+<h2 id="related-pages">Related pages</h2>
+<ul>
+<li><a href="../deploy-full-stack/">Deploy full stack</a></li>
+<li><a href="../deploy-infra-only/">Deploy infra only</a></li>
+<li><a href="../configuration/">Configuration</a></li>
 </ul>
 
 

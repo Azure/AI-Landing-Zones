@@ -16,7 +16,7 @@
         <link rel="prev" href="../deploy-full-stack/">
       
       
-        <link rel="next" href="../deploy-bicep/">
+        <link rel="next" href="../network-isolation/">
       
       
         
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deploy-the-infrastructure-only" class="md-skip">
+        <a href="#deploy-infra-only" class="md-skip">
           Skip to content
         </a>
       
@@ -589,10 +589,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
+  <a href="#before-you-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deploy
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
       
     </span>
   </a>
@@ -622,10 +633,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#guard-against-a-missing-foundation" class="md-nav__link">
+  <a href="#related-pages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Guard against a missing foundation
+        Related pages
       
     </span>
   </a>
@@ -648,70 +659,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-bicep/" class="md-nav__link">
+      <a href="../network-isolation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Bicep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-terraform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
+    Network isolation
   
 
     
@@ -760,14 +715,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../network-isolation/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Configuration
   
 
     
@@ -795,7 +750,63 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
   
 
     
@@ -953,10 +964,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deploy" class="md-nav__link">
+  <a href="#before-you-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deploy
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steps
       
     </span>
   </a>
@@ -986,10 +1008,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#guard-against-a-missing-foundation" class="md-nav__link">
+  <a href="#related-pages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Guard against a missing foundation
+        Related pages
       
     </span>
   </a>
@@ -1016,18 +1038,39 @@
   
 
 
-<h1 id="deploy-the-infrastructure-only">Deploy the infrastructure only</h1>
-<p>You can deploy the platform without any application and add one later.</p>
-<h2 id="deploy">Deploy</h2>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>azure/agent-landing-zone
+<h1 id="deploy-infra-only">Deploy infra only</h1>
+<p>Use this path when you want the Agent Landing Zone foundation (networking, Microsoft Foundry, Azure AI Search, storage, Cosmos DB, App Configuration, Key Vault, Container Registry, Container Apps environment and monitoring) without deploying the default application. You can add the default application or your own application to the same environment later.</p>
+<h2 id="before-you-start">Before you start</h2>
+<p>Complete the <a href="../deploy-full-stack/#prerequisites">prerequisites in Deploy full stack</a>. The tools, permissions and quota are the same.</p>
+<h2 id="steps">Steps</h2>
+<ol>
+<li>
+<p>Get the template and sign in:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>Azure/agent-landing-zone
 az<span class="w"> </span>login
 azd<span class="w"> </span>auth<span class="w"> </span>login
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span>
-azd<span class="w"> </span>provision
 </code></pre></div>
-<p><code>azd provision</code> runs preflight, provisioning, and post-provision configuration. It does not build or deploy application components.</p>
+</li>
+<li>
+<p>Create an environment and choose the network mode:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span><span class="w">   </span><span class="c1"># or true; see Network isolation</span>
+</code></pre></div>
+</li>
+<li>
+<p>Provision the foundation:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
+</code></pre></div>
+</li>
+</ol>
+<p><code>azd provision</code> runs the <code>preprovision</code> hook (preflight checks), deploys the infrastructure, then runs the <code>postprovision</code> hook, which configures the services and publishes the platform outputs described below. It does not build or deploy any application.</p>
 <h2 id="platform-outputs">Platform outputs</h2>
-<p>After provisioning, the Agent Landing Zone publishes the platform outputs that an application needs. They are stored as one JSON document in the <code>azd</code> environment variable <code>AGENTLZ_PLATFORM_OUTPUTS</code>, validated against <code>contracts/platform-outputs-v1.schema.json</code>, and also exposed as flat keys:</p>
+<p>After provisioning, the foundation publishes a stable set of outputs that any application can consume. They are available in three places:</p>
+<ul>
+<li>As flat keys in the azd environment (<code>azd env get-values</code>).</li>
+<li>As a single JSON document in the azd environment key <code>AGENTLZ_PLATFORM_OUTPUTS</code>.</li>
+<li>In Azure App Configuration, key <code>AGENTLZ_PLATFORM_OUTPUTS</code>, label <code>agent-lz</code>.</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -1081,33 +1124,44 @@ azd<span class="w"> </span>provision
 <tbody>
 <tr>
 <td><code>AGENTLZ_NETWORK_ISOLATED</code></td>
-<td><code>true</code> when the platform uses private networking</td>
+<td><code>true</code> when the foundation was deployed with private endpoints.</td>
 </tr>
 <tr>
 <td><code>AGENTLZ_IDENTITY_&lt;COMPONENT&gt;_CLIENT_ID</code></td>
-<td>Client ID of the managed identity created for each application component</td>
+<td>Client ID of the managed identity created for each application component.</td>
 </tr>
 <tr>
 <td><code>AGENTLZ_COMPONENT_IDENTITIES</code></td>
-<td>JSON map of all component identities</td>
+<td>JSON map of all component identities.</td>
 </tr>
 </tbody>
 </table>
-<p>To republish the outputs manually:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.outputs
+<p>Read the outputs from App Configuration:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span>show<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--endpoint<span class="w"> </span>&lt;app-configuration-endpoint&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="w"> </span>AGENTLZ_PLATFORM_OUTPUTS<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--label<span class="w"> </span>agent-lz<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--auth-mode<span class="w"> </span>login
 </code></pre></div>
-<p>Read them with <code>azd env get-values</code>.</p>
+<p>If the outputs are missing or out of date (for example after a deferred post-provision on an isolated network), republish them from the repository root:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>refresh
+python<span class="w"> </span>-m<span class="w"> </span>config.deployment.outputs
+</code></pre></div>
 <h2 id="add-an-application-later">Add an application later</h2>
-<p>Run <code>azd deploy</code> to deploy the default application. To deploy your own, point <code>AGENTLZ_APP_DEFINITION</code> to an application definition file or folder (default: <code>app-definition.json</code>) and run <code>azd up</code>:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>./my-app
-azd<span class="w"> </span>up
+<p>The environment deploys one application. By default this is the application described in <code>app-definition.json</code> (Agent App UI, Agent App Orchestrator and Agent App Ingestion). To use another application, point <code>AGENTLZ_APP_DEFINITION</code> at its definition file before the first deployment; see <a href="../build-your-own-app/">Custom applications</a>.</p>
+<p>The application identity (<code>AGENTLZ_APP_ID</code>) is bound to the environment on the first provision. Deploying a different application to the same environment fails the binding check; create a new environment instead.</p>
+<p>To deploy the application:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>See <a href="../build-your-own-app/">Build your own application</a>.</p>
-<p>An environment hosts <strong>one application</strong>. <code>AGENTLZ_APP_ID</code> is bound on the first provision; to deploy a different application, create a new <code>azd</code> environment.</p>
-<h2 id="guard-against-a-missing-foundation">Guard against a missing foundation</h2>
-<p><code>azd deploy</code> checks that the foundation exists before it builds anything (<code>python -m config.deployment.outputs --check-foundation</code>). If <code>AZURE_RESOURCE_GROUP</code> or <code>APP_CONFIG_ENDPOINT</code> is missing, the deployment stops with:</p>
+<p>If you run <code>azd deploy</code> in an environment that has not been provisioned, it stops with:</p>
 <div class="highlight"><pre><span></span><code>The foundation is not provisioned. Run azd provision first.
 </code></pre></div>
+<h2 id="related-pages">Related pages</h2>
+<ul>
+<li><a href="../network-isolation/">Network isolation</a></li>
+<li><a href="../configuration/">Configuration</a></li>
+<li><a href="../build-your-own-app/">Custom applications</a></li>
+</ul>
 
 
 

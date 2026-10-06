@@ -557,70 +557,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-bicep/" class="md-nav__link">
+      <a href="../network-isolation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Bicep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-terraform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
+    Network isolation
   
 
     
@@ -669,14 +613,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../network-isolation/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Configuration
   
 
     
@@ -704,7 +648,63 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
   
 
     
@@ -813,21 +813,215 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#common-problems" class="md-nav__link">
+  <a href="#deploy-stage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common problems
+        Deploy stage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy stage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hosted-deployment-is-not-prepared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted deployment is not prepared
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#collecting-information" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#application-definition-does-not-match-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Collecting information
+        Application definition does not match the environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-deployment-prerequisites-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private deployment prerequisites failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acr-task-agent-pool-is-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACR Task agent pool is missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stale-component-checkout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stale component checkout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-component-deployment-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A component deployment fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provision-and-post-provision-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provision and post-provision stages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provision and post-provision stages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#missing-endpoint-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Missing endpoint output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-post-provision-prerequisites-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private post-provision prerequisites failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-provision-was-deferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-provision was deferred
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network_isolation-is-not-a-boolean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NETWORK_ISOLATION is not a boolean
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provisioning-fails-in-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provisioning fails in Azure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Runtime">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-orchestrator-returns-http-422" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The orchestrator returns HTTP 422
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-application-starts-but-does-not-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The application starts but does not answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-denied-between-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access denied between services
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
       
     </span>
   </a>
@@ -931,21 +1125,215 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#common-problems" class="md-nav__link">
+  <a href="#deploy-stage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common problems
+        Deploy stage
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deploy stage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hosted-deployment-is-not-prepared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted deployment is not prepared
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#collecting-information" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#application-definition-does-not-match-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Collecting information
+        Application definition does not match the environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-deployment-prerequisites-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private deployment prerequisites failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acr-task-agent-pool-is-missing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACR Task agent pool is missing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stale-component-checkout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stale component checkout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-component-deployment-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A component deployment fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#provision-and-post-provision-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provision and post-provision stages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Provision and post-provision stages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#missing-endpoint-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Missing endpoint output
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-post-provision-prerequisites-failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private post-provision prerequisites failed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-provision-was-deferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-provision was deferred
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network_isolation-is-not-a-boolean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NETWORK_ISOLATION is not a boolean
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provisioning-fails-in-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provisioning fails in Azure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Runtime">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-orchestrator-returns-http-422" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The orchestrator returns HTTP 422
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-application-starts-but-does-not-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The application starts but does not answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-denied-between-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access denied between services
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
       
     </span>
   </a>
@@ -973,73 +1361,104 @@
 
 
 <h1 id="troubleshooting">Troubleshooting</h1>
-<h2 id="common-problems">Common problems</h2>
-<table>
-<thead>
-<tr>
-<th>Symptom</th>
-<th>Cause</th>
-<th>Fix</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>azd deploy</code> fails with a message that the platform foundation is missing</td>
-<td>Applications were deployed before the platform was provisioned, or in an environment where provisioning failed</td>
-<td>Run <code>azd provision</code> first and check that it completes. See <a href="../deploy-infra-only/">Deploy infrastructure only</a>.</td>
-</tr>
-<tr>
-<td>Preflight fails with a quota error</td>
-<td>The subscription does not have enough model or vCPU quota in the selected region</td>
-<td>Request more quota, lower the model capacity parameters, or choose another region. See <a href="../configuration/#deployment-parameters">Configuration</a>.</td>
-</tr>
-<tr>
-<td>Hosted validation fails during <code>preprovision</code></td>
-<td>The parameter combination is not valid for the selected <code>DEPLOYMENT_TOPOLOGY</code> (for example, continuity enabled without a hosted topology)</td>
-<td>Read the error message; it names the invalid parameter. See <a href="../hosted-agents/">Hosted agents</a>.</td>
-</tr>
-<tr>
-<td>The hosted agent returns HTTP 422 from the Responses API</td>
-<td>The request body does not match what the agent expects, or the model deployment name is wrong</td>
-<td>Check the request format in <a href="../hosted-agents/">Calling the agent</a> and the model deployment parameters.</td>
-</tr>
-<tr>
-<td>Continuity endpoints return HTTP 503</td>
-<td>Conversation continuity is not enabled, or the conversation store is not reachable</td>
-<td>Set <code>HOSTED_CONTINUITY_ENABLED=true</code> with a hosted topology, then run <code>azd provision</code>. See <a href="../hosted-agents/#conversation-continuity-and-panel">Conversation continuity and panel</a>.</td>
-</tr>
-<tr>
-<td>With network isolation, calls fail with name resolution or timeout errors</td>
-<td>Private DNS zones are not linked to the virtual network you are using, or you are running from outside the network</td>
-<td>Run the steps from the jumpbox and do the checks in <a href="../network-isolation/#check-connectivity">Network isolation</a>.</td>
-</tr>
-<tr>
-<td><code>azd deploy</code> cannot build images with network isolation on</td>
-<td>The ACR Tasks agent pool is not available</td>
-<td>Check that the agent pool exists in the container registry. Use a local build on the jumpbox only as a fallback.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="collecting-information">Collecting information</h2>
-<p>When you open an issue, include:</p>
+<p>This page lists the errors you are most likely to see, grouped by the deployment stage that raises them. Each entry shows the message, the cause, and the fix.</p>
+<p>Every stage writes its output to the terminal. Component deployments also write logs to the <code>.logs</code> folder of each component checkout.</p>
+<div class="admonition tip">
+<p class="admonition-title">Sharing diagnostics</p>
+<p>When you ask for help, share the failing command, the error message, and the specific non-secret settings involved (for example <code>NETWORK_ISOLATION</code>, <code>BUILD_MODE</code>, <code>AZURE_LOCATION</code>). Do not paste the full output of <code>azd env get-values</code>; it can contain endpoints and identifiers you may not want to publish.</p>
+</div>
+<h2 id="deploy-stage">Deploy stage</h2>
+<p>These checks run in the <code>predeploy</code> hook, in this order, before any application is built.</p>
+<h3 id="hosted-deployment-is-not-prepared">Hosted deployment is not prepared</h3>
+<p><strong>Symptom.</strong> Deploying a hosted topology stops and asks you to run the preparation script.</p>
+<p><strong>Cause.</strong> Hosted topologies need <code>HOSTED_AGENT_PREPARED=true</code> and <code>DEPLOY_HOSTED_AGENT=true</code>. <code>azd up</code> does not set them; the preparation script does.</p>
+<p><strong>Fix.</strong></p>
+<div class="highlight"><pre><span></span><code>pwsh<span class="w"> </span>scripts/prepareHostedDeployment.ps1
+azd<span class="w"> </span>deploy
+</code></pre></div>
+<p>See <a href="../hosted-agents/#topologies">Hosted agents</a>.</p>
+<h3 id="application-definition-does-not-match-the-environment">Application definition does not match the environment</h3>
+<p><strong>Symptom.</strong> <code>predeploy</code> exits with code <code>2</code> after validating the application definition.</p>
+<p><strong>Cause.</strong> The application definition and the topology bound to the environment disagree, for example a hosted definition in a classic environment.</p>
+<p><strong>Fix.</strong> Select the definition that matches the environment, or change the topology and provision again. See <a href="../build-your-own-app/">Custom applications</a>.</p>
+<h3 id="private-deployment-prerequisites-failed">Private deployment prerequisites failed</h3>
+<p><strong>Message.</strong></p>
+<div class="highlight"><pre><span></span><code>Private deployment prerequisites failed. Use a VPN/VNet-connected host; RUN_FROM_JUMPBOX is not a connectivity bypass.
+</code></pre></div>
+<p><strong>Cause.</strong> <code>NETWORK_ISOLATION=true</code> and the host cannot resolve or open a TLS connection to App Configuration, or to the Foundry project endpoint for hosted topologies. The check waits up to 20 seconds per endpoint.</p>
+<p><strong>Fix.</strong> Run the deployment from the jumpbox or from a host connected through VPN or a peered VNet. Setting <code>RUN_FROM_JUMPBOX</code> does not skip this check. See <a href="../network-isolation/#verify-private-connectivity">Verify private connectivity</a>.</p>
+<h3 id="acr-task-agent-pool-is-missing">ACR Task agent pool is missing</h3>
+<p><strong>Message.</strong></p>
+<div class="highlight"><pre><span></span><code>Run 'azd env set DEPLOY_ACR_TASK_AGENT_POOL true' and 'azd provision', or set BUILD_MODE=local on a VNet-connected host with Docker.
+</code></pre></div>
+<p><strong>Cause.</strong> <code>NETWORK_ISOLATION=true</code>, no ACR Task agent pool was provisioned, and <code>BUILD_MODE</code> is not <code>local</code>. Without a pool inside the VNet, the private registry cannot build images.</p>
+<p><strong>Fix (recommended).</strong> Provision the agent pool:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_ACR_TASK_AGENT_POOL<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>provision
+azd<span class="w"> </span>deploy
+</code></pre></div>
+<p><strong>Fix (alternative).</strong> Build on a VNet-connected host that has Docker installed:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>BUILD_MODE<span class="w"> </span><span class="nb">local</span>
+azd<span class="w"> </span>deploy
+</code></pre></div>
+<p>The jumpbox does not include Docker by default. See <a href="../network-isolation/#image-builds-in-isolated-deployments">Image builds in isolated deployments</a>.</p>
+<h3 id="stale-component-checkout">Stale component checkout</h3>
+<p><strong>Message</strong> contains <code>Remove or relocate the stale sibling checkout</code>.</p>
+<p><strong>Cause.</strong> <code>predeploy</code> clones each component next to this repository at the tag and commit pinned in <code>manifest.json</code>. A folder with that name already exists at a different commit or with local changes.</p>
+<p><strong>Fix.</strong> Move or delete the folder named in the message and run <code>azd deploy</code> again. If you are developing a component locally, keep your work in a separate folder.</p>
+<h3 id="a-component-deployment-fails">A component deployment fails</h3>
+<p><strong>Cause.</strong> The build or the container app update for one component failed.</p>
+<p><strong>Fix.</strong> Open the newest file in the <code>.logs</code> folder of that component checkout. Common causes are a registry that the build host cannot reach (see the agent pool entry above) or a missing role assignment for your identity on the registry.</p>
+<h2 id="provision-and-post-provision-stages">Provision and post-provision stages</h2>
+<h3 id="missing-endpoint-output">Missing endpoint output</h3>
+<p><strong>Message.</strong></p>
+<div class="highlight"><pre><span></span><code>Missing &lt;KEY&gt;. Run provisioning and load the selected azd environment outputs before this stage.
+</code></pre></div>
+<p><strong>Cause.</strong> The stage needs an output that the selected <code>azd</code> environment does not have: <code>APP_CONFIG_ENDPOINT</code>, <code>AZURE_AI_PROJECT_ENDPOINT</code>, or <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code>.</p>
+<p><strong>Fix.</strong> Confirm the environment with <code>azd env select &lt;name&gt;</code>, then run <code>azd provision</code>. If you moved to another machine, run <code>azd env refresh</code> to load the outputs.</p>
+<h3 id="private-post-provision-prerequisites-failed">Private post-provision prerequisites failed</h3>
+<p><strong>Message.</strong></p>
+<div class="highlight"><pre><span></span><code>Private post-provision prerequisites failed. Connect through VPN/VNet and rerun postProvision; configuration has not started.
+</code></pre></div>
+<p><strong>Cause.</strong> Provisioning completed, but the host cannot reach App Configuration on the private network. No configuration was applied.</p>
+<p><strong>Fix.</strong> Connect through the jumpbox, VPN, or a peered VNet, then run:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>postprovision
+</code></pre></div>
+<h3 id="post-provision-was-deferred">Post-provision was deferred</h3>
+<p><strong>Message.</strong></p>
+<div class="highlight"><pre><span></span><code>Post-provision configuration explicitly deferred; application setup is incomplete.
+</code></pre></div>
+<p><strong>Cause.</strong> This is a warning, not a failure. <code>RUN_FROM_JUMPBOX</code> is <code>false</code>, or <code>AZURE_SKIP_NETWORK_ISOLATION_WARNING</code> is <code>true</code>, so post-provision skipped configuration on purpose.</p>
+<p><strong>Fix.</strong> Finish the configuration from a connected host. See <a href="../network-isolation/#post-provision-can-be-deferred">Post-provision can be deferred</a> and <a href="../operations/#complete-a-deferred-post-provision">Complete a deferred post-provision</a>.</p>
+<h3 id="network_isolation-is-not-a-boolean"><code>NETWORK_ISOLATION</code> is not a boolean</h3>
+<p><strong>Cause.</strong> The value is something other than <code>true</code> or <code>false</code>.</p>
+<p><strong>Fix.</strong></p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span><span class="w">   </span><span class="c1"># or false</span>
+</code></pre></div>
+<h3 id="provisioning-fails-in-azure">Provisioning fails in Azure</h3>
+<p><strong>Cause.</strong> Common causes are model quota in the selected region, a resource name that is already taken, or a policy that denies a resource configuration.</p>
+<p><strong>Fix.</strong> Read the failed operation in the Azure portal under <strong>Resource group &gt; Deployments</strong>. For quota, choose another region or request more capacity. Then run <code>azd provision</code> again; provisioning is incremental.</p>
+<h2 id="runtime">Runtime</h2>
+<h3 id="the-orchestrator-returns-http-422">The orchestrator returns HTTP 422</h3>
+<p><strong>Cause.</strong> The hosted agent uses the stateless <strong>Responses 2.0.0</strong> protocol, and the request sends <code>conversation</code> or <code>previous_response_id</code>.</p>
+<p><strong>Fix.</strong> Remove those fields and send the context the agent needs in each request. See <a href="../hosted-agents/#calling-the-agent">Calling the agent</a>.</p>
+<h3 id="the-application-starts-but-does-not-answer">The application starts but does not answer</h3>
+<p>Check, in this order:</p>
 <ol>
-<li>The release tag you deployed.</li>
-<li>
-<p>The values of your environment, <strong>without secrets</strong>:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-values
-</code></pre></div>
-<p>Remove keys, passwords and connection strings before you share the output.</p>
-</li>
-<li>
-<p>Container App logs for the failing component:</p>
-<div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>logs<span class="w"> </span>show<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;container-app&gt;<span class="w"> </span>--tail<span class="w"> </span><span class="m">200</span>
-</code></pre></div>
-</li>
-<li>
-<p>The full error output from <code>azd</code>.</p>
-</li>
+<li>The container app revision is healthy. See <a href="../operations/#check-application-health">Check application health</a>.</li>
+<li>The logs show the startup sequence and no configuration errors. See <a href="../operations/#stream-logs-from-a-container-app">Stream logs from a container app</a>.</li>
+<li>Runtime settings use the label <code>agent-lz</code> in App Configuration. After changing a setting, restart the revision. See <a href="../operations/#change-a-runtime-setting">Change a runtime setting</a>.</li>
+<li>Application Insights shows the failing dependency. Use the queries in <a href="../operations/#monitoring">Monitoring</a>.</li>
 </ol>
-<p>Open issues at <a href="https://github.com/Azure/agent-landing-zone/issues">Azure/agent-landing-zone</a>.</p>
+<h3 id="access-denied-between-services">Access denied between services</h3>
+<p><strong>Cause.</strong> A managed identity is missing a role, or a role assignment has not propagated yet. New assignments can take several minutes.</p>
+<p><strong>Fix.</strong> Compare the assignments with <a href="../operations/#identity-and-roles">Identity and roles</a>. Wait a few minutes and retry before adding roles manually.</p>
+<h2 id="related-pages">Related pages</h2>
+<ul>
+<li><a href="../network-isolation/">Network isolation</a></li>
+<li><a href="../operations/">Operations</a></li>
+<li><a href="../configuration/">Configuration</a></li>
+</ul>
 
 
 

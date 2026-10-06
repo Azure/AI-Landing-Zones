@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../network-isolation/">
+        <link rel="prev" href="../configuration/">
       
       
-        <link rel="next" href="../operations/">
+        <link rel="next" href="../deploy-bicep/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Build your own app - AI Landing Zones</title>
+        <title>Custom applications - AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#build-your-own-application" class="md-skip">
+        <a href="#custom-applications" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Build your own app
+              Custom applications
             
           </span>
         </div>
@@ -557,70 +557,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-bicep/" class="md-nav__link">
+      <a href="../network-isolation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Bicep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../deploy-terraform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
+    Network isolation
   
 
     
@@ -669,14 +613,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../network-isolation/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Configuration
   
 
     
@@ -713,7 +657,7 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
   
 
     
@@ -731,7 +675,7 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
   
 
     
@@ -757,22 +701,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#application-definition-schema" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Application definition schema
+        How it works
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Application definition schema">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#application-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application definition
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Application definition">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#top-level" class="md-nav__link">
+  <a href="#fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Top level
+        Fields
       
     </span>
   </a>
@@ -780,32 +735,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#components" class="md-nav__link">
+  <a href="#what-a-definition-cannot-contain" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Components
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
+        What a definition cannot contain
       
     </span>
   </a>
@@ -829,10 +762,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reading-platform-outputs" class="md-nav__link">
+  <a href="#folder-layout-and-azureyaml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reading platform outputs
+        Folder layout and azure.yaml
       
     </span>
   </a>
@@ -840,10 +773,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#samples" class="md-nav__link">
+  <a href="#source-pinning" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Samples
+        Source pinning
       
     </span>
   </a>
@@ -851,10 +784,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy-your-application" class="md-nav__link">
+  <a href="#reading-platform-outputs-at-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deploy your application
+        Reading platform outputs at runtime
       
     </span>
   </a>
@@ -862,10 +795,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rules" class="md-nav__link">
+  <a href="#deploy-a-custom-application" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rules
+        Deploy a custom application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configappdefinition-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config.appdefinition reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
       
     </span>
   </a>
@@ -876,6 +831,62 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1025,22 +1036,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#application-definition-schema" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Application definition schema
+        How it works
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Application definition schema">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#application-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application definition
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Application definition">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#top-level" class="md-nav__link">
+  <a href="#fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Top level
+        Fields
       
     </span>
   </a>
@@ -1048,32 +1070,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#components" class="md-nav__link">
+  <a href="#what-a-definition-cannot-contain" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Components
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example
+        What a definition cannot contain
       
     </span>
   </a>
@@ -1097,10 +1097,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#reading-platform-outputs" class="md-nav__link">
+  <a href="#folder-layout-and-azureyaml" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reading platform outputs
+        Folder layout and azure.yaml
       
     </span>
   </a>
@@ -1108,10 +1108,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#samples" class="md-nav__link">
+  <a href="#source-pinning" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Samples
+        Source pinning
       
     </span>
   </a>
@@ -1119,10 +1119,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#deploy-your-application" class="md-nav__link">
+  <a href="#reading-platform-outputs-at-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deploy your application
+        Reading platform outputs at runtime
       
     </span>
   </a>
@@ -1130,10 +1130,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rules" class="md-nav__link">
+  <a href="#deploy-a-custom-application" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rules
+        Deploy a custom application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configappdefinition-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        config.appdefinition reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related pages
       
     </span>
   </a>
@@ -1160,166 +1182,129 @@
   
 
 
-<h1 id="build-your-own-application">Build your own application</h1>
-<p>Agent Landing Zone deploys the reference application (UI, orchestrator,
-ingestion) by default, but the platform is not tied to it. You can deploy your
-own application on the same landing zone by describing it in an
-<strong>application definition</strong>: a JSON file validated against
-<code>contracts/app-definition-v1.schema.json</code>.</p>
-<p>The definition declares <em>what</em> to deploy and <em>which capabilities</em> each
-component needs. The platform decides <em>how</em>: it provisions the hosting,
-assigns least-privilege Azure roles from capability profiles, and publishes
-your settings to App Configuration. Your application never names Azure roles,
-remote URLs, or lifecycle hooks.</p>
+<h1 id="custom-applications">Custom applications</h1>
+<p>Agent Landing Zone deploys the default application (Agent App UI, Agent App Orchestrator, and Agent App Ingestion) unless you select a different one. You can deploy your own application on the same platform by describing it in an <strong>application definition</strong>: a JSON file validated against <code>contracts/app-definition-v1.schema.json</code>.</p>
+<p>The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.</p>
+<h2 id="how-it-works">How it works</h2>
+<ol>
+<li>You write an application definition and an <code>azure.yaml</code> that describes how to build each component.</li>
+<li>You point an azd environment at the definition with <code>AGENTLZ_APP_DEFINITION</code>.</li>
+<li><code>azd up</code> provisions the platform, validates the definition, binds it to the environment, assigns roles from the declared capability profiles, and deploys each component.</li>
+</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>One azd environment hosts exactly one application. To try a custom
-application, use a <strong>new</strong> azd environment.</p>
+<p>One azd environment hosts exactly one application. To deploy a different application, create a new azd environment.</p>
 </div>
-<h2 id="application-definition-schema">Application definition schema</h2>
-<h3 id="top-level">Top level</h3>
+<h2 id="application-definition">Application definition</h2>
+<p>Minimal Container App example, taken from <code>samples/custom-app/containerapp/app-definition.json</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"schemaVersion"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sample-containerapp"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"displayName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sample custom application (Container App)"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"commit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0000000000000000000000000000000000000000"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"web"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"containerapp"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"src"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"profiles"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">      </span><span class="nt">"ingress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"external"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"cpu"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="nt">"memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0Gi"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"SAMPLE_GREETING"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello from Agent Landing Zone"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The all-zero commit is a placeholder. Replace it with the commit you deploy (see <a href="#source-pinning">Source pinning</a>).</p>
+<h3 id="fields">Fields</h3>
 <table>
 <thead>
 <tr>
 <th>Field</th>
 <th>Required</th>
-<th>Description</th>
+<th>Rules</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>schemaVersion</code></td>
 <td>Yes</td>
-<td>Always <code>1</code>.</td>
+<td>Must be <code>1</code>.</td>
 </tr>
 <tr>
 <td><code>id</code></td>
 <td>Yes</td>
-<td>Stable identifier of the application.</td>
+<td>Application identifier.</td>
 </tr>
 <tr>
 <td><code>displayName</code></td>
-<td>Yes</td>
-<td>Human-readable name.</td>
-</tr>
-<tr>
-<td><code>components</code></td>
-<td>Yes</td>
-<td>One or more deployable components.</td>
-</tr>
-<tr>
-<td><code>settings</code></td>
 <td>No</td>
-<td>Application settings published to App Configuration.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="components">Components</h3>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Required</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>name</code></td>
-<td>Yes</td>
-<td>Lowercase, starts with a letter, 2–24 characters (<code>^[a-z][a-z0-9-]{1,23}$</code>).</td>
-</tr>
-<tr>
-<td><code>kind</code></td>
-<td>Yes</td>
-<td><code>containerapp</code> (Azure Container Apps) or <code>azure.ai.agent</code> (Microsoft Foundry hosted agent).</td>
-</tr>
-<tr>
-<td><code>path</code></td>
-<td>Yes</td>
-<td>Relative folder containing the component and its own <code>azure.yaml</code>. Must not contain <code>..</code>.</td>
+<td>Human-readable name.</td>
 </tr>
 <tr>
 <td><code>source</code></td>
 <td>Yes</td>
-<td>Exactly one of <code>{ "commit": "&lt;40 hex characters&gt;" }</code> or <code>{ "imageDigest": "sha256:&lt;64 hex characters&gt;" }</code>.</td>
+<td>Either <code>commit</code> (40 hex characters) or <code>imageDigest</code> (<code>sha256:</code> followed by 64 hex characters).</td>
 </tr>
 <tr>
-<td><code>profiles</code></td>
+<td><code>components[].name</code></td>
 <td>Yes</td>
-<td>Capability profiles (see below). May be empty.</td>
+<td>Matches <code>^[a-z][a-z0-9-]{1,23}$</code>. Must match the service name in <code>azure.yaml</code>.</td>
 </tr>
 <tr>
-<td><code>ingress</code></td>
-<td>No</td>
-<td><code>external</code> or <code>internal</code> (default <code>internal</code>). <code>containerapp</code> only.</td>
+<td><code>components[].kind</code></td>
+<td>Yes</td>
+<td><code>containerapp</code> or <code>azure.ai.agent</code>.</td>
 </tr>
 <tr>
-<td><code>resources</code></td>
+<td><code>components[].path</code></td>
+<td>Yes</td>
+<td>Relative path to the component source. Must not contain <code>..</code>.</td>
+</tr>
+<tr>
+<td><code>components[].profiles</code></td>
 <td>No</td>
-<td><code>cpu</code> (0.25, 0.5, 0.75, 1.0, 1.5, 2.0; default 0.5) and <code>memory</code> (0.5Gi, 1.0Gi, 1.5Gi, 2.0Gi, 3.0Gi, 4.0Gi; default 1.0Gi). <code>containerapp</code> only.</td>
+<td>Capability profiles. See <a href="#capability-profiles">Capability profiles</a>.</td>
+</tr>
+<tr>
+<td><code>components[].ingress</code></td>
+<td>No</td>
+<td><code>external</code> or <code>internal</code>. Default <code>internal</code>. Container Apps only.</td>
+</tr>
+<tr>
+<td><code>components[].resources.cpu</code></td>
+<td>No</td>
+<td><code>0.25</code>, <code>0.5</code>, <code>0.75</code>, <code>1.0</code>, <code>1.5</code>, or <code>2.0</code>. Default <code>0.5</code>. Container Apps only.</td>
+</tr>
+<tr>
+<td><code>components[].resources.memory</code></td>
+<td>No</td>
+<td><code>0.5Gi</code> to <code>4.0Gi</code>. Default <code>1.0Gi</code>. Container Apps only.</td>
+</tr>
+<tr>
+<td><code>components[].settings</code></td>
+<td>No</td>
+<td>Keys are uppercase, 2–64 characters, and must not start with <code>AGENTLZ_</code>. Each entry has either <code>value</code> or <code>secret</code>.</td>
 </tr>
 </tbody>
 </table>
-<p><code>azure.ai.agent</code> components must not set <code>ingress</code> or <code>resources</code>; Foundry
-manages their hosting.</p>
-<h3 id="settings">Settings</h3>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Required</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>key</code></td>
-<td>Yes</td>
-<td>Uppercase, 2–64 characters, must not start with <code>AGENTLZ_</code> (reserved for the platform).</td>
-</tr>
-<tr>
-<td><code>value</code></td>
-<td>One of</td>
-<td>Plain value published with label <code>agent-lz</code>.</td>
-</tr>
-<tr>
-<td><code>secret</code></td>
-<td>One of</td>
-<td><code>true</code> to declare a secret stored in Key Vault and exposed as a Key Vault reference. Never combine with <code>value</code>.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="example">Example</h3>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">"$schema"</span><span class="p">:</span><span class="w"> </span><span class="s2">"../../../contracts/app-definition-v1.schema.json"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"schemaVersion"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sample-containerapp"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"displayName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sample custom application (Container App)"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"web"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"containerapp"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"src"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"commit"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0000000000000000000000000000000000000000"</span><span class="w"> </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">"profiles"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
-<span class="w">      </span><span class="nt">"ingress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"external"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"resources"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"cpu"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span><span class="w"> </span><span class="nt">"memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0Gi"</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SAMPLE_GREETING"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello from the sample application"</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div>
+<p>Components of kind <code>azure.ai.agent</code> run as Foundry hosted agents and cannot set <code>ingress</code> or <code>resources</code>. The hosted sample in <code>samples/custom-app/hosted/app-definition.json</code> defines one component named <code>agent</code> with <code>profiles: ["model-user"]</code>.</p>
+<p>Settings are validated against the schema. They are not published to App Configuration by the platform.</p>
+<h3 id="what-a-definition-cannot-contain">What a definition cannot contain</h3>
+<ul>
+<li>Lifecycle hooks.</li>
+<li>Remote repository URLs. Code is always read from the local working tree.</li>
+<li>Azure role names. Permissions come only from capability profiles.</li>
+</ul>
 <h2 id="capability-profiles">Capability profiles</h2>
-<p>Profiles are the only way a component obtains permissions. Each profile maps
-to a fixed set of Azure built-in roles scoped to the landing-zone resources.</p>
+<p>Every component receives the <code>base</code> profile. Add the others only when the component needs them.</p>
 <table>
 <thead>
 <tr>
 <th>Profile</th>
-<th>Roles granted</th>
+<th>Roles assigned to the component identity</th>
 </tr>
 </thead>
 <tbody>
@@ -1349,7 +1334,7 @@ to a fixed set of Azure built-in roles scoped to the landing-zone resources.</p>
 </tr>
 </tbody>
 </table>
-<p>The default reference application uses them as follows:</p>
+<p>For reference, the default application uses these profiles:</p>
 <table>
 <thead>
 <tr>
@@ -1359,82 +1344,98 @@ to a fixed set of Azure built-in roles scoped to the landing-zone resources.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>ui</code></td>
+<td>UI</td>
 <td><code>blob-delegator</code></td>
 </tr>
 <tr>
-<td><code>orchestrator</code></td>
+<td>Orchestrator</td>
 <td><code>model-user</code>, <code>retrieval-reader</code>, <code>conversation-store</code></td>
 </tr>
 <tr>
-<td><code>ingestion</code></td>
+<td>Ingestion</td>
 <td><code>model-user</code>, <code>conversation-store</code>, <code>ingestion-writer</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="reading-platform-outputs">Reading platform outputs</h2>
-<p>Every component receives <code>APP_CONFIG_ENDPOINT</code>. From App Configuration (label
-<code>agent-lz</code>), read <code>AGENTLZ_PLATFORM_OUTPUTS</code> to discover the Foundry project
-endpoint, Search, Storage, Cosmos DB, and other landing-zone resources. Your
-own <code>settings</code> are published under the same label. Authenticate with the
-component's managed identity.</p>
-<h2 id="samples">Samples</h2>
-<p>The Agent Landing Zone repository ships two minimal samples in
-<a href="https://github.com/Azure/agent-landing-zone/tree/main/samples/custom-app"><code>samples/custom-app/</code></a>:</p>
+<h2 id="folder-layout-and-azureyaml">Folder layout and <code>azure.yaml</code></h2>
+<p>The folder that contains the definition must also contain a root <code>azure.yaml</code> with one service per component. Service names must equal component names, and the file must not declare hooks.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sample-containerapp</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">web</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">containerapp</span>
+<span class="w">    </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src</span>
+<span class="w">    </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker</span>
+<span class="w">    </span><span class="nt">docker</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">remoteBuild</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+<h2 id="source-pinning">Source pinning</h2>
+<ul>
+<li><strong><code>source.commit</code></strong>: must equal the <code>HEAD</code> commit of the local folder that contains the definition. Nothing is cloned; the platform builds from your working tree and refuses to deploy if <code>HEAD</code> differs.</li>
+<li><strong><code>source.imageDigest</code></strong>: deploys a prebuilt image. Provide the digest through <code>AGENTLZ_IMAGE_DIGEST</code>.</li>
+</ul>
+<h2 id="reading-platform-outputs-at-runtime">Reading platform outputs at runtime</h2>
+<p>Components find platform resources through App Configuration. Each component receives <code>APP_CONFIG_ENDPOINT</code> and reads the <code>AGENTLZ_PLATFORM_OUTPUTS</code> key with label <code>agent-lz</code>. Both samples show the pattern: the Container App sample serves <code>GET /health</code> and <code>GET /</code>, and the hosted sample answers the Responses protocol.</p>
+<h2 id="deploy-a-custom-application">Deploy a custom application</h2>
+<p>Run these commands from the root of the Agent Landing Zone repository.</p>
+<ol>
+<li>
+<p>Validate the definition:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.appdefinition<span class="w"> </span>--validate<span class="w"> </span>path/to/your-app
+</code></pre></div>
+</li>
+<li>
+<p>Create a new environment and select the definition:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>my-custom-app
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>path/to/your-app/app-definition.json
+</code></pre></div>
+</li>
+<li>
+<p>Deploy:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>up
+</code></pre></div>
+</li>
+</ol>
+<p>During <code>azd up</code>, the pre-deploy hook validates the definition and checks that it is bound to the environment. A mismatch stops the deployment with exit code 2.</p>
+<h2 id="configappdefinition-reference"><code>config.appdefinition</code> reference</h2>
 <table>
 <thead>
 <tr>
-<th>Folder</th>
-<th>Hosting</th>
-<th>What it does</th>
+<th>Option</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>containerapp/</code></td>
-<td>Azure Container Apps</td>
-<td>Exposes <code>GET /health</code> and <code>GET /</code>, which returns the platform outputs.</td>
+<td><code>--validate [PATH]</code></td>
+<td>Validate a definition file or folder. Without a path, validates the definition selected for the environment.</td>
 </tr>
 <tr>
-<td><code>hosted/</code></td>
-<td>Microsoft Foundry hosted agent</td>
-<td>Answers the responses protocol using the Foundry project endpoint (profile <code>model-user</code>).</td>
+<td><code>--bind</code></td>
+<td>Bind the selected definition to the environment.</td>
+</tr>
+<tr>
+<td><code>--check-binding</code></td>
+<td>Verify that the environment is bound to the selected definition. Cannot be combined with <code>--bind</code>.</td>
+</tr>
+<tr>
+<td><code>--assign-roles</code></td>
+<td>Assign capability-profile roles to the identities of <code>containerapp</code> components.</td>
+</tr>
+<tr>
+<td><code>--env-name NAME</code></td>
+<td>azd environment. Defaults to <code>AZURE_ENV_NAME</code> or the azd default environment.</td>
+</tr>
+<tr>
+<td><code>--azure-dir PATH</code></td>
+<td>azd folder. Defaults to <code>&lt;repo&gt;/.azure</code>.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="deploy-your-application">Deploy your application</h2>
-<ol>
-<li>Copy a sample folder into your own repository and replace each component
-   <code>source.commit</code> with the commit you deploy. The all-zero value is a
-   placeholder and is rejected at deploy time.</li>
-<li>
-<p>Validate the definition from the Agent Landing Zone repository root:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.appdefinition<span class="w"> </span>--validate<span class="w"> </span>&lt;folder&gt;
-</code></pre></div>
-</li>
-<li>
-<p>In a new azd environment, point the platform at your definition and deploy:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>my-custom-app
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>&lt;folder&gt;
-azd<span class="w"> </span>up
-</code></pre></div>
-<p>When <code>AGENTLZ_APP_DEFINITION</code> is not set, the platform uses the default
-  <code>app-definition.json</code> (the reference application).</p>
-</li>
-</ol>
-<p>During <code>azd deploy</code>, the <code>predeploy</code> hook validates the definition, checks
-network prerequisites, and deploys each component: <code>containerapp</code> components
-through <code>azd deploy</code>, and <code>azure.ai.agent</code> components through
-<code>azd deploy &lt;name&gt;</code> followed by an <code>azd ai agent invoke</code> smoke test.</p>
-<h2 id="rules">Rules</h2>
+<h2 id="related-pages">Related pages</h2>
 <ul>
-<li>No lifecycle hooks in component <code>azure.yaml</code> files.</li>
-<li>No remote URLs: components are referenced by relative <code>path</code> and pinned
-  <code>source</code>.</li>
-<li>No role names: request permissions only through capability profiles.</li>
-<li>Setting keys must not use the reserved <code>AGENTLZ_</code> prefix.</li>
-<li>With network isolation enabled, the same build prerequisites apply as for
-  the reference application. See <a href="../network-isolation/">Network isolation</a>.</li>
+<li><a href="../deploy-infra-only/">Deploy infra only</a></li>
+<li><a href="../hosted-agents/">Hosted agents</a></li>
+<li><a href="../configuration/">Configuration</a></li>
 </ul>
 
 

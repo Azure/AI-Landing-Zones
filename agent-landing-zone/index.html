@@ -555,10 +555,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choose-a-path" class="md-nav__link">
+  <a href="#choose-your-path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose a path
+        Choose your path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
       
     </span>
   </a>
@@ -637,70 +648,14 @@
   
   
     <li class="md-nav__item">
-      <a href="deploy-bicep/" class="md-nav__link">
+      <a href="network-isolation/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Deploy with Bicep
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="deploy-terraform/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deploy with Terraform
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
+    Network isolation
   
 
     
@@ -749,14 +704,14 @@
   
   
     <li class="md-nav__item">
-      <a href="network-isolation/" class="md-nav__link">
+      <a href="configuration/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Configuration
   
 
     
@@ -784,7 +739,63 @@
   <span class="md-ellipsis">
     
   
-    Build your own app
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
   
 
     
@@ -964,10 +975,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#choose-a-path" class="md-nav__link">
+  <a href="#choose-your-path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose a path
+        Choose your path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
       
     </span>
   </a>
@@ -995,115 +1017,125 @@
 
 
 <h1 id="agent-landing-zone">Agent Landing Zone</h1>
-<p>The <strong>Agent Landing Zone</strong> is an enterprise-ready, secure foundation for building and running AI agent applications on Azure, based on the AI Landing Zones reference architecture. It deploys two layers:</p>
-<ul>
-<li>the <strong>infrastructure layer</strong> (the platform), from the Bicep implementation of AI Landing Zones;</li>
-<li>an optional <strong>application layer</strong>, made of agent and retrieval components that run on that platform.</li>
-</ul>
-<p>Source repository: <a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a>.</p>
+<p>Agent Landing Zone deploys a secure, production-ready Azure foundation for AI agents and, on top of it, an agent application. It provisions Azure AI Foundry, Azure AI Search, Azure Container Apps, Azure App Configuration, Key Vault, Cosmos DB and Azure Monitor with managed identities, least-privilege role assignments and optional private networking, and then deploys a retrieval-augmented agent application that is ready to use.</p>
+<p>Source code: <a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a></p>
 <h2 id="layers">Layers</h2>
+<p>Agent Landing Zone has two layers that you can deploy together or separately.</p>
 <table>
 <thead>
 <tr>
 <th>Layer</th>
 <th>What it contains</th>
-<th>How you deploy it</th>
+<th>Deployed by</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Infrastructure</td>
-<td>Microsoft Foundry account and project, model deployments, Azure AI Search, Storage, Cosmos DB, Key Vault, App Configuration, Container Registry, Container Apps environment, monitoring, and, when network isolation is on, the virtual network, private endpoints, jumpbox, and Bastion</td>
+<td>Foundry account and project, model deployments, Azure AI Search, Storage, Cosmos DB, Container Apps environment, Container Registry, App Configuration, Key Vault, Log Analytics, Application Insights and, with network isolation, the virtual network, private endpoints, firewall, Bastion and jumpbox</td>
 <td><code>azd provision</code></td>
 </tr>
 <tr>
 <td>Application</td>
-<td>Container Apps and, optionally, a Foundry hosted agent, described by an application definition</td>
+<td>The default agent application or your own application, described by an application definition</td>
 <td><code>azd deploy</code></td>
 </tr>
 </tbody>
 </table>
-<p><code>azd up</code> runs both. You can also deploy the infrastructure alone and add an application later. See <a href="deploy-infra-only/">Deploy the infrastructure only</a>.</p>
+<p><code>azd up</code> runs both layers in sequence.</p>
 <h2 id="default-application">Default application</h2>
-<p>When you do not supply your own application definition, the Agent Landing Zone deploys three components:</p>
+<p>The default application is a retrieval-augmented agent made of three components. Each component lives in its own repository, and <code>manifest.json</code> pins the exact version that each release validates.</p>
 <table>
 <thead>
 <tr>
 <th>Component</th>
-<th>Repository</th>
 <th>Role</th>
+<th>Repository</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>agent-app-ui</code></td>
-<td><a href="https://github.com/Azure/agent-app-ui">Azure/agent-app-ui</a></td>
+<td>Agent App UI</td>
 <td>Web chat front end</td>
+<td><a href="https://github.com/Azure/agent-app-ui">Azure/agent-app-ui</a></td>
 </tr>
 <tr>
-<td><code>agent-app-orchestrator</code></td>
+<td>Agent App Orchestrator</td>
+<td>Agent runtime that plans, retrieves and answers. Runs as a Foundry hosted agent by default, or as a Container App</td>
 <td><a href="https://github.com/Azure/agent-app-orchestrator">Azure/agent-app-orchestrator</a></td>
-<td>Agent orchestration, retrieval, and tool calls. Runs as a Container App or as a Foundry hosted agent</td>
 </tr>
 <tr>
-<td><code>agent-app-ingestion</code></td>
+<td>Agent App Ingestion</td>
+<td>Indexes documents into Azure AI Search for retrieval</td>
 <td><a href="https://github.com/Azure/agent-app-ingestion">Azure/agent-app-ingestion</a></td>
-<td>Document ingestion, chunking, and indexing</td>
 </tr>
 </tbody>
 </table>
-<p>The exact versions of each release are pinned in <code>manifest.json</code> in the <a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a> repository and listed in each <a href="https://github.com/Azure/agent-landing-zone/releases">GitHub Release</a>.</p>
-<h2 id="choose-a-path">Choose a path</h2>
+<p>You can replace this application with your own. See <a href="build-your-own-app/">Custom applications</a>.</p>
+<h2 id="choose-your-path">Choose your path</h2>
 <table>
 <thead>
 <tr>
 <th>I want to</th>
-<th>Read</th>
+<th>Go to</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Deploy the platform and the default application in one step</td>
-<td><a href="deploy-full-stack/">Deploy the full stack</a></td>
+<td>Deploy the infrastructure and the default application</td>
+<td><a href="deploy-full-stack/">Deploy full stack</a></td>
 </tr>
 <tr>
-<td>Deploy only the platform</td>
-<td><a href="deploy-infra-only/">Deploy the infrastructure only</a></td>
-</tr>
-<tr>
-<td>Run the orchestrator as a Foundry hosted agent</td>
-<td><a href="hosted-agents/">Hosted agents</a></td>
+<td>Deploy only the infrastructure and bring my own workload</td>
+<td><a href="deploy-infra-only/">Deploy infra only</a></td>
 </tr>
 <tr>
 <td>Deploy with private networking</td>
 <td><a href="network-isolation/">Network isolation</a></td>
 </tr>
 <tr>
-<td>Deploy my own application on the platform</td>
-<td><a href="build-your-own-app/">Build your own application</a></td>
+<td>Run the orchestrator as a Foundry hosted agent, or switch to Container Apps</td>
+<td><a href="hosted-agents/">Hosted agents</a></td>
 </tr>
 <tr>
-<td>Change parameters or runtime settings</td>
+<td>Change parameters and runtime settings</td>
 <td><a href="configuration/">Configuration</a></td>
 </tr>
 <tr>
-<td>Upgrade, redeploy, monitor, or remove</td>
+<td>Deploy my own agent application</td>
+<td><a href="build-your-own-app/">Custom applications</a></td>
+</tr>
+<tr>
+<td>Understand what the Bicep templates deploy</td>
+<td><a href="deploy-bicep/">Deploy with Bicep</a></td>
+</tr>
+<tr>
+<td>Use Terraform</td>
+<td><a href="deploy-terraform/">Terraform implementation status</a></td>
+</tr>
+<tr>
+<td>Upgrade, redeploy, monitor or delete an environment</td>
 <td><a href="operations/">Operations</a></td>
 </tr>
 <tr>
 <td>Fix a failed deployment</td>
 <td><a href="troubleshooting/">Troubleshooting</a></td>
 </tr>
-<tr>
-<td>Understand the Bicep source of <code>infra/</code></td>
-<td><a href="deploy-bicep/">Deploy with Bicep</a></td>
-</tr>
-<tr>
-<td>Use the Terraform implementation instead</td>
-<td><a href="deploy-terraform/">Deploy with Terraform</a></td>
-</tr>
 </tbody>
 </table>
+<h2 id="before-you-start">Before you start</h2>
+<div class="admonition warning">
+<p class="admonition-title">Cost</p>
+<p>The deployment creates billable resources, including Azure AI Search, Cosmos DB, Container Apps, model deployments and, with network isolation, Azure Firewall, Bastion and a virtual machine. Delete environments you no longer use with <code>azd down --purge</code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Quota and region</p>
+<p>The target region must offer every service in the deployment, and the subscription must have quota for the configured model deployments. A preflight check runs before provisioning and stops early when a service or quota is missing.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Duration</p>
+<p>A first deployment usually takes 30 to 60 minutes. Deployments with network isolation take longer because of the firewall, private endpoints and private DNS zones.</p>
+</div>
 
 
 
