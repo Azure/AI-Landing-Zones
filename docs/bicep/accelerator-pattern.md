@@ -9,7 +9,7 @@ The pattern is simple: the accelerator owns the application code and its scenari
 
 Reference implementations:
 
-- [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG)
+- [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 - [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice)
 
 ## When to use this pattern
@@ -134,7 +134,7 @@ For a new accelerator, download the starter scripts instead of copying code from
   </a>
 </div>
 
-They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
+They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
 
 **4. `main.parameters.json`**
 
@@ -404,7 +404,7 @@ Invariants to preserve:
 
 Reference accelerators:
 
-- [Azure/GPT-RAG](https://github.com/Azure/GPT-RAG) - good baseline for the submodule pattern.
+- [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone) - Agent Landing Zone accelerator (formerly GPT-RAG); it now incorporates the landing zone directly under `infra/` instead of using a submodule. See the [Agent Landing Zone docs](../agent-landing-zone/index.md).
 - [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) - useful when you need an example of nested boolean rewriting.
 
 Related documentation:
