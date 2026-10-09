@@ -79,6 +79,14 @@ Agent Landing Zone sends telemetry to Application Insights and Log Analytics, bo
 - **Application Insights**: requests, dependencies, exceptions, and traces from each component. Use **Transaction search** to follow a single request from the UI through the orchestrator to model and search calls.
 - **Log Analytics**: container output and platform events.
 
+UI failure diagnostics intentionally avoid dependency error payloads at application
+boundaries. When a record includes `exception_type` and `failure_site`, use its
+static operation description, code location and request reference to correlate
+the failure with dependency telemetry. Do not interpret missing exception text as
+successful processing or enable raw token, cookie, claim or signed-URL logging to
+investigate it. A failed optional panel index write still requires repair even
+when the chat turn continues; it does not confirm that the index was persisted.
+
 Useful Log Analytics queries:
 
 ```kusto
