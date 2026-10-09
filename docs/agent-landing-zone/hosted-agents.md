@@ -79,9 +79,13 @@ The move from `classic` to a hosted topology is complete only when `HOSTED_AGENT
 
 The full list of hosted defaults is in [Configuration](configuration.md#hosted-agent).
 
-## Grant access to callers
+## Bootstrap the agent's runtime access
 
-The deployment assigns the roles the platform needs. To give users access to the hosted agent, run the bootstrap script from the repository root:
+The hosted post-deploy hook discovers the actual agent runtime principal and
+assigns its minimum declared resource-scoped roles. This is not a caller-access
+grant. The deployment principal must be able to create those role assignments,
+or an authorized administrator must reconcile the exact read-only plan first.
+To rerun the idempotent bootstrap, use the repository root:
 
 ```bash
 ./scripts/bootstrapHostedAccess.sh
@@ -91,16 +95,25 @@ The deployment assigns the roles the platform needs. To give users access to the
 pwsh scripts/bootstrapHostedAccess.ps1
 ```
 
-The script reads `AGENTLZ_HOSTED_PROJECT` (default `hosted-agent`) and `AGENTLZ_HOSTED_SERVICE` (default `orchestrator-agent`), assigns the runtime roles, and sends a `Hello!` request as a smoke test.
+The script reads `AGENTLZ_HOSTED_PROJECT` (default `hosted-agent`) and
+`AGENTLZ_HOSTED_SERVICE` (default `orchestrator-agent`) and assigns the runtime
+roles. The root deployment hook, not this bootstrap script, performs the
+greeting smoke afterward.
 
-To review role assignments before applying them:
+To review role assignments before applying them, run from the repository root
+with `AZURE_ENV_NAME` set to the selected environment:
 
 ```bash
-python -m config.hosted_access --plan     # read-only, the default
-python -m config.hosted_access --apply
+python -m config.deployment.hosted_access --azd-env --plan
+python -m config.deployment.hosted_access --azd-env --apply
 ```
 
-Both commands accept `--azd-env <name>` to target a specific environment.
+`--azd-env` is a flag that loads the selected environment; it does not accept
+an environment name. ARM grant visibility does not prove data-plane readiness.
+Allow propagation, rerun bootstrap and retry the root deployment before
+authorizing cutover. A connected runner without role-management permission
+does not need Owner: an authorized administrator can apply only the exact
+grants in the plan. Never remove unrelated assignments to recover.
 
 ## Calling the agent
 
