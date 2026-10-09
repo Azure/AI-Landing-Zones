@@ -126,6 +126,26 @@ version defect.
 
 **Fix.** Open the newest file in the `.logs` folder of that component checkout. Common causes are a registry that the build host cannot reach (see the agent pool entry above) or a missing role assignment for your identity on the registry.
 
+### Deploy succeeds but the UI or administrative panel does not start
+
+**Symptom.** Child deployment commands return success, but the latest
+application revision is unhealthy. The UI reports missing
+`OAUTH_AZURE_AD_CLIENT_ID`, `OAUTH_AZURE_AD_CLIENT_SECRET`, or
+`OAUTH_AZURE_AD_TENANT_ID`; ingestion reports missing OAuth panel settings.
+
+**Cause.** Hosted UI startup validates the default user-delegated OAuth
+contract. The panel also requires Entra configuration. A previous healthy
+placeholder revision can still serve HTTP 200 while the new image fails.
+
+**Fix.** Check the latest revision's image, health, and startup logs. Configure
+the [delegated authentication settings](hosted-agents.md#configure-the-uis-delegated-authentication),
+store the client credential in Key Vault, and publish only its reference
+with label `agent-lz`. Restart the intended revision and verify its health,
+the Entra login redirect, and rejection of unauthenticated panel data requests.
+Then verify real user login, OBO, and document authorization. Do not switch
+to service identity or disable the panel to turn a missing-authentication
+failure into a passing acceptance result.
+
 ## Provision and post-provision stages
 
 ### Quota check rejects an unchanged existing deployment

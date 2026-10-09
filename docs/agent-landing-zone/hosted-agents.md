@@ -117,6 +117,42 @@ grants in the plan. Never remove unrelated assignments to recover.
 
 ## Calling the agent
 
+### Configure the UI's delegated authentication
+
+The default UI mode is `HOSTED_AGENT_AUTH_MODE=user_delegated`. It exchanges
+the signed-in user's access token through OAuth on-behalf-of (OBO); it does
+not fall back to the UI's managed identity. Before starting the UI, configure
+these keys in App Configuration with label `agent-lz`:
+
+| Key | Required value |
+| --- | --- |
+| `OAUTH_AZURE_AD_CLIENT_ID` | Client ID of the application's confidential Entra registration. |
+| `OAUTH_AZURE_AD_TENANT_ID` | Tenant containing the application registration. |
+| `OAUTH_AZURE_AD_CLIENT_SECRET` | Key Vault reference to the client credential, never plaintext. |
+| `OAUTH_AZURE_AD_SCOPES` | `api://<client-id>/user_impersonation openid profile offline_access` for the UI's single-token login. |
+
+Expose the application's `user_impersonation` API scope, request access tokens
+version 2, and register the UI's HTTPS
+`/auth/oauth/azure-ad/callback` redirect URI. Configure and consent the
+downstream delegated permissions needed for the deployed Foundry audience
+separately. The UI's own API scope is not proof of Foundry OBO consent, and a
+Microsoft Graph token is not a replacement for the UI API token.
+
+For `hosted-panel`, ingestion also requires the OAuth tenant and client ID;
+the administrative panel has no development authentication bypass. Respect
+the tenant's credential-lifetime policy, record the credential expiration,
+and rotate the Key Vault credential before it expires. A persistent
+`CHAINLIT_AUTH_SECRET`, preferably Key Vault-backed, prevents signed-in
+sessions from being invalidated by an application restart.
+
+After configuration, verify the intended image revisions are healthy and
+that unauthenticated panel data requests are rejected. Complete an actual
+user login, OBO invocation, and document-authorization checks before declaring
+end-to-end acceptance. A managed-identity greeting or login redirect alone
+does not prove these checks.
+
+### Protocol and caller access
+
 - The **Responses 2.0.0** protocol is stateless. A request that sends `conversation` or `previous_response_id` fails with HTTP 422. Send the context the agent needs in each request.
 - The **`/invocations`** endpoint is kept for older clients.
 - A caller that uses a delegated user identity needs the Foundry user role on the project **and** access to the agent.
