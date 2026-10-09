@@ -33,11 +33,7 @@ Complete the [prerequisites in Deploy full stack](deploy-full-stack.md#prerequis
 
 ## Platform outputs
 
-After provisioning, the foundation publishes a stable set of outputs that any application can consume. They are available in three places:
-
-- As flat keys in the azd environment (`azd env get-values`).
-- As a single JSON document in the azd environment key `AGENTLZ_PLATFORM_OUTPUTS`.
-- In Azure App Configuration, key `AGENTLZ_PLATFORM_OUTPUTS`, label `agent-lz`.
+After provisioning, the foundation publishes a stable set of outputs that any application can consume in Azure App Configuration: the JSON key `AGENTLZ_PLATFORM_OUTPUTS` and its flat keys, all with label `agent-lz`. The publisher reads the foundation values from the azd environment; it does not write these derived keys back into that environment.
 
 | Flat key | JSON path |
 | --- | --- |
@@ -55,8 +51,9 @@ Additional keys:
 | Key | Meaning |
 | --- | --- |
 | `AGENTLZ_NETWORK_ISOLATED` | `true` when the foundation was deployed with private endpoints. |
-| `AGENTLZ_IDENTITY_<COMPONENT>_CLIENT_ID` | Client ID of the managed identity created for each application component. |
-| `AGENTLZ_COMPONENT_IDENTITIES` | JSON map of all component identities. |
+| `AGENTLZ_IDENTITY_<COMPONENT>_CLIENT_ID` | Client ID of each provisioned Container App component's managed identity; also listed in the JSON `identities` array. Hosted-agent instance identities are created at deployment, not foundation provision time. |
+
+Without an explicit `AGENTLZ_COMPONENT_IDENTITIES` environment input, the publisher discovers the selected definition's provisioned Container Apps by their service tags and reads their actual identity client IDs. Missing or ambiguous identities fail publication; principal IDs are not substituted for client IDs. An explicit JSON map remains an override input, not an automatically published flat key. User-assigned identities use ARM discovery. For system-assigned identities, resolving the client ID also requires reading the exact service principal in Microsoft Entra ID.
 
 Read the outputs from App Configuration:
 

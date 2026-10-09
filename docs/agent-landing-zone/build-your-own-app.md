@@ -119,6 +119,8 @@ services:
 
 Components find platform resources through App Configuration. Each component receives `APP_CONFIG_ENDPOINT` and reads the `AGENTLZ_PLATFORM_OUTPUTS` key with label `agent-lz`. Both samples show the pattern: the Container App sample serves `GET /health` and `GET /`, and the hosted sample answers the Responses protocol.
 
+The platform-output publisher discovers the provisioned Container App identities for the selected definition and publishes their client IDs in `identities` and the matching `AGENTLZ_IDENTITY_<COMPONENT>_CLIENT_ID` keys. Hosted-agent instance identities are not available during foundation provisioning. Missing or ambiguous Container App identities fail publication rather than producing a success-shaped empty map; see [Platform outputs](deploy-infra-only.md#platform-outputs).
+
 Custom hosted services must declare `invocations` or `responses` in their
 `azure.yaml` protocols. The greeting smoke uses the selected service name and
 declared protocol, preferring `invocations` when both are available. For
