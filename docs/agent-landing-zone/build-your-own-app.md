@@ -22,19 +22,19 @@ Minimal Container App example, taken from `samples/custom-app/containerapp/app-d
   "schemaVersion": 1,
   "id": "sample-containerapp",
   "displayName": "Sample custom application (Container App)",
-  "source": { "commit": "0000000000000000000000000000000000000000" },
   "components": [
     {
       "name": "web",
       "kind": "containerapp",
       "path": "src",
+      "source": { "commit": "0000000000000000000000000000000000000000" },
       "profiles": [],
       "ingress": "external",
-      "resources": { "cpu": 0.5, "memory": "1.0Gi" },
-      "settings": {
-        "SAMPLE_GREETING": { "value": "Hello from Agent Landing Zone" }
-      }
+      "resources": { "cpu": 0.5, "memory": "1.0Gi" }
     }
+  ],
+  "settings": [
+    { "key": "SAMPLE_GREETING", "value": "Hello from the sample application" }
   ]
 }
 ```
@@ -48,7 +48,7 @@ The all-zero commit is a placeholder. Replace it with the commit you deploy (see
 | `schemaVersion` | Yes | Must be `1`. |
 | `id` | Yes | Application identifier. |
 | `displayName` | No | Human-readable name. |
-| `source` | Yes | Either `commit` (40 hex characters) or `imageDigest` (`sha256:` followed by 64 hex characters). |
+| `components[].source` | Yes | Either `commit` (40 hex characters) or `imageDigest` (`sha256:` followed by 64 hex characters). |
 | `components[].name` | Yes | Matches `^[a-z][a-z0-9-]{1,23}$`. Must match the service name in `azure.yaml`. |
 | `components[].kind` | Yes | `containerapp` or `azure.ai.agent`. |
 | `components[].path` | Yes | Relative path to the component source. Must not contain `..`. |
@@ -56,7 +56,7 @@ The all-zero commit is a placeholder. Replace it with the commit you deploy (see
 | `components[].ingress` | No | `external` or `internal`. Default `internal`. Container Apps only. |
 | `components[].resources.cpu` | No | `0.25`, `0.5`, `0.75`, `1.0`, `1.5`, or `2.0`. Default `0.5`. Container Apps only. |
 | `components[].resources.memory` | No | `0.5Gi` to `4.0Gi`. Default `1.0Gi`. Container Apps only. |
-| `components[].settings` | No | Keys are uppercase, 2–64 characters, and must not start with `AGENTLZ_`. Each entry has either `value` or `secret`. |
+| `settings[]` | No | Each entry has an uppercase `key`, 2–64 characters, which must not start with `AGENTLZ_`, and either `value` or `secret`. |
 
 Components of kind `azure.ai.agent` run as Foundry hosted agents and cannot set `ingress` or `resources`. The hosted sample in `samples/custom-app/hosted/app-definition.json` defines one component named `agent` with `profiles: ["model-user"]`.
 
@@ -93,6 +93,12 @@ For reference, the default application uses these profiles:
 
 The folder that contains the definition must also contain a root `azure.yaml` with one service per component. Service names must equal component names, and the file must not declare hooks.
 
+`components[].path` points to the service source, not to another azd project.
+Keep `azure.yaml` next to `app-definition.json` and set each service's `project`
+to its source folder. The pre-deploy hook reuses the selected environment in
+the definition folder and deploys each declared service by name, rather than
+deploying all services repeatedly.
+
 ```yaml
 name: sample-containerapp
 services:
@@ -106,12 +112,19 @@ services:
 
 ## Source pinning
 
-- **`source.commit`**: must equal the `HEAD` commit of the local folder that contains the definition. Nothing is cloned; the platform builds from your working tree and refuses to deploy if `HEAD` differs.
-- **`source.imageDigest`**: deploys a prebuilt image. Provide the digest through `AGENTLZ_IMAGE_DIGEST`.
+- **`components[].source.commit`**: must equal the `HEAD` commit of that component's local source folder. Nothing is cloned; the platform builds from your working tree and refuses to deploy if `HEAD` differs.
+- **`components[].source.imageDigest`**: deploys a prebuilt image. Provide the digest through `AGENTLZ_IMAGE_DIGEST`.
 
 ## Reading platform outputs at runtime
 
 Components find platform resources through App Configuration. Each component receives `APP_CONFIG_ENDPOINT` and reads the `AGENTLZ_PLATFORM_OUTPUTS` key with label `agent-lz`. Both samples show the pattern: the Container App sample serves `GET /health` and `GET /`, and the hosted sample answers the Responses protocol.
+
+Custom hosted services must declare `invocations` or `responses` in their
+`azure.yaml` protocols. The greeting smoke uses the selected service name and
+declared protocol, preferring `invocations` when both are available. For
+Responses services, it validates either Responses SSE or a completed JSON
+response with nonempty assistant output. A greeting is not evidence of
+document retrieval or authorization.
 
 ## Deploy a custom application
 
@@ -129,6 +142,9 @@ Run these commands from the root of the Agent Landing Zone repository.
     azd env new my-custom-app
     azd env set AGENTLZ_APP_DEFINITION path/to/your-app/app-definition.json
     ```
+
+    You can also select the containing folder:
+    `azd env set AGENTLZ_APP_DEFINITION path/to/your-app`.
 
 3. Deploy:
 
