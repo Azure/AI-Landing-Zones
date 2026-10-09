@@ -113,7 +113,26 @@ services:
 ## Source pinning
 
 - **`components[].source.commit`**: must equal the `HEAD` commit of that component's local source folder. Nothing is cloned; the platform builds from your working tree and refuses to deploy if `HEAD` differs.
-- **`components[].source.imageDigest`**: deploys a prebuilt image. Provide the digest through `AGENTLZ_IMAGE_DIGEST`.
+- **`components[].source.imageDigest`**: deploys a prebuilt image. Set the
+  corresponding service's `image` in `azure.yaml` to a qualified registry and
+  repository, such as `myregistry.azurecr.io/my-app:v1`. The platform replaces
+  its tag or existing digest with the definition's exact digest and deploys it
+  with `docker.imagePassthrough: true`; it does not build a different image.
+  Environment substitutions in `image` must resolve before deployment.
+
+With `NETWORK_ISOLATION=true`, source-pinned Docker components build through
+the foundation's dedicated `ACR_TASK_AGENT_POOL`, and the platform deploys the
+immutable digest returned by the completed ACR task. The service `project`
+must match `components[].path`, with `Dockerfile` and context `.` in that
+folder. Other Docker options or source-build layouts fail with actionable
+guidance to supply a prebuilt digest instead; they are not silently ignored.
+Public source builds keep the service's normal azd build behavior.
+
+For image handoff, the platform temporarily renders only the selected service
+in the child `azure.yaml` and restores the original file even if deployment
+fails. Do not run concurrent deploys or edit that file during a deployment.
+Private registry access must already be configured for the Container App or
+Foundry project identity; digest pinning does not bypass registry RBAC.
 
 ## Reading platform outputs at runtime
 
