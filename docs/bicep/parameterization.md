@@ -235,7 +235,15 @@ When any of these is set, the matching `deploy*` flag defaults to `false`, so th
 
 ### Private DNS zones
 
-All 15 zones used by the landing zone can be brought from a central platform subscription independently. When any of these is set, the local zone is **not** created. Pre-link the zone to the spoke VNet (or rely on hub→spoke peering + hub-side link) — automatic spoke linking is not performed. When `policyManagedPrivateDns=true`, no zone creation or linking happens regardless of these overrides.
+All 15 zones used by the landing zone can be brought from a central platform subscription independently. When any of these is set, the local zone is **not** created. Pre-link the zone to the spoke VNet (or rely on hub→spoke peering + hub-side link) — automatic spoke linking is not performed.
+
+When `policyManagedPrivateDns=true`, no local zone creation, VNet linking, or
+private-endpoint DNS zone group is performed regardless of these overrides.
+The setting changes DNS ownership only: network-isolated services, including
+Microsoft Foundry, keep public network access disabled and retain their private
+endpoints. The platform policy or central networking team must create the
+required records and VNet links before clients can resolve the private
+endpoints.
 
 | Parameter | Zone |
 |---|---|
