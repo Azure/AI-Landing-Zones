@@ -703,6 +703,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Image builds in isolated deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#application-specific-package-feeds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application-specific package feeds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1106,6 +1123,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Image builds in isolated deployments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#application-specific-package-feeds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application-specific package feeds
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1230,6 +1264,15 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 azd<span class="w"> </span>env<span class="w"> </span>refresh
 </code></pre></div>
 <p><code>azd env refresh</code> reloads the provisioning outputs (endpoints, resource names) into the local environment.</p>
+<p>Signing in with the jumpbox's managed identity does not grant deployment
+permissions. An authorized administrator must assign the configuration and
+build roles required by the selected application. For hosted-agent authoring,
+the runner needs <strong>Foundry User</strong> (previously <strong>Azure AI User</strong>) on the exact
+Foundry project, plus read access to the Foundry account. Cognitive Services
+Contributor and OpenAI User alone do not grant the agent data-plane actions.
+Do not grant subscription or resource-group Owner to resolve this denial.
+See <a href="https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry">Foundry RBAC</a>
+for the current role catalog and scopes. Allow role propagation before retrying.</p>
 <p>Then run post-provision and deploy. On Windows, use <code>./scripts/postProvision.ps1</code> instead of the shell script.</p>
 <div class="highlight"><pre><span></span><code>./scripts/postProvision.sh
 azd<span class="w"> </span>deploy
@@ -1268,6 +1311,27 @@ azd<span class="w"> </span>deploy
 </code></pre></div>
 </li>
 </ol>
+<h3 id="application-specific-package-feeds">Application-specific package feeds</h3>
+<p>The default build-subnet firewall rules allow common language and OS package
+registries. They do not allow every mirror recorded in an application's
+lockfile. Check the <code>resolved</code> URLs and download redirects for the exact
+component commit before building.</p>
+<p>For additional dependencies, set
+<code>parameters.additionalAcrTaskBuildFqdns.value</code> in <code>main.parameters.json</code> and
+provision the updated configuration. This is an explicit array, not an <code>azd</code>
+environment variable. Copy the same parameter file to a VNet-connected runner
+so a later provision preserves the setting.</p>
+<p>For example, the orchestrator <code>v5.2.0</code> frontend lockfile uses
+<code>ms-feed-2.pkgs.visualstudio.com</code>, <code>ms-feed-12.pkgs.visualstudio.com</code>,
+<code>ms-feed-17.pkgs.visualstudio.com</code>, and <code>ms-feed-25.pkgs.visualstudio.com</code>.
+Their public package downloads redirect to <code>*.vsblob.vsassets.io</code>.
+These application-specific hosts are not landing-zone defaults.
+With <code>extendFirewallForAcrTaskBuilds=true</code>, additional hosts are allowed only
+from the build-agent subnet over HTTPS on port 443. Do not enable public
+registry access, allow all Internet egress, disable TLS verification, or
+change dependency integrity hashes to work around a failed build.</p>
+<p>See <a href="../troubleshooting/#package-installation-fails-inside-the-build-pool">Package installation fails inside the build pool</a>
+for diagnosis.</p>
 <h2 id="verify-private-connectivity">Verify private connectivity</h2>
 <p>Run these checks from the host you will deploy from. Use the endpoint host names from <code>azd env get-value &lt;NAME&gt;</code>, for example <code>APP_CONFIG_ENDPOINT</code>.</p>
 <table>

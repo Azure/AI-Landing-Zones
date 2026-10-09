@@ -836,6 +836,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#hosted-agent-deployment-returns-an-agent-permission-denial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted agent deployment returns an agent permission denial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#application-definition-does-not-match-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -869,6 +880,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#package-installation-fails-inside-the-build-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package installation fails inside the build pool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#stale-component-checkout" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -884,6 +906,17 @@
     <span class="md-ellipsis">
       
         A component deployment fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-succeeds-but-the-ui-or-administrative-panel-does-not-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy succeeds but the UI or administrative panel does not start
       
     </span>
   </a>
@@ -906,6 +939,39 @@
   
     <nav class="md-nav" aria-label="Provision and post-provision stages">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quota-check-rejects-an-unchanged-existing-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quota check rejects an unchanged existing deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-rejects-evaluation-api-key-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry rejects evaluation API-key creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#administrative-panel-cannot-resolve-its-cosmos-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administrative panel cannot resolve its Cosmos database
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#missing-endpoint-output" class="md-nav__link">
@@ -1148,6 +1214,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#hosted-agent-deployment-returns-an-agent-permission-denial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted agent deployment returns an agent permission denial
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#application-definition-does-not-match-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1181,6 +1258,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#package-installation-fails-inside-the-build-pool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package installation fails inside the build pool
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#stale-component-checkout" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1196,6 +1284,17 @@
     <span class="md-ellipsis">
       
         A component deployment fails
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-succeeds-but-the-ui-or-administrative-panel-does-not-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy succeeds but the UI or administrative panel does not start
       
     </span>
   </a>
@@ -1218,6 +1317,39 @@
   
     <nav class="md-nav" aria-label="Provision and post-provision stages">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quota-check-rejects-an-unchanged-existing-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quota check rejects an unchanged existing deployment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#foundry-rejects-evaluation-api-key-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry rejects evaluation API-key creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#administrative-panel-cannot-resolve-its-cosmos-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Administrative panel cannot resolve its Cosmos database
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#missing-endpoint-output" class="md-nav__link">
@@ -1377,6 +1509,20 @@
 azd<span class="w"> </span>deploy
 </code></pre></div>
 <p>See <a href="../hosted-agents/#topologies">Hosted agents</a>.</p>
+<h3 id="hosted-agent-deployment-returns-an-agent-permission-denial">Hosted agent deployment returns an agent permission denial</h3>
+<p><strong>Symptom.</strong> Agent creation or lookup returns HTTP 403 and names
+<code>Microsoft.CognitiveServices/accounts/AIServices/agents/read</code> as a missing action.</p>
+<p><strong>Cause.</strong> The actual deployment principal lacks Foundry agent data-plane
+permissions. Successful private DNS/TLS checks and ARM provisioning do not
+prove agent authorization.</p>
+<p><strong>Fix.</strong> Verify the object ID in the denial against the identity used by
+<code>azd auth login</code>. An authorized administrator can grant <strong>Foundry User</strong>
+(formerly <strong>Azure AI User</strong>) at the target Foundry project scope for a runner
+that creates and updates agents. Verify the assignment, allow propagation,
+then retry. Do not substitute Azure AI Developer, which targets workspace/hub
+scenarios, or grant resource-group Owner. See
+<a href="../network-isolation/#complete-the-deployment-from-a-connected-host">Connected-host deployment</a>.
+This authoring role is not delegated-user/OBO acceptance evidence.</p>
 <h3 id="application-definition-does-not-match-the-environment">Application definition does not match the environment</h3>
 <p><strong>Symptom.</strong> <code>predeploy</code> exits with code <code>2</code> after validating the application definition.</p>
 <p><strong>Cause.</strong> The application definition and the topology bound to the environment disagree, for example a hosted definition in a classic environment.</p>
@@ -1402,6 +1548,23 @@ azd<span class="w"> </span>deploy
 azd<span class="w"> </span>deploy
 </code></pre></div>
 <p>The jumpbox does not include Docker by default. See <a href="../network-isolation/#image-builds-in-isolated-deployments">Image builds in isolated deployments</a>.</p>
+<h3 id="package-installation-fails-inside-the-build-pool">Package installation fails inside the build pool</h3>
+<p><strong>Symptom.</strong> An ACR run starts in the private agent pool, but package
+installation fails. For example, npm reports <code>Exit handler never called!</code>,
+followed by <code>tsc: not found</code> during the frontend build.</p>
+<p><strong>Diagnosis.</strong> Retrieve the actual failed ACR run log from a VNet-connected
+host. Correlate its timestamps and the build-agent source address with Azure
+Firewall deny logs. An existing pool and a successfully pulled base image do
+not prove that package feeds are reachable. Check the exact pinned lockfile's
+<code>resolved</code> URLs; setting npm's registry alone does not replace those URLs.</p>
+<p><strong>Fix.</strong> If firewall logs confirm blocked package hosts, add only the required
+feeds and their verified download CDN to
+<code>parameters.additionalAcrTaskBuildFqdns.value</code> in <code>main.parameters.json</code>,
+provision, and retry the same pinned source. See
+<a href="../network-isolation/#application-specific-package-feeds">Application-specific package feeds</a>.
+Keep the exception confined to build-subnet HTTPS traffic. Do not upgrade npm
+speculatively or treat a later missing compiler as proof of a dependency
+version defect.</p>
 <h3 id="stale-component-checkout">Stale component checkout</h3>
 <p><strong>Message</strong> contains <code>Remove or relocate the stale sibling checkout</code>.</p>
 <p><strong>Cause.</strong> <code>predeploy</code> clones each component next to this repository at the tag and commit pinned in <code>manifest.json</code>. A folder with that name already exists at a different commit or with local changes.</p>
@@ -1409,7 +1572,67 @@ azd<span class="w"> </span>deploy
 <h3 id="a-component-deployment-fails">A component deployment fails</h3>
 <p><strong>Cause.</strong> The build or the container app update for one component failed.</p>
 <p><strong>Fix.</strong> Open the newest file in the <code>.logs</code> folder of that component checkout. Common causes are a registry that the build host cannot reach (see the agent pool entry above) or a missing role assignment for your identity on the registry.</p>
+<h3 id="deploy-succeeds-but-the-ui-or-administrative-panel-does-not-start">Deploy succeeds but the UI or administrative panel does not start</h3>
+<p><strong>Symptom.</strong> Child deployment commands return success, but the latest
+application revision is unhealthy. The UI reports missing
+<code>OAUTH_AZURE_AD_CLIENT_ID</code>, <code>OAUTH_AZURE_AD_CLIENT_SECRET</code>, or
+<code>OAUTH_AZURE_AD_TENANT_ID</code>; ingestion reports missing OAuth panel settings.</p>
+<p><strong>Cause.</strong> Hosted UI startup validates the default user-delegated OAuth
+contract. The panel also requires Entra configuration. A previous healthy
+placeholder revision can still serve HTTP 200 while the new image fails.</p>
+<p><strong>Fix.</strong> Check the latest revision's image, health, and startup logs. Configure
+the <a href="../hosted-agents/#configure-the-uis-delegated-authentication">delegated authentication settings</a>,
+store the client credential in Key Vault, and publish only its reference
+with label <code>agent-lz</code>. Restart the intended revision and verify its health,
+the Entra login redirect, and rejection of unauthenticated panel data requests.
+Then verify real user login, OBO, and document authorization. Do not switch
+to service identity or disable the panel to turn a missing-authentication
+failure into a passing acceptance result.</p>
 <h2 id="provision-and-post-provision-stages">Provision and post-provision stages</h2>
+<h3 id="quota-check-rejects-an-unchanged-existing-deployment">Quota check rejects an unchanged existing deployment</h3>
+<p><strong>Symptom.</strong> Re-provisioning an existing environment reports less remaining
+model quota than the configured capacity, although that same account already
+has the requested deployment at that capacity.</p>
+<p><strong>Cause.</strong> In v4.2.2, both preflight gates compare the full requested capacity
+with unused regional quota. They do not credit capacity already allocated to
+the target deployment, so the second provision step of a hosted deployment
+can stop before Azure receives the incremental update.</p>
+<p><strong>Fix.</strong> Verify the selected environment, account location, deployment name,
+model/version and SKU. Do not disable preflight, reduce capacity just to pass
+the check, or delete the existing deployment. The correction tracked in
+<a href="https://github.com/Azure/agent-landing-zone/pull/773">agent-landing-zone#773</a>
+uses one shared quota calculation for both gates. It credits only a verified,
+successful matching deployment in the selected subscription and resource group,
+checks increases against the remaining quota, and aggregates deployments using
+the same quota pool. Fresh allocations and unverified or changed targets still
+need their full capacity; model availability checks remain in place.
+Until that correction is released, record this as a preflight limitation, not
+successful hosted deployment acceptance.</p>
+<h3 id="foundry-rejects-evaluation-api-key-creation">Foundry rejects evaluation API-key creation</h3>
+<p><strong>Message.</strong> <code>Failed to list key. disableLocalAuth is set to be true</code>.</p>
+<p><strong>Cause.</strong> The Foundry account requires Microsoft Entra ID. In v4.2.2,
+post-provision still attempts to copy an evaluation API key to Key Vault;
+its final success message does not prove that this secret was created.
+This does not require enabling key authentication for the application.</p>
+<p><strong>Fix.</strong> Keep local authentication disabled and use Microsoft Entra ID for
+evaluation clients. The correction tracked in
+<a href="https://github.com/Azure/agent-landing-zone/pull/773">agent-landing-zone#773</a>
+checks the account's authentication setting, explicitly reports key injection
+as not applicable for Entra-only accounts, and fails on unexpected key or
+Key Vault errors. Until that correction is released, record this post-provision
+limitation separately from application runtime results.</p>
+<h3 id="administrative-panel-cannot-resolve-its-cosmos-database">Administrative panel cannot resolve its Cosmos database</h3>
+<p><strong>Message.</strong> <code>DEPLOY_ADMINISTRATIVE_PANEL is true but DATABASE_ACCOUNT_NAME is not set</code>.</p>
+<p><strong>Cause.</strong> In v4.2.2, post-provision publishes the resolved account and database
+under <code>DATABASE_ACCOUNT_NAME</code> and <code>DATABASE_NAME</code> in App Configuration, but
+panel role assignment expects them in the process environment.</p>
+<p><strong>Fix.</strong> Confirm these two non-secret settings under label <code>agent-lz</code> in the
+selected environment's App Configuration. For a split recovery, supply those
+same values to <code>config.panel.setup</code>; do not infer the database name from a
+resource-name pattern or widen the grants to the account scope. The correction
+in <a href="https://github.com/Azure/agent-landing-zone/pull/773">agent-landing-zone#773</a>
+reads the published settings when process inputs are absent and preserves the
+existing container-scoped roles.</p>
 <h3 id="missing-endpoint-output">Missing endpoint output</h3>
 <p><strong>Message.</strong></p>
 <div class="highlight"><pre><span></span><code>Missing &lt;KEY&gt;. Run provisioning and load the selected azd environment outputs before this stage.

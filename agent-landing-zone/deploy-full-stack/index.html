@@ -1232,6 +1232,10 @@ azd<span class="w"> </span>provision
 azd<span class="w"> </span>deploy
 </code></pre></div>
 <p>See <a href="../hosted-agents/">Hosted agents</a> for what each step does. Later deployments of the same environment only need <code>azd deploy</code>.</p>
+<p>If the second provision step reports insufficient quota for an unchanged
+deployment that already exists in the same account, see
+<a href="../troubleshooting/#quota-check-rejects-an-unchanged-existing-deployment">Quota check rejects an unchanged existing deployment</a>.
+Do not bypass the quota gate to complete this sequence.</p>
 <h2 id="what-happens-during-the-deployment">What happens during the deployment</h2>
 <table>
 <thead>

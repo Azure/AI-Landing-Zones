@@ -1065,12 +1065,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </ol>
 <p><code>azd provision</code> runs the <code>preprovision</code> hook (preflight checks), deploys the infrastructure, then runs the <code>postprovision</code> hook, which configures the services and publishes the platform outputs described below. It does not build or deploy any application.</p>
 <h2 id="platform-outputs">Platform outputs</h2>
-<p>After provisioning, the foundation publishes a stable set of outputs that any application can consume. They are available in three places:</p>
-<ul>
-<li>As flat keys in the azd environment (<code>azd env get-values</code>).</li>
-<li>As a single JSON document in the azd environment key <code>AGENTLZ_PLATFORM_OUTPUTS</code>.</li>
-<li>In Azure App Configuration, key <code>AGENTLZ_PLATFORM_OUTPUTS</code>, label <code>agent-lz</code>.</li>
-</ul>
+<p>After provisioning, the foundation publishes a stable set of outputs that any application can consume in Azure App Configuration: the JSON key <code>AGENTLZ_PLATFORM_OUTPUTS</code> and its flat keys, all with label <code>agent-lz</code>. The publisher reads the foundation values from the azd environment; it does not write these derived keys back into that environment.</p>
 <table>
 <thead>
 <tr>
@@ -1128,14 +1123,11 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tr>
 <tr>
 <td><code>AGENTLZ_IDENTITY_&lt;COMPONENT&gt;_CLIENT_ID</code></td>
-<td>Client ID of the managed identity created for each application component.</td>
-</tr>
-<tr>
-<td><code>AGENTLZ_COMPONENT_IDENTITIES</code></td>
-<td>JSON map of all component identities.</td>
+<td>Client ID of each provisioned Container App component's managed identity; also listed in the JSON <code>identities</code> array. Hosted-agent instance identities are created at deployment, not foundation provision time.</td>
 </tr>
 </tbody>
 </table>
+<p>Without an explicit <code>AGENTLZ_COMPONENT_IDENTITIES</code> environment input, the publisher discovers the selected definition's provisioned Container Apps by their service tags and reads their actual identity client IDs. Missing or ambiguous identities fail publication; principal IDs are not substituted for client IDs. An explicit JSON map remains an override input, not an automatically published flat key. User-assigned identities use ARM discovery. For system-assigned identities, resolving the client ID also requires reading the exact service principal in Microsoft Entra ID.</p>
 <p>Read the outputs from App Configuration:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span>show<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--endpoint<span class="w"> </span>&lt;app-configuration-endpoint&gt;<span class="w"> </span><span class="se">\</span>

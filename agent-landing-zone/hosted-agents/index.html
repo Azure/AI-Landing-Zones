@@ -678,10 +678,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#grant-access-to-callers" class="md-nav__link">
+  <a href="#bootstrap-the-agents-runtime-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Grant access to callers
+        Bootstrap the agent's runtime access
       
     </span>
   </a>
@@ -696,6 +696,34 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Calling the agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-the-uis-delegated-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure the UI's delegated authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protocol-and-caller-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protocol and caller access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1030,10 +1058,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#grant-access-to-callers" class="md-nav__link">
+  <a href="#bootstrap-the-agents-runtime-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Grant access to callers
+        Bootstrap the agent's runtime access
       
     </span>
   </a>
@@ -1048,6 +1076,34 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Calling the agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-the-uis-delegated-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure the UI's delegated authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protocol-and-caller-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protocol and caller access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1224,19 +1280,81 @@ azd<span class="w"> </span>deploy
 </table>
 <p>The move from <code>classic</code> to a hosted topology is complete only when <code>HOSTED_AGENT_BASE_URL</code>, the image digest, and <code>HOSTED_CUTOVER_COMPLETE</code> are all set. Until then, the classic runtime stays in place.</p>
 <p>The full list of hosted defaults is in <a href="../configuration/#hosted-agent">Configuration</a>.</p>
-<h2 id="grant-access-to-callers">Grant access to callers</h2>
-<p>The deployment assigns the roles the platform needs. To give users access to the hosted agent, run the bootstrap script from the repository root:</p>
+<h2 id="bootstrap-the-agents-runtime-access">Bootstrap the agent's runtime access</h2>
+<p>The hosted post-deploy hook discovers the actual agent runtime principal and
+assigns its minimum declared resource-scoped roles. This is not a caller-access
+grant. The deployment principal must be able to create those role assignments,
+or an authorized administrator must reconcile the exact read-only plan first.
+To rerun the idempotent bootstrap, use the repository root:</p>
 <div class="highlight"><pre><span></span><code>./scripts/bootstrapHostedAccess.sh
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="n">scripts</span><span class="p">/</span><span class="n">bootstrapHostedAccess</span><span class="p">.</span><span class="n">ps1</span>
 </code></pre></div>
-<p>The script reads <code>AGENTLZ_HOSTED_PROJECT</code> (default <code>hosted-agent</code>) and <code>AGENTLZ_HOSTED_SERVICE</code> (default <code>orchestrator-agent</code>), assigns the runtime roles, and sends a <code>Hello!</code> request as a smoke test.</p>
-<p>To review role assignments before applying them:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.hosted_access<span class="w"> </span>--plan<span class="w">     </span><span class="c1"># read-only, the default</span>
-python<span class="w"> </span>-m<span class="w"> </span>config.hosted_access<span class="w"> </span>--apply
+<p>The script reads <code>AGENTLZ_HOSTED_PROJECT</code> (default <code>hosted-agent</code>) and
+<code>AGENTLZ_HOSTED_SERVICE</code> (default <code>orchestrator-agent</code>) and assigns the runtime
+roles. The root deployment hook, not this bootstrap script, performs the
+greeting smoke afterward.</p>
+<p>To review role assignments before applying them, run from the repository root
+with <code>AZURE_ENV_NAME</code> set to the selected environment:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.hosted_access<span class="w"> </span>--azd-env<span class="w"> </span>--plan
+python<span class="w"> </span>-m<span class="w"> </span>config.deployment.hosted_access<span class="w"> </span>--azd-env<span class="w"> </span>--apply
 </code></pre></div>
-<p>Both commands accept <code>--azd-env &lt;name&gt;</code> to target a specific environment.</p>
+<p><code>--azd-env</code> is a flag that loads the selected environment; it does not accept
+an environment name. ARM grant visibility does not prove data-plane readiness.
+Allow propagation, rerun bootstrap and retry the root deployment before
+authorizing cutover. A connected runner without role-management permission
+does not need Owner: an authorized administrator can apply only the exact
+grants in the plan. Never remove unrelated assignments to recover.</p>
 <h2 id="calling-the-agent">Calling the agent</h2>
+<h3 id="configure-the-uis-delegated-authentication">Configure the UI's delegated authentication</h3>
+<p>The default UI mode is <code>HOSTED_AGENT_AUTH_MODE=user_delegated</code>. It exchanges
+the signed-in user's access token through OAuth on-behalf-of (OBO); it does
+not fall back to the UI's managed identity. Before starting the UI, configure
+these keys in App Configuration with label <code>agent-lz</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Required value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OAUTH_AZURE_AD_CLIENT_ID</code></td>
+<td>Client ID of the application's confidential Entra registration.</td>
+</tr>
+<tr>
+<td><code>OAUTH_AZURE_AD_TENANT_ID</code></td>
+<td>Tenant containing the application registration.</td>
+</tr>
+<tr>
+<td><code>OAUTH_AZURE_AD_CLIENT_SECRET</code></td>
+<td>Key Vault reference to the client credential, never plaintext.</td>
+</tr>
+<tr>
+<td><code>OAUTH_AZURE_AD_SCOPES</code></td>
+<td><code>api://&lt;client-id&gt;/user_impersonation openid profile offline_access</code> for the UI's single-token login.</td>
+</tr>
+</tbody>
+</table>
+<p>Expose the application's <code>user_impersonation</code> API scope, request access tokens
+version 2, and register the UI's HTTPS
+<code>/auth/oauth/azure-ad/callback</code> redirect URI. Configure and consent the
+downstream delegated permissions needed for the deployed Foundry audience
+separately. The UI's own API scope is not proof of Foundry OBO consent, and a
+Microsoft Graph token is not a replacement for the UI API token.</p>
+<p>For <code>hosted-panel</code>, ingestion also requires the OAuth tenant and client ID;
+the administrative panel has no development authentication bypass. Respect
+the tenant's credential-lifetime policy, record the credential expiration,
+and rotate the Key Vault credential before it expires. A persistent
+<code>CHAINLIT_AUTH_SECRET</code>, preferably Key Vault-backed, prevents signed-in
+sessions from being invalidated by an application restart.</p>
+<p>After configuration, verify the intended image revisions are healthy and
+that unauthenticated panel data requests are rejected. Complete an actual
+user login, OBO invocation, and document-authorization checks before declaring
+end-to-end acceptance. A managed-identity greeting or login redirect alone
+does not prove these checks.</p>
+<h3 id="protocol-and-caller-access">Protocol and caller access</h3>
 <ul>
 <li>The <strong>Responses 2.0.0</strong> protocol is stateless. A request that sends <code>conversation</code> or <code>previous_response_id</code> fails with HTTP 422. Send the context the agent needs in each request.</li>
 <li>The <strong><code>/invocations</code></strong> endpoint is kept for older clients.</li>
