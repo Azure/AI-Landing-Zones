@@ -81,6 +81,12 @@ deployment identity needs permission to create these scoped role assignments;
 denied or ambiguous assignments fail deployment. RBAC propagation may require
 an idempotent retry with the same application and image.
 
+Key Vault profile assignments use the explicit `AZURE_KEY_VAULT_NAME` override
+when present, otherwise the foundation's `KEY_VAULT_NAME` output, followed by
+the vault endpoint inputs. The named vault must exist in the selected resource
+group. If no name is supplied and more than one vault exists, deployment fails
+rather than guessing which vault should receive application permissions.
+
 | Profile | Roles assigned to the component identity |
 | --- | --- |
 | `base` (always applied) | App Configuration Data Reader, AcrPull, Key Vault Secrets User |
