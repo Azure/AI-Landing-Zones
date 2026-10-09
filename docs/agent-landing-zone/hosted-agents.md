@@ -79,9 +79,13 @@ The move from `classic` to a hosted topology is complete only when `HOSTED_AGENT
 
 The full list of hosted defaults is in [Configuration](configuration.md#hosted-agent).
 
-## Grant access to callers
+## Bootstrap the agent's runtime access
 
-The deployment assigns the roles the platform needs. To give users access to the hosted agent, run the bootstrap script from the repository root:
+The hosted post-deploy hook discovers the actual agent runtime principal and
+assigns its minimum declared resource-scoped roles. This is not a caller-access
+grant. The deployment principal must be able to create those role assignments,
+or an authorized administrator must reconcile the exact read-only plan first.
+To rerun the idempotent bootstrap, use the repository root:
 
 ```bash
 ./scripts/bootstrapHostedAccess.sh
@@ -91,18 +95,63 @@ The deployment assigns the roles the platform needs. To give users access to the
 pwsh scripts/bootstrapHostedAccess.ps1
 ```
 
-The script reads `AGENTLZ_HOSTED_PROJECT` (default `hosted-agent`) and `AGENTLZ_HOSTED_SERVICE` (default `orchestrator-agent`), assigns the runtime roles, and sends a `Hello!` request as a smoke test.
+The script reads `AGENTLZ_HOSTED_PROJECT` (default `hosted-agent`) and
+`AGENTLZ_HOSTED_SERVICE` (default `orchestrator-agent`) and assigns the runtime
+roles. The root deployment hook, not this bootstrap script, performs the
+greeting smoke afterward.
 
-To review role assignments before applying them:
+To review role assignments before applying them, run from the repository root
+with `AZURE_ENV_NAME` set to the selected environment:
 
 ```bash
-python -m config.hosted_access --plan     # read-only, the default
-python -m config.hosted_access --apply
+python -m config.deployment.hosted_access --azd-env --plan
+python -m config.deployment.hosted_access --azd-env --apply
 ```
 
-Both commands accept `--azd-env <name>` to target a specific environment.
+`--azd-env` is a flag that loads the selected environment; it does not accept
+an environment name. ARM grant visibility does not prove data-plane readiness.
+Allow propagation, rerun bootstrap and retry the root deployment before
+authorizing cutover. A connected runner without role-management permission
+does not need Owner: an authorized administrator can apply only the exact
+grants in the plan. Never remove unrelated assignments to recover.
 
 ## Calling the agent
+
+### Configure the UI's delegated authentication
+
+The default UI mode is `HOSTED_AGENT_AUTH_MODE=user_delegated`. It exchanges
+the signed-in user's access token through OAuth on-behalf-of (OBO); it does
+not fall back to the UI's managed identity. Before starting the UI, configure
+these keys in App Configuration with label `agent-lz`:
+
+| Key | Required value |
+| --- | --- |
+| `OAUTH_AZURE_AD_CLIENT_ID` | Client ID of the application's confidential Entra registration. |
+| `OAUTH_AZURE_AD_TENANT_ID` | Tenant containing the application registration. |
+| `OAUTH_AZURE_AD_CLIENT_SECRET` | Key Vault reference to the client credential, never plaintext. |
+| `OAUTH_AZURE_AD_SCOPES` | `api://<client-id>/user_impersonation openid profile offline_access` for the UI's single-token login. |
+
+Expose the application's `user_impersonation` API scope, request access tokens
+version 2, and register the UI's HTTPS
+`/auth/oauth/azure-ad/callback` redirect URI. Configure and consent the
+downstream delegated permissions needed for the deployed Foundry audience
+separately. The UI's own API scope is not proof of Foundry OBO consent, and a
+Microsoft Graph token is not a replacement for the UI API token.
+
+For `hosted-panel`, ingestion also requires the OAuth tenant and client ID;
+the administrative panel has no development authentication bypass. Respect
+the tenant's credential-lifetime policy, record the credential expiration,
+and rotate the Key Vault credential before it expires. A persistent
+`CHAINLIT_AUTH_SECRET`, preferably Key Vault-backed, prevents signed-in
+sessions from being invalidated by an application restart.
+
+After configuration, verify the intended image revisions are healthy and
+that unauthenticated panel data requests are rejected. Complete an actual
+user login, OBO invocation, and document-authorization checks before declaring
+end-to-end acceptance. A managed-identity greeting or login redirect alone
+does not prove these checks.
+
+### Protocol and caller access
 
 - The **Responses 2.0.0** protocol is stateless. A request that sends `conversation` or `previous_response_id` fails with HTTP 422. Send the context the agent needs in each request.
 - The **`/invocations`** endpoint is kept for older clients.

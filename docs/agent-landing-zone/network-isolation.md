@@ -69,6 +69,16 @@ azd env refresh
 
 `azd env refresh` reloads the provisioning outputs (endpoints, resource names) into the local environment.
 
+Signing in with the jumpbox's managed identity does not grant deployment
+permissions. An authorized administrator must assign the configuration and
+build roles required by the selected application. For hosted-agent authoring,
+the runner needs **Foundry User** (previously **Azure AI User**) on the exact
+Foundry project, plus read access to the Foundry account. Cognitive Services
+Contributor and OpenAI User alone do not grant the agent data-plane actions.
+Do not grant subscription or resource-group Owner to resolve this denial.
+See [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry)
+for the current role catalog and scopes. Allow role propagation before retrying.
+
 Then run post-provision and deploy. On Windows, use `./scripts/postProvision.ps1` instead of the shell script.
 
 ```bash
@@ -121,6 +131,32 @@ If the pool is missing, `azd deploy` stops before building and offers two fixes:
     azd env set BUILD_MODE local
     azd deploy
     ```
+
+### Application-specific package feeds
+
+The default build-subnet firewall rules allow common language and OS package
+registries. They do not allow every mirror recorded in an application's
+lockfile. Check the `resolved` URLs and download redirects for the exact
+component commit before building.
+
+For additional dependencies, set
+`parameters.additionalAcrTaskBuildFqdns.value` in `main.parameters.json` and
+provision the updated configuration. This is an explicit array, not an `azd`
+environment variable. Copy the same parameter file to a VNet-connected runner
+so a later provision preserves the setting.
+
+For example, the orchestrator `v5.2.0` frontend lockfile uses
+`ms-feed-2.pkgs.visualstudio.com`, `ms-feed-12.pkgs.visualstudio.com`,
+`ms-feed-17.pkgs.visualstudio.com`, and `ms-feed-25.pkgs.visualstudio.com`.
+Their public package downloads redirect to `*.vsblob.vsassets.io`.
+These application-specific hosts are not landing-zone defaults.
+With `extendFirewallForAcrTaskBuilds=true`, additional hosts are allowed only
+from the build-agent subnet over HTTPS on port 443. Do not enable public
+registry access, allow all Internet egress, disable TLS verification, or
+change dependency integrity hashes to work around a failed build.
+
+See [Package installation fails inside the build pool](troubleshooting.md#package-installation-fails-inside-the-build-pool)
+for diagnosis.
 
 ## Verify private connectivity
 

@@ -22,19 +22,19 @@ Minimal Container App example, taken from `samples/custom-app/containerapp/app-d
   "schemaVersion": 1,
   "id": "sample-containerapp",
   "displayName": "Sample custom application (Container App)",
-  "source": { "commit": "0000000000000000000000000000000000000000" },
   "components": [
     {
       "name": "web",
       "kind": "containerapp",
       "path": "src",
+      "source": { "commit": "0000000000000000000000000000000000000000" },
       "profiles": [],
       "ingress": "external",
-      "resources": { "cpu": 0.5, "memory": "1.0Gi" },
-      "settings": {
-        "SAMPLE_GREETING": { "value": "Hello from Agent Landing Zone" }
-      }
+      "resources": { "cpu": 0.5, "memory": "1.0Gi" }
     }
+  ],
+  "settings": [
+    { "key": "SAMPLE_GREETING", "value": "Hello from the sample application" }
   ]
 }
 ```
@@ -48,7 +48,7 @@ The all-zero commit is a placeholder. Replace it with the commit you deploy (see
 | `schemaVersion` | Yes | Must be `1`. |
 | `id` | Yes | Application identifier. |
 | `displayName` | No | Human-readable name. |
-| `source` | Yes | Either `commit` (40 hex characters) or `imageDigest` (`sha256:` followed by 64 hex characters). |
+| `components[].source` | Yes | Either `commit` (40 hex characters) or `imageDigest` (`sha256:` followed by 64 hex characters). |
 | `components[].name` | Yes | Matches `^[a-z][a-z0-9-]{1,23}$`. Must match the service name in `azure.yaml`. |
 | `components[].kind` | Yes | `containerapp` or `azure.ai.agent`. |
 | `components[].path` | Yes | Relative path to the component source. Must not contain `..`. |
@@ -56,7 +56,7 @@ The all-zero commit is a placeholder. Replace it with the commit you deploy (see
 | `components[].ingress` | No | `external` or `internal`. Default `internal`. Container Apps only. |
 | `components[].resources.cpu` | No | `0.25`, `0.5`, `0.75`, `1.0`, `1.5`, or `2.0`. Default `0.5`. Container Apps only. |
 | `components[].resources.memory` | No | `0.5Gi` to `4.0Gi`. Default `1.0Gi`. Container Apps only. |
-| `components[].settings` | No | Keys are uppercase, 2–64 characters, and must not start with `AGENTLZ_`. Each entry has either `value` or `secret`. |
+| `settings[]` | No | Each entry has an uppercase `key`, 2–64 characters, which must not start with `AGENTLZ_`, and either `value` or `secret`. |
 
 Components of kind `azure.ai.agent` run as Foundry hosted agents and cannot set `ingress` or `resources`. The hosted sample in `samples/custom-app/hosted/app-definition.json` defines one component named `agent` with `profiles: ["model-user"]`.
 
@@ -71,6 +71,15 @@ Settings are validated against the schema. They are not published to App Configu
 ## Capability profiles
 
 Every component receives the `base` profile. Add the others only when the component needs them.
+
+Container App profile assignments are reconciled during post-provisioning.
+For custom hosted services, deployment first verifies the actual routed agent
+version and its instance identity against the selected Foundry project, then
+reconciles the declared profiles before running the greeting smoke. No bundled
+orchestrator permissions are substituted for the custom definition. The
+deployment identity needs permission to create these scoped role assignments;
+denied or ambiguous assignments fail deployment. RBAC propagation may require
+an idempotent retry with the same application and image.
 
 | Profile | Roles assigned to the component identity |
 | --- | --- |
@@ -93,6 +102,12 @@ For reference, the default application uses these profiles:
 
 The folder that contains the definition must also contain a root `azure.yaml` with one service per component. Service names must equal component names, and the file must not declare hooks.
 
+`components[].path` points to the service source, not to another azd project.
+Keep `azure.yaml` next to `app-definition.json` and set each service's `project`
+to its source folder. The pre-deploy hook reuses the selected environment in
+the definition folder and deploys each declared service by name, rather than
+deploying all services repeatedly.
+
 ```yaml
 name: sample-containerapp
 services:
@@ -106,12 +121,52 @@ services:
 
 ## Source pinning
 
-- **`source.commit`**: must equal the `HEAD` commit of the local folder that contains the definition. Nothing is cloned; the platform builds from your working tree and refuses to deploy if `HEAD` differs.
-- **`source.imageDigest`**: deploys a prebuilt image. Provide the digest through `AGENTLZ_IMAGE_DIGEST`.
+- **`components[].source.commit`**: must equal the `HEAD` commit of that component's local source folder. Nothing is cloned; the platform builds from your working tree and refuses to deploy if `HEAD` differs.
+- **`components[].source.imageDigest`**: deploys a prebuilt image. Set the
+  corresponding service's `image` in `azure.yaml` to a qualified registry and
+  repository, such as `myregistry.azurecr.io/my-app:v1`. The platform replaces
+  its tag or existing digest with the definition's exact digest and deploys it
+  with `docker.imagePassthrough: true`; it does not build a different image.
+  Environment substitutions in `image` must resolve before deployment.
+
+With `NETWORK_ISOLATION=true`, source-pinned Docker components build through
+the foundation's dedicated `ACR_TASK_AGENT_POOL`, and the platform deploys the
+immutable digest returned by the completed ACR task. The service `project`
+must match `components[].path`, with `Dockerfile` and context `.` in that
+folder. Other Docker options or source-build layouts fail with actionable
+guidance to supply a prebuilt digest instead; they are not silently ignored.
+Public source builds keep the service's normal azd build behavior.
+
+For image handoff, the platform temporarily renders only the selected service
+in the child `azure.yaml` and restores the original file even if deployment
+fails. Do not run concurrent deploys or edit that file during a deployment.
+Private registry access must already be configured for the Container App or
+Foundry project identity; digest pinning does not bypass registry RBAC.
+
+Foundation provisioning publishes the Foundry project and registry deployment
+outputs whenever those resources are enabled, even in classic topology.
+Custom hosted services do not require selection of the bundled hosted
+orchestrator merely to receive their project endpoint. After upgrading the
+foundation output correction, rerun provisioning to refresh the selected azd
+environment before deploying; do not copy endpoints from another environment.
+When an older environment has an empty project output, the quota preflight
+can discover a single existing Foundry project in the selected resource group.
+It credits only matching, successfully provisioned model allocations after
+verifying the account scope and region. Ambiguous projects receive no credit;
+select the intended project explicitly instead of bypassing the quota check.
 
 ## Reading platform outputs at runtime
 
 Components find platform resources through App Configuration. Each component receives `APP_CONFIG_ENDPOINT` and reads the `AGENTLZ_PLATFORM_OUTPUTS` key with label `agent-lz`. Both samples show the pattern: the Container App sample serves `GET /health` and `GET /`, and the hosted sample answers the Responses protocol.
+
+The platform-output publisher discovers the provisioned Container App identities for the selected definition and publishes their client IDs in `identities` and the matching `AGENTLZ_IDENTITY_<COMPONENT>_CLIENT_ID` keys. Hosted-agent instance identities are not available during foundation provisioning. Missing or ambiguous Container App identities fail publication rather than producing a success-shaped empty map; see [Platform outputs](deploy-infra-only.md#platform-outputs).
+
+Custom hosted services must declare `invocations` or `responses` in their
+`azure.yaml` protocols. The greeting smoke uses the selected service name and
+declared protocol, preferring `invocations` when both are available. For
+Responses services, it validates either Responses SSE or a completed JSON
+response with nonempty assistant output. A greeting is not evidence of
+document retrieval or authorization.
 
 ## Deploy a custom application
 
@@ -129,6 +184,9 @@ Run these commands from the root of the Agent Landing Zone repository.
     azd env new my-custom-app
     azd env set AGENTLZ_APP_DEFINITION path/to/your-app/app-definition.json
     ```
+
+    You can also select the containing folder:
+    `azd env set AGENTLZ_APP_DEFINITION path/to/your-app`.
 
 3. Deploy:
 
