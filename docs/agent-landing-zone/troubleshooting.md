@@ -73,6 +73,27 @@ azd deploy
 
 The jumpbox does not include Docker by default. See [Image builds in isolated deployments](network-isolation.md#image-builds-in-isolated-deployments).
 
+### Package installation fails inside the build pool
+
+**Symptom.** An ACR run starts in the private agent pool, but package
+installation fails. For example, npm reports `Exit handler never called!`,
+followed by `tsc: not found` during the frontend build.
+
+**Diagnosis.** Retrieve the actual failed ACR run log from a VNet-connected
+host. Correlate its timestamps and the build-agent source address with Azure
+Firewall deny logs. An existing pool and a successfully pulled base image do
+not prove that package feeds are reachable. Check the exact pinned lockfile's
+`resolved` URLs; setting npm's registry alone does not replace those URLs.
+
+**Fix.** If firewall logs confirm blocked package hosts, add only the required
+feeds and their verified download CDN to
+`parameters.additionalAcrTaskBuildFqdns.value` in `main.parameters.json`,
+provision, and retry the same pinned source. See
+[Application-specific package feeds](network-isolation.md#application-specific-package-feeds).
+Keep the exception confined to build-subnet HTTPS traffic. Do not upgrade npm
+speculatively or treat a later missing compiler as proof of a dependency
+version defect.
+
 ### Stale component checkout
 
 **Message** contains `Remove or relocate the stale sibling checkout`.

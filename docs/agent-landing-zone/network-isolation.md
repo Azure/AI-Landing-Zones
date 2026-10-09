@@ -122,6 +122,32 @@ If the pool is missing, `azd deploy` stops before building and offers two fixes:
     azd deploy
     ```
 
+### Application-specific package feeds
+
+The default build-subnet firewall rules allow common language and OS package
+registries. They do not allow every mirror recorded in an application's
+lockfile. Check the `resolved` URLs and download redirects for the exact
+component commit before building.
+
+For additional dependencies, set
+`parameters.additionalAcrTaskBuildFqdns.value` in `main.parameters.json` and
+provision the updated configuration. This is an explicit array, not an `azd`
+environment variable. Copy the same parameter file to a VNet-connected runner
+so a later provision preserves the setting.
+
+For example, the orchestrator `v5.2.0` frontend lockfile uses
+`ms-feed-2.pkgs.visualstudio.com`, `ms-feed-12.pkgs.visualstudio.com`,
+`ms-feed-17.pkgs.visualstudio.com`, and `ms-feed-25.pkgs.visualstudio.com`.
+Their public package downloads redirect to `*.vsblob.vsassets.io`.
+These application-specific hosts are not landing-zone defaults.
+With `extendFirewallForAcrTaskBuilds=true`, additional hosts are allowed only
+from the build-agent subnet over HTTPS on port 443. Do not enable public
+registry access, allow all Internet egress, disable TLS verification, or
+change dependency integrity hashes to work around a failed build.
+
+See [Package installation fails inside the build pool](troubleshooting.md#package-installation-fails-inside-the-build-pool)
+for diagnosis.
+
 ## Verify private connectivity
 
 Run these checks from the host you will deploy from. Use the endpoint host names from `azd env get-value <NAME>`, for example `APP_CONFIG_ENDPOINT`.
