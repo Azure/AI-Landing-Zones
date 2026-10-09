@@ -83,6 +83,11 @@ azd deploy
 
 See [Hosted agents](hosted-agents.md) for what each step does. Later deployments of the same environment only need `azd deploy`.
 
+If the second provision step reports insufficient quota for an unchanged
+deployment that already exists in the same account, see
+[Quota check rejects an unchanged existing deployment](troubleshooting.md#quota-check-rejects-an-unchanged-existing-deployment).
+Do not bypass the quota gate to complete this sequence.
+
 ## What happens during the deployment
 
 | Stage | Hook | What happens |

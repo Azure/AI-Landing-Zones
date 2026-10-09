@@ -89,6 +89,29 @@ The jumpbox does not include Docker by default. See [Image builds in isolated de
 
 ## Provision and post-provision stages
 
+### Quota check rejects an unchanged existing deployment
+
+**Symptom.** Re-provisioning an existing environment reports less remaining
+model quota than the configured capacity, although that same account already
+has the requested deployment at that capacity.
+
+**Cause.** In v4.2.2, both preflight gates compare the full requested capacity
+with unused regional quota. They do not credit capacity already allocated to
+the target deployment, so the second provision step of a hosted deployment
+can stop before Azure receives the incremental update.
+
+**Fix.** Verify the selected environment, account location, deployment name,
+model/version and SKU. Do not disable preflight, reduce capacity just to pass
+the check, or delete the existing deployment. The correction tracked in
+[agent-landing-zone#773](https://github.com/Azure/agent-landing-zone/pull/773)
+uses one shared quota calculation for both gates. It credits only a verified,
+successful matching deployment in the selected subscription and resource group,
+checks increases against the remaining quota, and aggregates deployments using
+the same quota pool. Fresh allocations and unverified or changed targets still
+need their full capacity; model availability checks remain in place.
+Until that correction is released, record this as a preflight limitation, not
+successful hosted deployment acceptance.
+
 ### Foundry rejects evaluation API-key creation
 
 **Message.** `Failed to list key. disableLocalAuth is set to be true`.
