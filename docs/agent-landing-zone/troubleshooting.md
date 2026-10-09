@@ -26,6 +26,24 @@ azd deploy
 
 See [Hosted agents](hosted-agents.md#topologies).
 
+### Hosted agent deployment returns an agent permission denial
+
+**Symptom.** Agent creation or lookup returns HTTP 403 and names
+`Microsoft.CognitiveServices/accounts/AIServices/agents/read` as a missing action.
+
+**Cause.** The actual deployment principal lacks Foundry agent data-plane
+permissions. Successful private DNS/TLS checks and ARM provisioning do not
+prove agent authorization.
+
+**Fix.** Verify the object ID in the denial against the identity used by
+`azd auth login`. An authorized administrator can grant **Foundry User**
+(formerly **Azure AI User**) at the target Foundry project scope for a runner
+that creates and updates agents. Verify the assignment, allow propagation,
+then retry. Do not substitute Azure AI Developer, which targets workspace/hub
+scenarios, or grant resource-group Owner. See
+[Connected-host deployment](network-isolation.md#complete-the-deployment-from-a-connected-host).
+This authoring role is not delegated-user/OBO acceptance evidence.
+
 ### Application definition does not match the environment
 
 **Symptom.** `predeploy` exits with code `2` after validating the application definition.

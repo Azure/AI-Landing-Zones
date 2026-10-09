@@ -69,6 +69,16 @@ azd env refresh
 
 `azd env refresh` reloads the provisioning outputs (endpoints, resource names) into the local environment.
 
+Signing in with the jumpbox's managed identity does not grant deployment
+permissions. An authorized administrator must assign the configuration and
+build roles required by the selected application. For hosted-agent authoring,
+the runner needs **Foundry User** (previously **Azure AI User**) on the exact
+Foundry project, plus read access to the Foundry account. Cognitive Services
+Contributor and OpenAI User alone do not grant the agent data-plane actions.
+Do not grant subscription or resource-group Owner to resolve this denial.
+See [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry)
+for the current role catalog and scopes. Allow role propagation before retrying.
+
 Then run post-provision and deploy. On Windows, use `./scripts/postProvision.ps1` instead of the shell script.
 
 ```bash
