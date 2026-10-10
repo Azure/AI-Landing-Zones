@@ -1324,6 +1324,13 @@ azd<span class="w"> </span>up
 <li><strong>Application Insights</strong>: requests, dependencies, exceptions, and traces from each component. Use <strong>Transaction search</strong> to follow a single request from the UI through the orchestrator to model and search calls.</li>
 <li><strong>Log Analytics</strong>: container output and platform events.</li>
 </ul>
+<p>UI failure diagnostics intentionally avoid dependency error payloads at application
+boundaries. When a record includes <code>exception_type</code> and <code>failure_site</code>, use its
+static operation description, code location and request reference to correlate
+the failure with dependency telemetry. Do not interpret missing exception text as
+successful processing or enable raw token, cookie, claim or signed-URL logging to
+investigate it. A failed optional panel index write still requires repair even
+when the chat turn continues; it does not confirm that the index was persisted.</p>
 <p>Useful Log Analytics queries:</p>
 <div class="highlight"><pre><span></span><code><span class="c">// Recent errors from all container apps</span>
 <span class="n">ContainerAppConsoleLogs_CL</span>

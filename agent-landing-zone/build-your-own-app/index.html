@@ -1308,6 +1308,11 @@ orchestrator permissions are substituted for the custom definition. The
 deployment identity needs permission to create these scoped role assignments;
 denied or ambiguous assignments fail deployment. RBAC propagation may require
 an idempotent retry with the same application and image.</p>
+<p>Key Vault profile assignments use the explicit <code>AZURE_KEY_VAULT_NAME</code> override
+when present, otherwise the foundation's <code>KEY_VAULT_NAME</code> output, followed by
+the vault endpoint inputs. The named vault must exist in the selected resource
+group. If no name is supplied and more than one vault exists, deployment fails
+rather than guessing which vault should receive application permissions.</p>
 <table>
 <thead>
 <tr>
