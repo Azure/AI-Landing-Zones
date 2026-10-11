@@ -148,6 +148,28 @@ failure into a passing acceptance result.
 
 ## Provision and post-provision stages
 
+### Search preflight region and quota
+
+**Symptom.** Foundation preflight reports Search provider availability or quota
+for `AZURE_LOCATION` even though `AZURE_SEARCH_LOCATION` selects another region,
+or accepts quota for only one service when two Search services will be created.
+
+**Cause.** Preflight must resolve the same effective `searchServiceLocation` as
+Bicep and count every enabled Search creation path. Checking only the primary
+region or only the general Search service does not match the deployment.
+
+**Fix.** Verify `AZURE_SEARCH_LOCATION`; an unset or empty value uses
+`AZURE_LOCATION`. Both the general and Foundry Agent Service Search services
+use this region, and both provider availability and Search quota checks must
+use it. Quota must cover one service for `deploySearchService`, plus one for
+Foundry when `deployAiFoundry` and `deployAAfAgentSvc` are enabled and no
+`aiSearchResourceId` is supplied. If both paths create a service, quota for only
+one is insufficient. Choose a supported region with capacity or request a quota
+increase. If the installed platform still checks the wrong region or count,
+wait for the platform correction rather than treating preflight as passed.
+Do not set `PREFLIGHT_SKIP` or `AGENTLZ_REGIONAL_PREFLIGHT_SKIP` to bypass it.
+See [Search region and quota](configuration.md#search-region-and-quota).
+
 ### Quota check rejects an unchanged existing deployment
 
 **Symptom.** Re-provisioning an existing environment reports less remaining

@@ -46,13 +46,30 @@ These values have no default in `main.parameters.json`. When they are not set, B
 | `USE_CAPP_API_KEY` | `false` | Protects the Container Apps with an API key in addition to Entra ID. |
 | `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | Applications read runtime settings from App Configuration. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Cosmos DB analytical store. |
-| `AZURE_SEARCH_LOCATION` | Empty | Region for Azure AI Search. Leave empty to use the deployment region. |
+| `AZURE_SEARCH_LOCATION` | Empty | Region for both the general Azure AI Search service and the Search service created for Foundry Agent Service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
 | `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Resource group for private endpoints. Leave empty to use the deployment resource group. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
 Parameters that start with `EXISTING_` reuse a resource instead of creating one. They are listed in [Network and security](#network-and-security).
+
+### Search region and quota
+
+`AZURE_SEARCH_LOCATION` resolves the effective Bicep `searchServiceLocation`;
+an unset or empty value falls back to `AZURE_LOCATION`. Both newly created
+Search services use this effective region. Provider availability and Search
+quota checks must use that same region, not the primary region when an override
+is set.
+
+Search quota must cover the complete enabled service count: one general service
+when `deploySearchService` (`DEPLOY_SEARCH_SERVICE`) is enabled, plus one Foundry
+Search service when `deployAiFoundry` and `deployAAfAgentSvc`
+(`DEPLOY_AAF_AGENT_SVC`) are enabled and `aiSearchResourceId` is not supplied.
+When both creation paths are enabled, the check requires quota for two services;
+reusing a Foundry Search resource does not request a new service for that path.
+Do not bypass preflight to work around a region mismatch or insufficient quota.
+See [Search preflight region and quota](troubleshooting.md#search-preflight-region-and-quota).
 
 ### Retrieval
 
