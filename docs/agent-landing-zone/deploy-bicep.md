@@ -7,6 +7,12 @@ Bicep template directly.
 
 ## How `azd` uses Bicep
 
+`azd up` first runs a read-only `preup` application-definition and environment
+binding check, before the deployment pipeline creates Azure resources.
+Standalone `azd provision` retains its `preprovision` validation; use
+`azd hooks run preup` before it when validation must precede even azd's
+resource-group initialization.
+
 When you run `azd provision` or `azd up`, three things happen in order:
 
 1. The `preprovision` hook validates your environment, runs the preflight
