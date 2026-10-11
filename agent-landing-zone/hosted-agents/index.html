@@ -1335,6 +1335,10 @@ these keys in App Configuration with label <code>agent-lz</code>:</p>
 <td><code>OAUTH_AZURE_AD_SCOPES</code></td>
 <td><code>api://&lt;client-id&gt;/user_impersonation openid profile offline_access</code> for the UI's single-token login.</td>
 </tr>
+<tr>
+<td><code>CHAINLIT_URL</code></td>
+<td>Canonical HTTPS frontend URL, without a trailing slash, matching the registered callback origin.</td>
+</tr>
 </tbody>
 </table>
 <p>Expose the application's <code>user_impersonation</code> API scope, request access tokens
@@ -1343,6 +1347,11 @@ version 2, and register the UI's HTTPS
 downstream delegated permissions needed for the deployed Foundry audience
 separately. The UI's own API scope is not proof of Foundry OBO consent, and a
 Microsoft Graph token is not a replacement for the UI API token.</p>
+<p>Behind TLS-terminating ingress, set <code>CHAINLIT_URL</code> explicitly before starting
+the UI. Verify that <code>/auth/oauth/azure-ad</code> redirects to Entra with an HTTPS
+<code>redirect_uri</code> that exactly matches the registered callback. An HTTP callback
+behind an HTTPS frontend is not a consent problem; correct the canonical URL
+and restart the UI rather than registering an insecure callback.</p>
 <p>For <code>hosted-panel</code>, ingestion also requires the OAuth tenant and client ID;
 the administrative panel has no development authentication bypass. Respect
 the tenant's credential-lifetime policy, record the credential expiration,
