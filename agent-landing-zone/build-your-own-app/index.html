@@ -1189,8 +1189,14 @@
 <ol>
 <li>You write an application definition and an <code>azure.yaml</code> that describes how to build each component.</li>
 <li>You point an azd environment at the definition with <code>AGENTLZ_APP_DEFINITION</code>.</li>
-<li><code>azd up</code> provisions the platform, validates the definition, binds it to the environment, assigns roles from the declared capability profiles, and deploys each component.</li>
+<li><code>azd up</code> first validates the definition and checks its environment binding, then provisions the platform, binds the application to the environment, assigns roles from the declared capability profiles, and deploys each component.</li>
 </ol>
+<p>The platform's <code>preup</code> hook rejects invalid definitions and changed application
+IDs before the deployment pipeline can create Azure resources, including an
+empty resource group. The <code>preprovision</code> hook repeats validation for standalone
+<code>azd provision</code>, but that later hook cannot guarantee rejection before azd's
+own resource-group initialization. For a strict no-Azure-change check before
+standalone provisioning, run <code>azd hooks run preup</code> first.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>One azd environment hosts exactly one application. To deploy a different application, create a new azd environment.</p>

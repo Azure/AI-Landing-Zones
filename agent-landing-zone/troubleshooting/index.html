@@ -941,6 +941,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#search-preflight-region-and-quota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search preflight region and quota
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#quota-check-rejects-an-unchanged-existing-deployment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1319,6 +1330,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#search-preflight-region-and-quota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search preflight region and quota
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#quota-check-rejects-an-unchanged-existing-deployment" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1589,6 +1611,24 @@ Then verify real user login, OBO, and document authorization. Do not switch
 to service identity or disable the panel to turn a missing-authentication
 failure into a passing acceptance result.</p>
 <h2 id="provision-and-post-provision-stages">Provision and post-provision stages</h2>
+<h3 id="search-preflight-region-and-quota">Search preflight region and quota</h3>
+<p><strong>Symptom.</strong> Foundation preflight reports Search provider availability or quota
+for <code>AZURE_LOCATION</code> even though <code>AZURE_SEARCH_LOCATION</code> selects another region,
+or accepts quota for only one service when two Search services will be created.</p>
+<p><strong>Cause.</strong> Preflight must resolve the same effective <code>searchServiceLocation</code> as
+Bicep and count every enabled Search creation path. Checking only the primary
+region or only the general Search service does not match the deployment.</p>
+<p><strong>Fix.</strong> Verify <code>AZURE_SEARCH_LOCATION</code>; an unset or empty value uses
+<code>AZURE_LOCATION</code>. Both the general and Foundry Agent Service Search services
+use this region, and both provider availability and Search quota checks must
+use it. Quota must cover one service for <code>deploySearchService</code>, plus one for
+Foundry when <code>deployAiFoundry</code> and <code>deployAAfAgentSvc</code> are enabled and no
+<code>aiSearchResourceId</code> is supplied. If both paths create a service, quota for only
+one is insufficient. Choose a supported region with capacity or request a quota
+increase. If the installed platform still checks the wrong region or count,
+wait for the platform correction rather than treating preflight as passed.
+Do not set <code>PREFLIGHT_SKIP</code> or <code>AGENTLZ_REGIONAL_PREFLIGHT_SKIP</code> to bypass it.
+See <a href="../configuration/#search-region-and-quota">Search region and quota</a>.</p>
 <h3 id="quota-check-rejects-an-unchanged-existing-deployment">Quota check rejects an unchanged existing deployment</h3>
 <p><strong>Symptom.</strong> Re-provisioning an existing environment reports less remaining
 model quota than the configured capacity, although that same account already

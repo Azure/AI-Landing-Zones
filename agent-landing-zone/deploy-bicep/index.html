@@ -1066,6 +1066,11 @@ the <code>infra/</code> folder of the repository, and <code>azd</code> calls it 
 explains how that works, what you can change, and why you should not call the
 Bicep template directly.</p>
 <h2 id="how-azd-uses-bicep">How <code>azd</code> uses Bicep</h2>
+<p><code>azd up</code> first runs a read-only <code>preup</code> application-definition and environment
+binding check, before the deployment pipeline creates Azure resources.
+Standalone <code>azd provision</code> retains its <code>preprovision</code> validation; use
+<code>azd hooks run preup</code> before it when validation must precede even azd's
+resource-group initialization.</p>
 <p>When you run <code>azd provision</code> or <code>azd up</code>, three things happen in order:</p>
 <ol>
 <li>The <code>preprovision</code> hook validates your environment, runs the preflight

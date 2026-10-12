@@ -718,6 +718,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#search-region-and-quota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search region and quota
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#retrieval" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1087,6 +1098,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#search-region-and-quota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search region and quota
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#retrieval" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1320,7 +1342,7 @@
 <tr>
 <td><code>AZURE_SEARCH_LOCATION</code></td>
 <td>Empty</td>
-<td>Region for Azure AI Search. Leave empty to use the deployment region.</td>
+<td>Region for both the general Azure AI Search service and the Search service created for Foundry Agent Service. Leave empty to use <code>AZURE_LOCATION</code>.</td>
 </tr>
 <tr>
 <td><code>AZURE_SPEECH_LOCATION</code></td>
@@ -1345,6 +1367,20 @@
 </tbody>
 </table>
 <p>Parameters that start with <code>EXISTING_</code> reuse a resource instead of creating one. They are listed in <a href="#network-and-security">Network and security</a>.</p>
+<h3 id="search-region-and-quota">Search region and quota</h3>
+<p><code>AZURE_SEARCH_LOCATION</code> resolves the effective Bicep <code>searchServiceLocation</code>;
+an unset or empty value falls back to <code>AZURE_LOCATION</code>. Both newly created
+Search services use this effective region. Provider availability and Search
+quota checks must use that same region, not the primary region when an override
+is set.</p>
+<p>Search quota must cover the complete enabled service count: one general service
+when <code>deploySearchService</code> (<code>DEPLOY_SEARCH_SERVICE</code>) is enabled, plus one Foundry
+Search service when <code>deployAiFoundry</code> and <code>deployAAfAgentSvc</code>
+(<code>DEPLOY_AAF_AGENT_SVC</code>) are enabled and <code>aiSearchResourceId</code> is not supplied.
+When both creation paths are enabled, the check requires quota for two services;
+reusing a Foundry Search resource does not request a new service for that path.
+Do not bypass preflight to work around a region mismatch or insufficient quota.
+See <a href="../troubleshooting/#search-preflight-region-and-quota">Search preflight region and quota</a>.</p>
 <h3 id="retrieval">Retrieval</h3>
 <table>
 <thead>
