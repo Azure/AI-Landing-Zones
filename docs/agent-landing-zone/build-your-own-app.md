@@ -8,7 +8,14 @@ The platform owns identity, networking, and permissions. Your application declar
 
 1. You write an application definition and an `azure.yaml` that describes how to build each component.
 2. You point an azd environment at the definition with `AGENTLZ_APP_DEFINITION`.
-3. `azd up` provisions the platform, validates the definition, binds it to the environment, assigns roles from the declared capability profiles, and deploys each component.
+3. `azd up` first validates the definition and checks its environment binding, then provisions the platform, binds the application to the environment, assigns roles from the declared capability profiles, and deploys each component.
+
+The platform's `preup` hook rejects invalid definitions and changed application
+IDs before the deployment pipeline can create Azure resources, including an
+empty resource group. The `preprovision` hook repeats validation for standalone
+`azd provision`, but that later hook cannot guarantee rejection before azd's
+own resource-group initialization. For a strict no-Azure-change check before
+standalone provisioning, run `azd hooks run preup` first.
 
 !!! note
     One azd environment hosts exactly one application. To deploy a different application, create a new azd environment.

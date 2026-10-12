@@ -92,6 +92,7 @@ Do not bypass the quota gate to complete this sequence.
 
 | Stage | Hook | What happens |
 | --- | --- | --- |
+| Application validation (`azd up`) | `preup` | Validates the selected definition and checks its environment binding before the deployment pipeline creates resources. |
 | Preflight | `preprovision` | Checks that the region offers the required services and that quota is available. |
 | Provision | — | Deploys the infrastructure from `infra/` (Bicep). |
 | Post-provision | `postprovision` | Configures Foundry, Azure AI Search, Container Apps and role assignments, and publishes runtime settings to App Configuration with the label `agent-lz`. |
