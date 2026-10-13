@@ -858,6 +858,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom hosted image pull fails with a classic bundled orchestrator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#private-deployment-prerequisites-failed" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1247,6 +1258,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom hosted image pull fails with a classic bundled orchestrator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#private-deployment-prerequisites-failed" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1547,8 +1569,37 @@ scenarios, or grant resource-group Owner. See
 This authoring role is not delegated-user/OBO acceptance evidence.</p>
 <h3 id="application-definition-does-not-match-the-environment">Application definition does not match the environment</h3>
 <p><strong>Symptom.</strong> <code>predeploy</code> exits with code <code>2</code> after validating the application definition.</p>
-<p><strong>Cause.</strong> The application definition and the topology bound to the environment disagree, for example a hosted definition in a classic environment.</p>
+<p><strong>Cause.</strong> The selected definition or topology differs from the application's
+environment binding. A custom <code>azure.ai.agent</code> component does not, by itself,
+require changing the bundled orchestrator from classic to hosted topology.</p>
 <p><strong>Fix.</strong> Select the definition that matches the environment, or change the topology and provision again. See <a href="../build-your-own-app/">Custom applications</a>.</p>
+<h3 id="custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator">Custom hosted image pull fails with a classic bundled orchestrator</h3>
+<p><strong>Symptom.</strong> A custom <code>azure.ai.agent</code> service cannot activate its private
+image, even though the selected environment has Foundry project and registry
+outputs.</p>
+<p><strong>Cause.</strong> Before the selection correction tracked in
+<a href="https://github.com/Azure/agent-landing-zone/issues/695">agent-landing-zone#695</a>,
+a custom hosted definition with a classic bundled orchestrator can leave
+<code>prepareHostedAgent=false</code>. This omits the existing declarative <code>AcrPull</code>
+assignment for the foundation's Foundry project managed identity. Publishing
+the endpoint or reconciling per-instance capability profiles does not replace
+that foundation image-pull preparation.</p>
+<p><strong>Fix.</strong> The platform correction is pending. Once a revision containing it
+is available, select the same environment and keep the same application
+definition and immutable image. From the platform repository root, run
+<code>azd hooks run preup</code>, <code>azd provision</code>, <code>azd env refresh</code>, then <code>azd deploy</code>;
+use a VNet-connected host for private environments. The selected custom hosted
+component must prepare the foundation without deploying the bundled hosted
+orchestrator or changing classic topology. Refreshing outputs alone cannot
+apply the role assignment.</p>
+<p>Do not grant broad roles manually, enable registry admin credentials, or
+substitute an OIDC connection or service identity for delegated-user/OBO
+authentication. Deployment still verifies the routed version and actual
+instance identity, reconciles the exact declared capability profiles, and
+only then runs the protocol greeting smoke. This is not evidence that all
+runtime identity grants precede image pull, or that recovery, first deployment,
+OBO, citations, or document allow/deny acceptance has passed. See
+<a href="../build-your-own-app/#source-pinning">Source pinning</a>.</p>
 <h3 id="private-deployment-prerequisites-failed">Private deployment prerequisites failed</h3>
 <p><strong>Message.</strong></p>
 <div class="highlight"><pre><span></span><code>Private deployment prerequisites failed. Use a VPN/VNet-connected host; RUN_FROM_JUMPBOX is not a connectivity bypass.
