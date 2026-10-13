@@ -48,9 +48,43 @@ This authoring role is not delegated-user/OBO acceptance evidence.
 
 **Symptom.** `predeploy` exits with code `2` after validating the application definition.
 
-**Cause.** The application definition and the topology bound to the environment disagree, for example a hosted definition in a classic environment.
+**Cause.** The selected definition or topology differs from the application's
+environment binding. A custom `azure.ai.agent` component does not, by itself,
+require changing the bundled orchestrator from classic to hosted topology.
 
 **Fix.** Select the definition that matches the environment, or change the topology and provision again. See [Custom applications](build-your-own-app.md).
+
+### Custom hosted image pull fails with a classic bundled orchestrator
+
+**Symptom.** A custom `azure.ai.agent` service cannot activate its private
+image, even though the selected environment has Foundry project and registry
+outputs.
+
+**Cause.** Before the selection correction tracked in
+[agent-landing-zone#695](https://github.com/Azure/agent-landing-zone/issues/695),
+a custom hosted definition with a classic bundled orchestrator can leave
+`prepareHostedAgent=false`. This omits the existing declarative `AcrPull`
+assignment for the foundation's Foundry project managed identity. Publishing
+the endpoint or reconciling per-instance capability profiles does not replace
+that foundation image-pull preparation.
+
+**Fix.** The platform correction is pending. Once a revision containing it
+is available, select the same environment and keep the same application
+definition and immutable image. From the platform repository root, run
+`azd hooks run preup`, `azd provision`, `azd env refresh`, then `azd deploy`;
+use a VNet-connected host for private environments. The selected custom hosted
+component must prepare the foundation without deploying the bundled hosted
+orchestrator or changing classic topology. Refreshing outputs alone cannot
+apply the role assignment.
+
+Do not grant broad roles manually, enable registry admin credentials, or
+substitute an OIDC connection or service identity for delegated-user/OBO
+authentication. Deployment still verifies the routed version and actual
+instance identity, reconciles the exact declared capability profiles, and
+only then runs the protocol greeting smoke. This is not evidence that all
+runtime identity grants precede image pull, or that recovery, first deployment,
+OBO, citations, or document allow/deny acceptance has passed. See
+[Source pinning](build-your-own-app.md#source-pinning).
 
 ### Private deployment prerequisites failed
 
