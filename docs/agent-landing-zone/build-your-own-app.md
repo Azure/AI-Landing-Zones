@@ -80,13 +80,18 @@ Settings are validated against the schema. They are not published to App Configu
 Every component receives the `base` profile. Add the others only when the component needs them.
 
 Container App profile assignments are reconciled during post-provisioning.
-For custom hosted services, deployment first verifies the actual routed agent
-version and its instance identity against the selected Foundry project, then
+For custom hosted services, foundation provisioning prepares registry pull
+access for the existing Foundry project managed identity. This is separate
+from capability-profile reconciliation for each hosted instance: deployment
+first verifies the actual routed agent version and its instance identity
+against the selected Foundry project, then
 reconciles the declared profiles before running the greeting smoke. No bundled
-orchestrator permissions are substituted for the custom definition. The
+orchestrator permissions are substituted for the custom definition, and this
+runtime check does not mean all instance grants precede image pull. The
 deployment identity needs permission to create these scoped role assignments;
 denied or ambiguous assignments fail deployment. RBAC propagation may require
-an idempotent retry with the same application and image.
+an explicit, idempotent retry with the same application and image after the
+reported failure; deployment does not silently bypass reconciliation.
 
 Key Vault profile assignments use the explicit `AZURE_KEY_VAULT_NAME` override
 when present, otherwise the foundation's `KEY_VAULT_NAME` output, followed by
@@ -158,15 +163,30 @@ wires registry pull authentication to the component's existing sole attached
 managed identity before deploying an immutable image. This adds no identity or
 RBAC assignment. The automatic wiring is specific to Container Apps and the
 platform ACR; configure access separately for other private registries. Hosted
-agents use the Foundry project identity, not Container App registry wiring.
+agents use the existing Foundry project managed identity for image pull, with
+the foundation's declarative `AcrPull` assignment on the platform ACR, not
+Container App registry wiring or a per-instance preactivation grant.
 Digest pinning does not bypass registry authorization.
 
 Foundation provisioning publishes the Foundry project and registry deployment
 outputs whenever those resources are enabled, even in classic topology.
-Custom hosted services do not require selection of the bundled hosted
-orchestrator merely to receive their project endpoint. After upgrading the
-foundation output correction, rerun provisioning to refresh the selected azd
-environment before deploying; do not copy endpoints from another environment.
+Selecting any custom `azure.ai.agent` component must also prepare the hosted
+foundation (`prepareHostedAgent=true`), even when the bundled orchestrator
+topology is classic. This does not deploy the bundled hosted orchestrator
+(`deployHostedAgent=false` for that classic topology) or change the topology.
+The selection correction tracked in
+[agent-landing-zone#695](https://github.com/Azure/agent-landing-zone/issues/695)
+is pending; a revision that only fixes foundation outputs is not sufficient
+to prepare project-identity image pull for this combination.
+For an existing failed custom hosted environment, use a platform revision
+containing the selection correction, keep the same definition and immutable
+image, select the environment with `azd env select <name>`, then run
+`azd hooks run preup`, `azd provision`, `azd env refresh`, and `azd deploy`
+from the platform repository root. Provisioning applies the declared
+project-identity pull assignment; refreshing alone cannot create it. Use a
+VNet-connected host for private environments. Do not copy endpoints from
+another environment or substitute broad manual grants, registry admin
+credentials, or an OIDC connection workaround.
 When an older environment has an empty project output, the quota preflight
 can discover a single existing Foundry project in the selected resource group.
 It credits only matching, successfully provisioned model allocations after
