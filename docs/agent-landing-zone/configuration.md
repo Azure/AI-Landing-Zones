@@ -79,35 +79,36 @@ pipeline. For Foundry IQ, also set `FOUNDRY_IQ_PATTERN=searchIndex` and
 existing Search schema/upgrade guards; the switch does not populate it.
 `FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` requires the ingestion app.
 
-!!! warning "Pinned UI compatibility — release blocker"
-    These source changes require a coordinated UI release and validated
-    umbrella pin update **before activating ingestion-free deployments**.
-    Pins are unchanged; the UI correction is not claimed as published here.
-    Until that dependency is integrated, explicitly retain
-    `DEPLOY_INGESTION_CONTAINER_APP=true`, including for fresh deployments
-    with the current UI pin.
+!!! warning "Publication pending — v4.3.0 / UI v3.3.0"
+    This guidance targets the proposed Agent Landing Zone **v4.3.0** release
+    with **agent-app-ui v3.3.0**. UI publication and the platform's validated
+    manifest pins must be confirmed before these docs are published or an
+    ingestion-free deployment is activated. The currently pinned combination
+    remains v4.2.3 / UI v3.2.2; this page does not claim that the proposed
+    releases are available.
 
-    UI v3.2.2 still sends chat attachments to Agent App Ingestion in both
-    classic and hosted modes. An empty endpoint does not disable that path:
-    the UI derives a `dataingest` URL or falls back to Dapr. Keep
-    `DEPLOY_INGESTION_CONTAINER_APP=true` if attachment uploads are required.
-    Native Blob source ingestion is not a replacement for conversation
-    uploads. Restricting attachments while retaining chat, authentication and
-    retrieval is a supported goal, but this UI pin has no independent upload
-    capability control. Its `.chainlit/config.toml` upload setting is
-    overwritten at startup to `not allow_anonymous`, and Entra Copilot
-    project settings force uploads on even when that TOML setting is false.
-    Do not enable anonymous authentication or change Copilot auth mode to
-    work around this limitation.
+**Versioned upgrade requirement.** Ingestion-free operation requires the
+coordinated v4.3.0 platform combination with the UI v3.3.0 upload gate.
+Upgrade the complete manifest-pinned combination, not only the configuration
+key or one application. Follow
+[the migration steps](operations.md#upgrade-ingestion-selection-to-v430).
 
-    The coordinated UI correction consumes the same
-    `DEPLOY_INGESTION_CONTAINER_APP` setting. A missing flag retains legacy
-    behavior; explicit `false` gates attachment controls, server handling and
-    client preflight before ingestion URL/Dapr resolution, while retaining
-    text chat, authentication and retrieval. Explicit `true` retains the
-    existing authentication/conversation eligibility checks; it does not
-    grant uploads unconditionally. Publishing the flag alone does not work
-    with UI v3.2.2. No native conversation upload implementation is implied.
+UI v3.2.2 sends chat attachments to Agent App Ingestion in both classic and
+hosted modes, regardless of the new flag. Keep
+`DEPLOY_INGESTION_CONTAINER_APP=true` on that older combination, including
+fresh deployments. An empty endpoint is not an opt-out: the UI derives a
+`dataingest` URL or falls back to Dapr. Its `.chainlit/config.toml` upload
+setting is overwritten at startup to `not allow_anonymous`, and Entra
+Copilot settings force uploads on even if that TOML setting is false.
+Do not change authentication policy to hide attachment controls.
+
+The UI v3.3.0 contract consumes `DEPLOY_INGESTION_CONTAINER_APP` under label
+`agent-lz`. A missing key preserves legacy behavior. Explicit `false` hides
+attachment controls and rejects server uploads and client preflight before
+ingestion URL/Dapr resolution; text chat, authentication and retrieval
+remain available. Explicit `true` retains the existing authentication and
+conversation eligibility checks, rather than granting uploads unconditionally.
+Native Blob source ingestion does not implement conversation uploads.
 
 Existing environments retain their prior component selection rather than
 silently adopting the fresh default. Custom application definitions retain

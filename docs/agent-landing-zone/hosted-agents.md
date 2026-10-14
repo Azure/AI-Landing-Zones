@@ -12,10 +12,13 @@ supported, configured Foundry IQ sources and is not feature-equivalent to
 the optional app. See
 [Ingestion application selection](configuration.md#ingestion-application-selection).
 
-The current UI v3.2.2 pin does not consume this flag to gate uploads.
-Explicitly retain `DEPLOY_INGESTION_CONTAINER_APP=true` until a coordinated
-UI release and validated umbrella pin update are integrated, before
-activating an ingestion-free deployment. The corrected UI's missing flag
+Ingestion-free hosted and classic deployments require the platform v4.3.0 /
+UI v3.3.0 combination after publication and validated manifest pins are
+confirmed. Follow the
+[versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
+On v4.2.3 / UI v3.2.2, retain `DEPLOY_INGESTION_CONTAINER_APP=true`;
+that older UI does not consume the flag to gate uploads.
+In the UI v3.3.0 contract, a missing flag
 retains legacy behavior; `false` gates controls and server/client upload
 paths, while `true` retains existing eligibility checks. This is not a native
 conversation upload implementation or a change to classic/hosted selection.

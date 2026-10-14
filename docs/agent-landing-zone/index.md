@@ -35,13 +35,19 @@ the configured source kinds, but is **not feature-equivalent** to the optional
 application. See [Ingestion application selection](configuration.md#ingestion-application-selection)
 before changing an existing deployment.
 
-!!! warning "Coordinated UI dependency"
-    The ingestion-free fresh default is part of the coordinated source change,
-    not a claim of a published release. The current UI v3.2.2 pin ignores the
-    ingestion selection for attachments. Keep the ingestion app explicitly
-    enabled until the coordinated UI upload gate has been released and pinned
-    in a validated umbrella combination. See the
-    [compatibility warning](configuration.md#ingestion-application-selection).
+!!! warning "Publication pending — v4.3.0 / UI v3.3.0"
+    The five changes described here target the proposed Agent Landing Zone
+    **v4.3.0** combination with **agent-app-ui v3.3.0**: optional ingestion,
+    guarded private Search readiness, shared-source permission options,
+    Search region/quota checks and opt-in firewall DNS proxy. UI publication
+    and validated platform pins are still prerequisites; this is not a claim
+    of release availability. Do not publish these docs before both are ready.
+
+Ingestion-free deployments require the coordinated v4.3.0 / UI v3.3.0
+combination. On v4.2.3 / UI v3.2.2, retain
+`DEPLOY_INGESTION_CONTAINER_APP=true`: that UI does not gate attachment uploads.
+See the [versioned compatibility requirements](configuration.md#ingestion-application-selection)
+and [upgrade runbook](operations.md#upgrade-ingestion-selection-to-v430).
 
 You can replace this application with your own. See [Custom applications](build-your-own-app.md).
 

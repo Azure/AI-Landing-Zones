@@ -52,6 +52,41 @@ azd deploy
 
 ## Change ingestion selection safely
 
+### Upgrade ingestion selection to v4.3.0
+
+This migration targets Agent Landing Zone **v4.3.0** with **agent-app-ui
+v3.3.0**. Publication and validated platform pins are prerequisites, not
+assumptions; see the
+[publication gate](configuration.md#ingestion-application-selection).
+
+1. Confirm that UI v3.3.0 is published and the platform v4.3.0 release
+   manifest pins its exact tag and commit. Compare the platform changelog
+   and GitHub Release **Component versions** table with that manifest for
+   the entire combination, including infrastructure provenance. Do not
+   activate ingestion-free operation with only a locally changed key.
+2. Record and retain the existing ingestion selection during the upgrade.
+   On the older v4.2.3 / UI v3.2.2 combination, explicitly retain `true`;
+   that UI does not enforce the upload gate.
+3. Upgrade the whole pinned platform combination using the selected
+   topology's full workflow. Verify that App Configuration publishes the
+   effective `DEPLOY_INGESTION_CONTAINER_APP` value under label `agent-lz`
+   and that the UI consumes it.
+4. Only then opt out if source/index bindings and ingestion requirements
+   support it, following the selection and validation steps below. Verify
+   that attachment controls are hidden and stale/direct uploads are
+   rejected, while text chat, authentication and retrieval still work.
+   Native source ingestion does not implement conversation uploads.
+
+For rollback to UI v3.2.2, restore the explicit ingestion selection to
+`true` and its required application endpoint/source configuration **before**
+restoring the older platform-pinned combination. Revalidate the full
+workflow and upload eligibility. Do not downgrade the UI while leaving an
+ingestion-free configuration or assume a missing endpoint disables uploads.
+Resource retirement and permission cleanup remain separately authorized
+operations; rollback must not delete documents or indexes.
+
+### Select and validate the ingestion path
+
 Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false`, but an
 upgrade must retain an existing environment's ingestion selection. Absence
 of the new variable is not permission to remove an existing component.
@@ -64,15 +99,11 @@ Foundry IQ ingestion covers your requirements; it is not feature-equivalent
 to the optional application. Export or back up relevant configuration and
 data before migration.
 
-With the currently pinned UI v3.2.2, chat attachments still require the
-ingestion app and ignore the new flag. A coordinated UI release and validated
-umbrella pin update are required **before activating ingestion-free deployments**;
-retain explicit `true` until that dependency is integrated. Native source ingestion
-does not make the attachment client optional. With the coordinated gate,
+In the v4.3.0 / UI v3.3.0 contract,
 `false` disables controls and server/client upload paths while retaining chat,
 authentication and retrieval; missing flags retain legacy behavior and `true`
-retains existing upload eligibility checks. See the
-[runtime compatibility warning](configuration.md#ingestion-application-selection).
+retains existing upload eligibility checks. On v4.2.3 / UI v3.2.2, retain
+explicit `true` until the versioned migration above is complete.
 
 Make the selection explicit before provisioning:
 

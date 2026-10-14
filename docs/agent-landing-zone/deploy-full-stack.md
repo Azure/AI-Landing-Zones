@@ -29,8 +29,12 @@ azd init -t azure/agent-landing-zone
 
 To pin a specific release, clone the repository at its tag instead:
 
+The v4.3.0 example below targets the coordinated UI v3.3.0 combination.
+Use it only after publication and validated platform pins are confirmed;
+see the [publication gate](configuration.md#ingestion-application-selection).
+
 ```bash
-git clone --branch v4.2.0 https://github.com/Azure/agent-landing-zone.git
+git clone --branch v4.3.0 https://github.com/Azure/agent-landing-zone.git
 cd agent-landing-zone
 ```
 
@@ -64,13 +68,13 @@ The legacy flags still work when `DEPLOYMENT_TOPOLOGY` is not set: `DEPLOY_HOSTE
 
 ### Choose ingestion independently
 
-!!! warning "Do not activate the fresh default with the old UI pin"
-    Ingestion-free deployments require the coordinated UI release and a
-    validated umbrella pin update. The current UI v3.2.2 ignores the selection
-    for attachments. Until that dependency is integrated, explicitly set
-    `DEPLOY_INGESTION_CONTAINER_APP=true` before provisioning. These source
-    changes do not imply that a new release has been published. See
-    [Pinned UI compatibility](configuration.md#ingestion-application-selection).
+!!! warning "Version requirement and publication gate"
+    Ingestion-free deployments require the coordinated platform v4.3.0 /
+    UI v3.3.0 combination, with publication and validated manifest pins
+    confirmed. On platform v4.2.3 / UI v3.2.2, explicitly set
+    `DEPLOY_INGESTION_CONTAINER_APP=true` before provisioning: the older UI
+    ignores the selection for attachments. See
+    [versioned compatibility requirements](configuration.md#ingestion-application-selection).
 
 Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false`.
 The default `foundry_iq` / `azureBlob` configuration uses native ingestion
@@ -91,7 +95,7 @@ authentication. Existing environments keep their prior selection, and
 explicit custom definitions keep their declared components. See
 [Ingestion application selection](configuration.md#ingestion-application-selection).
 
-With the coordinated UI gate, disabling ingestion disables attachment
+With the UI v3.3.0 gate, disabling ingestion disables attachment
 controls and rejects stale/direct uploads before resolving an ingestion
 endpoint; chat, authentication and retrieval remain available. Native source
 ingestion does not implement conversation uploads. Select the optional app

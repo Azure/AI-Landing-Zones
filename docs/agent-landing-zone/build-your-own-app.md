@@ -15,11 +15,19 @@ authentication contract. See
 [Ingestion application selection](configuration.md#ingestion-application-selection).
 
 For applications using the bundled UI, ingestion-free operation requires the
-coordinated upload gate and a validated release/pin update. UI v3.2.2 still
-calls the ingestion endpoint for attachments; do not activate the new
-ingestion-free default with that pin. Custom applications own their upload
+platform v4.3.0 / UI v3.3.0 combination, after publication and validated
+manifest pins are confirmed. Follow the
+[versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
+UI v3.2.2 still calls the ingestion endpoint for attachments; retain explicit
+`DEPLOY_INGESTION_CONTAINER_APP=true` on that older combination.
+Custom applications own their upload
 contract: native source ingestion does not implement conversation uploads
 or make an application-specific ingestion client optional.
+
+Custom definitions keep the legacy additive bundled composition, including
+the ingestion app, even when the bundled-only switch is `false`. Their
+published effective ingestion capability remains `true`; the raw switch is
+not permission to remove a custom or bundled dependency.
 
 ## How it works
 

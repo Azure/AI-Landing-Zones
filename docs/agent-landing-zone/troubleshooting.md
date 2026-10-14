@@ -248,27 +248,30 @@ explicitly select the app and rerun the full provisioning/deployment workflow.
 Do not silently remove an existing app or change UI authentication to repair
 selection. See [Change ingestion selection safely](operations.md#change-ingestion-selection-safely).
 
-If chat attachments fail despite successful native Blob ingestion, the pinned
-UI still depends on the ingestion application's upload endpoint. Clearing
-`INGESTION_BASE_URL` or `DATA_INGEST_APP_ENDPOINT` is not a runtime opt-out.
-Restore `DEPLOY_INGESTION_CONTAINER_APP=true` and use the complete workflow;
-do not point that client at a native Search source endpoint.
+**Check the version before repairing uploads.** Ingestion-free operation
+targets platform v4.3.0 / UI v3.3.0, after publication and validated manifest
+pins are confirmed. Follow the
+[versioned migration](operations.md#upgrade-ingestion-selection-to-v430);
+do not infer availability from these source docs.
 
-Manually setting `[features.spontaneous_file_upload].enabled=false` does not
-provide a supported workaround for pinned UI v3.2.2. Authenticated startup
-overwrites it to `true`, and Entra Copilot settings independently force it on.
-There is no authentication-independent upload switch at this pin. Preserve
-the authentication policy; do not select anonymous mode to hide attachment
-controls. A coordinated UI capability restriction is needed to retain
-working chat with explicitly unavailable attachments. That coordinated UI
-release and a validated umbrella pin update are required **before activating
-ingestion-free deployments**; until integrated, explicitly retain the
-ingestion app even in fresh environments. No new release or pin is claimed
-here. With the corrected UI, a missing flag keeps legacy behavior, explicit
-`false` gates controls, server upload handling and client preflight before
-endpoint/Dapr resolution, and `true` retains existing eligibility checks.
-Normal text chat, authentication and retrieval remain available; there is
-no native conversation upload implementation.
+On platform v4.2.3 / UI v3.2.2, attachments still depend on the ingestion
+application's upload endpoint. Retain or restore
+`DEPLOY_INGESTION_CONTAINER_APP=true` and use the complete workflow.
+Clearing `INGESTION_BASE_URL` or `DATA_INGEST_APP_ENDPOINT` is not an opt-out,
+and a native Search source endpoint is not an upload endpoint.
+Manually setting `[features.spontaneous_file_upload].enabled=false` is not
+a supported workaround for UI v3.2.2: authenticated startup overwrites it,
+and Entra Copilot settings independently force uploads on. Preserve the
+authentication policy; do not select anonymous mode to hide attachments.
+
+In the UI v3.3.0 contract, a missing App Configuration key keeps legacy
+behavior. Explicit `false` hides controls and rejects server uploads and
+client preflight before endpoint/Dapr resolution; `true` retains existing
+eligibility checks. If attachments remain available after opting out,
+verify the deployed manifest-pinned UI revision and the effective key under
+label `agent-lz`, rather than changing authentication or clearing endpoints.
+Normal text chat, authentication and retrieval remain available. Native
+source ingestion does not implement conversation uploads.
 
 ### Shared-source permission options are rejected or unexpected
 

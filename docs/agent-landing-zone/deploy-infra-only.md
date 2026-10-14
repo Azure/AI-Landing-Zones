@@ -78,12 +78,13 @@ The environment deploys one application. By default this is the bundled applicat
 
 The application identity (`AGENTLZ_APP_ID`) is bound to the environment on the first provision. Deploying a different application to the same environment fails the binding check; create a new environment instead.
 
-Before activating an ingestion-free bundled application, integrate the
-coordinated UI release and validated umbrella pin update. The current UI
-v3.2.2 does not gate attachment uploads on the new selection; retain
-`DEPLOY_INGESTION_CONTAINER_APP=true` until that dependency is integrated.
+Before activating an ingestion-free bundled application, complete the
+[v4.3.0 / UI v3.3.0 migration](operations.md#upgrade-ingestion-selection-to-v430),
+including confirmation of publication and validated manifest pins. On
+v4.2.3 / UI v3.2.2, retain `DEPLOY_INGESTION_CONTAINER_APP=true`;
+that older UI does not gate attachment uploads on the new selection.
 Native source ingestion is not a conversation upload implementation. See
-the [compatibility warning](configuration.md#ingestion-application-selection).
+the [versioned compatibility requirements](configuration.md#ingestion-application-selection).
 
 To deploy the application:
 
