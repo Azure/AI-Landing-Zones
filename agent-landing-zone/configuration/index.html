@@ -1634,10 +1634,22 @@ See <a href="../troubleshooting/#search-preflight-region-and-quota">Search prefl
 <td><code>false</code></td>
 <td>Keeps the classic orchestrator Container App while an existing environment moves to hosted.</td>
 </tr>
+<tr>
+<td><code>APP_CONFIG_TLS_COMPATIBILITY</code></td>
+<td><code>false</code></td>
+<td>Opt-in bootstrap transport for the App Configuration and application Key Vault endpoints; requires the coordinated runtime correction and <code>KEY_VAULT_URI</code>. See <a href="../hosted-agents/#configuration-tls-compatibility">Configuration TLS compatibility</a>.</td>
+</tr>
 </tbody>
 </table>
 <p>Other hosted defaults: CPU <code>2</code>, memory <code>4Gi</code>, Responses protocol <code>2.0.0</code>, Invocations protocol <code>1.0.0</code>, capability key ID <code>v1</code>, capability TTL <code>900</code> seconds, and history limits of <code>100</code> messages and <code>32000</code> characters.</p>
 <p><code>PREPARE_HOSTED_AGENT</code>, <code>HOSTED_AGENT_PREPARED</code> and <code>DEPLOY_HOSTED_AGENT</code> are managed by the deployment scripts. Do not set them by hand.</p>
+<p><code>APP_CONFIG_TLS_COMPATIBILITY</code> is a container environment variable, not an App
+Configuration key: it is read before remote configuration can load. Only <code>true</code>
+and <code>false</code> are accepted. The foundation's additive <code>KEY_VAULT_URI</code> output
+provides the deployed vault URI without hardcoding a cloud DNS suffix and is
+empty when the vault is not deployed. These coordinated corrections are included
+in Agent Landing Zone <strong>v4.2.3</strong>, which pins <strong>agent-app-ui v3.2.2</strong> and
+<strong>agent-app-orchestrator v5.2.1</strong>.</p>
 <h2 id="deployment-controls">Deployment controls</h2>
 <p>These variables change how the hooks behave. They do not change the deployed resources.</p>
 <table>
@@ -1676,6 +1688,10 @@ See <a href="../troubleshooting/#search-preflight-region-and-quota">Search prefl
 </table>
 <h2 id="runtime-settings">Runtime settings</h2>
 <p>Post-provision publishes runtime settings to Azure App Configuration with the label <code>agent-lz</code>. The applications read only that label.</p>
+<p>The corrected orchestrator's unlabelled selector uses the SDK's explicit null
+label (<code>"\0"</code>), not <code>None</code> (which means all labels). Existing service-label
+precedence is preserved; unrelated UI-labelled Key Vault references must not
+be pulled into the orchestrator's bootstrap.</p>
 <p>To change a runtime setting:</p>
 <ol>
 <li>Update the key in App Configuration with the label <code>agent-lz</code>.</li>

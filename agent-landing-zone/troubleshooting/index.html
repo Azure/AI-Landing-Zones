@@ -952,6 +952,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#hosted-configuration-tls-handshake-stalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted configuration TLS handshake stalls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-preflight-region-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1352,6 +1363,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#hosted-configuration-tls-handshake-stalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted configuration TLS handshake stalls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-preflight-region-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1662,6 +1684,27 @@ Then verify real user login, OBO, and document authorization. Do not switch
 to service identity or disable the panel to turn a missing-authentication
 failure into a passing acceptance result.</p>
 <h2 id="provision-and-post-provision-stages">Provision and post-provision stages</h2>
+<h3 id="hosted-configuration-tls-handshake-stalls">Hosted configuration TLS handshake stalls</h3>
+<p><strong>Symptom.</strong> The hosted container cannot finish loading App Configuration or
+resolving its Key Vault references despite verified private connectivity.
+The compatibility correction below requires Agent Landing Zone <strong>v4.2.3</strong>
+with <strong>agent-app-orchestrator v5.2.1</strong> and its hosted deployment definition.</p>
+<p><strong>Diagnosis.</strong> Distinguish DNS/routing/firewall failures, TLS handshake stalls,
+and HTTP authentication/authorization responses. Verify both endpoints from the
+relevant network, the actual runtime identity and its existing minimum roles.
+Do not treat a TLS success as proof of document authorization or infer that MTU
+is the established cause of every timeout.</p>
+<p><strong>Fix.</strong> For a confirmed transport compatibility case, use the endpoint-scoped,
+verified <a href="../hosted-agents/#configuration-tls-compatibility">configuration TLS profile</a>.
+Supply the actual application <code>KEY_VAULT_URI</code>, set
+<code>APP_CONFIG_TLS_COMPATIBILITY=true</code> and deploy the corrected agent version.
+Disable the profile with <code>false</code> and redeploy to restore the SDK default.
+Never use <code>verify=False</code>, downgrade globally to TLS 1.2, change caller identity
+or broaden RBAC to disguise the failure.</p>
+<p>If bootstrap unexpectedly tries to resolve a UI-only Key Vault reference,
+check the orchestrator's null-label selector: SDK <code>None</code> selects every label,
+whereas <code>"\0"</code> selects only unlabelled settings. Use the corrected selector
+without removing existing service-specific labels or weakening vault access.</p>
 <h3 id="search-preflight-region-and-quota">Search preflight region and quota</h3>
 <p><strong>Symptom.</strong> Foundation preflight reports Search provider availability or quota
 for <code>AZURE_LOCATION</code> even though <code>AZURE_SEARCH_LOCATION</code> selects another region,
@@ -1690,15 +1733,16 @@ the target deployment, so the second provision step of a hosted deployment
 can stop before Azure receives the incremental update.</p>
 <p><strong>Fix.</strong> Verify the selected environment, account location, deployment name,
 model/version and SKU. Do not disable preflight, reduce capacity just to pass
-the check, or delete the existing deployment. The correction tracked in
+the check, or delete the existing deployment. Agent Landing Zone <strong>v4.2.3</strong>
+includes the correction tracked in
 <a href="https://github.com/Azure/agent-landing-zone/pull/773">agent-landing-zone#773</a>
 uses one shared quota calculation for both gates. It credits only a verified,
 successful matching deployment in the selected subscription and resource group,
 checks increases against the remaining quota, and aggregates deployments using
 the same quota pool. Fresh allocations and unverified or changed targets still
 need their full capacity; model availability checks remain in place.
-Until that correction is released, record this as a preflight limitation, not
-successful hosted deployment acceptance.</p>
+For older releases, record this as a preflight limitation, not successful hosted
+deployment acceptance.</p>
 <h3 id="foundry-rejects-evaluation-api-key-creation">Foundry rejects evaluation API-key creation</h3>
 <p><strong>Message.</strong> <code>Failed to list key. disableLocalAuth is set to be true</code>.</p>
 <p><strong>Cause.</strong> The Foundry account requires Microsoft Entra ID. In v4.2.2,
@@ -1706,12 +1750,12 @@ post-provision still attempts to copy an evaluation API key to Key Vault;
 its final success message does not prove that this secret was created.
 This does not require enabling key authentication for the application.</p>
 <p><strong>Fix.</strong> Keep local authentication disabled and use Microsoft Entra ID for
-evaluation clients. The correction tracked in
+evaluation clients. Agent Landing Zone <strong>v4.2.3</strong> includes the correction tracked in
 <a href="https://github.com/Azure/agent-landing-zone/pull/773">agent-landing-zone#773</a>
 checks the account's authentication setting, explicitly reports key injection
 as not applicable for Entra-only accounts, and fails on unexpected key or
-Key Vault errors. Until that correction is released, record this post-provision
-limitation separately from application runtime results.</p>
+Key Vault errors. For older releases, record this post-provision limitation
+separately from application runtime results.</p>
 <h3 id="administrative-panel-cannot-resolve-its-cosmos-database">Administrative panel cannot resolve its Cosmos database</h3>
 <p><strong>Message.</strong> <code>DEPLOY_ADMINISTRATIVE_PANEL is true but DATABASE_ACCOUNT_NAME is not set</code>.</p>
 <p><strong>Cause.</strong> In v4.2.2, post-provision publishes the resolved account and database
@@ -1720,7 +1764,8 @@ panel role assignment expects them in the process environment.</p>
 <p><strong>Fix.</strong> Confirm these two non-secret settings under label <code>agent-lz</code> in the
 selected environment's App Configuration. For a split recovery, supply those
 same values to <code>config.panel.setup</code>; do not infer the database name from a
-resource-name pattern or widen the grants to the account scope. The correction
+resource-name pattern or widen the grants to the account scope. Agent Landing Zone
+<strong>v4.2.3</strong> includes the correction
 in <a href="https://github.com/Azure/agent-landing-zone/pull/773">agent-landing-zone#773</a>
 reads the published settings when process inputs are absent and preserves the
 existing container-scoped roles.</p>
