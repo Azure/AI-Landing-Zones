@@ -602,6 +602,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 3: Choose a topology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-ingestion-independently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose ingestion independently
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1049,6 +1066,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 3: Choose a topology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-ingestion-independently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose ingestion independently
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1127,7 +1161,7 @@
 
 
 <h1 id="deploy-full-stack">Deploy full stack</h1>
-<p>This guide deploys the infrastructure layer and the default application (Agent App UI, Agent App Orchestrator and Agent App Ingestion) into a new environment with public endpoints. For private networking, read this page and then <a href="../network-isolation/">Network isolation</a>.</p>
+<p>This guide deploys the infrastructure layer and the default application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App) into a new environment with public endpoints. For private networking, read this page and then <a href="../network-isolation/">Network isolation</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <p><strong>Azure permissions</strong></p>
 <ul>
@@ -1174,7 +1208,10 @@
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>azure/agent-landing-zone
 </code></pre></div>
 <p>To pin a specific release, clone the repository at its tag instead:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span>v4.2.0<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<p>The v4.3.0 example below selects the coordinated UI v3.3.0 combination.
+See the <a href="../#v430-component-combination">component pins</a> and
+<a href="../configuration/#ingestion-application-selection">versioned upgrade requirements</a>.</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span>v4.3.0<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
 <span class="nb">cd</span><span class="w"> </span>agent-landing-zone
 </code></pre></div>
 <p><code>infra/main.parameters.json</code> ships with the repository. You do not create or edit it; set parameters with <code>azd env set</code> instead (see <a href="../configuration/">Configuration</a>).</p>
@@ -1220,6 +1257,34 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>classic
 </code></pre></div>
 <p>The legacy flags still work when <code>DEPLOYMENT_TOPOLOGY</code> is not set: <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=false</code> selects <code>classic</code>, and <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=true</code> with <code>DEPLOY_ADMINISTRATIVE_PANEL=true</code> selects <code>hosted-panel</code>. An explicit <code>DEPLOYMENT_TOPOLOGY</code> always wins.</p>
+<h3 id="choose-ingestion-independently">Choose ingestion independently</h3>
+<div class="admonition warning">
+<p class="admonition-title">Versioned upgrade requirement</p>
+<p>Ingestion-free deployments require the coordinated platform v4.3.0 /
+UI v3.3.0 combination. On platform v4.2.3 / UI v3.2.2, explicitly set
+<code>DEPLOY_INGESTION_CONTAINER_APP=true</code> before provisioning: the older UI
+ignores the selection for attachments. See
+<a href="../configuration/#ingestion-application-selection">versioned compatibility requirements</a>.</p>
+</div>
+<p>Fresh environments default to <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>.
+The default <code>foundry_iq</code> / <code>azureBlob</code> configuration uses native ingestion
+for the configured Blob source; it does not need the ingestion Container App.
+Native ingestion does not provide every capability of Agent App Ingestion.
+Check your source kind, retrieval backend, source/index bindings and required
+ingestion features before choosing it.</p>
+<p>To select the optional application before provisioning:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<p>This choice works with both classic and hosted orchestration. It does not
+switch the retrieval backend, rebind sources or indexes, or change UI
+authentication. Existing environments keep their prior selection, and
+explicit custom definitions keep their declared components. See
+<a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>.</p>
+<p>With the UI v3.3.0 gate, disabling ingestion disables attachment
+controls and rejects stale/direct uploads before resolving an ingestion
+endpoint; chat, authentication and retrieval remain available. Native source
+ingestion does not implement conversation uploads. Select the optional app
+when those uploads are required, subject to the existing eligibility checks.</p>
 <h2 id="step-4-deploy">Step 4: Deploy</h2>
 <p><strong>Classic topology</strong></p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>up
@@ -1269,7 +1334,7 @@ Do not bypass the quota gate to complete this sequence.</p>
 <tr>
 <td>Deploy</td>
 <td><code>predeploy</code></td>
-<td>Validates the environment, clones each component at the commit pinned in <code>manifest.json</code>, builds its image and deploys it.</td>
+<td>Validates the environment, clones each selected component at the commit pinned in <code>manifest.json</code>, builds its image and deploys it.</td>
 </tr>
 </tbody>
 </table>
@@ -1277,8 +1342,8 @@ Do not bypass the quota gate to complete this sequence.</p>
 <ol>
 <li>Run <code>azd env get-value AZURE_RESOURCE_GROUP</code> and open the resource group in the Azure portal.</li>
 <li>Open the Container App whose name ends with <code>frontend</code> and browse to its URL.</li>
-<li>Upload a document to the <code>documents</code> container of the storage account. The ingestion component indexes it on its next run.</li>
-<li>Ask a question about the document in the UI.</li>
+<li>Upload a document to the configured source (<code>documents</code> for the default Blob configuration). Verify that the selected native or application-managed ingestion path has processed it; do not expect an ingestion Container App in a fresh native deployment.</li>
+<li>Ask a question about the document in the UI, then verify document allow/deny behavior with the intended user identities. A successful answer alone does not prove authorization.</li>
 </ol>
 <h2 id="clean-up">Clean up</h2>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>down<span class="w"> </span>--purge

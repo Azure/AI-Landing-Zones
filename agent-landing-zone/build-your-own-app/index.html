@@ -1183,8 +1183,29 @@
 
 
 <h1 id="custom-applications">Custom applications</h1>
-<p>Agent Landing Zone deploys the default application (Agent App UI, Agent App Orchestrator, and Agent App Ingestion) unless you select a different one. You can deploy your own application on the same platform by describing it in an <strong>application definition</strong>: a JSON file validated against <code>contracts/app-definition-v1.schema.json</code>.</p>
+<p>Agent Landing Zone deploys the default application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App) unless you select a different one. You can deploy your own application on the same platform by describing it in an <strong>application definition</strong>: a JSON file validated against <code>contracts/app-definition-v1.schema.json</code>.</p>
 <p>The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.</p>
+<p><code>DEPLOY_INGESTION_CONTAINER_APP</code> controls ingestion selection for the bundled
+application, not the components of an explicit custom definition. Custom
+definitions retain their declared component intent, including a component
+named <code>ingestion</code>. Do not remove a required custom component because the
+fresh bundled application defaults to native ingestion. Native ingestion
+supports configured Foundry IQ source kinds and is not feature-equivalent
+to Agent App Ingestion; it does not change your source/index bindings or
+authentication contract. See
+<a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>.</p>
+<p>For applications using the bundled UI, ingestion-free operation requires the
+platform v4.3.0 / UI v3.3.0 manifest-pinned combination. Follow the
+<a href="../operations/#upgrade-ingestion-selection-to-v430">versioned migration</a>.
+UI v3.2.2 still calls the ingestion endpoint for attachments; retain explicit
+<code>DEPLOY_INGESTION_CONTAINER_APP=true</code> on that older combination.
+Custom applications own their upload
+contract: native source ingestion does not implement conversation uploads
+or make an application-specific ingestion client optional.</p>
+<p>Custom definitions keep the legacy additive bundled composition, including
+the ingestion app, even when the bundled-only switch is <code>false</code>. Their
+published effective ingestion capability remains <code>true</code>; the raw switch is
+not permission to remove a custom or bundled dependency.</p>
 <h2 id="how-it-works">How it works</h2>
 <ol>
 <li>You write an application definition and an <code>azure.yaml</code> that describes how to build each component.</li>
@@ -1376,7 +1397,7 @@ rather than guessing which vault should receive application permissions.</p>
 <td><code>model-user</code>, <code>retrieval-reader</code>, <code>conversation-store</code></td>
 </tr>
 <tr>
-<td>Ingestion</td>
+<td>Ingestion (when selected)</td>
 <td><code>model-user</code>, <code>conversation-store</code>, <code>ingestion-writer</code></td>
 </tr>
 </tbody>

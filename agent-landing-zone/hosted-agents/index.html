@@ -1184,6 +1184,24 @@
 
 <h1 id="hosted-agents">Hosted agents</h1>
 <p>Agent Landing Zone can run the Agent App Orchestrator in two ways: as a <strong>Foundry hosted agent</strong> in Foundry Agent Service, or as a <strong>Container App</strong> (the classic topology). The topology is selected with <code>DEPLOYMENT_TOPOLOGY</code>.</p>
+<p>Ingestion is a separate choice: <code>DEPLOY_INGESTION_CONTAINER_APP</code> defaults to
+<code>false</code> for fresh environments and retains the prior selection in existing
+ones. Both hosted topologies and classic orchestration support the selected
+ingestion path. Disabling the ingestion app preserves chat, delegated
+authentication, retrieval and document authorization with the UI v3.3.0
+gate, but attachments can require the optional app. Native ingestion applies only to
+supported, configured Foundry IQ sources and is not feature-equivalent to
+the optional app. See
+<a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>.</p>
+<p>Ingestion-free hosted and classic deployments require the platform v4.3.0 /
+UI v3.3.0 manifest-pinned combination. Follow the
+<a href="../operations/#upgrade-ingestion-selection-to-v430">versioned migration</a>.
+On v4.2.3 / UI v3.2.2, retain <code>DEPLOY_INGESTION_CONTAINER_APP=true</code>;
+that older UI does not consume the flag to gate uploads.
+In the UI v3.3.0 contract, a missing flag
+retains legacy behavior; <code>false</code> gates controls and server/client upload
+paths, while <code>true</code> retains existing eligibility checks. This is not a native
+conversation upload implementation or a change to classic/hosted selection.</p>
 <h2 id="topologies">Topologies</h2>
 <table>
 <thead>
@@ -1374,7 +1392,7 @@ the UI. Verify that <code>/auth/oauth/azure-ad</code> redirects to Entra with an
 <code>redirect_uri</code> that exactly matches the registered callback. An HTTP callback
 behind an HTTPS frontend is not a consent problem; correct the canonical URL
 and restart the UI rather than registering an insecure callback.</p>
-<p>For <code>hosted-panel</code>, ingestion also requires the OAuth tenant and client ID;
+<p>For <code>hosted-panel</code> with the optional ingestion app selected, that app also requires the OAuth tenant and client ID;
 the administrative panel has no development authentication bypass. Respect
 the tenant's credential-lifetime policy, record the credential expiration,
 and rotate the Key Vault credential before it expires. A persistent

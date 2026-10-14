@@ -731,6 +731,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Verify private connectivity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opt-in-firewall-dns-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opt-in firewall DNS proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#private-native-blob-ingestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private native Blob ingestion
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1151,6 +1179,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Verify private connectivity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opt-in-firewall-dns-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Opt-in firewall DNS proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#private-native-blob-ingestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private native Blob ingestion
+      
+    </span>
+  </a>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1312,22 +1368,32 @@ azd<span class="w"> </span>deploy
 </li>
 </ol>
 <h3 id="application-specific-package-feeds">Application-specific package feeds</h3>
-<p>The default build-subnet firewall rules allow common language and OS package
-registries. They do not allow every mirror recorded in an application's
-lockfile. Check the <code>resolved</code> URLs and download redirects for the exact
-component commit before building.</p>
+<p>The root deployment defaults include dependency-verified package feed
+destinations alongside common language and OS package registries, through
+the scoped foundation build-egress configuration. This is a build-only
+allowlist, not a runtime or general Internet exception. It does not allow
+every mirror recorded in a custom application's lockfile. Check the
+<code>resolved</code> URLs and download redirects for the exact component commit
+before building.</p>
 <p>For additional dependencies, set
 <code>parameters.additionalAcrTaskBuildFqdns.value</code> in <code>main.parameters.json</code> and
 provision the updated configuration. This is an explicit array, not an <code>azd</code>
 environment variable. Copy the same parameter file to a VNet-connected runner
 so a later provision preserves the setting.</p>
-<p>For example, the orchestrator <code>v5.2.0</code> frontend lockfile uses
+<p>The orchestrator <code>v5.2.1</code> frontend lockfile uses
 <code>ms-feed-2.pkgs.visualstudio.com</code>, <code>ms-feed-12.pkgs.visualstudio.com</code>,
 <code>ms-feed-17.pkgs.visualstudio.com</code>, and <code>ms-feed-25.pkgs.visualstudio.com</code>.
 Their public package downloads redirect to <code>*.vsblob.vsassets.io</code>.
-These application-specific hosts are not landing-zone defaults.
-With <code>extendFirewallForAcrTaskBuilds=true</code>, additional hosts are allowed only
-from the build-agent subnet over HTTPS on port 443. Do not enable public
+These four exact feeds and the redirect CDN are included in the Agent Landing
+Zone default build allowlist; <code>packages.microsoft.com</code> is already included in
+the OS-package rule and does not need an additional entry.
+With <code>extendFirewallForAcrTaskBuilds=true</code> (the default) and an effective ACR
+Task agent pool, the feeds, redirect CDN, and additional hosts are allowed only
+from the build-agent subnet over HTTPS on port 443. They are not added to
+jumpbox, application, or agent-subnet rules. The additional-host array defaults
+to empty. Disabling the build-egress extension removes these package rules;
+re-enabling it restores them. This egress rule has no DNS-proxy dependency and
+does not change client DNS. Do not enable public
 registry access, allow all Internet egress, disable TLS verification, or
 change dependency integrity hashes to work around a failed build.</p>
 <p>See <a href="../troubleshooting/#package-installation-fails-inside-the-build-pool">Package installation fails inside the build pool</a>
@@ -1361,6 +1427,79 @@ for diagnosis.</p>
 </tbody>
 </table>
 <p>If DNS returns a public address, the host is not using the private DNS zones. Check the VNet link of the zone, or the DNS forwarder on your VPN or hub.</p>
+<h3 id="opt-in-firewall-dns-proxy">Opt-in firewall DNS proxy</h3>
+<p>The DNS proxy opt-in and guarded private ingestion guidance below target
+platform v4.3.0. Use the platform release's exact infrastructure tree and
+<a href="../#v430-component-combination">component combination</a>; the upstream
+infrastructure provenance alone does not include platform-owned changes.</p>
+<p><code>ENABLE_FIREWALL_DNS_PROXY</code> defaults to <code>false</code> and maps to the Bicep boolean
+<code>enableFirewallDnsProxy</code> (also default <code>false</code>), which sets
+<code>dnsSettings.enableProxy</code>. It applies only when the existing
+<code>deployAzureFirewall</code> and <code>networkIsolation</code> gates enable firewall deployment.
+Opt in only for a topology that deliberately uses the firewall as its DNS
+forwarding path:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ENABLE_FIREWALL_DNS_PROXY<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>provision
+</code></pre></div>
+<p>The selection persists through normal provisioning; enabling the proxy does
+<strong>not</strong> redirect VNet or VPN clients to the firewall or rewrite their DNS
+configuration. It is independent of the build-feed egress allowlist.</p>
+<p>Confirm the actual client DNS path and private-zone resolution separately
+from proxy enablement. A proxy cannot repair missing private DNS zone links,
+VPN routes or application authentication. For rollback, set
+<code>ENABLE_FIREWALL_DNS_PROXY=false</code> and provision only after confirming that
+the deployed DNS path does not depend on it.</p>
+<h2 id="private-native-blob-ingestion">Private native Blob ingestion</h2>
+<p>Private <code>azureBlob</code> ingestion uses Search-managed outbound shared private
+links. Before dependent Search cleanup/mutation and again before native
+knowledge source creation, configuration verifies the exact
+deployment-owned Search shared links, their expected targets and groups.
+This guarded implementation does <strong>not</strong> automatically approve target-side
+connections: pending links require authorized administrator approval.</p>
+<p>The gate is limited to <code>NETWORK_ISOLATION=true</code>, <code>RETRIEVAL_BACKEND=foundry_iq</code>
+and rendered native <code>azureBlob</code> sources, excluding the <code>searchIndex</code> pattern.
+It checks the application Search link to deployment Blob storage (<code>blob</code>)
+and the links to the deployment Foundry account (<code>openai_account</code>,
+<code>foundry_account</code>, <code>cognitiveservices_account</code>). It does not configure the
+separate Foundry Search service or unrelated services. Exact names come from
+the template's <code>SEARCH_SHARED_PRIVATE_LINKS</code> manifest, including bounded
+Foundry names. The exact Search shared-link GET must return the expected
+name, target and group; if its body includes a resource ID, that must match
+too.</p>
+<p>Microsoft documents that the backend endpoint is provisioned in a
+Microsoft-managed tenant. A target PEC can contain an opaque
+<code>Microsoft.Network/privateEndpoints</code> ID and omit a source Search/link
+binding; its name or request message alone is not proof of ownership.
+Configuration therefore does not enumerate target PECs, follow their
+pagination links, or write approvals. See Microsoft's
+<a href="https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private">approval and shared-link status procedure, sections 2 and 3</a>.</p>
+<p>A <code>Pending</code> source link stops immediately with its exact Search ID, target
+ID, group and link name for administrator investigation and approval.
+After approval, rerun configuration. An approved source still needs to be
+ready; ARM visibility alone does not prove readiness. A timeout or denied
+Search read permission is a configuration failure, not a reason to enable
+public access or bypass readiness. See
+<a href="../troubleshooting/#search-shared-private-links-are-not-ready">Search shared private links are not ready</a>.</p>
+<p>Polling has a 600-second total readiness budget, a 10-second interval and
+ARM request timeouts of at most 30 seconds (limited by the remaining budget).
+Each exact Search shared link must be <code>Approved</code> and <code>Succeeded</code>, the
+documented source-side readiness signal. Approved links whose provisioning
+is still propagating use bounded polling; pending approval does not spend
+this budget waiting for an unprovable target match. Administrator-approved
+links are usable even when target PECs are paginated, opaque or unreadable
+by the runner. The existing Azure CLI/managed-identity credential is reused;
+the runner needs Search shared-link read permission, with no new secret,
+target PEC read/write requirement or automatic RBAC grant.</p>
+<p>Native ingestion supports configured Foundry IQ source kinds and is not
+feature-equivalent to Agent App Ingestion. Choosing it does not remove
+Entra ID/OBO, RBAC or document-level authorization. In particular,
+<code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]</code> is a deliberate shared-source
+metadata choice for active, supported non-ADLS native Blob ingestion, not a
+workaround for a private connection failure. Infrastructure-published <code>[]</code>
+for <code>ai_search</code> (any pattern) or <code>foundry_iq</code> / <code>searchIndex</code> is accepted as
+unused metadata, not a shared-source opt-in: no native Blob source is rendered.
+See
+<a href="../configuration/#explicit-shared-source-permission-options">Explicit shared-source permission options</a>.</p>
 <h2 id="integrate-with-an-existing-hub">Integrate with an existing hub</h2>
 <p>To place the landing zone in an existing hub-and-spoke network, use the <code>ailz-integrated</code> deployment mode:</p>
 <table>

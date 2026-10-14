@@ -1140,8 +1140,15 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 python<span class="w"> </span>-m<span class="w"> </span>config.deployment.outputs
 </code></pre></div>
 <h2 id="add-an-application-later">Add an application later</h2>
-<p>The environment deploys one application. By default this is the application described in <code>app-definition.json</code> (Agent App UI, Agent App Orchestrator and Agent App Ingestion). To use another application, point <code>AGENTLZ_APP_DEFINITION</code> at its definition file before the first deployment; see <a href="../build-your-own-app/">Custom applications</a>.</p>
+<p>The environment deploys one application. By default this is the bundled application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App). Fresh environments default to native ingestion for supported, configured Foundry IQ sources with <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>; existing environments retain their selection. Choose ingestion before provisioning so the provisioned resources and deployed components agree; see <a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>. To use another application, point <code>AGENTLZ_APP_DEFINITION</code> at its definition file before the first deployment; explicit custom definitions retain their declared components. See <a href="../build-your-own-app/">Custom applications</a>.</p>
 <p>The application identity (<code>AGENTLZ_APP_ID</code>) is bound to the environment on the first provision. Deploying a different application to the same environment fails the binding check; create a new environment instead.</p>
+<p>Before activating an ingestion-free bundled application, complete the
+<a href="../operations/#upgrade-ingestion-selection-to-v430">v4.3.0 / UI v3.3.0 migration</a>,
+using the complete manifest-pinned combination. On
+v4.2.3 / UI v3.2.2, retain <code>DEPLOY_INGESTION_CONTAINER_APP=true</code>;
+that older UI does not gate attachment uploads on the new selection.
+Native source ingestion is not a conversation upload implementation. See
+the <a href="../configuration/#ingestion-application-selection">versioned compatibility requirements</a>.</p>
 <p>To deploy the application:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>

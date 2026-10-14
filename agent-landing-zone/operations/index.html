@@ -807,6 +807,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#change-ingestion-selection-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change ingestion selection safely
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Change ingestion selection safely">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-ingestion-selection-to-v430" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade ingestion selection to v4.3.0
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-and-validate-the-ingestion-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select and validate the ingestion path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#private-ingestion-and-shared-source-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private ingestion and shared-source recovery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#identity-and-roles" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1069,6 +1119,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#change-ingestion-selection-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Change ingestion selection safely
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Change ingestion selection safely">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-ingestion-selection-to-v430" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade ingestion selection to v4.3.0
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-and-validate-the-ingestion-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select and validate the ingestion path
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#private-ingestion-and-shared-source-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private ingestion and shared-source recovery
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#identity-and-roles" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1253,7 +1353,7 @@ git<span class="w"> </span>checkout<span class="w"> </span>vX.Y.Z
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="k">select</span><span class="w"> </span>&lt;environment&gt;
 azd<span class="w"> </span>up
 </code></pre></div>
-<p><code>azd up</code> re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every pinned component.</p>
+<p><code>azd up</code> re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every selected pinned component.</p>
 </li>
 </ol>
 <div class="admonition warning">
@@ -1264,7 +1364,117 @@ azd<span class="w"> </span>up
 <p>When the infrastructure is unchanged and you only need to push the pinned application components again (for example, after a failed deployment or a configuration change that requires new revisions):</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
-<p><code>azd deploy</code> runs the <code>predeploy</code> hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each component at the tag and commit pinned in <code>manifest.json</code>. Deployment logs for each component are written to <code>&lt;component&gt;/.logs</code> in the sibling checkout.</p>
+<p><code>azd deploy</code> runs the <code>predeploy</code> hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each selected component at the tag and commit pinned in <code>manifest.json</code>. Deployment logs for each component are written to <code>&lt;component&gt;/.logs</code> in the sibling checkout.</p>
+<h2 id="change-ingestion-selection-safely">Change ingestion selection safely</h2>
+<h3 id="upgrade-ingestion-selection-to-v430">Upgrade ingestion selection to v4.3.0</h3>
+<p>This migration targets Agent Landing Zone <strong>v4.3.0</strong> with <strong>agent-app-ui
+v3.3.0</strong>. Use the complete
+<a href="../#v430-component-combination">component combination</a>, not an
+independently upgraded UI or a locally edited configuration key.</p>
+<ol>
+<li>Confirm that UI v3.3.0 is published and the platform v4.3.0 release
+   manifest pins its exact tag and commit. Compare the platform changelog
+   and GitHub Release <strong>Component versions</strong> table with that manifest for
+   the entire combination, including infrastructure provenance. Do not
+   activate ingestion-free operation with only a locally changed key.</li>
+<li>Record and retain the existing ingestion selection during the upgrade.
+   On the older v4.2.3 / UI v3.2.2 combination, explicitly retain <code>true</code>;
+   that UI does not enforce the upload gate.</li>
+<li>Upgrade the whole pinned platform combination using the selected
+   topology's full workflow. Verify that App Configuration publishes the
+   effective <code>DEPLOY_INGESTION_CONTAINER_APP</code> value under label <code>agent-lz</code>
+   and that the UI consumes it.</li>
+<li>Only then opt out if source/index bindings and ingestion requirements
+   support it, following the selection and validation steps below. Verify
+   that attachment controls are hidden and stale/direct uploads are
+   rejected, while text chat, authentication and retrieval still work.
+   Native source ingestion does not implement conversation uploads.</li>
+</ol>
+<p>For rollback to UI v3.2.2, restore the explicit ingestion selection to
+<code>true</code> and its required application endpoint/source configuration <strong>before</strong>
+restoring the older platform-pinned combination. Revalidate the full
+workflow and upload eligibility. Do not downgrade the UI while leaving an
+ingestion-free configuration or assume a missing endpoint disables uploads.
+Resource retirement and permission cleanup remain separately authorized
+operations; rollback must not delete documents or indexes.</p>
+<h3 id="select-and-validate-the-ingestion-path">Select and validate the ingestion path</h3>
+<p>Fresh environments default to <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>, but an
+upgrade must retain an existing environment's ingestion selection. Absence
+of the new variable is not permission to remove an existing component.
+Explicit custom definitions retain their component intent.</p>
+<p>Before opting out of the bundled ingestion app, record the current selection,
+retrieval backend, configured source kind, source/index bindings and any
+application-managed ingestion dependencies. Confirm that supported native
+Foundry IQ ingestion covers your requirements; it is not feature-equivalent
+to the optional application. Export or back up relevant configuration and
+data before migration.</p>
+<p>In the v4.3.0 / UI v3.3.0 contract,
+<code>false</code> disables controls and server/client upload paths while retaining chat,
+authentication and retrieval; missing flags retain legacy behavior and <code>true</code>
+retains existing upload eligibility checks. On v4.2.3 / UI v3.2.2, retain
+explicit <code>true</code> until the versioned migration above is complete.</p>
+<p>Make the selection explicit before provisioning:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
+</code></pre></div>
+<p>Use <code>true</code> to retain or restore the optional app. Run the selected topology's
+full <a href="../deploy-full-stack/#step-4-deploy">deployment workflow</a>, not only
+<code>azd deploy</code>, so provisioning, post-provision reconciliation and application
+deployment use the same component selection. For private environments use a
+connected runner. Switching classic/hosted orchestration does not select an
+ingestion path. Chat/authentication/retrieval are separate from attachment
+eligibility.</p>
+<p>Validate source processing, retrieval and document authorization before
+retiring any old ingestion dependency. Do not delete an existing app,
+documents or indexes merely to match the fresh default. Explicit opt-out
+excludes the component from subsequent provisioning, deployment and
+reconciliation; it does not delete a deployed app or revoke its existing
+identity/RBAC. Any resource retirement or permission cleanup is a separate,
+deliberately authorized operation. To roll back,
+restore the previous explicit selection and source/index configuration, then
+rerun the matching deployment workflow and revalidate. Enabling the app alone
+does not change a retrieval backend or repair source bindings.</p>
+<h2 id="private-ingestion-and-shared-source-recovery">Private ingestion and shared-source recovery</h2>
+<p>Native <code>azureBlob</code> source configuration must wait for its required
+Search-managed outbound shared private links. This guarded implementation
+does not automatically approve target requests; pending links stop
+immediately with the exact deployment Search service, link name, target
+resource and expected group. Use an authorized administrator to investigate
+and approve that exact request. Never approve all pending requests.
+Approved source links use bounded readiness polling; denied Search read
+permissions or a timeout require operator recovery, not bypassing the gate. See
+<a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
+<p>Configuration checks readiness before dependent Search cleanup/mutation and
+again before native source creation. Recovery is idempotent: after an
+administrator approves the exact target connection, rerun configuration;
+only the exact source Search links are read, with no target PEC enumeration
+or approval writes or pagination. The readiness budget is 600 seconds with
+10-second polling and each ARM request is limited to at most 30 seconds,
+bounded by the remaining budget. Each source link must report <code>Approved</code> and <code>Succeeded</code>, as
+<a href="https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private">Microsoft documents in section 3</a>.
+Opaque Microsoft-managed endpoint identities or paginated target collections
+do not block already-approved sources. This is an ARM readiness check, not
+proof of end-to-end network reachability or successful document ingestion.</p>
+<p>For active native Blob ingestion,
+<code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]</code> is an explicit shared-source
+choice, not a private-link repair. It requires a recognized non-ADLS
+<code>azureBlob</code> source kind using <code>foundry_iq</code> and the <code>azureBlob</code> pattern (or
+historical <code>managed</code> compatibility alias). For <code>ai_search</code> with any pattern,
+or <code>foundry_iq</code> with <code>searchIndex</code>, infrastructure-published <code>[]</code> is accepted
+as unused metadata: no native Blob source is rendered, and no shared-source
+opt-in is implied. Active ADLS or mismatched/ambiguous source configuration
+still fails closed. Record
+the source audience and permission metadata before changing it. Omission
+or actual null preserves <code>["rbacScope"]</code>; textual <code>null</code> and other invalid
+input fail closed. Roll back to protected ingestion with <code>["rbacScope"]</code>,
+rerun source configuration, and verify source/index metadata and document
+allow/deny behavior. Do not assume already-ingested documents are protected
+merely because the setting has changed. Other sources, Entra ID/OBO, RBAC
+and network restrictions must remain unchanged.</p>
+<p>Set <code>ENABLE_FIREWALL_DNS_PROXY=false</code> and provision to disable the firewall
+DNS proxy only after confirming the DNS path does not rely on it. The
+default-off opt-in does not rewrite VNet or VPN DNS settings and is independent
+of build-feed egress. Reverting a private-link readiness gate does not revoke
+approved connections: revocation is a separate, deliberate operator action.</p>
 <h2 id="identity-and-roles">Identity and roles</h2>
 <p>Every application uses its own user-assigned managed identity. No keys or connection strings are stored in application settings.</p>
 <p>All applications receive these base roles:</p>
@@ -1312,7 +1522,7 @@ azd<span class="w"> </span>up
 <td><code>model-user</code>, <code>retrieval-reader</code>, <code>conversation-store</code></td>
 </tr>
 <tr>
-<td>Agent App Ingestion</td>
+<td>Agent App Ingestion (when selected)</td>
 <td><code>model-user</code>, <code>conversation-store</code>, <code>ingestion-writer</code></td>
 </tr>
 </tbody>

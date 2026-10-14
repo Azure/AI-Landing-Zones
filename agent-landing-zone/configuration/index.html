@@ -718,6 +718,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#ingestion-application-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ingestion application selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-region-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -733,6 +744,17 @@
     <span class="md-ellipsis">
       
         Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicit-shared-source-permission-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit shared-source permission options
       
     </span>
   </a>
@@ -1098,6 +1120,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#ingestion-application-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ingestion application selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#search-region-and-quota" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1113,6 +1146,17 @@
     <span class="md-ellipsis">
       
         Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#explicit-shared-source-permission-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Explicit shared-source permission options
       
     </span>
   </a>
@@ -1367,6 +1411,76 @@
 </tbody>
 </table>
 <p>Parameters that start with <code>EXISTING_</code> reuse a resource instead of creating one. They are listed in <a href="#network-and-security">Network and security</a>.</p>
+<h3 id="ingestion-application-selection">Ingestion application selection</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Fresh-environment default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOY_INGESTION_CONTAINER_APP</code></td>
+<td><code>false</code></td>
+<td>Selects the optional Agent App Ingestion Container App in the bundled application, independently of <code>DEPLOYMENT_TOPOLOGY</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>With the component disabled, it is excluded from provisioning parameters,
+checkout, build, deployment, endpoint reconciliation, identity discovery,
+role assignment and panel RBAC. UI chat, authentication and retrieval remain
+available with the UI v3.3.0 upload gate described below; attachment
+eligibility is a separate capability. This
+switch does <strong>not</strong> select a retrieval backend, configure a new source, rebind
+an index, or remove document authorization.</p>
+<p>Use native ingestion only for supported, configured Foundry IQ sources, such
+as the default <code>azureBlob</code> source. Native ingestion and Agent App Ingestion
+are not feature-equivalent. Unsupported combinations must fail explicitly;
+disabling the app is not a way to make an unconfigured source ingest documents.
+An ingestion-free <code>ai_search</code> or Foundry IQ <code>searchIndex</code> deployment must
+explicitly bind <code>SEARCH_RAG_INDEX_NAME</code> to an index populated by an independent
+pipeline. For Foundry IQ, also set <code>FOUNDRY_IQ_PATTERN=searchIndex</code> and
+<code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=searchIndex</code>. The named index must satisfy the
+existing Search schema/upgrade guards; the switch does not populate it.
+<code>FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true</code> requires the ingestion app.</p>
+<p><strong>Versioned upgrade requirement.</strong> Ingestion-free operation requires the
+Agent Landing Zone <strong>v4.3.0</strong> combination with <strong>agent-app-ui v3.3.0</strong>.
+Upgrade the complete manifest-pinned combination, not only the configuration
+key or one application. Follow
+<a href="../operations/#upgrade-ingestion-selection-to-v430">the migration steps</a>.</p>
+<p>UI v3.2.2 sends chat attachments to Agent App Ingestion in both classic and
+hosted modes, regardless of the new flag. Keep
+<code>DEPLOY_INGESTION_CONTAINER_APP=true</code> on that older combination, including
+fresh deployments. An empty endpoint is not an opt-out: the UI derives a
+<code>dataingest</code> URL or falls back to Dapr. Its <code>.chainlit/config.toml</code> upload
+setting is overwritten at startup to <code>not allow_anonymous</code>, and Entra
+Copilot settings force uploads on even if that TOML setting is false.
+Do not change authentication policy to hide attachment controls.</p>
+<p>The UI v3.3.0 contract consumes <code>DEPLOY_INGESTION_CONTAINER_APP</code> under label
+<code>agent-lz</code>. A missing key preserves legacy behavior. Explicit <code>false</code> hides
+attachment controls and rejects server uploads and client preflight before
+ingestion URL/Dapr resolution; text chat, authentication and retrieval
+remain available. Explicit <code>true</code> retains the existing authentication and
+conversation eligibility checks, rather than granting uploads unconditionally.
+Native Blob source ingestion does not implement conversation uploads.</p>
+<p>Existing environments retain their prior component selection rather than
+silently adopting the fresh default. Custom application definitions retain
+their explicit component intent. Before opting out in an existing environment,
+check source/index bindings and any application-managed ingestion dependencies.
+See <a href="../operations/#change-ingestion-selection-safely">Change ingestion selection safely</a>.</p>
+<p>Selection accepts only <code>true</code> or <code>false</code>. Pre-provision persists the resolved
+boolean into the azd environment, and provisioning/post-provision publish the
+same value under App Configuration label <code>agent-lz</code>. A populated existing
+environment without any prior selection retains ingestion (<code>true</code>); an empty
+azd-created resource group is fresh (<code>false</code>). When the local setting is
+missing, existing persisted selection is read rather than guessed. A failed
+state lookup requires an explicit selection or restored access. Custom
+definitions retain the existing additive bundled composition, including its
+ingestion app, even if this bundled-only switch is <code>false</code>. For these custom
+definitions, the published effective ingestion capability is <code>true</code>,
+consistent with the selected components rather than the raw bundled-only flag.</p>
 <h3 id="search-region-and-quota">Search region and quota</h3>
 <p><code>AZURE_SEARCH_LOCATION</code> resolves the effective Bicep <code>searchServiceLocation</code>;
 an unset or empty value falls back to <code>AZURE_LOCATION</code>. Both newly created
@@ -1439,6 +1553,55 @@ See <a href="../troubleshooting/#search-preflight-region-and-quota">Search prefl
 </tbody>
 </table>
 <p>Other retrieval defaults: billing plan <code>free</code>, semantic configuration <code>default</code>, security field <code>metadata_security_id</code>, storage container <code>documents</code>, content extraction mode <code>standard</code>, ingestion permission options <code>["rbacScope"]</code>, and the filter add-on disabled.</p>
+<p>For network-isolated native Blob configuration, infrastructure publishes
+<code>SEARCH_SHARED_PRIVATE_LINKS</code> as a JSON array under label <code>agent-lz</code>. This is
+post-provision metadata, not an operator switch or a runtime retrieval setting.
+Each entry records the template-owned <code>name</code>, <code>groupId</code> and
+<code>privateLinkResourceId</code>. Configuration cross-checks these against
+<code>SEARCH_SERVICE_RESOURCE_ID</code>, <code>STORAGE_ACCOUNT_RESOURCE_ID</code> and
+<code>AI_FOUNDRY_ACCOUNT_RESOURCE_ID</code>. This manifest identifies the exact source
+GETs for readiness; it is not an automatic target approval allowlist.
+Pending links require administrator approval. Do not substitute unrelated
+resources or edit the manifest to bypass the gate. See
+<a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
+<p>The exact ARM resource IDs can include Azure-valid resource-group names with
+parentheses, Unicode letters and decimal digits. Resource-group validation
+does not relax the expected resource type or allow extra path segments,
+query strings, URL hosts or encoded path separators.</p>
+<h3 id="explicit-shared-source-permission-options">Explicit shared-source permission options</h3>
+<p><code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS</code> controls the configured source's
+ingestion permission metadata; it is an existing setting, not a new runtime
+key. Omission or an actual null value retains the protected default
+<code>["rbacScope"]</code>. An explicit JSON empty array, <code>[]</code>, is an opt-in for a
+deliberately shared source <strong>when native Blob ingestion is active</strong>; it is
+not treated as a missing value.</p>
+<p>For active native Blob ingestion, the shared-source empty list is accepted
+with <code>RETRIEVAL_BACKEND=foundry_iq</code>, <code>FOUNDRY_IQ_PATTERN=azureBlob</code> (or the
+historical <code>managed</code> compatibility alias), <code>azureBlob</code> knowledge source kind
+and a recognized non-ADLS source. Active ADLS Gen2, mismatched source
+configuration and ambiguous ADLS configuration fail closed. Nonempty Blob
+permission lists accept only <code>rbacScope</code> and <code>sensitivityLabels</code>.</p>
+<p>The infrastructure also publishes <code>[]</code> as <strong>unused metadata</strong> for inactive
+native Blob ingestion: <code>ai_search</code> with any pattern, or <code>foundry_iq</code> with
+the <code>searchIndex</code> pattern. Those empty lists remain accepted because no
+native Blob knowledge source is rendered. They are not shared-source opt-ins
+and do not change the independently populated index's authorization.</p>
+<p>Malformed JSON, scalar values, textual <code>null</code>, non-string or blank list
+entries, and unsupported permission names fail with actionable diagnostics.
+Invalid input fails closed rather than silently falling back or removing
+protection. An actual null value and the text <code>null</code> are not interchangeable.</p>
+<p>For active native Blob ingestion, use <code>[]</code> only when policy permits the
+source's documents to be shared without that ingestion permission metadata.
+It does not grant document access by
+itself or change other sources, application authentication, Entra ID/OBO,
+retrieval authorization, RBAC or private network restrictions. Do not use it
+to work around an authentication or private-link failure. Review the source's
+intended audience and verify allow/deny behavior before enabling it.</p>
+<p>To restore protected ingestion, set <code>["rbacScope"]</code> and rerun the source
+configuration. Verify the resulting source/index permission metadata and
+document authorization; do not assume changing a setting alone has repaired
+already-ingested documents. See
+<a href="../operations/#private-ingestion-and-shared-source-recovery">Private ingestion and shared-source recovery</a>.</p>
 <h2 id="network-and-security">Network and security</h2>
 <p>These parameters matter mostly when <code>NETWORK_ISOLATION=true</code>. Read <a href="../network-isolation/">Network isolation</a> first.</p>
 <table>
@@ -1454,6 +1617,11 @@ See <a href="../troubleshooting/#search-preflight-region-and-quota">Search prefl
 <td><code>DEPLOY_AZURE_FIREWALL</code></td>
 <td><code>true</code></td>
 <td>Deploys Azure Firewall for egress control.</td>
+</tr>
+<tr>
+<td><code>ENABLE_FIREWALL_DNS_PROXY</code></td>
+<td><code>false</code></td>
+<td>Enables the deployed firewall's DNS proxy only when both Azure Firewall deployment and network isolation are enabled. Does not modify VNet or VPN DNS settings.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_ACR_TASK_AGENT_POOL</code></td>

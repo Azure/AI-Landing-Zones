@@ -552,6 +552,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Default application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v430-component-combination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v4.3.0 component combination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -972,6 +989,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Default application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v430-component-combination" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v4.3.0 component combination
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1044,7 +1078,7 @@
 </table>
 <p><code>azd up</code> runs both layers in sequence.</p>
 <h2 id="default-application">Default application</h2>
-<p>The default application is a retrieval-augmented agent made of three components. Each component lives in its own repository, and <code>manifest.json</code> pins the exact version that each release validates.</p>
+<p>The default application includes Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App. Each component lives in its own repository, and <code>manifest.json</code> pins the exact version that each release validates.</p>
 <table>
 <thead>
 <tr>
@@ -1065,12 +1099,66 @@
 <td><a href="https://github.com/Azure/agent-app-orchestrator">Azure/agent-app-orchestrator</a></td>
 </tr>
 <tr>
-<td>Agent App Ingestion</td>
-<td>Indexes documents into Azure AI Search for retrieval</td>
+<td>Agent App Ingestion (optional)</td>
+<td>Application-managed document ingestion into Azure AI Search</td>
 <td><a href="https://github.com/Azure/agent-app-ingestion">Azure/agent-app-ingestion</a></td>
 </tr>
 </tbody>
 </table>
+<p>Fresh environments default to <code>DEPLOY_INGESTION_CONTAINER_APP=false</code> for
+supported, configured native Foundry IQ ingestion. Existing environments retain
+their ingestion selection; explicit custom definitions retain their declared
+components. Ingestion selection is independent of classic or hosted
+orchestration. UI chat, authentication and retrieval are retained; attachments
+can require the optional app. Native ingestion is supported for
+the configured source kinds, but is <strong>not feature-equivalent</strong> to the optional
+application. See <a href="configuration/#ingestion-application-selection">Ingestion application selection</a>
+before changing an existing deployment.</p>
+<h3 id="v430-component-combination">v4.3.0 component combination</h3>
+<p>Agent Landing Zone <strong>v4.3.0</strong> coordinates optional ingestion, guarded private
+Search readiness, shared-source permission options, Search region/quota
+checks and opt-in firewall DNS proxy with <strong>agent-app-ui v3.3.0</strong>.
+The component pins below come from the platform's <code>manifest.json</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Version</th>
+<th>Commit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>agent-app-ui</td>
+<td>v3.3.0</td>
+<td><code>858ed4205d866b7bfbff43ca9ed20ab812baa24e</code></td>
+</tr>
+<tr>
+<td>agent-app-orchestrator</td>
+<td>v5.2.1</td>
+<td><code>27f952fcf8d48a2ba6267c237ea6bea8361fedd2</code></td>
+</tr>
+<tr>
+<td>agent-app-ingestion</td>
+<td>v3.1.1</td>
+<td><code>72efd8d7d51e10d38bf8b89f03b7eb42e1ed8ff2</code></td>
+</tr>
+<tr>
+<td>infra / AI Landing Zone</td>
+<td>v2.7.3</td>
+<td><code>97e2375b89dcda4900d75aac9e7ffb7b20cce165</code></td>
+</tr>
+</tbody>
+</table>
+<p>The infrastructure row records upstream provenance (<code>infra.source</code>), not a
+separately deployed infrastructure package. The platform owns its <code>infra/</code>
+source, including reviewed local changes; use the platform release's exact
+tree rather than substituting the upstream tag.</p>
+<p>Ingestion-free deployments require the coordinated v4.3.0 / UI v3.3.0
+combination. On v4.2.3 / UI v3.2.2, retain
+<code>DEPLOY_INGESTION_CONTAINER_APP=true</code>: that UI does not gate attachment uploads.
+See the <a href="configuration/#ingestion-application-selection">versioned compatibility requirements</a>
+and <a href="operations/#upgrade-ingestion-selection-to-v430">upgrade runbook</a>.</p>
 <p>You can replace this application with your own. See <a href="build-your-own-app/">Custom applications</a>.</p>
 <h2 id="choose-your-path">Choose your path</h2>
 <table>
