@@ -63,7 +63,7 @@ Parameters that start with `EXISTING_` reuse a resource instead of creating one.
 With the component disabled, it is excluded from provisioning parameters,
 checkout, build, deployment, endpoint reconciliation, identity discovery,
 role assignment and panel RBAC. UI chat, authentication and retrieval remain
-available with the coordinated UI correction described below; attachment
+available with the UI v3.3.0 upload gate described below; attachment
 eligibility is a separate capability. This
 switch does **not** select a retrieval backend, configure a new source, rebind
 an index, or remove document authorization.
@@ -79,16 +79,8 @@ pipeline. For Foundry IQ, also set `FOUNDRY_IQ_PATTERN=searchIndex` and
 existing Search schema/upgrade guards; the switch does not populate it.
 `FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` requires the ingestion app.
 
-!!! warning "Publication pending — v4.3.0 / UI v3.3.0"
-    This guidance targets the proposed Agent Landing Zone **v4.3.0** release
-    with **agent-app-ui v3.3.0**. UI publication and the platform's validated
-    manifest pins must be confirmed before these docs are published or an
-    ingestion-free deployment is activated. The currently pinned combination
-    remains v4.2.3 / UI v3.2.2; this page does not claim that the proposed
-    releases are available.
-
 **Versioned upgrade requirement.** Ingestion-free operation requires the
-coordinated v4.3.0 platform combination with the UI v3.3.0 upload gate.
+Agent Landing Zone **v4.3.0** combination with **agent-app-ui v3.3.0**.
 Upgrade the complete manifest-pinned combination, not only the configuration
 key or one application. Follow
 [the migration steps](operations.md#upgrade-ingestion-selection-to-v430).

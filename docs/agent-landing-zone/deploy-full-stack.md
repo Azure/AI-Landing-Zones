@@ -29,9 +29,9 @@ azd init -t azure/agent-landing-zone
 
 To pin a specific release, clone the repository at its tag instead:
 
-The v4.3.0 example below targets the coordinated UI v3.3.0 combination.
-Use it only after publication and validated platform pins are confirmed;
-see the [publication gate](configuration.md#ingestion-application-selection).
+The v4.3.0 example below selects the coordinated UI v3.3.0 combination.
+See the [component pins](index.md#v430-component-combination) and
+[versioned upgrade requirements](configuration.md#ingestion-application-selection).
 
 ```bash
 git clone --branch v4.3.0 https://github.com/Azure/agent-landing-zone.git
@@ -68,10 +68,9 @@ The legacy flags still work when `DEPLOYMENT_TOPOLOGY` is not set: `DEPLOY_HOSTE
 
 ### Choose ingestion independently
 
-!!! warning "Version requirement and publication gate"
+!!! warning "Versioned upgrade requirement"
     Ingestion-free deployments require the coordinated platform v4.3.0 /
-    UI v3.3.0 combination, with publication and validated manifest pins
-    confirmed. On platform v4.2.3 / UI v3.2.2, explicitly set
+    UI v3.3.0 combination. On platform v4.2.3 / UI v3.2.2, explicitly set
     `DEPLOY_INGESTION_CONTAINER_APP=true` before provisioning: the older UI
     ignores the selection for attachments. See
     [versioned compatibility requirements](configuration.md#ingestion-application-selection).

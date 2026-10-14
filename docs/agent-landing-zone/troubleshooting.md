@@ -249,10 +249,8 @@ Do not silently remove an existing app or change UI authentication to repair
 selection. See [Change ingestion selection safely](operations.md#change-ingestion-selection-safely).
 
 **Check the version before repairing uploads.** Ingestion-free operation
-targets platform v4.3.0 / UI v3.3.0, after publication and validated manifest
-pins are confirmed. Follow the
-[versioned migration](operations.md#upgrade-ingestion-selection-to-v430);
-do not infer availability from these source docs.
+requires the platform v4.3.0 / UI v3.3.0 manifest-pinned combination.
+Follow the [versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
 
 On platform v4.2.3 / UI v3.2.2, attachments still depend on the ingestion
 application's upload endpoint. Retain or restore

@@ -55,9 +55,9 @@ azd deploy
 ### Upgrade ingestion selection to v4.3.0
 
 This migration targets Agent Landing Zone **v4.3.0** with **agent-app-ui
-v3.3.0**. Publication and validated platform pins are prerequisites, not
-assumptions; see the
-[publication gate](configuration.md#ingestion-application-selection).
+v3.3.0**. Use the complete
+[component combination](index.md#v430-component-combination), not an
+independently upgraded UI or a locally edited configuration key.
 
 1. Confirm that UI v3.3.0 is published and the platform v4.3.0 release
    manifest pins its exact tag and commit. Compare the platform changelog

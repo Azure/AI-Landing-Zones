@@ -80,7 +80,7 @@ The application identity (`AGENTLZ_APP_ID`) is bound to the environment on the f
 
 Before activating an ingestion-free bundled application, complete the
 [v4.3.0 / UI v3.3.0 migration](operations.md#upgrade-ingestion-selection-to-v430),
-including confirmation of publication and validated manifest pins. On
+using the complete manifest-pinned combination. On
 v4.2.3 / UI v3.2.2, retain `DEPLOY_INGESTION_CONTAINER_APP=true`;
 that older UI does not gate attachment uploads on the new selection.
 Native source ingestion is not a conversation upload implementation. See

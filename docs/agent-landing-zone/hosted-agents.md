@@ -6,15 +6,14 @@ Ingestion is a separate choice: `DEPLOY_INGESTION_CONTAINER_APP` defaults to
 `false` for fresh environments and retains the prior selection in existing
 ones. Both hosted topologies and classic orchestration support the selected
 ingestion path. Disabling the ingestion app preserves chat, delegated
-authentication, retrieval and document authorization with the coordinated UI
+authentication, retrieval and document authorization with the UI v3.3.0
 gate, but attachments can require the optional app. Native ingestion applies only to
 supported, configured Foundry IQ sources and is not feature-equivalent to
 the optional app. See
 [Ingestion application selection](configuration.md#ingestion-application-selection).
 
 Ingestion-free hosted and classic deployments require the platform v4.3.0 /
-UI v3.3.0 combination after publication and validated manifest pins are
-confirmed. Follow the
+UI v3.3.0 manifest-pinned combination. Follow the
 [versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
 On v4.2.3 / UI v3.2.2, retain `DEPLOY_INGESTION_CONTAINER_APP=true`;
 that older UI does not consume the flag to gate uploads.

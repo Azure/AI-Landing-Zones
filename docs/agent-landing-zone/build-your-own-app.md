@@ -15,8 +15,7 @@ authentication contract. See
 [Ingestion application selection](configuration.md#ingestion-application-selection).
 
 For applications using the bundled UI, ingestion-free operation requires the
-platform v4.3.0 / UI v3.3.0 combination, after publication and validated
-manifest pins are confirmed. Follow the
+platform v4.3.0 / UI v3.3.0 manifest-pinned combination. Follow the
 [versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
 UI v3.2.2 still calls the ingestion endpoint for attachments; retain explicit
 `DEPLOY_INGESTION_CONTAINER_APP=true` on that older combination.

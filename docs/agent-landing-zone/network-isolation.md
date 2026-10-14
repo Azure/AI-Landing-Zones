@@ -183,9 +183,9 @@ If DNS returns a public address, the host is not using the private DNS zones. Ch
 ### Opt-in firewall DNS proxy
 
 The DNS proxy opt-in and guarded private ingestion guidance below target
-platform v4.3.0. Confirm publication and validated platform pins before
-adopting them; see the
-[release publication gate](configuration.md#ingestion-application-selection).
+platform v4.3.0. Use the platform release's exact infrastructure tree and
+[component combination](index.md#v430-component-combination); the upstream
+infrastructure provenance alone does not include platform-owned changes.
 
 `ENABLE_FIREWALL_DNS_PROXY` defaults to `false` and maps to the Bicep boolean
 `enableFirewallDnsProxy` (also default `false`), which sets

@@ -35,13 +35,24 @@ the configured source kinds, but is **not feature-equivalent** to the optional
 application. See [Ingestion application selection](configuration.md#ingestion-application-selection)
 before changing an existing deployment.
 
-!!! warning "Publication pending — v4.3.0 / UI v3.3.0"
-    The five changes described here target the proposed Agent Landing Zone
-    **v4.3.0** combination with **agent-app-ui v3.3.0**: optional ingestion,
-    guarded private Search readiness, shared-source permission options,
-    Search region/quota checks and opt-in firewall DNS proxy. UI publication
-    and validated platform pins are still prerequisites; this is not a claim
-    of release availability. Do not publish these docs before both are ready.
+### v4.3.0 component combination
+
+Agent Landing Zone **v4.3.0** coordinates optional ingestion, guarded private
+Search readiness, shared-source permission options, Search region/quota
+checks and opt-in firewall DNS proxy with **agent-app-ui v3.3.0**.
+The component pins below come from the platform's `manifest.json`.
+
+| Component | Version | Commit |
+| --- | --- | --- |
+| agent-app-ui | v3.3.0 | `858ed4205d866b7bfbff43ca9ed20ab812baa24e` |
+| agent-app-orchestrator | v5.2.1 | `27f952fcf8d48a2ba6267c237ea6bea8361fedd2` |
+| agent-app-ingestion | v3.1.1 | `72efd8d7d51e10d38bf8b89f03b7eb42e1ed8ff2` |
+| infra / AI Landing Zone | v2.7.3 | `97e2375b89dcda4900d75aac9e7ffb7b20cce165` |
+
+The infrastructure row records upstream provenance (`infra.source`), not a
+separately deployed infrastructure package. The platform owns its `infra/`
+source, including reviewed local changes; use the platform release's exact
+tree rather than substituting the upstream tag.
 
 Ingestion-free deployments require the coordinated v4.3.0 / UI v3.3.0
 combination. On v4.2.3 / UI v3.2.2, retain
