@@ -137,7 +137,13 @@ Firewall deny logs. An existing pool and a successfully pulled base image do
 not prove that package feeds are reachable. Check the exact pinned lockfile's
 `resolved` URLs; setting npm's registry alone does not replace those URLs.
 
-**Fix.** If firewall logs confirm blocked package hosts, add only the required
+**Fix.** The pinned orchestrator's four Microsoft npm feeds and
+`*.vsblob.vsassets.io` redirect CDN are included in the Agent Landing Zone
+default build allowlist. Confirm that the ACR Task agent pool and
+`extendFirewallForAcrTaskBuilds` are enabled and that the updated firewall
+configuration has been provisioned. `packages.microsoft.com` is already
+allowed by the OS-package rule; do not add it as a missing host.
+For other dependencies, if firewall logs confirm blocked package hosts, add only the required
 feeds and their verified download CDN to
 `parameters.additionalAcrTaskBuildFqdns.value` in `main.parameters.json`,
 provision, and retry the same pinned source. See
@@ -165,7 +171,7 @@ version defect.
 **Symptom.** Child deployment commands return success, but the latest
 application revision is unhealthy. The UI reports missing
 `OAUTH_AZURE_AD_CLIENT_ID`, `OAUTH_AZURE_AD_CLIENT_SECRET`, or
-`OAUTH_AZURE_AD_TENANT_ID`; ingestion reports missing OAuth panel settings.
+`OAUTH_AZURE_AD_TENANT_ID`; a selected ingestion app reports missing OAuth panel settings.
 
 **Cause.** Hosted UI startup validates the default user-delegated OAuth
 contract. The panel also requires Entra configuration. A previous healthy
@@ -181,6 +187,126 @@ to service identity or disable the panel to turn a missing-authentication
 failure into a passing acceptance result.
 
 ## Provision and post-provision stages
+
+### Search shared private links are not ready
+
+**Symptom.** Private native `azureBlob` source configuration stops with
+administrator approval instructions, denied Search reads or a readiness timeout.
+
+**Cause.** Search-managed outbound access is not ready for the exact required
+target/group. A pending connection, a successful ARM deployment or a private
+endpoint reachable by the runner does not prove Search's outbound link is
+ready.
+
+**Fix.** Use the reported Search resource, link name, target and group to
+investigate the exact deployment request. A pending link fails immediately:
+ask an authorized administrator to verify and approve only that request,
+following [Microsoft's procedure, sections 2 and 3](https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private),
+then rerun post-provision from a connected host. If polling times out, check the exact
+link state and allow propagation before retrying. Already-approved
+connections proceed only when the exact source link reports both `Approved`
+and `Succeeded`, without target PEC access. An approved link still
+provisioning uses a 600-second readiness budget, 10-second polling and
+requests limited to at most 30 seconds by the remaining budget. The gate
+runs before dependent Search mutation and before native source creation.
+Do not approve unrelated requests,
+grant broad Owner access, enable public network access or bypass the gate.
+See [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
+
+An ARM 401/403 stops configuration immediately. The existing runner identity
+needs `Microsoft.Search/searchServices/sharedPrivateLinkResources/read`;
+administrator approval does not replace that Search read permission.
+Rejected/disconnected or failed links are not automatically overridden.
+The backend endpoint can belong to a Microsoft-managed tenant, so its
+target PEC ID need not be a Search or shared-link ID. Configuration does not
+auto-approve by request-message text, a name substring or an assumed
+`<shared-link-name>.<GUID>` convention. It does not enumerate target PECs.
+
+The template publishes `SEARCH_SHARED_PRIVATE_LINKS` under label `agent-lz`.
+Older short-name deployments can use the prior deterministic naming rules.
+If a bounded long name has no manifest, configuration refuses to guess its
+hash: re-provision with the updated template in a separately authorized
+deployment, then retry configuration. Paginated or unreadable target
+collections do not prevent readiness once the exact source Search links are
+`Approved` and `Succeeded`. Do not edit the manifest to authorize an unrelated
+request.
+
+### Ingestion selection does not match the source configuration
+
+**Symptom.** No ingestion Container App appears in a fresh environment, or
+configuration rejects an unsupported ingestion combination.
+
+**Cause.** `DEPLOY_INGESTION_CONTAINER_APP=false` is the fresh bundled
+application default, independently of classic/hosted orchestration. Native
+ingestion requires a supported, configured Foundry IQ source; it does not
+cover all Agent App Ingestion features. Existing environments and explicit
+custom definitions retain their component intent.
+
+**Fix.** Check the resolved component selection, retrieval backend, source
+kind and source/index bindings. If application-managed ingestion is required,
+explicitly select the app and rerun the full provisioning/deployment workflow.
+Do not silently remove an existing app or change UI authentication to repair
+selection. See [Change ingestion selection safely](operations.md#change-ingestion-selection-safely).
+
+If chat attachments fail despite successful native Blob ingestion, the pinned
+UI still depends on the ingestion application's upload endpoint. Clearing
+`INGESTION_BASE_URL` or `DATA_INGEST_APP_ENDPOINT` is not a runtime opt-out.
+Restore `DEPLOY_INGESTION_CONTAINER_APP=true` and use the complete workflow;
+do not point that client at a native Search source endpoint.
+
+Manually setting `[features.spontaneous_file_upload].enabled=false` does not
+provide a supported workaround for pinned UI v3.2.2. Authenticated startup
+overwrites it to `true`, and Entra Copilot settings independently force it on.
+There is no authentication-independent upload switch at this pin. Preserve
+the authentication policy; do not select anonymous mode to hide attachment
+controls. A coordinated UI capability restriction is needed to retain
+working chat with explicitly unavailable attachments. That coordinated UI
+release and a validated umbrella pin update are required **before activating
+ingestion-free deployments**; until integrated, explicitly retain the
+ingestion app even in fresh environments. No new release or pin is claimed
+here. With the corrected UI, a missing flag keeps legacy behavior, explicit
+`false` gates controls, server upload handling and client preflight before
+endpoint/Dapr resolution, and `true` retains existing eligibility checks.
+Normal text chat, authentication and retrieval remain available; there is
+no native conversation upload implementation.
+
+### Shared-source permission options are rejected or unexpected
+
+**Cause.** Omitted or actual-null `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS`
+retains `["rbacScope"]`; explicit `[]` is not an omitted value. For active
+native Blob ingestion it selects a deliberately shared source only with
+`foundry_iq`, the `azureBlob` pattern (or historical `managed` compatibility
+alias), `azureBlob` source kind and recognized non-ADLS configuration.
+Active ADLS, source mismatches and ambiguous ADLS configuration fail closed.
+For inactive native Blob ingestion, infrastructure-published `[]` remains
+accepted as unused metadata for `ai_search` (any pattern) and
+`foundry_iq` / `searchIndex`. No native Blob source is rendered in these modes;
+this is not a shared-source opt-in. Nonempty Blob lists accept only
+`rbacScope` and `sensitivityLabels`.
+Malformed JSON, scalars, textual `null`, non-string/blank entries and
+unsupported names fail closed with actionable diagnostics.
+
+**Fix.** Supply valid JSON matching the intended source policy. Do not use
+`[]` as an authentication, RBAC or private-link workaround. Restore
+`["rbacScope"]` for protected ingestion and rerun source configuration,
+then verify the resulting permission metadata and document allow/deny
+behavior. Other sources and Entra ID/OBO remain protected by their existing
+contracts. See
+[Explicit shared-source permission options](configuration.md#explicit-shared-source-permission-options).
+
+### Firewall DNS proxy is enabled but clients still resolve incorrectly
+
+**Cause.** `ENABLE_FIREWALL_DNS_PROXY=false` is the default. The opt-in applies
+only when firewall deployment and network isolation are enabled; it does not
+modify VNet or VPN DNS settings or affect build-feed egress. Proxy enablement
+does not prove that clients use the firewall or that private DNS zone links
+and forwarding are correct.
+
+**Fix.** Check the actual client DNS server, the intended forwarding path
+and private-zone links. Keep client DNS changes deliberate and separate
+from the proxy selection. Do not redirect clients automatically or enable
+public access as a workaround. See
+[Opt-in firewall DNS proxy](network-isolation.md#opt-in-firewall-dns-proxy).
 
 ### Hosted configuration TLS handshake stalls
 

@@ -2,6 +2,24 @@
 
 Agent Landing Zone can run the Agent App Orchestrator in two ways: as a **Foundry hosted agent** in Foundry Agent Service, or as a **Container App** (the classic topology). The topology is selected with `DEPLOYMENT_TOPOLOGY`.
 
+Ingestion is a separate choice: `DEPLOY_INGESTION_CONTAINER_APP` defaults to
+`false` for fresh environments and retains the prior selection in existing
+ones. Both hosted topologies and classic orchestration support the selected
+ingestion path. Disabling the ingestion app preserves chat, delegated
+authentication, retrieval and document authorization with the coordinated UI
+gate, but attachments can require the optional app. Native ingestion applies only to
+supported, configured Foundry IQ sources and is not feature-equivalent to
+the optional app. See
+[Ingestion application selection](configuration.md#ingestion-application-selection).
+
+The current UI v3.2.2 pin does not consume this flag to gate uploads.
+Explicitly retain `DEPLOY_INGESTION_CONTAINER_APP=true` until a coordinated
+UI release and validated umbrella pin update are integrated, before
+activating an ingestion-free deployment. The corrected UI's missing flag
+retains legacy behavior; `false` gates controls and server/client upload
+paths, while `true` retains existing eligibility checks. This is not a native
+conversation upload implementation or a change to classic/hosted selection.
+
 ## Topologies
 
 | `DEPLOYMENT_TOPOLOGY` | Orchestrator runs as | Administrative panel | Cosmos DB |
@@ -145,7 +163,7 @@ the UI. Verify that `/auth/oauth/azure-ad` redirects to Entra with an HTTPS
 behind an HTTPS frontend is not a consent problem; correct the canonical URL
 and restart the UI rather than registering an insecure callback.
 
-For `hosted-panel`, ingestion also requires the OAuth tenant and client ID;
+For `hosted-panel` with the optional ingestion app selected, that app also requires the OAuth tenant and client ID;
 the administrative panel has no development authentication bypass. Respect
 the tenant's credential-lifetime policy, record the credential expiration,
 and rotate the Key Vault credential before it expires. A persistent

@@ -54,6 +54,79 @@ These values have no default in `main.parameters.json`. When they are not set, B
 
 Parameters that start with `EXISTING_` reuse a resource instead of creating one. They are listed in [Network and security](#network-and-security).
 
+### Ingestion application selection
+
+| Variable | Fresh-environment default | Description |
+| --- | --- | --- |
+| `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects the optional Agent App Ingestion Container App in the bundled application, independently of `DEPLOYMENT_TOPOLOGY`. |
+
+With the component disabled, it is excluded from provisioning parameters,
+checkout, build, deployment, endpoint reconciliation, identity discovery,
+role assignment and panel RBAC. UI chat, authentication and retrieval remain
+available with the coordinated UI correction described below; attachment
+eligibility is a separate capability. This
+switch does **not** select a retrieval backend, configure a new source, rebind
+an index, or remove document authorization.
+
+Use native ingestion only for supported, configured Foundry IQ sources, such
+as the default `azureBlob` source. Native ingestion and Agent App Ingestion
+are not feature-equivalent. Unsupported combinations must fail explicitly;
+disabling the app is not a way to make an unconfigured source ingest documents.
+An ingestion-free `ai_search` or Foundry IQ `searchIndex` deployment must
+explicitly bind `SEARCH_RAG_INDEX_NAME` to an index populated by an independent
+pipeline. For Foundry IQ, also set `FOUNDRY_IQ_PATTERN=searchIndex` and
+`FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=searchIndex`. The named index must satisfy the
+existing Search schema/upgrade guards; the switch does not populate it.
+`FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` requires the ingestion app.
+
+!!! warning "Pinned UI compatibility — release blocker"
+    These source changes require a coordinated UI release and validated
+    umbrella pin update **before activating ingestion-free deployments**.
+    Pins are unchanged; the UI correction is not claimed as published here.
+    Until that dependency is integrated, explicitly retain
+    `DEPLOY_INGESTION_CONTAINER_APP=true`, including for fresh deployments
+    with the current UI pin.
+
+    UI v3.2.2 still sends chat attachments to Agent App Ingestion in both
+    classic and hosted modes. An empty endpoint does not disable that path:
+    the UI derives a `dataingest` URL or falls back to Dapr. Keep
+    `DEPLOY_INGESTION_CONTAINER_APP=true` if attachment uploads are required.
+    Native Blob source ingestion is not a replacement for conversation
+    uploads. Restricting attachments while retaining chat, authentication and
+    retrieval is a supported goal, but this UI pin has no independent upload
+    capability control. Its `.chainlit/config.toml` upload setting is
+    overwritten at startup to `not allow_anonymous`, and Entra Copilot
+    project settings force uploads on even when that TOML setting is false.
+    Do not enable anonymous authentication or change Copilot auth mode to
+    work around this limitation.
+
+    The coordinated UI correction consumes the same
+    `DEPLOY_INGESTION_CONTAINER_APP` setting. A missing flag retains legacy
+    behavior; explicit `false` gates attachment controls, server handling and
+    client preflight before ingestion URL/Dapr resolution, while retaining
+    text chat, authentication and retrieval. Explicit `true` retains the
+    existing authentication/conversation eligibility checks; it does not
+    grant uploads unconditionally. Publishing the flag alone does not work
+    with UI v3.2.2. No native conversation upload implementation is implied.
+
+Existing environments retain their prior component selection rather than
+silently adopting the fresh default. Custom application definitions retain
+their explicit component intent. Before opting out in an existing environment,
+check source/index bindings and any application-managed ingestion dependencies.
+See [Change ingestion selection safely](operations.md#change-ingestion-selection-safely).
+
+Selection accepts only `true` or `false`. Pre-provision persists the resolved
+boolean into the azd environment, and provisioning/post-provision publish the
+same value under App Configuration label `agent-lz`. A populated existing
+environment without any prior selection retains ingestion (`true`); an empty
+azd-created resource group is fresh (`false`). When the local setting is
+missing, existing persisted selection is read rather than guessed. A failed
+state lookup requires an explicit selection or restored access. Custom
+definitions retain the existing additive bundled composition, including its
+ingestion app, even if this bundled-only switch is `false`. For these custom
+definitions, the published effective ingestion capability is `true`,
+consistent with the selected components rather than the raw bundled-only flag.
+
 ### Search region and quota
 
 `AZURE_SEARCH_LOCATION` resolves the effective Bicep `searchServiceLocation`;
@@ -87,6 +160,64 @@ See [Search preflight region and quota](troubleshooting.md#search-preflight-regi
 
 Other retrieval defaults: billing plan `free`, semantic configuration `default`, security field `metadata_security_id`, storage container `documents`, content extraction mode `standard`, ingestion permission options `["rbacScope"]`, and the filter add-on disabled.
 
+For network-isolated native Blob configuration, infrastructure publishes
+`SEARCH_SHARED_PRIVATE_LINKS` as a JSON array under label `agent-lz`. This is
+post-provision metadata, not an operator switch or a runtime retrieval setting.
+Each entry records the template-owned `name`, `groupId` and
+`privateLinkResourceId`. Configuration cross-checks these against
+`SEARCH_SERVICE_RESOURCE_ID`, `STORAGE_ACCOUNT_RESOURCE_ID` and
+`AI_FOUNDRY_ACCOUNT_RESOURCE_ID`. This manifest identifies the exact source
+GETs for readiness; it is not an automatic target approval allowlist.
+Pending links require administrator approval. Do not substitute unrelated
+resources or edit the manifest to bypass the gate. See
+[Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
+
+The exact ARM resource IDs can include Azure-valid resource-group names with
+parentheses, Unicode letters and decimal digits. Resource-group validation
+does not relax the expected resource type or allow extra path segments,
+query strings, URL hosts or encoded path separators.
+
+### Explicit shared-source permission options
+
+`FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS` controls the configured source's
+ingestion permission metadata; it is an existing setting, not a new runtime
+key. Omission or an actual null value retains the protected default
+`["rbacScope"]`. An explicit JSON empty array, `[]`, is an opt-in for a
+deliberately shared source **when native Blob ingestion is active**; it is
+not treated as a missing value.
+
+For active native Blob ingestion, the shared-source empty list is accepted
+with `RETRIEVAL_BACKEND=foundry_iq`, `FOUNDRY_IQ_PATTERN=azureBlob` (or the
+historical `managed` compatibility alias), `azureBlob` knowledge source kind
+and a recognized non-ADLS source. Active ADLS Gen2, mismatched source
+configuration and ambiguous ADLS configuration fail closed. Nonempty Blob
+permission lists accept only `rbacScope` and `sensitivityLabels`.
+
+The infrastructure also publishes `[]` as **unused metadata** for inactive
+native Blob ingestion: `ai_search` with any pattern, or `foundry_iq` with
+the `searchIndex` pattern. Those empty lists remain accepted because no
+native Blob knowledge source is rendered. They are not shared-source opt-ins
+and do not change the independently populated index's authorization.
+
+Malformed JSON, scalar values, textual `null`, non-string or blank list
+entries, and unsupported permission names fail with actionable diagnostics.
+Invalid input fails closed rather than silently falling back or removing
+protection. An actual null value and the text `null` are not interchangeable.
+
+For active native Blob ingestion, use `[]` only when policy permits the
+source's documents to be shared without that ingestion permission metadata.
+It does not grant document access by
+itself or change other sources, application authentication, Entra ID/OBO,
+retrieval authorization, RBAC or private network restrictions. Do not use it
+to work around an authentication or private-link failure. Review the source's
+intended audience and verify allow/deny behavior before enabling it.
+
+To restore protected ingestion, set `["rbacScope"]` and rerun the source
+configuration. Verify the resulting source/index permission metadata and
+document authorization; do not assume changing a setting alone has repaired
+already-ingested documents. See
+[Private ingestion and shared-source recovery](operations.md#private-ingestion-and-shared-source-recovery).
+
 ## Network and security
 
 These parameters matter mostly when `NETWORK_ISOLATION=true`. Read [Network isolation](network-isolation.md) first.
@@ -94,6 +225,7 @@ These parameters matter mostly when `NETWORK_ISOLATION=true`. Read [Network isol
 | Variable | Default | Description |
 | --- | --- | --- |
 | `DEPLOY_AZURE_FIREWALL` | `true` | Deploys Azure Firewall for egress control. |
+| `ENABLE_FIREWALL_DNS_PROXY` | `false` | Enables the deployed firewall's DNS proxy only when both Azure Firewall deployment and network isolation are enabled. Does not modify VNet or VPN DNS settings. |
 | `DEPLOY_ACR_TASK_AGENT_POOL` | `true` | Deploys an Azure Container Registry agent pool inside the virtual network so images can be built without a local Docker host. The pool is created only when `NETWORK_ISOLATION=true`. |
 | `DEPLOY_JUMPBOX` | Same as `NETWORK_ISOLATION` | Deploys a Windows jumpbox virtual machine. |
 | `DEPLOY_BASTION` | Same as `NETWORK_ISOLATION` | Deploys Azure Bastion. |

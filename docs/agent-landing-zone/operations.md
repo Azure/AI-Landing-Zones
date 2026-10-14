@@ -35,7 +35,7 @@ Each release pins a validated combination of infrastructure and application comp
     azd up
     ```
 
-    `azd up` re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every pinned component.
+    `azd up` re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every selected pinned component.
 
 !!! warning "Environments created with GPT-RAG v3"
     Environments created with GPT-RAG v3.x cannot be upgraded in place to Agent Landing Zone v4. Deploy a new environment, then migrate documents, search indexes, and conversation history from the old one. Remove the old environment only after you validate the new one.
@@ -48,7 +48,103 @@ When the infrastructure is unchanged and you only need to push the pinned applic
 azd deploy
 ```
 
-`azd deploy` runs the `predeploy` hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each component at the tag and commit pinned in `manifest.json`. Deployment logs for each component are written to `<component>/.logs` in the sibling checkout.
+`azd deploy` runs the `predeploy` hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each selected component at the tag and commit pinned in `manifest.json`. Deployment logs for each component are written to `<component>/.logs` in the sibling checkout.
+
+## Change ingestion selection safely
+
+Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false`, but an
+upgrade must retain an existing environment's ingestion selection. Absence
+of the new variable is not permission to remove an existing component.
+Explicit custom definitions retain their component intent.
+
+Before opting out of the bundled ingestion app, record the current selection,
+retrieval backend, configured source kind, source/index bindings and any
+application-managed ingestion dependencies. Confirm that supported native
+Foundry IQ ingestion covers your requirements; it is not feature-equivalent
+to the optional application. Export or back up relevant configuration and
+data before migration.
+
+With the currently pinned UI v3.2.2, chat attachments still require the
+ingestion app and ignore the new flag. A coordinated UI release and validated
+umbrella pin update are required **before activating ingestion-free deployments**;
+retain explicit `true` until that dependency is integrated. Native source ingestion
+does not make the attachment client optional. With the coordinated gate,
+`false` disables controls and server/client upload paths while retaining chat,
+authentication and retrieval; missing flags retain legacy behavior and `true`
+retains existing upload eligibility checks. See the
+[runtime compatibility warning](configuration.md#ingestion-application-selection).
+
+Make the selection explicit before provisioning:
+
+```bash
+azd env set DEPLOY_INGESTION_CONTAINER_APP false
+```
+
+Use `true` to retain or restore the optional app. Run the selected topology's
+full [deployment workflow](deploy-full-stack.md#step-4-deploy), not only
+`azd deploy`, so provisioning, post-provision reconciliation and application
+deployment use the same component selection. For private environments use a
+connected runner. Switching classic/hosted orchestration does not select an
+ingestion path. Chat/authentication/retrieval are separate from attachment
+eligibility.
+
+Validate source processing, retrieval and document authorization before
+retiring any old ingestion dependency. Do not delete an existing app,
+documents or indexes merely to match the fresh default. Explicit opt-out
+excludes the component from subsequent provisioning, deployment and
+reconciliation; it does not delete a deployed app or revoke its existing
+identity/RBAC. Any resource retirement or permission cleanup is a separate,
+deliberately authorized operation. To roll back,
+restore the previous explicit selection and source/index configuration, then
+rerun the matching deployment workflow and revalidate. Enabling the app alone
+does not change a retrieval backend or repair source bindings.
+
+## Private ingestion and shared-source recovery
+
+Native `azureBlob` source configuration must wait for its required
+Search-managed outbound shared private links. This guarded implementation
+does not automatically approve target requests; pending links stop
+immediately with the exact deployment Search service, link name, target
+resource and expected group. Use an authorized administrator to investigate
+and approve that exact request. Never approve all pending requests.
+Approved source links use bounded readiness polling; denied Search read
+permissions or a timeout require operator recovery, not bypassing the gate. See
+[Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
+
+Configuration checks readiness before dependent Search cleanup/mutation and
+again before native source creation. Recovery is idempotent: after an
+administrator approves the exact target connection, rerun configuration;
+only the exact source Search links are read, with no target PEC enumeration
+or approval writes or pagination. The readiness budget is 600 seconds with
+10-second polling and each ARM request is limited to at most 30 seconds,
+bounded by the remaining budget. Each source link must report `Approved` and `Succeeded`, as
+[Microsoft documents in section 3](https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private).
+Opaque Microsoft-managed endpoint identities or paginated target collections
+do not block already-approved sources. This is an ARM readiness check, not
+proof of end-to-end network reachability or successful document ingestion.
+
+For active native Blob ingestion,
+`FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]` is an explicit shared-source
+choice, not a private-link repair. It requires a recognized non-ADLS
+`azureBlob` source kind using `foundry_iq` and the `azureBlob` pattern (or
+historical `managed` compatibility alias). For `ai_search` with any pattern,
+or `foundry_iq` with `searchIndex`, infrastructure-published `[]` is accepted
+as unused metadata: no native Blob source is rendered, and no shared-source
+opt-in is implied. Active ADLS or mismatched/ambiguous source configuration
+still fails closed. Record
+the source audience and permission metadata before changing it. Omission
+or actual null preserves `["rbacScope"]`; textual `null` and other invalid
+input fail closed. Roll back to protected ingestion with `["rbacScope"]`,
+rerun source configuration, and verify source/index metadata and document
+allow/deny behavior. Do not assume already-ingested documents are protected
+merely because the setting has changed. Other sources, Entra ID/OBO, RBAC
+and network restrictions must remain unchanged.
+
+Set `ENABLE_FIREWALL_DNS_PROXY=false` and provision to disable the firewall
+DNS proxy only after confirming the DNS path does not rely on it. The
+default-off opt-in does not rewrite VNet or VPN DNS settings and is independent
+of build-feed egress. Reverting a private-link readiness gate does not revoke
+approved connections: revocation is a separate, deliberate operator action.
 
 ## Identity and roles
 
@@ -68,7 +164,7 @@ Additional roles come from the capability profiles declared for each component. 
 | --- | --- |
 | Agent App UI | `blob-delegator` |
 | Agent App Orchestrator | `model-user`, `retrieval-reader`, `conversation-store` |
-| Agent App Ingestion | `model-user`, `conversation-store`, `ingestion-writer` |
+| Agent App Ingestion (when selected) | `model-user`, `conversation-store`, `ingestion-writer` |
 
 For what each profile grants and how to use them in your own application, see [Capability profiles](build-your-own-app.md#capability-profiles).
 

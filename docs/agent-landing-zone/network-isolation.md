@@ -134,10 +134,13 @@ If the pool is missing, `azd deploy` stops before building and offers two fixes:
 
 ### Application-specific package feeds
 
-The default build-subnet firewall rules allow common language and OS package
-registries. They do not allow every mirror recorded in an application's
-lockfile. Check the `resolved` URLs and download redirects for the exact
-component commit before building.
+The root deployment defaults include dependency-verified package feed
+destinations alongside common language and OS package registries, through
+the scoped foundation build-egress configuration. This is a build-only
+allowlist, not a runtime or general Internet exception. It does not allow
+every mirror recorded in a custom application's lockfile. Check the
+`resolved` URLs and download redirects for the exact component commit
+before building.
 
 For additional dependencies, set
 `parameters.additionalAcrTaskBuildFqdns.value` in `main.parameters.json` and
@@ -145,13 +148,20 @@ provision the updated configuration. This is an explicit array, not an `azd`
 environment variable. Copy the same parameter file to a VNet-connected runner
 so a later provision preserves the setting.
 
-For example, the orchestrator `v5.2.0` frontend lockfile uses
+The orchestrator `v5.2.1` frontend lockfile uses
 `ms-feed-2.pkgs.visualstudio.com`, `ms-feed-12.pkgs.visualstudio.com`,
 `ms-feed-17.pkgs.visualstudio.com`, and `ms-feed-25.pkgs.visualstudio.com`.
 Their public package downloads redirect to `*.vsblob.vsassets.io`.
-These application-specific hosts are not landing-zone defaults.
-With `extendFirewallForAcrTaskBuilds=true`, additional hosts are allowed only
-from the build-agent subnet over HTTPS on port 443. Do not enable public
+These four exact feeds and the redirect CDN are included in the Agent Landing
+Zone default build allowlist; `packages.microsoft.com` is already included in
+the OS-package rule and does not need an additional entry.
+With `extendFirewallForAcrTaskBuilds=true` (the default) and an effective ACR
+Task agent pool, the feeds, redirect CDN, and additional hosts are allowed only
+from the build-agent subnet over HTTPS on port 443. They are not added to
+jumpbox, application, or agent-subnet rules. The additional-host array defaults
+to empty. Disabling the build-egress extension removes these package rules;
+re-enabling it restores them. This egress rule has no DNS-proxy dependency and
+does not change client DNS. Do not enable public
 registry access, allow all Internet egress, disable TLS verification, or
 change dependency integrity hashes to work around a failed build.
 
@@ -169,6 +179,88 @@ Run these checks from the host you will deploy from. Use the endpoint host names
 | TLS | `curl -sv https://<service-host>/ -o /dev/null` | TLS handshake completes. HTTP 401 or 403 is fine. |
 
 If DNS returns a public address, the host is not using the private DNS zones. Check the VNet link of the zone, or the DNS forwarder on your VPN or hub.
+
+### Opt-in firewall DNS proxy
+
+`ENABLE_FIREWALL_DNS_PROXY` defaults to `false` and maps to the Bicep boolean
+`enableFirewallDnsProxy` (also default `false`), which sets
+`dnsSettings.enableProxy`. It applies only when the existing
+`deployAzureFirewall` and `networkIsolation` gates enable firewall deployment.
+Opt in only for a topology that deliberately uses the firewall as its DNS
+forwarding path:
+
+```bash
+azd env set ENABLE_FIREWALL_DNS_PROXY true
+azd provision
+```
+
+The selection persists through normal provisioning; enabling the proxy does
+**not** redirect VNet or VPN clients to the firewall or rewrite their DNS
+configuration. It is independent of the build-feed egress allowlist.
+
+Confirm the actual client DNS path and private-zone resolution separately
+from proxy enablement. A proxy cannot repair missing private DNS zone links,
+VPN routes or application authentication. For rollback, set
+`ENABLE_FIREWALL_DNS_PROXY=false` and provision only after confirming that
+the deployed DNS path does not depend on it.
+
+## Private native Blob ingestion
+
+Private `azureBlob` ingestion uses Search-managed outbound shared private
+links. Before dependent Search cleanup/mutation and again before native
+knowledge source creation, configuration verifies the exact
+deployment-owned Search shared links, their expected targets and groups.
+This guarded implementation does **not** automatically approve target-side
+connections: pending links require authorized administrator approval.
+
+The gate is limited to `NETWORK_ISOLATION=true`, `RETRIEVAL_BACKEND=foundry_iq`
+and rendered native `azureBlob` sources, excluding the `searchIndex` pattern.
+It checks the application Search link to deployment Blob storage (`blob`)
+and the links to the deployment Foundry account (`openai_account`,
+`foundry_account`, `cognitiveservices_account`). It does not configure the
+separate Foundry Search service or unrelated services. Exact names come from
+the template's `SEARCH_SHARED_PRIVATE_LINKS` manifest, including bounded
+Foundry names. The exact Search shared-link GET must return the expected
+name, target and group; if its body includes a resource ID, that must match
+too.
+
+Microsoft documents that the backend endpoint is provisioned in a
+Microsoft-managed tenant. A target PEC can contain an opaque
+`Microsoft.Network/privateEndpoints` ID and omit a source Search/link
+binding; its name or request message alone is not proof of ownership.
+Configuration therefore does not enumerate target PECs, follow their
+pagination links, or write approvals. See Microsoft's
+[approval and shared-link status procedure, sections 2 and 3](https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private).
+
+A `Pending` source link stops immediately with its exact Search ID, target
+ID, group and link name for administrator investigation and approval.
+After approval, rerun configuration. An approved source still needs to be
+ready; ARM visibility alone does not prove readiness. A timeout or denied
+Search read permission is a configuration failure, not a reason to enable
+public access or bypass readiness. See
+[Search shared private links are not ready](troubleshooting.md#search-shared-private-links-are-not-ready).
+
+Polling has a 600-second total readiness budget, a 10-second interval and
+ARM request timeouts of at most 30 seconds (limited by the remaining budget).
+Each exact Search shared link must be `Approved` and `Succeeded`, the
+documented source-side readiness signal. Approved links whose provisioning
+is still propagating use bounded polling; pending approval does not spend
+this budget waiting for an unprovable target match. Administrator-approved
+links are usable even when target PECs are paginated, opaque or unreadable
+by the runner. The existing Azure CLI/managed-identity credential is reused;
+the runner needs Search shared-link read permission, with no new secret,
+target PEC read/write requirement or automatic RBAC grant.
+
+Native ingestion supports configured Foundry IQ source kinds and is not
+feature-equivalent to Agent App Ingestion. Choosing it does not remove
+Entra ID/OBO, RBAC or document-level authorization. In particular,
+`FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]` is a deliberate shared-source
+metadata choice for active, supported non-ADLS native Blob ingestion, not a
+workaround for a private connection failure. Infrastructure-published `[]`
+for `ai_search` (any pattern) or `foundry_iq` / `searchIndex` is accepted as
+unused metadata, not a shared-source opt-in: no native Blob source is rendered.
+See
+[Explicit shared-source permission options](configuration.md#explicit-shared-source-permission-options).
 
 ## Integrate with an existing hub
 

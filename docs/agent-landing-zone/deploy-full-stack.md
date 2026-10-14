@@ -1,6 +1,6 @@
 # Deploy full stack
 
-This guide deploys the infrastructure layer and the default application (Agent App UI, Agent App Orchestrator and Agent App Ingestion) into a new environment with public endpoints. For private networking, read this page and then [Network isolation](network-isolation.md).
+This guide deploys the infrastructure layer and the default application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App) into a new environment with public endpoints. For private networking, read this page and then [Network isolation](network-isolation.md).
 
 ## Prerequisites
 
@@ -62,6 +62,41 @@ azd env set DEPLOYMENT_TOPOLOGY classic
 
 The legacy flags still work when `DEPLOYMENT_TOPOLOGY` is not set: `DEPLOY_HOSTED_AGENT_ORCHESTRATION=false` selects `classic`, and `DEPLOY_HOSTED_AGENT_ORCHESTRATION=true` with `DEPLOY_ADMINISTRATIVE_PANEL=true` selects `hosted-panel`. An explicit `DEPLOYMENT_TOPOLOGY` always wins.
 
+### Choose ingestion independently
+
+!!! warning "Do not activate the fresh default with the old UI pin"
+    Ingestion-free deployments require the coordinated UI release and a
+    validated umbrella pin update. The current UI v3.2.2 ignores the selection
+    for attachments. Until that dependency is integrated, explicitly set
+    `DEPLOY_INGESTION_CONTAINER_APP=true` before provisioning. These source
+    changes do not imply that a new release has been published. See
+    [Pinned UI compatibility](configuration.md#ingestion-application-selection).
+
+Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false`.
+The default `foundry_iq` / `azureBlob` configuration uses native ingestion
+for the configured Blob source; it does not need the ingestion Container App.
+Native ingestion does not provide every capability of Agent App Ingestion.
+Check your source kind, retrieval backend, source/index bindings and required
+ingestion features before choosing it.
+
+To select the optional application before provisioning:
+
+```bash
+azd env set DEPLOY_INGESTION_CONTAINER_APP true
+```
+
+This choice works with both classic and hosted orchestration. It does not
+switch the retrieval backend, rebind sources or indexes, or change UI
+authentication. Existing environments keep their prior selection, and
+explicit custom definitions keep their declared components. See
+[Ingestion application selection](configuration.md#ingestion-application-selection).
+
+With the coordinated UI gate, disabling ingestion disables attachment
+controls and rejects stale/direct uploads before resolving an ingestion
+endpoint; chat, authentication and retrieval remain available. Native source
+ingestion does not implement conversation uploads. Select the optional app
+when those uploads are required, subject to the existing eligibility checks.
+
 ## Step 4: Deploy
 
 **Classic topology**
@@ -96,14 +131,14 @@ Do not bypass the quota gate to complete this sequence.
 | Preflight | `preprovision` | Checks that the region offers the required services and that quota is available. |
 | Provision | — | Deploys the infrastructure from `infra/` (Bicep). |
 | Post-provision | `postprovision` | Configures Foundry, Azure AI Search, Container Apps and role assignments, and publishes runtime settings to App Configuration with the label `agent-lz`. |
-| Deploy | `predeploy` | Validates the environment, clones each component at the commit pinned in `manifest.json`, builds its image and deploys it. |
+| Deploy | `predeploy` | Validates the environment, clones each selected component at the commit pinned in `manifest.json`, builds its image and deploys it. |
 
 ## Verify
 
 1. Run `azd env get-value AZURE_RESOURCE_GROUP` and open the resource group in the Azure portal.
 2. Open the Container App whose name ends with `frontend` and browse to its URL.
-3. Upload a document to the `documents` container of the storage account. The ingestion component indexes it on its next run.
-4. Ask a question about the document in the UI.
+3. Upload a document to the configured source (`documents` for the default Blob configuration). Verify that the selected native or application-managed ingestion path has processed it; do not expect an ingestion Container App in a fresh native deployment.
+4. Ask a question about the document in the UI, then verify document allow/deny behavior with the intended user identities. A successful answer alone does not prove authorization.
 
 ## Clean up
 

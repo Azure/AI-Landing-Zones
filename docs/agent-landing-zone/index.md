@@ -17,13 +17,31 @@ Agent Landing Zone has two layers that you can deploy together or separately.
 
 ## Default application
 
-The default application is a retrieval-augmented agent made of three components. Each component lives in its own repository, and `manifest.json` pins the exact version that each release validates.
+The default application includes Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App. Each component lives in its own repository, and `manifest.json` pins the exact version that each release validates.
 
 | Component | Role | Repository |
 | --- | --- | --- |
 | Agent App UI | Web chat front end | [Azure/agent-app-ui](https://github.com/Azure/agent-app-ui) |
 | Agent App Orchestrator | Agent runtime that plans, retrieves and answers. Runs as a Foundry hosted agent by default, or as a Container App | [Azure/agent-app-orchestrator](https://github.com/Azure/agent-app-orchestrator) |
-| Agent App Ingestion | Indexes documents into Azure AI Search for retrieval | [Azure/agent-app-ingestion](https://github.com/Azure/agent-app-ingestion) |
+| Agent App Ingestion (optional) | Application-managed document ingestion into Azure AI Search | [Azure/agent-app-ingestion](https://github.com/Azure/agent-app-ingestion) |
+
+Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false` for
+supported, configured native Foundry IQ ingestion. Existing environments retain
+their ingestion selection; explicit custom definitions retain their declared
+components. Ingestion selection is independent of classic or hosted
+orchestration. UI chat, authentication and retrieval are retained; attachments
+can require the optional app. Native ingestion is supported for
+the configured source kinds, but is **not feature-equivalent** to the optional
+application. See [Ingestion application selection](configuration.md#ingestion-application-selection)
+before changing an existing deployment.
+
+!!! warning "Coordinated UI dependency"
+    The ingestion-free fresh default is part of the coordinated source change,
+    not a claim of a published release. The current UI v3.2.2 pin ignores the
+    ingestion selection for attachments. Keep the ingestion app explicitly
+    enabled until the coordinated UI upload gate has been released and pinned
+    in a validated umbrella combination. See the
+    [compatibility warning](configuration.md#ingestion-application-selection).
 
 You can replace this application with your own. See [Custom applications](build-your-own-app.md).
 
