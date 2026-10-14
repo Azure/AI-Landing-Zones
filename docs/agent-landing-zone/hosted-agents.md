@@ -165,6 +165,57 @@ does not prove these checks.
 - A caller that uses a delegated user identity needs the Foundry user role on the project **and** access to the agent.
 - The continuity and administrative panel endpoints return HTTP 503 unless they are enabled.
 
+!!! note "Coordinated runtime corrections"
+    The corrections below are development changes, not part of the currently
+    pinned component releases. Adopt them through a validated umbrella release
+    containing the corrected UI, orchestrator and hosted deployment definition;
+    updating an environment variable alone does not update an existing image.
+
+The corrected UI calls `/invocations?api-version=v1` and accepts the
+`response.created` identifier in `response.conversation.id`, retaining
+compatibility with `response.conversation_id`. Malformed or conflicting
+identifiers fail explicitly rather than continuing under an unknown conversation.
+This does not change the stateless Responses protocol.
+
+For `CHAT_BACKEND=hosted_agent`, the corrected UI does not register the classic
+orchestrator/Dapr history data layer. OAuth login, chat and feedback callbacks
+remain available. Multi-turn context within the active session is not durable
+history after a reload, browser restart or new chat; use the separately supported
+continuity configuration where applicable. The classic backend retains its
+existing history integration.
+
+## Configuration TLS compatibility
+
+The corrected orchestrator supports an opt-in bootstrap profile for environments
+where App Configuration or Key Vault TLS handshakes stall after connectivity has
+been verified. `APP_CONFIG_TLS_COMPATIBILITY` defaults to `false`, retaining the
+SDK's normal transport. When explicitly `true`, the profile uses P-256 and TCP
+MSS 1200 only for the configured App Configuration and application Key Vault
+endpoints. It retains certificate and hostname verification, custom CA bundles,
+TLS 1.2 or later (including TLS 1.3), the existing credentials and retry policy.
+It neither grants access nor changes retrieval authorization.
+
+The foundation exports the deployed vault's actual `KEY_VAULT_URI`; the bundled
+hosted definition passes it to the container alongside the profile flag. For an
+existing foundation, refresh outputs only after the additive output has been
+provisioned. For an externally managed vault, supply its actual HTTPS URI.
+Enabling the profile without `KEY_VAULT_URI`, or using a flag other than `true`
+or `false`, fails startup explicitly.
+
+With the corrected image and hosted definition selected, opt in using:
+
+```bash
+azd env set APP_CONFIG_TLS_COMPATIBILITY true
+azd deploy
+```
+
+Changing this environment variable creates a new hosted-agent version; it does
+not mutate a running version. Roll back the profile with
+`azd env set APP_CONFIG_TLS_COMPATIBILITY false` and redeploy. Do not enable it
+globally, disable certificate verification or infer a proven MTU root cause from
+a successful compatibility test. See
+[TLS handshake stalls](troubleshooting.md#hosted-configuration-tls-handshake-stalls).
+
 ## Telemetry content
 
 Prompt and completion content is not recorded in telemetry by default. Turn it on only where storing that content in Application Insights is allowed by your policies.

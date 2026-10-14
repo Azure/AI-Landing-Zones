@@ -153,10 +153,18 @@ These parameters apply when the orchestrator runs as a Foundry hosted agent. See
 | `HOSTED_CONTINUITY_ENABLED` | `false` | Enables the conversation continuity endpoints. Requires a hosted topology with `CHAT_BACKEND=hosted_agent`. |
 | `HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS` | `60` | Idle timeout for streamed responses. |
 | `PRESERVE_CLASSIC_RUNTIME` | `false` | Keeps the classic orchestrator Container App while an existing environment moves to hosted. |
+| `APP_CONFIG_TLS_COMPATIBILITY` | `false` | Opt-in bootstrap transport for the App Configuration and application Key Vault endpoints; requires the coordinated runtime correction and `KEY_VAULT_URI`. See [Configuration TLS compatibility](hosted-agents.md#configuration-tls-compatibility). |
 
 Other hosted defaults: CPU `2`, memory `4Gi`, Responses protocol `2.0.0`, Invocations protocol `1.0.0`, capability key ID `v1`, capability TTL `900` seconds, and history limits of `100` messages and `32000` characters.
 
 `PREPARE_HOSTED_AGENT`, `HOSTED_AGENT_PREPARED` and `DEPLOY_HOSTED_AGENT` are managed by the deployment scripts. Do not set them by hand.
+
+`APP_CONFIG_TLS_COMPATIBILITY` is a container environment variable, not an App
+Configuration key: it is read before remote configuration can load. Only `true`
+and `false` are accepted. The foundation's additive `KEY_VAULT_URI` output
+provides the deployed vault URI without hardcoding a cloud DNS suffix and is
+empty when the vault is not deployed. These are coordinated development
+corrections, not features of the currently pinned releases.
 
 ## Deployment controls
 
@@ -174,6 +182,11 @@ These variables change how the hooks behave. They do not change the deployed res
 ## Runtime settings
 
 Post-provision publishes runtime settings to Azure App Configuration with the label `agent-lz`. The applications read only that label.
+
+The corrected orchestrator's unlabelled selector uses the SDK's explicit null
+label (`"\0"`), not `None` (which means all labels). Existing service-label
+precedence is preserved; unrelated UI-labelled Key Vault references must not
+be pulled into the orchestrator's bootstrap.
 
 To change a runtime setting:
 

@@ -182,6 +182,32 @@ failure into a passing acceptance result.
 
 ## Provision and post-provision stages
 
+### Hosted configuration TLS handshake stalls
+
+**Symptom.** The hosted container cannot finish loading App Configuration or
+resolving its Key Vault references despite verified private connectivity.
+The compatibility correction below is a development change and requires the
+corrected orchestrator image and hosted deployment definition.
+
+**Diagnosis.** Distinguish DNS/routing/firewall failures, TLS handshake stalls,
+and HTTP authentication/authorization responses. Verify both endpoints from the
+relevant network, the actual runtime identity and its existing minimum roles.
+Do not treat a TLS success as proof of document authorization or infer that MTU
+is the established cause of every timeout.
+
+**Fix.** For a confirmed transport compatibility case, use the endpoint-scoped,
+verified [configuration TLS profile](hosted-agents.md#configuration-tls-compatibility).
+Supply the actual application `KEY_VAULT_URI`, set
+`APP_CONFIG_TLS_COMPATIBILITY=true` and deploy the corrected agent version.
+Disable the profile with `false` and redeploy to restore the SDK default.
+Never use `verify=False`, downgrade globally to TLS 1.2, change caller identity
+or broaden RBAC to disguise the failure.
+
+If bootstrap unexpectedly tries to resolve a UI-only Key Vault reference,
+check the orchestrator's null-label selector: SDK `None` selects every label,
+whereas `"\0"` selects only unlabelled settings. Use the corrected selector
+without removing existing service-specific labels or weakening vault access.
+
 ### Search preflight region and quota
 
 **Symptom.** Foundation preflight reports Search provider availability or quota
