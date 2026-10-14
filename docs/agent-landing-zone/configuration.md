@@ -163,8 +163,9 @@ Other hosted defaults: CPU `2`, memory `4Gi`, Responses protocol `2.0.0`, Invoca
 Configuration key: it is read before remote configuration can load. Only `true`
 and `false` are accepted. The foundation's additive `KEY_VAULT_URI` output
 provides the deployed vault URI without hardcoding a cloud DNS suffix and is
-empty when the vault is not deployed. These are coordinated development
-corrections, not features of the currently pinned releases.
+empty when the vault is not deployed. These coordinated corrections are included
+in Agent Landing Zone **v4.2.3**, which pins **agent-app-ui v3.2.2** and
+**agent-app-orchestrator v5.2.1**.
 
 ## Deployment controls
 

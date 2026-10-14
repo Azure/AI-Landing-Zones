@@ -186,8 +186,8 @@ failure into a passing acceptance result.
 
 **Symptom.** The hosted container cannot finish loading App Configuration or
 resolving its Key Vault references despite verified private connectivity.
-The compatibility correction below is a development change and requires the
-corrected orchestrator image and hosted deployment definition.
+The compatibility correction below requires Agent Landing Zone **v4.2.3**
+with **agent-app-orchestrator v5.2.1** and its hosted deployment definition.
 
 **Diagnosis.** Distinguish DNS/routing/firewall failures, TLS handshake stalls,
 and HTTP authentication/authorization responses. Verify both endpoints from the

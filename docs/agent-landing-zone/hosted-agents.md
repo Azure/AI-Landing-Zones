@@ -166,9 +166,9 @@ does not prove these checks.
 - The continuity and administrative panel endpoints return HTTP 503 unless they are enabled.
 
 !!! note "Coordinated runtime corrections"
-    The corrections below are development changes, not part of the currently
-    pinned component releases. Adopt them through a validated umbrella release
-    containing the corrected UI, orchestrator and hosted deployment definition;
+    The corrections below are included in Agent Landing Zone **v4.2.3**, with
+    **agent-app-ui v3.2.2** and **agent-app-orchestrator v5.2.1**.
+    Adopt the coordinated umbrella release and hosted deployment definition;
     updating an environment variable alone does not update an existing image.
 
 The corrected UI calls `/invocations?api-version=v1` and accepts the
