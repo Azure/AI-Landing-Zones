@@ -243,15 +243,16 @@ can stop before Azure receives the incremental update.
 
 **Fix.** Verify the selected environment, account location, deployment name,
 model/version and SKU. Do not disable preflight, reduce capacity just to pass
-the check, or delete the existing deployment. The correction tracked in
+the check, or delete the existing deployment. Agent Landing Zone **v4.2.3**
+includes the correction tracked in
 [agent-landing-zone#773](https://github.com/Azure/agent-landing-zone/pull/773)
 uses one shared quota calculation for both gates. It credits only a verified,
 successful matching deployment in the selected subscription and resource group,
 checks increases against the remaining quota, and aggregates deployments using
 the same quota pool. Fresh allocations and unverified or changed targets still
 need their full capacity; model availability checks remain in place.
-Until that correction is released, record this as a preflight limitation, not
-successful hosted deployment acceptance.
+For older releases, record this as a preflight limitation, not successful hosted
+deployment acceptance.
 
 ### Foundry rejects evaluation API-key creation
 
@@ -263,12 +264,12 @@ its final success message does not prove that this secret was created.
 This does not require enabling key authentication for the application.
 
 **Fix.** Keep local authentication disabled and use Microsoft Entra ID for
-evaluation clients. The correction tracked in
+evaluation clients. Agent Landing Zone **v4.2.3** includes the correction tracked in
 [agent-landing-zone#773](https://github.com/Azure/agent-landing-zone/pull/773)
 checks the account's authentication setting, explicitly reports key injection
 as not applicable for Entra-only accounts, and fails on unexpected key or
-Key Vault errors. Until that correction is released, record this post-provision
-limitation separately from application runtime results.
+Key Vault errors. For older releases, record this post-provision limitation
+separately from application runtime results.
 
 ### Administrative panel cannot resolve its Cosmos database
 
@@ -281,7 +282,8 @@ panel role assignment expects them in the process environment.
 **Fix.** Confirm these two non-secret settings under label `agent-lz` in the
 selected environment's App Configuration. For a split recovery, supply those
 same values to `config.panel.setup`; do not infer the database name from a
-resource-name pattern or widen the grants to the account scope. The correction
+resource-name pattern or widen the grants to the account scope. Agent Landing Zone
+**v4.2.3** includes the correction
 in [agent-landing-zone#773](https://github.com/Azure/agent-landing-zone/pull/773)
 reads the published settings when process inputs are absent and preserves the
 existing container-scoped roles.
