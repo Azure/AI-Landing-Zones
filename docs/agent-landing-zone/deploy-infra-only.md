@@ -74,9 +74,17 @@ python -m config.deployment.outputs
 
 ## Add an application later
 
-The environment deploys one application. By default this is the application described in `app-definition.json` (Agent App UI, Agent App Orchestrator and Agent App Ingestion). To use another application, point `AGENTLZ_APP_DEFINITION` at its definition file before the first deployment; see [Custom applications](build-your-own-app.md).
+The environment deploys one application. By default this is the bundled application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App). Fresh environments default to native ingestion for supported, configured Foundry IQ sources with `DEPLOY_INGESTION_CONTAINER_APP=false`; existing environments retain their selection. Choose ingestion before provisioning so the provisioned resources and deployed components agree; see [Ingestion application selection](configuration.md#ingestion-application-selection). To use another application, point `AGENTLZ_APP_DEFINITION` at its definition file before the first deployment; explicit custom definitions retain their declared components. See [Custom applications](build-your-own-app.md).
 
 The application identity (`AGENTLZ_APP_ID`) is bound to the environment on the first provision. Deploying a different application to the same environment fails the binding check; create a new environment instead.
+
+Before activating an ingestion-free bundled application, complete the
+[v4.3.0 / UI v3.3.0 migration](operations.md#upgrade-ingestion-selection-to-v430),
+using the complete manifest-pinned combination. On
+v4.2.3 / UI v3.2.2, retain `DEPLOY_INGESTION_CONTAINER_APP=true`;
+that older UI does not gate attachment uploads on the new selection.
+Native source ingestion is not a conversation upload implementation. See
+the [versioned compatibility requirements](configuration.md#ingestion-application-selection).
 
 To deploy the application:
 

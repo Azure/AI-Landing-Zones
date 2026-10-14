@@ -1,8 +1,32 @@
 # Custom applications
 
-Agent Landing Zone deploys the default application (Agent App UI, Agent App Orchestrator, and Agent App Ingestion) unless you select a different one. You can deploy your own application on the same platform by describing it in an **application definition**: a JSON file validated against `contracts/app-definition-v1.schema.json`.
+Agent Landing Zone deploys the default application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App) unless you select a different one. You can deploy your own application on the same platform by describing it in an **application definition**: a JSON file validated against `contracts/app-definition-v1.schema.json`.
 
 The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.
+
+`DEPLOY_INGESTION_CONTAINER_APP` controls ingestion selection for the bundled
+application, not the components of an explicit custom definition. Custom
+definitions retain their declared component intent, including a component
+named `ingestion`. Do not remove a required custom component because the
+fresh bundled application defaults to native ingestion. Native ingestion
+supports configured Foundry IQ source kinds and is not feature-equivalent
+to Agent App Ingestion; it does not change your source/index bindings or
+authentication contract. See
+[Ingestion application selection](configuration.md#ingestion-application-selection).
+
+For applications using the bundled UI, ingestion-free operation requires the
+platform v4.3.0 / UI v3.3.0 manifest-pinned combination. Follow the
+[versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
+UI v3.2.2 still calls the ingestion endpoint for attachments; retain explicit
+`DEPLOY_INGESTION_CONTAINER_APP=true` on that older combination.
+Custom applications own their upload
+contract: native source ingestion does not implement conversation uploads
+or make an application-specific ingestion client optional.
+
+Custom definitions keep the legacy additive bundled composition, including
+the ingestion app, even when the bundled-only switch is `false`. Their
+published effective ingestion capability remains `true`; the raw switch is
+not permission to remove a custom or bundled dependency.
 
 ## How it works
 
@@ -114,7 +138,7 @@ For reference, the default application uses these profiles:
 | --- | --- |
 | UI | `blob-delegator` |
 | Orchestrator | `model-user`, `retrieval-reader`, `conversation-store` |
-| Ingestion | `model-user`, `conversation-store`, `ingestion-writer` |
+| Ingestion (when selected) | `model-user`, `conversation-store`, `ingestion-writer` |
 
 ## Folder layout and `azure.yaml`
 
