@@ -51,11 +51,11 @@ nav:
       - "Configuration": agent-landing-zone/configuration.md
       - "Custom applications": agent-landing-zone/build-your-own-app.md
       - "Deploy with Bicep": agent-landing-zone/deploy-bicep.md
+      - "Deploy with Terraform": terraform/index.md
+      - "Deploy with Portal": portal/Readme.md
       - "Terraform implementation status": agent-landing-zone/deploy-terraform.md
       - "Operations": agent-landing-zone/operations.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
-  - Terraform Implementation: terraform/index.md
-  - Portal installation: portal/Readme.md
 
 # These pages are intentionally kept out of the left navigation. The ACA
 # design article is a standalone reference, and the bicep v2 migration page is
