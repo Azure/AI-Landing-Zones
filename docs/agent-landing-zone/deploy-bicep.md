@@ -9,7 +9,7 @@ Bicep template directly.
 
 `azd up` first runs a read-only `preup` application-definition and environment
 binding check, before the deployment pipeline creates Azure resources.
-Standalone `azd provision` retains its `preprovision` validation; use
+Standalone `azd provision` retains its `preprovision` validation. Use
 `azd hooks run preup` before it when validation must precede even azd's
 resource-group initialization.
 
@@ -23,7 +23,10 @@ When you run `azd provision` or `azd up`, three things happen in order:
    App Configuration (label `agent-lz`), and configures Azure AI Search and
    Microsoft Foundry.
 
-`azd deploy` then builds and deploys the application components.
+`azd deploy` builds and deploys the selected application components.
+The bundled hosted orchestrator uses a prepared image rather than building
+one at this stage. Follow [Deploy full stack](deploy-full-stack.md#step-4-deploy)
+for its first-deployment sequence.
 
 ## Change parameters
 
@@ -52,13 +55,15 @@ defaults.
 Avoid `az deployment group create` or `az deployment sub create` against
 `infra/main.bicep`. A direct deployment skips:
 
-- environment composition and the preflight checks;
-- the hosted agent state;
-- role assignments;
-- App Configuration publishing;
-- the application deploy.
+- Environment composition and preflight checks.
+- Hosted agent image preparation and deploy handoff.
+- Post-provision role reconciliation and service configuration.
+- Post-provision App Configuration publishing.
+- Application deployment.
 
-The result is infrastructure that the application cannot use.
+A direct template deployment alone does not complete application setup.
+Some role assignments and configuration keys are declarative in Bicep,
+but the post-provision and deployment steps are still required.
 
 !!! warning "Do not use `what-if` with `main.parameters.json`"
     `infra/main.parameters.json` contains `${...}` substitutions and secret

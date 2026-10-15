@@ -9,7 +9,7 @@ The AI Landing Zone provides an enterprise-scale production ready reference arch
 - The AI Landing Zone is able to cover both generative and non-generative scenario per [resource selection guidance CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
 - Given the pace of innovation and change in AI, the AI Landing Zone may leverage services in Preview to provide an architecture with latest features.
 
-The AI Landing Zones comprises of an Agent Landing Zone and an AI Gateway Landing Zone, both of them can be deployed together or independently based on the needs of the organization and the use case.
+AI Landing Zones includes an Agent Landing Zone and an AI Gateway Landing Zone. You can deploy them together or independently, according to your organization's needs.
 
 ![image](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone.png)
 
@@ -17,7 +17,13 @@ The AI Landing Zones comprises of an Agent Landing Zone and an AI Gateway Landin
 
 ### Agent Landing Zone
 
-The below diagram represents the reference architecture of the Agent Landing Zone which leverages the Foundry for AI Apps & Agents workloads.
+Agent Landing Zone combines an Azure infrastructure foundation with an agent
+application built on Microsoft Foundry. The default application has a chat UI
+and an orchestrator agent hosted in Foundry, with Container Apps hosting as an
+alternative. Its ingestion Container App is optional. Fresh environments use
+native Foundry IQ Blob ingestion instead, which does not provide chat
+attachment uploads. See the [Agent Landing Zone guide](agent-landing-zone/index.md)
+for deployment options and configuration.
 
 ![image](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone-Foundry.png)
 
@@ -40,10 +46,14 @@ The table represents the various reference implementations of the AI Landing Zon
 ### Agent Landing Zone
 | Type | Description |
 | ----------- | ----------- |
-| Terraform | [Repo](https://aka.ms/ailz/terraform) |
-| Bicep | [Repo](https://aka.ms/ailz/bicep) |
-| Infrastructure + agent applications | [Docs](agent-landing-zone/index.md) |
-| Portal | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
+| Infrastructure with Terraform | [Repo](https://aka.ms/ailz/terraform) |
+| Infrastructure with Bicep | [Repo](https://aka.ms/ailz/bicep) |
+| Infrastructure and agent application with azd and Bicep | [Docs](agent-landing-zone/index.md) |
+| Infrastructure through the portal | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
+
+The infrastructure implementations do not deploy the default agent application.
+Use the azd and Bicep guide for that complete flow. Terraform application
+integration is [not yet validated](agent-landing-zone/deploy-terraform.md).
 
 Learn how the separately maintained implementations are aligned in
 [Bicep and Terraform feature parity](terraform-parity.md).

@@ -1,6 +1,6 @@
 # Agent Landing Zone
 
-Agent Landing Zone deploys a secure, production-ready Azure foundation for AI agents and, on top of it, an agent application. It provisions Azure AI Foundry, Azure AI Search, Azure Container Apps, Azure App Configuration, Key Vault, Cosmos DB and Azure Monitor with managed identities, least-privilege role assignments and optional private networking, and then deploys a retrieval-augmented agent application that is ready to use.
+Agent Landing Zone provides an Azure foundation for AI agents and a retrieval-augmented agent application. You can provision the foundation first and deploy the application later. The foundation uses Microsoft Foundry, Azure AI Search, Azure Container Apps, Azure App Configuration, Key Vault and Azure Monitor, with managed identities, scoped role assignments and optional private networking. Application Cosmos DB is provisioned when the selected topology needs it.
 
 Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 
@@ -10,10 +10,10 @@ Agent Landing Zone has two layers that you can deploy together or separately.
 
 | Layer | What it contains | Deployed by |
 | --- | --- | --- |
-| Infrastructure | Foundry account and project, model deployments, Azure AI Search, Storage, Cosmos DB, Container Apps environment, Container Registry, App Configuration, Key Vault, Log Analytics, Application Insights and, with network isolation, the virtual network, private endpoints, firewall, Bastion and jumpbox | `azd provision` |
+| Infrastructure | Foundry account and project, model deployments, Azure AI Search, Storage, Container Apps environment and placeholder apps, Container Registry, App Configuration, Key Vault and monitoring. Cosmos DB and private networking resources depend on the selected topology and parameters | `azd provision` |
 | Application | The default agent application or your own application, described by an application definition | `azd deploy` |
 
-`azd up` runs both layers in sequence.
+For the classic topology, `azd up` runs both layers in sequence. The first deployment of the default hosted topology needs an image preparation step between two provisions. Follow the topology-specific commands in [Deploy full stack](deploy-full-stack.md#step-4-deploy).
 
 ## Default application
 
@@ -27,12 +27,13 @@ The default application includes Agent App UI and Agent App Orchestrator, with a
 
 Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false` for
 supported, configured native Foundry IQ ingestion. Existing environments retain
-their ingestion selection; explicit custom definitions retain their declared
+their ingestion selection. Explicit custom definitions retain their declared
 components. Ingestion selection is independent of classic or hosted
-orchestration. UI chat, authentication and retrieval are retained; attachments
-can require the optional app. Native ingestion is supported for
-the configured source kinds, but is **not feature-equivalent** to the optional
-application. See [Ingestion application selection](configuration.md#ingestion-application-selection)
+orchestration. UI chat, authentication and retrieval remain available without
+the ingestion app, but chat attachment uploads require it and the existing
+upload eligibility checks. Native ingestion handles configured Blob sources,
+but is **not feature-equivalent** to the optional application.
+See [Ingestion application selection](configuration.md#ingestion-application-selection)
 before changing an existing deployment.
 
 ### v4.3.0 component combination
@@ -51,7 +52,7 @@ The component pins below come from the platform's `manifest.json`.
 
 The infrastructure row records upstream provenance (`infra.source`), not a
 separately deployed infrastructure package. The platform owns its `infra/`
-source, including reviewed local changes; use the platform release's exact
+source, including reviewed local changes. Use the platform release's exact
 tree rather than substituting the upstream tag.
 
 Ingestion-free deployments require the coordinated v4.3.0 / UI v3.3.0
@@ -60,7 +61,7 @@ combination. On v4.2.3 / UI v3.2.2, retain
 See the [versioned compatibility requirements](configuration.md#ingestion-application-selection)
 and [upgrade runbook](operations.md#upgrade-ingestion-selection-to-v430).
 
-You can replace this application with your own. See [Custom applications](build-your-own-app.md).
+You can select your own application before the first provision. Custom definitions deploy their declared components, while provisioning currently retains the bundled foundation resources as well. See [Custom applications](build-your-own-app.md).
 
 ## Choose your path
 
@@ -83,7 +84,7 @@ You can replace this application with your own. See [Custom applications](build-
     The deployment creates billable resources, including Azure AI Search, Cosmos DB, Container Apps, model deployments and, with network isolation, Azure Firewall, Bastion and a virtual machine. Delete environments you no longer use with `azd down --purge`.
 
 !!! note "Quota and region"
-    The target region must offer every service in the deployment, and the subscription must have quota for the configured model deployments. A preflight check runs before provisioning and stops early when a service or quota is missing.
+    The target region must offer the enabled services, and the subscription must have quota for the configured deployments. Preflight checks run before provisioning to identify unsupported regions and insufficient quota. A passing preflight does not guarantee that Azure can complete the deployment.
 
 !!! note "Duration"
-    A first deployment usually takes 30 to 60 minutes. Deployments with network isolation take longer because of the firewall, private endpoints and private DNS zones.
+    Allow extra time for a first deployment, especially with network isolation. Resource provisioning, image builds, role propagation and private-link approval all affect the duration.
