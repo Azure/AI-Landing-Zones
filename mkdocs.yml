@@ -38,12 +38,10 @@ markdown_extensions:
 nav:
   - Home: index.md
   - What's New: whatisnew.md
-  - Architecture:
-      - "Design Checklist": architecture/design-checklist.md
-      - "Cost Guide": architecture/cost-guide.md
-      - "FAQ": architecture/faq.md
+  - FAQ: architecture/faq.md
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
+      - "Design Checklist": architecture/design-checklist.md
       - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
       - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
       - "Network isolation": agent-landing-zone/network-isolation.md
@@ -56,6 +54,7 @@ nav:
       - "Terraform implementation status": agent-landing-zone/deploy-terraform.md
       - "Operations": agent-landing-zone/operations.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
+      - "Cost Guide": architecture/cost-guide.md
 
 # These pages are intentionally kept out of the left navigation. The ACA
 # design article is a standalone reference, and the bicep v2 migration page is
