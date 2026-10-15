@@ -1241,7 +1241,8 @@
 
 
 <h1 id="network-isolation">Network isolation</h1>
-<p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone deploys every data-plane service behind private endpoints. Public network access is disabled, and the services resolve through private DNS zones linked to the landing zone virtual network.</p>
+<p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone uses private endpoints and private DNS for the deployed workload services. With the default empty <code>allowedIpRanges</code>, public access to those service endpoints is disabled. This is not a blanket block on every public endpoint: Azure Resource Manager remains public, and telemetry and optional public ingress have separate settings.</p>
+<p>An explicit, nonempty <code>allowedIpRanges</code> in <code>main.parameters.json</code> enables IP-restricted public access on services that support those rules, even with isolation enabled. Review that exception and any existing network or DNS resources before describing a deployment as private-only.</p>
 <p>This page explains what changes when isolation is on, how to reach the private network, and how to complete a deployment from a connected host.</p>
 <h2 id="what-changes-with-isolation">What changes with isolation</h2>
 <table>
@@ -1254,9 +1255,9 @@
 </thead>
 <tbody>
 <tr>
-<td>Data-plane access</td>
-<td>Public endpoints, protected by Microsoft Entra ID</td>
-<td>Private endpoints only</td>
+<td>Workload service access</td>
+<td>Public endpoints, with service authentication and authorization</td>
+<td>Private endpoints by default</td>
 </tr>
 <tr>
 <td>DNS</td>
@@ -1265,31 +1266,32 @@
 </tr>
 <tr>
 <td>Jumpbox, Azure Bastion, NAT gateway</td>
-<td>Not deployed</td>
+<td>Not deployed by default</td>
 <td>Deployed by default</td>
 </tr>
 <tr>
 <td>Container image builds</td>
-<td>Regular ACR Tasks</td>
-<td>ACR Task agent pool inside the VNet</td>
+<td>Local Docker or regular ACR Tasks</td>
+<td>ACR Task agent pool inside the VNet by default</td>
 </tr>
 <tr>
 <td>Post-provision and deploy</td>
-<td>Run from any workstation</td>
-<td>Run from a host connected to the VNet</td>
+<td>Run from an authorized host that can reach the endpoints</td>
+<td>Run from an authorized host connected to the VNet</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The ACR Task agent pool is created only for isolated deployments. When isolation is off, images are built with regular ACR Tasks and no pool is created, even if <code>DEPLOY_ACR_TASK_AGENT_POOL</code> is <code>true</code>.</p>
+<p>The ACR Task agent pool is created only for isolated deployments. When isolation is off, supported components can build with local Docker or regular ACR Tasks. No pool is created, even if <code>DEPLOY_ACR_TASK_AGENT_POOL</code> is <code>true</code>.</p>
 </div>
 <h2 id="enable-isolation">Enable isolation</h2>
 <p>Set the flag before the first provision:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
-azd<span class="w"> </span>up
+azd<span class="w"> </span>provision
 </code></pre></div>
-<p><code>azd provision</code> succeeds from any workstation, because Azure Resource Manager is a public control plane. The steps that follow (post-provision configuration and <code>azd deploy</code>) talk to data-plane endpoints and must run from a host that can reach the private network.</p>
+<p>The ARM resource deployment uses a public control plane, but <code>azd provision</code> also runs lifecycle hooks. Existing-environment topology discovery can require private App Configuration access before ARM deployment, and post-provision configuration requires private connectivity afterward. Provisioning therefore does not always succeed from an unconnected workstation.</p>
+<p>For a complete deployment, use a connected host. A single <code>azd up</code> can run the classic workflow when prerequisites and connectivity are ready. A first hosted deployment needs the separate <a href="../hosted-agents/#deploy-with-a-hosted-topology">provision, prepare, provision, deploy sequence</a>. Starting it with <code>azd up</code> does not remove the image-preparation or second-provision requirement.</p>
 <h2 id="reach-the-private-network">Reach the private network</h2>
 <p>Use one of these options:</p>
 <ul>
@@ -1298,7 +1300,7 @@ azd<span class="w"> </span>up
 <li><strong>The jumpbox VM</strong> deployed by the landing zone, reached through Azure Bastion.</li>
 </ul>
 <h3 id="use-the-jumpbox">Use the jumpbox</h3>
-<p>The jumpbox is a Windows VM. Its administrator user is <code>testvmuser</code>. The password is not stored in Key Vault, so set one before your first sign-in:</p>
+<p>The default jumpbox is a Windows VM. Unless overridden, its administrator user is <code>testvmuser</code>. Its password comes from the secure <code>vmAdminPassword</code> provisioning input, not a documented Key Vault secret. If you do not have that credential, an authorized operator can reset it before sign-in:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>vm<span class="w"> </span>user<span class="w"> </span>update<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--resource-group<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--name<span class="w"> </span>&lt;jumpbox-vm-name&gt;<span class="w"> </span><span class="se">\</span>
@@ -1320,24 +1322,26 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 azd<span class="w"> </span>env<span class="w"> </span>refresh
 </code></pre></div>
 <p><code>azd env refresh</code> reloads the provisioning outputs (endpoints, resource names) into the local environment.</p>
-<p>Signing in with the jumpbox's managed identity does not grant deployment
-permissions. An authorized administrator must assign the configuration and
-build roles required by the selected application. For hosted-agent authoring,
+<p>Signing in with the jumpbox's managed identity does not prove that all
+deployment permissions are present. Verify its existing configuration and
+build roles, then have an authorized administrator grant only the missing
+permissions required by the selected application. For hosted-agent authoring,
 the runner needs <strong>Foundry User</strong> (previously <strong>Azure AI User</strong>) on the exact
 Foundry project, plus read access to the Foundry account. Cognitive Services
 Contributor and OpenAI User alone do not grant the agent data-plane actions.
 Do not grant subscription or resource-group Owner to resolve this denial.
 See <a href="https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry">Foundry RBAC</a>
 for the current role catalog and scopes. Allow role propagation before retrying.</p>
-<p>Then run post-provision and deploy. On Windows, use <code>./scripts/postProvision.ps1</code> instead of the shell script.</p>
+<p>Then complete any deferred post-provision configuration. On Windows, use <code>./scripts/postProvision.ps1</code> instead of the shell script.</p>
 <div class="highlight"><pre><span></span><code>./scripts/postProvision.sh
 azd<span class="w"> </span>deploy
 </code></pre></div>
+<p>The commands above complete a classic deployment, or redeploy a hosted environment whose immutable image handoff is already provisioned. For a new hosted deployment, run <code>prepareHostedDeployment</code> after configuration, run <code>azd provision</code> again, and only then run <code>azd deploy</code>. An infrastructure-only deployment stops after provisioning and post-provision configuration. It can contain placeholder Container Apps without running the pinned applications.</p>
 <h3 id="post-provision-can-be-deferred">Post-provision can be deferred</h3>
-<p>When provisioning runs from a host without private network access, post-provision can be <strong>deferred</strong> instead of failing. This happens when <code>RUN_FROM_JUMPBOX</code> is set to <code>false</code> (or <code>0</code>, <code>no</code>, <code>skip</code>) or when <code>AZURE_SKIP_NETWORK_ISOLATION_WARNING</code> is <code>true</code>. You then see:</p>
+<p>When isolation is enabled, post-provision can be <strong>deferred</strong> instead of failing. Set <code>RUN_FROM_JUMPBOX</code> to <code>false</code> (or <code>0</code>, <code>no</code>, <code>skip</code>), or set <code>AZURE_SKIP_NETWORK_ISOLATION_WARNING=true</code> while <code>RUN_FROM_JUMPBOX</code> is not truthy. A truthy <code>RUN_FROM_JUMPBOX</code>, such as <code>true</code>, requests the connectivity check even if the warning flag is set. Deferral produces:</p>
 <div class="highlight"><pre><span></span><code>Post-provision configuration explicitly deferred; application setup is incomplete.
 </code></pre></div>
-<p><code>azd provision</code> still reports success, but the application is <strong>not</strong> configured. Clear the deferral setting and rerun post-provision from a connected host:</p>
+<p>If the other provisioning stages succeed, <code>azd provision</code> reports success, but the application is <strong>not</strong> configured. Deferral does not bypass earlier topology or provisioning checks. Clear the deferral setting and rerun post-provision from a connected host:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RUN_FROM_JUMPBOX<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SKIP_NETWORK_ISOLATION_WARNING<span class="w"> </span><span class="nb">false</span>
 ./scripts/postProvision.sh<span class="w">      </span><span class="c1"># or ./scripts/postProvision.ps1</span>
@@ -1350,7 +1354,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <p><code>RUN_FROM_JUMPBOX</code> only controls whether post-provision is deferred. It does not provide connectivity. <code>azd deploy</code> always checks private reachability, and fails with "Private deployment prerequisites failed" when the host cannot reach the endpoints.</p>
 </div>
 <h2 id="image-builds-in-isolated-deployments">Image builds in isolated deployments</h2>
-<p>Container registries in an isolated deployment reject public build agents, so images are built in an <strong>ACR Task agent pool</strong> that runs inside the VNet. It is created by default (<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code>).</p>
+<p>With the default private registry configuration, public build agents cannot reach the registry. Remote builds use an <strong>ACR Task agent pool</strong> inside the VNet. It is created by default (<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code>), and the root hosted topology composition selects it for isolated deployments.</p>
 <p>If the pool is missing, <code>azd deploy</code> stops before building and offers two fixes:</p>
 <ol>
 <li>
@@ -1361,12 +1365,13 @@ azd<span class="w"> </span>deploy
 </code></pre></div>
 </li>
 <li>
-<p><strong>Build locally:</strong> on a VNet-connected host with Docker installed, run:</p>
+<p><strong>Build supported Container App components locally:</strong> on a VNet-connected host with Docker installed, run:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>BUILD_MODE<span class="w"> </span><span class="nb">local</span>
 azd<span class="w"> </span>deploy
 </code></pre></div>
 </li>
 </ol>
+<p>The local alternative applies to component scripts that support <code>BUILD_MODE=local</code>. Automatic hosted orchestrator image preparation and isolated custom source builds still require the private pool. Supplying an already-built immutable digest can skip those builds, but does not bypass the root pre-deploy pool guard unless <code>BUILD_MODE=local</code> is selected. That guard is not proof that the remaining services can build locally.</p>
 <h3 id="application-specific-package-feeds">Application-specific package feeds</h3>
 <p>The root deployment defaults include dependency-verified package feed
 destinations alongside common language and OS package registries, through
@@ -1385,14 +1390,14 @@ so a later provision preserves the setting.</p>
 <code>ms-feed-17.pkgs.visualstudio.com</code>, and <code>ms-feed-25.pkgs.visualstudio.com</code>.
 Their public package downloads redirect to <code>*.vsblob.vsassets.io</code>.
 These four exact feeds and the redirect CDN are included in the Agent Landing
-Zone default build allowlist; <code>packages.microsoft.com</code> is already included in
+Zone default build allowlist. <code>packages.microsoft.com</code> is already included in
 the OS-package rule and does not need an additional entry.
 With <code>extendFirewallForAcrTaskBuilds=true</code> (the default) and an effective ACR
 Task agent pool, the feeds, redirect CDN, and additional hosts are allowed only
 from the build-agent subnet over HTTPS on port 443. They are not added to
 jumpbox, application, or agent-subnet rules. The additional-host array defaults
-to empty. Disabling the build-egress extension removes these package rules;
-re-enabling it restores them. This egress rule has no DNS-proxy dependency and
+to empty. Disabling the build-egress extension removes these package rules.
+Re-enabling it restores them. This egress rule has no DNS-proxy dependency and
 does not change client DNS. Do not enable public
 registry access, allow all Internet egress, disable TLS verification, or
 change dependency integrity hashes to work around a failed build.</p>
@@ -1412,7 +1417,7 @@ for diagnosis.</p>
 <tr>
 <td>DNS</td>
 <td><code>nslookup &lt;service-host&gt;</code></td>
-<td>A private address (10.x, 172.16–31.x or 192.168.x)</td>
+<td>Only private IPv4 addresses (10.x, 172.16 through 31.x or 192.168.x)</td>
 </tr>
 <tr>
 <td>TCP</td>
@@ -1427,10 +1432,11 @@ for diagnosis.</p>
 </tbody>
 </table>
 <p>If DNS returns a public address, the host is not using the private DNS zones. Check the VNet link of the zone, or the DNS forwarder on your VPN or hub.</p>
+<p>On Windows, also check resolution through the operating system resolver, especially when a VPN uses NRPT rules. <code>nslookup</code> alone can differ from the resolver used by the Python prerequisite check. That check rejects public, mixed public/private, IPv6, loopback and link-local answers, then verifies TCP 443 and TLS with the original hostname and normal certificate validation. It sends no HTTP request or credentials. Passing it does not prove API health, RBAC, OBO or document authorization.</p>
 <h3 id="opt-in-firewall-dns-proxy">Opt-in firewall DNS proxy</h3>
 <p>The DNS proxy opt-in and guarded private ingestion guidance below target
 platform v4.3.0. Use the platform release's exact infrastructure tree and
-<a href="../#v430-component-combination">component combination</a>; the upstream
+<a href="../#v430-component-combination">component combination</a>. The upstream
 infrastructure provenance alone does not include platform-owned changes.</p>
 <p><code>ENABLE_FIREWALL_DNS_PROXY</code> defaults to <code>false</code> and maps to the Bicep boolean
 <code>enableFirewallDnsProxy</code> (also default <code>false</code>), which sets
@@ -1441,7 +1447,7 @@ forwarding path:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ENABLE_FIREWALL_DNS_PROXY<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>provision
 </code></pre></div>
-<p>The selection persists through normal provisioning; enabling the proxy does
+<p>The selection persists through normal provisioning. Enabling the proxy does
 <strong>not</strong> redirect VNet or VPN clients to the firewall or rewrite their DNS
 configuration. It is independent of the build-feed egress allowlist.</p>
 <p>Confirm the actual client DNS path and private-zone resolution separately
@@ -1464,19 +1470,19 @@ and the links to the deployment Foundry account (<code>openai_account</code>,
 separate Foundry Search service or unrelated services. Exact names come from
 the template's <code>SEARCH_SHARED_PRIVATE_LINKS</code> manifest, including bounded
 Foundry names. The exact Search shared-link GET must return the expected
-name, target and group; if its body includes a resource ID, that must match
+name, target and group. If its body includes a resource ID, that must match
 too.</p>
 <p>Microsoft documents that the backend endpoint is provisioned in a
 Microsoft-managed tenant. A target PEC can contain an opaque
 <code>Microsoft.Network/privateEndpoints</code> ID and omit a source Search/link
-binding; its name or request message alone is not proof of ownership.
+binding. Its name or request message alone is not proof of ownership.
 Configuration therefore does not enumerate target PECs, follow their
 pagination links, or write approvals. See Microsoft's
 <a href="https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private">approval and shared-link status procedure, sections 2 and 3</a>.</p>
 <p>A <code>Pending</code> source link stops immediately with its exact Search ID, target
 ID, group and link name for administrator investigation and approval.
 After approval, rerun configuration. An approved source still needs to be
-ready; ARM visibility alone does not prove readiness. A timeout or denied
+ready. ARM visibility alone does not prove readiness. A timeout or denied
 Search read permission is a configuration failure, not a reason to enable
 public access or bypass readiness. See
 <a href="../troubleshooting/#search-shared-private-links-are-not-ready">Search shared private links are not ready</a>.</p>
@@ -1484,11 +1490,11 @@ public access or bypass readiness. See
 ARM request timeouts of at most 30 seconds (limited by the remaining budget).
 Each exact Search shared link must be <code>Approved</code> and <code>Succeeded</code>, the
 documented source-side readiness signal. Approved links whose provisioning
-is still propagating use bounded polling; pending approval does not spend
+is still propagating use bounded polling. Pending approval does not spend
 this budget waiting for an unprovable target match. Administrator-approved
 links are usable even when target PECs are paginated, opaque or unreadable
-by the runner. The existing Azure CLI/managed-identity credential is reused;
-the runner needs Search shared-link read permission, with no new secret,
+by the runner. The existing Azure CLI/managed-identity credential is reused.
+The runner needs Search shared-link read permission, with no new secret,
 target PEC read/write requirement or automatic RBAC grant.</p>
 <p>Native ingestion supports configured Foundry IQ source kinds and is not
 feature-equivalent to Agent App Ingestion. Choosing it does not remove

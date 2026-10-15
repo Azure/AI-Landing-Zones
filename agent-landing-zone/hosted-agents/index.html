@@ -664,6 +664,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Deploy with a hosted topology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redeploy-the-same-image-or-prepare-a-new-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redeploy the same image or prepare a new one
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1055,6 +1072,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Deploy with a hosted topology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redeploy-the-same-image-or-prepare-a-new-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redeploy the same image or prepare a new one
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1189,19 +1223,23 @@
 ones. Both hosted topologies and classic orchestration support the selected
 ingestion path. Disabling the ingestion app preserves chat, delegated
 authentication, retrieval and document authorization with the UI v3.3.0
-gate, but attachments can require the optional app. Native ingestion applies only to
+gate, but disables conversation attachments. Native ingestion applies only to
 supported, configured Foundry IQ sources and is not feature-equivalent to
 the optional app. See
 <a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>.</p>
 <p>Ingestion-free hosted and classic deployments require the platform v4.3.0 /
 UI v3.3.0 manifest-pinned combination. Follow the
 <a href="../operations/#upgrade-ingestion-selection-to-v430">versioned migration</a>.
-On v4.2.3 / UI v3.2.2, retain <code>DEPLOY_INGESTION_CONTAINER_APP=true</code>;
-that older UI does not consume the flag to gate uploads.
+On v4.2.3 / UI v3.2.2, retain <code>DEPLOY_INGESTION_CONTAINER_APP=true</code>.
+That older UI does not consume the flag to gate uploads.
 In the UI v3.3.0 contract, a missing flag
-retains legacy behavior; <code>false</code> gates controls and server/client upload
+retains legacy behavior. <code>false</code> gates controls and server/client upload
 paths, while <code>true</code> retains existing eligibility checks. This is not a native
 conversation upload implementation or a change to classic/hosted selection.</p>
+<p>Enabling the app is necessary for conversation uploads, not sufficient for
+every caller to upload. The UI retains authenticated-mode eligibility,
+rejects anonymous Copilot uploads, and enforces its supported file types
+and size/count limits. Native source ingestion does not replace this path.</p>
 <h2 id="topologies">Topologies</h2>
 <table>
 <thead>
@@ -1209,7 +1247,7 @@ conversation upload implementation or a change to classic/hosted selection.</p>
 <th><code>DEPLOYMENT_TOPOLOGY</code></th>
 <th>Orchestrator runs as</th>
 <th>Administrative panel</th>
-<th>Cosmos DB</th>
+<th>Application Cosmos DB</th>
 </tr>
 </thead>
 <tbody>
@@ -1233,6 +1271,14 @@ conversation upload implementation or a change to classic/hosted selection.</p>
 </tr>
 </tbody>
 </table>
+<p>The table describes the bundled application in its resolved topology, not
+every resource that might remain after a migration. In <code>hosted-panel</code>,
+Cosmos stores owner-index and feedback metadata, not hosted chat transcripts.
+History and continuity require their own configuration. Selecting the
+ingestion app does not enable either feature.
+Foundry Agent Service can provision its own backing Cosmos DB separately.
+Omitting application Cosmos DB does not mean that no Cosmos DB resource
+exists anywhere in the foundation.</p>
 <p>How the topology is resolved:</p>
 <ul>
 <li>An explicit <code>DEPLOYMENT_TOPOLOGY</code> value always wins.</li>
@@ -1240,36 +1286,77 @@ conversation upload implementation or a change to classic/hosted selection.</p>
 <li>An environment that already recorded a topology keeps it.</li>
 <li>An older environment with no topology marker is treated as <code>classic</code>, so an existing deployment is never switched silently.</li>
 </ul>
-<p>To choose a topology before the first deployment:</p>
+<p>To choose a topology before the first provision:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>hosted-panel
 </code></pre></div>
 <h2 id="deploy-with-a-hosted-topology">Deploy with a hosted topology</h2>
-<p>A hosted deployment needs the orchestrator image digest before the hosted agent resource can be created. This takes one extra step compared with <code>classic</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create the platform and the Foundry project</span>
+<p>A first bundled hosted deployment has four stages. Provisioning prepares
+the foundation and immutable deployment handoff. It does not create or run
+the data-plane agent version. Image preparation builds the manifest-pinned
+orchestrator and records its digest. A second provision materializes that
+digest in the handoff, and deployment creates the hosted agent version.</p>
+<p>Run these commands from the platform repository root, with the intended
+environment selected and the <a href="../deploy-full-stack/#prerequisites">deployment prerequisites</a>
+in place:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Create the platform and Foundry prerequisites, then run post-provision</span>
 azd<span class="w"> </span>provision
 
 <span class="c1"># 2. Build the orchestrator image and record its digest</span>
 pwsh<span class="w"> </span>scripts/prepareHostedDeployment.ps1<span class="w">     </span><span class="c1"># or: ./scripts/prepareHostedDeployment.sh</span>
 
-<span class="c1"># 3. Create the hosted agent resource with the recorded digest</span>
+<span class="c1"># 3. Provision the immutable deploy handoff with the recorded digest</span>
 azd<span class="w"> </span>provision
 
-<span class="c1"># 4. Deploy the application</span>
+<span class="c1"># 4. Create the hosted agent version and deploy the selected applications</span>
 azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>You can use <code>azd up</code> instead of step 1. If you run <code>azd deploy</code> before step 2, the pre-deploy hook stops and tells you to run <code>prepareHostedDeployment</code>.</p>
-<p>With <code>DEPLOYMENT_TOPOLOGY=classic</code>, a single <code>azd up</code> is enough.</p>
+<p>Starting a fresh hosted environment with <code>azd up</code> runs provisioning, but
+its deploy stage stops because the image handoff is incomplete. Continue
+with steps 2 through 4. Preparation alone is not enough: its output tells
+you to provision again before deploying.</p>
+<p>With <code>DEPLOYMENT_TOPOLOGY=classic</code>, <code>azd up</code> can run the complete workflow
+when authentication, quota, configuration and network prerequisites are
+ready. It is not an unconditional application-readiness guarantee.</p>
 <p>During step 4 the hosted deployment:</p>
 <ol>
-<li>Runs <code>azd deploy orchestrator-agent</code> from the <code>hosted-agent/</code> folder.</li>
-<li>Sends a smoke-test request with <code>azd ai agent invoke</code>.</li>
+<li>Runs <code>azd deploy orchestrator-agent</code> from <code>hosted-agent/</code>. The service-level post-deploy hook discovers the actual runtime principal and bootstraps its access.</li>
+<li>Sends a greeting smoke-test request with <code>azd ai agent invoke</code> and checks that the protocol response completes successfully.</li>
 <li>Publishes <code>HOSTED_AGENT_BASE_URL</code> to the environment and to App Configuration.</li>
-<li>Activates conversation continuity, when enabled.</li>
+<li>Validates and activates conversation continuity when requested, then deploys the remaining selected components.</li>
+<li>Publishes the hosted routing and cutover markers only after the selected deployments succeed.</li>
 </ol>
+<p>A failed greeting or component deployment blocks cutover. A successful
+greeting exercises configuration and model access, not real-user login,
+OBO, citations or document allow/deny behavior.</p>
 <div class="admonition note">
 <p class="admonition-title">Network isolation</p>
 <p>With <code>NETWORK_ISOLATION=true</code>, images are built by the ACR Tasks agent pool inside the virtual network. See <a href="../network-isolation/#image-builds-in-isolated-deployments">Image builds in isolated deployments</a>.</p>
 </div>
+<h3 id="redeploy-the-same-image-or-prepare-a-new-one">Redeploy the same image or prepare a new one</h3>
+<p>For an already-provisioned handoff with the same image digest and compatible
+source pin, run <code>azd deploy</code> again. It reuses the immutable image rather than
+rebuilding the hosted orchestrator. Runtime environment changes declared
+in <code>hosted-agent/azure.yaml</code>, such as the TLS profile or telemetry-content
+flag, can create a new agent version with that same digest.</p>
+<p>When the manifest's orchestrator source commit changes, run
+<code>prepareHostedDeployment</code>, <code>azd provision</code>, and <code>azd deploy</code> again.
+Preparation rebuilds a generated image whose recorded source commit no
+longer matches the manifest. It reuses a generated digest when the source
+commit and startup-command hash match. Provisioning rejects a generated
+digest recorded against a different manifest source commit.
+Do not skip that provision after a source change. Deploy-only validation
+checks the digest and Foundry context, not the generated image's source
+commit against the newly selected manifest.</p>
+<p>An explicitly supplied digest without generated-source provenance is
+treated as operator-managed and is not rebuilt automatically. The
+preparation script's <code>--image-version sha256:&lt;64-hex-characters&gt;</code> option
+also skips building and clears generated-image provenance. Verify the
+image's compatibility and availability yourself, then provision the
+handoff before deploying it. Do not assume that changing the platform tag
+replaces an operator-managed image.</p>
+<p>After an infrastructure-only deployment, the first provision and
+post-provision configuration are not sufficient to start hosted
+applications. Complete preparation, the second provision, and deployment.</p>
 <h2 id="validation-rules">Validation rules</h2>
 <p>The deployment stops early when the hosted configuration is invalid:</p>
 <table>
@@ -1294,7 +1381,11 @@ azd<span class="w"> </span>deploy
 </tr>
 </tbody>
 </table>
-<p><code>prepareHostedDeployment</code> sets the digest for you. <code>AGENTLZ_IMAGE_DIGEST</code> is a different variable: it is used only by <a href="../build-your-own-app/">custom applications</a> whose components are pinned with <code>source.imageDigest</code>.</p>
+<p><code>prepareHostedDeployment</code> sets the hosted digest for you.
+For custom definitions, the root hook sets <code>AGENTLZ_IMAGE_DIGEST</code> from
+<code>source.imageDigest</code>. Neither is interchangeable with
+<code>HOSTED_AGENT_IMAGE_VERSION</code>. See
+<a href="../build-your-own-app/">Custom applications</a>.</p>
 <p>Other hosted settings:</p>
 <table>
 <thead>
@@ -1310,7 +1401,7 @@ azd<span class="w"> </span>deploy
 </tr>
 <tr>
 <td><code>HOSTED_CONTINUITY_ENABLED</code></td>
-<td>Enables the conversation continuity endpoints. Default <code>false</code>. Requires a hosted topology.</td>
+<td>Requests UI-managed conversation continuity. Default <code>false</code>. Requires a hosted topology and successful activation.</td>
 </tr>
 <tr>
 <td><code>PRESERVE_CLASSIC_RUNTIME</code></td>
@@ -1318,12 +1409,25 @@ azd<span class="w"> </span>deploy
 </tr>
 </tbody>
 </table>
-<p>The move from <code>classic</code> to a hosted topology is complete only when <code>HOSTED_AGENT_BASE_URL</code>, the image digest, and <code>HOSTED_CUTOVER_COMPLETE</code> are all set. Until then, the classic runtime stays in place.</p>
+<p>During a migration that preserves classic routing, the runtime selector
+stays classic until <code>HOSTED_AGENT_BASE_URL</code>, a valid image digest, and
+<code>HOSTED_CUTOVER_COMPLETE=true</code> are all present. These markers record hook
+completion, not full user acceptance. Removing an old runtime is a separate
+operator decision.</p>
 <p>The full list of hosted defaults is in <a href="../configuration/#hosted-agent">Configuration</a>.</p>
+<p>The bundled child <code>hosted-agent/azure.yaml</code> fixes the agent name, CPU,
+memory, protocols and startup command as literal agent-definition fields.
+The corresponding <code>HOSTED_AGENT_*</code> inputs used by provisioning do not
+automatically customize those fields in the deployed version. Keep any
+deliberate child-definition changes compatible with the provisioning
+contract. A custom startup command is rejected.</p>
 <h2 id="bootstrap-the-agents-runtime-access">Bootstrap the agent's runtime access</h2>
-<p>The hosted post-deploy hook discovers the actual agent runtime principal and
-assigns its minimum declared resource-scoped roles. This is not a caller-access
-grant. The deployment principal must be able to create those role assignments,
+<p>The bundled hosted post-deploy hook discovers the actual agent runtime principal and
+assigns App Configuration Data Reader on the store and Cognitive Services
+OpenAI User on the Foundry account. If <code>AUDIT_HMAC_KEY</code> is configured as a
+Key Vault reference, it also plans Key Vault Secrets User on that individual
+secret. This is a closed bootstrap role set, not all component capability
+profiles or a caller-access grant. The deployment principal must be able to create those role assignments,
 or an authorized administrator must reconcile the exact read-only plan first.
 To rerun the idempotent bootstrap, use the repository root:</p>
 <div class="highlight"><pre><span></span><code>./scripts/bootstrapHostedAccess.sh
@@ -1339,16 +1443,22 @@ with <code>AZURE_ENV_NAME</code> set to the selected environment:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.hosted_access<span class="w"> </span>--azd-env<span class="w"> </span>--plan
 python<span class="w"> </span>-m<span class="w"> </span>config.deployment.hosted_access<span class="w"> </span>--azd-env<span class="w"> </span>--apply
 </code></pre></div>
-<p><code>--azd-env</code> is a flag that loads the selected environment; it does not accept
+<p><code>--azd-env</code> is a flag that loads the selected environment. It does not accept
 an environment name. ARM grant visibility does not prove data-plane readiness.
 Allow propagation, rerun bootstrap and retry the root deployment before
 authorizing cutover. A connected runner without role-management permission
 does not need Owner: an authorized administrator can apply only the exact
 grants in the plan. Never remove unrelated assignments to recover.</p>
+<p>The foundation's Foundry project identity pulls the image. The deployed
+agent's runtime principal, the deployment principal and a delegated caller
+are separate identities with separate permissions. For custom hosted
+services, deployment reconciles the component's declared capability profiles
+against the discovered runtime principal. See
+<a href="../troubleshooting/#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator">Custom hosted image-pull recovery</a>.</p>
 <h2 id="calling-the-agent">Calling the agent</h2>
 <h3 id="configure-the-uis-delegated-authentication">Configure the UI's delegated authentication</h3>
 <p>The default UI mode is <code>HOSTED_AGENT_AUTH_MODE=user_delegated</code>. It exchanges
-the signed-in user's access token through OAuth on-behalf-of (OBO); it does
+the signed-in user's access token through OAuth on-behalf-of (OBO). It does
 not fall back to the UI's managed identity. Before starting the UI, configure
 these keys in App Configuration with label <code>agent-lz</code>:</p>
 <table>
@@ -1390,14 +1500,14 @@ Microsoft Graph token is not a replacement for the UI API token.</p>
 <p>Behind TLS-terminating ingress, set <code>CHAINLIT_URL</code> explicitly before starting
 the UI. Verify that <code>/auth/oauth/azure-ad</code> redirects to Entra with an HTTPS
 <code>redirect_uri</code> that exactly matches the registered callback. An HTTP callback
-behind an HTTPS frontend is not a consent problem; correct the canonical URL
+behind an HTTPS frontend is not a consent problem. Correct the canonical URL
 and restart the UI rather than registering an insecure callback.</p>
-<p>For <code>hosted-panel</code> with the optional ingestion app selected, that app also requires the OAuth tenant and client ID;
-the administrative panel has no development authentication bypass. Respect
+<p>For <code>hosted-panel</code> with the optional ingestion app selected, that app also requires the OAuth tenant and client ID.
+The administrative panel has no development authentication bypass. Respect
 the tenant's credential-lifetime policy, record the credential expiration,
 and rotate the Key Vault credential before it expires. A persistent
-<code>CHAINLIT_AUTH_SECRET</code>, preferably Key Vault-backed, prevents signed-in
-sessions from being invalidated by an application restart.</p>
+<code>CHAINLIT_AUTH_SECRET</code>, preferably Key Vault-backed, avoids session resets
+caused by replacing a temporary generated signing secret on restart.</p>
 <p>After configuration, verify the intended image revisions are healthy and
 that unauthenticated panel data requests are rejected. Complete an actual
 user login, OBO invocation, and document-authorization checks before declaring
@@ -1405,29 +1515,39 @@ end-to-end acceptance. A managed-identity greeting or login redirect alone
 does not prove these checks.</p>
 <h3 id="protocol-and-caller-access">Protocol and caller access</h3>
 <ul>
-<li>The <strong>Responses 2.0.0</strong> protocol is stateless. A request that sends <code>conversation</code> or <code>previous_response_id</code> fails with HTTP 422. Send the context the agent needs in each request.</li>
-<li>The <strong><code>/invocations</code></strong> endpoint is kept for older clients.</li>
+<li>The <strong>Responses 2.0.0</strong> adapter is stateless. A non-null <code>previous_response_id</code> fails with HTTP 422. Top-level <code>conversation</code> and other unhandled routing or sampling fields are ignored, not used to load history. Send the complete, bounded, ordered input on each request, ending with the current user message.</li>
+<li>The <strong><code>/invocations</code></strong> endpoint is supported and is the path used by the pinned UI, with <code>api-version=v1</code>.</li>
+<li>An <code>/invocations</code> <code>conversation_id</code> is a label for conversation-scoped retrieval, not permission to load managed history. Its presence does not make the runtime stateful.</li>
 <li>A caller that uses a delegated user identity needs the Foundry user role on the project <strong>and</strong> access to the agent.</li>
-<li>The continuity and administrative panel endpoints return HTTP 503 unless they are enabled.</li>
+<li>Disabled panel history surfaces return HTTP 503. Panel history requires <code>DEPLOY_ADMINISTRATIVE_PANEL</code>, <code>PANEL_HISTORY_ENABLED</code> and hosted continuity, with their authentication and owner checks. Continuity is a separate UI-coordinated feature, not a generic runtime history endpoint.</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Coordinated runtime corrections</p>
 <p>The corrections below are included in Agent Landing Zone <strong>v4.2.3</strong>, with
 <strong>agent-app-ui v3.2.2</strong> and <strong>agent-app-orchestrator v5.2.1</strong>.
-Adopt the coordinated umbrella release and hosted deployment definition;
-updating an environment variable alone does not update an existing image.</p>
+These corrections remain in the v4.3.0 pinned combination. Adopt the
+coordinated umbrella release and hosted deployment definition.
+Updating an environment variable alone does not update an existing image.</p>
 </div>
 <p>The corrected UI calls <code>/invocations?api-version=v1</code> and accepts the
 <code>response.created</code> identifier in <code>response.conversation.id</code>, retaining
 compatibility with <code>response.conversation_id</code>. Malformed or conflicting
 identifiers fail explicitly rather than continuing under an unknown conversation.
 This does not change the stateless Responses protocol.</p>
-<p>For <code>CHAT_BACKEND=hosted_agent</code>, the corrected UI does not register the classic
+<p>For <code>CHAT_BACKEND=hosted_agent</code>, the pinned UI does not register the classic
 orchestrator/Dapr history data layer. OAuth login, chat and feedback callbacks
-remain available. Multi-turn context within the active session is not durable
-history after a reload, browser restart or new chat; use the separately supported
+remain available. Without continuity, multi-turn context within the active session is not durable
+history after a reload, browser restart or new chat. Use the separately supported
 continuity configuration where applicable. The classic backend retains its
 existing history integration.</p>
+<p>Continuity is disabled by default. When enabled and activated, the UI
+coordinates managed Conversations reads and writes with owner binding and
+agent-scoped permissions, then sends an authorized transcript to the
+stateless runtime. It does not give the hosted container general history
+access or restore the classic Chainlit history data layer. The panel's
+Cosmos owner index and feedback remain metadata, not a second transcript
+store. A topology choice, greeting or enabled flag alone does not prove
+durable history or cross-user isolation.</p>
 <h2 id="configuration-tls-compatibility">Configuration TLS compatibility</h2>
 <p>The corrected orchestrator supports an opt-in bootstrap profile for environments
 where App Configuration or Key Vault TLS handshakes stall after connectivity has
@@ -1436,8 +1556,10 @@ SDK's normal transport. When explicitly <code>true</code>, the profile uses P-25
 MSS 1200 only for the configured App Configuration and application Key Vault
 endpoints. It retains certificate and hostname verification, custom CA bundles,
 TLS 1.2 or later (including TLS 1.3), the existing credentials and retry policy.
-It neither grants access nor changes retrieval authorization.</p>
-<p>The foundation exports the deployed vault's actual <code>KEY_VAULT_URI</code>; the bundled
+It neither grants access nor changes retrieval authorization. This profile
+belongs to the orchestrator configuration loader, not the UI, ingestion app
+or every outbound HTTP client.</p>
+<p>The foundation exports the deployed vault's actual <code>KEY_VAULT_URI</code>. The bundled
 hosted definition passes it to the container alongside the profile flag. For an
 existing foundation, refresh outputs only after the additive output has been
 provisioned. For an externally managed vault, supply its actual HTTPS URI.
@@ -1447,7 +1569,7 @@ or <code>false</code>, fails startup explicitly.</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>APP_CONFIG_TLS_COMPATIBILITY<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>Changing this environment variable creates a new hosted-agent version; it does
+<p>Changing this environment variable creates a new hosted-agent version. It does
 not mutate a running version. Roll back the profile with
 <code>azd env set APP_CONFIG_TLS_COMPATIBILITY false</code> and redeploy. Do not enable it
 globally, disable certificate verification or infer a proven MTU root cause from
@@ -1459,7 +1581,10 @@ a successful compatibility test. See
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>classic
 azd<span class="w"> </span>up
 </code></pre></div>
-<p>The older flag <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=false</code> has the same effect when <code>DEPLOYMENT_TOPOLOGY</code> is not set.</p>
+<p>The older flag <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=false</code> selects classic
+when <code>DEPLOYMENT_TOPOLOGY</code> is not set and the legacy flag pair is consistent.
+Verify the resolved topology, healthy classic revision and source bindings.
+Switching topology does not select ingestion or delete the hosted agent.</p>
 <h2 id="related-pages">Related pages</h2>
 <ul>
 <li><a href="../deploy-full-stack/">Deploy full stack</a></li>

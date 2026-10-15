@@ -768,10 +768,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-parity-is-kept" class="md-nav__link">
+  <a href="#how-parity-is-tracked" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How parity is kept
+        How parity is tracked
       
     </span>
   </a>
@@ -964,10 +964,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-parity-is-kept" class="md-nav__link">
+  <a href="#how-parity-is-tracked" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How parity is kept
+        How parity is tracked
       
     </span>
   </a>
@@ -1047,18 +1047,20 @@ Zone deployment flow does not use it yet.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="how-parity-is-kept">How parity is kept</h2>
-<p>The Bicep and Terraform implementations are kept at the same infrastructure
-level through automated synchronization followed by human review. The
-<code>infra-terraform-parity.yml</code> workflow reports differences, and maintainers
-review each change before it is merged. See
+<h2 id="how-parity-is-tracked">How parity is tracked</h2>
+<p>The <code>infra-terraform-parity.yml</code> workflow is designed to open a draft handoff
+containing Bicep changes for Terraform maintainers. It does not translate
+templates or prove equivalent behavior. A maintainer must implement, validate
+and review the corresponding Terraform changes. Automation can be disabled
+and requires approval before publishing a handoff. See
 <a href="../../terraform-parity/">Terraform parity</a> for the current status.</p>
 <h2 id="using-terraform-for-the-infrastructure">Using Terraform for the infrastructure</h2>
-<p>You can deploy the infrastructure with the AI Landing Zone Terraform
-implementation and then deploy the applications yourself. This path is not
-validated. You must provide the same outputs that the Bicep deployment
-publishes, run the post-provision configuration, and run <code>azd deploy</code> against
-an environment that contains those values. Expect to debug missing settings.</p>
+<p>The AI Landing Zone Terraform implementation can provision its infrastructure,
+but it is not a supported end-to-end Agent Landing Zone deployment path.
+There is no validated procedure here for importing its outputs, running
+Agent Landing Zone post-provision configuration and deploying the application.
+Populating an azd environment with endpoint values alone does not establish
+the required application binding, identities, permissions or hosted image handoff.</p>
 <p>If you need a supported path today, use Bicep:</p>
 <ul>
 <li><a href="../deploy-full-stack/">Deploy full stack</a></li>

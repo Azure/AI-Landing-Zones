@@ -1068,7 +1068,7 @@ Bicep template directly.</p>
 <h2 id="how-azd-uses-bicep">How <code>azd</code> uses Bicep</h2>
 <p><code>azd up</code> first runs a read-only <code>preup</code> application-definition and environment
 binding check, before the deployment pipeline creates Azure resources.
-Standalone <code>azd provision</code> retains its <code>preprovision</code> validation; use
+Standalone <code>azd provision</code> retains its <code>preprovision</code> validation. Use
 <code>azd hooks run preup</code> before it when validation must precede even azd's
 resource-group initialization.</p>
 <p>When you run <code>azd provision</code> or <code>azd up</code>, three things happen in order:</p>
@@ -1081,7 +1081,10 @@ resource-group initialization.</p>
    App Configuration (label <code>agent-lz</code>), and configures Azure AI Search and
    Microsoft Foundry.</li>
 </ol>
-<p><code>azd deploy</code> then builds and deploys the application components.</p>
+<p><code>azd deploy</code> builds and deploys the selected application components.
+The bundled hosted orchestrator uses a prepared image rather than building
+one at this stage. Follow <a href="../deploy-full-stack/#step-4-deploy">Deploy full stack</a>
+for its first-deployment sequence.</p>
 <h2 id="change-parameters">Change parameters</h2>
 <p>Set values in your <code>azd</code> environment, then provision again:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
@@ -1115,13 +1118,15 @@ defaults.</p>
 <p>Avoid <code>az deployment group create</code> or <code>az deployment sub create</code> against
 <code>infra/main.bicep</code>. A direct deployment skips:</p>
 <ul>
-<li>environment composition and the preflight checks;</li>
-<li>the hosted agent state;</li>
-<li>role assignments;</li>
-<li>App Configuration publishing;</li>
-<li>the application deploy.</li>
+<li>Environment composition and preflight checks.</li>
+<li>Hosted agent image preparation and deploy handoff.</li>
+<li>Post-provision role reconciliation and service configuration.</li>
+<li>Post-provision App Configuration publishing.</li>
+<li>Application deployment.</li>
 </ul>
-<p>The result is infrastructure that the application cannot use.</p>
+<p>A direct template deployment alone does not complete application setup.
+Some role assignments and configuration keys are declarative in Bicep,
+but the post-provision and deployment steps are still required.</p>
 <div class="admonition warning">
 <p class="admonition-title">Do not use <code>what-if</code> with <code>main.parameters.json</code></p>
 <p><code>infra/main.parameters.json</code> contains <code>${...}</code> substitutions and secret

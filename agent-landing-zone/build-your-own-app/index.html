@@ -1183,7 +1183,11 @@
 
 
 <h1 id="custom-applications">Custom applications</h1>
-<p>Agent Landing Zone deploys the default application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App) unless you select a different one. You can deploy your own application on the same platform by describing it in an <strong>application definition</strong>: a JSON file validated against <code>contracts/app-definition-v1.schema.json</code>.</p>
+<p>Describe your application in an <strong>application definition</strong>, a JSON file
+validated against <code>contracts/app-definition-v1.schema.json</code>. Select it before
+the environment's first provision. If no custom definition is selected, the
+platform deploys Agent App UI and an orchestrator agent, with optional
+Agent App Ingestion.</p>
 <p>The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.</p>
 <p><code>DEPLOY_INGESTION_CONTAINER_APP</code> controls ingestion selection for the bundled
 application, not the components of an explicit custom definition. Custom
@@ -1191,21 +1195,23 @@ definitions retain their declared component intent, including a component
 named <code>ingestion</code>. Do not remove a required custom component because the
 fresh bundled application defaults to native ingestion. Native ingestion
 supports configured Foundry IQ source kinds and is not feature-equivalent
-to Agent App Ingestion; it does not change your source/index bindings or
+to Agent App Ingestion. It does not change your source/index bindings or
 authentication contract. See
 <a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>.</p>
 <p>For applications using the bundled UI, ingestion-free operation requires the
 platform v4.3.0 / UI v3.3.0 manifest-pinned combination. Follow the
 <a href="../operations/#upgrade-ingestion-selection-to-v430">versioned migration</a>.
-UI v3.2.2 still calls the ingestion endpoint for attachments; retain explicit
+UI v3.2.2 still calls the ingestion endpoint for attachments. Retain explicit
 <code>DEPLOY_INGESTION_CONTAINER_APP=true</code> on that older combination.
 Custom applications own their upload
 contract: native source ingestion does not implement conversation uploads
 or make an application-specific ingestion client optional.</p>
-<p>Custom definitions keep the legacy additive bundled composition, including
-the ingestion app, even when the bundled-only switch is <code>false</code>. Their
-published effective ingestion capability remains <code>true</code>; the raw switch is
-not permission to remove a custom or bundled dependency.</p>
+<p>Custom definitions currently use additive foundation composition.
+Provisioning retains the bundled Container App placeholders, including
+ingestion, alongside the custom resources, even when the bundled-only switch
+is <code>false</code>. Deployment uses the selected definition's declared components.
+The published effective ingestion capability remains <code>true</code> for custom
+definitions. It does not prove that a custom application implements uploads.</p>
 <h2 id="how-it-works">How it works</h2>
 <ol>
 <li>You write an application definition and an <code>azure.yaml</code> that describes how to build each component.</li>
@@ -1263,7 +1269,7 @@ standalone provisioning, run <code>azd hooks run preup</code> first.</p>
 <tr>
 <td><code>id</code></td>
 <td>Yes</td>
-<td>Application identifier.</td>
+<td>Application identifier matching <code>^[a-z][a-z0-9-]{2,39}$</code>. Bound to the environment at the first provision.</td>
 </tr>
 <tr>
 <td><code>displayName</code></td>
@@ -1273,7 +1279,7 @@ standalone provisioning, run <code>azd hooks run preup</code> first.</p>
 <tr>
 <td><code>components[].source</code></td>
 <td>Yes</td>
-<td>Either <code>commit</code> (40 hex characters) or <code>imageDigest</code> (<code>sha256:</code> followed by 64 hex characters).</td>
+<td>Either <code>commit</code> (40 lowercase hex characters) or <code>imageDigest</code> (<code>sha256:</code> followed by 64 lowercase hex characters).</td>
 </tr>
 <tr>
 <td><code>components[].name</code></td>
@@ -1308,12 +1314,17 @@ standalone provisioning, run <code>azd hooks run preup</code> first.</p>
 <tr>
 <td><code>components[].resources.memory</code></td>
 <td>No</td>
-<td><code>0.5Gi</code> to <code>4.0Gi</code>. Default <code>1.0Gi</code>. Container Apps only.</td>
+<td>One of <code>0.5Gi</code>, <code>1.0Gi</code>, <code>1.5Gi</code>, <code>2.0Gi</code>, <code>3.0Gi</code> or <code>4.0Gi</code>. Default <code>1.0Gi</code>. Container Apps only.</td>
 </tr>
 <tr>
 <td><code>settings[]</code></td>
 <td>No</td>
-<td>Each entry has an uppercase <code>key</code>, 2–64 characters, which must not start with <code>AGENTLZ_</code>, and either <code>value</code> or <code>secret</code>.</td>
+<td>Each entry requires an uppercase <code>key</code> of 2 to 64 characters that does not start with <code>AGENTLZ_</code>. Optional <code>value</code> and <code>secret: true</code> are mutually exclusive.</td>
+</tr>
+<tr>
+<td><code>components[].settings[]</code></td>
+<td>No</td>
+<td>Component settings with the same key and value rules as application settings. They cannot duplicate an application setting.</td>
 </tr>
 </tbody>
 </table>
@@ -1322,7 +1333,9 @@ standalone provisioning, run <code>azd hooks run preup</code> first.</p>
 <h3 id="what-a-definition-cannot-contain">What a definition cannot contain</h3>
 <ul>
 <li>Lifecycle hooks.</li>
-<li>Remote repository URLs. Code is always read from the local working tree.</li>
+<li>Remote URLs in definition fields, including setting values. The optional
+  <code>$schema</code> field is exempt. Configure runtime endpoints outside the
+  definition, and keep source code in the local working tree.</li>
 <li>Azure role names. Permissions come only from capability profiles.</li>
 </ul>
 <h2 id="capability-profiles">Capability profiles</h2>
@@ -1336,10 +1349,10 @@ against the selected Foundry project, then
 reconciles the declared profiles before running the greeting smoke. No bundled
 orchestrator permissions are substituted for the custom definition, and this
 runtime check does not mean all instance grants precede image pull. The
-deployment identity needs permission to create these scoped role assignments;
+deployment identity needs permission to create these scoped role assignments.
 denied or ambiguous assignments fail deployment. RBAC propagation may require
 an explicit, idempotent retry with the same application and image after the
-reported failure; deployment does not silently bypass reconciliation.</p>
+reported failure. Deployment does not silently bypass reconciliation.</p>
 <p>Key Vault profile assignments use the explicit <code>AZURE_KEY_VAULT_NAME</code> override
 when present, otherwise the foundation's <code>KEY_VAULT_NAME</code> output, followed by
 the vault endpoint inputs. The named vault must exist in the selected resource
@@ -1420,12 +1433,12 @@ deploying all services repeatedly.</p>
 </code></pre></div>
 <h2 id="source-pinning">Source pinning</h2>
 <ul>
-<li><strong><code>components[].source.commit</code></strong>: must equal the <code>HEAD</code> commit of that component's local source folder. Nothing is cloned; the platform builds from your working tree and refuses to deploy if <code>HEAD</code> differs.</li>
+<li><strong><code>components[].source.commit</code></strong>: must equal the <code>HEAD</code> commit of that component's local source folder. Nothing is cloned. The platform builds from the working tree and refuses to deploy if <code>HEAD</code> differs. Keep the working tree clean because the commit check does not reject uncommitted source changes.</li>
 <li><strong><code>components[].source.imageDigest</code></strong>: deploys a prebuilt image. Set the
   corresponding service's <code>image</code> in <code>azure.yaml</code> to a qualified registry and
   repository, such as <code>myregistry.azurecr.io/my-app:v1</code>. The platform replaces
   its tag or existing digest with the definition's exact digest and deploys it
-  with <code>docker.imagePassthrough: true</code>; it does not build a different image.
+  with <code>docker.imagePassthrough: true</code>. It does not build a different image.
   Environment substitutions in <code>image</code> must resolve before deployment.</li>
 </ul>
 <p>With <code>NETWORK_ISOLATION=true</code>, source-pinned Docker components build through
@@ -1433,16 +1446,17 @@ the foundation's dedicated <code>ACR_TASK_AGENT_POOL</code>, and the platform de
 immutable digest returned by the completed ACR task. The service <code>project</code>
 must match <code>components[].path</code>, with <code>Dockerfile</code> and context <code>.</code> in that
 folder. Other Docker options or source-build layouts fail with actionable
-guidance to supply a prebuilt digest instead; they are not silently ignored.
+guidance to supply a prebuilt digest instead. They are not silently ignored.
 Public source builds keep the service's normal azd build behavior.</p>
-<p>For image handoff, the platform temporarily renders only the selected service
-in the child <code>azure.yaml</code> and restores the original file even if deployment
-fails. Do not run concurrent deploys or edit that file during a deployment.
+<p>For image handoff, the platform temporarily updates the selected service's
+image and Docker settings in the child <code>azure.yaml</code>, then restores the
+original file even if deployment fails. It deploys that service by name.
+Do not run concurrent deploys or edit that file during a deployment.
 For a custom Container App using the platform ACR, deployment automatically
 wires registry pull authentication to the component's existing sole attached
 managed identity before deploying an immutable image. This adds no identity or
 RBAC assignment. The automatic wiring is specific to Container Apps and the
-platform ACR; configure access separately for other private registries. Hosted
+platform ACR. Configure access separately for other private registries. Hosted
 agents use the existing Foundry project managed identity for image pull, with
 the foundation's declarative <code>AcrPull</code> assignment on the platform ACR, not
 Container App registry wiring or a per-instance preactivation grant.
@@ -1453,35 +1467,36 @@ Selecting any custom <code>azure.ai.agent</code> component must also prepare the
 foundation (<code>prepareHostedAgent=true</code>), even when the bundled orchestrator
 topology is classic. This does not deploy the bundled hosted orchestrator
 (<code>deployHostedAgent=false</code> for that classic topology) or change the topology.
-The selection correction tracked in
-<a href="https://github.com/Azure/agent-landing-zone/issues/695">agent-landing-zone#695</a>
-is pending; a revision that only fixes foundation outputs is not sufficient
-to prepare project-identity image pull for this combination.
-For an existing failed custom hosted environment, use a platform revision
-containing the selection correction, keep the same definition and immutable
+The current platform prepares these prerequisites for custom hosted
+components independently of the bundled orchestrator topology.
+For an existing failed custom hosted environment, use the current coordinated
+platform release, keep the same definition and immutable
 image, select the environment with <code>azd env select &lt;name&gt;</code>, then run
 <code>azd hooks run preup</code>, <code>azd provision</code>, <code>azd env refresh</code>, and <code>azd deploy</code>
 from the platform repository root. Provisioning applies the declared
-project-identity pull assignment; refreshing alone cannot create it. Use a
+project-identity pull assignment. Refreshing alone cannot create it. Use a
 VNet-connected host for private environments. Do not copy endpoints from
 another environment or substitute broad manual grants, registry admin
 credentials, or an OIDC connection workaround.
 When an older environment has an empty project output, the quota preflight
 can discover a single existing Foundry project in the selected resource group.
 It credits only matching, successfully provisioned model allocations after
-verifying the account scope and region. Ambiguous projects receive no credit;
+verifying the account scope and region. Ambiguous projects receive no credit.
 select the intended project explicitly instead of bypassing the quota check.</p>
 <h2 id="reading-platform-outputs-at-runtime">Reading platform outputs at runtime</h2>
 <p>Components find platform resources through App Configuration. Each component receives <code>APP_CONFIG_ENDPOINT</code> and reads the <code>AGENTLZ_PLATFORM_OUTPUTS</code> key with label <code>agent-lz</code>. Both samples show the pattern: the Container App sample serves <code>GET /health</code> and <code>GET /</code>, and the hosted sample answers the Responses protocol.</p>
-<p>The platform-output publisher discovers the provisioned Container App identities for the selected definition and publishes their client IDs in <code>identities</code> and the matching <code>AGENTLZ_IDENTITY_&lt;COMPONENT&gt;_CLIENT_ID</code> keys. Hosted-agent instance identities are not available during foundation provisioning. Missing or ambiguous Container App identities fail publication rather than producing a success-shaped empty map; see <a href="../deploy-infra-only/#platform-outputs">Platform outputs</a>.</p>
-<p>Custom hosted services must declare <code>invocations</code> or <code>responses</code> in their
-<code>azure.yaml</code> protocols. The greeting smoke uses the selected service name and
+<p>The platform-output publisher discovers the provisioned Container App identities for the selected definition and publishes their client IDs in <code>identities</code> and the matching <code>AGENTLZ_IDENTITY_&lt;COMPONENT&gt;_CLIENT_ID</code> keys. Hosted-agent instance identities are not available during foundation provisioning. Missing or ambiguous Container App identities fail publication rather than producing an empty map. See <a href="../deploy-infra-only/#platform-outputs">Platform outputs</a>.</p>
+<p>Custom hosted services must declare an explicit agent <code>name</code> and either
+<code>invocations</code> or <code>responses</code> in their <code>azure.yaml</code> service definition.
+The greeting smoke uses the selected service name and
 declared protocol, preferring <code>invocations</code> when both are available. For
 Responses services, it validates either Responses SSE or a completed JSON
 response with nonempty assistant output. A greeting is not evidence of
 document retrieval or authorization.</p>
 <h2 id="deploy-a-custom-application">Deploy a custom application</h2>
-<p>Run these commands from the root of the Agent Landing Zone repository.</p>
+<p>Run these commands from the root of the Agent Landing Zone repository.
+Complete the <a href="../deploy-full-stack/#prerequisites">deployment prerequisites</a>
+and <a href="../deploy-full-stack/#prepare-python">prepare Python</a> first.</p>
 <ol>
 <li>
 <p>Validate the definition:</p>
@@ -1495,6 +1510,16 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 <p>You can also select the containing folder:
   <code>azd env set AGENTLZ_APP_DEFINITION path/to/your-app</code>.</p>
+</li>
+<li>
+<p>Choose the bundled foundation topology before deploying:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>classic
+</code></pre></div>
+<p>This avoids the bundled hosted orchestrator's image handoff. Custom
+  <code>azure.ai.agent</code> components still receive their hosted foundation
+  prerequisites and deploy through their own service definitions.
+  If you keep a hosted bundled topology instead, complete its
+  <a href="../deploy-full-stack/#step-4-deploy">image preparation sequence</a>.</p>
 </li>
 <li>
 <p>Deploy:</p>

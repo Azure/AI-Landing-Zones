@@ -1039,23 +1039,40 @@
 
 
 <h1 id="deploy-infra-only">Deploy infra only</h1>
-<p>Use this path when you want the Agent Landing Zone foundation (networking, Microsoft Foundry, Azure AI Search, storage, Cosmos DB, App Configuration, Key Vault, Container Registry, Container Apps environment and monitoring) without deploying the default application. You can add the default application or your own application to the same environment later.</p>
+<p>Use this path to provision the Agent Landing Zone foundation without building
+or deploying application images. Resources depend on the selected topology
+and parameters. Provisioning still creates the selected Container Apps with
+placeholder images and prepares their identities and permissions.</p>
+<p>Choose the application before the first provision, even if you plan to deploy
+it later. The application ID is bound to the environment at provision time.</p>
 <h2 id="before-you-start">Before you start</h2>
 <p>Complete the <a href="../deploy-full-stack/#prerequisites">prerequisites in Deploy full stack</a>. The tools, permissions and quota are the same.</p>
 <h2 id="steps">Steps</h2>
 <ol>
 <li>
 <p>Get the template and sign in:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>init<span class="w"> </span>-t<span class="w"> </span>Azure/agent-landing-zone
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span>v4.3.0<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<span class="nb">cd</span><span class="w"> </span>agent-landing-zone
 az<span class="w"> </span>login
 azd<span class="w"> </span>auth<span class="w"> </span>login
 </code></pre></div>
+<p><a href="../deploy-full-stack/#prepare-python">Prepare Python</a> before continuing.</p>
 </li>
 <li>
 <p>Create an environment and choose the network mode:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span><span class="w">   </span><span class="c1"># or true; see Network isolation</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span>
 </code></pre></div>
+<p>For private networking, set <code>NETWORK_ISOLATION=true</code> and follow
+  <a href="../network-isolation/">Network isolation</a>.</p>
+</li>
+<li>
+<p>If you plan to deploy a custom application, select its definition now:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>path/to/your-app/app-definition.json
+</code></pre></div>
+<p>Skip this step to use the bundled application. See
+  <a href="../build-your-own-app/">Custom applications</a> for the definition format.</p>
 </li>
 <li>
 <p>Provision the foundation:</p>
@@ -1063,9 +1080,18 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 </li>
 </ol>
-<p><code>azd provision</code> runs the <code>preprovision</code> hook (preflight checks), deploys the infrastructure, then runs the <code>postprovision</code> hook, which configures the services and publishes the platform outputs described below. It does not build or deploy any application.</p>
+<p><code>azd provision</code> validates and binds the application definition, runs preflight,
+deploys the infrastructure, then configures the services in <code>postprovision</code>.
+It publishes the platform outputs described below when post-provision
+configuration completes. It does not build or deploy application images.
+For isolated deployments, post-provision may be explicitly deferred until
+you connect from a VNet-connected host.</p>
 <h2 id="platform-outputs">Platform outputs</h2>
-<p>After provisioning, the foundation publishes a stable set of outputs that any application can consume in Azure App Configuration: the JSON key <code>AGENTLZ_PLATFORM_OUTPUTS</code> and its flat keys, all with label <code>agent-lz</code>. The publisher reads the foundation values from the azd environment; it does not write these derived keys back into that environment.</p>
+<p>Post-provision publishes platform outputs in Azure App Configuration as the
+JSON key <code>AGENTLZ_PLATFORM_OUTPUTS</code> and matching flat keys, all with label
+<code>agent-lz</code>. The publisher reads values from the azd environment. It does not
+write the derived keys back into that environment. Search and Cosmos DB
+sections are omitted when their endpoints are absent.</p>
 <table>
 <thead>
 <tr>
@@ -1123,11 +1149,11 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tr>
 <tr>
 <td><code>AGENTLZ_IDENTITY_&lt;COMPONENT&gt;_CLIENT_ID</code></td>
-<td>Client ID of each provisioned Container App component's managed identity; also listed in the JSON <code>identities</code> array. Hosted-agent instance identities are created at deployment, not foundation provision time.</td>
+<td>Client ID of each provisioned Container App component's managed identity, also listed in the JSON <code>identities</code> array. Hosted-agent instance identities are created at deployment, not foundation provision time.</td>
 </tr>
 </tbody>
 </table>
-<p>Without an explicit <code>AGENTLZ_COMPONENT_IDENTITIES</code> environment input, the publisher discovers the selected definition's provisioned Container Apps by their service tags and reads their actual identity client IDs. Missing or ambiguous identities fail publication; principal IDs are not substituted for client IDs. An explicit JSON map remains an override input, not an automatically published flat key. User-assigned identities use ARM discovery. For system-assigned identities, resolving the client ID also requires reading the exact service principal in Microsoft Entra ID.</p>
+<p>Without an explicit <code>AGENTLZ_COMPONENT_IDENTITIES</code> environment input, the publisher discovers the selected definition's provisioned Container Apps by their service tags and reads their actual identity client IDs. Missing or ambiguous identities fail publication. Principal IDs are not substituted for client IDs. An explicit JSON map remains an override input, not an automatically published flat key. User-assigned identities use ARM discovery. For system-assigned identities, resolving the client ID also requires reading the exact service principal in Microsoft Entra ID.</p>
 <p>Read the outputs from App Configuration:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span>show<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--endpoint<span class="w"> </span>&lt;app-configuration-endpoint&gt;<span class="w"> </span><span class="se">\</span>
@@ -1140,18 +1166,30 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 python<span class="w"> </span>-m<span class="w"> </span>config.deployment.outputs
 </code></pre></div>
 <h2 id="add-an-application-later">Add an application later</h2>
-<p>The environment deploys one application. By default this is the bundled application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App). Fresh environments default to native ingestion for supported, configured Foundry IQ sources with <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>; existing environments retain their selection. Choose ingestion before provisioning so the provisioned resources and deployed components agree; see <a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>. To use another application, point <code>AGENTLZ_APP_DEFINITION</code> at its definition file before the first deployment; explicit custom definitions retain their declared components. See <a href="../build-your-own-app/">Custom applications</a>.</p>
-<p>The application identity (<code>AGENTLZ_APP_ID</code>) is bound to the environment on the first provision. Deploying a different application to the same environment fails the binding check; create a new environment instead.</p>
+<p>Deploy the same application definition selected before provisioning. The bundled
+application includes Agent App UI and an orchestrator agent, with optional
+Agent App Ingestion. Fresh environments use native Foundry IQ Blob ingestion
+with <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>. Existing environments keep their
+selection. Choose ingestion before provisioning so the provisioned resources
+and deployed components agree. See
+<a href="../configuration/#ingestion-application-selection">Ingestion application selection</a>.</p>
+<p>The application ID (<code>AGENTLZ_APP_ID</code>) is bound on the first provision.
+Deploying a definition with a different ID fails the binding check.
+Create a new environment for a different application.</p>
 <p>Before activating an ingestion-free bundled application, complete the
 <a href="../operations/#upgrade-ingestion-selection-to-v430">v4.3.0 / UI v3.3.0 migration</a>,
 using the complete manifest-pinned combination. On
-v4.2.3 / UI v3.2.2, retain <code>DEPLOY_INGESTION_CONTAINER_APP=true</code>;
+v4.2.3 / UI v3.2.2, retain <code>DEPLOY_INGESTION_CONTAINER_APP=true</code>.
 that older UI does not gate attachment uploads on the new selection.
 Native source ingestion is not a conversation upload implementation. See
 the <a href="../configuration/#ingestion-application-selection">versioned compatibility requirements</a>.</p>
-<p>To deploy the application:</p>
+<p>For the bundled application in the classic topology, deploy it with:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
+<p>For the bundled application's hosted topology, follow the preparation,
+second provision and deploy steps in
+<a href="../deploy-full-stack/#step-4-deploy">Deploy full stack</a>.
+For a custom application, follow <a href="../build-your-own-app/">Custom applications</a>.</p>
 <p>If you run <code>azd deploy</code> in an environment that has not been provisioned, it stops with:</p>
 <div class="highlight"><pre><span></span><code>The foundation is not provisioned. Run azd provision first.
 </code></pre></div>

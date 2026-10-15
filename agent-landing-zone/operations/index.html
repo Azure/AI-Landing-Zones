@@ -1339,7 +1339,11 @@
 </code></pre></div>
 </div>
 <h2 id="upgrade-to-a-new-release">Upgrade to a new release</h2>
-<p>Each release pins a validated combination of infrastructure and application components in <code>manifest.json</code>. Upgrade by moving the whole environment to a new release tag, not by upgrading components individually.</p>
+<p>Each release pins a compatible combination of infrastructure and application
+components in <code>manifest.json</code>. Upgrade the environment as a whole, not by
+upgrading components independently. The <code>infra.source</code> entry records upstream
+provenance, not a separately checked-out infrastructure dependency. Use the
+release's repository-owned <code>infra/</code> tree, including its platform changes.</p>
 <ol>
 <li>Read the release notes for the target version on the <a href="https://github.com/Azure/agent-landing-zone/releases">releases page</a>. Check the <strong>Component versions</strong> table and any breaking changes.</li>
 <li>
@@ -1349,11 +1353,30 @@ git<span class="w"> </span>checkout<span class="w"> </span>vX.Y.Z
 </code></pre></div>
 </li>
 <li>
-<p>Select the environment and run the full workflow:</p>
+<p>Select the environment and run the workflow for its topology. For classic:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="k">select</span><span class="w"> </span>&lt;environment&gt;
 azd<span class="w"> </span>up
 </code></pre></div>
-<p><code>azd up</code> re-runs provisioning (idempotent for unchanged resources), post-provision configuration, and the deployment of every selected pinned component.</p>
+<p><code>azd up</code> runs provisioning, post-provision configuration and deployment
+  of the selected components. Review configuration and data reconciliation
+  before treating any upgrade as a no-op. Private environments require a
+  connected runner, including when existing topology is read from private
+  App Configuration.</p>
+<p>For hosted deployments, a generated image from a different orchestrator
+  source pin must be prepared again. Run the preparation script, provision
+  the new immutable handoff, then deploy. If the foundation is not yet
+  provisioned, provision it before preparation. Follow
+  <a href="../hosted-agents/#deploy-with-a-hosted-topology">Hosted deployment and redeployment</a>.
+  A single <code>azd up</code> does not build a missing hosted image or repair a stale
+  generated-image handoff. If the image and provisioned handoff remain
+  compatible, the normal full workflow can reuse them.</p>
+</li>
+<li>
+<p>Verify the intended revisions and routed hosted version, authentication,
+   retrieval, document allow/deny behavior and any ingestion or history
+   features you rely on. A successful hook or greeting is not that acceptance
+   test. The v4.3.0 release records offline validation, not new Azure
+   deployment or live-environment validation.</p>
 </li>
 </ol>
 <div class="admonition warning">
@@ -1361,10 +1384,30 @@ azd<span class="w"> </span>up
 <p>Environments created with GPT-RAG v3.x cannot be upgraded in place to Agent Landing Zone v4. Deploy a new environment, then migrate documents, search indexes, and conversation history from the old one. Remove the old environment only after you validate the new one.</p>
 </div>
 <h2 id="redeploy-applications-only">Redeploy applications only</h2>
-<p>When the infrastructure is unchanged and you only need to push the pinned application components again (for example, after a failed deployment or a configuration change that requires new revisions):</p>
+<p>When provisioning and post-provision configuration are complete and their
+outputs, component selection and image handoff are still compatible, redeploy
+the applications from the platform repository root:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
-<p><code>azd deploy</code> runs the <code>predeploy</code> hook, which validates the environment, checks private connectivity when network isolation is enabled, and deploys each selected component at the tag and commit pinned in <code>manifest.json</code>. Deployment logs for each component are written to <code>&lt;component&gt;/.logs</code> in the sibling checkout.</p>
+<p><code>azd deploy</code> runs the <code>predeploy</code> hook, which checks the foundation and
+application binding, validates topology, checks private reachability when
+isolation is enabled, and deploys the selected components. Bundled Container
+App components use the manifest's tag and commit in sibling checkouts. Their
+child deployment logs are written to <code>&lt;component&gt;/.logs</code>.</p>
+<p>Hosted orchestration reuses the prepared digest. It does not build a new
+orchestrator image during <code>azd deploy</code>. For a changed source pin or image,
+follow <a href="../hosted-agents/#redeploy-the-same-image-or-prepare-a-new-one">same-image and new-image redeployment</a>.
+Custom components use their selected definition's source pins, not an
+assumed manifest entry. Do not use application-only deployment to apply
+infrastructure, RBAC, topology or ingestion-selection changes.</p>
+<p>An infrastructure-only environment may already contain Container Apps with
+placeholder images. <code>azd provision</code> and post-provision configuration do not
+run the pinned applications. Classic applications can be deployed once that
+foundation is configured. Hosted applications additionally need digest
+preparation and a second provision before deployment.
+If using a custom application, select its definition before the first
+provision so binding, resource planning and later deployment agree. Selecting
+it only before the first deploy is too late for an already-bound environment.</p>
 <h2 id="change-ingestion-selection-safely">Change ingestion selection safely</h2>
 <h3 id="upgrade-ingestion-selection-to-v430">Upgrade ingestion selection to v4.3.0</h3>
 <p>This migration targets Agent Landing Zone <strong>v4.3.0</strong> with <strong>agent-app-ui
@@ -1372,14 +1415,14 @@ v3.3.0</strong>. Use the complete
 <a href="../#v430-component-combination">component combination</a>, not an
 independently upgraded UI or a locally edited configuration key.</p>
 <ol>
-<li>Confirm that UI v3.3.0 is published and the platform v4.3.0 release
-   manifest pins its exact tag and commit. Compare the platform changelog
+<li>Confirm that the selected platform v4.3.0 release
+   manifest pins UI v3.3.0 at its exact tag and commit. Compare the platform changelog
    and GitHub Release <strong>Component versions</strong> table with that manifest for
    the entire combination, including infrastructure provenance. Do not
    activate ingestion-free operation with only a locally changed key.</li>
 <li>Record and retain the existing ingestion selection during the upgrade.
-   On the older v4.2.3 / UI v3.2.2 combination, explicitly retain <code>true</code>;
-   that UI does not enforce the upload gate.</li>
+   On the older v4.2.3 / UI v3.2.2 combination, explicitly retain <code>true</code>.
+   That UI does not enforce the upload gate.</li>
 <li>Upgrade the whole pinned platform combination using the selected
    topology's full workflow. Verify that App Configuration publishes the
    effective <code>DEPLOY_INGESTION_CONTAINER_APP</code> value under label <code>agent-lz</code>
@@ -1396,7 +1439,7 @@ restoring the older platform-pinned combination. Revalidate the full
 workflow and upload eligibility. Do not downgrade the UI while leaving an
 ingestion-free configuration or assume a missing endpoint disables uploads.
 Resource retirement and permission cleanup remain separately authorized
-operations; rollback must not delete documents or indexes.</p>
+operations. Rollback must not delete documents or indexes.</p>
 <h3 id="select-and-validate-the-ingestion-path">Select and validate the ingestion path</h3>
 <p>Fresh environments default to <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>, but an
 upgrade must retain an existing environment's ingestion selection. Absence
@@ -1405,17 +1448,25 @@ Explicit custom definitions retain their component intent.</p>
 <p>Before opting out of the bundled ingestion app, record the current selection,
 retrieval backend, configured source kind, source/index bindings and any
 application-managed ingestion dependencies. Confirm that supported native
-Foundry IQ ingestion covers your requirements; it is not feature-equivalent
+Foundry IQ ingestion covers your requirements. It is not feature-equivalent
 to the optional application. Export or back up relevant configuration and
 data before migration.</p>
 <p>In the v4.3.0 / UI v3.3.0 contract,
 <code>false</code> disables controls and server/client upload paths while retaining chat,
-authentication and retrieval; missing flags retain legacy behavior and <code>true</code>
+authentication and retrieval. Missing flags retain legacy behavior and <code>true</code>
 retains existing upload eligibility checks. On v4.2.3 / UI v3.2.2, retain
 explicit <code>true</code> until the versioned migration above is complete.</p>
 <p>Make the selection explicit before provisioning:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
 </code></pre></div>
+<p>Opt-out is supported for <code>foundry_iq</code> with the native <code>azureBlob</code> pattern
+and source kind. For <code>ai_search</code>, or <code>foundry_iq</code> with both pattern and kind
+set to <code>searchIndex</code>, supply <code>SEARCH_RAG_INDEX_NAME</code> explicitly and populate
+that index through an independent ingestion pipeline. The switch does not
+create that pipeline, infer an index, change a backend or rewrite source
+bindings. Unsupported source combinations and
+<code>FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true</code> fail validation with opt-out.
+Retain the app when its ingestion or conversation-upload path is required.</p>
 <p>Use <code>true</code> to retain or restore the optional app. Run the selected topology's
 full <a href="../deploy-full-stack/#step-4-deploy">deployment workflow</a>, not only
 <code>azd deploy</code>, so provisioning, post-provision reconciliation and application
@@ -1427,7 +1478,7 @@ eligibility.</p>
 retiring any old ingestion dependency. Do not delete an existing app,
 documents or indexes merely to match the fresh default. Explicit opt-out
 excludes the component from subsequent provisioning, deployment and
-reconciliation; it does not delete a deployed app or revoke its existing
+reconciliation. It does not delete a deployed app or revoke its existing
 identity/RBAC. Any resource retirement or permission cleanup is a separate,
 deliberately authorized operation. To roll back,
 restore the previous explicit selection and source/index configuration, then
@@ -1436,17 +1487,17 @@ does not change a retrieval backend or repair source bindings.</p>
 <h2 id="private-ingestion-and-shared-source-recovery">Private ingestion and shared-source recovery</h2>
 <p>Native <code>azureBlob</code> source configuration must wait for its required
 Search-managed outbound shared private links. This guarded implementation
-does not automatically approve target requests; pending links stop
+does not automatically approve target requests. Pending links stop
 immediately with the exact deployment Search service, link name, target
 resource and expected group. Use an authorized administrator to investigate
 and approve that exact request. Never approve all pending requests.
-Approved source links use bounded readiness polling; denied Search read
+Approved source links use bounded readiness polling. Denied Search read
 permissions or a timeout require operator recovery, not bypassing the gate. See
 <a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
 <p>Configuration checks readiness before dependent Search cleanup/mutation and
 again before native source creation. Recovery is idempotent: after an
-administrator approves the exact target connection, rerun configuration;
-only the exact source Search links are read, with no target PEC enumeration
+administrator approves the exact target connection, rerun configuration.
+Only the exact source Search links are read, with no target PEC enumeration
 or approval writes or pagination. The readiness budget is 600 seconds with
 10-second polling and each ARM request is limited to at most 30 seconds,
 bounded by the remaining budget. Each source link must report <code>Approved</code> and <code>Succeeded</code>, as
@@ -1464,7 +1515,7 @@ as unused metadata: no native Blob source is rendered, and no shared-source
 opt-in is implied. Active ADLS or mismatched/ambiguous source configuration
 still fails closed. Record
 the source audience and permission metadata before changing it. Omission
-or actual null preserves <code>["rbacScope"]</code>; textual <code>null</code> and other invalid
+or actual null preserves <code>["rbacScope"]</code>. Textual <code>null</code> and other invalid
 input fail closed. Roll back to protected ingestion with <code>["rbacScope"]</code>,
 rerun source configuration, and verify source/index metadata and document
 allow/deny behavior. Do not assume already-ingested documents are protected
@@ -1476,8 +1527,12 @@ default-off opt-in does not rewrite VNet or VPN DNS settings and is independent
 of build-feed egress. Reverting a private-link readiness gate does not revoke
 approved connections: revocation is a separate, deliberate operator action.</p>
 <h2 id="identity-and-roles">Identity and roles</h2>
-<p>Every application uses its own user-assigned managed identity. No keys or connection strings are stored in application settings.</p>
-<p>All applications receive these base roles:</p>
+<p>Provisioned Container Apps use separate user-assigned managed identities
+by default. Secrets such as OAuth client credentials belong in Key Vault,
+referenced from App Configuration, not literal application settings. The
+platform also supports optional API-key paths, so do not assume that every
+deployment is secret-free.</p>
+<p>The application capability catalog includes these implicit base roles:</p>
 <table>
 <thead>
 <tr>
@@ -1504,7 +1559,10 @@ approved connections: revocation is a separate, deliberate operator action.</p>
 </tr>
 </tbody>
 </table>
-<p>Additional roles come from the capability profiles declared for each component. The default application uses these profiles:</p>
+<p>Additional roles come from the capability profiles declared for each
+component. The bundled definition declares the profiles below. Effective
+grants also depend on the topology and deployed resources, so this is not
+a promise of identical grants in classic and hosted modes.</p>
 <table>
 <thead>
 <tr>
@@ -1528,19 +1586,30 @@ approved connections: revocation is a separate, deliberate operator action.</p>
 </tbody>
 </table>
 <p>For what each profile grants and how to use them in your own application, see <a href="../build-your-own-app/#capability-profiles">Capability profiles</a>.</p>
+<p>The bundled hosted orchestrator uses a separate, discovered runtime
+principal and the narrower <a href="../hosted-agents/#bootstrap-the-agents-runtime-access">hosted bootstrap plan</a>.
+Its project identity's registry pull role is a foundation prerequisite,
+not a replacement for runtime grants. Continuity and panel permissions are
+feature-owned and reconciled separately. A deployment principal's ability
+to assign roles does not prove that a delegated user can call the agent or
+retrieve a protected document.</p>
 <h2 id="monitoring">Monitoring</h2>
 <p>Agent Landing Zone sends telemetry to Application Insights and Log Analytics, both deployed with the infrastructure.</p>
 <ul>
 <li><strong>Application Insights</strong>: requests, dependencies, exceptions, and traces from each component. Use <strong>Transaction search</strong> to follow a single request from the UI through the orchestrator to model and search calls.</li>
 <li><strong>Log Analytics</strong>: container output and platform events.</li>
 </ul>
+<p>The Container Apps queries and commands below cover Container Apps, not
+the Foundry hosted orchestrator. Inspect the routed agent version and its
+Foundry runtime logs separately. Telemetry content capture is a separate,
+default-off privacy choice, not a requirement for a successful chat.</p>
 <p>UI failure diagnostics intentionally avoid dependency error payloads at application
 boundaries. When a record includes <code>exception_type</code> and <code>failure_site</code>, use its
 static operation description, code location and request reference to correlate
 the failure with dependency telemetry. Do not interpret missing exception text as
 successful processing or enable raw token, cookie, claim or signed-URL logging to
 investigate it. A failed optional panel index write still requires repair even
-when the chat turn continues; it does not confirm that the index was persisted.</p>
+when the chat turn continues. It does not confirm that the index was persisted.</p>
 <p>Useful Log Analytics queries:</p>
 <div class="highlight"><pre><span></span><code><span class="c">// Recent errors from all container apps</span>
 <span class="n">ContainerAppConsoleLogs_CL</span>
@@ -1560,12 +1629,20 @@ when the chat turn continues; it does not confirm that the index was persisted.<
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name, state:properties.runningStatus, revision:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
 </code></pre></div>
-<p>A healthy app shows <code>Running</code> and a ready revision. If a revision fails to start, check <code>ContainerAppSystemLogs_CL</code> for the reason.</p>
+<p>A healthy app shows <code>Running</code> and a ready revision. Also verify the image
+and latest intended revision. An older healthy placeholder can still serve
+HTTP 200 while the new application revision fails. Check
+<code>ContainerAppSystemLogs_CL</code> and startup logs for that revision.</p>
 <h3 id="stream-logs-from-a-container-app">Stream logs from a container app</h3>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>logs<span class="w"> </span>show<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;container-app-name&gt;<span class="w"> </span>--follow
 </code></pre></div>
 <h3 id="change-a-runtime-setting">Change a runtime setting</h3>
-<p>Runtime settings live in Azure App Configuration under the label <code>agent-lz</code>.</p>
+<p>Post-provision publishes shared runtime settings to Azure App Configuration
+under label <code>agent-lz</code>. That is not a label-isolation guarantee. Check the
+<a href="../configuration/#runtime-settings">actual component selectors and overwrite behavior</a>
+and whether provisioning manages the setting before editing it.
+Infrastructure and deployment-selection inputs require their full workflow,
+not just a key update or restart.</p>
 <ol>
 <li>
 <p>Update the key:</p>
@@ -1574,28 +1651,51 @@ when the chat turn continues; it does not confirm that the index was persisted.<
 </code></pre></div>
 </li>
 <li>
-<p>Restart the active revision of each affected app so it reads the new value:</p>
+<p>Restart each affected Container App revision so it reads the new value:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>revision<span class="w"> </span>restart<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;container-app-name&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--revision<span class="w"> </span>&lt;revision-name&gt;
 </code></pre></div>
 </li>
 </ol>
+<p>For a hosted version, use the root <code>azd deploy</code> workflow with the existing
+compatible image handoff. Process environment values declared in
+<code>hosted-agent/azure.yaml</code> are immutable version inputs and require deployment
+of a new agent version. An App Configuration key cannot substitute for a
+process-only setting such as <code>APP_CONFIG_TLS_COMPATIBILITY</code>.</p>
 <p>For the available settings, see <a href="../configuration/">Configuration</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>With network isolation enabled, App Configuration is reachable only from the private network. Run these commands from a VPN- or VNet-connected host.</p>
 </div>
 <h3 id="rotate-a-secret">Rotate a secret</h3>
-<p>Secrets are stored in Key Vault and referenced from App Configuration. To rotate one, add a new version of the Key Vault secret, then restart the revisions of the apps that use it. No App Configuration change is needed because the reference points to the secret, not to a specific version.</p>
+<p>Secrets are stored in Key Vault and referenced from App Configuration.
+Inspect the reference before rotation. An unversioned secret URI resolves
+the current version when configuration is reloaded, so no reference change
+is needed. A versioned URI must be updated deliberately. Add the new secret
+version, retain the required access, then restart the affected Container App
+revisions or redeploy the hosted version to reload configuration. Verify
+the new credential before retiring the old one.</p>
 <h3 id="roll-back-to-a-previous-release">Roll back to a previous release</h3>
-<p>Roll back by redeploying the previous validated combination:</p>
+<p>Review the previous release's migration constraints and restore its complete
+compatible combination. When only classic application pins changed and
+the existing foundation remains compatible, application-only rollback uses:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>v&lt;previous-version&gt;
 azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>If the newer release changed infrastructure, run <code>azd up</code> instead so that provisioning, configuration, and application deployment stay consistent with the older pins. Check the release notes for changes that cannot be reverted, such as data migrations.</p>
+<p>If infrastructure or configuration changed, rerun the selected topology's
+full workflow so provisioning, configuration and applications agree. For
+hosted rollback, prepare the previous pinned image or deliberately restore
+its verified digest, provision the handoff, then deploy. <code>azd up</code> is not a
+substitute for that image step. Check the release notes for changes that
+cannot be reverted, such as data migrations, and restore ingestion before
+downgrading to a UI without the upload gate.</p>
 <h3 id="complete-a-deferred-post-provision">Complete a deferred post-provision</h3>
-<p>When post-provision configuration was deferred (for example, provisioning ran from a host without private network access), the environment is not fully configured. From a VPN- or VNet-connected host, run:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>postprovision
+<p>When post-provision configuration was deferred, the environment is not
+fully configured. From a VPN- or VNet-connected host, select the intended
+environment, clear the deferral and rerun the hook:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RUN_FROM_JUMPBOX<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SKIP_NETWORK_ISOLATION_WARNING<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>postprovision
 </code></pre></div>
 <p>See <a href="../network-isolation/#post-provision-can-be-deferred">Post-provision can be deferred</a>.</p>
 <h3 id="remove-an-environment">Remove an environment</h3>
