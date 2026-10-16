@@ -17,8 +17,8 @@ Zone, AI Gateway Landing Zone, or both.
 
 ## Architecture
 
-An [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones)
-that can be deployed with or without an existing Azure platform landing zone.
+Two complementary landing zones: Agent Landing Zone for AI applications and
+agents, and AI Gateway Landing Zone for centralized model access.
 
 </div>
 

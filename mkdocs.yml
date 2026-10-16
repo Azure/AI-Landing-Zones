@@ -37,8 +37,6 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
 nav:
   - Home: index.md
-  - What's New: whatisnew.md
-  - FAQ: architecture/faq.md
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
       - "Design Checklist": architecture/design-checklist.md
@@ -61,6 +59,8 @@ nav:
       - "Operations": agent-landing-zone/operations.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
       - "Cost Guide": architecture/cost-guide.md
+  - What's New: whatisnew.md
+  - FAQ: architecture/faq.md
 
 # These pages are intentionally kept out of the left navigation. The ACA
 # design article is a standalone reference, and the bicep v2 migration page is
@@ -78,4 +78,4 @@ extra:
 
 extra_css:
   # Update the content version when styles change to invalidate browser caches.
-  - stylesheets/extra.css?v=b0bcdd59a03d
+  - stylesheets/extra.css?v=f9858cd57fe4
