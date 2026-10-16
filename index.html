@@ -1317,34 +1317,32 @@ Choose a Bicep or Terraform implementation <a href="#extensible-implementations"
 <thead>
 <tr>
 <th>Implementation</th>
-<th>Deployment options</th>
+<th>Bicep</th>
+<th>Terraform</th>
+<th>Portal</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Foundry modules</td>
-<td><a href="https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry">Bicep</a>, <a href="https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest">Terraform</a></td>
+<td><strong>Agent Landing Zone</strong></td>
+<td><a href="https://aka.ms/ailz/bicep">View implementation</a></td>
+<td><a href="https://aka.ms/ailz/terraform">View implementation</a></td>
+<td><a href="https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json"><img alt="Deploy to Azure" src="https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg" /></a></td>
 </tr>
 <tr>
-<td>Agent Landing Zone infrastructure</td>
-<td><a href="https://aka.ms/ailz/bicep">Bicep</a>, <a href="https://aka.ms/ailz/terraform">Terraform</a>, <a href="https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json">Portal</a></td>
+<td><strong>AI Gateway Landing Zone</strong></td>
+<td><a href="https://aka.ms/ailz/apim">View implementation</a></td>
+<td><a href="https://aka.ms/ailz/aigateway/terraform">View implementation</a></td>
+<td>&mdash;</td>
 </tr>
 <tr>
-<td>Infrastructure and default agent application</td>
-<td><a href="agent-landing-zone/">azd and Bicep guide</a></td>
-</tr>
-<tr>
-<td>AI Gateway Landing Zone</td>
-<td><a href="https://aka.ms/ailz/apim">Bicep</a>, <a href="https://aka.ms/ailz/aigateway/terraform">Terraform</a></td>
+<td><strong>Foundry AVM Modules</strong></td>
+<td><a href="https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry">View module</a></td>
+<td><a href="https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest">View module</a></td>
+<td>&mdash;</td>
 </tr>
 </tbody>
 </table>
-<p>Infrastructure-only deployments do not include the default agent application.
-For the complete flow, use the azd guide. Terraform application integration is
-<a href="agent-landing-zone/deploy-terraform/">not yet validated</a>.
-See <a href="terraform-parity/">Bicep and Terraform feature parity</a> for implementation
-differences, or the <a href="https://github.com/Azure/AI-Landing-Zones/tree/legacy-bicep"><code>legacy-bicep</code> branch</a>
-for the previous Bicep codebase.</p>
 <p><span id="whats-new"></span>
 <span id="frequently-asked-questions"></span></p>
 <h2 id="design-and-resources">Design and resources</h2>
