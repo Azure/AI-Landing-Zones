@@ -43,6 +43,7 @@
 
 .md-typeset .landing-zone-overview p {
   margin: 0;
+  text-wrap: pretty;
 }
 
 .md-typeset .landing-zone-overview + .admonition.note > p:not(.admonition-title) {
