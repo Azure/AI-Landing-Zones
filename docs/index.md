@@ -42,8 +42,8 @@ A foundation for generative and non-generative AI workloads, focused on
 </div>
 
 !!! note
-    Designed and tested for Azure public cloud. Government and sovereign deployments
-    require separate validation. Some services used by the solution may be in preview.
+    Designed and tested for Azure public cloud. Validate government and sovereign
+    deployments separately. Some included services may be in preview.
 
 <span id="use-cases-scenarios"></span>
 

@@ -45,6 +45,10 @@
   margin: 0;
 }
 
+.md-typeset .landing-zone-overview + .admonition.note > p:not(.admonition-title) {
+  text-wrap: pretty;
+}
+
 @media (max-width: 48em) {
   .md-typeset .landing-zone-overview {
     grid-template-columns: 1fr;
