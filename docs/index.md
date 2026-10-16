@@ -5,9 +5,10 @@ hide:
 
 # AI Landing Zones
 
-AI Landing Zones provides reference architectures and deployable implementations
-for secure, resilient AI applications and agents on Azure. Choose Agent Landing
-Zone, AI Gateway Landing Zone, or both.
+AI Landing Zones provides [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones)
+reference architectures and deployable implementations for secure, resilient AI
+applications and agents on Azure. Choose Agent Landing Zone, AI Gateway Landing
+Zone, or both.
 
 ![AI Landing Zones overview](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone.png)
 
@@ -81,7 +82,8 @@ Choose a Bicep or Terraform implementation [below](#extensible-implementations).
 
 ## Extensible Implementations
 
-Choose an implementation for your deployment:
+Deploy with or without an existing Azure platform landing zone. Choose an
+implementation below.
 
 | Implementation | Bicep | Terraform | Portal |
 | --- | --- | --- | --- |
