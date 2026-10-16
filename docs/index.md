@@ -11,14 +11,39 @@ Zone, AI Gateway Landing Zone, or both.
 
 ![AI Landing Zones overview](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone.png)
 
-This [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones)
-can run with or without a platform landing zone. Its Bicep and Terraform
-implementations use [Azure Verified Modules](https://aka.ms/AVM) and focus on
+<div class="landing-zone-overview" markdown="1">
+
+<div markdown="1">
+
+## Architecture
+
+An [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones)
+that can be deployed with or without an existing Azure platform landing zone.
+
+</div>
+
+<div markdown="1">
+
+## Implementation
+
+Bicep and Terraform implementations built on [Azure Verified Modules](https://aka.ms/AVM).
+
+</div>
+
+<div markdown="1">
+
+## Workloads
+
+A foundation for generative and non-generative AI workloads, focused on
 [AI on Azure Platform](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures).
 
-Designed and tested for Azure public cloud, it requires environment-specific
-validation for government and sovereign deployments. Some Azure services used
-by the solution may be in preview.
+</div>
+
+</div>
+
+Designed and tested for Azure public cloud. Government and sovereign deployments
+require separate validation. Some services used by the solution may be in preview.
+{: .landing-zone-overview-note }
 
 <span id="use-cases-scenarios"></span>
 

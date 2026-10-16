@@ -27,6 +27,36 @@
   white-space: nowrap;
 }
 
+.md-typeset .landing-zone-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+  margin: 1.2rem 0 0.8rem;
+}
+
+.md-typeset .landing-zone-overview h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.md-typeset .landing-zone-overview p {
+  margin: 0;
+}
+
+.md-typeset .landing-zone-overview-note {
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 48em) {
+  .md-typeset .landing-zone-overview {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
 .md-typeset .alz-download-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
