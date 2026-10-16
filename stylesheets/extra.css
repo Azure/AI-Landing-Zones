@@ -45,11 +45,6 @@
   margin: 0;
 }
 
-.md-typeset .landing-zone-overview-note {
-  font-size: 0.75rem;
-  line-height: 1.6;
-}
-
 @media (max-width: 48em) {
   .md-typeset .landing-zone-overview {
     grid-template-columns: 1fr;
