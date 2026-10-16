@@ -292,6 +292,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workloads
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-cases" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1195,6 +1228,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Workloads
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use-cases" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1365,13 +1431,24 @@
 for secure, resilient AI applications and agents on Azure. Choose Agent Landing
 Zone, AI Gateway Landing Zone, or both.</p>
 <p><img alt="AI Landing Zones overview" src="https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone.png" /></p>
-<p>This <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones">application landing zone</a>
-can run with or without a platform landing zone. Its Bicep and Terraform
-implementations use <a href="https://aka.ms/AVM">Azure Verified Modules</a> and focus on
+<div class="landing-zone-overview">
+<div>
+<h2 id="architecture">Architecture</h2>
+<p>An <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones">application landing zone</a>
+that can be deployed with or without an existing Azure platform landing zone.</p>
+</div>
+<div>
+<h2 id="implementation">Implementation</h2>
+<p>Bicep and Terraform implementations built on <a href="https://aka.ms/AVM">Azure Verified Modules</a>.</p>
+</div>
+<div>
+<h2 id="workloads">Workloads</h2>
+<p>A foundation for generative and non-generative AI workloads, focused on
 <a href="https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/architectures">AI on Azure Platform</a>.</p>
-<p>Designed and tested for Azure public cloud, it requires environment-specific
-validation for government and sovereign deployments. Some Azure services used
-by the solution may be in preview.</p>
+</div>
+</div>
+<p class="landing-zone-overview-note">Designed and tested for Azure public cloud. Government and sovereign deployments
+require separate validation. Some services used by the solution may be in preview.</p>
 <p><span id="use-cases-scenarios"></span></p>
 <h2 id="use-cases">Use cases</h2>
 <p>Build AI applications and agents on a secure Azure foundation for scenarios such as:</p>
