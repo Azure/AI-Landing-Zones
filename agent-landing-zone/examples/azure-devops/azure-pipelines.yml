@@ -1,0 +1,121 @@
+# Copy this file and deploy-stage.yml to .pipelines/ in your platform repository.
+# Replace every REPLACE_* value. See ../../azure-devops.md before authorizing.
+trigger: none
+pr: none
+
+stages:
+- stage: CI
+  jobs:
+  - job: Validate
+    pool:
+      name: REPLACE_CI_LINUX_POOL
+    workspace:
+      clean: all
+    steps:
+    - checkout: self
+      clean: true
+      fetchDepth: 0
+      persistCredentials: false
+      path: s/agent-landing-zone
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.12'
+    - bash: |
+        set -euo pipefail
+        for tool in bash pwsh jq git curl az azd; do command -v "$tool"; done
+        test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
+        python -c 'import sys; assert sys.version_info >= (3,12)'
+        python -m venv "$VENV"
+        source "$VENV/bin/activate"
+        python -m pip install -r config/requirements.txt
+        python -m config.appdefinition --validate app-definition.json
+        python -m json.tool manifest.json >/dev/null
+        az bicep build --file infra/main.bicep --stdout >/dev/null
+      workingDirectory: $(Pipeline.Workspace)/s/agent-landing-zone
+      env:
+        EXPECTED_COMMIT: $(Build.SourceVersion)
+        VENV: $(Agent.TempDirectory)/agentlz-python-$(System.JobId)
+      displayName: Validate the queued source revision (no Azure deployment)
+    - bash: rm -rf "$VENV"
+      condition: always()
+      env:
+        VENV: $(Agent.TempDirectory)/agentlz-python-$(System.JobId)
+      displayName: Remove CI Python environment
+
+- template: deploy-stage.yml
+  parameters:
+    stage: DEV
+    dependsOn: [CI]
+    condition: "and(succeeded(), eq(dependencies.CI.result, 'Succeeded'))"
+    environment: agentlz-dev
+    pool: REPLACE_DEV_VNET_LINUX_POOL
+    serviceConnection: REPLACE_DEV_WIF_SERVICE_CONNECTION
+    variableGroup: agentlz-dev-secrets
+    settings:
+      AZURE_ENV_NAME: agentlz-dev
+      AZURE_SUBSCRIPTION_ID: REPLACE_DEV_SUBSCRIPTION_ID
+      AZURE_RESOURCE_GROUP: REPLACE_DEV_RESOURCE_GROUP
+      AZURE_LOCATION: REPLACE_DEV_REGION
+      AZURE_AI_FOUNDRY_LOCATION: REPLACE_DEV_FOUNDRY_REGION
+      AZURE_COSMOS_LOCATION: REPLACE_DEV_COSMOS_REGION
+      AZURE_PRINCIPAL_ID: REPLACE_DEV_SERVICE_PRINCIPAL_OBJECT_ID
+      AZURE_PRINCIPAL_TYPE: ServicePrincipal
+      DEPLOYMENT_TOPOLOGY: hosted-no-panel
+      HOSTED_AGENT_RESOURCE_SCOPE: REPLACE_DEV_HOSTED_RESOURCE_SCOPE
+      DEPLOY_INGESTION_CONTAINER_APP: 'false'
+      NETWORK_ISOLATION: 'true'
+      RUN_FROM_JUMPBOX: 'true'
+      AZURE_SKIP_NETWORK_ISOLATION_WARNING: 'false'
+      BUILD_MODE: acr-task
+
+- template: deploy-stage.yml
+  parameters:
+    stage: TEST
+    dependsOn: [CI, DEV]
+    condition: "and(succeeded(), eq(dependencies.CI.result, 'Succeeded'), eq(dependencies.DEV.result, 'Succeeded'))"
+    environment: agentlz-test
+    pool: REPLACE_TEST_VNET_LINUX_POOL
+    serviceConnection: REPLACE_TEST_WIF_SERVICE_CONNECTION
+    variableGroup: agentlz-test-secrets
+    settings:
+      AZURE_ENV_NAME: agentlz-test
+      AZURE_SUBSCRIPTION_ID: REPLACE_TEST_SUBSCRIPTION_ID
+      AZURE_RESOURCE_GROUP: REPLACE_TEST_RESOURCE_GROUP
+      AZURE_LOCATION: REPLACE_TEST_REGION
+      AZURE_AI_FOUNDRY_LOCATION: REPLACE_TEST_FOUNDRY_REGION
+      AZURE_COSMOS_LOCATION: REPLACE_TEST_COSMOS_REGION
+      AZURE_PRINCIPAL_ID: REPLACE_TEST_SERVICE_PRINCIPAL_OBJECT_ID
+      AZURE_PRINCIPAL_TYPE: ServicePrincipal
+      DEPLOYMENT_TOPOLOGY: hosted-no-panel
+      HOSTED_AGENT_RESOURCE_SCOPE: REPLACE_TEST_HOSTED_RESOURCE_SCOPE
+      DEPLOY_INGESTION_CONTAINER_APP: 'false'
+      NETWORK_ISOLATION: 'true'
+      RUN_FROM_JUMPBOX: 'true'
+      AZURE_SKIP_NETWORK_ISOLATION_WARNING: 'false'
+      BUILD_MODE: acr-task
+
+- template: deploy-stage.yml
+  parameters:
+    stage: PROD
+    dependsOn: [CI, DEV, TEST]
+    condition: "and(succeeded(), eq(dependencies.CI.result, 'Succeeded'), eq(dependencies.DEV.result, 'Succeeded'), eq(dependencies.TEST.result, 'Succeeded'))"
+    environment: agentlz-prod
+    pool: REPLACE_PROD_VNET_LINUX_POOL
+    serviceConnection: REPLACE_PROD_WIF_SERVICE_CONNECTION
+    variableGroup: agentlz-prod-secrets
+    settings:
+      AZURE_ENV_NAME: agentlz-prod
+      AZURE_SUBSCRIPTION_ID: REPLACE_PROD_SUBSCRIPTION_ID
+      AZURE_RESOURCE_GROUP: REPLACE_PROD_RESOURCE_GROUP
+      AZURE_LOCATION: REPLACE_PROD_REGION
+      AZURE_AI_FOUNDRY_LOCATION: REPLACE_PROD_FOUNDRY_REGION
+      AZURE_COSMOS_LOCATION: REPLACE_PROD_COSMOS_REGION
+      AZURE_PRINCIPAL_ID: REPLACE_PROD_SERVICE_PRINCIPAL_OBJECT_ID
+      AZURE_PRINCIPAL_TYPE: ServicePrincipal
+      DEPLOYMENT_TOPOLOGY: hosted-no-panel
+      HOSTED_AGENT_RESOURCE_SCOPE: REPLACE_PROD_HOSTED_RESOURCE_SCOPE
+      DEPLOY_INGESTION_CONTAINER_APP: 'false'
+      NETWORK_ISOLATION: 'true'
+      RUN_FROM_JUMPBOX: 'true'
+      AZURE_SKIP_NETWORK_ISOLATION_WARNING: 'false'
+      BUILD_MODE: acr-task

@@ -319,6 +319,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#14th-october-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14th October 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#19th-may-2026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -498,6 +509,62 @@
     
   
     Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-landing-zone/customer-environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customer environments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-landing-zone/azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps walkthrough
   
 
     
@@ -713,6 +780,145 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_12" id="__nav_4_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundation runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Foundation runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bicep/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-spoke deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Azure DevOps setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../terraform/" class="md-nav__link">
         
@@ -909,6 +1115,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#14th-october-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14th October 2026
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#19th-may-2026" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -984,6 +1201,17 @@
 
 
 <h1 id="whats-new">What's New</h1>
+<h2 id="14th-october-2026">14th October 2026</h2>
+<p><strong>Agent Landing Zone v4.3.0 released.</strong></p>
+<ul>
+<li><strong>Independent ingestion deployment</strong> — fresh, supported native-ingestion deployments omit the ingestion Container App. Existing and custom deployments retain their component choices; disabling deployment does not delete existing applications or document data. See <a href="../agent-landing-zone/configuration/#ingestion-application-selection">ingestion application selection</a>.</li>
+<li><strong>Ingestion-aware uploads</strong> — UI v3.3.0 disables upload controls and rejects attachments server-side when the ingestion application is disabled. Text chat, authentication and retrieval remain available.</li>
+<li><strong>Private native Blob ingestion safeguards</strong> — network-isolated setup requires the exact Search shared private links to be approved and successfully provisioned, with administrator approval instructions when pending. No unrelated or target-side connections are approved automatically. See <a href="../agent-landing-zone/network-isolation/#private-native-blob-ingestion">private native Blob ingestion</a>.</li>
+<li><strong>Explicit shared-source permissions</strong> — deliberately shared, non-ADLS Blob sources can use empty ingestion permission options; protected defaults remain unchanged. Review the <a href="../agent-landing-zone/configuration/#explicit-shared-source-permission-options">shared-source permission guidance</a> before opting in.</li>
+<li><strong>Isolated image builds and DNS</strong> — build-subnet-only HTTPS egress now covers the pinned Microsoft npm feeds and package-download CDN without requiring firewall DNS proxy. The separate <code>ENABLE_FIREWALL_DNS_PROXY</code> option defaults to <code>false</code> and does not change client DNS. See <a href="../agent-landing-zone/network-isolation/#image-builds-in-isolated-deployments">image builds</a> and <a href="../agent-landing-zone/network-isolation/#opt-in-firewall-dns-proxy">firewall DNS proxy</a>.</li>
+</ul>
+<p>The <a href="https://github.com/Azure/agent-landing-zone/blob/v4.3.0/manifest.json">release manifest</a> pins UI <strong>v3.3.0</strong>, orchestrator <strong>v5.2.1</strong>, ingestion <strong>v3.1.1</strong>, and infrastructure / AI Landing Zone <strong>v2.7.3</strong>.</p>
+<p>Start with the <a href="../agent-landing-zone/deploy-full-stack/">full-stack deployment guide</a>. For complete changes and reported validation, see the <a href="https://github.com/Azure/agent-landing-zone/releases/tag/v4.3.0">v4.3.0 release notes</a>.</p>
 <h2 id="19th-may-2026">19th May 2026</h2>
 <ul>
 <li><strong>AI Landing Zones Bicep v2.0.2 released.</strong> Hotfix for a v2.0.0 regression that caused <code>azd provision</code> to fail mid-deployment with <code>InvalidTemplate: 'databaseAccount_privateEndpoints[0]' / 'keyVault_privateEndpoints[0]' ... 'reference' is not valid: all function arguments should be string literals.</code> whenever <code>networkIsolation=false</code> was combined with the default <code>deployAiFoundry=true</code>. The fix gates the AI Foundry private-endpoint subnet on <code>_networkIsolation</code>, mirroring an existing sibling pattern in the same file. No behavior change for the <code>networkIsolation=true</code> (Zero Trust) topology. Release: <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.0.2">v2.0.2</a>.</li>
@@ -1005,7 +1233,7 @@
 <h2 id="17th-november-2025">17th November 2025</h2>
 <ul>
 <li>AI Landing Zones goes from preview to GA</li>
-<li>AI Landing Zones <a href="https://github.com/Azure/AI-Landing-Zones/blob/main/terraform/readme.md">Terraform guide</a> published</li>
+<li>AI Landing Zones <a href="../terraform/">Terraform guide</a> published</li>
 </ul>
 <h2 id="6th-november-2025">6th November 2025</h2>
 <ul>

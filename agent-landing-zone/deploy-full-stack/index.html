@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../../architecture/design-checklist/">
+        <link rel="prev" href="../azure-devops/">
       
       
         <link rel="next" href="../deploy-infra-only/">
@@ -415,6 +415,62 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../customer-environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customer environments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps walkthrough
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -793,6 +849,145 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_12" id="__nav_4_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundation runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Foundation runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-spoke deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Azure DevOps setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../terraform/" class="md-nav__link">
         
@@ -1144,6 +1339,10 @@
 <h1 id="deploy-full-stack">Deploy full stack</h1>
 <p>This guide deploys the infrastructure layer and the default application (Agent App UI and Agent App Orchestrator, with an optional Agent App Ingestion Container App) into a new environment with public endpoints. For private networking, read this page and then <a href="../network-isolation/">Network isolation</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
+<p>For a customer-owned repository and repeatable deployments, use
+<a href="../customer-environments/">Customer environments</a> and the
+<a href="../azure-devops/">Azure DevOps walkthrough</a>. The commands below explain the same
+application lifecycle for an interactive deployment.</p>
 <p><strong>Azure permissions</strong></p>
 <ul>
 <li><strong>Owner</strong>, or <strong>Contributor</strong> plus <strong>User Access Administrator</strong>, on the target subscription. The deployment creates role assignments for managed identities.</li>

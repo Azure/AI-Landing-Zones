@@ -418,6 +418,62 @@
   
   
     <li class="md-nav__item">
+      <a href="../customer-environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customer environments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps walkthrough
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../deploy-full-stack/" class="md-nav__link">
         
   
@@ -816,6 +872,145 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_12" id="__nav_4_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundation runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Foundation runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-spoke deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Azure DevOps setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../terraform/" class="md-nav__link">
         
@@ -1191,6 +1386,9 @@
 <p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone uses private endpoints and private DNS for the deployed workload services. With the default empty <code>allowedIpRanges</code>, public access to those service endpoints is disabled. This is not a blanket block on every public endpoint: Azure Resource Manager remains public, and telemetry and optional public ingress have separate settings.</p>
 <p>An explicit, nonempty <code>allowedIpRanges</code> in <code>main.parameters.json</code> enables IP-restricted public access on services that support those rules, even with isolation enabled. Review that exception and any existing network or DNS resources before describing a deployment as private-only.</p>
 <p>This page explains what changes when isolation is on, how to reach the private network, and how to complete a deployment from a connected host.</p>
+<p>For ordered foundation setup, follow the <a href="../../bicep/standalone/">standalone</a> or
+<a href="../../bicep/hub-and-spoke/">hub-and-spoke</a> runbook. For connected deployment agents
+and protected environment promotion, see the <a href="../azure-devops/">Azure DevOps walkthrough</a>.</p>
 <h2 id="what-changes-with-isolation">What changes with isolation</h2>
 <table>
 <thead>

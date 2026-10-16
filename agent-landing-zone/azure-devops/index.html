@@ -1,0 +1,1906 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../customer-environments/">
+      
+      
+        <link rel="next" href="../deploy-full-stack/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Azure DevOps walkthrough - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deploy-applications-with-azure-devops" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Azure DevOps walkthrough
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customer-environments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Customer environments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps walkthrough
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps walkthrough
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-prepare-the-repository-and-runners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Prepare the repository and runners
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Prepare the repository and runners">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#runner-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runner requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-establish-identities-and-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Establish identities and permissions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Establish identities and permissions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#complete-the-application-sign-in-setup-separately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete the application sign-in setup separately
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-fill-the-pipeline-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Fill the pipeline inputs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Fill the pipeline inputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#private-component-repositories-and-custom-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private component repositories and custom definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-protect-and-register-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Protect and register the pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-understand-what-runs-on-a-fresh-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Understand what runs on a fresh job
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-verify-dev-approve-test-then-approve-prod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Verify DEV, approve TEST, then approve PROD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshoot-redeploy-and-recover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshoot, redeploy and recover
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-example-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local example validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hosted agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_12" id="__nav_4_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundation runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Foundation runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/standalone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Standalone deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/hub-and-spoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub-and-spoke deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/deploy-with-azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep Azure DevOps setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/Readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy with Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform implementation status
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-prepare-the-repository-and-runners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Prepare the repository and runners
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Prepare the repository and runners">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#runner-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runner requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-establish-identities-and-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Establish identities and permissions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Establish identities and permissions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#complete-the-application-sign-in-setup-separately" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete the application sign-in setup separately
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-fill-the-pipeline-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Fill the pipeline inputs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Fill the pipeline inputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#private-component-repositories-and-custom-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private component repositories and custom definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-protect-and-register-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Protect and register the pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-understand-what-runs-on-a-fresh-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Understand what runs on a fresh job
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-verify-dev-approve-test-then-approve-prod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Verify DEV, approve TEST, then approve PROD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshoot-redeploy-and-recover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshoot, redeploy and recover
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-example-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local example validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="deploy-applications-with-azure-devops">Deploy applications with Azure DevOps</h1>
+<p>Use this walkthrough to deploy the Bicep/azd <strong>Agent Landing Zone application</strong>,
+including its foundation, from a customer-owned platform repository. It promotes
+one CI-validated source commit through <strong>DEV → TEST → PROD</strong>. It does not deploy
+an application by running the foundation repository's pipelines alone.</p>
+<p>Start with <a href="../customer-environments/">Customer environments</a> for repository
+ownership and component customization. Follow the
+<a href="../../bicep/deploy-with-azure-devops/">foundation Azure DevOps setup</a> for creating
+service connections, finding principal IDs, authorizing pipelines and configuring
+Environment checks. Return here for the application's hooks and deployment sequence.</p>
+<p>These are adaptable customer examples, not changes to upstream pipelines.
+The existing foundation CD pipeline permits independent environment selection.
+Its deployment job checks out source: downloading its CI artifact does not prove
+that the artifact is deployed. Its preview template is not automatically executed.
+The example below instead checks out and verifies the <strong>same commit in every job</strong>;
+it does not consume a source archive or claim to run an infrastructure preview.</p>
+<h2 id="1-prepare-the-repository-and-runners">1. Prepare the repository and runners</h2>
+<p>Use a reviewed platform release (the inspected baseline is v4.3.0) in your customer
+repository. Keep <code>manifest.json</code>, <code>app-definition.json</code>, <code>main.parameters.json</code>,
+<code>azure.yaml</code>, <code>infra/</code>, <code>config/</code>, <code>contracts/</code> and <code>scripts/</code> together at its root.
+Infrastructure is incorporated under <code>infra/</code>; do not deploy it from a second
+foundation checkout. Commit customer configuration and compatible component pins
+before queuing a pipeline. Do not commit credentials or local azd environments.</p>
+<p>The downloadable example initially deploys the <strong>bundled application</strong> with
+<code>hosted-no-panel</code>, native Blob ingestion and private endpoints. Set the same
+reviewed topology and ingestion selection across the three environments:</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Choices and effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOYMENT_TOPOLOGY</code></td>
+<td><code>hosted-no-panel</code>, <code>hosted-panel</code>, or <code>classic</code>. Classic runs orchestration in Container Apps.</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_RESOURCE_SCOPE</code></td>
+<td>Required <strong>before first provision</strong> for hosted modes: the deployed Foundry delegated-user audience followed by <code>/.default</code>. It has no implicit runtime default.</td>
+</tr>
+<tr>
+<td><code>DEPLOY_INGESTION_CONTAINER_APP</code></td>
+<td>Explicit <code>'false'</code> in this example; set <code>'true'</code> if the optional app and conversation uploads are required. Native source ingestion is not feature-equivalent. Retain an existing environment's selection during upgrades.</td>
+</tr>
+<tr>
+<td><code>NETWORK_ISOLATION</code></td>
+<td>Explicit <code>'true'</code>. Do not change it merely to make a pipeline pass.</td>
+</tr>
+<tr>
+<td><code>BUILD_MODE</code></td>
+<td><code>acr-task</code>; private image builds use the foundation's ACR Tasks pool. Local Docker is not required.</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../configuration/">Configuration</a>, <a href="../hosted-agents/">Hosted agents</a> and
+<a href="../configuration/#ingestion-application-selection">ingestion compatibility</a>.
+An explicit topology overrides legacy flags; fresh environments otherwise default
+to hosted, existing recorded topologies remain sticky, and unmarked older
+environments are treated as classic. This example deliberately makes the choice
+explicit: <strong>do not use it to switch an existing classic environment to hosted</strong>
+without the migration and recovery review.</p>
+<h3 id="runner-requirements">Runner requirements</h3>
+<p>Create authorized <strong>Linux self-hosted Azure Pipelines agent pools</strong>, with a runner
+able to reach each environment's private endpoints through its VNet or a peered
+hub/VPN. Bootstrap the deployment network before this full-stack pipeline: an
+agent cannot depend on the VNet it is about to create to become reachable.
+Use <a href="../network-isolation/">Network isolation</a> for DNS, routing and egress checks.
+The CI-only pool need not reach Azure data-plane endpoints.</p>
+<p>Every runner needs Bash, PowerShell 7 (<code>pwsh</code>), jq, Git, curl, Azure CLI with Bicep,
+Azure Developer CLI (<code>azd</code>), and Python <strong>3.12+ with pip and venv</strong>. Hosted deployment
+also needs an azd version supporting the pinned <code>hosted-agent/azure.yaml</code> service.
+Install and pin approved tool versions in your agent image; record them in your
+release evidence. Populate the self-hosted agent's Python tool cache for
+<code>UsePythonVersion@0</code> (<code>3.12</code>), rather than assuming it can install Python.
+Allow package, source and container-build dependency egress. Hooks themselves
+bootstrap a temporary pip environment during post-provision.</p>
+<p>From the agent's Bash shell, verify:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>--version
+pwsh<span class="w"> </span>--version
+jq<span class="w"> </span>--version
+git<span class="w"> </span>--version
+az<span class="w"> </span>version
+az<span class="w"> </span>bicep<span class="w"> </span>version
+azd<span class="w"> </span>version
+</code></pre></div>
+<p>The YAML uses <strong><code>pool.name</code></strong>, not <code>pool.vmImage</code>. A private ACR Tasks agent pool
+is a different resource from an Azure Pipelines agent pool: it builds images,
+but does not run azd, topology discovery or post-provision hooks. A Microsoft-hosted
+public agent is not the default private deployment runner. For an intentionally
+public deployment, review network inputs and runner policy separately.</p>
+<p>Use dedicated, preferably ephemeral agents. <code>workspace.clean</code> isolates jobs;
+the final cleanup removes only explicitly listed runtime state directories and
+temporary tool configuration, leaving source checkouts intact. Do not place
+unrelated files in the agent workspace or run untrusted pull requests on
+deployment agents.</p>
+<h2 id="2-establish-identities-and-permissions">2. Establish identities and permissions</h2>
+<p>Create an <strong>Azure Resource Manager workload identity federation (WIF)</strong> service
+connection per environment, following the foundation setup. Restrict each
+connection to this pipeline and its target subscription/scopes. The
+<code>AzureCLI@2</code> task authenticates noninteractively; all azd and hook commands run
+inside it, with <code>azd config set auth.useAzCliAuth true</code>. Do not add interactive
+<code>az login</code>, <code>azd auth login</code>, client secrets or exported federation tokens.</p>
+<p>Set <code>AZURE_PRINCIPAL_ID</code> to the connection identity's <strong>enterprise application /
+service principal object ID</strong>, not its application/client ID or app-registration
+object ID. Set <code>AZURE_PRINCIPAL_TYPE=ServicePrincipal</code>; the default parameter type
+is <code>User</code> and is wrong for this job. A connection that can read the subscription
+does not necessarily have deployment or data-plane permissions.</p>
+<p>Have an administrator approve the minimum role plan:</p>
+<table>
+<thead>
+<tr>
+<th>Identity</th>
+<th>Required access to review</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deployment service principal</td>
+<td>Contributor for resource deployment plus scoped role-assignment authority (for example User Access Administrator) wherever Bicep and hooks create grants. Subscription-scope deployments, provider registration and hub/shared resources can require additional scope; use the foundation guide's scope review. Do not solve data-plane denials by adding Owner.</td>
+</tr>
+<tr>
+<td>Deployment service principal, configuration/build operations</td>
+<td>App Configuration Data Owner for publishing settings; required Key Vault secret access when resolving references; Search service/index configuration permissions and the Foundry configuration/model/deployment actions used by the enabled hooks. ACR Tasks build/run and registry/Container Apps update permissions must also be authorized. These are separate from ARM Contributor. Check the effective grants from Bicep for the explicit principal and add only missing scoped roles.</td>
+</tr>
+<tr>
+<td>Deployment service principal, hosted authoring</td>
+<td>Foundry User (previously Azure AI User) on the exact project, plus account read access; authority to create the scoped runtime assignments in the <a href="../hosted-agents/#bootstrap-the-agents-runtime-access">hosted access plan</a>. Cognitive Services Contributor/OpenAI User alone do not grant hosted-agent data-plane authoring.</td>
+</tr>
+<tr>
+<td>Runtime managed identities</td>
+<td>Capability-profile roles and hosted project/image-pull/bootstrap grants, as described in <a href="../operations/#identity-and-roles">Identity and roles</a>. Do not substitute the pipeline identity for the runtime identity.</td>
+</tr>
+<tr>
+<td>Delegated application users</td>
+<td>Application consent, Foundry caller/agent access where applicable, and the intended source/document permissions. Pipeline success grants none of these to users.</td>
+</tr>
+</tbody>
+</table>
+<p>Also confirm service/model availability, quota, provider registration and Responsible
+AI acceptance in each target subscription. Do not set preflight bypass flags to
+work around an unattended failure. Allow RBAC propagation before retrying.</p>
+<h3 id="complete-the-application-sign-in-setup-separately">Complete the application sign-in setup separately</h3>
+<p>The pipeline service connection is <strong>not</strong> the UI's Entra application registration.
+The inspected root configuration and pinned UI deployment scripts do not create
+that registration or grant tenant consent. Arrange this with an Entra administrator
+for each isolated application environment:</p>
+<ol>
+<li>Create the confidential application registration; expose its
+   <code>api://&lt;client-id&gt;/user_impersonation</code> scope and request version-2 access tokens.</li>
+<li>Register the final HTTPS UI URL with <code>/auth/oauth/azure-ad/callback</code>.
+   Set <code>CHAINLIT_URL</code> to that canonical HTTPS origin without a trailing slash.
+   For a first deployment, discover the assigned frontend URL, finish this setup,
+   and restart the UI before accepting DEV.</li>
+<li>Create/rotate its client credential under tenant policy. Store it in Key Vault,
+   publish a <strong>Key Vault reference</strong> as <code>OAUTH_AZURE_AD_CLIENT_SECRET</code>, and publish
+   <code>OAUTH_AZURE_AD_CLIENT_ID</code>, <code>OAUTH_AZURE_AD_TENANT_ID</code> and
+   <code>OAUTH_AZURE_AD_SCOPES</code> under App Configuration label <code>agent-lz</code>.
+   Keep <code>CHAINLIT_AUTH_SECRET</code> stable and protected as well.</li>
+<li>Configure and consent the downstream delegated permissions for the deployed
+   audience, including Foundry OBO for hosted mode. Graph scopes are not a
+   replacement for the UI's single-token API scope. Grant intended caller access.</li>
+<li>Review conflicting unlabelled/service settings, restart affected components,
+   then perform actual user sign-in and document allow/deny tests.</li>
+</ol>
+<p>Follow <a href="../hosted-agents/#configure-the-uis-delegated-authentication">delegated authentication</a>
+for the exact keys and consent boundaries, and
+<a href="../configuration/#runtime-settings">runtime settings</a> for publishing/restart behavior.
+Tenant consent and this configuration are an <strong>unattended onboarding gap</strong>, not
+work automatically performed by YAML or by granting Azure subscription roles.
+Use a separately reviewed administrative procedure or automation; do not give
+the deployment connection broad Microsoft Graph permissions to hide the gap.</p>
+<h2 id="3-fill-the-pipeline-inputs">3. Fill the pipeline inputs</h2>
+<p>Download both files, then place them beside each other in <strong><code>.pipelines/</code> in the
+customer platform repository</strong>, not in its <code>infra/</code> folder:</p>
+<ul>
+<li><a href="../examples/azure-devops/azure-pipelines.yml">azure-pipelines.yml</a></li>
+<li><a href="../examples/azure-devops/deploy-stage.yml">deploy-stage.yml</a></li>
+<li>Optional local check: <a href="../examples/azure-devops/validate.py">validate.py</a></li>
+</ul>
+<p>Replace the following values before authorization. DEV, TEST and PROD must have
+separate resource groups, azd environments, connection identities, configuration
+stores, secrets and data. Separate subscriptions are recommended where the
+customer's governance requires them.</p>
+<table>
+<thead>
+<tr>
+<th>Exact example input</th>
+<th>Required replacement / source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REPLACE_CI_LINUX_POOL</code></td>
+<td>Authorized Linux validation pool with the toolchain above.</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_VNET_LINUX_POOL</code>, <code>REPLACE_TEST_VNET_LINUX_POOL</code>, <code>REPLACE_PROD_VNET_LINUX_POOL</code></td>
+<td>Authorized, connected Linux deployment pool for each target. May be the same pool only if its connectivity and isolation policy cover all targets.</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_WIF_SERVICE_CONNECTION</code>, <code>REPLACE_TEST_WIF_SERVICE_CONNECTION</code>, <code>REPLACE_PROD_WIF_SERVICE_CONNECTION</code></td>
+<td>Exact Azure DevOps WIF service connection names, authorized for this pipeline only.</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_SUBSCRIPTION_ID</code>, <code>REPLACE_TEST_SUBSCRIPTION_ID</code>, <code>REPLACE_PROD_SUBSCRIPTION_ID</code></td>
+<td>Target subscription GUIDs matching those connections' allowed scopes.</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_RESOURCE_GROUP</code>, <code>REPLACE_TEST_RESOURCE_GROUP</code>, <code>REPLACE_PROD_RESOURCE_GROUP</code></td>
+<td>New target names for first provision, or the exact previously azd-provisioned groups for redeployment.</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_REGION</code>, <code>REPLACE_TEST_REGION</code>, <code>REPLACE_PROD_REGION</code></td>
+<td>Supported foundation locations (<code>AZURE_LOCATION</code>).</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_FOUNDRY_REGION</code>, <code>REPLACE_TEST_FOUNDRY_REGION</code>, <code>REPLACE_PROD_FOUNDRY_REGION</code></td>
+<td>Foundry/model locations with quota (<code>AZURE_AI_FOUNDRY_LOCATION</code>).</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_COSMOS_REGION</code>, <code>REPLACE_TEST_COSMOS_REGION</code>, <code>REPLACE_PROD_COSMOS_REGION</code></td>
+<td>Cosmos locations supported by the selected topology/foundation (<code>AZURE_COSMOS_LOCATION</code>).</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_SERVICE_PRINCIPAL_OBJECT_ID</code>, <code>REPLACE_TEST_SERVICE_PRINCIPAL_OBJECT_ID</code>, <code>REPLACE_PROD_SERVICE_PRINCIPAL_OBJECT_ID</code></td>
+<td>Connection service principal <strong>object IDs</strong>; keep <code>AZURE_PRINCIPAL_TYPE: ServicePrincipal</code>.</td>
+</tr>
+<tr>
+<td><code>REPLACE_DEV_HOSTED_RESOURCE_SCOPE</code>, <code>REPLACE_TEST_HOSTED_RESOURCE_SCOPE</code>, <code>REPLACE_PROD_HOSTED_RESOURCE_SCOPE</code></td>
+<td>Explicit delegated-user Foundry scope ending in <code>/.default</code>, matched to the deployed audience and consent (for example <code>https://ai.azure.com/.default</code> where that is the target audience). Required for both hosted topologies before provisioning; not the UI's <code>api://&lt;client-id&gt;/user_impersonation</code> scope. Classic does not consume this hosted input.</td>
+</tr>
+<tr>
+<td><code>environment: agentlz-dev</code>, <code>agentlz-test</code>, <code>agentlz-prod</code></td>
+<td>Precreated Azure DevOps Environment resource names. Rename consistently if required; these are approval resources, not azd environments.</td>
+</tr>
+<tr>
+<td><code>AZURE_ENV_NAME: agentlz-dev</code>, <code>agentlz-test</code>, <code>agentlz-prod</code></td>
+<td>Unique azd names, retained exactly for subsequent refresh/deploy runs.</td>
+</tr>
+<tr>
+<td><code>variableGroup: agentlz-dev-secrets</code>, <code>agentlz-test-secrets</code>, <code>agentlz-prod-secrets</code></td>
+<td>Create these Library variable groups and authorize only this pipeline. Each must contain the secret variable <code>AGENTLZ_SECRET_SETTINGS_JSON</code>, initially the string <code>{}</code>.</td>
+</tr>
+<tr>
+<td><code>AGENTLZ_SECRET_SETTINGS_JSON</code> in each group</td>
+<td>JSON object of additional documented azd/hook inputs, with string values. It cannot override the inline deployment controls. Empty <code>{}</code> is valid for the bundled example. This is <strong>not</strong> automatic publication of OAuth/runtime settings or a private Git credential mechanism.</td>
+</tr>
+<tr>
+<td>Inline <code>settings</code> in each stage</td>
+<td>Review topology, ingestion, isolation and regional settings. Add required <a href="../configuration/">configuration</a> inputs for your approved network, source, models or reused resources. Keep nonsecret configuration reviewable here; never put secret values in YAML.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>settings</code> maps are intentionally inline, not an unexplained external
+configuration file. Values are reapplied after environment refresh on every job.
+<code>RUN_FROM_JUMPBOX=true</code> <strong>requires</strong> the connected-host check; it does not create
+connectivity. The example leaves <code>AZURE_SKIP_NETWORK_ISOLATION_WARNING=false</code>.
+The inspected POSIX preProvision hook's interactive warning checks the legacy
+<code>AZURE_NETWORK_ISOLATION</code> variable, not the example's <code>NETWORK_ISOLATION</code> input.
+Do not inherit that legacy alias in the runner or environment. If an existing
+workflow must retain a truthy legacy alias, explicitly review setting the warning
+flag to <code>true</code> for unattended execution while retaining <code>RUN_FROM_JUMPBOX=true</code>.
+The warning flag alone can defer configuration when <code>RUN_FROM_JUMPBOX</code> is not
+truthy; never use that combination as a private deployment shortcut.</p>
+<p>Protect variable-group edits as well as YAML changes. Secret masking is not a
+data-loss prevention system; keep pipeline debug and shell tracing off.
+Use Key Vault references for runtime secrets instead of literal secret JSON
+wherever the contract supports them.</p>
+<h3 id="private-component-repositories-and-custom-definitions">Private component repositories and custom definitions</h3>
+<p>The platform connection authenticates <strong>Azure</strong>, not GitHub or Azure Repos Git.
+See <a href="../customer-environments/#private-git-authentication">Private Git authentication</a>
+for the customer repository boundary.
+The root deploy hook clones selected bundled components as <strong>sibling checkouts</strong>
+using manifest repository/tag pins, then verifies the expected commit. Use
+approved read-only Git credentials for those private repositories separately.
+The example does not install a private-Git credential: before adopting private
+component pins, add your organization's reviewed, job-scoped credential-helper or
+SSH-agent/known-host setup <strong>inside the authenticated task</strong>, with guaranteed
+cleanup. Test the exact repository/tag access without printing tokens. Source
+checkout authorization alone does not authorize the hook's new clones.</p>
+<p>Never put tokens in manifest URLs, command-line URLs, <code>url.insteadOf</code> global
+configuration, <code>.azure</code>, or downloadable artifacts. Keep <code>persistCredentials:
+false</code>; the example uses a temporary <code>GIT_CONFIG_GLOBAL</code> because hooks can write
+safe-directory entries. Do not rely on an agent owner's persistent Git credentials.
+If using an Azure Repos job token, separately grant the build identity read access
+to the required repositories and review job-token scope before explicitly mapping
+it into the credential mechanism. It is not a GitHub credential.</p>
+<p>For a <a href="../build-your-own-app/">custom application</a>, adapt CI validation to the
+selected definition and add <code>AGENTLZ_APP_DEFINITION</code> to each stage <strong>before first
+provision</strong>. Keep the application ID stable. Custom definitions accept <strong>local
+sources or immutable image digests</strong>, not remote repository URLs. Materialize
+local source in every job with a clean Git checkout at its declared
+<code>source.commit</code>, preserving <code>.git</code> metadata and the definition's relative layout.
+Explicitly check out pinned component repositories or pinned submodules if needed,
+using the separate Git credentials above. Do not feed these hooks a <code>git archive</code>
+tree without Git metadata: they check the component's actual <code>git rev-parse HEAD</code>.
+Source commit checks do not reject uncommitted edits; validate clean trees.
+Extend the template's fixed cleanup list with the custom definition folder's
+explicit <code>.azure</code> and <code>.logs</code> paths; never add a source or workspace root.
+Custom hosted services follow their own definition/image contract, not an assumed
+bundled orchestrator build. The downloaded template's preparation branch is for
+the bundled application; replace that branch with the documented custom hosted
+workflow before using it for a custom hosted definition.</p>
+<h2 id="4-protect-and-register-the-pipeline">4. Protect and register the pipeline</h2>
+<ol>
+<li>In <strong>Pipelines → Environments</strong>, create the three exact Environment names.
+   On <strong>agentlz-test</strong> and <strong>agentlz-prod</strong>, configure <strong>Approvals and checks</strong> outside
+   YAML, with accountable reviewers, no self-approval where policy requires it,
+   and restricted administrator/pipeline permissions. Approval for TEST accepts
+   DEV evidence; approval for PROD accepts TEST evidence. Configure branch control
+   and an exclusive lock where appropriate, and avoid overlapping release runs.</li>
+<li>Authorize this pipeline, not all pipelines, to use the environments, pools,
+   WIF connections and variable groups. Protect the release branch and require
+   review of pipeline/template changes.</li>
+<li>In <strong>Pipelines → New pipeline</strong>, select the customer repository and
+   <strong>Existing Azure Pipelines YAML file</strong>, then <code>.pipelines/azure-pipelines.yml</code>.
+   Save it without starting a production run until all inputs/checks are ready.</li>
+<li>Queue a run from a reviewed branch/commit. This sample has no automatic trigger.
+   Leave <strong>all stages selected</strong>; never use stage selection as a promotion bypass.</li>
+</ol>
+<p>CI validates the application definition and manifest JSON, installs the hook
+dependencies, and compiles Bicep without deploying. It is not a complete security
+scan, Bicep what-if, Azure readiness test, or real-user acceptance test. Add your
+existing unit/contract tests and review gates before extending it.</p>
+<p>Each deployment stage requires <code>succeeded()</code> <strong>and an explicit result equal to
+<code>Succeeded</code> for every prerequisite</strong>. <code>Failed</code>, <code>Canceled</code>, <code>Skipped</code> and
+<code>SucceededWithIssues</code> cannot promote. Do not replace these conditions with
+<code>always()</code>, <code>succeededOrFailed()</code> or independent stage-selection parameters.
+Azure DevOps Environment approvals remain external protected-resource checks;
+the YAML does not create or prove their existence.</p>
+<h2 id="5-understand-what-runs-on-a-fresh-job">5. Understand what runs on a fresh job</h2>
+<p>The template checks out <code>Build.SourceVersion</code> again and fails if <code>HEAD</code> differs.
+It activates Python 3.12 and installs <code>config/requirements.txt</code> <strong>in that job</strong>;
+a CI virtual environment is not available on a later agent.</p>
+<p>Inside <code>AzureCLI@2</code>, it initializes a local azd environment (or explicitly selects
+one already present), sets the intended resource group, and checks group existence:</p>
+<ul>
+<li><strong>New group:</strong> no refresh is attempted before the first provision.</li>
+<li><strong>Existing group:</strong> <code>azd env refresh --environment &lt;name&gt; --no-prompt</code> must reload
+  the previous azd deployment outputs. Access, discovery or refresh errors fail
+  the job; there is no <code>|| true</code>. An existing empty/unrelated resource group is
+  not a prior azd deployment. Use a fresh target for this example or explicitly
+  onboard/review the existing foundation before using it.</li>
+</ul>
+<p>The same azd name and subscription must locate the previous deployment. Review
+the refreshed target and outputs for an existing environment; do not create a
+second deployment by renaming the environment. Local <code>.azure</code> is disposable here,
+not a promoted artifact or backup. Review migration state and application binding
+before adopting an existing environment into CI.</p>
+<p>After refresh, reviewed environment settings are applied, then the template runs:</p>
+<table>
+<thead>
+<tr>
+<th>Topology</th>
+<th>Ordered commands from the platform root</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classic</td>
+<td><code>azd hooks run preup --no-prompt</code> → <code>azd provision --no-prompt</code> → <code>azd deploy --no-prompt</code></td>
+</tr>
+<tr>
+<td>Bundled hosted</td>
+<td><code>azd hooks run preup --no-prompt</code> → <code>azd provision --no-prompt</code> → <code>bash scripts/prepareHostedDeployment.sh</code> → <code>azd provision --no-prompt</code> → <code>azd deploy --no-prompt</code></td>
+</tr>
+</tbody>
+</table>
+<p>Preup validates/checks binding before standalone provisioning. Preprovision
+resolves topology using <code>python -m config.deployment.topology</code> and composes
+<code>infra/main.parameters.json</code>; subsequent hooks use <code>--describe</code> to read its JSON.
+Post-provision configures application services and roles. The first hosted
+provision prepares prerequisites, preparation records an image digest, the second
+provision materializes that digest in the deployment handoff, and deploy creates
+the hosted version plus the other selected components.</p>
+<p>This full workflow is deliberately repeatable on fresh agents. A hosted
+preparation may reuse a compatible digest when its provenance is available, but
+disposable local state and different environment registries can cause rebuilding.
+Bundled Container App scripts build per environment. <strong>This is immutable source
+promotion, not build-once immutable-image promotion</strong>: mutable base images, package
+feeds, tool versions, generated configuration and credentials can affect results.
+Pin dependencies/base images and record actual image digests per environment.
+If identical images are mandatory, design and validate a separate digest-based
+application contract and cross-registry availability/permissions; do not claim
+this source workflow already provides it.</p>
+<p>No build artifacts are published or downloaded. Do not add a whole-workspace
+publish step: hooks copy <code>.azure</code> to sibling components and create <code>.logs</code>.
+Exclude <code>.azure</code>, <code>.env</code>/environment files, logs, secret files, credential/config
+caches, <code>.git</code> credentials and Python dependency environments from any future
+artifact. If changing to CI artifacts, deploy from the downloaded validated tree
+and explicitly solve the Git metadata requirement for local custom sources.</p>
+<p>Cleanup runs even after failure. Its fixed path list removes <code>.azure</code> and <code>.logs</code>
+from the platform root, <code>hosted-agent/</code>, and the three manifest component sibling
+checkouts (<code>agent-app-ui</code>, <code>agent-app-orchestrator</code>, <code>agent-app-ingestion</code>).
+It leaves their source files intact and removes the job-specific temporary Python
+environment, azd config and Git config. Update the explicit state-directory list
+when changing component names or adding a custom definition folder; do not replace
+it with recursive deletion of source/workspace roots. AzureCLI@2 owns its isolated
+Azure CLI authentication context. Abrupt agent loss can prevent cleanup:
+reimage ephemeral agents or securely clean their disks before reuse.</p>
+<h2 id="6-verify-dev-approve-test-then-approve-prod">6. Verify DEV, approve TEST, then approve PROD</h2>
+<p>Expected pipeline results are a green CI job, successful DEV deployment, TEST
+waiting for its protected Environment check, then PROD waiting after successful
+TEST. Check the recorded <code>Build.SourceVersion</code> and reviewed manifest pins; do not
+approve a different run just because its branch name is the same.</p>
+<p>Before each promotion, record the following against the preceding environment
+in your release evidence:</p>
+<ol>
+<li><code>azd env get-value AZURE_RESOURCE_GROUP</code> identifies the intended target.
+   App Configuration has the expected platform outputs and effective settings
+   under label <code>agent-lz</code>; the selected apps have real, healthy image revisions,
+   not just provisioned placeholders. Record image digests and hosted routed version.</li>
+<li>Complete Entra setup above. Verify HTTPS login/callback, authenticated API
+   access and (for hosted mode) real-user OBO invocation. The hook's managed-identity
+   greeting alone is not proof of these.</li>
+<li>Ingest a controlled document through the selected configured source. With an
+   authorized user, retrieve its expected content/citations. With a user lacking
+   that document's permission, verify the content is not returned. Also verify
+   unauthenticated requests are rejected where required. Check that logs do not
+   contain tokens or protected document bodies.</li>
+<li>Exercise selected ingestion/upload, history, panel and continuity features;
+   check disabled surfaces are actually unavailable. Native Blob ingestion does
+   not imply conversation uploads work without the optional app.</li>
+<li>Inspect service health, RBAC and private endpoint resolution, and attach
+   sanitized evidence to the run/change record. See
+   <a href="../operations/#check-application-health">application health</a> and
+   <a href="../hosted-agents/#configure-the-uis-delegated-authentication">document authorization guidance</a>.</li>
+</ol>
+<p>Do not approve TEST or PROD until the preceding environment meets these checks.
+Hook exit status is necessary but not sufficient: some post-provision setup
+sections currently log a configuration failure and continue. Add organization-owned
+acceptance checks before promotion; this sample does not pretend those sections
+are fail-closed end-to-end tests.</p>
+<h2 id="troubleshoot-redeploy-and-recover">Troubleshoot, redeploy and recover</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Connection login fails, or azd asks for sign-in</td>
+<td>Verify WIF issuer/subject/audience, pipeline authorization and connection scope. Keep azd CLI-auth configuration and commands inside the authenticated task. Do not add interactive login.</td>
+</tr>
+<tr>
+<td>ARM succeeds but App Configuration/Search/Foundry returns 403</td>
+<td>Check the <strong>deployment principal's</strong> scoped data-plane roles and propagation. For hosted authoring, check exact project access. Do not substitute subscription Owner or disable authorization.</td>
+</tr>
+<tr>
+<td>Private DNS/connectivity check fails</td>
+<td>Verify the Azure Pipelines runner's network/DNS/firewall path. An ACR Tasks pool does not connect the pipeline agent. Keep post-provision nondeferred.</td>
+</tr>
+<tr>
+<td>Refresh fails</td>
+<td>Check the azd environment name, subscription, prior deployment and read permission. Stop; do not swallow the error or silently provision another group.</td>
+</tr>
+<tr>
+<td>Stale sibling checkout / source mismatch</td>
+<td>Use the clean workspace and exact manifest/local source commits. Do not remove commit validation or update pins only in PROD.</td>
+</tr>
+<tr>
+<td>Hosted handoff/digest missing</td>
+<td>Complete provision → prepare → provision → deploy; see <a href="../hosted-agents/#redeploy-the-same-image-or-prepare-a-new-one">hosted redeployment</a>. Do not skip the second provision after a source change.</td>
+</tr>
+<tr>
+<td>Green deploy but UI login/retrieval fails</td>
+<td>Complete registration/consent/runtime settings, inspect sanitized hook/service logs and run the real-user positive/negative checks. See <a href="../troubleshooting/">Troubleshooting</a>.</td>
+</tr>
+<tr>
+<td>TEST or PROD starts without the expected approval</td>
+<td>Stop the run and fix Environment checks/permissions outside YAML before restarting.</td>
+</tr>
+</tbody>
+</table>
+<p>For an application-only redeployment with unchanged compatible foundation/binding
+and hosted handoff, use the same initialization/authentication procedure and
+<code>azd deploy</code>, following <a href="../operations/#redeploy-applications-only">Redeploy applications only</a>.
+Do not replace full provisioning with deploy-only for infrastructure, RBAC,
+topology or ingestion-selection changes.</p>
+<p>For recovery, select the last accepted <strong>complete pinned combination</strong> and
+review configuration/data compatibility before rerunning the protected flow.
+Follow <a href="../operations/#roll-back-to-a-previous-release">Roll back to a previous release</a>.
+Rechecking an old commit does not reverse schema, infrastructure or data changes.
+Back up required data/configuration under a separate authorized process, retain
+known-good images, and do not use <code>azd down --purge</code> as rollback.</p>
+<h2 id="local-example-validation">Local example validation</h2>
+<p>With Python and PyYAML installed, run from the downloaded example directory:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">PyYAML</span><span class="o">==</span><span class="m">6</span>.0.3
+python<span class="w"> </span>validate.py
+</code></pre></div>
+<p>This checks YAML/template wiring, stage conditions against prerequisite result
+combinations, embedded Bash/Python syntax, and the exact cleanup targets with
+<code>rm</code> intercepted (no real deletion) without Azure. It is not the Azure
+DevOps template-expansion service and cannot check real service connections,
+approvals, RBAC, private connectivity, tenant consent or application behavior.
+The example has not been executed against Azure or registered as a live pipeline
+as part of this documentation change.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
