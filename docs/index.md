@@ -18,8 +18,8 @@ Zone, or both.
 
 ## Architecture
 
-Two complementary landing zones: Agent Landing Zone for AI applications and
-agents, and AI Gateway Landing Zone for centralized model access.
+Agent Landing Zone for AI applications and agents; AI Gateway Landing Zone for
+centralized model access.
 
 </div>
 
