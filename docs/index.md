@@ -96,9 +96,12 @@ Review the design principles and recommendations for
 
 ![Well-Architected Framework AI architecture patterns](https://learn.microsoft.com/en-us/azure/well-architected/ai/images/ai-architecture-pattern.png)
 
-<span id="roadmap"></span>
+## Roadmap
 
-**Roadmap:** Follow [planned work](https://aka.ms/ailz/roadmap).
+AI Landing Zones continues to evolve with new Azure capabilities and customer
+requirements. Explore the [project roadmap](https://aka.ms/ailz/roadmap) to follow
+planned improvements and upcoming work across the reference architectures and
+implementations.
 
 ## Contributing
 
