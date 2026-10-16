@@ -41,9 +41,9 @@ A foundation for generative and non-generative AI workloads, focused on
 
 </div>
 
-Designed and tested for Azure public cloud. Government and sovereign deployments
-require separate validation. Some services used by the solution may be in preview.
-{: .landing-zone-overview-note }
+!!! note
+    Designed and tested for Azure public cloud. Government and sovereign deployments
+    require separate validation. Some services used by the solution may be in preview.
 
 <span id="use-cases-scenarios"></span>
 
