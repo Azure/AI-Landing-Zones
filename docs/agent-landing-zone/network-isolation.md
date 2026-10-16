@@ -6,6 +6,10 @@ An explicit, nonempty `allowedIpRanges` in `main.parameters.json` enables IP-res
 
 This page explains what changes when isolation is on, how to reach the private network, and how to complete a deployment from a connected host.
 
+For ordered foundation setup, follow the [standalone](../bicep/standalone.md) or
+[hub-and-spoke](../bicep/hub-and-spoke.md) runbook. For connected deployment agents
+and protected environment promotion, see the [Azure DevOps walkthrough](azure-devops.md).
+
 ## What changes with isolation
 
 | Area | `NETWORK_ISOLATION=false` | `NETWORK_ISOLATION=true` |

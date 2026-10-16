@@ -4,6 +4,11 @@ This guide deploys the infrastructure layer and the default application (Agent A
 
 ## Prerequisites
 
+For a customer-owned repository and repeatable deployments, use
+[Customer environments](customer-environments.md) and the
+[Azure DevOps walkthrough](azure-devops.md). The commands below explain the same
+application lifecycle for an interactive deployment.
+
 **Azure permissions**
 
 - **Owner**, or **Contributor** plus **User Access Administrator**, on the target subscription. The deployment creates role assignments for managed identities.

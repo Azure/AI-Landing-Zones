@@ -10,6 +10,11 @@ it later. The application ID is bound to the environment at provision time.
 
 ## Before you start
 
+Choose the foundation network shape with the
+[standalone](../bicep/standalone.md) or [hub-and-spoke](../bicep/hub-and-spoke.md)
+runbook. Those runbooks identify foundation-only checks; return here for the
+Agent Landing Zone provisioning flow and application binding.
+
 Complete the [prerequisites in Deploy full stack](deploy-full-stack.md#prerequisites). The tools, permissions and quota are the same.
 
 ## Steps

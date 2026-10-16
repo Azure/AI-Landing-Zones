@@ -1,5 +1,9 @@
 # Terraform Deployment Guide for AI Landing Zones
 
+!!! note "Strategy under review"
+    The Terraform deployment strategy is currently under review. For current Agent
+    Landing Zone integration limitations, see [Terraform implementation status](../agent-landing-zone/deploy-terraform.md).
+
 ## What This Deployment Does
 
 This Terraform configuration deploys an **AI Landing Zone** which is a complete AI/ML platform environment ready for development and deployment of AI applications.

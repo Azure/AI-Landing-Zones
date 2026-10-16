@@ -42,6 +42,8 @@ nav:
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
       - "Design Checklist": architecture/design-checklist.md
+      - "Customer environments": agent-landing-zone/customer-environments.md
+      - "Azure DevOps walkthrough": agent-landing-zone/azure-devops.md
       - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
       - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
       - "Network isolation": agent-landing-zone/network-isolation.md
@@ -49,6 +51,10 @@ nav:
       - "Configuration": agent-landing-zone/configuration.md
       - "Custom applications": agent-landing-zone/build-your-own-app.md
       - "Deploy with Bicep": agent-landing-zone/deploy-bicep.md
+      - Foundation runbooks:
+          - "Standalone deployment": bicep/standalone.md
+          - "Hub-and-spoke deployment": bicep/hub-and-spoke.md
+          - "Bicep Azure DevOps setup": bicep/deploy-with-azure-devops.md
       - "Deploy with Terraform": terraform/index.md
       - "Deploy with Portal": portal/Readme.md
       - "Terraform implementation status": agent-landing-zone/deploy-terraform.md
