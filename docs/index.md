@@ -67,26 +67,34 @@ Choose an implementation for your deployment:
 <span id="whats-new"></span>
 <span id="frequently-asked-questions"></span>
 
-## Design and resources
-
 <span id="design-checklist"></span>
 
-**Design checklist:** Use the [AI Landing Zone Checklist](architecture/design-checklist.md)
-to plan a new environment or assess an existing one.
+## Design areas
 
-<span id="cloud-adoption-framework"></span>
+Use the [AI Landing Zone Checklist](architecture/design-checklist.md) to plan a new
+environment or assess an existing one across the following design areas.
 
-**Cloud Adoption Framework:** Start with the [CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/),
+![AI Landing Zone design areas](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone-design-area-checklist.png)
+
+## Design and resources
+
+### Cloud Adoption Framework
+
+Start with the [CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/),
 [AI checklist](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/#ai-checklists),
 and [AI strategy](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy).
 For generative and non-generative workloads, consult the
 [resource selection guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
 For infrastructure-based AI workloads, see [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
 
-<span id="well-architected-framework"></span>
+![Cloud Adoption Framework AI Ready guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/images/ai-ready.svg)
 
-**Well-Architected Framework:** Review the design principles and recommendations for
+### Well-Architected Framework
+
+Review the design principles and recommendations for
 [AI workloads on Azure](https://learn.microsoft.com/en-us/azure/well-architected/ai/).
+
+![Well-Architected Framework AI architecture patterns](https://learn.microsoft.com/en-us/azure/well-architected/ai/images/ai-architecture-pattern.png)
 
 <span id="roadmap"></span>
 
