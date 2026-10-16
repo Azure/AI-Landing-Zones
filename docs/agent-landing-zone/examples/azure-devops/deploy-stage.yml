@@ -1,0 +1,155 @@
+parameters:
+- name: stage
+  type: string
+- name: dependsOn
+  type: object
+- name: condition
+  type: string
+- name: environment
+  type: string
+- name: pool
+  type: string
+- name: serviceConnection
+  type: string
+- name: variableGroup
+  type: string
+- name: settings
+  type: object
+
+stages:
+- stage: ${{ parameters.stage }}
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: ${{ parameters.condition }}
+  variables:
+  - group: ${{ parameters.variableGroup }}
+  jobs:
+  - deployment: DeployApplication
+    environment: ${{ parameters.environment }}
+    pool:
+      name: ${{ parameters.pool }}
+    workspace:
+      clean: all
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: none
+          - checkout: self
+            clean: true
+            fetchDepth: 0
+            persistCredentials: false
+            path: s/agent-landing-zone
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.12'
+          - task: AzureCLI@2
+            displayName: Provision and deploy the CI-validated commit
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: bash
+              scriptLocation: inlineScript
+              workingDirectory: $(Pipeline.Workspace)/s/agent-landing-zone
+              useGlobalConfig: false
+              visibleAzLogin: false
+              inlineScript: |
+                set -euo pipefail
+                for tool in bash pwsh jq git curl az azd; do command -v "$tool"; done
+                test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT"
+                test -z "$(git status --porcelain)"
+                python -c 'import sys; assert sys.version_info >= (3,12)'
+                python -m venv "$VENV"
+                source "$VENV/bin/activate"
+                python -m pip install -r config/requirements.txt
+                mkdir -p "$AZD_CONFIG_DIR"
+                azd config set auth.useAzCliAuth true
+                # AzureCLI@2 has already authenticated through the WIF connection.
+                export AZURE_ENV_NAME
+                AZURE_ENV_NAME="$(jq -er '.AZURE_ENV_NAME' <<< "$SETTINGS_JSON")"
+                subscription="$(jq -er '.AZURE_SUBSCRIPTION_ID' <<< "$SETTINGS_JSON")"
+                location="$(jq -er '.AZURE_LOCATION' <<< "$SETTINGS_JSON")"
+                group="$(jq -er '.AZURE_RESOURCE_GROUP' <<< "$SETTINGS_JSON")"
+                az account set --subscription "$subscription"
+                if [ -d ".azure/$AZURE_ENV_NAME" ]; then
+                  azd env select "$AZURE_ENV_NAME" --no-prompt
+                else
+                  azd env new "$AZURE_ENV_NAME" --subscription "$subscription" --location "$location" --no-prompt
+                fi
+                azd env set AZURE_RESOURCE_GROUP "$group" --no-prompt >/dev/null
+                exists="$(az group exists --name "$group" --subscription "$subscription" -o tsv)"
+                case "$exists" in
+                  true) azd env refresh --environment "$AZURE_ENV_NAME" --no-prompt ;;
+                  false) ;; # First provision: there are no deployment outputs to refresh.
+                  *) echo "Unexpected resource-group existence result" >&2; exit 1 ;;
+                esac
+                # Reapply reviewed inputs AFTER refresh; never print the secret map.
+                python - <<'PY'
+                import json, os, re, subprocess
+                settings = json.loads(os.environ["SETTINGS_JSON"])
+                secrets = json.loads(os.environ["SECRET_SETTINGS_JSON"])
+                if not isinstance(secrets, dict):
+                    raise SystemExit("AGENTLZ_SECRET_SETTINGS_JSON must be a JSON object")
+                forbidden = set(settings) | {
+                    "PREFLIGHT_SKIP", "AGENTLZ_REGIONAL_PREFLIGHT_SKIP",
+                    "DEPLOY_HOSTED_AGENT_ORCHESTRATION", "DEPLOY_ADMINISTRATIVE_PANEL",
+                }
+                if forbidden.intersection(secrets):
+                    raise SystemExit("Secret inputs must not override reviewed deployment controls")
+                settings.update(secrets)
+                for key, value in settings.items():
+                    if not re.fullmatch(r"[A-Z][A-Z0-9_]*", key) or not isinstance(value, str):
+                        raise SystemExit("Settings must contain uppercase keys and string values")
+                    subprocess.run(["azd", "env", "set", key, value, "--no-prompt"],
+                                   check=True, stdout=subprocess.DEVNULL)
+                PY
+                # Validate binding first; provision resolves and persists the topology.
+                azd hooks run preup --no-prompt
+                azd provision --no-prompt
+                topology="$(azd env get-value DEPLOYMENT_TOPOLOGY)"
+                case "$topology" in
+                  classic) ;;
+                  hosted-no-panel|hosted-panel)
+                    bash scripts/prepareHostedDeployment.sh
+                    azd provision --no-prompt
+                    ;;
+                  *) echo "Unsupported topology" >&2; exit 1 ;;
+                esac
+                azd deploy --no-prompt
+                azd env get-value AZURE_RESOURCE_GROUP
+                echo "Deployment commands completed. Perform the guide's user acceptance checks before promotion."
+            env:
+              EXPECTED_COMMIT: $(Build.SourceVersion)
+              SETTINGS_JSON: ${{ convertToJson(parameters.settings) }}
+              SECRET_SETTINGS_JSON: $(AGENTLZ_SECRET_SETTINGS_JSON)
+              VENV: $(Agent.TempDirectory)/agentlz-python-$(System.JobId)
+              AZD_CONFIG_DIR: $(Agent.TempDirectory)/agentlz-azd-$(System.JobId)
+              GIT_CONFIG_GLOBAL: $(Agent.TempDirectory)/agentlz-git-$(System.JobId)
+              AZURE_CORE_ONLY_SHOW_ERRORS: 'true'
+          - bash: |
+              set -euo pipefail
+              # Keep source checkouts; remove only known runtime state directories.
+              # Update this fixed list when reviewed manifest component names change.
+              source_parent="${SOURCE_PARENT:?Missing source parent}"
+              state_dirs=(
+                "$source_parent/agent-landing-zone/.azure"
+                "$source_parent/agent-landing-zone/.logs"
+                "$source_parent/agent-landing-zone/hosted-agent/.azure"
+                "$source_parent/agent-landing-zone/hosted-agent/.logs"
+                "$source_parent/agent-app-ui/.azure"
+                "$source_parent/agent-app-ui/.logs"
+                "$source_parent/agent-app-orchestrator/.azure"
+                "$source_parent/agent-app-orchestrator/.logs"
+                "$source_parent/agent-app-ingestion/.azure"
+                "$source_parent/agent-app-ingestion/.logs"
+              )
+              for state_dir in "${state_dirs[@]}"; do
+                rm -rf -- "$state_dir"
+              done
+              rm -rf -- "$VENV" "$AZD_CONFIG_DIR"
+              rm -f -- "$GIT_CONFIG_GLOBAL"
+            condition: always()
+            displayName: Remove known runtime state and temporary tool configuration
+            env:
+              SOURCE_PARENT: $(Pipeline.Workspace)/s
+              VENV: $(Agent.TempDirectory)/agentlz-python-$(System.JobId)
+              AZD_CONFIG_DIR: $(Agent.TempDirectory)/agentlz-azd-$(System.JobId)
+              GIT_CONFIG_GLOBAL: $(Agent.TempDirectory)/agentlz-git-$(System.JobId)

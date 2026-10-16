@@ -2,6 +2,11 @@
 
 This page covers day-2 tasks for a running Agent Landing Zone environment: upgrades, redeployments, identity and roles, monitoring, and routine runbooks.
 
+Keep customer changes and upstream pins in the repository structure described in
+[Customer environments](customer-environments.md). Use the
+[Azure DevOps walkthrough](azure-devops.md) to apply the same reviewed revision
+through development, test and production rather than updating each environment manually.
+
 !!! note "Repository names"
     The repositories were renamed. GitHub redirects the old URLs, but update existing clones so tooling and scripts use the current names:
 

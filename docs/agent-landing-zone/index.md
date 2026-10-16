@@ -4,6 +4,10 @@ Agent Landing Zone provides an Azure foundation for AI agents and a retrieval-au
 
 Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 
+Deploying in your organization? Start with [Customer environments](customer-environments.md)
+for repository ownership and customization, then follow the
+[Azure DevOps walkthrough](azure-devops.md) for gated deployments across environments.
+
 ## Layers
 
 Agent Landing Zone has two layers that you can deploy together or separately.

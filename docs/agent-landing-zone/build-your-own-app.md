@@ -8,6 +8,10 @@ Agent App Ingestion.
 
 The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.
 
+To customize a bundled component rather than replace the application, first read
+[Customer environments](customer-environments.md). For repeatable application
+deployment, see the [Azure DevOps walkthrough](azure-devops.md).
+
 `DEPLOY_INGESTION_CONTAINER_APP` controls ingestion selection for the bundled
 application, not the components of an explicit custom definition. Custom
 definitions retain their declared component intent, including a component
