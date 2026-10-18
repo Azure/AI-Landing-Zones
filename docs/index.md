@@ -5,10 +5,10 @@ hide:
 
 # AI Landing Zones
 
-AI Landing Zones provides [application landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/#platform-landing-zones-vs-application-landing-zones)
-reference architectures and deployable implementations for secure, resilient AI
-applications and agents on Azure. Choose Agent Landing Zone, AI Gateway Landing
-Zone, or both.
+Build AI applications and agents on a secure, resilient Azure foundation.
+AI Landing Zones provides [workload landing zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/)
+reference architectures and deployable implementations. Start with Agent Landing
+Zone, centralize model access with AI Gateway Landing Zone, or combine both.
 
 ![AI Landing Zones overview](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone.png)
 
@@ -18,8 +18,8 @@ Zone, or both.
 
 ## Architecture
 
-Agent Landing Zone for AI applications and agents; AI Gateway Landing Zone for
-centralized model access.
+Agent Landing Zone provides the workload foundation, while AI Gateway Landing
+Zone centralizes model access.
 
 </div>
 
@@ -108,11 +108,11 @@ environment or assess an existing one across the following design areas.
 ### Cloud Adoption Framework
 
 Start with the [CAF AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/),
-[AI checklist](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/#ai-checklists),
+[AI adoption steps](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/#5-how-to-adopt-ai),
 and [AI strategy](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/strategy).
 For generative and non-generative workloads, consult the
 [resource selection guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/platform/resource-selection).
-For infrastructure-based AI workloads, see [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/infrastructure/cycle-cloud).
+For infrastructure-based AI workloads, see [AI on Azure Infrastructure](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ai/infrastructure/ai-azure-infrastructure).
 
 ![Cloud Adoption Framework AI Ready guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/images/ai-ready.svg)
 
@@ -125,7 +125,7 @@ Review the design principles and recommendations for
 
 ## Roadmap
 
-AI Landing Zones continues to evolve with new Azure capabilities and customer
+AI Landing Zones continues to evolve with new Azure capabilities and workload
 requirements. Explore the [project roadmap](https://aka.ms/ailz/roadmap) to follow
 planned improvements and upcoming work across the reference architectures and
 implementations.

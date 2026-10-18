@@ -1,6 +1,16 @@
 # Parameterization
 
-All parameters are defined in `main.parameters.json`. You can customize values by editing the file directly or by using `azd env set` for parameters that support environment variable substitution (indicated by `${VARIABLE_NAME}` syntax in the default value).
+This reference describes the independent Bicep foundation. Its root
+`main.parameters.json` supplies native parameter values and `${VARIABLE_NAME}`
+substitutions. Use `azd env set` only for substitutions actually present in the
+selected source file; native arrays and objects need reviewed file changes.
+
+Agent Landing Zone composes its own root parameter file and regenerates
+`infra/main.parameters.json`. Its definition and topology can override foundation
+choices. See [Agent configuration](../agent-landing-zone/configuration.md) rather
+than assuming every foundation deploy toggle is an Agent environment variable.
+Execute changes through the [infrastructure](../agent-landing-zone/deploy-infra-only.md)
+or [full-stack](../agent-landing-zone/deploy-full-stack.md) runbook.
 
 ```bash
 # Example: set a parameter via azd
@@ -31,12 +41,12 @@ azd env set NETWORK_ISOLATION true
 
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
-| `deploymentMode` | `standalone` | `DEPLOYMENT_MODE` | Topology preset: `standalone` (self-contained spoke) or `ailz-integrated` (peer to an existing hub VNet, reuse hub services) |
+| `deploymentMode` | `standalone` | `DEPLOYMENT_MODE` | Design intent: `standalone` or `ailz-integrated`; explicit network, routing, DNS and reuse inputs still determine behavior |
 | `networkIsolation` | `false` | `NETWORK_ISOLATION` | Enable Zero Trust network isolation (private endpoints, VNet) |
-| `allowedIpRanges` | `[]` | `ALLOWED_IP_RANGES` | IPv4 / CIDR allow-list applied to Storage, Key Vault, Cosmos DB, AI Search, ACR, AI Foundry, and Container Registry data planes when `networkIsolation=true` |
+| `allowedIpRanges` | `[]` | — (native array) | Approved IPv4/CIDR public-access exceptions on supported service data planes; review separately from private endpoints |
 | `useZoneRedundancy` | `false` | — | Enable zone redundancy for supported services |
-| `useCMK` | `false` | — | Enable customer-managed keys for encryption |
-| `greenFieldDeployment` | `true` | — | Green-field deployment (creates all resources from scratch) |
+| `useCMK` | `false` | — | Enable encryption keys that you manage |
+| `greenFieldDeployment` | `true` | `GREEN_FIELD_DEPLOYMENT` | Green-field deployment; review resource-specific conditions and reuse inputs |
 | `publicIngress` | `{ enabled: false }` | — | Optional Application Gateway WAF v2 public endpoint for a private Container App. See [Public Ingress with Application Gateway](public-ingress.md). |
 
 ## Solution Storage controls
@@ -196,16 +206,18 @@ By default, resource names are generated using the [CAF naming pattern](#resourc
 
 All of the parameters below are optional. Leave them empty to let the template create the resource; set any of them to a resource ID to **reuse** an existing resource instead. Cross-resource-group and cross-subscription IDs are supported throughout.
 
-Use these to compose hub-and-spoke and Application Landing Zone (ALZ) topologies where the platform team owns shared services (Key Vault, Log Analytics, Application Insights, Private DNS zones, hub Bastion / NAT / firewall, etc.) and the spoke just consumes them.
+Use these for hub-and-spoke and workload landing zone designs where a platform
+team owns shared services. Resource reuse needs explicit scoped permissions
+and connectivity; a resource ID alone does not supply them.
 
 ### Workload data services
 
 | Parameter | Env variable | Description |
 |---|---|---|
-| `aiSearchResourceId` | `AI_SEARCH_RESOURCE_ID` | Reuse an existing Azure AI Search service instead of creating one in the spoke. |
-| `aiFoundryStorageAccountResourceId` | `AI_FOUNDRY_STORAGE_ACCOUNT_RESOURCE_ID` | Reuse an existing Storage account as the AI Foundry storage backing. |
-| `aiFoundryCosmosDBAccountResourceId` | `AI_FOUNDRY_COSMOS_DB_ACCOUNT_RESOURCE_ID` | Reuse an existing Cosmos DB account as the AI Foundry Cosmos backing. |
-| `keyVaultResourceId` | `KEY_VAULT_RESOURCE_ID` | Reuse an existing Key Vault for the workload (skips local vault creation). |
+| `aiSearchResourceId` | — (native string) | Reattach a dedicated Foundry backing Search service; this is not the workload Search reuse input. |
+| `aiFoundryStorageAccountResourceId` | — (native string) | Reuse dedicated Foundry backing Storage. |
+| `aiFoundryCosmosDBAccountResourceId` | — (native string) | Reuse dedicated Foundry backing Cosmos DB. |
+| `keyVaultResourceId` | — (native string; add to reviewed root file if needed) | Existing workload Key Vault ID. Review its deployment and access conditions. |
 
 ### Observability
 
@@ -225,7 +237,9 @@ Use these to compose hub-and-spoke and Application Landing Zone (ALZ) topologies
 
 ### Hub jumpbox / Bastion / NAT
 
-When any of these is set, the matching `deploy*` flag defaults to `false`, so the spoke reuses the hub-managed component instead of deploying its own.
+An existing ID influences the matching nullable `deploy*` default; an explicit
+deploy flag wins. Review the effective flags together rather than assuming the
+ID alone suppresses every local resource.
 
 | Parameter | Env variable | Description |
 |---|---|---|
@@ -235,7 +249,12 @@ When any of these is set, the matching `deploy*` flag defaults to `false`, so th
 
 ### Private DNS zones
 
-All 15 zones used by the landing zone can be brought from a central platform subscription independently. When any of these is set, the local zone is **not** created. Pre-link the zone to the spoke VNet (or rely on hub→spoke peering + hub-side link) — automatic spoke linking is not performed. When `policyManagedPrivateDns=true`, no zone creation or linking happens regardless of these overrides.
+Each applicable zone can be brought from a central platform subscription.
+An existing zone ID suppresses its local creation and automatic spoke link.
+Every client VNet needs a zone link or explicit DNS forwarding path to a linked
+network; **peering alone does not propagate DNS zone links**.
+With `policyManagedPrivateDns=true`, use the Policy-owned DNS model instead of
+BYO overrides and agree who creates zone groups, records and links.
 
 | Parameter | Zone |
 |---|---|
@@ -257,7 +276,8 @@ All 15 zones used by the landing zone can be brought from a central platform sub
 
 ## Hub integration
 
-For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke deployments. See the [Hub-and-Spoke topology](hub-and-spoke.md) runbook for the full picture.
+For `deploymentMode=ailz-integrated` or hybrid hub-and-spoke designs. See the
+[hub-and-spoke reference](hub-and-spoke.md) for ownership, DNS and peering.
 
 | Parameter | Default | Description |
 |---|---|---|
@@ -287,7 +307,7 @@ The BYO IDs that drive this section (`hubIntegrationHubVnetResourceId`, `hubInte
 | Parameter | Default | Description |
 |---|---|---|
 | `vmAdminPassword` | Auto-generated | Admin password for the Jumpbox VM |
-| `vmSize` | `Standard_D8s_v5` | VM size for the Jumpbox |
+| `vmSize` | Root substitution defaults to `Standard_D2s_v3` | VM size for the jumpbox; set `AZURE_VM_SIZE` after checking regional capacity |
 
 ## Tags
 

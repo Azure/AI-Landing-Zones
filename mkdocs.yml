@@ -39,39 +39,38 @@ nav:
   - Home: index.md
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
+      - "How the template works": agent-landing-zone/how-it-works.md
       - "Design Checklist": architecture/design-checklist.md
-      - "Customer environments": agent-landing-zone/customer-environments.md
-      - "Azure DevOps walkthrough": agent-landing-zone/azure-devops.md
-      - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
-      - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
-      - "Network isolation": agent-landing-zone/network-isolation.md
-      - "Hosted agents": agent-landing-zone/hosted-agents.md
-      - "Configuration": agent-landing-zone/configuration.md
-      - "Custom applications": agent-landing-zone/build-your-own-app.md
-      - "Deploy with Bicep": agent-landing-zone/deploy-bicep.md
-      - Foundation runbooks:
-          - "Standalone deployment": bicep/standalone.md
-          - "Hub-and-spoke deployment": bicep/hub-and-spoke.md
-          - "Bicep Azure DevOps setup": bicep/deploy-with-azure-devops.md
-      - "Deploy with Terraform": terraform/index.md
-      - "Deploy with Portal": portal/Readme.md
-      - "Terraform implementation status": agent-landing-zone/deploy-terraform.md
-      - "Operations": agent-landing-zone/operations.md
+      - Plan your deployment:
+          - "Resources and cost estimates": bicep/deployed-resources.md
+          - "Cost planning": architecture/cost-guide.md
+          - "Sizing and capacity": agent-landing-zone/sizing.md
+      - Runbooks:
+          - "Deploy infrastructure only": agent-landing-zone/deploy-infra-only.md
+          - "Deploy the full stack": agent-landing-zone/deploy-full-stack.md
+          - "Deploy with Azure DevOps": agent-landing-zone/azure-devops.md
+      - Reference:
+          - "Configuration": agent-landing-zone/configuration.md
+          - "Agent hosting": agent-landing-zone/hosted-agents.md
+          - "Network isolation": agent-landing-zone/network-isolation.md
+          - "Custom applications": agent-landing-zone/build-your-own-app.md
+          - "Terraform": terraform/index.md
+          - "Portal": portal/Readme.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
-      - "Cost Guide": architecture/cost-guide.md
   - What's New: whatisnew.md
   - FAQ: architecture/faq.md
 
-# These pages are intentionally kept out of the left navigation. The ACA
-# design article is a standalone reference, and the bicep v2 migration page is
-# a redirect stub that preserves an older URL. Listing them here keeps the nav
-# clean and silences the "not in nav" check for just these files, while still
-# flagging any future stray pages.
+# Supporting references and compatibility pages remain reachable by link without
+# competing with the two interactive deployment runbooks in the left navigation.
 not_in_nav: |
   /AI-Landing-Zones-Design-ACA.md
-  /bicep/migration-v2.md
   /terraform-parity.md
   /bicep/*.md
+  /agent-landing-zone/customer-environments.md
+  /agent-landing-zone/operations.md
+  /agent-landing-zone/deploy-bicep.md
+  /agent-landing-zone/deploy-terraform.md
+  /agent-landing-zone/ingestion.md
 
 extra:
   generator: false

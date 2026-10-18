@@ -2,15 +2,22 @@
 
 This page explains how an accelerator repository can reuse the [AI Landing Zone Bicep implementation](https://github.com/Azure/bicep-ptn-aiml-landing-zone) without copying or forking it.
 
+This is an implementation pattern for **other accelerators**, not an Agent
+Landing Zone deployment procedure. Agent Landing Zone owns its `infra/` source
+and no longer uses this submodule pattern. To deploy, use
+[Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md) or
+[Deploy the full stack](../agent-landing-zone/deploy-full-stack.md).
+Version numbers below illustrate pin mechanics, not a current-release recommendation.
+
 The pattern is simple: the accelerator owns the application code and its scenario-specific parameter file, while the shared AI Landing Zone Bicep code is brought in as a git submodule under `infra/`.
 
 !!! tip "In one sentence"
     Use `infra/` as a submodule that points to `Azure/bicep-ptn-aiml-landing-zone`, then run a `preprovision` script before `azd provision` so the submodule is initialized, pinned to the expected tag, and overlaid with the accelerator's own `main.parameters.json`.
 
-Reference implementations:
+Implementation references:
 
-- [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 - [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice)
+- [Agent template contract](../agent-landing-zone/how-it-works.md) — the distinct repository-owned-source model
 
 ## When to use this pattern
 
@@ -122,19 +129,22 @@ They should:
 For a new accelerator, download the starter scripts instead of copying code from this page.
 
 <div class="alz-download-grid">
-  <a class="alz-download-card alz-download-card--primary" href="downloads/preProvision.sh" download>
+  <a class="alz-download-card alz-download-card--primary" href="../downloads/preProvision.sh" download>
     <span class="alz-download-card__label">Linux/macOS hook</span>
     <strong>preProvision.sh</strong>
     <span>Shell starter for azd environments that execute the POSIX hook.</span>
   </a>
-  <a class="alz-download-card" href="downloads/preProvision.ps1" download>
+  <a class="alz-download-card" href="../downloads/preProvision.ps1" download>
     <span class="alz-download-card__label">Windows/PowerShell hook</span>
     <strong>preProvision.ps1</strong>
     <span>PowerShell starter with the same submodule, parameter copy, and preflight flow.</span>
   </a>
 </div>
 
-They cover the generic flow: prepare `infra/`, copy the accelerator parameters, and run the AI Landing Zone preflight checks. Use [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone) as a reference for the same baseline in a real accelerator, and [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice) only when you need an example of nested boolean rewriting.
+They cover the generic flow: prepare `infra/`, copy accelerator parameters and
+run foundation preflight. See [Azure/live-voice-practice](https://github.com/Azure/live-voice-practice)
+for nested boolean rewriting. Do not copy current Agent platform hooks as
+submodule starters: their repository-owned-source contract is different.
 
 **4. `main.parameters.json`**
 
@@ -320,15 +330,11 @@ Add `.azure/` to `.gitignore`.
 .azure
 ```
 
-**7. Test the flow**
+**7. Validate the integration**
 
-```bash
-git clone --recurse-submodules https://github.com/myorg/my-accelerator.git
-cd my-accelerator
-azd init
-azd env set AZURE_LOCATION eastus2
-azd provision
-```
+Use the accelerator's reviewed source, complete parameter overlay and a
+nonproduction environment. Exercise its lifecycle with its own supported
+runbook; there is no additional generic deployment recipe here.
 
 During provisioning, the script should print messages similar to:
 
@@ -398,7 +404,8 @@ Invariants to preserve:
 - The `.gitmodules` `branch` value should be a released AI Landing Zone tag.
 - The root `main.parameters.json` must match the schema expected by the pinned AI Landing Zone tag.
 - Accelerator-specific checks should run before the AI Landing Zone preflight checks.
-- Preflight logic should honor `PREFLIGHT_SKIP=true` when the reference script supports it.
+- Preserve preflight validation and fail on findings; offline checks do not
+  establish Azure deployment readiness.
 
 ## References and next steps
 

@@ -5,10 +5,36 @@ Agent Landing Zone has two kinds of configuration:
 - **Deployment inputs** are `azd` environment variables read by Bicep or the lifecycle hooks. They control resource provisioning, application selection and image builds.
 - **Runtime settings** are Azure App Configuration keys read by applications at startup. Some bootstrap values must be container environment variables because they are needed before remote configuration can load.
 
-Set a deployment parameter with `azd env set <NAME> <value>` before you run `azd up`. Run `azd env get-values` to see the current values of the selected environment.
+Set deployment inputs with `azd env set <NAME> <value>` before provisioning.
+Inspect only the keys you need with `azd env get-value <NAME>`; a complete
+environment dump can contain secrets.
+
+This is a settings reference, not another deployment procedure. Follow
+[Deploy infrastructure only](deploy-infra-only.md) or
+[Deploy the full stack](deploy-full-stack.md) for the ordered workflow.
 
 !!! note
     `main.parameters.json` is the checked-in input to composition. The `preprovision` hook generates `infra/main.parameters.json` from it and the selected environment. Do not edit the generated file. In a Git checkout, the hook attempts to hide local regeneration from `git status` with `skip-worktree`.
+
+## Environment boundaries
+
+Use separate azd environments and resource groups for DEV, TEST and PROD.
+Separate subscriptions provide a stronger administrative and quota boundary.
+An environment name or App Configuration label alone is not a security boundary.
+
+| Boundary | Keep separate |
+| --- | --- |
+| Target and deployment access | Resource group/subscription, azd environment and environment-scoped deployment identity. DEV must not deploy to PROD. |
+| Runtime access | Component identities, grants and Entra registrations, or explicitly separated callbacks and consent. |
+| Configuration and secrets | App Configuration store/endpoint and Key Vault. The `agent-lz` label is shared by convention, not an environment separator. |
+| Data | Sources, indexes, conversation/history stores and retention. Use approved test data instead of copying production documents. |
+| Network and builds | DNS, routes, private endpoints and a connected runner. An ACR build pool does not connect the deployment host. |
+
+Keep nonsecret, approved inputs in version control. A folder such as
+`environments/` is your convention, not an automatically loaded platform input:
+apply its settings explicitly. Local `.azure` is private deployment state, not
+a promoted configuration artifact. Hooks copy it to child projects; protect
+those workspaces too. Never copy DEV state into TEST or PROD.
 
 ## Deployment parameters
 
@@ -61,65 +87,26 @@ Parameters that start with `EXISTING_` reuse a resource instead of creating one.
 | --- | --- | --- |
 | `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects the optional Agent App Ingestion Container App in the bundled application, independently of `DEPLOYMENT_TOPOLOGY`. |
 
-With the component disabled, it is excluded from provisioning parameters,
-checkout, build, deployment, endpoint reconciliation, identity discovery,
-role assignment and panel RBAC. UI chat, authentication and retrieval remain
-available with the UI v3.3.0 upload gate described below. Attachment
-eligibility is a separate capability. This
-switch does **not** select a retrieval backend, configure a new source, rebind
-an index, or remove document authorization.
+The boolean is persisted by pre-provision and published under label `agent-lz`.
+Existing environments retain their selection; they do not silently adopt the
+fresh default. Custom definitions retain their declared intent and additive
+foundation composition.
 
-Use native ingestion only for supported, configured Foundry IQ sources, such
-as the default `azureBlob` source. Native ingestion and Agent App Ingestion
-are not feature-equivalent. Unsupported combinations fail explicitly.
-Disabling the app is not a way to make an unconfigured source ingest documents.
-An ingestion-free `ai_search` or Foundry IQ `searchIndex` deployment must
-explicitly bind `SEARCH_RAG_INDEX_NAME` to an index populated by an independent
-pipeline. For Foundry IQ, also set `FOUNDRY_IQ_PATTERN=searchIndex` and
-`FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=searchIndex`. The named index must satisfy the
-existing Search schema/upgrade guards. The switch does not populate it.
-`FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` requires the ingestion app.
+| Selection | Effect |
+| --- | --- |
+| `false` | Omits the bundled ingestion app from subsequent composition/deployment and reconciliation. The UI disables attachment controls and upload paths, not text chat, authentication or retrieval. |
+| `true` | Selects the app and retains the UI's existing upload eligibility checks. It does not grant every caller permission to upload. |
 
-**Versioned upgrade requirement.** Ingestion-free operation requires the
-Agent Landing Zone **v4.3.0** combination with **agent-app-ui v3.3.0**.
-Upgrade the complete manifest-pinned combination, not only the configuration
-key or one application. Follow
-[the migration steps](operations.md#upgrade-ingestion-selection-to-v430).
+Opt-out supports native Foundry IQ `azureBlob`, or an explicitly bound,
+independently populated `SEARCH_RAG_INDEX_NAME` for `ai_search` / Foundry IQ
+`searchIndex`. It does not select a strategy, configure SharePoint, rewrite
+source bindings, populate an index or remove authorization.
+`FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` requires the app.
 
-UI v3.2.2 sends chat attachments to Agent App Ingestion in both classic and
-hosted modes, regardless of the new flag. Keep
-`DEPLOY_INGESTION_CONTAINER_APP=true` on that older combination, including
-fresh deployments. An empty endpoint is not an opt-out: the UI derives a
-`dataingest` URL or falls back to Dapr. Its `.chainlit/config.toml` upload
-setting is overwritten at startup to `not allow_anonymous`, and Entra
-Copilot settings force uploads on even if that TOML setting is false.
-Do not change authentication policy to hide attachment controls.
-
-The UI v3.3.0 contract consumes `DEPLOY_INGESTION_CONTAINER_APP` under label
-`agent-lz`. A missing key preserves legacy behavior. Explicit `false` hides
-attachment controls and rejects server uploads and client preflight before
-ingestion URL/Dapr resolution. Text chat, authentication and retrieval
-remain available. Explicit `true` retains the existing authentication and
-conversation eligibility checks, rather than granting uploads unconditionally.
-Native Blob source ingestion does not implement conversation uploads.
-
-Existing environments retain their prior component selection rather than
-silently adopting the fresh default. Custom application definitions retain
-their explicit component intent. Before opting out in an existing environment,
-check source/index bindings and any application-managed ingestion dependencies.
-See [Change ingestion selection safely](operations.md#change-ingestion-selection-safely).
-
-Selection accepts only `true` or `false`. Pre-provision persists the resolved
-boolean into the azd environment, and provisioning/post-provision publish the
-same value under App Configuration label `agent-lz`. A populated existing
-environment without any prior selection retains ingestion (`true`). An empty
-azd-created resource group is fresh (`false`). When the local setting is
-missing, existing persisted selection is read rather than guessed. A failed
-state lookup requires an explicit selection or restored access. Custom
-definitions retain the existing additive bundled composition, including its
-ingestion app, even if this bundled-only switch is `false`. For these custom
-definitions, the published effective ingestion capability is `true`,
-consistent with the selected components rather than the raw bundled-only flag.
+See [Ingestion and conversation uploads](ingestion.md) for source choices,
+SharePoint distinctions, custom-definition behavior and
+[older-UI migration and safe retirement](ingestion.md#upgrade-and-retirement-safety).
+Disabling the component does not delete existing resources or revoke old grants.
 
 ### Search region and quota
 
@@ -210,7 +197,7 @@ To restore protected ingestion, set `["rbacScope"]` and rerun the source
 configuration. Verify the resulting source/index permission metadata and
 document authorization. Do not assume changing a setting alone has repaired
 already-ingested documents. See
-[Private ingestion and shared-source recovery](operations.md#private-ingestion-and-shared-source-recovery).
+[Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
 ## Network and security
 
@@ -300,9 +287,9 @@ These are runtime settings, not additional infrastructure parameters.
 Configuration key: it is read before remote configuration can load. Only `true`
 and `false` are accepted. The foundation's additive `KEY_VAULT_URI` output
 provides the deployed vault URI without hardcoding a cloud DNS suffix and is
-empty when the vault is not deployed. These coordinated corrections are included
-in Agent Landing Zone **v4.2.3**, which pins **agent-app-ui v3.2.2** and
-**agent-app-orchestrator v5.2.1**.
+empty when the vault is not deployed. Use the complete manifest-pinned
+application and infrastructure combination so the loader and hosted definition
+agree on these inputs.
 
 ## Deployment controls
 
@@ -339,11 +326,11 @@ custom source-build path. See
 Post-provision publishes runtime settings to Azure App Configuration with
 the label `agent-lz`. Use that label for platform-owned settings.
 
-The pinned components do not read exclusively from `agent-lz`. Their startup
+The bundled components do not read exclusively from `agent-lz`. Their startup
 loaders also select service or legacy labels, and later matching selections
-can overwrite earlier values. UI v3.3.0 and ingestion v3.1.1 endpoint loaders
+can overwrite earlier values. UI and ingestion endpoint loaders
 end with `label_filter=None`, which leaves the label filter unset and can
-read other labels. Orchestrator v5.2.1 uses the explicit null label `"\0"` for its last
+read other labels. The orchestrator uses the explicit null label `"\0"` for its last
 selection, which reads unlabelled keys rather than all labels. Unlabelled
 values can still override `agent-lz` values.
 
@@ -355,10 +342,15 @@ The component repositories document their version-specific selectors.
 To change a runtime setting:
 
 1. Update the key in App Configuration with the label `agent-lz`.
-2. Restart the affected Container App revision or hosted agent instance so
-   it reloads startup configuration.
+2. Restart the affected Container App revision or deploy a new hosted version
+   so it reloads startup configuration. Running hosted versions are immutable.
 
 Deployment-owned keys can be overwritten by the next provision or
 post-provision run. Change their deployment inputs as well when the new
 value must persist. Settings declared by a custom application definition are
 validated but not published. Publish them yourself.
+
+Use the [runtime-setting runbook](deploy-full-stack.md#change-a-runtime-setting)
+for commands and [secret rotation](deploy-full-stack.md#rotate-a-secret) for
+versioned versus unversioned Key Vault references. Changing deployment selection,
+RBAC or infrastructure requires the matching full workflow, not just a key edit.

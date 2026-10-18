@@ -1,9 +1,25 @@
 # Frequently Asked Questions
 
-**What is the difference between version Azure Landing Zone and AI Landing Zone?**
+## How do Azure Landing Zones and AI Landing Zones relate?
 
-The Azure Landing Zone is comprise of platform landing zone and application landing zone. The platform landing zone provides the foundational infrastructure and services required to support workloads in Azure, while the application landing zone is tailored for specific applications or workloads, ensuring they have the necessary resources and configurations to operate effectively. The AI landing zone is an application landing zone specifically designed to support AI workloads, incorporating specialized resources, configurations, and best practices for deploying and managing AI applications in Azure.
+Azure Landing Zones distinguish between a **platform landing zone**, which
+provides shared services and governance, and **workload landing zones**, which
+contain the resources for individual workloads.
 
-**What is the recommended reference architecture for AI Landing Zones, with or with out Platform Landing Zone?**
+An AI Landing Zone is a workload landing zone designed for AI services and
+applications. It can integrate with an existing platform landing zone or provide
+a standalone foundation when shared platform services are not available.
 
-The AI Landing Zone with Platform Landing Zone is the recommend reference architecture where shared services like firewall, DDoS, Bastion, jump boxes are centralized in the Platform Landing Zone whereas resources specific to an Agentic AI Application are in the AI Landing Zones. AI Landing Zone without Platform Landing Zone is suitable for scenarios where an organization either wants their AI Application to be independent and isolated from the rest of their platform and applications or for an organization that will only have a single AI Application hosted on Azure.
+## Should I integrate with a platform landing zone or deploy standalone?
+
+Use platform integration when your organization already provides shared
+connectivity, DNS, firewall and administrative access. This keeps those services
+centrally managed while AI-specific resources remain in the workload landing zone.
+
+A standalone deployment is useful when no shared platform exists or the workload
+needs a separately managed foundation. Its team must then operate the required
+networking and governance services. Standalone does not, by itself, guarantee
+network isolation or remove the need for security controls.
+
+See the [Azure Landing Zones guidance](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/) and
+[design checklist](design-checklist.md) before choosing a deployment model.

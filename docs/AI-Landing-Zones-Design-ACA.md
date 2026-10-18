@@ -81,6 +81,7 @@ This section covers the recommendations for optimizing the AI workloads to be de
 #### Reducing Cold Starts & Storage
 
 Loading multi-gigabyte models (Foundry or open-source) into memory can lead to significant latency.
+
 - **[Azure Files Volume Mounts](https://learn.microsoft.com/azure/container-apps/storage-mounts-azure-files?tabs=bash):** Download model weights to a persistent Azure File Share once. Mount this share to the container so the model is available instantly on startup without re-downloading.
 - **Azure Container Registry (ACR):** Deploy Azure Container Registry in the same region as the Azure Container Apps environment to reduce latency.
   - Use the Premium SKU for [global distribution](https://learn.microsoft.com/azure/container-registry/container-registry-geo-replication) and [Artifact Streaming](https://learn.microsoft.com/azure/container-registry/container-registry-artifact-streaming?tabs=azure-cli) to further accelerate container startup times.

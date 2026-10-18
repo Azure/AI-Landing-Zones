@@ -4,11 +4,10 @@ With `NETWORK_ISOLATION=true`, Agent Landing Zone uses private endpoints and pri
 
 An explicit, nonempty `allowedIpRanges` in `main.parameters.json` enables IP-restricted public access on services that support those rules, even with isolation enabled. Review that exception and any existing network or DNS resources before describing a deployment as private-only.
 
-This page explains what changes when isolation is on, how to reach the private network, and how to complete a deployment from a connected host.
-
-For ordered foundation setup, follow the [standalone](../bicep/standalone.md) or
-[hub-and-spoke](../bicep/hub-and-spoke.md) runbook. For connected deployment agents
-and protected environment promotion, see the [Azure DevOps walkthrough](azure-devops.md).
+Use this reference to plan connectivity, DNS and image builds. For the ordered
+procedure, follow [Deploy infrastructure only](deploy-infra-only.md) or
+[Deploy the full stack](deploy-full-stack.md). Optional pipeline automation is
+covered separately in the [Azure DevOps runbook](azure-devops.md).
 
 ## What changes with isolation
 
@@ -29,12 +28,13 @@ Set the flag before the first provision:
 
 ```bash
 azd env set NETWORK_ISOLATION true
-azd provision
 ```
 
 The ARM resource deployment uses a public control plane, but `azd provision` also runs lifecycle hooks. Existing-environment topology discovery can require private App Configuration access before ARM deployment, and post-provision configuration requires private connectivity afterward. Provisioning therefore does not always succeed from an unconnected workstation.
 
-For a complete deployment, use a connected host. A single `azd up` can run the classic workflow when prerequisites and connectivity are ready. A first hosted deployment needs the separate [provision, prepare, provision, deploy sequence](hosted-agents.md#deploy-with-a-hosted-topology). Starting it with `azd up` does not remove the image-preparation or second-provision requirement.
+Use a connected host for the matching canonical runbook. A new hosted deployment
+also needs the image preparation and handoff stages described in
+[Deploy the full stack](deploy-full-stack.md).
 
 ## Reach the private network
 
@@ -46,36 +46,20 @@ Use one of these options:
 
 ### Use the jumpbox
 
-The default jumpbox is a Windows VM. Unless overridden, its administrator user is `testvmuser`. Its password comes from the secure `vmAdminPassword` provisioning input, not a documented Key Vault secret. If you do not have that credential, an authorized operator can reset it before sign-in:
-
-```bash
-az vm user update \
-  --resource-group <resource-group> \
-  --name <jumpbox-vm-name> \
-  --username testvmuser \
-  --password '<new-password>'
-```
+The default jumpbox is a Windows VM. Unless overridden, its administrator user is
+`testvmuser`. The password is supplied through the secure `vmAdminPassword`
+provisioning input, not a documented Key Vault secret. If it is unavailable,
+have an authorized administrator reset it through your approved credential
+procedure. Do not expose a new password in shell history or command logs.
 
 Connect through Azure Bastion from the Azure portal, then install the [deployment prerequisites](deploy-full-stack.md#prerequisites). Docker is not installed on the jumpbox by default, and it is not required: image builds run in the ACR Task agent pool.
 
-## Complete the deployment from a connected host
+## Connected-host requirements
 
-On the connected host, clone the repository at the same release tag you provisioned with, then select the environment:
-
-```bash
-git clone --branch <release-tag> https://github.com/Azure/agent-landing-zone.git
-cd agent-landing-zone
-
-az login                     # or: az login --identity
-azd auth login               # or: azd auth login --managed-identity
-
-azd env new <environment-name>        # same name as the provisioned environment
-azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
-azd env set AZURE_LOCATION <location>
-azd env refresh
-```
-
-`azd env refresh` reloads the provisioning outputs (endpoints, resource names) into the local environment.
+Use the same reviewed platform revision and approved inputs on the connected
+host. Restore/select the intended azd environment and refresh its provisioning
+outputs using the [infrastructure runbook](deploy-infra-only.md).
+Refreshing outputs is not provisioning or application configuration.
 
 Signing in with the jumpbox's managed identity does not prove that all
 deployment permissions are present. Verify its existing configuration and
@@ -88,14 +72,10 @@ Do not grant subscription or resource-group Owner to resolve this denial.
 See [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry)
 for the current role catalog and scopes. Allow role propagation before retrying.
 
-Then complete any deferred post-provision configuration. On Windows, use `./scripts/postProvision.ps1` instead of the shell script.
-
-```bash
-./scripts/postProvision.sh
-azd deploy
-```
-
-The commands above complete a classic deployment, or redeploy a hosted environment whose immutable image handoff is already provisioned. For a new hosted deployment, run `prepareHostedDeployment` after configuration, run `azd provision` again, and only then run `azd deploy`. An infrastructure-only deployment stops after provisioning and post-provision configuration. It can contain placeholder Container Apps without running the pinned applications.
+An infrastructure-only deployment stops after provisioning and post-provision
+configuration. It can contain placeholder Container Apps without running the
+selected applications. Continue with [Deploy the full stack](deploy-full-stack.md)
+when you are ready to deploy application code.
 
 ### Post-provision can be deferred
 
@@ -105,13 +85,10 @@ When isolation is enabled, post-provision can be **deferred** instead of failing
 Post-provision configuration explicitly deferred; application setup is incomplete.
 ```
 
-If the other provisioning stages succeed, `azd provision` reports success, but the application is **not** configured. Deferral does not bypass earlier topology or provisioning checks. Clear the deferral setting and rerun post-provision from a connected host:
-
-```bash
-azd env set RUN_FROM_JUMPBOX true
-azd env set AZURE_SKIP_NETWORK_ISOLATION_WARNING false
-./scripts/postProvision.sh      # or ./scripts/postProvision.ps1
-```
+If the other provisioning stages succeed, `azd provision` reports success, but
+the application is **not** configured. Deferral does not bypass earlier topology
+or provisioning checks. Clear it and rerun configuration from a connected host:
+see [Complete a deferred post-provision](deploy-infra-only.md#complete-a-deferred-post-provision).
 
 When the deferral settings are not set and the private endpoints cannot be reached, post-provision fails with:
 
@@ -128,20 +105,11 @@ With the default private registry configuration, public build agents cannot reac
 
 If the pool is missing, `azd deploy` stops before building and offers two fixes:
 
-1. **Create the pool (recommended):**
-
-    ```bash
-    azd env set DEPLOY_ACR_TASK_AGENT_POOL true
-    azd provision
-    azd deploy
-    ```
-
-2. **Build supported Container App components locally:** on a VNet-connected host with Docker installed, run:
-
-    ```bash
-    azd env set BUILD_MODE local
-    azd deploy
-    ```
+1. **Create the pool (recommended):** select
+   `DEPLOY_ACR_TASK_AGENT_POOL=true` and apply it through the matching
+   [deployment runbook](deploy-full-stack.md).
+2. **Use local builds where supported:** `BUILD_MODE=local` needs a
+   VNet-connected host with working Docker.
 
 The local alternative applies to component scripts that support `BUILD_MODE=local`. Automatic hosted orchestrator image preparation and isolated custom source builds still require the private pool. Supplying an already-built immutable digest can skip those builds, but does not bypass the root pre-deploy pool guard unless `BUILD_MODE=local` is selected. That guard is not proof that the remaining services can build locally.
 
@@ -161,22 +129,26 @@ provision the updated configuration. This is an explicit array, not an `azd`
 environment variable. Copy the same parameter file to a VNet-connected runner
 so a later provision preserves the setting.
 
-The orchestrator `v5.2.1` frontend lockfile uses
+The bundled orchestrator frontend lockfile uses
 `ms-feed-2.pkgs.visualstudio.com`, `ms-feed-12.pkgs.visualstudio.com`,
 `ms-feed-17.pkgs.visualstudio.com`, and `ms-feed-25.pkgs.visualstudio.com`.
 Their public package downloads redirect to `*.vsblob.vsassets.io`.
 These four exact feeds and the redirect CDN are included in the Agent Landing
 Zone default build allowlist. `packages.microsoft.com` is already included in
 the OS-package rule and does not need an additional entry.
+
 With `extendFirewallForAcrTaskBuilds=true` (the default) and an effective ACR
 Task agent pool, the feeds, redirect CDN, and additional hosts are allowed only
 from the build-agent subnet over HTTPS on port 443. They are not added to
 jumpbox, application, or agent-subnet rules. The additional-host array defaults
-to empty. Disabling the build-egress extension removes these package rules.
+to empty.
+
+Disabling the build-egress extension removes these package rules.
 Re-enabling it restores them. This egress rule has no DNS-proxy dependency and
-does not change client DNS. Do not enable public
-registry access, allow all Internet egress, disable TLS verification, or
-change dependency integrity hashes to work around a failed build.
+does not change client DNS.
+
+Do not enable public registry access, allow all Internet egress, disable TLS
+verification, or change dependency integrity hashes to work around a failed build.
 
 See [Package installation fails inside the build pool](troubleshooting.md#package-installation-fails-inside-the-build-pool)
 for diagnosis.
@@ -197,10 +169,9 @@ On Windows, also check resolution through the operating system resolver, especia
 
 ### Opt-in firewall DNS proxy
 
-The DNS proxy opt-in and guarded private ingestion guidance below target
-platform v4.3.0. Use the platform release's exact infrastructure tree and
-[component combination](index.md#v430-component-combination). The upstream
-infrastructure provenance alone does not include platform-owned changes.
+Use the platform's repository-owned infrastructure tree. Upstream infrastructure
+provenance alone does not include platform-owned changes or establish a compatible
+application combination.
 
 `ENABLE_FIREWALL_DNS_PROXY` defaults to `false` and maps to the Bicep boolean
 `enableFirewallDnsProxy` (also default `false`), which sets
@@ -211,10 +182,10 @@ forwarding path:
 
 ```bash
 azd env set ENABLE_FIREWALL_DNS_PROXY true
-azd provision
 ```
 
-The selection persists through normal provisioning. Enabling the proxy does
+Apply the selection through the matching deployment runbook. It persists through
+normal provisioning. Enabling the proxy does
 **not** redirect VNet or VPN clients to the firewall or rewrite their DNS
 configuration. It is independent of the build-feed egress allowlist.
 
@@ -288,7 +259,7 @@ To place the landing zone in an existing hub-and-spoke network, use the `ailz-in
 
 | Setting | Purpose |
 | --- | --- |
-| `DEPLOYMENT_MODE=ailz-integrated` | Deploy as a spoke of an existing hub |
+| `DEPLOYMENT_MODE=ailz-integrated` | Declares integration intent; does not attach a hub or override component flags by itself |
 | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | Hub VNet to peer with |
 | `HUB_INTEGRATION_CREATE_HUB_PEERING` | Create the peering (default `true`) |
 | `HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT` | Allow gateway transit (default `false`) |
@@ -298,4 +269,7 @@ To place the landing zone in an existing hub-and-spoke network, use the `ailz-in
 | `AZURE_PE_RESOURCE_GROUP_NAME`, `AZURE_PE_LOCATION` | Where to place private endpoints |
 | `EXISTING_*` | Reuse the existing VNet, private DNS zones, jumpbox, Bastion, NAT gateway or monitoring resources |
 
-See [Configuration](configuration.md#network-and-security) for the full list, and the [hub-and-spoke guide](../bicep/hub-and-spoke.md) for the network design.
+Supply the peering, routing, DNS and reuse settings explicitly.
+See [Configuration](configuration.md#network-and-security) for the full list,
+the [hub-and-spoke design](../bicep/hub-and-spoke.md) for design detail, and
+[Deploy infrastructure only](deploy-infra-only.md) to execute the deployment.

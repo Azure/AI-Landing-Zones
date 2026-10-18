@@ -1,536 +1,175 @@
-# Terraform Deployment Guide for AI Landing Zones
+# Terraform foundation reference
 
 !!! note "Strategy under review"
-    The Terraform deployment strategy is currently under review. For current Agent
-    Landing Zone integration limitations, see [Terraform implementation status](../agent-landing-zone/deploy-terraform.md).
+    The Terraform deployment strategy is currently under review.
 
-## What This Deployment Does
+The [Terraform AI Landing Zone module](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone)
+provides infrastructure building blocks and examples. Use its source and input
+reference for Terraform-managed foundations.
 
-This Terraform configuration deploys an **AI Landing Zone** which is a complete AI/ML platform environment ready for development and deployment of AI applications.
+For the Agent Landing Zone application, follow [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
+or [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md). Those
+runbooks describe the Bicep/`azd` workflow, including application configuration,
+identity and image preparation. A Terraform apply is not an application
+deployment.
 
----
+## Choose an example
 
-## Prerequisites
+The implementation lives in its own repository, not in a `terraform` directory
+of the documentation or Agent Landing Zone repository.
 
-**1. Install Required Tools**
+| Example | Purpose |
+| --- | --- |
+| [Standalone](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/tree/main/examples/standalone) | Foundation without an existing platform landing zone. |
+| [Default](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/tree/main/examples/default) | Demonstrates platform integration with an example hub. It creates demonstration hub resources too. |
+| [Standalone with an existing VNet](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/tree/main/examples/standalone-byo-vnet) | Starting point for a standalone foundation using an existing virtual network. |
+| [Default with an existing VNet](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/tree/main/examples/default-byo-vnet) | Starting point for platform integration using an existing virtual network. |
 
-**Terraform (version 1.9 or higher, but less than 2.0):**
-- Download from [terraform.io](https://www.terraform.io/downloads.html)
-- After installation, verify by running: `terraform --version`
-- You should see output like: `Terraform v1.9.x`
+!!! warning "Examples require a security and cost review"
+    The examples are test configurations, not production-ready security policies.
+    For example, the standalone example includes test-runner public Key Vault
+    access, some disabled diagnostic settings and purge-on-destroy settings.
+    Review the actual source before applying it. Adapt networking, data
+    protection and monitoring to your requirements rather than copying those
+    settings into production.
 
-**Azure CLI:**
-- Download from [docs.microsoft.com/en-us/cli/azure/install-azure-cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-- After installation, verify by running: `az --version`
-- You should see Azure CLI version information
+## Prepare the deployment
 
-**2. Azure Subscription Requirements**
+You need:
 
-- An active Azure subscription
-- **Owner** or **Contributor** role on the subscription (required to create resources)
-- Sufficient quota for the resources being deployed (VMs, networking, AI services)
+- [Terraform](https://developer.hashicorp.com/terraform/install) matching the
+  selected example's `required_version` constraint.
+- [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), an Azure
+  subscription and quota for the services and models you select.
+- Resource creation permissions at the intended deployment scope. If the
+  configuration creates role assignments, the deployment identity also needs
+  the appropriate role-assignment permissions. Contributor alone cannot create
+  role assignments.
+- A runner that can reach the required private data-plane endpoints.
+- An approved state-storage and recovery plan before creating resources.
 
-**3. Register Required Resource Providers**
-
-Before deploying, ensure these Azure resource providers are registered.  If not, terraform will register the providers during deployment, which may cause delays:
-
-```powershell
-az provider register --namespace Microsoft.CognitiveServices
-az provider register --namespace Microsoft.MachineLearningServices
-az provider register --namespace Microsoft.Storage
-az provider register --namespace Microsoft.KeyVault
-az provider register --namespace Microsoft.Network
-az provider register --namespace Microsoft.DocumentDB
-az provider register --namespace Microsoft.Search
-az provider register --namespace Microsoft.ContainerRegistry
-az provider register --namespace Microsoft.App
-az provider register --namespace Microsoft.Compute
-az feature register --name EncryptionAtHost --namespace Microsoft.Compute
-```
-
-**Note:** Provider registration can take 5-10 minutes. Check status with:
-```powershell
-az provider show --namespace Microsoft.CognitiveServices --query "registrationState"
-```
-
----
-
-## Step-by-Step Deployment Instructions
-
-**Step 1: Authenticate to Azure**
-
-There are two methods to authenticate: **Interactive Login** (recommended for personal use) or **Service Principal** (recommended for automation/CI/CD).
-
-#### Option A: Interactive Login (Easiest for Getting Started)
-
-Open PowerShell and log in to Azure:
+For interactive use, authenticate and confirm the subscription:
 
 ```powershell
 az login
+az account set --subscription "<subscription-id>"
+az account show --query "{subscription:id, tenant:tenantId}" --output table
+$env:ARM_SUBSCRIPTION_ID = "<subscription-id>"
 ```
 
-**What happens:**
-- A browser window will open
-- Sign in with your Azure account
-- The CLI will display your available subscriptions
+For automation, prefer your runner's supported managed identity or federated
+identity configuration. Follow the
+[AzureRM provider authentication guidance](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+for the selected method. Do not put client secrets in `.tf` files, shell
+history or persistent user environment variables.
 
-**Set the correct subscription (if you have multiple):**
-```powershell
-# List all subscriptions
-az account list --output table
-
-# Set the subscription you want to use
-az account set --subscription "<YOUR_SUBSCRIPTION_ID_OR_NAME>"
-
-# Verify the correct subscription is selected
-az account show --output table
-```
-
-#### Option B: Service Principal Authentication (For Automation)
-
-**When to use Service Principals:**
-- Running Terraform in CI/CD pipelines (Azure DevOps, GitHub Actions)
-- Automated deployments without interactive login
-- Shared environments where multiple people deploy
-- When you need specific permission boundaries
-
-**Step 1: Get Your Subscription ID**
-```powershell
-az login  # Log in first to create the service principal
-az account show --query id --output tsv
-```
-
-**Step 2: Create the Service Principal**
-```powershell
-# Replace <SUBSCRIPTION_ID> with your actual subscription ID
-# Replace <SP_NAME> with a descriptive name (e.g., "terraform-ai-landing-zone-sp")
-# The below command creates a Service Principal and assigns contributor role to the subscription
-az ad sp create-for-rbac --name "<SP_NAME>" --role="Contributor" --scopes="/subscriptions/<SUBSCRIPTION_ID>"
-```
-
-**Example output:**
-
-```json
-{
-  "appId": "12345678-1234-1234-1234-123456789abc",
-  "displayName": "terraform-ai-landing-zone-sp",
-  "password": "abcdefgh-1234-5678-90ab-cdefghijklmn",
-  "tenant": "87654321-4321-4321-4321-210987654321"
-}
-```
-
-**Save these values securely!** You won't be able to see the password again.
-
-**Add role assignment to Service Principal**
+Clone the implementation and open the example you reviewed:
 
 ```powershell
-# To grant Key Vault permissions, the Service Principal must have either "Owner" or "User Access Administrator". 
-# Following least privilege principle, assign "User Access Administrator". 
-# Replace <SP_AppId> with the Application ID from the output above. 
-# Assign the role:
-az role assignment create --assignee "<SP_AppID>" --role="User Access Administrator" --scope="/subscriptions/<SUBSCRIPTION_ID>"
-```
-**Step 3: Set Environment Variables**
-
-In PowerShell, set these environment variables (they must be named exactly as shown):
-
-```powershell
-# Set environment variables for the current session
-$env:ARM_CLIENT_ID="<appId from output>"
-$env:ARM_CLIENT_SECRET="<password from output>"
-$env:ARM_TENANT_ID="<tenant from output>"
-$env:ARM_SUBSCRIPTION_ID="<your subscription ID>"
-$env:ARM_USE_AZUREAD=true
-
-# Verify they're set
-echo "Client ID: $env:ARM_CLIENT_ID"
-echo "Tenant ID: $env:ARM_TENANT_ID"
-echo "Subscription ID: $env:ARM_SUBSCRIPTION_ID"
-echo "Client Secret is set: $($env:ARM_CLIENT_SECRET -ne $null)"
-echo "Use Azure AD: $env:ARM_USE_AZUREAD"
+git clone https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone.git
+Set-Location terraform-azurerm-avm-ptn-aiml-landing-zone
+Set-Location examples\standalone
+terraform version
 ```
 
-**To make these permanent (persist across PowerShell sessions):**
-```powershell
-# Set user environment variables (permanent)
-[System.Environment]::SetEnvironmentVariable('ARM_CLIENT_ID', '<appId>', 'User')
-[System.Environment]::SetEnvironmentVariable('ARM_CLIENT_SECRET', '<password>', 'User')
-[System.Environment]::SetEnvironmentVariable('ARM_TENANT_ID', '<tenant>', 'User')
-[System.Environment]::SetEnvironmentVariable('ARM_SUBSCRIPTION_ID', '<subscription_id>', 'User')
-[System.Environment]::SetEnvironmentVariable('ARM_USE_AZUREAD', 'true', 'User')
+Inspect `main.tf`, `variables.tf` and the example README. Confirm the region,
+names, models, network access, backing services and all enabled add-ons.
+Some example settings are literal values in `main.tf`; setting an unrelated
+variable will not override them. Use the selected module's
+[input definitions](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/blob/main/variables.tf)
+when creating your own root configuration.
 
-# Refresh your current session to load the variables
-$env:ARM_CLIENT_ID = [System.Environment]::GetEnvironmentVariable('ARM_CLIENT_ID', 'User')
-$env:ARM_CLIENT_SECRET = [System.Environment]::GetEnvironmentVariable('ARM_CLIENT_SECRET', 'User')
-$env:ARM_TENANT_ID = [System.Environment]::GetEnvironmentVariable('ARM_TENANT_ID', 'User')
-$env:ARM_SUBSCRIPTION_ID = [System.Environment]::GetEnvironmentVariable('ARM_SUBSCRIPTION_ID', 'User')
-$env:ARM_USE_AZUREAD = [System.Environment]::GetEnvironmentVariable('ARM_USE_AZUREAD', 'User')
-```
+## Protect Terraform state
 
-**Step 4: Test the Service Principal**
-```powershell
-# Login using the service principal
-az login --service-principal --username $env:ARM_CLIENT_ID --password $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID
+State and saved plans can contain secrets and sensitive resource details.
+Do not commit them or share unredacted `terraform show` output. Keep state
+encrypted, access-controlled, backed up and separate for each environment.
 
-# Verify access
-az account show
-```
+For team use, configure an approved
+[Azure Storage backend](https://developer.hashicorp.com/terraform/language/backend/azurerm)
+before the first `terraform init`, using identity-based authentication and state
+locking. Grant only the required backend data access. If resources already
+exist, plan state migration explicitly; do not initialize a new empty backend
+and apply against the same resources.
 
-**Important Notes:**
-- When these environment variables are set, Terraform automatically uses them
-- You don't need to run `az login` when using service principal environment variables
-- Keep the client secret secure - treat it like a password
-- Service principals can have specific permissions (Contributor role in this case)
+## Validate, plan and apply
 
-**For CI/CD Pipelines:**
-Store these as secrets in your pipeline:
-- **Azure DevOps:** Pipeline > Edit > Variables > Add (select "Keep this value secret")
-- **GitHub Actions:** Repository > Settings > Secrets and variables > Actions > New repository secret
-
----
-
-**Step 2: Navigate to the Terraform Directory**
-
-```powershell
-cd C:\Git\AI-Landing-Zones\terraform
-```
-
----
-
-**Step 3: (Optional) Set Up Remote Backend**
-
-**What is a backend?**
-Terraform stores information about your infrastructure in a "state file". By default, this is stored locally. For production or team environments, you should store it in Azure Storage.
-
-**Option A: Use Local Backend (Recommended for Testing)**
-
-No action needed. Terraform will create a `terraform.tfstate` file locally.
-
-**Option B: Use Azure Storage Backend (Recommended for Production)**
-
-First, create the backend resources:
-
-```powershell
-# Set variables (customize these)
-$RESOURCE_GROUP_NAME="tfstate-rg"
-$STORAGE_ACCOUNT_NAME="tfstate$(Get-Random -Minimum 10000 -Maximum 99999)"  # Must be globally unique
-$CONTAINER_NAME="tfstate"
-$LOCATION="eastus"
-
-# Create resource group
-az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
-
-# Create storage account
-az storage account create --name $STORAGE_ACCOUNT_NAME --resource-group $RESOURCE_GROUP_NAME --location $LOCATION --sku Standard_LRS
-
-# Create blob container
-az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --auth-mode login
-```
-
-**Then create a file named `backend.tf` in the terraform directory:**
-
-```hcl
-terraform {
-  backend "azurerm" {
-    resource_group_name  = "tfstate-rg"
-    storage_account_name = "tfstate12345"  # Use the name from above
-    container_name       = "tfstate"
-    key                  = "ai-landing-zone.tfstate"
-  }
-}
-```
-
----
-
-**Step 4: Configure Variables (Optional)**
-
-The code has default values, but you can customize them by creating a `terraform.tfvars` file:
-
-```hcl
-# terraform.tfvars
-enable_telemetry = true  # Set to false if you don't want to send telemetry to Microsoft
-```
-
-**Note:** The location and resource names are hardcoded in `main.tf`. If you want to change them, edit `main.tf` directly:
-- Look for `location = "swedencentral"` (line ~17)
-- Look for `resource_group_name = "ai-lz-rg-01"` (line ~19)
-
----
-
-**Step 5: Initialize Terraform**
-
-This downloads the required providers and modules:
+Run these commands from the selected example or your reviewed root module:
 
 ```powershell
 terraform init
+terraform validate
+terraform plan -out=deployment.tfplan
+terraform show deployment.tfplan
 ```
 
-**Expected output:**
-```
-Initializing the backend...
-Initializing provider plugins...
-- Finding hashicorp/azurerm versions matching "~> 4.21"...
-- Finding hashicorp/http versions matching "~> 3.4"...
-- Installing hashicorp/azurerm v4.21.x...
-- Installed hashicorp/azurerm v4.21.x
+Review additions, updates and deletions, including provider registration,
+role assignments, public access and recurring charges. Commit the reviewed
+dependency lock file according to your repository policy. Do not use
+`terraform init -upgrade` as a generic repair for authentication or network
+failures.
 
-Terraform has been successfully initialized!
-```
-
-**If you see errors:**
-- Check your internet connection
-- Ensure you have Terraform 1.9+ installed
-- Try running `terraform init -upgrade`
-
----
-
-**Step 6: Review the Deployment Plan**
-
-See what Terraform will create without actually creating it:
+Apply only the approved plan:
 
 ```powershell
-terraform plan
+terraform apply deployment.tfplan
 ```
 
-**Tip: To capture the full output for easier review, redirect it to a file:**
-```powershell
-terraform plan > plan_output.txt
-```
+Applying a saved plan does not ask for another approval. Protect it and use your
+normal approval process before this command. If configuration or the environment
+has changed since planning, create and review a new plan.
 
-**Expected output:**
-- A long list of resources to be created (50+ resources)
-- At the end: `Plan: XX to add, 0 to change, 0 to destroy.`
+## Verify the foundation
 
-**Review the output carefully:**
-- Check that the location is correct
-- Check that resource names make sense
-- Ensure no unexpected resources are being created
+1. Confirm Terraform reports a successful apply.
+2. Inspect resources in the **actual resource group named in your configuration
+   or plan**, not a fixed example name:
 
----
+    ```powershell
+    az resource list --resource-group "<resource-group>" --output table
+    ```
 
-**Step 7: Deploy the Infrastructure**
+3. Verify private DNS, network access and identities from the intended runner
+   and application network. Resource existence does not prove data-plane access.
+4. Check the intended Foundry project and model deployments, diagnostic
+   settings and data-protection controls.
+5. Record the source revision, lock file, reviewed plan and verification
+   results without exposing sensitive values.
 
-Apply the configuration to create the resources:
+## Diagnose common failures
 
-```powershell
-terraform apply
-```
+| Symptom | Diagnosis and corrective action | Verify |
+| --- | --- | --- |
+| Authentication fails or the subscription is missing | Identify whether Terraform uses Azure CLI, managed identity or federation. Confirm the tenant/subscription for that method; an interactive `az login` does not repair an unrelated CI identity. | Re-run `terraform plan` with the intended identity. |
+| `AuthorizationFailed` while assigning a role | Check the denied action and exact scope. Ask an authorized administrator for the minimum required permission, not blanket Owner access. | Retry the plan/apply after propagation and inspect the intended assignment. |
+| Resource provider is not registered | Inspect the provider named in the error. Have an authorized identity register only the required provider and wait for `Registered`. | Query `az provider show --namespace "<namespace>" --query registrationState`. |
+| Quota or model availability blocks creation | Compare the selected region, model and SKU with current availability and subscription quota. Request capacity or deliberately revise the design. | Review a new plan before applying a region or model change. |
+| Key Vault or another private endpoint returns a connection error | Check runner DNS, routes, TLS and data-plane permissions separately. Move to an approved connected runner; do not enable public access just to pass the deployment. | Test the endpoint from the actual runner and retry the failed operation. |
+| `A resource with the ID ... already exists` | Determine who owns the resource and which state manages it. Use a reviewed import or a deliberately different resource identity where appropriate. Do not delete it blindly. | Review the resulting plan for unintended replacement or deletion. |
+| Module/provider download fails | Check the reported registry URL, proxy and egress rules. Preserve the state and lock file while investigating. | Re-run `terraform init` without a speculative provider upgrade. |
 
-**What happens:**
-1. Terraform will show the plan again
-2. You'll be prompted: `Do you want to perform these actions?`
-3. Type `yes` and press Enter
+## Changes and retirement
 
-**Expected duration:** 15-30 minutes
+Treat configuration changes as reviewed plans. Changing a region or a resource
+name may replace resources and lose data; it is not an in-place migration
+procedure.
 
-**You'll see progress output like:**
-```
-module.test.azurerm_resource_group.this: Creating...
-module.test.azurerm_virtual_network.this: Creating...
-module.test.azurerm_resource_group.this: Creation complete after 2s
-...
-Apply complete! Resources: XX added, 0 changed, 0 destroyed.
-```
-
-**If deployment fails:**
-- Read the error message carefully
-- Common issues:
-  - Quota limits (request quota increase in Azure Portal)
-  - Region capacity (try a different region)
-  - Permission issues (ensure you have Contributor role)
-  - Provider not registered (see Prerequisites Step 3)
-  - Key Vault public access is disabled.  
-    - In production, GitHub workflows run within the network so this is not an issue.  
-    - For local runs, set access to “Allow public access from specific virtual networks and IP addresses” and whitelist workstation’s public IP.  
-
----
-
-**Step 8: Verify the Deployment**
-
-Check that resources were created:
+Before retiring a foundation, confirm ownership, backups, retention obligations
+and dependent applications. Inspect the example's purge settings and keep the
+state backend available for recovery.
 
 ```powershell
-# List resource groups
-az group list --output table
-
-# List resources in the AI Landing Zone resource group
-az resource list --resource-group ai-lz-rg-01 --output table
+terraform plan -destroy -out=retirement.tfplan
+terraform show retirement.tfplan
 ```
 
-**You should see resources like:**
-- Virtual Network (ai-lz-vnet-01)
-- AI Hub
-- Storage accounts
-- Key Vault
-- Container Registry
-- And more...
-
----
-
-**Step 9: Access Your Resources**
-
-**Azure Portal:**
-1. Go to [portal.azure.com](https://portal.azure.com)
-2. Navigate to Resource Groups
-3. Click on `ai-lz-rg-01`
-4. Explore the deployed resources
-
-**Azure AI Foundry:**
-1. Go to [ai.azure.com](https://ai.azure.com)
-2. You should see your AI Hub and Project
-
----
-
-## Making Changes
-
-If you need to modify the configuration:
-
-1. Edit the relevant `.tf` files (usually `main.tf`)
-2. Run `terraform plan` to preview changes
-3. Run `terraform apply` to apply changes
-
-**Example:** To change the location:
-- Open `main.tf`
-- Find `location = "swedencentral"`
-- Change to your desired region (e.g., `location = "eastus"`)
-- Run `terraform plan` and `terraform apply`
-
----
-
-## Clean Up / Destroy Resources
-
-**WARNING:** This will delete ALL resources created by this Terraform configuration!
+Only after the deletion plan is explicitly approved:
 
 ```powershell
-terraform destroy
+terraform apply retirement.tfplan
 ```
 
-**What happens:**
-1. Terraform shows what will be destroyed
-2. You'll be prompted: `Do you really want to destroy all resources?`
-3. Type `yes` and press Enter
-4. All resources will be deleted (takes 10-15 minutes)
-
-**Note:** If destroy fails due to lingering dependencies, wait a few minutes and try again.
-
----
-
-## Troubleshooting Common Issues
-
-**Issue: "Error: building account" or authentication errors**
-
-**Solution:**
-```powershell
-# Re-authenticate
-az login
-az account set --subscription "<YOUR_SUBSCRIPTION_ID>"
-```
-
-**Issue: "Error: insufficient quota"**
-
-**Solution:**
-- Go to Azure Portal → Subscriptions → Usage + quotas
-- Request a quota increase for the required resource
-- Or try deploying to a different region
-
-**Issue: "Error: Resource provider not registered"**
-
-**Solution:**
-```powershell
-# Register the provider mentioned in the error
-az provider register --namespace <NAMESPACE_FROM_ERROR>
-# Wait a few minutes and try again
-```
-
-**Issue: "Error: A resource with the ID already exists"**
-
-**Solution:**
-- Another resource with the same name exists
-- Either delete the existing resource or change the name in `main.tf`
-
-**Issue: Terraform init fails with module download errors**
-
-**Solution:**
-```powershell
-# Clear the cache and re-initialize
-Remove-Item -Recurse -Force .terraform
-terraform init
-```
-
-**Issue: "Error: storage account name is not available"**
-
-**Solution:**
-- Storage account names must be globally unique
-- The code tries to generate a unique name, but if it fails, edit `main.tf` to use a different storage account name
-
----
-
-## Understanding the Terraform Files
-
-- **`terraform.tf`**: Defines Terraform version and required providers (azurerm, http, random)
-- **`variables.tf`**: Defines input variables (only `enable_telemetry` in this case)
-- **`main.tf`**: The main configuration that defines all Azure resources
-- **`terraform.tfstate`**: Created after deployment, stores current infrastructure state (DO NOT manually edit)
-- **`terraform.tfvars`**: (Optional) Your custom variable values
-- **`backend.tf`**: (Optional) Remote backend configuration for state storage
-
----
-
-## Next Steps After Deployment
-
-1. **Explore AI Foundry:**
-   - Go to [ai.azure.com](https://ai.azure.com)
-   - Open your project: "Project 1 Display Name"
-   - Start building AI applications
-
-2. **Connect to Resources:**
-   - Use Azure Bastion to securely connect to VMs
-   - Access Container Registry to push/pull container images
-   - Use Key Vault to manage secrets
-
-3. **Deploy AI Models:**
-   - The deployment includes GPT-4o model deployment
-   - You can deploy additional models through Azure AI Foundry
-
-4. **Set Up CI/CD:**
-   - Integrate with Azure DevOps or GitHub Actions
-   - Automate model deployment and application updates
-
----
-
-## Additional Resources
-
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/)
-- [Terraform Azure Provider Documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
-- [Azure AI Landing Zone Pattern](https://github.com/Azure/AI-Landing-Zones)
-
----
-
-## Getting Help
-
-If you encounter issues:
-1. Check the error message carefully
-2. Review the Troubleshooting section above
-3. Check Azure Portal for resource status
-4. Review Terraform state: `terraform show`
-5. Open an issue on the GitHub repository
-
----
-
-## Summary Checklist
-
-- [ ] Install Terraform (1.9+)
-- [ ] Install Azure CLI
-- [ ] Run `az login` and set correct subscription
-- [ ] Register required Azure resource providers
-- [ ] Navigate to terraform directory
-- [ ] (Optional) Create backend storage and `backend.tf`
-- [ ] (Optional) Create `terraform.tfvars` with custom values
-- [ ] Run `terraform init`
-- [ ] Run `terraform plan` and review
-- [ ] Run `terraform apply` and type `yes`
-- [ ] Wait 15-30 minutes for deployment
-- [ ] Verify resources in Azure Portal
-- [ ] Access AI Foundry at ai.azure.com
-
-You're now ready to build AI applications on your new AI Landing Zone!
+Do not run deletion to repair a failed apply, and do not remove shared resources
+or the state backend as incidental cleanup. Follow the module repository's
+[README](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone/blob/main/README.md)
+for implementation-specific requirements.

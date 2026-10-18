@@ -1,30 +1,29 @@
 # Deploy applications with Azure DevOps
 
-Use this walkthrough to deploy the Bicep/azd **Agent Landing Zone application**,
-including its foundation, from a customer-owned platform repository. It promotes
-one CI-validated source commit through **DEV → TEST → PROD**. It does not deploy
-an application by running the foundation repository's pipelines alone.
+Use this optional CI/CD runbook when you want to promote one reviewed application
+revision through **DEV → TEST → PROD** with protected approvals. It automates the
+platform's application and foundation lifecycle; Azure DevOps is not required
+for an interactive deployment.
 
-Start with [Customer environments](customer-environments.md) for repository
-ownership and component customization. Follow the
-[foundation Azure DevOps setup](../bicep/deploy-with-azure-devops.md) for creating
-service connections, finding principal IDs, authorizing pipelines and configuring
-Environment checks. Return here for the application's hooks and deployment sequence.
+For interactive execution, use [Deploy infrastructure only](deploy-infra-only.md)
+or [Deploy the full stack](deploy-full-stack.md). For component changes, see
+[Custom applications](build-your-own-app.md#customize-a-bundled-component).
 
-These are adaptable customer examples, not changes to upstream pipelines.
-The existing foundation CD pipeline permits independent environment selection.
-Its deployment job checks out source: downloading its CI artifact does not prove
-that the artifact is deployed. Its preview template is not automatically executed.
-The example below instead checks out and verifies the **same commit in every job**;
-it does not consume a source archive or claim to run an infrastructure preview.
+!!! info "Choose the right pipeline"
+    The downloadable example below verifies the **same source commit in every
+    job** and enforces successful prior stages. It is not a build-once image
+    promotion pipeline. The separate [foundation pipeline guide](../bicep/deploy-with-azure-devops.md)
+    explains upstream service connections and Environment setup; those assets
+    provision infrastructure only, allow independent environment selection and
+    do not automatically execute their preview template.
 
 ## 1. Prepare the repository and runners
 
-Use a reviewed platform release (the inspected baseline is v4.3.0) in your customer
-repository. Keep `manifest.json`, `app-definition.json`, `main.parameters.json`,
+Use your reviewed platform revision. Keep
+`manifest.json`, `app-definition.json`, `main.parameters.json`,
 `azure.yaml`, `infra/`, `config/`, `contracts/` and `scripts/` together at its root.
 Infrastructure is incorporated under `infra/`; do not deploy it from a second
-foundation checkout. Commit customer configuration and compatible component pins
+foundation checkout. Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
 The downloadable example initially deploys the **bundled application** with
@@ -111,7 +110,7 @@ Have an administrator approve the minimum role plan:
 | Deployment service principal | Contributor for resource deployment plus scoped role-assignment authority (for example User Access Administrator) wherever Bicep and hooks create grants. Subscription-scope deployments, provider registration and hub/shared resources can require additional scope; use the foundation guide's scope review. Do not solve data-plane denials by adding Owner. |
 | Deployment service principal, configuration/build operations | App Configuration Data Owner for publishing settings; required Key Vault secret access when resolving references; Search service/index configuration permissions and the Foundry configuration/model/deployment actions used by the enabled hooks. ACR Tasks build/run and registry/Container Apps update permissions must also be authorized. These are separate from ARM Contributor. Check the effective grants from Bicep for the explicit principal and add only missing scoped roles. |
 | Deployment service principal, hosted authoring | Foundry User (previously Azure AI User) on the exact project, plus account read access; authority to create the scoped runtime assignments in the [hosted access plan](hosted-agents.md#bootstrap-the-agents-runtime-access). Cognitive Services Contributor/OpenAI User alone do not grant hosted-agent data-plane authoring. |
-| Runtime managed identities | Capability-profile roles and hosted project/image-pull/bootstrap grants, as described in [Identity and roles](operations.md#identity-and-roles). Do not substitute the pipeline identity for the runtime identity. |
+| Runtime managed identities | [Capability-profile roles](build-your-own-app.md#capability-profiles) and separate [hosted project/image-pull/runtime grants](hosted-agents.md#bootstrap-the-agents-runtime-access). Do not substitute the pipeline identity for the runtime identity. |
 | Delegated application users | Application consent, Foundry caller/agent access where applicable, and the intended source/document permissions. Pipeline success grants none of these to users. |
 
 Also confirm service/model availability, quota, provider registration and Responsible
@@ -152,8 +151,8 @@ the deployment connection broad Microsoft Graph permissions to hide the gap.
 
 ## 3. Fill the pipeline inputs
 
-Download both files, then place them beside each other in **`.pipelines/` in the
-customer platform repository**, not in its `infra/` folder:
+Download both files, then place them beside each other in **`.pipelines/` in your
+platform repository**, not in its `infra/` folder:
 
 - [azure-pipelines.yml](examples/azure-devops/azure-pipelines.yml)
 - [deploy-stage.yml](examples/azure-devops/deploy-stage.yml)
@@ -161,8 +160,13 @@ customer platform repository**, not in its `infra/` folder:
 
 Replace the following values before authorization. DEV, TEST and PROD must have
 separate resource groups, azd environments, connection identities, configuration
-stores, secrets and data. Separate subscriptions are recommended where the
-customer's governance requires them.
+stores, secrets and data. Apply the
+[environment boundaries](configuration.md#environment-boundaries), including
+runtime identities, sign-in, test data and network isolation.
+
+Never copy DEV's `.azure` state into TEST or PROD. Initialize or securely restore
+the intended environment on each runner, refresh its outputs when needed and
+reapply approved inputs. Keep `.azure` and sibling child state private.
 
 | Exact example input | Required replacement / source |
 | --- | --- |
@@ -202,8 +206,8 @@ wherever the contract supports them.
 ### Private component repositories and custom definitions
 
 The platform connection authenticates **Azure**, not GitHub or Azure Repos Git.
-See [Private Git authentication](customer-environments.md#private-git-authentication)
-for the customer repository boundary.
+See [Private Git authentication](build-your-own-app.md#private-git-authentication)
+for repository access.
 The root deploy hook clones selected bundled components as **sibling checkouts**
 using manifest repository/tag pins, then verifies the expected commit. Use
 approved read-only Git credentials for those private repositories separately.
@@ -224,15 +228,18 @@ it into the credential mechanism. It is not a GitHub credential.
 For a [custom application](build-your-own-app.md), adapt CI validation to the
 selected definition and add `AGENTLZ_APP_DEFINITION` to each stage **before first
 provision**. Keep the application ID stable. Custom definitions accept **local
-sources or immutable image digests**, not remote repository URLs. Materialize
-local source in every job with a clean Git checkout at its declared
+sources or immutable image digests**, not remote repository URLs.
+
+Materialize local source in every job with a clean Git checkout at its declared
 `source.commit`, preserving `.git` metadata and the definition's relative layout.
 Explicitly check out pinned component repositories or pinned submodules if needed,
 using the separate Git credentials above. Do not feed these hooks a `git archive`
 tree without Git metadata: they check the component's actual `git rev-parse HEAD`.
 Source commit checks do not reject uncommitted edits; validate clean trees.
+
 Extend the template's fixed cleanup list with the custom definition folder's
 explicit `.azure` and `.logs` paths; never add a source or workspace root.
+
 Custom hosted services follow their own definition/image contract, not an assumed
 bundled orchestrator build. The downloaded template's preparation branch is for
 the bundled application; replace that branch with the documented custom hosted
@@ -249,7 +256,7 @@ workflow before using it for a custom hosted definition.
 2. Authorize this pipeline, not all pipelines, to use the environments, pools,
    WIF connections and variable groups. Protect the release branch and require
    review of pipeline/template changes.
-3. In **Pipelines → New pipeline**, select the customer repository and
+3. In **Pipelines → New pipeline**, select your platform repository and
    **Existing Azure Pipelines YAML file**, then `.pipelines/azure-pipelines.yml`.
    Save it without starting a production run until all inputs/checks are ready.
 4. Queue a run from a reviewed branch/commit. This sample has no automatic trigger.
@@ -359,7 +366,7 @@ in your release evidence:
    not imply conversation uploads work without the optional app.
 5. Inspect service health, RBAC and private endpoint resolution, and attach
    sanitized evidence to the run/change record. See
-   [application health](operations.md#check-application-health) and
+   [application health and diagnostics](troubleshooting.md) and
    [document authorization guidance](hosted-agents.md#configure-the-uis-delegated-authentication).
 
 Do not approve TEST or PROD until the preceding environment meets these checks.
@@ -383,13 +390,13 @@ are fail-closed end-to-end tests.
 
 For an application-only redeployment with unchanged compatible foundation/binding
 and hosted handoff, use the same initialization/authentication procedure and
-`azd deploy`, following [Redeploy applications only](operations.md#redeploy-applications-only).
+`azd deploy`, following [Redeploy applications only](deploy-full-stack.md#redeploy-applications-only).
 Do not replace full provisioning with deploy-only for infrastructure, RBAC,
 topology or ingestion-selection changes.
 
 For recovery, select the last accepted **complete pinned combination** and
 review configuration/data compatibility before rerunning the protected flow.
-Follow [Roll back to a previous release](operations.md#roll-back-to-a-previous-release).
+Follow [Roll back to a previous release](deploy-full-stack.md#roll-back-to-a-previous-release).
 Rechecking an old commit does not reverse schema, infrastructure or data changes.
 Back up required data/configuration under a separate authorized process, retain
 known-good images, and do not use `azd down --purge` as rollback.

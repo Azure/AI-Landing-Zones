@@ -1,306 +1,178 @@
-# Standalone deployment runbook
+# Standalone network reference
 
-Deploy the **Bicep AI Landing Zone foundation** in a dedicated resource group,
-with its own VNet, DNS, private endpoints, firewall, Bastion and jumpbox. No
-customer hub is required. Use [Hub-and-spoke](hub-and-spoke.md) when a platform
-team owns shared network services.
+A standalone foundation manages its own workload network rather than relying
+on a shared hub. With isolation enabled it can include local private DNS,
+private endpoints, firewall, Bastion and a jumpbox. For shared network services,
+use the [hub-and-spoke design](hub-and-spoke.md).
 
-This runbook uses **v2.7.3** of `Azure/bicep-ptn-aiml-landing-zone`. Run the
-PowerShell 7 commands from that repository's root, where `azure.yaml`,
-`main.bicep` and `main.parameters.json` live. The foundation's default Container
-App is a hello-world placeholder, **not the full Agent Landing Zone application**.
+Execute [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
+for either the independent Bicep foundation or the Agent foundation.
+Execute [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md)
+when the Agent application is required. This page is the network reference
+for those procedures, not a third deployment path.
 
-For the Agent product, use [Deploy full stack](../agent-landing-zone/deploy-full-stack.md)
-or [Deploy infra only](../agent-landing-zone/deploy-infra-only.md) instead. Its
-foundation is incorporated into `infra/`, but configuration and lifecycle
-commands run from the **Agent repository root**. Do not run this separate
-foundation deployment into an Agent environment.
+## Ownership and scope
 
-## 1. Prepare a pinned checkout
+<a id="1-prepare-a-pinned-checkout"></a>
 
-The workload owner manages resources, network policy, backups and cost in the
-dedicated group. The security/network owner approves address allocation,
-firewall rules and any public access exception. Obtain deployment approval
-before provisioning; Azure Firewall, Bastion, VMs and AI services incur costs.
+The workload team owns resources, backups and cost in its dedicated group.
+The network/security owners approve addresses, egress and public exceptions.
+Confirm regional capacity, resource-provider registration and scoped deployment
+permissions before provisioning.
 
-Prerequisites:
+The upstream Bicep foundation creates a hello-world Container App, not the
+Agent application. Agent Landing Zone instead uses its repository-owned
+`infra/` and additional hooks. Do not deploy both sources into one environment.
+The [inventory and cost estimates](deployed-resources.md) describe the independent
+foundation; selected Agent application resources can differ.
 
-- Git, Azure CLI, Azure Developer CLI and PowerShell 7.
-- Contributor plus role-assignment authority (for example User Access
-  Administrator) at the deployment scopes. Check [Permissions](permissions.md)
-  for resource and data-plane assignments; do not use Owner as a troubleshooting
-  shortcut.
-- Registered resource providers, accepted AI service terms, regional model,
-  Search and VM capacity/quota. Review [Regional considerations](regional-considerations.md)
-  and preflight findings rather than relying on a fixed vCPU estimate.
-- A plan to reach private endpoints from VPN or the deployed jumpbox. Signing
-  in successfully does not grant network reachability or data-plane access.
+## Address planning
 
-Replace every `<...>` input below:
+<a id="2-plan-addresses"></a>
 
-```powershell
-git clone --branch v2.7.3 https://github.com/Azure/bicep-ptn-aiml-landing-zone.git ailz-standalone
-Set-Location ailz-standalone
-$subscriptionId = '<subscription-id>'
-$location = '<azure-region>'
-$envName = '<unique-environment-name>'
-$resourceGroup = '<dedicated-resource-group>'
+Reserve a VNet range that does not overlap other VNets, VPN/on-premises ranges
+or future hub connections. The upstream default VNet is `192.168.0.0/21`.
+Changing only that prefix does not change the individual subnet prefixes.
 
-az login
-azd auth login
-az account set --subscription $subscriptionId
-az group create --name $resourceGroup --location $location
-azd env new $envName --subscription $subscriptionId --location $location
-azd env set AZURE_RESOURCE_GROUP $resourceGroup
-```
+The following is a **complete illustrative allocation**, not a universally safe
+range. Replace it as a unit if it conflicts with your approved design.
 
-All later `azd` commands run from this checkout against this environment.
-Do not commit `.azure/`, credentials or VM passwords.
-
-## 2. Plan addresses
-
-Reserve a range that does not overlap VPN/on-premises networks, other VNets or
-future hub connections. Upstream `main.bicep` defaults to `192.168.0.0/21`.
-The example below uses **`10.200.0.0/21` only as an illustrative allocation**;
-replace the entire plan if it conflicts with your network.
-
-These are **native Bicep parameters**, not mapped azd environment variables.
-`azd env set VNET_ADDRESS_PREFIXES ...` and `ALLOWED_IP_RANGES ...` do not update
-these values in upstream v2.7.3. The following command merges a complete sample
-IP plan into the existing root parameter file while retaining other entries:
-
-```powershell
-$ipPlan = [ordered]@{
-    vnetAddressPrefixes = @('10.200.0.0/21')
-    agentSubnetPrefix = '10.200.0.0/24'
-    acaEnvironmentSubnetPrefix = '10.200.4.0/23'
-    peSubnetPrefix = '10.200.2.0/26'
-    azureBastionSubnetPrefix = '10.200.2.64/26'
-    azureFirewallSubnetPrefix = '10.200.2.128/26'
-    gatewaySubnetPrefix = '10.200.2.192/26'
-    azureAppGatewaySubnetPrefix = '10.200.3.0/27'
-    jumpboxSubnetPrefix = '10.200.3.64/27'
-    devopsBuildAgentsSubnetPrefix = '10.200.3.96/27'
-}
-$parameters = Get-Content ./main.parameters.json -Raw | ConvertFrom-Json -AsHashtable
-foreach ($entry in $ipPlan.GetEnumerator()) {
-    $parameters.parameters[$entry.Key] = @{ value = $entry.Value }
-}
-$parameters | ConvertTo-Json -Depth 100 | Set-Content ./main.parameters.json -Encoding utf8
-git diff -- main.parameters.json
-```
-
-Expected: only the approved parameter changes. Every subnet must fit within the
-VNet without overlap. Keep `AzureBastionSubnet` and `AzureFirewallSubnet` at
-least `/26`; reserve adequate private-endpoint capacity. The example gives the
-workload-profile Container Apps environment the recommended `/23`; the current
-preflight enforces `/27` minimum and warns below that recommendation. Do not
-confuse this with a guarantee of future scale.
-
-Keep the reviewed parameter file with your customer-owned configuration and
-carry it to any connected deployment host. Environment refresh does not restore
-these custom input edits.
-
-## 3. Configure the standalone private topology
-
-```powershell
-azd env set DEPLOYMENT_MODE standalone
-azd env set NETWORK_ISOLATION true
-azd env set DEPLOY_AZURE_FIREWALL true
-azd env set DEPLOY_JUMPBOX true
-azd env set DEPLOY_BASTION true
-azd env set DEPLOY_NAT_GATEWAY true
-azd env set BASTION_SKU_NAME Standard
-azd env set BASTION_ENABLE_TUNNELING true
-```
-
-`DEPLOYMENT_MODE` records intent; the explicit flags select the resources.
-This private path keeps Search enabled, creates local monitoring and DNS zones,
-and leaves `allowedIpRanges` empty. It does not enable optional public ingress.
-The NAT gateway supports the jumpbox subnet; it is not a firewall or an
-alternative to inspecting the effective route. The template creates the
-workload default route to the local firewall.
-
-Review the [v2.7.3 firewall egress allowlist](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/v2.7.3/README.md#firewall-egress-allow-list-network-isolation)
-for Azure services, registry pulls and jumpbox software bootstrap. Optional
-private ACR Tasks builds require their build-subnet egress too. The foundation
-defaults `DEPLOY_ACR_TASK_AGENT_POOL=false`; the Agent product configures that
-pool separately. A pool is not a VNet-connected deployment agent.
-
-Do not turn `NETWORK_ISOLATION` off or add broad public IP exceptions to
-troubleshoot. `allowedIpRanges` is a native array in `main.parameters.json`;
-a nonempty approved value can enable IP-restricted public access even with
-isolation on. Storage trusted-service/resource-instance exceptions and Shared
-Key access are independent controls: network isolation alone does not remove
-them. Review [Parameterization](parameterization.md) before changing them.
-The public demo path in [How to deploy](how-to-deploy.md#basic-deployment) is a
-different security posture, not this private runbook.
-
-## 4. Preview and provision
-
-From the foundation checkout:
-
-```powershell
-pwsh ./scripts/Invoke-PreflightChecks.ps1
-azd provision --preview
-# Review scopes, routes, public access, role assignments and Policy findings.
-# After deployment approval:
-azd provision
-azd env refresh
-```
-
-Preflight also runs as the repository's `preprovision` hook. Resolve failed
-checks; do not skip it. Preview is a change review, not proof of connectivity
-or authorization. Allow time for firewall, AI services and VM bootstrap.
-
-Expected: selected deployments succeed and outputs are saved in the azd
-environment. The default foundation lifecycle does not build or deploy the
-Agent application. The optional VM bootstrap (`DEPLOY_SOFTWARE`, default
-`true`) installs tools; inspect its extension result rather than assuming it
-prepared every application prerequisite.
-
-## 5. Verify private connectivity
-
-First inspect the deployment from the foundation checkout:
-
-```powershell
-$resourceGroup = azd env get-value AZURE_RESOURCE_GROUP
-az resource list --subscription $subscriptionId --resource-group $resourceGroup --query '[].{name:name,type:type,state:properties.provisioningState}' -o table
-az containerapp list --subscription $subscriptionId --resource-group $resourceGroup --query '[].{name:name,fqdn:properties.configuration.ingress.fqdn}' -o table
-az vm list --subscription $subscriptionId --resource-group $resourceGroup --show-details --query '[].{name:name,state:powerState}' -o table
-az network private-endpoint list --subscription $subscriptionId --resource-group $resourceGroup --query '[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}' -o json
-```
-
-Expected: selected resources are `Succeeded`, the jumpbox is running and
-private endpoint connections are `Approved`. Resource counts vary with enabled
-features and are not a success criterion.
-
-Choose names from these listings rather than assuming the first resource is
-the correct one. Test the foundation's hello-world app **inside the VNet**,
-using the Windows jumpbox's Run Command:
-
-```powershell
-$vmName = '<jumpbox-name-from-list>'
-$appName = '<foundation-container-app-name-from-list>'
-$fqdn = az containerapp show --subscription $subscriptionId --resource-group $resourceGroup --name $appName --query properties.configuration.ingress.fqdn -o tsv
-$script = @"
-`$ErrorActionPreference = 'Stop'
-Resolve-DnsName -Type A '$fqdn'
-Test-NetConnection -ComputerName '$fqdn' -Port 443
-`$response = Invoke-WebRequest -Uri 'https://$fqdn' -UseBasicParsing -TimeoutSec 30
-if (`$response.StatusCode -ne 200) { throw 'Unexpected HTTP response' }
-Write-Output ('Status=' + `$response.StatusCode)
-"@
-az vm run-command invoke --subscription $subscriptionId --resource-group $resourceGroup --name $vmName --command-id RunPowerShellScript --scripts $script --query 'value[].{code:code,message:message}' -o json
-```
-
-Expected: DNS resolves to the approved private endpoint/environment IP,
-`TcpTestSucceeded=True`, and `Status=200` with the placeholder page. Check the
-guest output for errors: a submitted Run Command operation alone is not proof
-that the request succeeded.
-
-For interactive access, use Bastion in the portal or, from a supported Windows
-client with the Azure CLI Bastion extension:
-
-```powershell
-az network bastion list --subscription $subscriptionId --resource-group $resourceGroup --query '[].{name:name,sku:sku.name,tunneling:enableTunneling}' -o table
-$bastionName = '<bastion-name-from-list>'
-$vmId = az vm show --subscription $subscriptionId --resource-group $resourceGroup --name $vmName --query id -o tsv
-az network bastion rdp --subscription $subscriptionId --resource-group $resourceGroup --name $bastionName --target-resource-id $vmId
-```
-
-Native RDP requires Standard/Premium Bastion with tunneling enabled. Use the
-provisioned VM credential; if unavailable, an authorized operator can reset it
-in the portal (default username `testvmuser`). Do not put a password in shell
-history or add a public IP to the VM.
-
-From the connected Windows host, repeat DNS and TCP checks for the actual
-Search, Storage, App Configuration and ACR names:
-
-```powershell
-$serviceFqdns = @(
-    '<search-service>.search.windows.net',
-    '<storage-account>.blob.core.windows.net',
-    '<app-configuration>.azconfig.io',
-    '<registry>.azurecr.io'
-)
-foreach ($name in $serviceFqdns) {
-    Resolve-DnsName -Name $name -Type A
-    Test-NetConnection -ComputerName $name -Port 443
-}
-```
-
-Expected: private answers matching the deployed endpoint NICs and successful
-TCP connections. Then test each data plane with its intended authorized
-identity. A 401/403 is not a successful authorization test, even if it proves
-the endpoint responds. Check telemetry in the intended workspace. An
-unconnected workstation must not serve the private app or read private service
-data; a public DNS answer outside the VNet alone does not prove exposure.
-
-Hello-world success proves only this network path. It does not validate Agent
-configuration, ingestion, retrieval, Entra sign-in or document-level
-authorization. Those require the application deployment and positive/negative
-authorization tests with representative identities.
-
-## 6. Recover without weakening isolation
-
-Inspect failed operations and app logs before changing configuration:
-
-```powershell
-az deployment group list --subscription $subscriptionId --resource-group $resourceGroup --query '[].{name:name,state:properties.provisioningState}' -o table
-$deploymentName = '<failed-deployment-name-from-list>'
-az deployment operation group list --subscription $subscriptionId --resource-group $resourceGroup --name $deploymentName --query "[?properties.provisioningState=='Failed'].properties.statusMessage" -o json
-# If the app exists:
-az containerapp logs show --subscription $subscriptionId --resource-group $resourceGroup --name $appName --type system --tail 50
-```
-
-| Symptom | Recovery |
+| Native parameter | Example allocation |
 | --- | --- |
-| Token expiry/disconnected CLI | Run `azd auth login`, inspect the still-running ARM deployment, then retry with the same environment |
-| Preflight, quota, capacity or Policy error | Correct the specific input or obtain approved quota/policy/capacity; do not disable required services |
-| DNS failure or public answer inside VNet | Inspect private endpoint approval, zone records and VNet links; for custom DNS, repair resolver forwarding |
-| 502, failed revision or image pull | Inspect system logs and firewall denies; allow only required image/package destinations for the correct source subnet |
-| VM bootstrap failure | Inspect the VM's Custom Script Extension and firewall logs; resolve tooling/egress failure before retrying |
-| Data-plane 403 | Verify network path and the caller's service-specific role at the correct scope, allow propagation, then retest |
+| `vnetAddressPrefixes` | `["10.200.0.0/21"]` |
+| `agentSubnetPrefix` | `10.200.0.0/24` |
+| `acaEnvironmentSubnetPrefix` | `10.200.4.0/23` |
+| `peSubnetPrefix` | `10.200.2.0/26` |
+| `azureBastionSubnetPrefix` | `10.200.2.64/26` |
+| `azureFirewallSubnetPrefix` | `10.200.2.128/26` |
+| `gatewaySubnetPrefix` | `10.200.2.192/26` |
+| `azureAppGatewaySubnetPrefix` | `10.200.3.0/27` |
+| `jumpboxSubnetPrefix` | `10.200.3.64/27` |
+| `devopsBuildAgentsSubnetPrefix` | `10.200.3.96/27` |
 
-After correction, review `azd provision --preview` and rerun `azd provision`.
-Keep the same source revision, parameter file and environment. Preserve data
-and identity assignments; do not delete a partially deployed group, purge
-soft-deleted services or move existing resources to another region as a generic
-retry. Reverting infrastructure code is not a guaranteed rollback; review its
-effects on resources and security settings with the owners.
+These native values belong in the selected source's reviewed root
+`main.parameters.json`; there is no `VNET_ADDRESS_PREFIXES` mapping.
+Keep the complete file with the deployment inputs and carry it to a connected
+host. Environment refresh does not restore file customizations.
 
-## 7. Clean up a dedicated environment
+Every subnet must fit without overlap. Keep `AzureBastionSubnet` and
+`AzureFirewallSubnet` at least `/26`. Reserve private-endpoint capacity and
+growth. The workload-profile Container Apps environment example uses the
+recommended `/23`; current preflight enforces `/27` minimum and warns below
+the recommendation. That minimum is not a future-scale guarantee.
 
-Inventory resources and dependencies first, obtain data-retention approval and
-back up required data. Confirm there are no shared or externally owned resources
-in the deletion scope:
+## Private network choices
 
-```powershell
-azd env select $envName
-azd env get-value AZURE_SUBSCRIPTION_ID
-azd env get-value AZURE_RESOURCE_GROUP
-az resource list --subscription $subscriptionId --resource-group $resourceGroup --query '[].{name:name,type:type}' -o table
-# Only after confirming the exact dedicated scope:
-azd down
+<a id="3-configure-the-standalone-private-topology"></a>
+
+| Input | Private standalone intent |
+| --- | --- |
+| `DEPLOYMENT_MODE` | `standalone`; records intent, not a replacement for explicit flags |
+| `NETWORK_ISOLATION` | `true` |
+| `DEPLOY_AZURE_FIREWALL` | `true` for local inspected egress |
+| `DEPLOY_JUMPBOX`, `DEPLOY_BASTION`, `DEPLOY_NAT_GATEWAY` | Independently selected; the canonical runbook shows the self-contained choice |
+| `BASTION_SKU_NAME`, `BASTION_ENABLE_TUNNELING` | Standard/Premium with tunneling for native RDP |
+| `DEPLOY_ACR_TASK_AGENT_POOL` | Upstream defaults off; the Agent platform selects it for private remote builds |
+
+The NAT gateway supports its configured subnet; it is not a firewall or a
+substitute for reviewing effective routes. Inspect the local firewall route and
+required destinations in the
+[upstream egress reference](https://github.com/Azure/bicep-ptn-aiml-landing-zone#firewall-egress-allow-list-network-isolation).
+Agent platform build egress also includes its own dependency-specific inputs.
+An ACR Tasks pool does not make the deployment host VNet-connected.
+
+With empty native `allowedIpRanges`, private service endpoints are the intended
+path. A nonempty approved list can enable IP-restricted public access.
+Storage trusted-service/resource-instance exceptions and Shared Key access
+remain independent controls; see [Storage controls](parameterization.md#solution-storage-controls).
+Optional [Application Gateway ingress](public-ingress.md) is a separate,
+explicitly reviewed public entry point.
+
+## Existing VNet and DNS ownership
+
+With `USE_EXISTING_VNET=true`, decide who manages each subnet, NSG, route table
+and delegation. Do not update existing subnets under isolation with
+`DEPLOY_NSGS=false`; retain managed NSGs or use `DEPLOY_SUBNETS=false` and have
+the network owner prepare the complete subnet configuration.
+
+Choose local DNS, per-zone BYO IDs or Azure Policy-managed DNS deliberately.
+Shared zones require links or forwarding for every actual client VNet;
+peering alone does not propagate zone links. Avoid duplicate authoritative
+zones. See [private DNS parameters](parameterization.md#private-dns-zones)
+and [Policy ownership](hub-and-spoke.md#private-dns-ownership).
+
+The BYO-VNet reserved `AzureBastionSubnet` is excluded from generic NSG attachment
+when Bastion is disabled; enabled Bastion uses its dedicated compliant NSG.
+Do not rename subnets, renumber prefixes or reapply an older workaround
+automatically on existing deployments. Plan such migrations explicitly.
+
+## Provisioning boundary
+
+<a id="4-preview-and-provision"></a>
+
+Return to [preview and provision](../agent-landing-zone/deploy-infra-only.md#step-4-preview-and-provision)
+after the network inputs are approved. Preflight validates parameters and
+regional readiness, not successful bootstrap or data-plane access.
+Inspect the VM Custom Script Extension result if software bootstrap is selected;
+it is not evidence that all Agent prerequisites are installed.
+
+For a new build subnet created in a BYO VNet, the ACR Tasks pool depends on the
+conditional subnet deployment. With `DEPLOY_SUBNETS=false`, subnet readiness is
+the external network owner's responsibility. A first-attempt cold-start check
+must start with that subnet absent, record successful operations and the pool's
+final state, and distinguish retries from the first attempt. Source availability
+and offline CI do not prove this live result.
+
+## Verify private connectivity
+
+<a id="5-verify-private-connectivity"></a>
+
+Inspect the actual endpoint names and approvals in the selected resource group:
+
+```bash
+az containerapp list -g <resource-group> \
+  --query "[].{name:name,fqdn:properties.configuration.ingress.fqdn}" -o table
+az network private-endpoint list -g <resource-group> \
+  --query "[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}" -o json
 ```
 
-Review the interactive deletion prompt. Do not add `--force --purge` by default:
-soft-deleted services may be recoverable, while purge removes that option.
-Check for retained chargeable resources and externally created links afterward.
-Setting a deploy flag to `false` on an incremental deployment is not cleanup.
-If this environment later adopted a hub, follow
-[spoke-only cleanup](hub-and-spoke.md#8-clean-up-only-the-spoke) and leave shared
-hub resources untouched.
+From the actual connected Windows host, repeat these checks for the app, Search,
+Storage, App Configuration and registry hostnames:
 
-## Next steps
+```powershell
+Resolve-DnsName -Name <service-hostname> -Type A
+Test-NetConnection -ComputerName <service-hostname> -Port 443
+```
 
-- [Hub-and-spoke deployment](hub-and-spoke.md): integrate with shared DNS,
-  firewall, monitoring and operator access.
-- [Agent network isolation](../agent-landing-zone/network-isolation.md):
-  connect a host and complete private post-provision/deploy operations. `azd
-  provision` may defer application setup; success is not readiness.
-- [Deploy full stack](../agent-landing-zone/deploy-full-stack.md) and
-  [Hosted agents](../agent-landing-zone/hosted-agents.md): use the Agent
-  repository's supported lifecycle, including the first hosted deployment's
-  provision/prepare/provision/deploy sequence.
+Expect private answers matching the intended endpoint NICs and successful TCP
+connections. Test HTTPS with normal certificate validation and the intended
+authorized identity. A 401/403 can show an endpoint responds, but is not a
+successful data-access authorization test. Confirm telemetry reaches the
+intended workspace.
+
+For the independent foundation's placeholder app, an HTTPS 200 from inside the
+network is a runtime/network smoke test only. Agent acceptance also requires
+sign-in, agent/tool execution and positive/negative document-access tests.
+An unconnected workstation must not serve a private app or read private data;
+public DNS outside the VNet alone does not establish exposure.
+
+Use the portal's Bastion connection or approved VPN for interactive access.
+Native Bastion RDP requires a supported Windows client, Standard/Premium SKU and
+tunneling. Use the provisioned VM credential or an authorized portal reset
+(default username `testvmuser`); never put passwords in command history or add a
+public VM IP as a shortcut.
+
+## Recovery and retirement
+
+<a id="6-recover-without-weakening-isolation"></a>
+<a id="7-clean-up-a-dedicated-environment"></a>
+
+Inspect failed deployment operations, system logs and firewall denies. Correct
+the specific quota, Policy, DNS, route, egress or role failure; preserve the same
+approved inputs on retry. Do not disable isolation, purge a partially deployed
+group or move existing resources to another region as generic recovery.
+
+Use [foundation reconfiguration](../agent-landing-zone/deploy-infra-only.md#reconfigure-or-upgrade-the-foundation)
+and [safe removal](../agent-landing-zone/deploy-full-stack.md#remove-an-environment).
+If this environment later adopted a hub, preserve shared services and retire
+only its own attachments with their owners.

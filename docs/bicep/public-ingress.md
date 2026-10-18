@@ -4,6 +4,11 @@ Network-isolated deployments keep Container Apps private by default. The Contain
 
 Use **Public Ingress** when one Container App needs a controlled public entry point. The Bicep template provisions Azure Application Gateway WAF v2 in front of the private Container Apps environment, without making the environment itself public.
 
+This is a configuration reference, not another landing-zone deployment
+procedure. Apply its reviewed parameter changes through
+[Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
+or [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md).
+
 !!! warning "Cost and teardown"
     Application Gateway WAF v2 and Standard Public IP incur hourly charges while deployed. Turning `publicIngress.enabled` back to `false` does not delete resources that were already created by an incremental ARM deployment. Use `azd down` for full teardown, or manually delete the gateway, Public IP, WAF policy, NSG, and gateway identity.
 
@@ -33,7 +38,9 @@ Public Ingress is intentionally a two-step workflow.
 
 This keeps the post-provision configuration in source control instead of relying on portal edits that can be overwritten later.
 
-## Step 1: enable the gateway skeleton
+<a id="step-1-enable-the-gateway-skeleton"></a>
+
+## Gateway skeleton configuration
 
 In `main.parameters.json`, enable Public Ingress:
 
@@ -45,15 +52,13 @@ In `main.parameters.json`, enable Public Ingress:
 }
 ```
 
-Provision the landing zone:
+Apply this through the canonical provisioning step, then capture
+`PUBLIC_INGRESS_PUBLIC_IP` from its outputs or the resource-group deployment
+outputs in the Azure portal.
 
-```bash
-azd provision
-```
+<a id="step-2-prepare-the-hostname-and-certificate"></a>
 
-After provisioning, capture the `PUBLIC_INGRESS_PUBLIC_IP` output. You can get it from the `azd provision` output or from the resource group deployment outputs in the Azure portal.
-
-## Step 2: prepare the hostname and certificate
+## Hostname and certificate ownership
 
 Choose the public hostname, for example:
 
@@ -77,7 +82,9 @@ https://<key-vault-name>.vault.azure.net/secrets/<certificate-name>
 
 Use the versionless URI, not a URI that includes a certificate version.
 
-## Step 3: point DNS at Application Gateway
+<a id="step-3-point-dns-at-application-gateway"></a>
+
+## Public DNS
 
 In your public DNS provider, create or update an A record:
 
@@ -87,7 +94,9 @@ In your public DNS provider, create or update an A record:
 
 Wait for DNS propagation before validating the endpoint.
 
-## Step 4: switch to live mode
+<a id="step-4-switch-to-live-mode"></a>
+
+## Live configuration
 
 Update `main.parameters.json` with the hostname, certificate secret URI, and source CIDRs that are allowed to reach the gateway:
 
@@ -102,15 +111,13 @@ Update `main.parameters.json` with the hostname, certificate secret URI, and sou
 }
 ```
 
-Provision again:
+Apply the reviewed change through the canonical provisioning step again.
+The template configures the HTTPS listener, attaches the Key Vault certificate,
+redirects HTTP to HTTPS, and opens the NSG only for the configured source CIDRs.
 
-```bash
-azd provision
-```
+<a id="step-5-validate"></a>
 
-The template now configures the HTTPS listener, attaches the Key Vault certificate, redirects HTTP to HTTPS, and opens the NSG only for the configured source CIDRs.
-
-## Step 5: validate
+## Validation expectations
 
 From an allowed source:
 
@@ -169,10 +176,7 @@ publicIngress: {
 
 ## Teardown
 
-For full teardown:
-
-```bash
-azd down
-```
-
-If the rest of the landing zone must remain, delete the Public Ingress resources manually: Application Gateway, Public IP, WAF policy, NSG, and gateway user-assigned identity.
+For full teardown use [safe environment removal](../agent-landing-zone/deploy-full-stack.md#remove-an-environment).
+If the rest of the landing zone must remain, obtain approval to retire only
+the gateway resources and dependencies: Application Gateway, Public IP, WAF
+policy, NSG and gateway identity. Confirm none are shared before deletion.

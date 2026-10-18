@@ -1,13 +1,14 @@
 # Deploy with Azure DevOps
 
-This guide explains how to deploy the AI Landing Zone (Bicep) from Azure DevOps
-Pipelines. It covers what the pipelines do, what you need to set up first, how to
-wire everything together in your project, and how the pipelines relate to the
-pre-flight checks that run before each deployment.
+Use this optional runbook to automate the **AI Landing Zone Bicep foundation**
+with Azure DevOps. It explains the upstream CI/CD assets, service connections
+and protected Environment checks. For the Agent Landing Zone application and
+strict DEV → TEST → PROD promotion, use the
+[application CI/CD runbook](../agent-landing-zone/azure-devops.md).
 
-Use this when you want repeatable, gated deployments to Dev, Test, and Prod
-instead of running `azd provision` by hand. If you only need a one-off local
-deployment, see [How to Deploy](how-to-deploy.md) instead.
+For an interactive Agent Landing Zone deployment, use
+[Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md) or
+[Deploy the full stack](../agent-landing-zone/deploy-full-stack.md).
 
 The pipeline assets live in the landing zone repository under
 `pipelines/azuredevops/`. This page is the source of truth for setup and usage;
@@ -16,9 +17,8 @@ the YAML files in that folder are the assets it references.
 !!! important "Foundation, not the full application"
     These assets belong to [Azure/bicep-ptn-aiml-landing-zone](https://github.com/Azure/bicep-ptn-aiml-landing-zone/tree/main/pipelines/azuredevops)
     and run from that repository's root. They provision the foundation, not the
-    Agent Landing Zone runtime. For customer-owned repositories and application
-    deployment, follow [Customer environments](../agent-landing-zone/customer-environments.md)
-    and the [full-stack Azure DevOps walkthrough](../agent-landing-zone/azure-devops.md).
+    Agent Landing Zone runtime. For application deployment from your platform
+    repository, use the [application Azure DevOps runbook](../agent-landing-zone/azure-devops.md).
     Copying these YAML files into the platform repository without adapting paths
     and lifecycle steps is not a full-stack pipeline.
 
@@ -36,8 +36,9 @@ deployment (`*.bicep`, `*.json`, `modules/`, `constants/`, and
 - lints the template with `az bicep lint`,
 - publishes the repository as a pipeline artifact named `bicep-templates`.
 
-No Azure sign-in or provisioning happens in CI. It only proves the templates are
-well formed, and it hands a validated artifact to the CD pipeline.
+No Azure sign-in or provisioning happens in CI. It checks template build/lint,
+not Azure readiness, security or application acceptance, and publishes an
+artifact for traceability.
 
 **CD pipeline (`cd-pipeline.yml`)** deploys the landing zone. It does not trigger
 automatically (`trigger: none` and `pr: none`); you run it on demand and choose
@@ -64,9 +65,9 @@ When you queue the CD pipeline, you pick the environments to deploy with three
 boolean parameters: `Deploy to DEV`, `Deploy to TEST`, and `Deploy to PROD`. All
 default to off, so a run deploys only what you opt into.
 
-The stages run in a fixed order through stage dependencies: Dev depends on the
-artifact download, Test depends on Dev, and Prod depends on Test. If a selected
-environment fails, the later environments are skipped. Each environment deploys
+Stage dependencies order Dev after the artifact download, Test after Dev and
+Prod after Test. However, the existing `not(failed())` condition allows skipped
+earlier environments: this is **not strict promotion**. Each selected environment deploys
 with the reusable `deploy-bicep.yml` template, which runs `azd provision` against
 that environment.
 
@@ -213,8 +214,8 @@ agent pool and variable group when Azure DevOps reports **Permission needed**.
 Confirm the selected CI run succeeded and record both the CI and CD source
 revisions. Successful setup means CI publishes `bicep-templates`, CD resolves its
 identity, and each selected Environment records a successful deployment.
-Then verify the actual resources with the appropriate
-[standalone](standalone.md) or [integrated](hub-and-spoke.md) runbook.
+Then verify the actual resources. For an Agent Landing Zone environment, use
+the acceptance checks in [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md).
 
 !!! tip
     For strict promotion, Test must require `dependencies.Dev.result` to equal
@@ -243,9 +244,9 @@ If a check fails, the pipeline reports the failure before submitting the templat
 deployment (azd may already
 have initialized its resource group). You can narrow or skip checks with the script switches and
 environment variables documented in the script header, for example
-`LZ_PREFLIGHT_REGIONAL_SKIP` to skip only the regional block, or
-`PREFLIGHT_SKIP` as an emergency escape hatch. Skipping is meant for unblocking,
-not for normal runs.
+`LZ_PREFLIGHT_REGIONAL_SKIP` or `PREFLIGHT_SKIP`. These are diagnostic controls,
+not fixes for quota, permission, region or network failures. Resolve the cause
+rather than treating a skipped check as deployment readiness.
 
 ## Troubleshooting
 

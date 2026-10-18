@@ -13,7 +13,7 @@ The Portal-based AI Landing Zone deploys a secure, enterprise-ready AI/ML infras
 ## Prerequisites
 
 - An Azure subscription with **Contributor** role (or **Owner** if enabling Microsoft Defender)
-- A resource group in a [supported region](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models#model-summary-table-and-region-availability)
+- A resource group in a [supported region](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)
 - If using Platform Landing Zone mode: existing Private DNS Zones for the services being deployed
 - Sufficient quota for the selected VM sizes and AI model deployments
 

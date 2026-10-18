@@ -1,48 +1,112 @@
 # Custom applications
 
-Describe your application in an **application definition**, a JSON file
-validated against `contracts/app-definition-v1.schema.json`. Select it before
-the environment's first provision. If no custom definition is selected, the
-platform deploys Agent App UI and an orchestrator agent, with optional
-Agent App Ingestion.
+You can extend a bundled component or bring a different application to the
+foundation. Choose the contract that matches your change:
+
+| Goal | Approach |
+| --- | --- |
+| Change a documented setting | Use [Configuration](configuration.md); no source fork is needed. |
+| Extend the bundled UI, agent strategies/tools or ingestion code | Fork only the component you change and update its coordinated pins below. |
+| Deploy a different application composition | Supply an application definition and its matching `azure.yaml`. |
+
+The orchestrator is an extensible agent architecture. Its registered strategies
+include model/tool coordination, MCP, NL2SQL, multimodal and retrieval-oriented
+behavior. A strategy is not a hosting topology: Foundry hosting versus Container
+Apps is a separate choice, and each strategy still needs its own configured
+tools, data sources and authorization.
 
 The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.
 
-To customize a bundled component rather than replace the application, first read
-[Customer environments](customer-environments.md). For repeatable application
-deployment, see the [Azure DevOps walkthrough](azure-devops.md).
+For the platform-wide mechanism, read [How the template works](how-it-works.md).
+For execution, use [Deploy infrastructure only](deploy-infra-only.md) or
+[Deploy the full stack](deploy-full-stack.md).
 
-`DEPLOY_INGESTION_CONTAINER_APP` controls ingestion selection for the bundled
-application, not the components of an explicit custom definition. Custom
-definitions retain their declared component intent, including a component
-named `ingestion`. Do not remove a required custom component because the
-fresh bundled application defaults to native ingestion. Native ingestion
-supports configured Foundry IQ source kinds and is not feature-equivalent
-to Agent App Ingestion. It does not change your source/index bindings or
-authentication contract. See
-[Ingestion application selection](configuration.md#ingestion-application-selection).
+## Customize a bundled component
 
-For applications using the bundled UI, ingestion-free operation requires the
-platform v4.3.0 / UI v3.3.0 manifest-pinned combination. Follow the
-[versioned migration](operations.md#upgrade-ingestion-selection-to-v430).
-UI v3.2.2 still calls the ingestion endpoint for attachments. Retain explicit
-`DEPLOY_INGESTION_CONTAINER_APP=true` on that older combination.
-Custom applications own their upload
-contract: native source ingestion does not implement conversation uploads
-or make an application-specific ingestion client optional.
+An unmodified deployment does not require four forks. Fork or mirror the platform
+when you need versioned deployment inputs, automation or platform changes. Fork
+only the runtime repositories whose source you change. The platform fetches the
+selected components; changing its Git remote does not change their repository
+URLs.
 
-Custom definitions currently use additive foundation composition.
-Provisioning retains the bundled Container App placeholders, including
-ingestion, alongside the custom resources, even when the bundled-only switch
-is `false`. Deployment uses the selected definition's declared components.
-The published effective ingestion capability remains `true` for custom
-definitions. It does not prove that a custom application implements uploads.
+Prefer configuration over source changes. Forking the orchestrator to add a
+strategy does not require forking the UI, ingestion or upstream infrastructure.
+Keep your platform changes in its repository-owned `infra/` tree when needed,
+with upstream provenance recorded separately in `manifest.json`.
 
-## How it works
+<details markdown="1">
+<summary>Updating older repository remotes</summary>
 
-1. You write an application definition and an `azure.yaml` that describes how to build each component.
-2. You point an azd environment at the definition with `AGENTLZ_APP_DEFINITION`.
-3. `azd up` first validates the definition and checks its environment binding, then provisions the platform, binds the application to the environment, assigns roles from the declared capability profiles, and deploys each component.
+Older clones can still use the previous repository names. Update your remotes
+and automation to the current names even where GitHub redirects still work:
+
+| Previous | Current |
+| --- | --- |
+| `Azure/GPT-RAG` | `Azure/agent-landing-zone` |
+| `Azure/gpt-rag-ui` | `Azure/agent-app-ui` |
+| `Azure/gpt-rag-orchestrator` | `Azure/agent-app-orchestrator` |
+| `Azure/gpt-rag-ingestion` | `Azure/agent-app-ingestion` |
+
+Changing a remote does not update component pins or migrate an Azure deployment.
+Use the [upgrade runbook](deploy-full-stack.md#upgrade-to-a-new-release) for that.
+
+</details>
+
+### Pin the modified component
+
+For example, when using your organization's orchestrator fork:
+
+1. Test and commit the component change, then publish a stable tag that resolves
+   to its intended **full 40-character SHA**. The fetch path selects a published
+   tag, or a branch when no tag is set, and verifies that `HEAD` matches the SHA.
+   A SHA alone is not a selectable fetch ref.
+2. Update that component's `repo`, `tag` and `commit` together in the platform
+   `manifest.json`. Keep unchanged components at their coordinated release pins.
+3. Set the bundled `app-definition.json` orchestrator `source.commit` to the
+   **same SHA**. Keep application ID `agent-lz-default`. A manifest-only change
+   fails bundled definition validation.
+4. Validate both files with the existing hook dependencies installed:
+
+    ```bash
+    python -m config.appdefinition --validate app-definition.json
+    ```
+
+5. Commit the two pin files together and validate the complete combination before
+   promotion. Upstream release validation does not cover your modified component.
+
+Keep manifest names `agent-app-ui`, `agent-app-orchestrator` and
+`agent-app-ingestion`, and bundled definition names `ui`, `orchestrator` and
+`ingestion`. Hooks use those names to map entries and sibling folders.
+
+Existing sibling checkouts are verified, not advanced automatically. Preserve
+local work and relocate stale checkouts before allowing hooks to fetch selected
+versions. Keep deployment working trees clean: a matching `HEAD` does not prove
+there are no uncommitted changes.
+
+Bundled hosted image preparation fetches and verifies the manifest-pinned
+orchestrator separately. It builds the hosted entrypoint from that source, not a
+different platform implementation. Changing only a startup variable does not
+convert a classic image into a supported hosted image. See
+[Image provenance and redeployment](hosted-agents.md#redeploy-the-same-image-or-prepare-a-new-one).
+
+### Private Git authentication
+
+Azure authentication does not authorize GitHub or Azure Repos clones. The actual
+deployment runner needs noninteractive **read access** to every selected private
+repository, including hosted image preparation's orchestrator checkout.
+
+Use an approved credential helper, short-lived token or SSH identity with explicit
+repository access. Test access using that runner identity. Never embed tokens in
+manifest URLs, definitions, environment files or logs. Avoid shared write-enabled
+credentials when read-only access is sufficient. For a protected promotion
+pipeline, see the optional [Azure DevOps runbook](azure-devops.md).
+
+## Application binding and selection
+
+An **application definition** is validated against
+`contracts/app-definition-v1.schema.json`. Its folder supplies the matching
+`azure.yaml`. Select `AGENTLZ_APP_DEFINITION` before the first provision, not just
+before deployment. When omitted, the bundled application is selected.
 
 The platform's `preup` hook rejects invalid definitions and changed application
 IDs before the deployment pipeline can create Azure resources, including an
@@ -53,6 +117,26 @@ standalone provisioning, run `azd hooks run preup` first.
 
 !!! note
     One azd environment hosts exactly one application. To deploy a different application, create a new azd environment.
+
+<details markdown="1">
+<summary>Ingestion and additive composition</summary>
+
+`DEPLOY_INGESTION_CONTAINER_APP` selects the bundled app, not components in an
+explicit custom definition. Custom definitions keep their declared intent,
+including any component named `ingestion`.
+
+Current foundation composition is additive: bundled Container App
+placeholders, including ingestion, remain alongside custom resources even
+with the bundled-only switch set to `false`. Deployment uses the definition's
+declared components. The effective published ingestion capability is `true`;
+it is not evidence that your custom app implements uploads.
+
+Preserve your application's upload/source/authentication contracts. Native
+source ingestion does not replace conversation uploads or every application
+ingestion feature. Applications reusing the bundled UI must also meet its
+[upload-gate migration requirements](ingestion.md#upgrade-and-retirement-safety).
+
+</details>
 
 ## Application definition
 
@@ -126,7 +210,7 @@ reconciles the declared profiles before running the greeting smoke. No bundled
 orchestrator permissions are substituted for the custom definition, and this
 runtime check does not mean all instance grants precede image pull. The
 deployment identity needs permission to create these scoped role assignments.
-denied or ambiguous assignments fail deployment. RBAC propagation may require
+Denied or ambiguous assignments fail deployment. RBAC propagation may require
 an explicit, idempotent retry with the same application and image after the
 reported failure. Deployment does not silently bypass reconciliation.
 
@@ -208,26 +292,29 @@ Digest pinning does not bypass registry authorization.
 
 Foundation provisioning publishes the Foundry project and registry deployment
 outputs whenever those resources are enabled, even in classic topology.
+
 Selecting any custom `azure.ai.agent` component must also prepare the hosted
 foundation (`prepareHostedAgent=true`), even when the bundled orchestrator
 topology is classic. This does not deploy the bundled hosted orchestrator
 (`deployHostedAgent=false` for that classic topology) or change the topology.
 The current platform prepares these prerequisites for custom hosted
 components independently of the bundled orchestrator topology.
-For an existing failed custom hosted environment, use the current coordinated
-platform release, keep the same definition and immutable
-image, select the environment with `azd env select <name>`, then run
-`azd hooks run preup`, `azd provision`, `azd env refresh`, and `azd deploy`
-from the platform repository root. Provisioning applies the declared
-project-identity pull assignment. Refreshing alone cannot create it. Use a
-VNet-connected host for private environments. Do not copy endpoints from
-another environment or substitute broad manual grants, registry admin
-credentials, or an OIDC connection workaround.
+
+For recovery, retain the same application definition and immutable image, then
+apply the current coordinated platform's foundation through the
+[full-stack runbook](deploy-full-stack.md). Provisioning applies the declared
+project-identity pull grant; refreshing outputs alone cannot create it.
+
+Use a connected host for private environments. Never substitute another
+environment's endpoints, broad manual grants, registry admin credentials or
+an OIDC connection workaround. See
+[Custom hosted image-pull recovery](troubleshooting.md#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator).
+
 When an older environment has an empty project output, the quota preflight
 can discover a single existing Foundry project in the selected resource group.
 It credits only matching, successfully provisioned model allocations after
 verifying the account scope and region. Ambiguous projects receive no credit.
-select the intended project explicitly instead of bypassing the quota check.
+Select the intended project explicitly instead of bypassing the quota check.
 
 ## Reading platform outputs at runtime
 
@@ -243,47 +330,29 @@ Responses services, it validates either Responses SSE or a completed JSON
 response with nonempty assistant output. A greeting is not evidence of
 document retrieval or authorization.
 
-## Deploy a custom application
+## Validate and select a definition
 
-Run these commands from the root of the Agent Landing Zone repository.
-Complete the [deployment prerequisites](deploy-full-stack.md#prerequisites)
-and [prepare Python](deploy-full-stack.md#prepare-python) first.
+From the platform root, with the hook dependencies installed:
 
-1. Validate the definition:
+```bash
+python -m config.appdefinition --validate path/to/your-app
+```
 
-    ```bash
-    python -m config.appdefinition --validate path/to/your-app
-    ```
+The deployment input is a file or its containing folder:
 
-2. Create a new environment and select the definition:
+```bash
+azd env set AGENTLZ_APP_DEFINITION path/to/your-app/app-definition.json
+```
 
-    ```bash
-    azd env new my-custom-app
-    azd env set AGENTLZ_APP_DEFINITION path/to/your-app/app-definition.json
-    ```
+Apply it to a **new environment before provisioning**, following
+[Deploy infrastructure only](deploy-infra-only.md) or
+[Deploy the full stack](deploy-full-stack.md). Pre-deploy revalidates the
+definition and binding; a mismatch exits with code 2.
 
-    You can also select the containing folder:
-    `azd env set AGENTLZ_APP_DEFINITION path/to/your-app`.
-
-3. Choose the bundled foundation topology before deploying:
-
-    ```bash
-    azd env set DEPLOYMENT_TOPOLOGY classic
-    ```
-
-    This avoids the bundled hosted orchestrator's image handoff. Custom
-    `azure.ai.agent` components still receive their hosted foundation
-    prerequisites and deploy through their own service definitions.
-    If you keep a hosted bundled topology instead, complete its
-    [image preparation sequence](deploy-full-stack.md#step-4-deploy).
-
-4. Deploy:
-
-    ```bash
-    azd up
-    ```
-
-During `azd up`, the pre-deploy hook validates the definition and checks that it is bound to the environment. A mismatch stops the deployment with exit code 2.
+Selecting the bundled foundation's `classic` topology avoids a bundled hosted
+orchestrator handoff. It does not prevent custom `azure.ai.agent` components from
+receiving their own hosted prerequisites. Custom hosted services use their own
+definition and service configuration, not the bundled image preparation script.
 
 ## `config.appdefinition` reference
 

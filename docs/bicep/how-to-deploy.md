@@ -1,105 +1,32 @@
-# How to Deploy
+---
+search:
+  exclude: true
+---
 
-Choose your preferred deployment mode based on project requirements and environment constraints.
+# Bicep deployment considerations
 
-## Prerequisites
+Deployment instructions are consolidated into two runbooks:
 
-**Required permissions:**
+- [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
+  covers both the independent Bicep foundation and Agent foundation.
+- [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md)
+  includes Agent application images and runtime deployment.
 
-- Azure subscription with **Contributor** and **User Access Admin** roles
-- Agreement to Responsible AI terms for Azure AI Services
+This reference retains foundation-specific rollout and Storage compatibility
+details. It is not an alternative initialization or provisioning procedure.
 
-**Required tools:**
+<a id="prerequisites"></a>
+<a id="basic-deployment"></a>
+<a id="zero-trust-deployment"></a>
+<a id="using-the-jumpbox-vm"></a>
+<a id="optional-public-endpoint"></a>
 
-- [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
-- [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd)
-- [PowerShell 7+](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell) — required by the pre-flight validation hook
-- [Git](https://git-scm.com/downloads)
-
-!!! note
-    Azure CLI and PowerShell 7+ are required by the `azd preprovision` hook that runs `scripts/Invoke-PreflightChecks.ps1` before deployment. You can bypass the hook by setting `PREFLIGHT_SKIP=true` in your shell, but the script is the fastest way to catch parameter mistakes (subnet sizing, CIDR overlap, BYO resource typos) before they reach ARM.
-
-## Basic Deployment
-
-Quick setup for demos and development environments without network isolation. This is the **standalone** topology.
-
-**1. Initialize the project**
-
-```bash
-azd init -t azure/bicep-ptn-aiml-landing-zone
-```
-
-**2. Sign in to Azure**
-
-```bash
-az login
-azd auth login
-```
-
-!!! tip
-    Add `--tenant` for `az` or `--tenant-id` for `azd` if you want to target a specific tenant.
-
-**3. Provision infrastructure**
-
-```bash
-azd provision
-```
-
-!!! info "Optional customization"
-    You can change parameter values in `main.parameters.json` or set them using `azd env set` before running `azd provision`. The latter applies only to parameters that support environment variable substitution. See [Parameterization](parameterization.md) for the full reference.
-
-## Zero Trust Deployment
-
-For deployments that **require network isolation**. The network-isolated configuration uses private endpoints and disables public network access unless an `allowedIpRanges` list is configured. For Storage, review trusted-service and resource-instance exceptions separately: public network access `Disabled` does not necessarily remove their access. See [Storage firewall limitations](https://learn.microsoft.com/azure/storage/common/storage-network-security-limitations).
-
-**1. Initialize the project**
-
-```bash
-azd init -t azure/bicep-ptn-aiml-landing-zone
-```
-
-**2. Enable network isolation**
-
-```bash
-azd env set NETWORK_ISOLATION true
-```
-
-!!! info "Optional customization"
-    Update other parameters in `main.parameters.json` or via `azd env set` before provisioning. See [Parameterization](parameterization.md) for available settings.
-
-**3. Sign in to Azure**
-
-```bash
-az login
-azd auth login
-```
-
-!!! tip
-    Add `--tenant` for `az` or `--tenant-id` for `azd` if you want to target a specific tenant.
-
-**4. Provision infrastructure**
-
-```bash
-azd provision
-```
-
-### Using the Jumpbox VM
-
-After a Zero Trust deployment, use the Jumpbox VM to access services inside the virtual network.
-
-**1. Reset the VM password** (required on first access if not set in deployment parameters):
-
-   - In the Azure Portal, go to your VM resource → **Support + troubleshooting** → **Reset password**
-   - Set new credentials (default username is `testvmuser`)
-
-**2. Connect via Azure Bastion**
-
-   - In the Azure Portal, go to your VM resource → **Connect** → **Bastion**
-   - Enter the credentials you set in step 1
-
-### Optional public endpoint
-
-If a private Container App must be reachable through a controlled public endpoint, use [Public Ingress with Application Gateway](public-ingress.md). The template first provisions an inert Application Gateway skeleton, then you complete the hostname, certificate, DNS, and allowed-source configuration.
+Choose public, private standalone or private hub integration in the
+[foundation runbook](../agent-landing-zone/deploy-infra-only.md#step-3-choose-the-foundation-shape).
+Use [standalone](standalone.md) and [hub-and-spoke](hub-and-spoke.md) for their
+address, DNS, routing, access and ownership contracts. Optional
+[Application Gateway ingress](public-ingress.md) is separate from private
+service access.
 
 ### Private build pool ordering
 
@@ -187,44 +114,14 @@ The rule grants network eligibility, not data permissions. The scanner's managed
 3. **Verify the effective configuration and consumers.** After an approved deployment, check the solution account's bypass, complete resource-instance rules list, and Shared Key setting, along with the unchanged PNA, IP, `defaultAction`, and private-endpoint behavior. Test migrated clients and, if required, the existing scanner. The change does not remove AVM's secure `listKeys` outputs, so it is not a key-free management-plane deployment guarantee. Local documentation checks do not supply this live evidence.
 4. **Rollback through the same pin/overlay workflow.** Review the intended access state before reverting. An older implementation may reject the new inputs, restore bypass `AzureServices`, or drop approved resource-instance rules; match its parameter contract and assess those effects first. Restoring wider bypass or enabling keys again requires explicit approval, not an automatic fallback. Preserve approved exceptions on a compatible revision where possible and verify effective settings and consumers after rollback.
 
-## AI Landing Zone Integrated Deployment
+<a id="ai-landing-zone-integrated-deployment"></a>
 
-For deployments that **plug into an existing Azure Landing Zone** — i.e. the spoke peers to a corporate hub that already provides Bastion, Firewall, Private DNS zones, and Log Analytics.
+## Existing hub integration
 
-This topology assumes you (or another team) already operate a hub VNet and shared platform services. The AI Landing Zone spoke consumes them rather than re-creating them.
-
-**1. Initialize the project**
-
-```bash
-azd init -t azure/bicep-ptn-aiml-landing-zone
-```
-
-**2. Set the topology preset and hub integration**
-
-```bash
-azd env set DEPLOYMENT_MODE ailz-integrated
-azd env set HUB_VNET_RESOURCE_ID "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/virtualNetworks/<hub-vnet>"
-azd env set EGRESS_NEXT_HOP_IP "<hub firewall private IP>"
-```
-
-You'll typically also bring your own observability and DNS zones:
-
-```bash
-azd env set EXISTING_LOG_ANALYTICS_WORKSPACE_ID "/subscriptions/.../workspaces/<law>"
-azd env set EXISTING_APPLICATION_INSIGHTS_ID    "/subscriptions/.../components/<ai>"
-# Plus per-zone EXISTING_PRIVATE_DNS_ZONE_* IDs as needed — see Parameterization
-```
-
-**3. Sign in and provision**
-
-```bash
-az login
-azd auth login
-azd provision
-```
-
-!!! info "Full walkthrough"
-    The [Hub-and-Spoke Topology](hub-and-spoke.md) page documents this scenario end-to-end, including a minimal test hub Bicep template, IP planning, peering setup, and verifying connectivity through the hub Bastion.
+Use the actual `HUB_INTEGRATION_*` and `EXISTING_*_RESOURCE_ID` mappings
+listed in the [hub-and-spoke reference](hub-and-spoke.md#hub-integration-inputs).
+A deployment-mode label alone does not establish routing, private DNS or access.
+Test-hub fixtures are not production hub setup.
 
 ## Next steps
 - [Public Ingress with Application Gateway](public-ingress.md) — Publish a private Container App through Application Gateway WAF v2

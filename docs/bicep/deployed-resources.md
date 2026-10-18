@@ -5,6 +5,17 @@ This page answers the two questions operators always ask before approving an AI 
 1. **What does this template actually deploy?** — every resource, broken down by *always-on baseline*, *default-on (toggleable)*, *BYO-capable*, and *opt-in add-on*.
 2. **What will it cost?** — an order-of-magnitude monthly estimate for three common scenarios, with the variable (token / call / data) drivers called out separately.
 
+!!! info "Foundation scope"
+    This inventory describes the **independent Bicep foundation**, not the
+    Agent application footprint. Agent Landing Zone composes its own services,
+    topology and component selection. Foundry backing resources are separate
+    from application stores, and conditional creation/reuse applies across all
+    resource families. Check the selected source's current
+    [parameters](parameterization.md), deployment preview and
+    [Agent choices](../agent-landing-zone/deploy-full-stack.md#step-3-choose-the-application-and-network).
+    Cost scenarios below are dated example configurations, not current defaults
+    or full Agent deployment quotes.
+
 !!! warning "Cost figures are estimates, not a quote"
     All numbers here are **USD/month**, **East US 2 PAYG retail pricing**, **as of 2026-05-29**, with empty data and a quiet workload (~1 user). Your bill will vary with region, currency, EA/MCA discounts, reserved capacity, autoscale behavior, data volumes, model token consumption, AI Search index size, and Application Gateway capacity units. **Always validate with the [Azure Pricing Calculator](https://azure.microsoft.com/en-us/pricing/calculator/)** before committing.
 
@@ -19,7 +30,7 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 | Azure AI Search | **2** — one for Foundry agents, one for the workload | Agent Service stores agent state, thread embeddings, and tool indices in its own Search service so workload index churn never affects agents |
 | Storage account | **2** — one for Foundry artifacts, one for workload blobs | Agent files, run outputs, and Foundry connections live in the Foundry-owned account |
 | Cosmos DB account | **2** — one for Foundry agent threads/state, one for workload documents | Foundry-owned account holds thread/run/message documents |
-| Key Vault | **2** — one for workload secrets, one for the jumpbox VM (ZT only) | `deployVmKeyVault=true` is on by default |
+| Key Vault | **1 workload vault**, plus an optional VM vault | `deployVmKeyVault=false` by default; a VM vault requires explicit selection and applicable resource conditions |
 
 !!! tip "How to opt out of the duplicate Foundry data plane"
     - **Bring your own** — set `aiSearchResourceId`, `aiFoundryStorageAccountResourceId`, and `aiFoundryCosmosDBAccountResourceId` to existing resource IDs of a **dedicated Foundry-only trio** that belongs exclusively to this Foundry instance. Don't share the Agent Service data plane with the workload or with other Foundry instances — only use BYO to reattach a trio already provisioned out-of-band for this same Foundry.
@@ -30,16 +41,19 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 
 ## What gets deployed
 
-The deployment is composed in five layers. Every box below maps to a real `deploy*` flag in `main.parameters.json`, so any of them can be toggled independently — the layers are purely a presentation aid.
+The inventory is grouped by responsibility. Each resource has feature,
+dependency and reuse conditions; disabling one resource does not guarantee
+that its consumers still form a valid deployment. Root parameter-file values
+can also differ from native Bicep defaults.
 
 | Layer | Purpose | Always present? |
 |---|---|---|
-| **Runtime apps** | The Container Apps that run your workload (orchestrator and any you add) | Yes (driven by `containerAppsList`) |
+| **Runtime apps** | Placeholder Container Apps, or separately deployed workload images | Conditional on runtime deploy flags and `containerAppsList` |
 | **AI Foundry & agent data plane** | Foundry account/project, model deployments, Foundry-owned Search/Storage/Cosmos when Agent Service is on | Yes by default; the agent data plane appears only when `deployAAfAgentSvc=true` |
 | **Workload data path** | Workload-owned AI Search, Storage, Cosmos, Key Vault | Yes by default, each individually toggleable / BYO-capable |
 | **Common platform** | App Configuration, Container Registry, Container Apps Environment, managed identity / RBAC, Log Analytics, App Insights | Yes by default, each individually toggleable |
 | **Zero Trust networking** | VNet/subnets, NSGs, private endpoints, private DNS, Azure Firewall, Jumpbox VM, VM Key Vault, Bastion, NAT Gateway | Opt-in via `networkIsolation=true` |
-| **Scenario add-ons** | Application Gateway WAF v2, Azure Speech, ACR build-agent pool | Mostly opt-in (a couple are default-on) |
+| **Scenario add-ons** | Application Gateway WAF v2, Azure Speech, Bing grounding, ACR build-agent pool | Explicit opt-ins in the current upstream root parameters |
 
 ### Legend used below
 
@@ -59,7 +73,7 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 
 | Resource | Marker | Flag / parameter | Default config |
 |---|---|---|---|
-| Orchestrator Container App | ✅ | `containerAppsList[]` | 1 vCPU / 2 GiB, `min_replicas=1`, profile `main` (D4) |
+| Placeholder Container App (`orchestrator`) | ✅ | `containerAppsList[]` | 1 vCPU / 2 GiB, `min_replicas=1`, profile `main` (D4); not the Agent application |
 | Additional Container Apps | 🟧 | Append entries to `containerAppsList` | One entry per app; see [Parameterization](parameterization.md) |
 
 !!! note "Why this matters for cost"
@@ -73,7 +87,7 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 | AI Foundry project | ✅ | `deployAfProject` | Created inside the account |
 | Model deployment: chat | ✅ | `modelDeploymentList[0]` | `gpt-5-nano`, GlobalStandard, capacity 40 |
 | Model deployment: embeddings | ✅ | `modelDeploymentList[1]` | `text-embedding-3-large`, Standard, capacity 10 |
-| Grounding with Bing | ✅ | `deployGroundingWithBing` | Bing Search resource, S1; **billed per query** |
+| Grounding with Bing | 🟧 | `deployGroundingWithBing` | Root defaults off; when selected, billed per query |
 | Foundry-dedicated AI Search | ✅ 🔧 | `deployAAfAgentSvc` / `aiSearchResourceId` | Standard SKU, **1 partition × 1 replica** (scale up for AI Search read/write SLA) |
 | Foundry-dedicated Storage | ✅ 🔧 | `deployAAfAgentSvc` / `aiFoundryStorageAccountResourceId` | Standard_LRS, Hot |
 | Foundry-dedicated Cosmos DB | ✅ 🔧 | `deployAAfAgentSvc` / `aiFoundryCosmosDBAccountResourceId` | NoSQL, autoscale |
@@ -82,9 +96,9 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 
 | Resource | Marker | Flag / parameter | Default config |
 |---|---|---|---|
-| Workload AI Search | ✅ 🔧 | `deploySearchService` / `aiSearchResourceId` | Standard SKU, **1 partition × 1 replica** |
-| Workload Storage | ✅ 🔧 | `deployStorageAccount` | Standard_LRS, Hot |
-| Workload Cosmos DB | ✅ 🔧 | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
+| Workload AI Search | ✅ | `deploySearchService` | Standard SKU, **1 partition × 1 replica**; `aiSearchResourceId` belongs to the separate Foundry backing path |
+| Workload Storage | ✅ | `deployStorageAccount` | Standard_LRS, Hot |
+| Workload Cosmos DB | ✅ | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
 | Workload Key Vault | ✅ 🔧 | `deployKeyVault` / `keyVaultResourceId` | Standard tier |
 | Azure Speech | 🟧 | `deploySpeechService` | S0 (off by default) |
 
@@ -98,7 +112,7 @@ The deployment is composed in five layers. Every box below maps to a real `deplo
 | Managed identity & RBAC | ✅ | `useUAI` | System-assigned by default; UAI when `useUAI=true` |
 | Log Analytics workspace | ✅ 🔧 | `deployLogAnalytics` / `existingLogAnalyticsWorkspaceResourceId` | PAYG ingestion |
 | Application Insights | ✅ 🔧 | `deployAppInsights` / `existingApplicationInsightsResourceId` | Workspace-based |
-| ACR build-agent pool | ✅ | `deployAcrTaskAgentPool` | For ACR Tasks (S1 agent pool) |
+| ACR build-agent pool | 🟧 🔒 | `deployAcrTaskAgentPool` | Upstream root defaults off; requires the private registry/network gates. Agent platform selects it separately for isolated builds |
 
 ### Zero Trust networking (only when `networkIsolation=true`)
 
@@ -147,8 +161,8 @@ deployAzureFirewall     = false   (auto-suppressed when NI is off)
 deployJumpbox / Bastion / NatGateway = false (defaults to NI; no VNet)
 publicIngress.enabled   = false
 deployAAfAgentSvc       = true    (default — Standard Agent Setup)
-deployAcrTaskAgentPool  = true    (default)
-deployGroundingWithBing = true    (default)
+deployAcrTaskAgentPool  = false   (private pool is not created in this public scenario)
+deployGroundingWithBing = true    (explicit scenario choice; current upstream root defaults false)
 ```
 
 Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a public endpoint.
@@ -183,7 +197,7 @@ deployAzureFirewall     = true     (default when NI; share hub FW to skip)
 deployJumpbox           = true     (default = NI)
 deployBastion           = true     (default = NI && deployJumpbox)
 deployNatGateway        = true     (default = NI && deployJumpbox)
-deployVmKeyVault        = true     (default)
+deployVmKeyVault        = true     (explicit scenario choice; current default is false)
 publicIngress.enabled   = false
 ```
 
@@ -253,7 +267,10 @@ Variable model / data / processing cost applies to all three and depends entirel
     | `deployGroundingWithBing=false` if you don't use Bing-grounded answers | $0 fixed; saves variable Bing query cost | No Bing grounding |
     | Deallocate the Jumpbox VM when idle | ~$70/mo (compute only; disk continues) | Manual stop/start |
 
-    Stacking the first two levers in Scenario 1 takes the **Basic floor from ~$892 to ~$332/month**.
+    Disabling unused Agent Service backing resources and moving the placeholder
+    runtime off D4 gives the illustrative reduction from ~$892 to ~$332/month.
+    Do not count Foundry Search reuse as an additional saving after already
+    removing Agent Service. Shared resources still incur costs in their owning scope.
 
 ---
 

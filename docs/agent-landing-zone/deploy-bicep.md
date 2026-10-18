@@ -1,85 +1,27 @@
-# Deploy with Bicep
+---
+search:
+  exclude: true
+---
 
-Agent Landing Zone uses Bicep for its infrastructure. The Bicep source lives in
-the `infra/` folder of the repository, and `azd` calls it for you. This page
-explains how that works, what you can change, and why you should not call the
-Bicep template directly.
+# Bicep deployment guidance has moved
 
-## How `azd` uses Bicep
+Use one of the two deployment runbooks:
 
-`azd up` first runs a read-only `preup` application-definition and environment
-binding check, before the deployment pipeline creates Azure resources.
-Standalone `azd provision` retains its `preprovision` validation. Use
-`azd hooks run preup` before it when validation must precede even azd's
-resource-group initialization.
+- [Deploy infrastructure only](deploy-infra-only.md) — choose the Agent
+  foundation or independent AI Landing Zone Bicep source, then provision it.
+- [Deploy the full stack](deploy-full-stack.md) — provision the Agent
+  foundation and deploy the selected application.
 
-When you run `azd provision` or `azd up`, three things happen in order:
+<a id="how-azd-uses-bicep"></a>
+<a id="change-parameters"></a>
+<a id="resource-naming"></a>
+<a id="do-not-call-bicep-directly"></a>
+<a id="reference"></a>
+<a id="related-pages"></a>
 
-1. The `preprovision` hook validates your environment, runs the preflight
-   checks, and composes `infra/main.parameters.json` from your `azd`
-   environment values.
-2. `azd` deploys `infra/main.bicep` with those parameters.
-3. The `postprovision` hook assigns roles, publishes runtime settings to Azure
-   App Configuration (label `agent-lz`), and configures Azure AI Search and
-   Microsoft Foundry.
-
-`azd deploy` builds and deploys the selected application components.
-The bundled hosted orchestrator uses a prepared image rather than building
-one at this stage. Follow [Deploy full stack](deploy-full-stack.md#step-4-deploy)
-for its first-deployment sequence.
-
-## Change parameters
-
-Set values in your `azd` environment, then provision again:
-
-```bash
-azd env set NETWORK_ISOLATION true
-azd env set AZURE_LOCATION eastus2
-azd provision
-```
-
-You do not need to edit `infra/main.parameters.json`. The `preprovision` hook
-rewrites it from your environment on every run. See
-[Configuration](configuration.md) for the full list of parameters and their
-defaults.
-
-## Resource naming
-
-| `RESOURCE_NAMING_MODE` | Behavior |
-| --- | --- |
-| `caf` (default) | Names follow Cloud Adoption Framework abbreviations, for example `ca-<token>-orchestrator`. |
-| `legacy` | Keeps the naming scheme used by earlier GPT-RAG releases. Use it only when you must match existing resource names. |
-
-## Do not call Bicep directly
-
-Avoid `az deployment group create` or `az deployment sub create` against
-`infra/main.bicep`. A direct deployment skips:
-
-- Environment composition and preflight checks.
-- Hosted agent image preparation and deploy handoff.
-- Post-provision role reconciliation and service configuration.
-- Post-provision App Configuration publishing.
-- Application deployment.
-
-A direct template deployment alone does not complete application setup.
-Some role assignments and configuration keys are declarative in Bicep,
-but the post-provision and deployment steps are still required.
-
-!!! warning "Do not use `what-if` with `main.parameters.json`"
-    `infra/main.parameters.json` contains `${...}` substitutions and secret
-    placeholders that only `azd` resolves. Passing it to `az deployment ... what-if`
-    produces wrong or failing results. Use `azd provision --preview` instead.
-
-## Reference
-
-The Bicep modules and their parameters are documented in the AI Landing Zone
-pages:
-
-- [How to deploy the Bicep implementation](../bicep/how-to-deploy.md)
-- [Bicep parameterization](../bicep/parameterization.md)
-
-## Related pages
-
-- [Deploy full stack](deploy-full-stack.md)
-- [Deploy infra only](deploy-infra-only.md)
-- [Configuration](configuration.md)
+For the Bicep entry point, lifecycle hooks, generated parameters and manifest
+contract, read [How the template works](how-it-works.md).
+For supported settings and naming, use [Configuration](configuration.md) and
+the [foundation parameter reference](../bicep/parameterization.md).
+Run the supported lifecycle from the platform root: calling `infra/main.bicep`
+directly omits required validation, configuration and application work.
