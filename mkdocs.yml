@@ -46,9 +46,9 @@ nav:
           - "Cost planning": architecture/cost-guide.md
           - "Sizing and capacity": agent-landing-zone/sizing.md
       - Runbooks:
-          - "Deploy infrastructure only": agent-landing-zone/deploy-infra-only.md
-          - "Deploy the full stack": agent-landing-zone/deploy-full-stack.md
-          - "Deploy with Azure DevOps": agent-landing-zone/azure-devops.md
+          - "Infrastructure only": agent-landing-zone/deploy-infra-only.md
+          - "Full stack": agent-landing-zone/deploy-full-stack.md
+          - "Azure DevOps": agent-landing-zone/azure-devops.md
       - Reference:
           - "Configuration": agent-landing-zone/configuration.md
           - "Agent hosting": agent-landing-zone/hosted-agents.md
@@ -77,4 +77,4 @@ extra:
 
 extra_css:
   # Update the content version when styles change to invalidate browser caches.
-  - stylesheets/extra.css?v=f9858cd57fe4
+  - stylesheets/extra.css?v=fd71ad9d4e68
