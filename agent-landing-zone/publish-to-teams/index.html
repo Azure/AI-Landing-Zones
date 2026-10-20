@@ -27,7 +27,7 @@
     
     
       
-        <title>Publish to Teams - AI Landing Zones</title>
+        <title>Teams & M365 - AI Landing Zones</title>
       
     
     
@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=fd71ad9d4e68">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=47a3a035c069">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#publish-to-teams" class="md-skip">
+        <a href="#publish-to-teams-and-microsoft-365-copilot" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Publish to Teams
+              Teams & M365
             
           </span>
         </div>
@@ -652,7 +652,7 @@
   <span class="md-ellipsis">
     
   
-    Publish to Teams
+    Teams & M365
   
 
     
@@ -670,7 +670,7 @@
   <span class="md-ellipsis">
     
   
-    Publish to Teams
+    Teams & M365
   
 
     
@@ -1274,24 +1274,41 @@
   
 
 
-<h1 id="publish-to-teams">Publish to Teams</h1>
-<p>Publish an existing Foundry hosted agent as a Teams app. This is a <strong>manual
-post-deployment task</strong>: the landing zone template does not create the bot or
-publish the app.</p>
-<div class="highlight"><pre><span></span><code>Teams -&gt; Azure Bot Service -&gt; Foundry agent Activity endpoint
-                             Restricted public HTTPS
-</code></pre></div>
-<p>Foundry and Bot Service keep <strong>public network access disabled</strong>. Foundry exposes
-only the Activity route to service-managed Bot Service and Microsoft 365 source
-ranges; authentication still applies. This channel does not use your private
-endpoint, Application Gateway or web UI.</p>
-<div class="admonition note">
-<p class="admonition-title">Scope</p>
-<p>This runbook uses the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network">documented Foundry REST publishing flow</a>.
-It publishes the agent, not the Agent App UI or a <code>classic</code> Container Apps
-orchestrator. The same publishing API also supports Microsoft 365 Copilot;
-this runbook verifies Teams, not Copilot Studio or Agent 365 autopilot.</p>
-</div>
+<h1 id="publish-to-teams-and-microsoft-365-copilot">Publish to Teams and Microsoft 365 Copilot</h1>
+<p><a id="publish-to-teams"></a></p>
+<p>Publish a Foundry hosted agent to <strong>Teams and Microsoft 365 Copilot</strong>. This manual
+task is separate from the landing zone deployment. Expand the commands as you
+follow the five steps.</p>
+<p><strong>Teams / Microsoft 365 Copilot</strong> &rarr; <strong>Azure Bot Service</strong> &rarr;
+<strong>Foundry Activity endpoint</strong></p>
+<p>Foundry and Bot Service keep <strong>public network access disabled</strong>. Only the
+Activity route accepts restricted public HTTPS from service-managed Microsoft
+channel ranges, with authentication. It does not use your private endpoint,
+Application Gateway or web UI. This follows the
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network">Foundry REST publishing flow</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Covered here?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Teams and Microsoft 365 Copilot</td>
+<td>Yes. One publication, then verify each client in Step 5.</td>
+</tr>
+<tr>
+<td>Microsoft Agent 365 autopilot</td>
+<td>No. A <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365">separate flow</a> creates instances with their own agent user accounts and requires tenant enrollment, licensing and admin approval.</td>
+</tr>
+<tr>
+<td>Copilot Studio</td>
+<td>No. This is not a connected-agent configuration.</td>
+</tr>
+</tbody>
+</table>
+<p>Not the web UI or a <code>classic</code> Container Apps orchestrator.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>A working <code>hosted-no-panel</code> or <code>hosted-panel</code> deployment from
@@ -1300,29 +1317,30 @@ this runbook verifies Teams, not Copilot Studio or Agent 365 autopilot.</p>
   resolves and reaches the Foundry project's private endpoint.</li>
 <li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI</a>,
   <a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/install#azure-cli">Bicep CLI</a>
-  and <strong>PowerShell 7.4 or later</strong>. Use the same PowerShell session throughout.</li>
+  and <strong>PowerShell 7.4 or later</strong>. Run Steps 1-4 in one session.</li>
 <li><strong>Foundry User</strong> on the project, plus <strong>Azure Bot Service Contributor Role</strong>
   and permission to create resource-group deployments in the target resource
   group. Resource-group <strong>Contributor</strong> also covers the bot and deployment.
   A subscription administrator must register <code>Microsoft.BotService</code> if needed.</li>
-<li>Teams access for <strong>member accounts in the same tenant</strong> as Foundry, and app
-  policies that permit the app. Guest accounts cannot call these agents.
-  Organization-wide publication also needs Microsoft 365 admin approval.</li>
+<li>Teams and Microsoft 365 Copilot access for <strong>members of the Foundry tenant</strong>,
+  with applicable licenses and app policies. Guests cannot call these agents.
+  Organization-wide publication needs Microsoft 365 admin approval.</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Approve the data flow first</p>
-<p>Teams and Microsoft 365 process publishing metadata and agent conversations
-under their own compliance and data-residency commitments. Approve this
-channel before sending organizational data. Do not assume the web UI's
-delegated authentication, document permissions or upload features transfer
-unchanged to Teams.</p>
+<p>Microsoft 365 processes metadata and conversations under its own compliance
+and data-residency commitments. Approve this channel first. The web UI's
+delegated authentication, document permissions and uploads do not
+automatically transfer to either client.</p>
 </div>
 <h2 id="step-1-select-the-agent-and-save-its-configuration">Step 1: Select the agent and save its configuration</h2>
 <p>In the Azure portal, note the subscription, resource group, Foundry resource and
 project names. In <a href="https://ai.azure.com/">Foundry</a>, open the project and agent;
 note the <strong>tested agent version</strong>. The bundled agent name is
 <code>agent-app-orchestrator</code>; use the actual name for a custom agent.</p>
-<p>Replace the placeholders, then run:</p>
+<p>Replace the placeholders and run on the connected host.</p>
+<details class="runbook-command">
+<summary>PowerShell: select the target and save a backup</summary>
 <div class="highlight"><pre><span></span><code><span class="nv">$ErrorActionPreference</span> <span class="p">=</span> <span class="s2">"Stop"</span>
 <span class="nv">$PSNativeCommandUseErrorActionPreference</span> <span class="p">=</span> <span class="nv">$true</span>
 
@@ -1372,11 +1390,11 @@ note the <strong>tested agent version</strong>. The bundled agent name is
 <span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span>
 <span class="s2">"Working folder: $work"</span>
 </code></pre></div>
-<p><strong>Expected:</strong> the intended tenant and subscription, an agent identity
-<code>client_id</code>, the endpoint configuration and a working-folder path. Keep that
-path, <code>target.json</code> and <code>agent-before.json</code> for later checks, outside source
-control. These files do not contain the bearer token.</p>
-<p>Choose the audience <strong>before Step 3</strong>:</p>
+</details>
+<p><strong>Expected:</strong> the intended tenant/subscription, identity <code>client_id</code>, endpoint
+configuration and working-folder path. Keep that path, <code>target.json</code> and
+<code>agent-before.json</code> outside source control; they contain no bearer token.</p>
+<p>Choose the audience <strong>before Step 3</strong>, in the same session:</p>
 <table>
 <thead>
 <tr>
@@ -1389,7 +1407,7 @@ control. These files do not contain the bearer token.</p>
 <tr>
 <td><code>Shared</code> (start here)</td>
 <td>Authorized identities through <code>BotServiceRbac</code></td>
-<td>Initially only the publisher, under <strong>Your agents</strong>; no publishing approval required</td>
+<td>Publisher only initially, under <strong>Your agents</strong>; no publishing approval</td>
 </tr>
 <tr>
 <td><code>Tenant</code></td>
@@ -1398,24 +1416,25 @@ control. These files do not contain the bearer token.</p>
 </tr>
 </tbody>
 </table>
-<p>For organization-wide publication, set <code>$publishScope = "Tenant"</code> only after
-that access has been approved. With <code>Shared</code>, an administrator can give selected
-testers <strong>Foundry Agent Consumer</strong> at the
+<p>Set <code>$publishScope = "Tenant"</code> only after organization-wide access is approved.
+For <code>Shared</code>, grant selected testers <strong>Foundry Agent Consumer</strong> at the
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization#grant-access-to-one-agent">agent scope</a>.
 Sharing an app link does not grant invocation permission.</p>
-<div class="admonition note">
-<p class="admonition-title">Older agents</p>
 <p>If the identity check fails, follow the
-<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications">Foundry migration guidance</a>.
-Do not substitute the project's managed identity or the web UI client ID.</p>
-</div>
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications">migration guidance</a>.
+Do not substitute the project identity or web UI client ID.</p>
 <h2 id="step-2-create-the-bot-and-teams-channel">Step 2: Create the bot and Teams channel</h2>
-<p>Check provider registration:</p>
+<p>Check registration, save the template, then deploy it. The Teams channel below
+also serves the Microsoft 365 Copilot publishing flow.</p>
+<details class="runbook-command">
+<summary>1. Check Bot Service provider registration</summary>
 <div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">provider</span> <span class="n">show</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">BotService</span> <span class="p">-</span><span class="n">-query</span> <span class="n">registrationState</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
 </code></pre></div>
 <p><strong>Expected:</strong> <code>Registered</code>. If not, have a subscription administrator run
 <code>az provider register --namespace Microsoft.BotService --wait</code>.</p>
-<p>Save this as <strong><code>bot-service.bicep</code></strong> in <code>$work</code>:</p>
+</details>
+<details class="runbook-command">
+<summary>2. Save bot-service.bicep in the working folder</summary>
 <div class="highlight"><pre><span></span><code>param botName string
 param displayName string
 param msaAppId string
@@ -1448,7 +1467,11 @@ resource teams 'Microsoft.BotService/botServices/channels@2021-03-01' = {
   }
 }
 </code></pre></div>
-<p>Deploy this <strong>separate</strong> template into the Foundry resource group:</p>
+</details>
+<p>Deploy this <strong>separate</strong> template into the Foundry resource group.
+Replace the display name in the commands.</p>
+<details class="runbook-command">
+<summary>3. Deploy the bot and verify its network setting</summary>
 <div class="highlight"><pre><span></span><code><span class="nv">$displayName</span> <span class="p">=</span> <span class="s2">"&lt;agent-display-name&gt;"</span>
 <span class="nv">$activityEndpoint</span> <span class="p">=</span> <span class="s2">"$agentUri/endpoint/protocols/activityProtocol"</span>
 
@@ -1463,19 +1486,21 @@ resource teams 'Microsoft.BotService/botServices/channels@2021-03-01' = {
 <span class="n">az</span> <span class="n">resource</span> <span class="n">show</span> <span class="p">-</span><span class="n">-ids</span> <span class="nv">$botServiceId</span> <span class="p">-</span><span class="n">-api-version</span> <span class="n">2022</span><span class="p">-</span><span class="n">09</span><span class="p">-</span><span class="n">15</span> <span class="p">`</span>
     <span class="p">-</span><span class="n">-query</span> <span class="s2">"properties.{endpoint:endpoint,pna:publicNetworkAccess}"</span> <span class="p">-</span><span class="n">-output</span> <span class="n">json</span>
 </code></pre></div>
+</details>
 <p><strong>Expected:</strong> the agent's <code>activityProtocol</code> URL and <code>"pna": "Disabled"</code>.
 No bot application code, client secret, public VNet ingress or custom connector
 is required.</p>
 <h2 id="step-3-enable-the-restricted-activity-route">Step 3: Enable the restricted Activity route</h2>
-<p>This keeps existing protocols and non-Bot authorization schemes, adds the
-matching Bot Service scheme, and pins traffic to the tested agent version.</p>
+<p>Enable the route, preserve existing protocols and pin the tested version.</p>
 <div class="admonition warning">
 <p class="admonition-title">Preserve the web application path</p>
 <p>The API replaces the protocol configuration and authorization array.
 Keep existing entries, especially <code>responses</code>, <code>invocations</code> and <code>Entra</code>.
 Pinning the active version affects <strong>all consumers</strong> of this agent, not
-only Teams. Do not run concurrent agent configuration changes.</p>
+only Microsoft 365 clients. Do not run concurrent configuration changes.</p>
 </div>
+<details class="runbook-command">
+<summary>PowerShell: enable Activity and pin the tested version</summary>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="nv">$publishScope</span> <span class="n">-notin</span> <span class="p">@(</span><span class="s2">"Shared"</span><span class="p">,</span> <span class="s2">"Tenant"</span><span class="p">))</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"Choose Shared or Tenant."</span> <span class="p">}</span>
 <span class="nv">$agent</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
     <span class="n">-Headers</span> <span class="nv">$headers</span><span class="p">).</span><span class="n">Content</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span> <span class="n">-AsHashtable</span>
@@ -1508,9 +1533,14 @@ only Teams. Do not run concurrent agent configuration changes.</p>
     <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/merge-patch+json"</span> <span class="n">-Body</span> <span class="nv">$patch</span> <span class="p">|</span>
     <span class="nb">Out-Null</span>
 </code></pre></div>
+</details>
+<p><strong>Expected:</strong> the PATCH succeeds. Step 5 checks the resulting configuration.</p>
 <h2 id="step-4-publish-the-app">Step 4: Publish the app</h2>
 <p>Replace the metadata placeholders with approved values. Use your organization's
-real HTTPS website, privacy statement and terms of use.</p>
+HTTPS website, privacy statement and terms of use. Keep
+<code>publishAsAutopilot=false</code>; Agent 365 autopilot needs the separate flow linked above.</p>
+<details class="runbook-command">
+<summary>PowerShell: publish to Teams and Microsoft 365 Copilot</summary>
 <div class="highlight"><pre><span></span><code><span class="nv">$publishRequest</span> <span class="p">=</span> <span class="p">@{</span>
     <span class="n">agentDisplayName</span> <span class="p">=</span> <span class="nv">$displayName</span>
     <span class="n">botServiceArmId</span> <span class="p">=</span> <span class="nv">$botServiceId</span>
@@ -1532,20 +1562,20 @@ real HTTPS website, privacy statement and terms of use.</p>
 <span class="nv">$result</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">20</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="nb">publish-result</span><span class="p">.</span><span class="n">json</span>
 <span class="nv">$result</span>
 </code></pre></div>
+</details>
 <p><strong>Expected:</strong> a successful response containing <code>titleId</code>. For <code>Tenant</code>, a
 Microsoft 365 administrator must approve the request in
 <a href="https://admin.cloud.microsoft/?#/agents/all/requested">Microsoft 365 admin center &gt; Agents &gt; Requests</a>.
 Tenant app policies can still restrict availability.</p>
 <div class="admonition note">
 <p class="admonition-title">App version versus agent version</p>
-<p><code>appVersion</code> versions the Teams listing. Increment it when republishing
-metadata or changing publication scope. <code>$agentVersion</code> selects the runtime.
-A runtime update does not require republishing the Teams listing.</p>
+<p><code>appVersion</code> versions the store listing; increase it for metadata or scope
+changes. <code>$agentVersion</code> selects the runtime; updating it does not require
+republishing the listing.</p>
 </div>
-<details>
+<details class="runbook-command">
 <summary>Optional: download the generated Teams package</summary>
-<p>For an approved manual package review or upload process, use the same request
-body with the ZIP endpoint:</p>
+<p>For manual review or upload, reuse the request body:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Invoke-WebRequest</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}/microsoft365/zip?api-version=v1"</span> <span class="p">`</span>
     <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/json"</span> <span class="n">-Body</span> <span class="nv">$body</span> <span class="n">-OutFile</span> <span class="n">appPackage</span><span class="p">.</span><span class="n">zip</span>
 </code></pre></div>
@@ -1559,11 +1589,10 @@ agent's publishing configuration. It requires agent write permission.</p>
 </details>
 <h2 id="step-5-install-and-verify">Step 5: Install and verify</h2>
 <p><a id="resume-in-a-new-session"></a></p>
-<details>
+<details class="runbook-command">
 <summary>Returning later or using a new PowerShell session?</summary>
-<p>After Step 2, use this block to resume verification or maintenance without
-recreating the bot or republishing. Replace the path with the folder printed
-in Step 1. Run from the connected host.</p>
+<p>After Step 2, resume verification or maintenance without recreating or
+republishing. Use the Step 1 folder and connected host.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$ErrorActionPreference</span> <span class="p">=</span> <span class="s2">"Stop"</span>
 <span class="nv">$PSNativeCommandUseErrorActionPreference</span> <span class="p">=</span> <span class="nv">$true</span>
 <span class="nb">Set-Location</span> <span class="s2">"&lt;saved-working-folder&gt;"</span>
@@ -1582,32 +1611,52 @@ in Step 1. Run from the connected host.</p>
     <span class="p">-</span><span class="n">-query</span> <span class="n">id</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
 </code></pre></div>
 </details>
+<p>Find the agent in each client. Use the publishing account for <code>Shared</code>; for
+<code>Tenant</code>, wait for admin approval and look under <strong>Built by your org</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Client</th>
+<th>Open the agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Teams</td>
+<td><strong>Apps</strong> &gt; find the agent &gt; add it &gt; open its chat.</td>
+</tr>
+<tr>
+<td>Microsoft 365 Copilot</td>
+<td>Open the <strong>Agents</strong> area &gt; find the agent in the agent store &gt; add/open it. For <code>Shared</code>, check <strong>Your agents</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p>In <strong>each client</strong>:</p>
 <ol>
-<li>Open Teams <strong>Apps</strong> and find the agent. For <code>Shared</code>, use the publishing
-   account; for <code>Tenant</code>, wait for approval and look under <strong>Built by your org</strong>.
-   Add the app and open its chat. Complete any sign-in card.</li>
-<li>Send a greeting, then a real workload question and a follow-up. Check that
-   tools and knowledge sources work, not only that the bot replies.</li>
-<li>Test with an intended user and a tenant member without agent permission,
-   not a guest. For <code>Shared</code>, the latter must not invoke the agent. For protected
-   data, verify access with both allowed and denied identities before rollout.</li>
-<li>From the connected host, review the final endpoint and network settings:<div class="highlight"><pre><span></span><code><span class="nv">$after</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="n">-Headers</span> <span class="nv">$headers</span>
+<li>Complete any sign-in card. Send a greeting, a workload question and a
+   follow-up. Verify tools and knowledge sources, not just a reply.</li>
+<li>Test an intended user and a tenant member without permission, not a guest.
+   With <code>Shared</code>, the latter must be denied. For protected data, verify both
+   allowed and denied identities before rollout.</li>
+</ol>
+<p>From the connected host, check the final configuration:</p>
+<details class="runbook-command">
+<summary>PowerShell: verify the endpoint and both PNA settings</summary>
+<div class="highlight"><pre><span></span><code><span class="nv">$after</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="n">-Headers</span> <span class="nv">$headers</span>
 <span class="nv">$after</span><span class="p">.</span><span class="n">agent_endpoint</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">30</span>
 <span class="n">az</span> <span class="n">cognitiveservices</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$foundryName</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
     <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">publicNetworkAccess</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
 <span class="n">az</span> <span class="n">resource</span> <span class="n">show</span> <span class="p">-</span><span class="n">-ids</span> <span class="nv">$botServiceId</span> <span class="p">-</span><span class="n">-api-version</span> <span class="n">2022</span><span class="p">-</span><span class="n">09</span><span class="p">-</span><span class="n">15</span> <span class="p">`</span>
     <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">publicNetworkAccess</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
 </code></pre></div>
-</li>
-</ol>
+</details>
 <p><strong>Expected:</strong> the tested version at 100%, preserved original protocols and
 <code>Entra</code>, <code>activity.enable_m365_public_endpoint=true</code>, the matching Bot Service
 scheme, and <strong>both PNA values <code>Disabled</code></strong>.</p>
 <div class="admonition note">
 <p class="admonition-title">Channel limitations</p>
-<p>Foundry currently documents no streaming responses or citations for
-published agents. Teams file capabilities do not prove that the bundled
-application's web-upload pipeline is supported in this channel.
+<p>Published agents currently have no streaming responses or citations.
+Client file capabilities do not imply support for the web-upload pipeline.
 See <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#limitations">Foundry publishing limitations</a>.</p>
 </div>
 <h2 id="update-or-stop-publication">Update or stop publication</h2>
@@ -1630,16 +1679,18 @@ before using the commands below.</p>
 <td>Select the previous tested version. This changes the version for every consumer of the stable endpoint.</td>
 </tr>
 <tr>
-<td>Change Teams name, descriptions or URLs</td>
-<td>Edit <code>publish-request.json</code>, increase <code>appVersion</code>, then submit it using the block below. Keep <code>botServiceArmId</code> and <code>publishScope</code> unchanged for a metadata-only update.</td>
+<td>Change listing name, descriptions or URLs</td>
+<td>Edit <code>publish-request.json</code>, increase <code>appVersion</code>, then submit below. Keep <code>botServiceArmId</code> and <code>publishScope</code> unchanged for metadata-only updates.</td>
 </tr>
 <tr>
-<td>Redeploy the landing zone or hosted agent</td>
-<td>Recheck the active version, Activity exception, Bot Service authorization and end-to-end Teams behavior. Manual channel configuration is not owned by the landing zone template.</td>
+<td>Redeploy the landing zone or agent</td>
+<td>Recheck the active version, Activity exception, authorization and both clients. The template does not own this manual configuration.</td>
 </tr>
 </tbody>
 </table>
-<p>After editing and reviewing the saved metadata:</p>
+<details class="runbook-command">
+<summary>Update listing metadata</summary>
+<p>Edit and review <code>publish-request.json</code> first, then run:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$body</span> <span class="p">=</span> <span class="nb">Get-Content</span> <span class="nb">publish-request</span><span class="p">.</span><span class="n">json</span> <span class="n">-Raw</span>
 <span class="nv">$result</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="p">`</span>
     <span class="n">-Uri</span> <span class="s2">"${agentUri}/microsoft365/publish?api-version=v1"</span> <span class="p">`</span>
@@ -1647,8 +1698,12 @@ before using the commands below.</p>
 <span class="nv">$result</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">20</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="nb">publish-result</span><span class="p">.</span><span class="n">json</span>
 <span class="nv">$result</span>
 </code></pre></div>
-<p>To stop channel access while keeping the web application's private path, read
-the <strong>current</strong> configuration and disable only the Activity exception:</p>
+</details>
+<p>To stop access from <strong>both clients</strong>, disable only the Activity exception.
+Keep Foundry PNA disabled; the web application's private path stays available.</p>
+<details class="runbook-command">
+<summary>Stop Teams and Copilot access</summary>
+<p>Read the <strong>current</strong> configuration before changing it:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$current</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
     <span class="n">-Headers</span> <span class="nv">$headers</span><span class="p">).</span><span class="n">Content</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span> <span class="n">-AsHashtable</span>
 <span class="nv">$protocols</span> <span class="p">=</span> <span class="nv">$current</span><span class="p">.</span><span class="n">agent_endpoint</span><span class="p">.</span><span class="n">protocol_configuration</span>
@@ -1660,10 +1715,10 @@ the <strong>current</strong> configuration and disable only the Activity excepti
     <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/merge-patch+json"</span> <span class="n">-Body</span> <span class="nv">$disable</span> <span class="p">|</span>
     <span class="nb">Out-Null</span>
 </code></pre></div>
-<p>Keep Foundry PNA disabled. Confirm new Teams requests no longer reach the agent,
-then have the administrator block/remove the app from the catalog. Uninstalling
-the app alone is not endpoint access revocation. Do not delete shared Foundry
-resources or blindly restore an old configuration over subsequent changes.</p>
+</details>
+<p>Confirm new requests from both clients are blocked, then have the administrator
+block/remove the app. Uninstalling alone does not revoke endpoint access.
+Do not delete shared resources or overwrite later changes with an old backup.</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
 <thead>
@@ -1675,15 +1730,15 @@ resources or blindly restore an old configuration over subsequent changes.</p>
 <tbody>
 <tr>
 <td>Project GET/PATCH fails or times out</td>
-<td>Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience <code>https://ai.azure.com</code>. For an expired token or a new terminal, <a href="#resume-in-a-new-session">resume the session</a>. Do not enable PNA.</td>
+<td>Check private connectivity, tenant, Foundry User and token audience <code>https://ai.azure.com</code>. For an expired token, <a href="#resume-in-a-new-session">resume</a>. Do not enable PNA.</td>
 </tr>
 <tr>
 <td>Bot deployment denied</td>
 <td><code>Microsoft.BotService</code> registration, bot/deployment permissions and Azure Policy.</td>
 </tr>
 <tr>
-<td>Agent is missing from Teams</td>
-<td>Correct account/scope, admin approval and app policies. Refresh the store or sign out/in; catalog caching can delay discovery.</td>
+<td>Agent is missing from either client</td>
+<td>Check account/scope, approval and app policies. Refresh or sign out/in; catalog caching can delay discovery.</td>
 </tr>
 <tr>
 <td><code>403 NetworkAccessDenied</code> on Activity</td>
@@ -1695,7 +1750,7 @@ resources or blindly restore an old configuration over subsequent changes.</p>
 </tr>
 <tr>
 <td>Bot replies, but tools or retrieval fail</td>
-<td>Runtime identity grants, user/data authorization and outbound access. A successful web UI test does not validate Teams identity propagation.</td>
+<td>Check runtime grants, data authorization and outbound access. Web UI success does not validate channel identity propagation.</td>
 </tr>
 <tr>
 <td>Conversation is stuck or returns <code>no tool output found</code></td>
