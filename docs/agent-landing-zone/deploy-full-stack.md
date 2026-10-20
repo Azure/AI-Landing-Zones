@@ -1,4 +1,6 @@
-# Deploy the full stack
+# Full stack deploy
+
+<a id="deploy-the-full-stack"></a>
 
 Deploy the Azure foundation and the bundled agent application: a web UI, an
 orchestrator and, when selected, an ingestion application. Choose where the
@@ -275,6 +277,10 @@ In a bundled hosted topology, continue at preparation above.
 
 Use [Troubleshooting](troubleshooting.md) for failures. Do not authorize a cutover
 based only on a successful hook or HTTP 200.
+
+To make a hosted agent available in Teams, continue with
+[Publish to Teams](publish-to-teams.md). Bot creation and channel publication
+are separate manual tasks, not part of this deployment.
 
 ## Lifecycle
 

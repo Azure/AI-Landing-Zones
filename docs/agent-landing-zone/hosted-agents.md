@@ -172,6 +172,10 @@ generated temporary signing secret.
 - A delegated caller needs Foundry user access on the project **and** agent
   access. Deployment permission alone does not provide this.
 
+For the separate Teams channel, follow [Publish to Teams](publish-to-teams.md).
+It uses Bot Service authorization and the Foundry Activity endpoint, not the
+UI's delegated invocation path.
+
 <details markdown="1">
 <summary>Continuity, history and the administrative panel</summary>
 

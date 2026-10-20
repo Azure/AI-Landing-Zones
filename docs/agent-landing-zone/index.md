@@ -75,7 +75,8 @@ Follow the planning steps in order, then choose a deployment runbook.
 | Plan capacity for my workload | [Sizing and capacity](sizing.md), with current planning questions and detailed guidance planned |
 | Choose deployment settings, hosting and connectivity | [Configuration](configuration.md), [Agent hosting](hosted-agents.md) and [Network isolation](network-isolation.md) |
 | Provision a foundation without deploying application code | [Deploy infrastructure only](deploy-infra-only.md) |
-| Deploy the foundation and agent application | [Deploy the full stack](deploy-full-stack.md) |
+| Deploy the foundation and agent application | [Full stack deploy](deploy-full-stack.md) |
+| Make a hosted agent available in Teams | [Publish to Teams](publish-to-teams.md) |
 | Integrate my own application or modify a component | [Custom applications](build-your-own-app.md) |
 | Automate deployments with Azure DevOps (optional) | [Deploy with Azure DevOps](azure-devops.md) |
 | Diagnose a deployment or runtime problem | [Troubleshooting](troubleshooting.md) |

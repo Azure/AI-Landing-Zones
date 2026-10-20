@@ -47,7 +47,8 @@ nav:
           - "Sizing and capacity": agent-landing-zone/sizing.md
       - Runbooks:
           - "Infrastructure only": agent-landing-zone/deploy-infra-only.md
-          - "Full stack": agent-landing-zone/deploy-full-stack.md
+          - "Full stack deploy": agent-landing-zone/deploy-full-stack.md
+          - "Publish to Teams": agent-landing-zone/publish-to-teams.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
       - Reference:
           - "Configuration": agent-landing-zone/configuration.md
@@ -61,7 +62,7 @@ nav:
   - FAQ: architecture/faq.md
 
 # Supporting references and compatibility pages remain reachable by link without
-# competing with the two interactive deployment runbooks in the left navigation.
+# competing with the operational runbooks in the left navigation.
 not_in_nav: |
   /AI-Landing-Zones-Design-ACA.md
   /terraform-parity.md
