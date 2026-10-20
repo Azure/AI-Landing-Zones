@@ -33,9 +33,9 @@ endpoint, Application Gateway or web UI.
   and permission to create resource-group deployments in the target resource
   group. Resource-group **Contributor** also covers the bot and deployment.
   A subscription administrator must register `Microsoft.BotService` if needed.
-- Teams access in the **same tenant** as Foundry, and tenant app policies that
-  permit the app. Organization-wide publication also needs Microsoft 365 admin
-  approval.
+- Teams access for **member accounts in the same tenant** as Foundry, and app
+  policies that permit the app. Guest accounts cannot call these agents.
+  Organization-wide publication also needs Microsoft 365 admin approval.
 
 !!! warning "Approve the data flow first"
     Teams and Microsoft 365 process publishing metadata and agent conversations
@@ -92,12 +92,22 @@ if (-not $agent.instance_identity.client_id -or -not $agent.agent_endpoint) {
     throw "The agent needs a unique identity and stable endpoint. Stop before publishing."
 }
 $agent | ConvertTo-Json -Depth 100 | Set-Content agent-before.json
+@{
+    subscriptionId = $subscriptionId
+    tenantId = $tenantId
+    resourceGroup = $resourceGroup
+    foundryName = $foundryName
+    agentUri = $agentUri
+    botName = $botName
+} | ConvertTo-Json | Set-Content target.json
 $agent.agent_endpoint | ConvertTo-Json -Depth 100
+"Working folder: $work"
 ```
 
 **Expected:** the intended tenant and subscription, an agent identity
-`client_id`, and the current endpoint configuration. Keep `agent-before.json`
-in this local working folder, outside source control.
+`client_id`, the endpoint configuration and a working-folder path. Keep that
+path, `target.json` and `agent-before.json` for later checks, outside source
+control. These files do not contain the bearer token.
 
 Choose the audience **before Step 3**:
 
@@ -199,6 +209,8 @@ matching Bot Service scheme, and pins traffic to the tested agent version.
 
 ```powershell
 if ($publishScope -notin @("Shared", "Tenant")) { throw "Choose Shared or Tenant." }
+$agent = (Invoke-WebRequest -Uri "${agentUri}?api-version=v1" `
+    -Headers $headers).Content | ConvertFrom-Json -AsHashtable
 $protocols = $agent.agent_endpoint.protocol_configuration
 if (-not $protocols) { throw "Review the agent's existing protocols before continuing." }
 $activity = $protocols.activity
@@ -291,14 +303,44 @@ agent's publishing configuration. It requires agent write permission.
 
 ## Step 5: Install and verify
 
+<a id="resume-in-a-new-session"></a>
+
+<details markdown="1">
+<summary>Returning later or using a new PowerShell session?</summary>
+
+After Step 2, use this block to resume verification or maintenance without
+recreating the bot or republishing. Replace the path with the folder printed
+in Step 1. Run from the connected host.
+
+```powershell
+$ErrorActionPreference = "Stop"
+$PSNativeCommandUseErrorActionPreference = $true
+Set-Location "<saved-working-folder>"
+$target = Get-Content target.json -Raw | ConvertFrom-Json -AsHashtable
+$resourceGroup = $target.resourceGroup
+$foundryName = $target.foundryName
+$agentUri = $target.agentUri
+
+az login --tenant $target.tenantId
+az account set --subscription $target.subscriptionId
+$token = az account get-access-token --resource https://ai.azure.com `
+    --query accessToken --output tsv
+$headers = @{ Authorization = "Bearer $token" }
+Remove-Variable token
+$botServiceId = az bot show --name $target.botName --resource-group $resourceGroup `
+    --query id --output tsv
+```
+
+</details>
+
 1. Open Teams **Apps** and find the agent. For `Shared`, use the publishing
    account; for `Tenant`, wait for approval and look under **Built by your org**.
    Add the app and open its chat. Complete any sign-in card.
 2. Send a greeting, then a real workload question and a follow-up. Check that
    tools and knowledge sources work, not only that the bot replies.
-3. Test with an intended user and an unauthorized user. For `Shared`, the latter
-   must not invoke the agent. For protected data, verify document access with
-   both allowed and denied identities before broader rollout.
+3. Test with an intended user and a tenant member without agent permission,
+   not a guest. For `Shared`, the latter must not invoke the agent. For protected
+   data, verify access with both allowed and denied identities before rollout.
 4. From the connected host, review the final endpoint and network settings:
 
     ```powershell
@@ -322,12 +364,26 @@ scheme, and **both PNA values `Disabled`**.
 
 ## Update or stop publication
 
+If the original session ended or its token expired, [resume the session](#resume-in-a-new-session)
+before using the commands below.
+
 | Task | Action |
 | --- | --- |
 | Release a new runtime version | Test it, then change the [active version](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version). Keep the bot and listing. |
 | Roll back agent behavior | Select the previous tested version. This changes the version for every consumer of the stable endpoint. |
-| Change Teams name, descriptions or URLs | Repeat Step 4 with reviewed metadata and a higher `appVersion`. |
+| Change Teams name, descriptions or URLs | Edit `publish-request.json`, increase `appVersion`, then submit it using the block below. Keep `botServiceArmId` and `publishScope` unchanged for a metadata-only update. |
 | Redeploy the landing zone or hosted agent | Recheck the active version, Activity exception, Bot Service authorization and end-to-end Teams behavior. Manual channel configuration is not owned by the landing zone template. |
+
+After editing and reviewing the saved metadata:
+
+```powershell
+$body = Get-Content publish-request.json -Raw
+$result = Invoke-RestMethod -Method Post `
+    -Uri "${agentUri}/microsoft365/publish?api-version=v1" `
+    -Headers $headers -ContentType "application/json" -Body $body
+$result | ConvertTo-Json -Depth 20 | Set-Content publish-result.json
+$result
+```
 
 To stop channel access while keeping the web application's private path, read
 the **current** configuration and disable only the Activity exception:
@@ -354,12 +410,13 @@ resources or blindly restore an old configuration over subsequent changes.
 
 | Symptom | Check |
 | --- | --- |
-| Project GET/PATCH fails or times out | Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience `https://ai.azure.com`. If the token expired, repeat the token/header commands in Step 1. Do not enable PNA. |
+| Project GET/PATCH fails or times out | Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience `https://ai.azure.com`. For an expired token or a new terminal, [resume the session](#resume-in-a-new-session). Do not enable PNA. |
 | Bot deployment denied | `Microsoft.BotService` registration, bot/deployment permissions and Azure Policy. |
 | Agent is missing from Teams | Correct account/scope, admin approval and app policies. Refresh the store or sign out/in; catalog caching can delay discovery. |
 | `403 NetworkAccessDenied` on Activity | Verify the flag and test through Teams, not a public `curl` request. Arbitrary public source IPs remain blocked. |
 | User can open the app but gets an authorization error | Same-tenant sign-in and, for `Shared`, Foundry Agent Consumer access. Do not switch to `Tenant` just to clear a denial. |
 | Bot replies, but tools or retrieval fail | Runtime identity grants, user/data authorization and outbound access. A successful web UI test does not validate Teams identity propagation. |
+| Conversation is stuck or returns `no tool output found` | Send `/foundry_new_preview` in the Teams chat to reset it. Previous conversation context cannot be restored. |
 | `version already exists` | Increase `appVersion`; do not change the runtime version to fix listing metadata. |
 
 For other errors, use [Foundry publishing troubleshooting](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot)
