@@ -1292,24 +1292,6 @@ you enable a restricted public HTTPS exception for the Activity route. Foundry
 allows only service-managed Microsoft channel source ranges and still requires
 authentication and authorization. Channel delivery uses this exception, not the
 Foundry private endpoint. Management requests still use the private endpoint.</p>
-<table>
-<thead>
-<tr>
-<th>Publishing option</th>
-<th>How it relates to this runbook</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Teams and Microsoft 365 Copilot</td>
-<td>This procedure publishes to both clients. Verify each one in Step 5.</td>
-</tr>
-<tr>
-<td>Microsoft Agent 365 autopilot</td>
-<td>Follow the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365">separate autopilot procedure</a>. It creates instances with their own agent user accounts and requires tenant enrollment, licensing and admin approval.</td>
-</tr>
-</tbody>
-</table>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li><strong>Agent:</strong> Have a working hosted agent in a Foundry project, with its own
@@ -1594,9 +1576,6 @@ instead of running this publish request.</p>
 <p>Replace the placeholders below with approved listing details, including your
 organization's HTTPS website, privacy statement and terms of use. These details
 are visible to users; do not include secrets or sensitive information.</p>
-<p>Keep <code>publishAsAutopilot</code> set to <code>false</code>. This procedure publishes an agent to
-the Teams and Copilot stores; creating an Agent 365 autopilot requires the
-<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365">separate autopilot procedure</a>.</p>
 <details class="runbook-command">
 <summary>PowerShell: publish to Teams and Microsoft 365 Copilot</summary>
 <div class="highlight"><pre><span></span><code><span class="nv">$publishRequest</span> <span class="p">=</span> <span class="p">@{</span>
