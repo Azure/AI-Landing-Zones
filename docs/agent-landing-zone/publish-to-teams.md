@@ -23,11 +23,6 @@ allows only service-managed Microsoft channel source ranges and still requires
 authentication and authorization. Channel delivery uses this exception, not the
 Foundry private endpoint. Management requests still use the private endpoint.
 
-| Publishing option | How it relates to this runbook |
-| --- | --- |
-| Teams and Microsoft 365 Copilot | This procedure publishes to both clients. Verify each one in Step 5. |
-| Microsoft Agent 365 autopilot | Follow the [separate autopilot procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365). It creates instances with their own agent user accounts and requires tenant enrollment, licensing and admin approval. |
-
 ## Prerequisites
 
 - **Agent:** Have a working hosted agent in a Foundry project, with its own
@@ -330,10 +325,6 @@ instead of running this publish request.
 Replace the placeholders below with approved listing details, including your
 organization's HTTPS website, privacy statement and terms of use. These details
 are visible to users; do not include secrets or sensitive information.
-
-Keep `publishAsAutopilot` set to `false`. This procedure publishes an agent to
-the Teams and Copilot stores; creating an Agent 365 autopilot requires the
-[separate autopilot procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365).
 
 <details class="runbook-command" markdown="1">
 <summary>PowerShell: publish to Teams and Microsoft 365 Copilot</summary>
