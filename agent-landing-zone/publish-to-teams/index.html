@@ -1276,13 +1276,13 @@
 
 <h1 id="publish-to-teams-and-microsoft-365-copilot">Publish to Teams and Microsoft 365 Copilot</h1>
 <p><a id="publish-to-teams"></a></p>
-<p>Use this runbook to publish an existing Foundry hosted agent to <strong>Teams and
-Microsoft 365 Copilot</strong>. You will create a Bot Service resource, configure the
-agent's channel access and publish its app listing. These are manual
-post-deployment tasks; the landing zone template does not perform them.</p>
-<p>The procedure publishes the hosted agent, not the Agent App UI. It applies to
-<code>hosted-no-panel</code> and <code>hosted-panel</code> deployments, not to an orchestrator running
-in Container Apps with the <code>classic</code> topology.</p>
+<p>Publish an agent already <strong>hosted in Microsoft Foundry</strong> to <strong>Teams and
+Microsoft 365 Copilot</strong>. Start with a tested agent in a private-network Foundry
+project, then use its endpoint, identity and version throughout this runbook.
+The agent can be part of your own application.</p>
+<p>You will create a Bot Service resource, enable channel access and publish the
+agent's app listing. These are manual post-deployment tasks; the landing zone
+template does not perform them.</p>
 <p>Messages from either client follow the same path:</p>
 <p><strong>Teams / Microsoft 365 Copilot</strong> &rarr; <strong>Azure Bot Service</strong> &rarr;
 <strong>Foundry Activity endpoint</strong></p>
@@ -1290,8 +1290,8 @@ in Container Apps with the <code>classic</code> topology.</p>
 the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network">Foundry REST publishing flow</a>,
 you enable a restricted public HTTPS exception for the Activity route. Foundry
 allows only service-managed Microsoft channel source ranges and still requires
-authentication and authorization. Channel messages do not pass through your
-private endpoint, Application Gateway or web UI.</p>
+authentication and authorization. Channel delivery uses this exception, not the
+Foundry private endpoint. Management requests still use the private endpoint.</p>
 <table>
 <thead>
 <tr>
@@ -1316,12 +1316,18 @@ private endpoint, Application Gateway or web UI.</p>
 </table>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
-<li><strong>Deployment:</strong> Complete <a href="../deploy-full-stack/">Full stack deploy</a> with
-  <code>hosted-no-panel</code> or <code>hosted-panel</code>, and test the agent version you will publish.</li>
+<li><strong>Agent:</strong> Have a working hosted agent in a Foundry project, with its own
+  agent identity, a stable endpoint and a version you have tested. If you still
+  need to deploy an application, start with
+  <a href="../deploy-full-stack/">Full stack deploy</a> or
+  <a href="../build-your-own-app/">Custom applications</a>, then return here.</li>
 <li><strong>Network access:</strong> Run the commands from a
   <a href="../network-isolation/#reach-the-private-network">VNet-connected host</a> that
-  resolves and reaches the Foundry project's private endpoint. Agent management
-  requests remain private.</li>
+  resolves and reaches the Foundry project's private endpoint. This procedure
+  <strong>requires Foundry PNA to be disabled</strong>. For a project with public access
+  enabled, use the
+  <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot">Foundry portal publishing procedure</a>
+  instead.</li>
 <li><strong>Tools:</strong> Install <a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI</a>,
   <a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/install#azure-cli">Bicep CLI</a>
   and <strong>PowerShell 7.4 or later</strong>. Run Steps 1-4 in the same PowerShell session;
@@ -1333,23 +1339,30 @@ private endpoint, Application Gateway or web UI.</p>
   <code>Microsoft.BotService</code> if it is not already registered.</li>
 <li><strong>Microsoft 365 access:</strong> Use member accounts in the <strong>same tenant as Foundry</strong>,
   with access to Teams and Microsoft 365 Copilot and app policies that allow the
-  agent. Guest accounts cannot call these agents. Identify a Microsoft 365
-  administrator to approve publication if you plan to distribute it tenant-wide.</li>
+  agent. Guest accounts cannot call these agents. Tenant-wide publication
+  requires a Microsoft 365 administrator's approval.</li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Copilot licensing</p>
+<p>Users do not need a Microsoft 365 Copilot license to use a published agent
+in Microsoft Copilot Chat. Without that license, access to shared tenant
+data can incur usage-based charges. Review
+<a href="https://learn.microsoft.com/microsoft-365/copilot/extensibility/cost-considerations">Copilot licensing and cost considerations</a>
+when planning access.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Approve the data flow first</p>
 <p>Obtain your organization's approval before sending data through this
 channel. Microsoft 365 processes publishing metadata and conversations under
-its own compliance and data-residency commitments. Do not assume the web
-UI's delegated authentication, document permissions or upload features work
-unchanged in Teams or Copilot.</p>
+its own compliance and data-residency commitments. Validate how the agent
+authenticates users and enforces data permissions through this channel;
+tests through another client do not establish those guarantees.</p>
 </div>
 <h2 id="step-1-select-the-agent-and-save-its-configuration">Step 1: Select the agent and save its configuration</h2>
 <p>In the Azure portal, collect the subscription ID, resource group name, Foundry
 resource name and project name. Then open the agent in
-<a href="https://ai.azure.com/">Foundry</a> and record its name and <strong>tested version</strong>.
-The bundled agent is named <code>agent-app-orchestrator</code>; use your agent's actual
-name if you customized the deployment.</p>
+<a href="https://ai.azure.com/">Foundry</a> and record its <strong>name and tested version</strong>.
+Use these values for the agent you want to publish.</p>
 <p>Expand the block below, replace every placeholder and run it on the connected
 host. The commands check the agent's identity and save its configuration before
 you change it.</p>
@@ -1362,7 +1375,7 @@ you change it.</p>
 <span class="nv">$resourceGroup</span> <span class="p">=</span> <span class="s2">"&lt;foundry-resource-group&gt;"</span>
 <span class="nv">$foundryName</span> <span class="p">=</span> <span class="s2">"&lt;foundry-resource-name&gt;"</span>
 <span class="nv">$projectName</span> <span class="p">=</span> <span class="s2">"&lt;foundry-project-name&gt;"</span>
-<span class="nv">$agentName</span> <span class="p">=</span> <span class="s2">"agent-app-orchestrator"</span>
+<span class="nv">$agentName</span> <span class="p">=</span> <span class="s2">"&lt;agent-name&gt;"</span>
 <span class="nv">$agentVersion</span> <span class="p">=</span> <span class="s2">"&lt;tested-agent-version&gt;"</span>
 <span class="nv">$botName</span> <span class="p">=</span> <span class="s2">"&lt;globally-unique-bot-name&gt;"</span>
 <span class="nv">$publishScope</span> <span class="p">=</span> <span class="s2">"Shared"</span>
@@ -1425,7 +1438,7 @@ controls both catalog visibility and permission to call the agent:</p>
 <tr>
 <td><code>Shared</code></td>
 <td>Only identities with the required Foundry permissions can invoke it, through <code>BotServiceRbac</code>.</td>
-<td>Initially, only the publisher sees it under <strong>Your agents</strong>. Publishing approval is not required.</td>
+<td>The publisher finds it under <strong>Your agents</strong> and can share the link with authorized testers. Publishing approval is not required.</td>
 </tr>
 <tr>
 <td><code>Tenant</code></td>
@@ -1444,8 +1457,9 @@ Sharing an app link does not grant invocation permission.</p>
 <p class="admonition-title">If the agent identity check fails</p>
 <p>Stop and follow the
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications">Foundry migration guidance</a>.
-Bot Service needs the agent identity's client ID, not the project's managed
-identity or the web UI client ID.</p>
+Bot Service needs the agent identity's client ID
+(<code>instance_identity.client_id</code>), not the project's managed identity or an
+application registration belonging to another client.</p>
 </div>
 <h2 id="step-2-create-the-bot-and-teams-channel">Step 2: Create the bot and Teams channel</h2>
 <p>Complete the three sections below in order. This creates a separate Bot Service
@@ -1525,15 +1539,19 @@ connector.</p>
 <p>Run the block below to enable the restricted Activity route, apply the Bot
 Service authorization scheme for your chosen audience and send traffic to the
 tested agent version. The block reads the current configuration so it can
-preserve the existing protocols and non-Bot authorization schemes.</p>
+preserve the existing protocols and non-Bot authorization schemes. It also
+checks for Foundry's default <code>Entra</code> authorization. If you changed that
+configuration, review the
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#authorization-schemes">endpoint authorization settings</a>
+before proceeding.</p>
 <div class="admonition warning">
-<p class="admonition-title">Preserve the web application path</p>
+<p class="admonition-title">Preserve access for existing consumers</p>
 <p>The API replaces the submitted protocol configuration and authorization
-array. Do not remove existing entries, especially <code>responses</code>, <code>invocations</code>
-and <code>Entra</code>: removing them can break the web application's existing
-invocation path. Selecting the active version affects <strong>all consumers</strong> of
-the agent, not just Teams and Copilot. Do not let another operator change
-the agent configuration while you run this step.</p>
+array. Keep the protocols and authorization schemes your agent already
+uses, such as <code>responses</code>, <code>invocations</code> and <code>Entra</code>. Removing them can break
+other clients. Pinning the version also affects <strong>all consumers</strong> of the
+stable endpoint, not just Teams and Copilot. Do not run concurrent agent
+configuration changes.</p>
 </div>
 <details class="runbook-command">
 <summary>PowerShell: enable Activity and pin the tested version</summary>
@@ -1573,6 +1591,10 @@ the agent configuration while you run this step.</p>
 <p><strong>Expected result:</strong> The update completes without errors and prints no output.
 You will check the final configuration in Step 5.</p>
 <h2 id="step-4-publish-the-app">Step 4: Publish the app</h2>
+<p>This step submits the listing directly to the catalogs. If your organization
+requires package review <strong>before submission</strong>, follow the
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#download-and-inspect-the-app-package">REST package-download procedure</a>
+instead of running this publish request.</p>
 <p>Replace the placeholders below with approved listing details, including your
 organization's HTTPS website, privacy statement and terms of use. These details
 are visible to users; do not include secrets or sensitive information.</p>
@@ -1616,22 +1638,18 @@ running agent version; changing that version does not require republishing
 the listing.</p>
 </div>
 <details class="runbook-command">
-<summary>Optional: download the generated Teams package</summary>
-<p>If your administrator requires a package for review or manual upload, run this
-block in the same session after creating the publication request:</p>
+<summary>Optional: inspect a copy of the published app package</summary>
+<p>To inspect or retain the package after direct publication, run this block in
+the same session. It reuses the publication request:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Invoke-WebRequest</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}/microsoft365/zip?api-version=v1"</span> <span class="p">`</span>
     <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/json"</span> <span class="n">-Body</span> <span class="nv">$body</span> <span class="n">-OutFile</span> <span class="n">appPackage</span><span class="p">.</span><span class="n">zip</span>
 </code></pre></div>
 <p>Extract the ZIP and review its manifest and icons with the
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot#inspect-the-downloaded-package">package inspection checklist</a>.
-Keep the generated IDs and agent sections unchanged. To upload the package in
-Teams, select <strong>Apps &gt; Manage your apps &gt; Upload an app</strong>, then choose
-<strong>Upload a custom app</strong> or <strong>Submit an app to your org</strong>, as permitted by your
-administrator.</p>
+Keep the generated IDs and agent sections unchanged.</p>
 <p>The download call does <strong>not</strong> submit the app to the catalogs, but it can update
-the agent's publishing configuration and requires agent write permission. If you
-already published directly, do not upload a second copy unless your
-administrator requires it.</p>
+the agent's publishing configuration and requires agent write permission.
+Downloading this copy does not require uploading it again.</p>
 </details>
 <h2 id="step-5-install-and-verify">Step 5: Install and verify</h2>
 <p><a id="resume-in-a-new-session"></a></p>
@@ -1711,9 +1729,10 @@ protocols and <code>Entra</code> authorization are preserved,
 matches your publication scope. <strong>Both PNA values must remain <code>Disabled</code>.</strong></p>
 <div class="admonition note">
 <p class="admonition-title">Channel limitations</p>
-<p>Foundry's documentation currently states that published agents do not
-support streaming responses or citations. File support in a client does not
-mean the Agent App UI's upload pipeline is available through that client. Review the
+<p>Published agents do not support streaming responses or citations.
+File uploads and image generation are not supported in Microsoft 365
+Copilot, although they are available in Teams. Test the capabilities your
+agent uses in each client and review the
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#limitations">Foundry publishing limitations</a>
 before rollout.</p>
 </div>
@@ -1731,11 +1750,11 @@ before running the maintenance commands.</p>
 <tbody>
 <tr>
 <td>Release a new runtime version</td>
-<td>Test the version, then select it as the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version">active version</a>. You can keep the existing bot and listing.</td>
+<td>Test the version, then follow the <strong>REST API</strong> tab in the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version">active-version instructions</a> from the connected host. Keep the existing bot and listing.</td>
 </tr>
 <tr>
 <td>Roll back agent behavior</td>
-<td>Select the previous tested version as active. This changes the version for every consumer of the stable endpoint.</td>
+<td>Use the same REST instructions to select the previous tested version. This changes the version for every consumer of the stable endpoint.</td>
 </tr>
 <tr>
 <td>Change the listing name, descriptions or URLs</td>
@@ -1761,8 +1780,8 @@ block below. A <code>Tenant</code> update can require renewed admin approval.</p
 </code></pre></div>
 </details>
 <p>To stop channel access from <strong>both clients</strong>, run the block below. It disables
-only the Activity exception, leaving the web application's private path
-unchanged. Keep Foundry PNA disabled.</p>
+only the public Activity exception, leaving the other endpoint protocols and
+their private access unchanged. Keep Foundry PNA disabled.</p>
 <details class="runbook-command">
 <summary>Stop Teams and Copilot access</summary>
 <p>The commands read the <strong>current</strong> protocol configuration and change only the
@@ -1814,12 +1833,16 @@ configuration changes.</p>
 <td>Check that the user is signed in to the Foundry tenant and, for <code>Shared</code>, has Foundry Agent Consumer access. Do not switch to <code>Tenant</code> just to remove the error.</td>
 </tr>
 <tr>
-<td>The agent replies, but tools or retrieval fail.</td>
-<td>Check runtime identity permissions, data authorization and outbound access. A successful web UI test does not validate identity propagation through the channel.</td>
+<td>The Teams sign-in card opens, but its redirect page does not load.</td>
+<td>Ask the network administrator to allow outbound HTTPS (TCP 443) to <code>*.azureml.ms</code> from the user's network, then retry sign-in.</td>
 </tr>
 <tr>
-<td>A Teams conversation is stuck or returns <code>no tool output found</code>.</td>
-<td>Send <code>/foundry_new_preview</code> in that chat to reset it. This discards the previous conversation context, which cannot be restored.</td>
+<td>The agent replies, but tools or retrieval fail.</td>
+<td>Check runtime identity permissions, data authorization and outbound access. A successful test in another client does not validate identity propagation through Teams or Copilot.</td>
+</tr>
+<tr>
+<td>A conversation is stuck or returns <code>no tool output found</code>.</td>
+<td>In Teams, send <code>/foundry_new_preview</code>; in Copilot, start a new chat with the agent. Previous conversation context cannot be restored after a reset.</td>
 </tr>
 <tr>
 <td>Publication returns <code>version already exists</code>.</td>
