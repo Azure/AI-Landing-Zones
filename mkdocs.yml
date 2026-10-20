@@ -48,7 +48,7 @@ nav:
       - Runbooks:
           - "Infrastructure only": agent-landing-zone/deploy-infra-only.md
           - "Full stack deploy": agent-landing-zone/deploy-full-stack.md
-          - "Publish to Teams": agent-landing-zone/publish-to-teams.md
+          - "Teams & M365": agent-landing-zone/publish-to-teams.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
       - Reference:
           - "Configuration": agent-landing-zone/configuration.md
@@ -78,4 +78,4 @@ extra:
 
 extra_css:
   # Update the content version when styles change to invalidate browser caches.
-  - stylesheets/extra.css?v=fd71ad9d4e68
+  - stylesheets/extra.css?v=47a3a035c069

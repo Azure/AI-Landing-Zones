@@ -76,7 +76,7 @@ Follow the planning steps in order, then choose a deployment runbook.
 | Choose deployment settings, hosting and connectivity | [Configuration](configuration.md), [Agent hosting](hosted-agents.md) and [Network isolation](network-isolation.md) |
 | Provision a foundation without deploying application code | [Deploy infrastructure only](deploy-infra-only.md) |
 | Deploy the foundation and agent application | [Full stack deploy](deploy-full-stack.md) |
-| Make a hosted agent available in Teams | [Publish to Teams](publish-to-teams.md) |
+| Make a hosted agent available in Teams and Microsoft 365 Copilot | [Publish to Teams and M365](publish-to-teams.md) |
 | Integrate my own application or modify a component | [Custom applications](build-your-own-app.md) |
 | Automate deployments with Azure DevOps (optional) | [Deploy with Azure DevOps](azure-devops.md) |
 | Diagnose a deployment or runtime problem | [Troubleshooting](troubleshooting.md) |

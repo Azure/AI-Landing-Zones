@@ -278,8 +278,8 @@ In a bundled hosted topology, continue at preparation above.
 Use [Troubleshooting](troubleshooting.md) for failures. Do not authorize a cutover
 based only on a successful hook or HTTP 200.
 
-To make a hosted agent available in Teams, continue with
-[Publish to Teams](publish-to-teams.md). Bot creation and channel publication
+To make a hosted agent available in Teams and Microsoft 365 Copilot, continue with
+[Publish to Teams and M365](publish-to-teams.md). Bot creation and channel publication
 are separate manual tasks, not part of this deployment.
 
 ## Lifecycle

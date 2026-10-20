@@ -9,8 +9,8 @@ procedure, follow [Deploy infrastructure only](deploy-infra-only.md) or
 [Deploy the full stack](deploy-full-stack.md). Optional pipeline automation is
 covered separately in the [Azure DevOps runbook](azure-devops.md).
 
-!!! note "Teams publication"
-    [Publish to Teams](publish-to-teams.md) adds a manual, source-IP-filtered
+!!! note "Teams and Microsoft 365 Copilot publication"
+    [Publish to Teams and M365](publish-to-teams.md) adds a manual, source-IP-filtered
     public exception for the Foundry Activity route while Foundry and Bot Service
     PNA stay disabled. Channel delivery does not use Private Link; other Foundry
     APIs remain private. The template does not enable this exception.

@@ -1,24 +1,27 @@
-# Publish to Teams
+# Publish to Teams and Microsoft 365 Copilot
 
-Publish an existing Foundry hosted agent as a Teams app. This is a **manual
-post-deployment task**: the landing zone template does not create the bot or
-publish the app.
+<a id="publish-to-teams"></a>
 
-```text
-Teams -> Azure Bot Service -> Foundry agent Activity endpoint
-                             Restricted public HTTPS
-```
+Publish a Foundry hosted agent to **Teams and Microsoft 365 Copilot**. This manual
+task is separate from the landing zone deployment. Expand the commands as you
+follow the five steps.
 
-Foundry and Bot Service keep **public network access disabled**. Foundry exposes
-only the Activity route to service-managed Bot Service and Microsoft 365 source
-ranges; authentication still applies. This channel does not use your private
-endpoint, Application Gateway or web UI.
+**Teams / Microsoft 365 Copilot** &rarr; **Azure Bot Service** &rarr;
+**Foundry Activity endpoint**
 
-!!! note "Scope"
-    This runbook uses the [documented Foundry REST publishing flow](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network).
-    It publishes the agent, not the Agent App UI or a `classic` Container Apps
-    orchestrator. The same publishing API also supports Microsoft 365 Copilot;
-    this runbook verifies Teams, not Copilot Studio or Agent 365 autopilot.
+Foundry and Bot Service keep **public network access disabled**. Only the
+Activity route accepts restricted public HTTPS from service-managed Microsoft
+channel ranges, with authentication. It does not use your private endpoint,
+Application Gateway or web UI. This follows the
+[Foundry REST publishing flow](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network).
+
+| Destination | Covered here? |
+| --- | --- |
+| Teams and Microsoft 365 Copilot | Yes. One publication, then verify each client in Step 5. |
+| Microsoft Agent 365 autopilot | No. A [separate flow](https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365) creates instances with their own agent user accounts and requires tenant enrollment, licensing and admin approval. |
+| Copilot Studio | No. This is not a connected-agent configuration. |
+
+Not the web UI or a `classic` Container Apps orchestrator.
 
 ## Prerequisites
 
@@ -28,21 +31,20 @@ endpoint, Application Gateway or web UI.
   resolves and reaches the Foundry project's private endpoint.
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli),
   [Bicep CLI](https://learn.microsoft.com/azure/azure-resource-manager/bicep/install#azure-cli)
-  and **PowerShell 7.4 or later**. Use the same PowerShell session throughout.
+  and **PowerShell 7.4 or later**. Run Steps 1-4 in one session.
 - **Foundry User** on the project, plus **Azure Bot Service Contributor Role**
   and permission to create resource-group deployments in the target resource
   group. Resource-group **Contributor** also covers the bot and deployment.
   A subscription administrator must register `Microsoft.BotService` if needed.
-- Teams access for **member accounts in the same tenant** as Foundry, and app
-  policies that permit the app. Guest accounts cannot call these agents.
-  Organization-wide publication also needs Microsoft 365 admin approval.
+- Teams and Microsoft 365 Copilot access for **members of the Foundry tenant**,
+  with applicable licenses and app policies. Guests cannot call these agents.
+  Organization-wide publication needs Microsoft 365 admin approval.
 
 !!! warning "Approve the data flow first"
-    Teams and Microsoft 365 process publishing metadata and agent conversations
-    under their own compliance and data-residency commitments. Approve this
-    channel before sending organizational data. Do not assume the web UI's
-    delegated authentication, document permissions or upload features transfer
-    unchanged to Teams.
+    Microsoft 365 processes metadata and conversations under its own compliance
+    and data-residency commitments. Approve this channel first. The web UI's
+    delegated authentication, document permissions and uploads do not
+    automatically transfer to either client.
 
 ## Step 1: Select the agent and save its configuration
 
@@ -51,7 +53,10 @@ project names. In [Foundry](https://ai.azure.com/), open the project and agent;
 note the **tested agent version**. The bundled agent name is
 `agent-app-orchestrator`; use the actual name for a custom agent.
 
-Replace the placeholders, then run:
+Replace the placeholders and run on the connected host.
+
+<details class="runbook-command" markdown="1">
+<summary>PowerShell: select the target and save a backup</summary>
 
 ```powershell
 $ErrorActionPreference = "Stop"
@@ -104,32 +109,35 @@ $agent.agent_endpoint | ConvertTo-Json -Depth 100
 "Working folder: $work"
 ```
 
-**Expected:** the intended tenant and subscription, an agent identity
-`client_id`, the endpoint configuration and a working-folder path. Keep that
-path, `target.json` and `agent-before.json` for later checks, outside source
-control. These files do not contain the bearer token.
+</details>
 
-Choose the audience **before Step 3**:
+**Expected:** the intended tenant/subscription, identity `client_id`, endpoint
+configuration and working-folder path. Keep that path, `target.json` and
+`agent-before.json` outside source control; they contain no bearer token.
+
+Choose the audience **before Step 3**, in the same session:
 
 | `$publishScope` | Who can call the agent | Store visibility |
 | --- | --- | --- |
-| `Shared` (start here) | Authorized identities through `BotServiceRbac` | Initially only the publisher, under **Your agents**; no publishing approval required |
+| `Shared` (start here) | Authorized identities through `BotServiceRbac` | Publisher only initially, under **Your agents**; no publishing approval |
 | `Tenant` | Everyone in the Foundry tenant through `BotServiceTenant` | **Built by your org**, after Microsoft 365 admin approval |
 
-For organization-wide publication, set `$publishScope = "Tenant"` only after
-that access has been approved. With `Shared`, an administrator can give selected
-testers **Foundry Agent Consumer** at the
+Set `$publishScope = "Tenant"` only after organization-wide access is approved.
+For `Shared`, grant selected testers **Foundry Agent Consumer** at the
 [agent scope](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization#grant-access-to-one-agent).
 Sharing an app link does not grant invocation permission.
 
-!!! note "Older agents"
-    If the identity check fails, follow the
-    [Foundry migration guidance](https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications).
-    Do not substitute the project's managed identity or the web UI client ID.
+If the identity check fails, follow the
+[migration guidance](https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications).
+Do not substitute the project identity or web UI client ID.
 
 ## Step 2: Create the bot and Teams channel
 
-Check provider registration:
+Check registration, save the template, then deploy it. The Teams channel below
+also serves the Microsoft 365 Copilot publishing flow.
+
+<details class="runbook-command" markdown="1">
+<summary>1. Check Bot Service provider registration</summary>
 
 ```powershell
 az provider show --namespace Microsoft.BotService --query registrationState --output tsv
@@ -138,7 +146,10 @@ az provider show --namespace Microsoft.BotService --query registrationState --ou
 **Expected:** `Registered`. If not, have a subscription administrator run
 `az provider register --namespace Microsoft.BotService --wait`.
 
-Save this as **`bot-service.bicep`** in `$work`:
+</details>
+
+<details class="runbook-command" markdown="1">
+<summary>2. Save bot-service.bicep in the working folder</summary>
 
 ```bicep
 param botName string
@@ -174,7 +185,13 @@ resource teams 'Microsoft.BotService/botServices/channels@2021-03-01' = {
 }
 ```
 
-Deploy this **separate** template into the Foundry resource group:
+</details>
+
+Deploy this **separate** template into the Foundry resource group.
+Replace the display name in the commands.
+
+<details class="runbook-command" markdown="1">
+<summary>3. Deploy the bot and verify its network setting</summary>
 
 ```powershell
 $displayName = "<agent-display-name>"
@@ -192,20 +209,24 @@ az resource show --ids $botServiceId --api-version 2022-09-15 `
     --query "properties.{endpoint:endpoint,pna:publicNetworkAccess}" --output json
 ```
 
+</details>
+
 **Expected:** the agent's `activityProtocol` URL and `"pna": "Disabled"`.
 No bot application code, client secret, public VNet ingress or custom connector
 is required.
 
 ## Step 3: Enable the restricted Activity route
 
-This keeps existing protocols and non-Bot authorization schemes, adds the
-matching Bot Service scheme, and pins traffic to the tested agent version.
+Enable the route, preserve existing protocols and pin the tested version.
 
 !!! warning "Preserve the web application path"
     The API replaces the protocol configuration and authorization array.
     Keep existing entries, especially `responses`, `invocations` and `Entra`.
     Pinning the active version affects **all consumers** of this agent, not
-    only Teams. Do not run concurrent agent configuration changes.
+    only Microsoft 365 clients. Do not run concurrent configuration changes.
+
+<details class="runbook-command" markdown="1">
+<summary>PowerShell: enable Activity and pin the tested version</summary>
 
 ```powershell
 if ($publishScope -notin @("Shared", "Tenant")) { throw "Choose Shared or Tenant." }
@@ -241,10 +262,18 @@ Invoke-RestMethod -Method Patch -Uri "${agentUri}?api-version=v1" `
     Out-Null
 ```
 
+</details>
+
+**Expected:** the PATCH succeeds. Step 5 checks the resulting configuration.
+
 ## Step 4: Publish the app
 
 Replace the metadata placeholders with approved values. Use your organization's
-real HTTPS website, privacy statement and terms of use.
+HTTPS website, privacy statement and terms of use. Keep
+`publishAsAutopilot=false`; Agent 365 autopilot needs the separate flow linked above.
+
+<details class="runbook-command" markdown="1">
+<summary>PowerShell: publish to Teams and Microsoft 365 Copilot</summary>
 
 ```powershell
 $publishRequest = @{
@@ -269,21 +298,22 @@ $result | ConvertTo-Json -Depth 20 | Set-Content publish-result.json
 $result
 ```
 
+</details>
+
 **Expected:** a successful response containing `titleId`. For `Tenant`, a
 Microsoft 365 administrator must approve the request in
 [Microsoft 365 admin center > Agents > Requests](https://admin.cloud.microsoft/?#/agents/all/requested).
 Tenant app policies can still restrict availability.
 
 !!! note "App version versus agent version"
-    `appVersion` versions the Teams listing. Increment it when republishing
-    metadata or changing publication scope. `$agentVersion` selects the runtime.
-    A runtime update does not require republishing the Teams listing.
+    `appVersion` versions the store listing; increase it for metadata or scope
+    changes. `$agentVersion` selects the runtime; updating it does not require
+    republishing the listing.
 
-<details markdown="1">
+<details class="runbook-command" markdown="1">
 <summary>Optional: download the generated Teams package</summary>
 
-For an approved manual package review or upload process, use the same request
-body with the ZIP endpoint:
+For manual review or upload, reuse the request body:
 
 ```powershell
 Invoke-WebRequest -Method Post -Uri "${agentUri}/microsoft365/zip?api-version=v1" `
@@ -305,12 +335,11 @@ agent's publishing configuration. It requires agent write permission.
 
 <a id="resume-in-a-new-session"></a>
 
-<details markdown="1">
+<details class="runbook-command" markdown="1">
 <summary>Returning later or using a new PowerShell session?</summary>
 
-After Step 2, use this block to resume verification or maintenance without
-recreating the bot or republishing. Replace the path with the folder printed
-in Step 1. Run from the connected host.
+After Step 2, resume verification or maintenance without recreating or
+republishing. Use the Step 1 folder and connected host.
 
 ```powershell
 $ErrorActionPreference = "Stop"
@@ -333,33 +362,45 @@ $botServiceId = az bot show --name $target.botName --resource-group $resourceGro
 
 </details>
 
-1. Open Teams **Apps** and find the agent. For `Shared`, use the publishing
-   account; for `Tenant`, wait for approval and look under **Built by your org**.
-   Add the app and open its chat. Complete any sign-in card.
-2. Send a greeting, then a real workload question and a follow-up. Check that
-   tools and knowledge sources work, not only that the bot replies.
-3. Test with an intended user and a tenant member without agent permission,
-   not a guest. For `Shared`, the latter must not invoke the agent. For protected
-   data, verify access with both allowed and denied identities before rollout.
-4. From the connected host, review the final endpoint and network settings:
+Find the agent in each client. Use the publishing account for `Shared`; for
+`Tenant`, wait for admin approval and look under **Built by your org**.
 
-    ```powershell
-    $after = Invoke-RestMethod -Uri "${agentUri}?api-version=v1" -Headers $headers
-    $after.agent_endpoint | ConvertTo-Json -Depth 30
-    az cognitiveservices account show --name $foundryName --resource-group $resourceGroup `
-        --query properties.publicNetworkAccess --output tsv
-    az resource show --ids $botServiceId --api-version 2022-09-15 `
-        --query properties.publicNetworkAccess --output tsv
-    ```
+| Client | Open the agent |
+| --- | --- |
+| Teams | **Apps** > find the agent > add it > open its chat. |
+| Microsoft 365 Copilot | Open the **Agents** area > find the agent in the agent store > add/open it. For `Shared`, check **Your agents**. |
+
+In **each client**:
+
+1. Complete any sign-in card. Send a greeting, a workload question and a
+   follow-up. Verify tools and knowledge sources, not just a reply.
+2. Test an intended user and a tenant member without permission, not a guest.
+   With `Shared`, the latter must be denied. For protected data, verify both
+   allowed and denied identities before rollout.
+
+From the connected host, check the final configuration:
+
+<details class="runbook-command" markdown="1">
+<summary>PowerShell: verify the endpoint and both PNA settings</summary>
+
+```powershell
+$after = Invoke-RestMethod -Uri "${agentUri}?api-version=v1" -Headers $headers
+$after.agent_endpoint | ConvertTo-Json -Depth 30
+az cognitiveservices account show --name $foundryName --resource-group $resourceGroup `
+    --query properties.publicNetworkAccess --output tsv
+az resource show --ids $botServiceId --api-version 2022-09-15 `
+    --query properties.publicNetworkAccess --output tsv
+```
+
+</details>
 
 **Expected:** the tested version at 100%, preserved original protocols and
 `Entra`, `activity.enable_m365_public_endpoint=true`, the matching Bot Service
 scheme, and **both PNA values `Disabled`**.
 
 !!! note "Channel limitations"
-    Foundry currently documents no streaming responses or citations for
-    published agents. Teams file capabilities do not prove that the bundled
-    application's web-upload pipeline is supported in this channel.
+    Published agents currently have no streaming responses or citations.
+    Client file capabilities do not imply support for the web-upload pipeline.
     See [Foundry publishing limitations](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#limitations).
 
 ## Update or stop publication
@@ -371,10 +412,13 @@ before using the commands below.
 | --- | --- |
 | Release a new runtime version | Test it, then change the [active version](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version). Keep the bot and listing. |
 | Roll back agent behavior | Select the previous tested version. This changes the version for every consumer of the stable endpoint. |
-| Change Teams name, descriptions or URLs | Edit `publish-request.json`, increase `appVersion`, then submit it using the block below. Keep `botServiceArmId` and `publishScope` unchanged for a metadata-only update. |
-| Redeploy the landing zone or hosted agent | Recheck the active version, Activity exception, Bot Service authorization and end-to-end Teams behavior. Manual channel configuration is not owned by the landing zone template. |
+| Change listing name, descriptions or URLs | Edit `publish-request.json`, increase `appVersion`, then submit below. Keep `botServiceArmId` and `publishScope` unchanged for metadata-only updates. |
+| Redeploy the landing zone or agent | Recheck the active version, Activity exception, authorization and both clients. The template does not own this manual configuration. |
 
-After editing and reviewing the saved metadata:
+<details class="runbook-command" markdown="1">
+<summary>Update listing metadata</summary>
+
+Edit and review `publish-request.json` first, then run:
 
 ```powershell
 $body = Get-Content publish-request.json -Raw
@@ -385,8 +429,15 @@ $result | ConvertTo-Json -Depth 20 | Set-Content publish-result.json
 $result
 ```
 
-To stop channel access while keeping the web application's private path, read
-the **current** configuration and disable only the Activity exception:
+</details>
+
+To stop access from **both clients**, disable only the Activity exception.
+Keep Foundry PNA disabled; the web application's private path stays available.
+
+<details class="runbook-command" markdown="1">
+<summary>Stop Teams and Copilot access</summary>
+
+Read the **current** configuration before changing it:
 
 ```powershell
 $current = (Invoke-WebRequest -Uri "${agentUri}?api-version=v1" `
@@ -401,21 +452,22 @@ Invoke-RestMethod -Method Patch -Uri "${agentUri}?api-version=v1" `
     Out-Null
 ```
 
-Keep Foundry PNA disabled. Confirm new Teams requests no longer reach the agent,
-then have the administrator block/remove the app from the catalog. Uninstalling
-the app alone is not endpoint access revocation. Do not delete shared Foundry
-resources or blindly restore an old configuration over subsequent changes.
+</details>
+
+Confirm new requests from both clients are blocked, then have the administrator
+block/remove the app. Uninstalling alone does not revoke endpoint access.
+Do not delete shared resources or overwrite later changes with an old backup.
 
 ## Troubleshooting
 
 | Symptom | Check |
 | --- | --- |
-| Project GET/PATCH fails or times out | Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience `https://ai.azure.com`. For an expired token or a new terminal, [resume the session](#resume-in-a-new-session). Do not enable PNA. |
+| Project GET/PATCH fails or times out | Check private connectivity, tenant, Foundry User and token audience `https://ai.azure.com`. For an expired token, [resume](#resume-in-a-new-session). Do not enable PNA. |
 | Bot deployment denied | `Microsoft.BotService` registration, bot/deployment permissions and Azure Policy. |
-| Agent is missing from Teams | Correct account/scope, admin approval and app policies. Refresh the store or sign out/in; catalog caching can delay discovery. |
+| Agent is missing from either client | Check account/scope, approval and app policies. Refresh or sign out/in; catalog caching can delay discovery. |
 | `403 NetworkAccessDenied` on Activity | Verify the flag and test through Teams, not a public `curl` request. Arbitrary public source IPs remain blocked. |
 | User can open the app but gets an authorization error | Same-tenant sign-in and, for `Shared`, Foundry Agent Consumer access. Do not switch to `Tenant` just to clear a denial. |
-| Bot replies, but tools or retrieval fail | Runtime identity grants, user/data authorization and outbound access. A successful web UI test does not validate Teams identity propagation. |
+| Bot replies, but tools or retrieval fail | Check runtime grants, data authorization and outbound access. Web UI success does not validate channel identity propagation. |
 | Conversation is stuck or returns `no tool output found` | Send `/foundry_new_preview` in the Teams chat to reset it. Previous conversation context cannot be restored. |
 | `version already exists` | Increase `appVersion`; do not change the runtime version to fix listing metadata. |
 

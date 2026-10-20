@@ -113,3 +113,46 @@
   background: linear-gradient(135deg, color-mix(in srgb, var(--md-primary-fg-color) 8%, transparent), transparent);
   border-color: color-mix(in srgb, var(--md-primary-fg-color) 28%, var(--md-default-fg-color--lightest));
 }
+
+.md-typeset details.runbook-command {
+  background: transparent;
+  border: 0;
+  border-block: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0;
+  box-shadow: none;
+  color: inherit;
+  font-size: inherit;
+  margin: 1em 0;
+  padding: 0;
+}
+
+.md-typeset details.runbook-command > summary {
+  background: transparent;
+  color: var(--md-primary-fg-color);
+  cursor: pointer;
+  font-weight: 600;
+  margin: 0;
+  padding: 0.7rem 1.8rem 0.7rem 0;
+}
+
+.md-typeset details.runbook-command > summary::before {
+  display: none;
+}
+
+.md-typeset details.runbook-command > summary::after {
+  margin-top: -0.5rem;
+  top: 50%;
+}
+
+.md-typeset details.runbook-command > summary:hover {
+  color: var(--md-accent-fg-color);
+}
+
+.md-typeset details.runbook-command > summary:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+
+.md-typeset details.runbook-command[open] {
+  padding-bottom: 0.6rem;
+}
