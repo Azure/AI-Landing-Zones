@@ -1,0 +1,1716 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../deploy-full-stack/">
+      
+      
+        <link rel="next" href="../azure-devops/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Publish to Teams - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=fd71ad9d4e68">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#publish-to-teams" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Publish to Teams
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the template works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan your deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan your deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../bicep/deployed-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources and cost estimates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/cost-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sizing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing and capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure only
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full stack deploy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish to Teams
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish to Teams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-select-the-agent-and-save-its-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Select the agent and save its configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-create-the-bot-and-teams-channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create the bot and Teams channel
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-enable-the-restricted-activity-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Enable the restricted Activity route
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-publish-the-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Publish the app
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-install-and-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Install and verify
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-or-stop-publication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update or stop publication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent hosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Custom applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../portal/Readme/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-1-select-the-agent-and-save-its-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Select the agent and save its configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-2-create-the-bot-and-teams-channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create the bot and Teams channel
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-enable-the-restricted-activity-route" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Enable the restricted Activity route
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-4-publish-the-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Publish the app
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-5-install-and-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Install and verify
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-or-stop-publication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update or stop publication
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="publish-to-teams">Publish to Teams</h1>
+<p>Publish an existing Foundry hosted agent as a Teams app. This is a <strong>manual
+post-deployment task</strong>: the landing zone template does not create the bot or
+publish the app.</p>
+<div class="highlight"><pre><span></span><code>Teams -&gt; Azure Bot Service -&gt; Foundry agent Activity endpoint
+                             Restricted public HTTPS
+</code></pre></div>
+<p>Foundry and Bot Service keep <strong>public network access disabled</strong>. Foundry exposes
+only the Activity route to service-managed Bot Service and Microsoft 365 source
+ranges; authentication still applies. This channel does not use your private
+endpoint, Application Gateway or web UI.</p>
+<div class="admonition note">
+<p class="admonition-title">Scope</p>
+<p>This runbook uses the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network">documented Foundry REST publishing flow</a>.
+It publishes the agent, not the Agent App UI or a <code>classic</code> Container Apps
+orchestrator. The same publishing API also supports Microsoft 365 Copilot;
+this runbook verifies Teams, not Copilot Studio or Agent 365 autopilot.</p>
+</div>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>A working <code>hosted-no-panel</code> or <code>hosted-panel</code> deployment from
+  <a href="../deploy-full-stack/">Full stack deploy</a>, with a tested agent version.</li>
+<li>A <a href="../network-isolation/#reach-the-private-network">VNet-connected host</a> that
+  resolves and reaches the Foundry project's private endpoint.</li>
+<li><a href="https://learn.microsoft.com/cli/azure/install-azure-cli">Azure CLI</a>,
+  <a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/install#azure-cli">Bicep CLI</a>
+  and <strong>PowerShell 7.4 or later</strong>. Use the same PowerShell session throughout.</li>
+<li><strong>Foundry User</strong> on the project, plus <strong>Azure Bot Service Contributor Role</strong>
+  and permission to create resource-group deployments in the target resource
+  group. Resource-group <strong>Contributor</strong> also covers the bot and deployment.
+  A subscription administrator must register <code>Microsoft.BotService</code> if needed.</li>
+<li>Teams access in the <strong>same tenant</strong> as Foundry, and tenant app policies that
+  permit the app. Organization-wide publication also needs Microsoft 365 admin
+  approval.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Approve the data flow first</p>
+<p>Teams and Microsoft 365 process publishing metadata and agent conversations
+under their own compliance and data-residency commitments. Approve this
+channel before sending organizational data. Do not assume the web UI's
+delegated authentication, document permissions or upload features transfer
+unchanged to Teams.</p>
+</div>
+<h2 id="step-1-select-the-agent-and-save-its-configuration">Step 1: Select the agent and save its configuration</h2>
+<p>In the Azure portal, note the subscription, resource group, Foundry resource and
+project names. In <a href="https://ai.azure.com/">Foundry</a>, open the project and agent;
+note the <strong>tested agent version</strong>. The bundled agent name is
+<code>agent-app-orchestrator</code>; use the actual name for a custom agent.</p>
+<p>Replace the placeholders, then run:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$ErrorActionPreference</span> <span class="p">=</span> <span class="s2">"Stop"</span>
+<span class="nv">$PSNativeCommandUseErrorActionPreference</span> <span class="p">=</span> <span class="nv">$true</span>
+
+<span class="nv">$subscriptionId</span> <span class="p">=</span> <span class="s2">"&lt;subscription-id&gt;"</span>
+<span class="nv">$resourceGroup</span> <span class="p">=</span> <span class="s2">"&lt;foundry-resource-group&gt;"</span>
+<span class="nv">$foundryName</span> <span class="p">=</span> <span class="s2">"&lt;foundry-resource-name&gt;"</span>
+<span class="nv">$projectName</span> <span class="p">=</span> <span class="s2">"&lt;foundry-project-name&gt;"</span>
+<span class="nv">$agentName</span> <span class="p">=</span> <span class="s2">"agent-app-orchestrator"</span>
+<span class="nv">$agentVersion</span> <span class="p">=</span> <span class="s2">"&lt;tested-agent-version&gt;"</span>
+<span class="nv">$botName</span> <span class="p">=</span> <span class="s2">"&lt;globally-unique-bot-name&gt;"</span>
+<span class="nv">$publishScope</span> <span class="p">=</span> <span class="s2">"Shared"</span>
+
+<span class="n">az</span> <span class="n">login</span>
+<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="nv">$subscriptionId</span>
+<span class="nv">$tenantId</span> <span class="p">=</span> <span class="n">az</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-query</span> <span class="n">tenantId</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+<span class="n">az</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-query</span> <span class="s2">"{subscription:id,tenant:tenantId}"</span> <span class="p">-</span><span class="n">-output</span> <span class="n">table</span>
+
+<span class="nv">$pna</span> <span class="p">=</span> <span class="n">az</span> <span class="n">cognitiveservices</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$foundryName</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">publicNetworkAccess</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$pna</span> <span class="o">-ne</span> <span class="s2">"Disabled"</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"This runbook requires Foundry PNA Disabled."</span> <span class="p">}</span>
+
+<span class="nv">$work</span> <span class="p">=</span> <span class="nb">Join-Path</span> <span class="nv">$HOME</span> <span class="p">(</span><span class="s2">"teams-publication-"</span> <span class="p">+</span> <span class="p">(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="s2">"yyyyMMdd-HHmmss"</span><span class="p">))</span>
+<span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="nv">$work</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nb">Set-Location</span> <span class="nv">$work</span>
+
+<span class="nv">$projectEndpoint</span> <span class="p">=</span> <span class="s2">"https://$foundryName.services.ai.azure.com/api/projects/$projectName"</span>
+<span class="nv">$agentUri</span> <span class="p">=</span> <span class="s2">"$projectEndpoint/agents/</span><span class="p">$(</span><span class="no">[uri]</span><span class="p">::</span><span class="n">EscapeDataString</span><span class="p">(</span><span class="nv">$agentName</span><span class="p">))</span><span class="s2">"</span>
+<span class="nv">$token</span> <span class="p">=</span> <span class="n">az</span> <span class="n">account</span> <span class="nb">get-access</span><span class="n">-token</span> <span class="p">-</span><span class="n">-resource</span> <span class="n">https</span><span class="p">://</span><span class="n">ai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="n">accessToken</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+<span class="nv">$headers</span> <span class="p">=</span> <span class="p">@{</span> <span class="n">Authorization</span> <span class="p">=</span> <span class="s2">"Bearer $token"</span> <span class="p">}</span>
+<span class="nb">Remove-Variable</span> <span class="n">token</span>
+
+<span class="nv">$agent</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span><span class="p">).</span><span class="n">Content</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span> <span class="n">-AsHashtable</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$agent</span><span class="p">.</span><span class="n">instance_identity</span><span class="p">.</span><span class="n">client_id</span> <span class="o">-or</span> <span class="o">-not</span> <span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="s2">"The agent needs a unique identity and stable endpoint. Stop before publishing."</span>
+<span class="p">}</span>
+<span class="nv">$agent</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="n">agent-before</span><span class="p">.</span><span class="n">json</span>
+<span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span>
+</code></pre></div>
+<p><strong>Expected:</strong> the intended tenant and subscription, an agent identity
+<code>client_id</code>, and the current endpoint configuration. Keep <code>agent-before.json</code>
+in this local working folder, outside source control.</p>
+<p>Choose the audience <strong>before Step 3</strong>:</p>
+<table>
+<thead>
+<tr>
+<th><code>$publishScope</code></th>
+<th>Who can call the agent</th>
+<th>Store visibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Shared</code> (start here)</td>
+<td>Authorized identities through <code>BotServiceRbac</code></td>
+<td>Initially only the publisher, under <strong>Your agents</strong>; no publishing approval required</td>
+</tr>
+<tr>
+<td><code>Tenant</code></td>
+<td>Everyone in the Foundry tenant through <code>BotServiceTenant</code></td>
+<td><strong>Built by your org</strong>, after Microsoft 365 admin approval</td>
+</tr>
+</tbody>
+</table>
+<p>For organization-wide publication, set <code>$publishScope = "Tenant"</code> only after
+that access has been approved. With <code>Shared</code>, an administrator can give selected
+testers <strong>Foundry Agent Consumer</strong> at the
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization#grant-access-to-one-agent">agent scope</a>.
+Sharing an app link does not grant invocation permission.</p>
+<div class="admonition note">
+<p class="admonition-title">Older agents</p>
+<p>If the identity check fails, follow the
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications">Foundry migration guidance</a>.
+Do not substitute the project's managed identity or the web UI client ID.</p>
+</div>
+<h2 id="step-2-create-the-bot-and-teams-channel">Step 2: Create the bot and Teams channel</h2>
+<p>Check provider registration:</p>
+<div class="highlight"><pre><span></span><code><span class="n">az</span> <span class="n">provider</span> <span class="n">show</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">BotService</span> <span class="p">-</span><span class="n">-query</span> <span class="n">registrationState</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+</code></pre></div>
+<p><strong>Expected:</strong> <code>Registered</code>. If not, have a subscription administrator run
+<code>az provider register --namespace Microsoft.BotService --wait</code>.</p>
+<p>Save this as <strong><code>bot-service.bicep</code></strong> in <code>$work</code>:</p>
+<div class="highlight"><pre><span></span><code>param botName string
+param displayName string
+param msaAppId string
+param tenantId string
+param endpoint string
+
+resource bot 'Microsoft.BotService/botServices@2022-09-15' = {
+  name: botName
+  kind: 'azurebot'
+  location: 'global'
+  sku: {
+    name: 'F0'
+  }
+  properties: {
+    displayName: displayName
+    endpoint: endpoint
+    msaAppId: msaAppId
+    msaAppTenantId: tenantId
+    msaAppType: 'SingleTenant'
+    publicNetworkAccess: 'Disabled'
+  }
+}
+
+resource teams 'Microsoft.BotService/botServices/channels@2021-03-01' = {
+  parent: bot
+  name: 'MsTeamsChannel'
+  location: 'global'
+  properties: {
+    channelName: 'MsTeamsChannel'
+  }
+}
+</code></pre></div>
+<p>Deploy this <strong>separate</strong> template into the Foundry resource group:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$displayName</span> <span class="p">=</span> <span class="s2">"&lt;agent-display-name&gt;"</span>
+<span class="nv">$activityEndpoint</span> <span class="p">=</span> <span class="s2">"$agentUri/endpoint/protocols/activityProtocol"</span>
+
+<span class="n">az</span> <span class="n">deployment</span> <span class="nb">group </span><span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-name</span> <span class="s2">"teams-bot"</span> <span class="p">-</span><span class="n">-template</span><span class="o">-file</span> <span class="n">bot-service</span><span class="p">.</span><span class="n">bicep</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-parameters</span> <span class="n">botName</span><span class="p">=</span><span class="nv">$botName</span> <span class="n">displayName</span><span class="p">=</span><span class="s2">"$displayName"</span> <span class="p">`</span>
+        <span class="n">msaAppId</span><span class="p">=$(</span><span class="nv">$agent</span><span class="p">.</span><span class="n">instance_identity</span><span class="p">.</span><span class="n">client_id</span><span class="p">)</span> <span class="n">tenantId</span><span class="p">=</span><span class="nv">$tenantId</span> <span class="p">`</span>
+        <span class="n">endpoint</span><span class="p">=</span><span class="nv">$activityEndpoint</span> <span class="p">-</span><span class="n">-output</span> <span class="n">none</span>
+
+<span class="nv">$botServiceId</span> <span class="p">=</span> <span class="n">az</span> <span class="n">bot</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$botName</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="n">id</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+<span class="n">az</span> <span class="n">resource</span> <span class="n">show</span> <span class="p">-</span><span class="n">-ids</span> <span class="nv">$botServiceId</span> <span class="p">-</span><span class="n">-api-version</span> <span class="n">2022</span><span class="p">-</span><span class="n">09</span><span class="p">-</span><span class="n">15</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="s2">"properties.{endpoint:endpoint,pna:publicNetworkAccess}"</span> <span class="p">-</span><span class="n">-output</span> <span class="n">json</span>
+</code></pre></div>
+<p><strong>Expected:</strong> the agent's <code>activityProtocol</code> URL and <code>"pna": "Disabled"</code>.
+No bot application code, client secret, public VNet ingress or custom connector
+is required.</p>
+<h2 id="step-3-enable-the-restricted-activity-route">Step 3: Enable the restricted Activity route</h2>
+<p>This keeps existing protocols and non-Bot authorization schemes, adds the
+matching Bot Service scheme, and pins traffic to the tested agent version.</p>
+<div class="admonition warning">
+<p class="admonition-title">Preserve the web application path</p>
+<p>The API replaces the protocol configuration and authorization array.
+Keep existing entries, especially <code>responses</code>, <code>invocations</code> and <code>Entra</code>.
+Pinning the active version affects <strong>all consumers</strong> of this agent, not
+only Teams. Do not run concurrent agent configuration changes.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="nv">$publishScope</span> <span class="n">-notin</span> <span class="p">@(</span><span class="s2">"Shared"</span><span class="p">,</span> <span class="s2">"Tenant"</span><span class="p">))</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"Choose Shared or Tenant."</span> <span class="p">}</span>
+<span class="nv">$protocols</span> <span class="p">=</span> <span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span><span class="p">.</span><span class="n">protocol_configuration</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$protocols</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"Review the agent's existing protocols before continuing."</span> <span class="p">}</span>
+<span class="nv">$activity</span> <span class="p">=</span> <span class="nv">$protocols</span><span class="p">.</span><span class="n">activity</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$activity</span><span class="p">)</span> <span class="p">{</span> <span class="nv">$activity</span> <span class="p">=</span> <span class="p">@{}</span> <span class="p">}</span>
+<span class="nv">$activity</span><span class="p">.</span><span class="n">enable_m365_public_endpoint</span> <span class="p">=</span> <span class="nv">$true</span>
+<span class="nv">$protocols</span><span class="p">.</span><span class="n">activity</span> <span class="p">=</span> <span class="nv">$activity</span>
+
+<span class="nv">$botScheme</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$publishScope</span> <span class="o">-eq</span> <span class="s2">"Tenant"</span><span class="p">)</span> <span class="p">{</span> <span class="s2">"BotServiceTenant"</span> <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="s2">"BotServiceRbac"</span> <span class="p">}</span>
+<span class="nv">$schemes</span> <span class="p">=</span> <span class="p">@(</span><span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span><span class="p">.</span><span class="n">authorization_schemes</span> <span class="p">|</span>
+    <span class="nb">Where-Object</span> <span class="p">{</span> <span class="nv">$_</span><span class="p">.</span><span class="nb">type </span><span class="n">-notin</span> <span class="p">@(</span><span class="s2">"BotServiceRbac"</span><span class="p">,</span> <span class="s2">"BotServiceTenant"</span><span class="p">)</span> <span class="p">})</span>
+<span class="nv">$schemes</span> <span class="p">+=</span> <span class="p">@{</span> <span class="nb">type </span><span class="p">=</span> <span class="nv">$botScheme</span> <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="s2">"Entra"</span> <span class="n">-notin</span> <span class="nv">$schemes</span><span class="p">.</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"Review missing Entra authorization before continuing."</span> <span class="p">}</span>
+
+<span class="nv">$patch</span> <span class="p">=</span> <span class="p">@{</span>
+    <span class="n">agent_endpoint</span> <span class="p">=</span> <span class="p">@{</span>
+        <span class="n">protocol_configuration</span> <span class="p">=</span> <span class="nv">$protocols</span>
+        <span class="n">authorization_schemes</span> <span class="p">=</span> <span class="nv">$schemes</span>
+        <span class="n">version_selector</span> <span class="p">=</span> <span class="p">@{</span>
+            <span class="n">version_selection_rules</span> <span class="p">=</span> <span class="p">@(</span>
+                <span class="p">@{</span> <span class="nb">type </span><span class="p">=</span> <span class="s2">"FixedRatio"</span><span class="p">;</span> <span class="n">agent_version</span> <span class="p">=</span> <span class="nv">$agentVersion</span><span class="p">;</span> <span class="n">traffic_percentage</span> <span class="p">=</span> <span class="n">100</span> <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span>
+
+<span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Patch</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/merge-patch+json"</span> <span class="n">-Body</span> <span class="nv">$patch</span> <span class="p">|</span>
+    <span class="nb">Out-Null</span>
+</code></pre></div>
+<h2 id="step-4-publish-the-app">Step 4: Publish the app</h2>
+<p>Replace the metadata placeholders with approved values. Use your organization's
+real HTTPS website, privacy statement and terms of use.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$publishRequest</span> <span class="p">=</span> <span class="p">@{</span>
+    <span class="n">agentDisplayName</span> <span class="p">=</span> <span class="nv">$displayName</span>
+    <span class="n">botServiceArmId</span> <span class="p">=</span> <span class="nv">$botServiceId</span>
+    <span class="n">publishScope</span> <span class="p">=</span> <span class="nv">$publishScope</span>
+    <span class="n">publishAsAutopilot</span> <span class="p">=</span> <span class="nv">$false</span>
+    <span class="n">appVersion</span> <span class="p">=</span> <span class="s2">"1.0.0"</span>
+    <span class="n">shortDescription</span> <span class="p">=</span> <span class="s2">"&lt;short-description&gt;"</span>
+    <span class="n">fullDescription</span> <span class="p">=</span> <span class="s2">"&lt;full-description&gt;"</span>
+    <span class="n">developerName</span> <span class="p">=</span> <span class="s2">"&lt;organization-name&gt;"</span>
+    <span class="n">developerWebsiteUrl</span> <span class="p">=</span> <span class="s2">"https://&lt;organization-domain&gt;"</span>
+    <span class="n">privacyUrl</span> <span class="p">=</span> <span class="s2">"https://&lt;organization-domain&gt;/privacy"</span>
+    <span class="n">termsOfUseUrl</span> <span class="p">=</span> <span class="s2">"https://&lt;organization-domain&gt;/terms"</span>
+<span class="p">}</span>
+<span class="nv">$body</span> <span class="p">=</span> <span class="nv">$publishRequest</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">10</span>
+<span class="nv">$body</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="nb">publish-request</span><span class="p">.</span><span class="n">json</span>
+<span class="nv">$result</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="p">`</span>
+    <span class="n">-Uri</span> <span class="s2">"${agentUri}/microsoft365/publish?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/json"</span> <span class="n">-Body</span> <span class="nv">$body</span>
+<span class="nv">$result</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">20</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="nb">publish-result</span><span class="p">.</span><span class="n">json</span>
+<span class="nv">$result</span>
+</code></pre></div>
+<p><strong>Expected:</strong> a successful response containing <code>titleId</code>. For <code>Tenant</code>, a
+Microsoft 365 administrator must approve the request in
+<a href="https://admin.cloud.microsoft/?#/agents/all/requested">Microsoft 365 admin center &gt; Agents &gt; Requests</a>.
+Tenant app policies can still restrict availability.</p>
+<div class="admonition note">
+<p class="admonition-title">App version versus agent version</p>
+<p><code>appVersion</code> versions the Teams listing. Increment it when republishing
+metadata or changing publication scope. <code>$agentVersion</code> selects the runtime.
+A runtime update does not require republishing the Teams listing.</p>
+</div>
+<details>
+<summary>Optional: download the generated Teams package</summary>
+<p>For an approved manual package review or upload process, use the same request
+body with the ZIP endpoint:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Invoke-WebRequest</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}/microsoft365/zip?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/json"</span> <span class="n">-Body</span> <span class="nv">$body</span> <span class="n">-OutFile</span> <span class="n">appPackage</span><span class="p">.</span><span class="n">zip</span>
+</code></pre></div>
+<p>Inspect the manifest and icons using the
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot#inspect-the-downloaded-package">package inspection checklist</a>.
+Keep generated IDs and agent sections unchanged. In Teams, use
+<strong>Apps &gt; Manage your apps &gt; Upload an app</strong>, then <strong>Upload a custom app</strong> or
+<strong>Submit an app to your org</strong>, as allowed by your administrator.</p>
+<p>Downloading does <strong>not</strong> submit the app for publication, but it can update the
+agent's publishing configuration. It requires agent write permission.</p>
+</details>
+<h2 id="step-5-install-and-verify">Step 5: Install and verify</h2>
+<ol>
+<li>Open Teams <strong>Apps</strong> and find the agent. For <code>Shared</code>, use the publishing
+   account; for <code>Tenant</code>, wait for approval and look under <strong>Built by your org</strong>.
+   Add the app and open its chat. Complete any sign-in card.</li>
+<li>Send a greeting, then a real workload question and a follow-up. Check that
+   tools and knowledge sources work, not only that the bot replies.</li>
+<li>Test with an intended user and an unauthorized user. For <code>Shared</code>, the latter
+   must not invoke the agent. For protected data, verify document access with
+   both allowed and denied identities before broader rollout.</li>
+<li>From the connected host, review the final endpoint and network settings:<div class="highlight"><pre><span></span><code><span class="nv">$after</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="n">-Headers</span> <span class="nv">$headers</span>
+<span class="nv">$after</span><span class="p">.</span><span class="n">agent_endpoint</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">30</span>
+<span class="n">az</span> <span class="n">cognitiveservices</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$foundryName</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">publicNetworkAccess</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+<span class="n">az</span> <span class="n">resource</span> <span class="n">show</span> <span class="p">-</span><span class="n">-ids</span> <span class="nv">$botServiceId</span> <span class="p">-</span><span class="n">-api-version</span> <span class="n">2022</span><span class="p">-</span><span class="n">09</span><span class="p">-</span><span class="n">15</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">publicNetworkAccess</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+</code></pre></div>
+</li>
+</ol>
+<p><strong>Expected:</strong> the tested version at 100%, preserved original protocols and
+<code>Entra</code>, <code>activity.enable_m365_public_endpoint=true</code>, the matching Bot Service
+scheme, and <strong>both PNA values <code>Disabled</code></strong>.</p>
+<div class="admonition note">
+<p class="admonition-title">Channel limitations</p>
+<p>Foundry currently documents no streaming responses or citations for
+published agents. Teams file capabilities do not prove that the bundled
+application's web-upload pipeline is supported in this channel.
+See <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#limitations">Foundry publishing limitations</a>.</p>
+</div>
+<h2 id="update-or-stop-publication">Update or stop publication</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Release a new runtime version</td>
+<td>Test it, then change the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version">active version</a>. Keep the bot and listing.</td>
+</tr>
+<tr>
+<td>Roll back agent behavior</td>
+<td>Select the previous tested version. This changes the version for every consumer of the stable endpoint.</td>
+</tr>
+<tr>
+<td>Change Teams name, descriptions or URLs</td>
+<td>Repeat Step 4 with reviewed metadata and a higher <code>appVersion</code>.</td>
+</tr>
+<tr>
+<td>Redeploy the landing zone or hosted agent</td>
+<td>Recheck the active version, Activity exception, Bot Service authorization and end-to-end Teams behavior. Manual channel configuration is not owned by the landing zone template.</td>
+</tr>
+</tbody>
+</table>
+<p>To stop channel access while keeping the web application's private path, read
+the <strong>current</strong> configuration and disable only the Activity exception:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$current</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span><span class="p">).</span><span class="n">Content</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span> <span class="n">-AsHashtable</span>
+<span class="nv">$protocols</span> <span class="p">=</span> <span class="nv">$current</span><span class="p">.</span><span class="n">agent_endpoint</span><span class="p">.</span><span class="n">protocol_configuration</span>
+<span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$protocols</span><span class="p">.</span><span class="n">activity</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"No Activity configuration found; review the endpoint."</span> <span class="p">}</span>
+<span class="nv">$protocols</span><span class="p">.</span><span class="n">activity</span><span class="p">.</span><span class="n">enable_m365_public_endpoint</span> <span class="p">=</span> <span class="nv">$false</span>
+<span class="nv">$disable</span> <span class="p">=</span> <span class="p">@{</span> <span class="n">agent_endpoint</span> <span class="p">=</span> <span class="p">@{</span> <span class="n">protocol_configuration</span> <span class="p">=</span> <span class="nv">$protocols</span> <span class="p">}</span> <span class="p">}</span> <span class="p">|</span>
+    <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span>
+<span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Patch</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/merge-patch+json"</span> <span class="n">-Body</span> <span class="nv">$disable</span> <span class="p">|</span>
+    <span class="nb">Out-Null</span>
+</code></pre></div>
+<p>Keep Foundry PNA disabled. Confirm new Teams requests no longer reach the agent,
+then have the administrator block/remove the app from the catalog. Uninstalling
+the app alone is not endpoint access revocation. Do not delete shared Foundry
+resources or blindly restore an old configuration over subsequent changes.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project GET/PATCH fails or times out</td>
+<td>Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience <code>https://ai.azure.com</code>. If the token expired, repeat the token/header commands in Step 1. Do not enable PNA.</td>
+</tr>
+<tr>
+<td>Bot deployment denied</td>
+<td><code>Microsoft.BotService</code> registration, bot/deployment permissions and Azure Policy.</td>
+</tr>
+<tr>
+<td>Agent is missing from Teams</td>
+<td>Correct account/scope, admin approval and app policies. Refresh the store or sign out/in; catalog caching can delay discovery.</td>
+</tr>
+<tr>
+<td><code>403 NetworkAccessDenied</code> on Activity</td>
+<td>Verify the flag and test through Teams, not a public <code>curl</code> request. Arbitrary public source IPs remain blocked.</td>
+</tr>
+<tr>
+<td>User can open the app but gets an authorization error</td>
+<td>Same-tenant sign-in and, for <code>Shared</code>, Foundry Agent Consumer access. Do not switch to <code>Tenant</code> just to clear a denial.</td>
+</tr>
+<tr>
+<td>Bot replies, but tools or retrieval fail</td>
+<td>Runtime identity grants, user/data authorization and outbound access. A successful web UI test does not validate Teams identity propagation.</td>
+</tr>
+<tr>
+<td><code>version already exists</code></td>
+<td>Increase <code>appVersion</code>; do not change the runtime version to fix listing metadata.</td>
+</tr>
+</tbody>
+</table>
+<p>For other errors, use <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot">Foundry publishing troubleshooting</a>
+and <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization">published-agent authorization</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -16,7 +16,7 @@
         <link rel="prev" href="../deploy-infra-only/">
       
       
-        <link rel="next" href="../azure-devops/">
+        <link rel="next" href="../publish-to-teams/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Full stack - AI Landing Zones</title>
+        <title>Full stack deploy - AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deploy-the-full-stack" class="md-skip">
+        <a href="#full-stack-deploy" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Full stack
+              Full stack deploy
             
           </span>
         </div>
@@ -624,7 +624,7 @@
   <span class="md-ellipsis">
     
   
-    Full stack
+    Full stack deploy
   
 
     
@@ -642,7 +642,7 @@
   <span class="md-ellipsis">
     
   
-    Full stack
+    Full stack deploy
   
 
     
@@ -937,6 +937,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publish-to-teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish to Teams
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1602,7 +1630,8 @@
   
 
 
-<h1 id="deploy-the-full-stack">Deploy the full stack</h1>
+<h1 id="full-stack-deploy">Full stack deploy</h1>
+<p><a id="deploy-the-full-stack"></a></p>
 <p>Deploy the Azure foundation and the bundled agent application: a web UI, an
 orchestrator and, when selected, an ingestion application. Choose where the
 orchestrator runs and how the deployment connects to Azure before provisioning.</p>
@@ -1926,6 +1955,9 @@ az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w
 </ol>
 <p>Use <a href="../troubleshooting/">Troubleshooting</a> for failures. Do not authorize a cutover
 based only on a successful hook or HTTP 200.</p>
+<p>To make a hosted agent available in Teams, continue with
+<a href="../publish-to-teams/">Publish to Teams</a>. Bot creation and channel publication
+are separate manual tasks, not part of this deployment.</p>
 <h2 id="lifecycle">Lifecycle</h2>
 <p>Run these tasks from the platform root with the intended environment selected,
 Python active, both CLIs authenticated and private connectivity available when
