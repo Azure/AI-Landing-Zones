@@ -51,12 +51,18 @@ Foundry private endpoint. Management requests still use the private endpoint.
   agent. Guest accounts cannot call these agents. Tenant-wide publication
   requires a Microsoft 365 administrator's approval.
 
-!!! note "Copilot licensing"
-    Users do not need a Microsoft 365 Copilot license to use a published agent
-    in Microsoft Copilot Chat. Without that license, access to shared tenant
-    data can incur usage-based charges. Review
-    [Copilot licensing and cost considerations](https://learn.microsoft.com/microsoft-365/copilot/extensibility/cost-considerations)
-    when planning access.
+!!! note "Licensing and costs"
+    To use the agent in Microsoft Copilot Chat, users need an eligible
+    Microsoft 365 subscription. The Microsoft 365 Copilot add-on is optional:
+
+    - **With the add-on:** No additional Microsoft 365 usage charge for using
+      this agent.
+    - **Without the add-on:** Access to shared tenant data, such as SharePoint
+      or Copilot connectors, can incur usage-based charges in Copilot Credits.
+
+    **In both cases, Azure costs are separate:** the license does not cover
+    Foundry model usage, agent hosting or other Azure services. See
+    [licensing and costs for custom engine agents](https://learn.microsoft.com/microsoft-365/copilot/extensibility/cost-considerations#custom-engine-agents).
 
 !!! warning "Approve the data flow first"
     Obtain your organization's approval before sending data through this
