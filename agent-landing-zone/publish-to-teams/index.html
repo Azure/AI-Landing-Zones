@@ -1305,9 +1305,9 @@ this runbook verifies Teams, not Copilot Studio or Agent 365 autopilot.</p>
   and permission to create resource-group deployments in the target resource
   group. Resource-group <strong>Contributor</strong> also covers the bot and deployment.
   A subscription administrator must register <code>Microsoft.BotService</code> if needed.</li>
-<li>Teams access in the <strong>same tenant</strong> as Foundry, and tenant app policies that
-  permit the app. Organization-wide publication also needs Microsoft 365 admin
-  approval.</li>
+<li>Teams access for <strong>member accounts in the same tenant</strong> as Foundry, and app
+  policies that permit the app. Guest accounts cannot call these agents.
+  Organization-wide publication also needs Microsoft 365 admin approval.</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Approve the data flow first</p>
@@ -1361,11 +1361,21 @@ note the <strong>tested agent version</strong>. The bundled agent name is
     <span class="k">throw</span> <span class="s2">"The agent needs a unique identity and stable endpoint. Stop before publishing."</span>
 <span class="p">}</span>
 <span class="nv">$agent</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="n">agent-before</span><span class="p">.</span><span class="n">json</span>
+<span class="p">@{</span>
+    <span class="n">subscriptionId</span> <span class="p">=</span> <span class="nv">$subscriptionId</span>
+    <span class="n">tenantId</span> <span class="p">=</span> <span class="nv">$tenantId</span>
+    <span class="n">resourceGroup</span> <span class="p">=</span> <span class="nv">$resourceGroup</span>
+    <span class="n">foundryName</span> <span class="p">=</span> <span class="nv">$foundryName</span>
+    <span class="n">agentUri</span> <span class="p">=</span> <span class="nv">$agentUri</span>
+    <span class="n">botName</span> <span class="p">=</span> <span class="nv">$botName</span>
+<span class="p">}</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="n">target</span><span class="p">.</span><span class="n">json</span>
 <span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">100</span>
+<span class="s2">"Working folder: $work"</span>
 </code></pre></div>
 <p><strong>Expected:</strong> the intended tenant and subscription, an agent identity
-<code>client_id</code>, and the current endpoint configuration. Keep <code>agent-before.json</code>
-in this local working folder, outside source control.</p>
+<code>client_id</code>, the endpoint configuration and a working-folder path. Keep that
+path, <code>target.json</code> and <code>agent-before.json</code> for later checks, outside source
+control. These files do not contain the bearer token.</p>
 <p>Choose the audience <strong>before Step 3</strong>:</p>
 <table>
 <thead>
@@ -1467,6 +1477,8 @@ Pinning the active version affects <strong>all consumers</strong> of this agent,
 only Teams. Do not run concurrent agent configuration changes.</p>
 </div>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="nv">$publishScope</span> <span class="n">-notin</span> <span class="p">@(</span><span class="s2">"Shared"</span><span class="p">,</span> <span class="s2">"Tenant"</span><span class="p">))</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"Choose Shared or Tenant."</span> <span class="p">}</span>
+<span class="nv">$agent</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span><span class="p">).</span><span class="n">Content</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span> <span class="n">-AsHashtable</span>
 <span class="nv">$protocols</span> <span class="p">=</span> <span class="nv">$agent</span><span class="p">.</span><span class="n">agent_endpoint</span><span class="p">.</span><span class="n">protocol_configuration</span>
 <span class="k">if</span> <span class="p">(</span><span class="o">-not</span> <span class="nv">$protocols</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"Review the agent's existing protocols before continuing."</span> <span class="p">}</span>
 <span class="nv">$activity</span> <span class="p">=</span> <span class="nv">$protocols</span><span class="p">.</span><span class="n">activity</span>
@@ -1546,15 +1558,39 @@ Keep generated IDs and agent sections unchanged. In Teams, use
 agent's publishing configuration. It requires agent write permission.</p>
 </details>
 <h2 id="step-5-install-and-verify">Step 5: Install and verify</h2>
+<p><a id="resume-in-a-new-session"></a></p>
+<details>
+<summary>Returning later or using a new PowerShell session?</summary>
+<p>After Step 2, use this block to resume verification or maintenance without
+recreating the bot or republishing. Replace the path with the folder printed
+in Step 1. Run from the connected host.</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$ErrorActionPreference</span> <span class="p">=</span> <span class="s2">"Stop"</span>
+<span class="nv">$PSNativeCommandUseErrorActionPreference</span> <span class="p">=</span> <span class="nv">$true</span>
+<span class="nb">Set-Location</span> <span class="s2">"&lt;saved-working-folder&gt;"</span>
+<span class="nv">$target</span> <span class="p">=</span> <span class="nb">Get-Content</span> <span class="n">target</span><span class="p">.</span><span class="n">json</span> <span class="n">-Raw</span> <span class="p">|</span> <span class="nb">ConvertFrom-Json</span> <span class="n">-AsHashtable</span>
+<span class="nv">$resourceGroup</span> <span class="p">=</span> <span class="nv">$target</span><span class="p">.</span><span class="n">resourceGroup</span>
+<span class="nv">$foundryName</span> <span class="p">=</span> <span class="nv">$target</span><span class="p">.</span><span class="n">foundryName</span>
+<span class="nv">$agentUri</span> <span class="p">=</span> <span class="nv">$target</span><span class="p">.</span><span class="n">agentUri</span>
+
+<span class="n">az</span> <span class="n">login</span> <span class="p">-</span><span class="n">-tenant</span> <span class="nv">$target</span><span class="p">.</span><span class="n">tenantId</span>
+<span class="n">az</span> <span class="n">account</span> <span class="nb">set </span><span class="p">-</span><span class="n">-subscription</span> <span class="nv">$target</span><span class="p">.</span><span class="n">subscriptionId</span>
+<span class="nv">$token</span> <span class="p">=</span> <span class="n">az</span> <span class="n">account</span> <span class="nb">get-access</span><span class="n">-token</span> <span class="p">-</span><span class="n">-resource</span> <span class="n">https</span><span class="p">://</span><span class="n">ai</span><span class="p">.</span><span class="n">azure</span><span class="p">.</span><span class="n">com</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="n">accessToken</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+<span class="nv">$headers</span> <span class="p">=</span> <span class="p">@{</span> <span class="n">Authorization</span> <span class="p">=</span> <span class="s2">"Bearer $token"</span> <span class="p">}</span>
+<span class="nb">Remove-Variable</span> <span class="n">token</span>
+<span class="nv">$botServiceId</span> <span class="p">=</span> <span class="n">az</span> <span class="n">bot</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$target</span><span class="p">.</span><span class="n">botName</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
+    <span class="p">-</span><span class="n">-query</span> <span class="n">id</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
+</code></pre></div>
+</details>
 <ol>
 <li>Open Teams <strong>Apps</strong> and find the agent. For <code>Shared</code>, use the publishing
    account; for <code>Tenant</code>, wait for approval and look under <strong>Built by your org</strong>.
    Add the app and open its chat. Complete any sign-in card.</li>
 <li>Send a greeting, then a real workload question and a follow-up. Check that
    tools and knowledge sources work, not only that the bot replies.</li>
-<li>Test with an intended user and an unauthorized user. For <code>Shared</code>, the latter
-   must not invoke the agent. For protected data, verify document access with
-   both allowed and denied identities before broader rollout.</li>
+<li>Test with an intended user and a tenant member without agent permission,
+   not a guest. For <code>Shared</code>, the latter must not invoke the agent. For protected
+   data, verify access with both allowed and denied identities before rollout.</li>
 <li>From the connected host, review the final endpoint and network settings:<div class="highlight"><pre><span></span><code><span class="nv">$after</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="n">-Headers</span> <span class="nv">$headers</span>
 <span class="nv">$after</span><span class="p">.</span><span class="n">agent_endpoint</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">30</span>
 <span class="n">az</span> <span class="n">cognitiveservices</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$foundryName</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
@@ -1575,6 +1611,8 @@ application's web-upload pipeline is supported in this channel.
 See <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#limitations">Foundry publishing limitations</a>.</p>
 </div>
 <h2 id="update-or-stop-publication">Update or stop publication</h2>
+<p>If the original session ended or its token expired, <a href="#resume-in-a-new-session">resume the session</a>
+before using the commands below.</p>
 <table>
 <thead>
 <tr>
@@ -1593,7 +1631,7 @@ See <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-cop
 </tr>
 <tr>
 <td>Change Teams name, descriptions or URLs</td>
-<td>Repeat Step 4 with reviewed metadata and a higher <code>appVersion</code>.</td>
+<td>Edit <code>publish-request.json</code>, increase <code>appVersion</code>, then submit it using the block below. Keep <code>botServiceArmId</code> and <code>publishScope</code> unchanged for a metadata-only update.</td>
 </tr>
 <tr>
 <td>Redeploy the landing zone or hosted agent</td>
@@ -1601,6 +1639,14 @@ See <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-cop
 </tr>
 </tbody>
 </table>
+<p>After editing and reviewing the saved metadata:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">$body</span> <span class="p">=</span> <span class="nb">Get-Content</span> <span class="nb">publish-request</span><span class="p">.</span><span class="n">json</span> <span class="n">-Raw</span>
+<span class="nv">$result</span> <span class="p">=</span> <span class="nb">Invoke-RestMethod</span> <span class="n">-Method</span> <span class="n">Post</span> <span class="p">`</span>
+    <span class="n">-Uri</span> <span class="s2">"${agentUri}/microsoft365/publish?api-version=v1"</span> <span class="p">`</span>
+    <span class="n">-Headers</span> <span class="nv">$headers</span> <span class="n">-ContentType</span> <span class="s2">"application/json"</span> <span class="n">-Body</span> <span class="nv">$body</span>
+<span class="nv">$result</span> <span class="p">|</span> <span class="nb">ConvertTo-Json</span> <span class="n">-Depth</span> <span class="n">20</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="nb">publish-result</span><span class="p">.</span><span class="n">json</span>
+<span class="nv">$result</span>
+</code></pre></div>
 <p>To stop channel access while keeping the web application's private path, read
 the <strong>current</strong> configuration and disable only the Activity exception:</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$current</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">"${agentUri}?api-version=v1"</span> <span class="p">`</span>
@@ -1629,7 +1675,7 @@ resources or blindly restore an old configuration over subsequent changes.</p>
 <tbody>
 <tr>
 <td>Project GET/PATCH fails or times out</td>
-<td>Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience <code>https://ai.azure.com</code>. If the token expired, repeat the token/header commands in Step 1. Do not enable PNA.</td>
+<td>Private DNS/VNet connectivity, selected tenant, Foundry User role and token audience <code>https://ai.azure.com</code>. For an expired token or a new terminal, <a href="#resume-in-a-new-session">resume the session</a>. Do not enable PNA.</td>
 </tr>
 <tr>
 <td>Bot deployment denied</td>
@@ -1650,6 +1696,10 @@ resources or blindly restore an old configuration over subsequent changes.</p>
 <tr>
 <td>Bot replies, but tools or retrieval fail</td>
 <td>Runtime identity grants, user/data authorization and outbound access. A successful web UI test does not validate Teams identity propagation.</td>
+</tr>
+<tr>
+<td>Conversation is stuck or returns <code>no tool output found</code></td>
+<td>Send <code>/foundry_new_preview</code> in the Teams chat to reset it. Previous conversation context cannot be restored.</td>
 </tr>
 <tr>
 <td><code>version already exists</code></td>
