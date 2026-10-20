@@ -27,7 +27,6 @@ Foundry private endpoint. Management requests still use the private endpoint.
 | --- | --- |
 | Teams and Microsoft 365 Copilot | This procedure publishes to both clients. Verify each one in Step 5. |
 | Microsoft Agent 365 autopilot | Follow the [separate autopilot procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/agent-365). It creates instances with their own agent user accounts and requires tenant enrollment, licensing and admin approval. |
-| Copilot Studio | Connecting a Copilot Studio agent to Foundry is a different integration and is not covered here. |
 
 ## Prerequisites
 
