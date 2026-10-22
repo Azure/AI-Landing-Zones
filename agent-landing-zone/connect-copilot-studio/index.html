@@ -1403,10 +1403,12 @@ and a dedicated pilot agent in Copilot Studio.</p>
 
 <div class="admonition note">
 <p class="admonition-title">Why use a flow in this scenario?</p>
-<p>This runbook focuses on <strong>Foundry with Public Network Access (PNA) disabled</strong>.
-The Power Automate flow provides the validated private route to the agent's
-Responses API. For the native integration, see
-<a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent">Connect to a Microsoft Foundry agent (preview)</a>.</p>
+<p>This runbook covers <strong>Foundry with Public Network Access (PNA) disabled</strong>.
+It uses a Power Automate flow because the HTTP connector supports
+<a href="https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation">virtual network integration</a>,
+allowing HTTPS requests to reach Foundry through its private endpoint.
+The <a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent">native Microsoft Foundry integration</a>
+is <strong>in preview</strong> and follows a separate setup, outside this procedure.</p>
 </div>
 <p>This is separate from <a href="../publish-to-teams/">Teams publication</a>. It requires
 neither Bot Service nor a
