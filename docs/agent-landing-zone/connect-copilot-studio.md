@@ -24,10 +24,12 @@ Messages follow this path:
 </div>
 
 !!! note "Why use a flow in this scenario?"
-    This runbook focuses on **Foundry with Public Network Access (PNA) disabled**.
-    The Power Automate flow provides the validated private route to the agent's
-    Responses API. For the native integration, see
-    [Connect to a Microsoft Foundry agent (preview)](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent).
+    This runbook covers **Foundry with Public Network Access (PNA) disabled**.
+    It uses a Power Automate flow because the HTTP connector supports
+    [virtual network integration](https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation),
+    allowing HTTPS requests to reach Foundry through its private endpoint.
+    The [native Microsoft Foundry integration](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent)
+    is **in preview** and follows a separate setup, outside this procedure.
 
 This is separate from [Teams publication](publish-to-teams.md). It requires
 neither Bot Service nor a
