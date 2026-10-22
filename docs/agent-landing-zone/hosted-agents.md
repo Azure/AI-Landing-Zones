@@ -176,6 +176,12 @@ For Teams and Microsoft 365 Copilot, follow [Publish to Teams and M365](publish-
 It uses Bot Service authorization and the Foundry Activity endpoint, not the
 UI's delegated invocation path.
 
+For a Copilot Studio agent calling a private Foundry hosted agent, follow
+[Connect Copilot Studio](connect-copilot-studio.md). It uses a Power Automate
+agent flow with an authenticated HTTP connection and VNet delegation, not the
+native connected-agent tool. Review its shared-connection identity boundary
+before using it with protected data.
+
 <details markdown="1">
 <summary>Continuity, history and the administrative panel</summary>
 

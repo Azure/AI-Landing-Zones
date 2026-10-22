@@ -15,6 +15,11 @@ covered separately in the [Azure DevOps runbook](azure-devops.md).
     PNA stay disabled. Channel delivery does not use Private Link; other Foundry
     APIs remain private. The template does not enable this exception.
 
+For a Copilot Studio agent calling Foundry, use
+[Connect Copilot Studio](connect-copilot-studio.md). That runbook uses an
+authenticated agent flow and Power Platform VNet delegation to reach the Foundry
+private endpoint; it does not require the Activity-route public exception.
+
 ## What changes with isolation
 
 | Area | `NETWORK_ISOLATION=false` | `NETWORK_ISOLATION=true` |

@@ -686,6 +686,7 @@ prerequisite for successful chat or safe diagnosis.
 
 ## Related pages
 
+- [Copilot Studio private integration](connect-copilot-studio.md#troubleshooting)
 - [Deployment runbook](deploy-full-stack.md)
 - [Configuration](configuration.md)
 - [Network isolation](network-isolation.md)

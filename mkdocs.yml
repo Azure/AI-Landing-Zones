@@ -49,6 +49,7 @@ nav:
           - "Infrastructure only": agent-landing-zone/deploy-infra-only.md
           - "Full stack deploy": agent-landing-zone/deploy-full-stack.md
           - "Teams & M365": agent-landing-zone/publish-to-teams.md
+          - "Copilot Studio": agent-landing-zone/connect-copilot-studio.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
       - Reference:
           - "Configuration": agent-landing-zone/configuration.md

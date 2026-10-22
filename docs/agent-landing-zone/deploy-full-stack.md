@@ -439,5 +439,6 @@ do not delete shared hub, DNS or monitoring resources.
 
 ## Related runbooks
 
+- [Connect Copilot Studio to a private Foundry agent](connect-copilot-studio.md)
 - [Deploy infrastructure only](deploy-infra-only.md)
 - [Deploy with Azure DevOps](azure-devops.md) — optional reviewed promotion and automation
