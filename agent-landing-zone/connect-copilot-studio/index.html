@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=48bea8ac7aaf">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=7702616a2bfd">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -780,10 +780,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#http-request" class="md-nav__link">
+  <a href="#https-request" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HTTP request
+        HTTPS request
       
     </span>
   </a>
@@ -1290,10 +1290,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#http-request" class="md-nav__link">
+  <a href="#https-request" class="md-nav__link">
     <span class="md-ellipsis">
       
-        HTTP request
+        HTTPS request
       
     </span>
   </a>
@@ -1384,17 +1384,22 @@
 <p>Connect a <strong>Copilot Studio agent</strong> to an existing <strong>Microsoft Foundry hosted
 agent</strong> without enabling Foundry public network access.</p>
 <p>Messages follow this path:</p>
-<div class="runbook-path">
+<div class="runbook-path runbook-path--annotated">
 <ol role="list" aria-label="Message path from Copilot Studio to Foundry">
   <li><strong>Copilot Studio</strong></li>
+  <li class="runbook-path__connection" role="presentation" aria-hidden="true"><span class="runbook-path__arrow"></span></li>
   <li><strong>Power Automate</strong> <span class="runbook-path__detail">agent flow</span></li>
-  <li><strong>HTTP with Microsoft Entra ID</strong> <span class="runbook-path__detail">(preauthorized)</span></li>
-  <li><strong>Power Platform</strong> <span class="runbook-path__detail">delegated subnet</span></li>
-  <li><strong>Foundry</strong> <span class="runbook-path__detail">private endpoint</span></li>
+  <li class="runbook-path__connection" role="presentation">
+    <strong class="runbook-path__protocol">HTTPS request</strong>
+    <span class="runbook-path__authentication">Microsoft Entra ID authentication</span>
+    <span class="runbook-path__arrow" aria-hidden="true"></span>
+  </li>
+  <li><strong>Foundry agent</strong> <span class="runbook-path__detail">Responses API</span></li>
 </ol>
+<p class="runbook-path__route"><strong>Private connectivity:</strong> the HTTPS request goes through the Power Platform delegated subnet and Foundry private endpoint.</p>
 </div>
 
-<p>This is an authenticated HTTP integration, not the native <strong>Microsoft Foundry
+<p>This is an authenticated HTTPS integration, not the native <strong>Microsoft Foundry
 agent</strong> connected-agent tool and not <a href="../publish-to-teams/">Teams publication</a>.
 It does not require Bot Service or an exception for the Foundry Activity route.</p>
 <h2 id="prerequisites">Prerequisites</h2>
@@ -1524,12 +1529,16 @@ so it can be moved with its connection reference.</p>
 </tr>
 </tbody>
 </table>
+<p><strong>"Preauthorized" refers to the Microsoft application used by the connector,
+not to access to your Foundry agent.</strong> Requests still use HTTPS and the
+connection user's Microsoft Entra identity, with the permissions from Step 2.</p>
 <p>Do not append the project path to the base URL or use the resource hostname as
 the token audience. Do not supply a bearer token, API key or client secret.
 If tenant policy blocks the connector or requires consent, stop and have the
 administrator review the <a href="https://learn.microsoft.com/connectors/webcontents/">connector's permission requirements</a>;
 do not bypass the policy with another connector.</p>
-<h3 id="http-request">HTTP request</h3>
+<p><a id="http-request"></a></p>
+<h3 id="https-request">HTTPS request</h3>
 <p>Keep the action name <strong>Invoke an HTTP request</strong>. The expressions below reference
 its internal name, <code>Invoke_an_HTTP_request</code>; check that name in Code view if the
 designer adds a suffix.</p>
