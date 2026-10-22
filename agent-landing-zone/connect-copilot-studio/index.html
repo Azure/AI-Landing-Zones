@@ -1401,9 +1401,17 @@ and a dedicated pilot agent in Copilot Studio.</p>
 <p class="runbook-path__route"><strong>Private connectivity:</strong> the HTTPS request goes through the Power Platform delegated subnet and Foundry private endpoint.</p>
 </div>
 
-<p>This is an authenticated HTTPS integration, not the native <strong>Microsoft Foundry
-agent</strong> connected-agent tool and not <a href="../publish-to-teams/">Teams publication</a>.
-It does not require Bot Service or an exception for the Foundry Activity route.</p>
+<div class="admonition note">
+<p class="admonition-title">Why use a flow instead of the native connection?</p>
+<p>In the validated private setup, the
+<a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent">native Microsoft Foundry connection (preview)</a>
+reached Foundry from a public source and was blocked with public network
+access disabled. The flow below used the delegated private path successfully;
+this result does not establish a universal limitation of native connectivity.</p>
+</div>
+<p>This is separate from <a href="../publish-to-teams/">Teams publication</a>. It requires
+neither Bot Service nor a
+<a href="../publish-to-teams/#step-3-enable-the-restricted-activity-route">restricted public exception for the Foundry Activity route</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li><strong>Foundry:</strong> A running, tested hosted agent. Ask its owner for the stable
