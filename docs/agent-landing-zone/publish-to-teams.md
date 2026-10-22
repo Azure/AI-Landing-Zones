@@ -13,8 +13,13 @@ template does not perform them.
 
 Messages from either client follow the same path:
 
-**Teams / Microsoft 365 Copilot** &rarr; **Azure Bot Service** &rarr;
-**Foundry Activity endpoint**
+<div class="runbook-path">
+<ol role="list" aria-label="Message path from Teams and Microsoft 365 Copilot to Foundry">
+  <li><strong>Teams / Microsoft 365 Copilot</strong></li>
+  <li><strong>Azure Bot Service</strong></li>
+  <li><strong>Foundry</strong> <span class="runbook-path__detail">Activity endpoint</span></li>
+</ol>
+</div>
 
 Foundry and Bot Service keep **public network access (PNA) disabled**. Following
 the [Foundry REST publishing flow](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network),

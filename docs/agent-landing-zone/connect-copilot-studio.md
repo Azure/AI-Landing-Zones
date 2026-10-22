@@ -5,9 +5,15 @@ agent** without enabling Foundry public network access.
 
 Messages follow this path:
 
-**Copilot Studio** &rarr; **Power Automate agent flow** &rarr;
-**HTTP with Microsoft Entra ID (preauthorized)** &rarr;
-**Power Platform delegated subnet** &rarr; **Foundry private endpoint**
+<div class="runbook-path">
+<ol role="list" aria-label="Message path from Copilot Studio to Foundry">
+  <li><strong>Copilot Studio</strong></li>
+  <li><strong>Power Automate</strong> <span class="runbook-path__detail">agent flow</span></li>
+  <li><strong>HTTP with Microsoft Entra ID</strong> <span class="runbook-path__detail">(preauthorized)</span></li>
+  <li><strong>Power Platform</strong> <span class="runbook-path__detail">delegated subnet</span></li>
+  <li><strong>Foundry</strong> <span class="runbook-path__detail">private endpoint</span></li>
+</ol>
+</div>
 
 This is an authenticated HTTP integration, not the native **Microsoft Foundry
 agent** connected-agent tool and not [Teams publication](publish-to-teams.md).
