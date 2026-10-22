@@ -3,6 +3,9 @@
 Connect a **Copilot Studio agent** to an existing **Microsoft Foundry hosted
 agent** without enabling Foundry public network access.
 
+You will reuse the existing Foundry agent and network, then create a relay flow
+and a dedicated pilot agent in Copilot Studio.
+
 Messages follow this path:
 
 <div class="runbook-path runbook-path--annotated">
@@ -26,12 +29,13 @@ It does not require Bot Service or an exception for the Foundry Activity route.
 
 ## Prerequisites
 
-- **Foundry:** A running, tested hosted agent with a stable **Responses** endpoint
-  and a recorded active version. This runbook uses the agent endpoint shown in
+- **Foundry:** A running, tested hosted agent. Ask its owner for the stable
+  **Responses URL** and **active agent version**. Use the agent endpoint shown in
   Step 3, not a Container Apps `/invocations` URL or an Activity endpoint.
 - **Azure network:** The platform team has already delivered the Power Platform
-  delegated subnet, regional connectivity, an enterprise policy, an approved
-  Foundry private endpoint and private DNS. Every subnet referenced by the
+  delegated subnet, regional connectivity, an enterprise policy and its
+  **Azure resource ID**, an approved Foundry private endpoint and private DNS.
+  Every subnet referenced by the
   policy must resolve and reach Foundry over HTTPS. Foundry **public network
   access must be Disabled**.
 - **Power Platform:** A **Managed Environment** with Dataverse, a maker account
@@ -49,7 +53,7 @@ networks and be associated with the environment. Use the
 [Power Platform setup requirements](https://learn.microsoft.com/power-platform/admin/vnet-support-setup-configure)
 if the platform handoff is incomplete.
 
-!!! warning "Choose the effective identity before sharing"
+!!! warning "Foundry uses the connection user's permissions"
     This procedure uses a **specific, shared connection** signed in as an
     approved Microsoft Entra user in the Foundry tenant. Foundry sees that
     connection user, **not automatically the person chatting in Studio**.
@@ -63,11 +67,15 @@ if the platform handoff is incomplete.
 
 ## Step 1: Associate the environment with the private network
 
-1. Record the **Power Platform environment ID**, the Azure **enterprise policy
-   resource ID**, and the Foundry **resource, project, agent and active version**.
+A **Power Platform administrator** performs this step. Schedule the change first:
+the environment's other supported workloads are also affected, and connections
+can be unstable for up to 30 minutes.
+
+1. In the [Power Platform admin center](https://admin.powerplatform.microsoft.com/),
+   open **Manage > Environments**, select the target environment and record its
+   **Environment ID** from **Details**.
    Select this same environment in Copilot Studio and Power Automate.
-2. In the [Power Platform admin center](https://admin.powerplatform.microsoft.com/),
-   open **Security > Data and privacy > Azure Virtual Network policies**.
+2. Open **Security > Data and privacy > Azure Virtual Network policies**.
    Select the environment, select the prepared policy and **Save**. If the
    correct association already exists, leave it unchanged.
 3. Open **Manage > Environments**, select the environment, then **History**.
@@ -80,9 +88,7 @@ if the platform handoff is incomplete.
    successful test.
 
 **Expected result:** The Managed Environment is linked to the intended policy,
-and all its regional paths can reach the Foundry private endpoint. Schedule the
-change: enabling subnet delegation can cause up to 30 minutes of connection
-instability, and the environment's other supported workloads are affected too.
+and all its regional paths can reach the Foundry private endpoint.
 
 ## Step 2: Authorize the connection user
 
@@ -97,6 +103,8 @@ them with the connection user's identity.
 
 Run with PowerShell 7 and Azure CLI. Replace every placeholder; use the
 **object ID of the user who will sign in to the connection**, not an app client ID.
+Copy **Object ID** from that user's **Overview** in the Microsoft Entra admin
+center.
 
 ```powershell
 $ErrorActionPreference = "Stop"
@@ -119,7 +127,8 @@ az role assignment create `
 </details>
 
 **Expected result:** The assignment targets the intended user and agent.
-Record its ID if this is a new pilot-only grant, and allow RBAC propagation.
+Keep the returned `id` for rollback if this is a new pilot-only grant, and
+allow time for the permissions to take effect.
 Do not grant subscription Owner, broad Contributor or extra project-authoring
 roles to resolve an invocation failure. See
 [Foundry RBAC and agent scopes](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry#agent-scope-role-assignments).
@@ -128,14 +137,20 @@ roles to resolve an invocation failure. See
 
 In Copilot Studio, select **Flows > New flow > Agent flow**. Use the environment
 from Step 1 and name the flow **Call private Foundry agent**. Keep it in a solution
-so it can be moved with its connection reference.
+so it can be moved with its connection reference; the solution is the deployment
+package for these items.
+
+!!! note "Use the flow's expression editor"
+    In this step, paste expressions into the flow designer's **Expression**
+    editor (**fx**), not as plain text. Step 4 uses Copilot Studio's
+    **Formula** tab instead.
 
 ### Input and connection
 
 1. In **When an agent calls the flow**, add one **Text** input named `message`.
-   Its display name and JSON property are different: the first text input in the
-   tested designer uses the property **`text`**. Check **Code view / Peek code**
-   and use the actual property in the expression below.
+   Open the trigger's **Code view / Peek code** and find the property whose
+   `title` is `message`. Its generated key is **`text`** in the tested designer;
+   `message` is only the display name. Use the actual key in the body expression.
 2. Between the trigger and **Respond to the agent**, add **Invoke an HTTP
    request** from **HTTP with Microsoft Entra ID (preauthorized)**.
    Do **not** use **Get web resource**; it is not supported with VNet delegation.
@@ -163,7 +178,8 @@ do not bypass the policy with another connector.
 
 Keep the action name **Invoke an HTTP request**. The expressions below reference
 its internal name, `Invoke_an_HTTP_request`; check that name in Code view if the
-designer adds a suffix.
+designer adds a suffix. If it differs, update every `body(...)` reference in the
+response expression below.
 
 | Request field | Value |
 | --- | --- |
@@ -176,10 +192,15 @@ designer adds a suffix.
 https://<foundry-resource>.services.ai.azure.com/api/projects/<project>/agents/<agent>/endpoint/protocols/openai/responses?api-version=v1
 ```
 
-Replace the placeholders with the selected agent's actual endpoint values.
-The stable endpoint uses its **active version**; record and verify that version
-before acceptance. Do not let the chat user or generative orchestration choose
-the URL, method, headers or connection.
+Use the exact stable **Responses** URL from the agent's **Publish** dropdown in
+Foundry, or ask its owner for it. Do not substitute display names into the
+template. Do not let the chat user or generative orchestration choose the URL,
+method, headers or connection.
+
+!!! note "API version is not the agent version"
+    Keep `api-version=v1` unchanged. Foundry selects the **active agent version**
+    behind the stable URL; do not add that version to the URL. Record and verify
+    it before acceptance.
 
 For **Body**, select **Expression** and paste this expression, without `@{...}`:
 
@@ -191,7 +212,8 @@ Replace `text` only if the trigger uses another property. Constructing the objec
 before serializing it preserves quotes, line breaks, backslashes and Unicode.
 Do not concatenate the user's message into a JSON string.
 
-This request is nonstreaming. `store:true` requests response storage; approve
+The flow waits for a complete response; it does not stream tokens.
+`store:true` requests response storage; approve
 Foundry's retention settings before using real data. It does **not** implement
 multi-turn history: each call sends only the current message.
 
@@ -204,13 +226,24 @@ Set its value using **Expression**:
 if(contains(body('Invoke_an_HTTP_request'), '$content'), base64ToString(body('Invoke_an_HTTP_request')?['$content']), string(body('Invoke_an_HTTP_request')))
 ```
 
-The connector can wrap the JSON response in a base64 `$content` envelope.
-This expression returns the actual JSON text in either form.
+This decodes the response to JSON text, whether the connector returns JSON
+directly or inside a base64 `$content` envelope. It is **not the chat reply**;
+Step 4 extracts that text.
 
-Keep **Respond to the agent** configured to run **only after HTTP success**.
-In its **Settings > Networking**, set **Asynchronous response = Off**.
-Select the specific authorized connection in the flow's connection/run-only
-settings, not **Provided by run-only user**. Save and **Publish** the flow.
+Select **Respond to the agent > Settings** and configure:
+
+- **Run After:** Run only when **Invoke an HTTP request** **is successful**.
+  Do not select failed, skipped or timed-out states.
+- **Networking:** Set **Asynchronous response = Off**.
+
+Save and **Publish** the flow. In [Power Automate](https://make.powerautomate.com/),
+open its details page, then **Run only users > Edit**. For the HTTP connector,
+select the specific authorized connection, not **Provided by run-only user**,
+and save the settings.
+
+In **Solutions**, open your team's solution and confirm the flow is listed.
+If not, select **Add existing > Automation > Cloud flow**, select the flow and
+**Add**. If needed, [create a solution first](https://learn.microsoft.com/power-automate/overview-solution-flows#create-a-solution).
 
 **Expected result:** The published flow has one text input, one authenticated
 POST and one text output. Its complete synchronous execution must stay within
@@ -219,19 +252,25 @@ Streaming and background completion are not handled by this relay.
 
 ## Step 4: Relay the actual response in Copilot Studio
 
-Use a **dedicated pilot Studio agent**. The topic below handles every nonempty
-message; do not add it unchanged to an agent with other routing responsibilities.
+In Copilot Studio, create or open a **dedicated pilot agent**. The topic below
+handles every nonempty message; do not add it unchanged to an agent with other
+routing responsibilities.
 Require [user authentication](https://learn.microsoft.com/microsoft-copilot-studio/advanced-end-user-authentication)
 and restrict sharing before adding real users.
 
-1. Create a topic named **Private Foundry relay**. Change its trigger to
-   **A message is received** and set the condition to
-   `!IsBlank(System.Activity.Text)`.
+1. Open **Topics > Add a topic > From blank** and name it **Private Foundry
+   relay**. On the **Trigger** node, select **Change trigger > A message is
+   received**, then **Edit**. In the trigger's **Condition**, switch
+   **Builder > Formula** and enter `!IsBlank(System.Activity.Text)`.
+   This is a trigger property, not a separate Condition node.
 2. Add **Add a tool**, select the published **Call private Foundry agent** flow,
-   and bind its `message` input to **`System.Activity.Text`**. Save the
-   `foundry_response` output in the text variable **`Topic.FoundryResponse`**.
-3. Add **Variable management > Set a variable value**. Create the text variable
-   **`Topic.FoundryReply`** and set its value using the **Formula** tab below.
+   and bind its `message` input to the system variable **`System.Activity.Text`**
+   (the user's current message). For `foundry_response`, create a **Text** topic
+   variable named **`FoundryResponse`**, shown as **`Topic.FoundryResponse`**.
+3. Add **Variable management > Set a variable value**. Under **Set variable**,
+   select **Create new** and name the variable **`FoundryReply`**
+   (shown as **`Topic.FoundryReply`**). For **To value**, select **Formula** and
+   paste the expression below; the resulting variable must be **Text**.
    It reads all message `output_text` parts, rather than assuming the first output
    item is a message; tool calls can precede it.
 
@@ -262,13 +301,15 @@ and restrict sharing before adding real users.
 
     </details>
 
-4. Add a **Condition** using
+4. Add a **Condition** node. In its **...** menu, select **Change to formula**,
+   open the formula editor and enter
    `IsBlank(Topic.FoundryReply) || IsMatch(Topic.FoundryReply, "\s*", MatchOptions.Complete)`.
    In the true branch (missing or whitespace-only text), send:
    **"The Foundry agent did not return a completed text response. Please contact
    the support team."** Do not display raw JSON or retry the POST automatically.
-   In the other branch, add **Send a message** containing the variable
-   **`Topic.FoundryReply`**, without a generative rewrite.
+   In **All Other Conditions** (false), add **Send a message** and insert the
+   **`Topic.FoundryReply`** variable, without a generative rewrite.
+   Insert its value with the variable picker; do not type its name as message text.
 5. End **both branches** with **Topic management > End all topics**.
    Do not enable a second Foundry tool as an automatic fallback. Run the topic
    checker and resolve every error before saving.
@@ -280,16 +321,19 @@ handling must report the failed action, not substitute a generated answer.
 
 ## Step 5: Verify the private path, then publish
 
-Use harmless test data in a **new** Studio test conversation. Record the UTC
-window and flow run ID. A chatbot reply alone is not proof of backend execution.
+Use harmless test data in a **new** Studio test conversation and record the UTC
+test window. In Power Automate, open the flow's details page and select the
+matching run in **Run history**. Keep its run ID; expand the HTTP action to inspect
+its status and outputs, and **Respond to the agent** for the decoded JSON.
+A chatbot reply alone is not proof of backend execution.
 
 | Check | Acceptance evidence |
 | --- | --- |
 | Request integrity | A message containing `"quotes"`, a newline, `C:\test\file` and `café` reaches the flow unchanged. Use an echo-capable test agent if exact round-trip comparison is needed. |
 | Real Foundry execution | The matching flow run shows HTTP **200**, decoded `status: completed`, no non-null `error`, and real `output_text`. Check the selected agent/version in available response or runtime diagnostics. |
-| Private ingress | Foundry PNA is still **Disabled**. Correlate the bounded run window and target resource with Foundry gateway diagnostics or equivalent approved network evidence; the source is the delegated private path, not a public connector address. |
+| Private ingress | Foundry public network access is still **Disabled**. Have the platform team correlate the UTC test window and target resource with existing Foundry gateway diagnostics or equivalent approved network evidence; the source must be the delegated private path, not a public connector address. |
 | No hidden fallback | The topic trace invokes the intended flow once and sends its returned text. A failed action or invalid response gives an error, not a plausible generated reply. |
-| Authorization | An approved pilot user can invoke the Studio agent; an unshared user cannot. Separately confirm that the connection identity and agent cannot expose data outside the approved shared-data boundary. |
+| Authorization | An approved pilot user can invoke the Studio agent; a user outside the shared audience cannot. Separately confirm that the connection identity and agent cannot expose data outside the approved shared-data boundary. |
 | Runtime limit | Representative calls complete below **100 seconds**, including connector and agent processing. |
 
 Use existing approved diagnostic settings; do not turn on prompt or document
@@ -297,16 +341,16 @@ capture just to obtain network evidence. A jumpbox success establishes only the
 jumpbox path. If gateway logs are unavailable, do not claim that private ingress
 has been independently verified.
 
-After these checks pass, **publish the Studio agent** and repeat the test from
-the intended authenticated channel with an approved pilot user. Designer success
+After these checks pass, return to the Studio agent and select **Publish**.
+Repeat the test from the intended authenticated channel with an approved pilot user. Designer success
 does not verify channel authentication, sharing or connection behavior.
 
 ## Troubleshooting
 
 | Symptom | Check and action |
 | --- | --- |
-| `Public access is disabled` / HTTP 403 | Confirm the flow ran in the associated environment, uses **Invoke an HTTP request** from the exact connector, and the policy operation succeeded. Inspect the ingress source before changing RBAC. Do not enable Foundry PNA. |
-| DNS failure or timeout | Have the platform team check DNS, peering/routes, NSGs and HTTPS from **both regional paths**, where required. A private endpoint in only one reachable network is insufficient. |
+| `Public access is disabled` / HTTP 403 | Confirm the flow ran in the associated environment, uses **Invoke an HTTP request** from the exact connector, and the policy operation succeeded. Inspect the ingress source before changing RBAC. Do not enable Foundry public network access. |
+| DNS failure or timeout | Have the platform team check DNS, peering/routes, NSGs and HTTPS from **every delegated regional subnet**. Each path referenced by the policy must reach the private endpoint. |
 | HTTP 401 / authorization 403 | Verify the connection user's tenant, `https://ai.azure.com` audience, connection health and agent-scoped invocation access. Distinguish connector-consent errors from Foundry RBAC errors; allow role propagation. |
 | HTTP 404 / unsupported endpoint | Compare the fixed URL, project and agent with the tested stable Responses endpoint. Do not substitute Activity, Container Apps or another API version. |
 | Response contains `$content`, or Studio shows base64 | Apply the Step 3 decoder and check the HTTP action's internal name. |
@@ -327,9 +371,10 @@ timestamps, run/request IDs and status codes during diagnosis.
   target environment and repeat Step 5 after an agent, policy or identity change.
 - **Maintain:** Assign an owner for connection reauthentication, monitor failures,
   latency and capacity, and review access and response-retention policies.
-  This single-message relay does not supply history or end-user OBO.
+  This relay supplies neither multi-turn history nor the chat user's identity
+  in Foundry.
 - **Stop:** Disable the relay topic/flow and republish the Studio agent. Remove a
   pilot-only role assignment only if it was created for this integration and is
   not shared. Do not delete the delegated subnet or detach the environment's VNet
-  policy as routine rollback: other workloads may depend on it. Keep Foundry PNA
+  policy as routine rollback: other workloads may depend on it. Keep Foundry public network access
   disabled throughout.
