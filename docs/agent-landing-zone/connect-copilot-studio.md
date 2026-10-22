@@ -23,12 +23,11 @@ Messages follow this path:
 <p class="runbook-path__route"><strong>Private connectivity:</strong> the HTTPS request goes through the Power Platform delegated subnet and Foundry private endpoint.</p>
 </div>
 
-!!! note "Why use a flow instead of the native connection?"
-    In the validated private setup, the
-    [native Microsoft Foundry connection (preview)](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent)
-    reached Foundry from a public source and was blocked with public network
-    access disabled. The flow below used the delegated private path successfully;
-    this result does not establish a universal limitation of native connectivity.
+!!! note "Why use a flow in this scenario?"
+    This runbook focuses on **Foundry with Public Network Access (PNA) disabled**.
+    The Power Automate flow provides the validated private route to the agent's
+    Responses API. For the native integration, see
+    [Connect to a Microsoft Foundry agent (preview)](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent).
 
 This is separate from [Teams publication](publish-to-teams.md). It requires
 neither Bot Service nor a
