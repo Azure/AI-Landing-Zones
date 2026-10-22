@@ -5,17 +5,22 @@ agent** without enabling Foundry public network access.
 
 Messages follow this path:
 
-<div class="runbook-path">
+<div class="runbook-path runbook-path--annotated">
 <ol role="list" aria-label="Message path from Copilot Studio to Foundry">
   <li><strong>Copilot Studio</strong></li>
+  <li class="runbook-path__connection" role="presentation" aria-hidden="true"><span class="runbook-path__arrow"></span></li>
   <li><strong>Power Automate</strong> <span class="runbook-path__detail">agent flow</span></li>
-  <li><strong>HTTP with Microsoft Entra ID</strong> <span class="runbook-path__detail">(preauthorized)</span></li>
-  <li><strong>Power Platform</strong> <span class="runbook-path__detail">delegated subnet</span></li>
-  <li><strong>Foundry</strong> <span class="runbook-path__detail">private endpoint</span></li>
+  <li class="runbook-path__connection" role="presentation">
+    <strong class="runbook-path__protocol">HTTPS request</strong>
+    <span class="runbook-path__authentication">Microsoft Entra ID authentication</span>
+    <span class="runbook-path__arrow" aria-hidden="true"></span>
+  </li>
+  <li><strong>Foundry agent</strong> <span class="runbook-path__detail">Responses API</span></li>
 </ol>
+<p class="runbook-path__route"><strong>Private connectivity:</strong> the HTTPS request goes through the Power Platform delegated subnet and Foundry private endpoint.</p>
 </div>
 
-This is an authenticated HTTP integration, not the native **Microsoft Foundry
+This is an authenticated HTTPS integration, not the native **Microsoft Foundry
 agent** connected-agent tool and not [Teams publication](publish-to-teams.md).
 It does not require Bot Service or an exception for the Foundry Activity route.
 
@@ -142,13 +147,19 @@ so it can be moved with its connection reference.
 | Base Resource URL | `https://<foundry-resource>.services.ai.azure.com` |
 | Sign-in account | The connection user authorized in Step 2 |
 
+**"Preauthorized" refers to the Microsoft application used by the connector,
+not to access to your Foundry agent.** Requests still use HTTPS and the
+connection user's Microsoft Entra identity, with the permissions from Step 2.
+
 Do not append the project path to the base URL or use the resource hostname as
 the token audience. Do not supply a bearer token, API key or client secret.
 If tenant policy blocks the connector or requires consent, stop and have the
 administrator review the [connector's permission requirements](https://learn.microsoft.com/connectors/webcontents/);
 do not bypass the policy with another connector.
 
-### HTTP request
+<a id="http-request"></a>
+
+### HTTPS request
 
 Keep the action name **Invoke an HTTP request**. The expressions below reference
 its internal name, `Invoke_an_HTTP_request`; check that name in Code view if the
