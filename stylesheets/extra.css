@@ -156,3 +156,98 @@
 .md-typeset details.runbook-command[open] {
   padding-bottom: 0.6rem;
 }
+
+.md-typeset .runbook-path {
+  container-type: inline-size;
+  margin: 1.2rem 0 1.4rem;
+}
+
+.md-typeset .runbook-path ol {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.md-typeset .runbook-path ol > li {
+  align-items: center;
+  background: color-mix(in srgb, var(--md-primary-fg-color) 4%, var(--md-default-bg-color));
+  border: 1px solid color-mix(in srgb, var(--md-primary-fg-color) 28%, var(--md-default-bg-color));
+  border-radius: 0.2rem;
+  color: var(--md-default-fg-color);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.68rem;
+  justify-content: center;
+  line-height: 1.4;
+  margin: 0;
+  min-height: 4.3rem;
+  min-width: 0;
+  padding: 0.65rem 0.4rem;
+  position: relative;
+  text-align: center;
+}
+
+.md-typeset .runbook-path strong {
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.md-typeset .runbook-path__detail {
+  font-size: 0.62rem;
+  margin-top: 0.2rem;
+}
+
+.md-typeset .runbook-path li:not(:last-child)::before,
+.md-typeset .runbook-path li:not(:last-child)::after {
+  border-color: var(--md-primary-fg-color);
+  border-style: solid;
+  content: "";
+  position: absolute;
+}
+
+.md-typeset .runbook-path li:not(:last-child)::before {
+  border-width: 0.08rem 0 0;
+  height: 0;
+  left: calc(100% + 0.2rem);
+  top: 50%;
+  width: 0.85rem;
+}
+
+.md-typeset .runbook-path li:not(:last-child)::after {
+  border-width: 0.08rem 0.08rem 0 0;
+  height: 0.3rem;
+  left: calc(100% + 0.7rem);
+  top: calc(50% - 0.15rem);
+  transform: rotate(45deg);
+  width: 0.3rem;
+}
+
+@container (max-width: 32rem) {
+  .md-typeset .runbook-path ol {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+
+  .md-typeset .runbook-path ol > li {
+    min-height: 0;
+    padding: 0.6rem 0.8rem;
+  }
+
+  .md-typeset .runbook-path li:not(:last-child)::before {
+    border-width: 0 0 0 0.08rem;
+    height: 0.85rem;
+    left: 50%;
+    top: calc(100% + 0.2rem);
+    width: 0;
+  }
+
+  .md-typeset .runbook-path li:not(:last-child)::after {
+    left: calc(50% - 0.15rem);
+    top: calc(100% + 0.7rem);
+    transform: rotate(135deg);
+  }
+}

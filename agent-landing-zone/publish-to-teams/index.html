@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=47a3a035c069">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=48bea8ac7aaf">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -1312,8 +1312,14 @@ The agent can be part of your own application.</p>
 agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.</p>
 <p>Messages from either client follow the same path:</p>
-<p><strong>Teams / Microsoft 365 Copilot</strong> &rarr; <strong>Azure Bot Service</strong> &rarr;
-<strong>Foundry Activity endpoint</strong></p>
+<div class="runbook-path">
+<ol role="list" aria-label="Message path from Teams and Microsoft 365 Copilot to Foundry">
+  <li><strong>Teams / Microsoft 365 Copilot</strong></li>
+  <li><strong>Azure Bot Service</strong></li>
+  <li><strong>Foundry</strong> <span class="runbook-path__detail">Activity endpoint</span></li>
+</ol>
+</div>
+
 <p>Foundry and Bot Service keep <strong>public network access (PNA) disabled</strong>. Following
 the <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network">Foundry REST publishing flow</a>,
 you enable a restricted public HTTPS exception for the Activity route. Foundry
