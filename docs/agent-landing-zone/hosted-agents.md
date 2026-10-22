@@ -178,8 +178,9 @@ UI's delegated invocation path.
 
 For a Copilot Studio agent calling a private Foundry hosted agent, follow
 [Connect Copilot Studio](connect-copilot-studio.md). It uses a Power Automate
-agent flow with an authenticated HTTP connection and VNet delegation, not the
-native connected-agent tool. Review its shared-connection identity boundary
+agent flow with an authenticated HTTPS connection and VNet delegation, not the
+[native connected-agent tool](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent).
+Review its shared-connection identity boundary
 before using it with protected data.
 
 <details markdown="1">
