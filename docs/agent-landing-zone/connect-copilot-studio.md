@@ -31,10 +31,6 @@ Messages follow this path:
     The [native Microsoft Foundry integration](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent)
     is **in preview** and follows a separate setup, outside this procedure.
 
-This is separate from [Teams publication](publish-to-teams.md). It requires
-neither Bot Service nor a
-[restricted public exception for the Foundry Activity route](publish-to-teams.md#step-3-enable-the-restricted-activity-route).
-
 ## Prerequisites
 
 - **Foundry:** A running, tested hosted agent. Ask its owner for the stable
