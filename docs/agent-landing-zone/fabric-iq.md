@@ -1,5 +1,114 @@
 # Fabric data
 
+## Optional Fabric foundation
+
+The Fabric foundation integration retains the existing `azd provision`
+lifecycle. Bicep parameter `deployFabric` and environment input `DEPLOY_FABRIC`
+default to `false`. Use a platform revision containing the integration; these
+files are not deployed from this documentation repository.
+
+The foundation creates only a capacity when needed and a workspace, with
+capacity assignment, baseline workspace access, and a native workspace identity.
+It grants that identity **Cognitive Services OpenAI User** on the deployed
+Foundry account so supported Fabric workloads can call its Azure OpenAI model
+deployments. It creates **no Lakehouse, Data Agent, Fabric item, or Foundry IQ
+knowledge source**, and is independent of `RETRIEVAL_BACKEND`.
+
+```bash
+azd env set DEPLOY_FABRIC true
+azd env set FABRIC_CAPACITY_SKU F2
+azd provision
+```
+
+To reuse a capacity without ARM creation or updates, set
+`EXISTING_FABRIC_CAPACITY_NAME` to its exact visible display name before
+provisioning. Otherwise Bicep converges the named capacity; reruns do not create
+a second capacity. The workspace is also reused by exact display name.
+
+### Inputs and permissions
+
+| Input | Default | Purpose |
+| --- | --- | --- |
+| `DEPLOY_FABRIC` | `false` | Enables the workspace foundation and scoped inference access. |
+| `FABRIC_CAPACITY_NAME` | `fc<resourceToken>` | Capacity name; lowercase letters and digits, starting with a letter. |
+| `EXISTING_FABRIC_CAPACITY_NAME` | Empty | Reuse an exact, visible capacity display name; skips ARM capacity creation. |
+| `FABRIC_LOCATION` | Deployment location | Capacity region; verify F SKU availability and workspace compatibility. |
+| `FABRIC_CAPACITY_SKU` | `F2` | New capacity SKU. |
+| `FABRIC_CAPACITY_ADMIN_MEMBERS_JSON` | `[]` | Additional administrator UPNs or supported object IDs; the deploying principal is included automatically. |
+| `FABRIC_CAPACITY_LOCK` | `CanNotDelete` | `None`, `CanNotDelete`, or `ReadOnly`. |
+| `FABRIC_WORKSPACE_NAME` | `<environment>-fabric` | Workspace display name. |
+| `FABRIC_WORKSPACE_DESCRIPTION` | Generated | Workspace description. |
+| `FABRIC_DOMAIN_ID` | Empty | Optional domain when creating a workspace. |
+| `FABRIC_WORKSPACE_ROLE_ASSIGNMENTS_JSON` | `[]` | Principal/role objects; deploying-principal `Admin` access is retained. |
+
+For workspace access, supply Entra object IDs:
+
+```bash
+azd env set FABRIC_WORKSPACE_ROLE_ASSIGNMENTS_JSON '[{"principal":{"id":"<entra-group-object-id>","type":"Group"},"role":"Viewer"}]'
+```
+
+Roles are `Admin`, `Member`, `Contributor`, or `Viewer`; principal types are
+`User`, `Group`, `ServicePrincipal`, and `ServicePrincipalProfile`.
+Use `AZURE_PRINCIPAL_TYPE=ServicePrincipal` for a pipeline deployment identity.
+No identities are hardcoded, and tenant-wide grants are not accepted.
+
+The deploying identity needs Azure permission to create the capacity and lock,
+register `Microsoft.Fabric` for a new capacity, and assign roles at the Foundry
+account scope (`Microsoft.Authorization/roleAssignments/write`, such as scoped
+User Access Administrator). Fabric tenant settings must permit workspace
+creation, workspace identity provisioning, and the required APIs. An existing
+capacity must be accessible for workspace assignment.
+
+### Workspace-to-Foundry identity boundary
+
+A [Fabric workspace identity](https://learn.microsoft.com/fabric/security/workspace-identity)
+is a Fabric-managed service principal, **not an Azure user-assigned managed
+identity (UAMI)**. The extension creates or reuses the native identity and grants
+it the existing repository-defined OpenAI inference role. It does not attach
+a UAMI, create an intermediary, or grant Foundry contributor/project roles.
+
+Azure RBAC is reconciled separately from the Fabric REST calls after the
+workspace identity exists. The scope is the single deployed
+`Microsoft.CognitiveServices/accounts` resource, not the subscription or resource
+group. The Foundry account must be included in the deployment.
+
+RBAC is authorization, not a runtime connection. In a supported Fabric
+connection/workload, select workspace-identity authentication and the intended
+Foundry model endpoint/deployment. Do not assume every Fabric notebook or
+connector can obtain a workspace-identity token. Verify that workload's
+authentication support, role propagation and network reachability before
+testing inference. The foundation does not create a connection or make a test
+inference call.
+
+### Outputs, retries, and disabling
+
+The hook persists `FABRIC_CAPACITY_NAME`, `FABRIC_CAPACITY_ID`,
+`FABRIC_WORKSPACE_ID`, `FABRIC_WORKSPACE_URL`,
+`FABRIC_WORKSPACE_IDENTITY_APPLICATION_ID`,
+`FABRIC_WORKSPACE_IDENTITY_PRINCIPAL_ID`,
+`FABRIC_FOUNDRY_ACCOUNT_RESOURCE_ID`, and `FABRIC_FOUNDRY_ROLE_ASSIGNMENT_ID`.
+`FABRIC_FOUNDATION_CONFIG` is the nonsecret ARM-to-hook handoff.
+These outputs are deployment state, not application retrieval settings.
+
+Reruns reuse exact workspace names, wait for capacity assignment and identity
+operations, reconcile requested workspace grants, and reuse the exact-scope
+Foundry role assignment. Ambiguous names and permission failures stop
+provisioning. Correct the cause and rerun `azd provision`.
+
+`DEPLOY_FABRIC=false` skips Fabric-specific CLI/API work. Disabling is not
+uninstallation: it does not delete the workspace or revoke existing grants.
+Review capacity removal through normal ARM change control and its lock.
+Changing the target identity/account does not automatically revoke old grants.
+The removed Lakehouse/Data Agent parameters and generated connector handoff are
+no longer supported. Any previously created items or independently configured
+knowledge sources are not deleted or disabled by this change.
+
+Fabric does not inherit the landing zone's VNet isolation. Review Fabric
+outbound access, Foundry firewall/private connectivity, regional residency and
+tenant policies separately; an RBAC grant alone does not establish connectivity.
+
+## Query existing Fabric data
+
 Use a Fabric data agent to answer analytical questions over an existing Power BI
 semantic model. The model stays in Fabric; this is live querying, not document
 ingestion.

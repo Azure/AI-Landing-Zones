@@ -83,6 +83,25 @@ application projects.
 post-provision hook. It does **not** mean the pinned application code is running:
 some provisioned Container Apps initially contain placeholder images.
 
+### Optional Fabric foundation ordering
+
+The Fabric foundation integration extends these same hooks; it does not add
+another deployment workflow. Its `deployFabric` parameter defaults to `false`.
+When enabled, pre-provision checks Fabric inputs and access, Bicep creates the
+capacity (or reuses an existing capacity), and post-provision performs Fabric
+REST configuration after the private-network guard and before App Configuration
+publication and Search setup. It creates/reuses the workspace and its native
+identity, assigns capacity and baseline workspace access, then separately
+reconciles account-scoped Azure OpenAI inference RBAC for that identity.
+Capacity and its optional lock use Bicep; workspace operations use Fabric REST;
+the identity's Foundry grant uses Azure RBAC after the principal exists.
+No Lakehouse, Data Agent, or knowledge source is created.
+
+See [Fabric foundation](fabric-iq.md#optional-fabric-foundation). A
+workspace RBAC grant is not proof of working inference; the selected Fabric
+workload must support workspace-identity authentication and reach the Foundry
+endpoint. Existing Search provisioning remains unchanged.
+
 For bundled Container Apps, deployment uses the verified component checkouts
 and their child `azure.yaml` projects to build and deploy the code. Hosted
 orchestration uses the prepared image described below. Custom applications
