@@ -1919,8 +1919,9 @@
 <h1 id="how-it-works">How it works</h1>
 <p>Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (<code>azd</code>). This page explains
-that connection for the <strong>Bicep/azd implementation</strong>. Use the deployment runbooks
-for the commands to execute. Read how settings work below, then use
+that connection for the <strong>Bicep/azd implementation</strong>. For step-by-step commands,
+use <a href="../deploy-infra-only/">Deploy infra only</a> or
+<a href="../deploy-full-stack/">Deploy full stack</a>. Read how settings work below, then use
 <a href="../planning/">Deployment choices</a> to select the implementation and topology.</p>
 <h2 id="how-to-read-deployment-settings">How to read deployment settings</h2>
 <p>A <strong>deployment parameter</strong> tells the template what to create or reuse, such
@@ -1946,14 +1947,16 @@ values:</p>
 </tr>
 </tbody>
 </table>
-<p>For example, after creating and selecting an environment in the deployment
-runbook, enable private networking with:</p>
+<p>For example, <code>NETWORK_ISOLATION</code> controls private networking. After creating
+or selecting an environment using <a href="../deploy-infra-only/#procedure">Deploy infra only</a>
+or <a href="../deploy-full-stack/#procedure">Deploy full stack</a>, set this input with:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
 <p>Set deployment inputs before provisioning. The platform combines them with
 the root parameter file to generate <code>infra/main.parameters.json</code>.
 The <a href="../configuration/">Configuration reference</a> lists available inputs and
-defaults; the runbooks provide the order in which to apply them.</p>
+defaults; the two deployment guides linked above provide the order in which
+to apply them.</p>
 <p><strong>Runtime settings</strong> control application behavior after deployment and are
 usually stored in Azure App Configuration. Each Agent Application guide
 identifies the settings to change and how to reload them.</p>
