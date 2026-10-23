@@ -441,6 +441,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -736,34 +764,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2052,8 +2052,12 @@
 
 
 <h1 id="network-isolation">Network isolation</h1>
-<p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone uses private endpoints and private DNS for the deployed workload services. With the default empty <code>allowedIpRanges</code>, public access to those service endpoints is disabled. This is not a blanket block on every public endpoint: Azure Resource Manager remains public, and telemetry and optional public ingress have separate settings.</p>
-<p>An explicit, nonempty <code>allowedIpRanges</code> in <code>main.parameters.json</code> enables IP-restricted public access on services that support those rules, even with isolation enabled. Review that exception and any existing network or DNS resources before describing a deployment as private-only.</p>
+<p>Use the <code>NETWORK_ISOLATION</code> deployment input to choose private networking.
+Set it in the selected <code>azd</code> environment before provisioning, as shown in
+<a href="#enable-isolation">Enable isolation</a>. For the input formats and deployment
+flow, see <a href="../how-it-works/#how-to-read-deployment-settings">How it works</a>.</p>
+<p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone uses private endpoints and private DNS for the deployed workload services. With the default empty <code>allowedIpRanges</code>, public access to those service endpoints is disabled. Azure Resource Manager remains public; telemetry and optional public ingress have separate settings.</p>
+<p>An explicit, nonempty <code>allowedIpRanges</code> in <code>main.parameters.json</code> enables IP-restricted public access on services that support those rules, even with isolation enabled. Include those public access paths and any reused network or DNS resources in your connectivity plan.</p>
 <p>Use this reference to plan connectivity, DNS and image builds. For the ordered
 procedure, follow <a href="../deploy-infra-only/">Deploy infrastructure only</a> or
 <a href="../deploy-full-stack/">Deploy the full stack</a>. Optional pipeline automation is
@@ -2139,10 +2143,11 @@ procedure. Do not expose a new password in shell history or command logs.</p>
 <p>Use the same reviewed platform revision and approved inputs on the connected
 host. Restore/select the intended azd environment and refresh its provisioning
 outputs using the <a href="../deploy-infra-only/">infrastructure runbook</a>.
-Refreshing outputs is not provisioning or application configuration.</p>
-<p>Signing in with the jumpbox's managed identity does not prove that all
-deployment permissions are present. Verify its existing configuration and
-build roles, then have an authorized administrator grant only the missing
+Refreshing outputs updates local environment values. Run the provisioning and
+configuration steps separately as directed by that runbook.</p>
+<p>If you deploy with the jumpbox's managed identity, verify its configuration
+and build roles before running deployment commands. Have an authorized
+administrator grant only the missing
 permissions required by the selected application. For hosted-agent authoring,
 the runner needs <strong>Foundry User</strong> (previously <strong>Azure AI User</strong>) on the exact
 Foundry project, plus read access to the Foundry account. Cognitive Services
@@ -2179,7 +2184,12 @@ see <a href="../deploy-infra-only/#complete-a-deferred-post-provision">Complete 
 <li><strong>Use local builds where supported:</strong> <code>BUILD_MODE=local</code> needs a
    VNet-connected host with working Docker.</li>
 </ol>
-<p>The local alternative applies to component scripts that support <code>BUILD_MODE=local</code>. Automatic hosted orchestrator image preparation and isolated custom source builds still require the private pool. Supplying an already-built immutable digest can skip those builds, but does not bypass the root pre-deploy pool guard unless <code>BUILD_MODE=local</code> is selected. That guard is not proof that the remaining services can build locally.</p>
+<p>The local alternative applies to component scripts that support <code>BUILD_MODE=local</code>.
+Automatic hosted orchestrator image preparation and isolated custom source builds
+still require the private pool. Supplying an already-built immutable digest can
+skip those builds. To deploy without a pool, the root pre-deploy check also
+requires <code>BUILD_MODE=local</code>; verify that each remaining service supports local
+builds before selecting that mode.</p>
 <h3 id="application-specific-package-feeds">Application-specific package feeds</h3>
 <p>The root deployment defaults include dependency-verified package feed
 destinations alongside common language and OS package registries, through
@@ -2241,7 +2251,7 @@ for diagnosis.</p>
 </tbody>
 </table>
 <p>If DNS returns a public address, the host is not using the private DNS zones. Check the VNet link of the zone, or the DNS forwarder on your VPN or hub.</p>
-<p>On Windows, also check resolution through the operating system resolver, especially when a VPN uses NRPT rules. <code>nslookup</code> alone can differ from the resolver used by the Python prerequisite check. That check rejects public, mixed public/private, IPv6, loopback and link-local answers, then verifies TCP 443 and TLS with the original hostname and normal certificate validation. It sends no HTTP request or credentials. Passing it does not prove API health, RBAC, OBO or document authorization.</p>
+<p>On Windows, also check resolution through the operating system resolver, especially when a VPN uses Name Resolution Policy Table (NRPT) rules. <code>nslookup</code> can differ from the resolver used by the Python prerequisite check. That check requires private IPv4 answers and rejects mixed public/private, IPv6, loopback and link-local answers, then verifies TCP 443 and TLS with the original hostname and normal certificate validation. It sends no HTTP request or credentials. After verifying connectivity, test API access and document permissions with the intended user identities.</p>
 <h3 id="opt-in-firewall-dns-proxy">Opt-in firewall DNS proxy</h3>
 <p>Use the platform's repository-owned infrastructure tree. Upstream infrastructure
 provenance alone does not include platform-owned changes or establish a compatible
@@ -2280,19 +2290,18 @@ the template's <code>SEARCH_SHARED_PRIVATE_LINKS</code> manifest, including boun
 Foundry names. The exact Search shared-link GET must return the expected
 name, target and group. If its body includes a resource ID, that must match
 too.</p>
-<p>Microsoft documents that the backend endpoint is provisioned in a
-Microsoft-managed tenant. A target PEC can contain an opaque
-<code>Microsoft.Network/privateEndpoints</code> ID and omit a source Search/link
-binding. Its name or request message alone is not proof of ownership.
-Configuration therefore does not enumerate target PECs, follow their
-pagination links, or write approvals. See Microsoft's
+<p>The target service receives a private endpoint connection (PEC) request.
+Because its name, message and endpoint ID may not identify the originating
+Search link, an administrator must verify and approve the correct request.
+The configuration script reads the deployment's Search links and leaves
+target-side approval to that administrator. See Microsoft's
 <a href="https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private">approval and shared-link status procedure, sections 2 and 3</a>.</p>
 <p>A <code>Pending</code> source link stops immediately with its exact Search ID, target
 ID, group and link name for administrator investigation and approval.
-After approval, rerun configuration. An approved source still needs to be
-ready. ARM visibility alone does not prove readiness. A timeout or denied
-Search read permission is a configuration failure, not a reason to enable
-public access or bypass readiness. See
+After approval, rerun configuration. Each source link must report connection
+status <code>Approved</code> and provisioning state <code>Succeeded</code> before configuration
+continues. If a read times out or is denied, resolve connectivity or Search
+read permissions and retry with public access still disabled. See
 <a href="../troubleshooting/#search-shared-private-links-are-not-ready">Search shared private links are not ready</a>.</p>
 <p>Polling has a 600-second total readiness budget, a 10-second interval and
 ARM request timeouts of at most 30 seconds (limited by the remaining budget).

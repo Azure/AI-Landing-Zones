@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1854,9 +1854,9 @@
 <h1 id="user-feedback">User feedback</h1>
 <p>Collect answer ratings and comments through the optional hosted-panel API.
 The default <strong>hosted-no-panel</strong> deployment has no Agent Application feedback store
-or feedback administration surface. Foundry conversation persistence does not
-add either feature. <a href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents">Foundry hosted agents</a>
-provide the hosting runtime; the feedback APIs below belong to Agent Application.</p>
+or feedback administration surface. To collect feedback, deploy the panel and
+add a UI control that calls its API. <a href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents">Foundry hosted agents</a>
+provide the hosting runtime; Agent Application supplies the feedback APIs below.</p>
 <h2 id="choose-the-supported-path">Choose the supported path</h2>
 <table>
 <thead>
@@ -1872,22 +1872,21 @@ provide the hosting runtime; the feedback APIs below belong to Agent Application
 </tr>
 <tr>
 <td><code>hosted-panel</code></td>
-<td>Optional Cosmos-backed feedback APIs. User-facing routes require additional gates; deploying the panel alone does not activate them.</td>
+<td>Optional Cosmos-backed feedback APIs, activated through the settings and ownership checks below.</td>
 </tr>
 <tr>
 <td><code>ENABLE_USER_FEEDBACK=true</code></td>
-<td>Shows the existing Chainlit thumbs controls on eligible nonempty answers. The callbacks still call the classic orchestrator, not the hosted-panel API. Do not enable this as a hosted feedback solution.</td>
+<td>Shows the existing Chainlit thumbs controls on eligible nonempty answers. These call the classic orchestrator and are unsuitable for hosted feedback.</td>
 </tr>
 <tr>
 <td><code>USER_FEEDBACK_RATING=true</code></td>
-<td>Changes those existing controls from immediate thumbs submission to a rating/comment form. It does not change their backend. Both UI flags default to <code>false</code>; anonymous embedded sessions cannot use feedback actions.</td>
+<td>Changes those classic controls from immediate thumbs submission to a rating/comment form using the same backend. Both UI flags default to <code>false</code>; anonymous embedded sessions cannot use feedback actions.</td>
 </tr>
 </tbody>
 </table>
-<p>For hosted chat, adding a rating/comment control that calls the panel API is
-<strong>Agent Application customization</strong>, not a Foundry setting. Keep hosted chat on
-<code>CHAT_BACKEND=hosted_agent</code>; do not deploy a classic orchestrator just to make
-the old callbacks work.</p>
+<p>For hosted chat, add a rating/comment control that calls the panel API through
+<strong>Agent Application customization</strong>. Keep hosted chat on
+<code>CHAT_BACKEND=hosted_agent</code>.</p>
 <h2 id="prepare-a-hosted-panel-integration">Prepare a hosted-panel integration</h2>
 <p>You need an Agent Application developer, a deployment operator, and an Entra
 administrator for the token audience and permissions. Use approved test
@@ -1895,15 +1894,17 @@ conversations and a connected development host if Agent Application is private.<
 <ol>
 <li>Follow <a href="../deploy-full-stack/">Deploy the full stack</a> to select
    <code>DEPLOYMENT_TOPOLOGY=hosted-panel</code>. This selects hosted orchestration plus
-   <code>DEPLOY_ADMINISTRATIVE_PANEL=true</code>; it does not move chat into Container
-   Apps. Confirm that the panel metadata containers and the UI identity's
+   <code>DEPLOY_ADMINISTRATIVE_PANEL=true</code>, while chat remains in Foundry.
+   Confirm that the panel metadata containers and the UI identity's
    Cosmos access have been provisioned.</li>
 <li>Establish working owner-bound hosted continuity before enabling the
    user-facing panel routes. <code>HOSTED_CONTINUITY_ENABLED=true</code> is required.
-   Follow <a href="../hosted-agents/">Hosted agents</a> for the hosted runtime; an arbitrary
-   conversation ID is not proof of ownership.</li>
+   Follow <a href="../hosted-agents/">Hosted agents</a> to configure continuity and verify
+   that each conversation is bound to its owner.</li>
 <li>
-<p>Configure the user-facing API gates and dependencies:</p>
+<p>Enable the user-facing APIs and configure their dependencies in App
+   Configuration under label <code>agent-lz</code>, following
+   <a href="../configuration/">Configuration</a>:</p>
 <table>
 <thead>
 <tr>
@@ -1941,35 +1942,32 @@ conversations and a connected development host if Agent Application is private.<
 <p>The default metadata containers are <code>panel-conversation-owner-index</code> and
  <code>panel-feedback</code>, selected by <code>PANEL_OWNER_INDEX_DATABASE_CONTAINER</code> and
  <code>PANEL_FEEDBACK_DATABASE_CONTAINER</code>.</p>
-<p>Do not select <code>delegated</code> enumeration without
- <code>PANEL_HISTORY_OWNER_BINDING_VALIDATED=true</code> and environment-specific
- evidence: the UI configuration loader rejects that combination. This
- panel gate is separate from continuity's
+<p>The alternative <code>delegated</code> enumeration mode requires
+ <code>PANEL_HISTORY_OWNER_BINDING_VALIDATED=true</code> after owner isolation has
+ been validated in that environment. The UI rejects the mode while this
+ gate is false. This panel gate is separate from continuity's
  <code>HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED</code> gate.</p>
-<p>Apply nonsecret runtime keys under label <code>agent-lz</code> using Entra
- authentication (<code>az appconfig kv set --auth-mode login</code>), following
- <a href="../configuration/">Configuration</a>. These settings are loaded at UI startup:
- replace/restart the UI process after an approved change, not the Foundry
- hosted agent. Check environment-variable overrides as well as remote keys.
+<p>Apply nonsecret keys using Entra authentication
+ (<code>az appconfig kv set --auth-mode login</code>). These settings are loaded at UI startup:
+ replace/restart the UI process after an approved change.
+ Check environment-variable overrides as well as remote keys.
  Provisioning republishes panel settings and forcibly resets
  <code>PANEL_HISTORY_OWNER_BINDING_VALIDATED</code> and
- <code>PANEL_OPERATOR_SURFACES_ENABLED</code> to <code>false</code>; an azd input cannot attest
- either evidence gate.
+ <code>PANEL_OPERATOR_SURFACES_ENABLED</code> to <code>false</code>. Enable these runtime gates
+ only after their checks pass; they cannot be activated through an azd input.
 4. Add a signed-in feedback control to your UI. Send a delegated user bearer
  to the UI service's
  <code>POST /panel/conversations/{conversation_id}/feedback</code> endpoint. Obtain the
  conversation ID from <code>items[].id</code> returned by
  <code>GET /panel/conversations</code> on the same UI service, not from user input or
- another session. This ID identifies a conversation; it is not an endpoint
- or an agent name. Use the same ID for
+ another session. Use the same ID for
  <code>GET /panel/conversations/{conversation_id}/feedback</code> to verify persistence.</p>
 <p>The bearer must include the delegated <code>user_impersonation</code> scope for the
  configured audience. Never put tokens in URLs, example bodies or command
  history. Each request validates the caller and checks the Cosmos owner
- index before accepting the conversation ID. Conversation ownership does
- not grant permission to retrieved source documents; preserve retrieval
- OBO and source ACL enforcement.</p>
-<p>Example JSON body for this <strong>UI API</strong>, not the ingestion API:</p>
+ index before accepting the conversation ID. Retrieved source documents
+ require their own authorization; preserve retrieval OBO and source ACL enforcement.</p>
+<p>Example JSON body for this <strong>UI API</strong>:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">"feedback_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"review-001"</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">"message_ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"answer-reference"</span><span class="p">,</span>
@@ -1984,8 +1982,7 @@ conversations and a connected development host if Agent Application is private.<
  comment to 2,000. Unknown fields are rejected. Retrying the same feedback
  ID upserts that owner's record. Keep IDs unique across that owner's
  conversations, not just within one conversation.</p>
-<p>This is an API integration recipe, not a built-in hosted chat form. If you
- cannot maintain a custom control, leave the legacy feedback flags off and
+<p>If you cannot maintain a custom control, leave the legacy feedback flags off and
  use your organization's approved support channel instead.</p>
 </li>
 </ol>
@@ -2025,35 +2022,35 @@ the same response as a missing conversation, not disclosure of the record.</p>
 </table>
 <p>To withdraw the custom user-facing surface, set <code>PANEL_HISTORY_ENABLED=false</code>
 and reload the UI process. This also disables panel history and deletion,
-but does not delete stored feedback or change hosted chat routing. Do not
-remove Cosmos resources as a feedback toggle.</p>
+while stored feedback and hosted chat routing remain unchanged. Retain Cosmos
+resources and manage stored feedback under the retention policy below.</p>
 <h2 id="administrative-views">Administrative views</h2>
 <p>The ingestion service has a separate Admin-authorized
 <code>GET /api/panel/feedback</code> API and feedback counts in
 <code>GET /api/panel/overview</code>, only in hosted-panel mode. These require a validated
-bearer with the Entra <code>Admin</code> app role; missing tenant configuration does not
-disable authorization.</p>
-<p>These are <strong>not</strong> the UI API above: ingestion uses <code>conversationId</code>,
+bearer with the Entra <code>Admin</code> app role and reject requests when tenant
+configuration is missing.</p>
+<p>The ingestion API uses <code>conversationId</code>,
 <code>messageId</code>, <code>rating: "up" | "down"</code>, <code>comment</code> and <code>tags</code>, whereas the UI
-stores <code>message_ref</code> and a numeric rating. There is no shipped adapter joining
-these contracts. Do not promise that owner-submitted UI records appear in an
-admin feedback view. A unified moderation view requires a deliberate schema
-and authorization integration.</p>
+stores <code>message_ref</code> and a numeric rating. The APIs have separate schemas and
+no shipped adapter connects them. To show owner-submitted UI records in an
+administrative view, implement a shared schema and authorization integration.</p>
 <p>The separate operator overview/curation surface is gated by
 <code>PANEL_OPERATOR_SURFACES_ENABLED=true</code>, actual panel deployment, an explicit
 <code>PANEL_OPERATOR_APP_ROLE</code> or <code>PANEL_OPERATOR_GROUP_ID</code>, and the backend's
-cursor-signing secret. It is not enabled by the <code>Admin</code> role or the user
-history gate alone. Provisioning deliberately leaves this evidence gate off.</p>
+cursor-signing secret. Configure these separately from the <code>Admin</code> role and
+the user history gate. Provisioning leaves the operator surface disabled until
+its authorization checks have been validated.</p>
 <h2 id="privacy-and-retention">Privacy and retention</h2>
 <p>Panel Cosmos stores ownership and feedback metadata, not chat transcripts or
 citations. Comments are still user-authored data: ask users not to paste
 secrets, personal data or source documents. Restrict operator access and set
 an explicit retention policy for feedback separately from Foundry conversation
 retention. <a href="https://learn.microsoft.com/en-us/azure/cosmos-db/time-to-live">Cosmos DB time to live</a>
-can expire metadata when configured; no automatic retention period is promised
-by this workflow. The UI's conversation-deletion route also attempts feedback
-cleanup; a partial failure is not proof that all records were erased. Include
-failed cleanup and retained backups in your deletion procedure.</p>
+can expire metadata when configured; this workflow sets no automatic retention
+period. The UI's conversation-deletion route also attempts feedback cleanup.
+Check the result and retry failed cleanup. Include retained backups in your
+deletion procedure.</p>
 
 
 

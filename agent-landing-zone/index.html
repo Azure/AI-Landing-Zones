@@ -547,6 +547,34 @@
   
   
     <li class="md-nav__item">
+      <a href="how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="planning/" class="md-nav__link">
         
   
@@ -639,34 +667,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1888,10 +1888,11 @@ Deployment parameters and application selection determine what is created.</p>
 </tr>
 </tbody>
 </table>
-<p>For the file layout and lifecycle, read <a href="how-it-works/">How the template works</a>.
-Start with <a href="planning/">Deployment choices</a> to choose a topology, tool and
-resource footprint. The shared <a href="../bicep/deployed-resources/">foundation inventory</a>
-is a reference, not the exact bill of materials for every Agent deployment.</p>
+<p>Start with <a href="how-it-works/">How it works</a> for the deployment flow and how to
+set parameters. Then use <a href="planning/">Deployment choices</a> to choose a topology, tool and
+resource footprint. Compare the shared
+<a href="../bicep/deployed-resources/">foundation inventory</a> with your selected
+topology and reuse settings to identify the resources in your deployment.</p>
 <h2 id="agent-application">Agent Application</h2>
 <p>The <a href="https://github.com/Azure/agent-app-orchestrator">Agent App Orchestrator</a>
 coordinates models, knowledge sources and configured tools through a selected
@@ -1935,11 +1936,10 @@ in history, continuity and optional administration features.</p>
 provides application-managed document processing, including format-aware
 chunking, embeddings and configured SharePoint ingestion. Native Foundry IQ can
 instead ingest configured Blob sources without Agent App Ingestion.</p>
-<p>These paths are not feature-equivalent. Conversation attachments require
-Agent App Ingestion and the existing upload eligibility checks. SharePoint has
-separate connector and permission requirements; the native Blob path does not
-establish ingestion-free SharePoint support. See <a href="ingestion/">Ingestion choices</a>
-before selecting or changing the ingestion path.</p>
+<p>Choose the path for the sources and features you need. Conversation attachments
+require Agent App Ingestion and the UI's upload eligibility checks. SharePoint
+requires its own connector and permissions. See <a href="ingestion/">Ingestion choices</a>
+for the supported paths and their setup requirements.</p>
 <h2 id="choose-your-path">Choose your path</h2>
 <p>Review the design checklist, plan the deployment, then choose a deployment
 runbook. <a href="whats-new/">What's new</a> covers recent changes.</p>
@@ -1954,6 +1954,10 @@ runbook. <a href="whats-new/">What's new</a> covers recent changes.</p>
 <tr>
 <td>Review architecture and security decisions</td>
 <td><a href="../architecture/design-checklist/">Design checklist</a></td>
+</tr>
+<tr>
+<td>Understand the deployment flow and how to set parameters</td>
+<td><a href="how-it-works/">How it works</a></td>
 </tr>
 <tr>
 <td>Choose standalone, hub integration or AI Gateway, and a deployment tool</td>
@@ -1972,8 +1976,8 @@ runbook. <a href="whats-new/">What's new</a> covers recent changes.</p>
 <td><a href="cost-planning/">Cost planning</a></td>
 </tr>
 <tr>
-<td>Understand the template and set deployment inputs</td>
-<td><a href="how-it-works/">How the template works</a>, then <a href="configuration/">Configuration</a></td>
+<td>Look up deployment inputs and runtime settings</td>
+<td><a href="configuration/">Configuration</a></td>
 </tr>
 <tr>
 <td>Provision a foundation without deploying application code</td>

@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1909,9 +1909,9 @@
 <p><strong>Source ingestion</strong> prepares documents for retrieval. <strong>Conversation uploads</strong>
 attach files to an individual chat. They have different configuration and
 authorization requirements.</p>
-<p>Choosing where the orchestrator runs does not choose either path. An agent
-strategy controls orchestration behavior, not whether an ingestion service is
-deployed.</p>
+<p>Choose ingestion separately from orchestrator hosting and strategy. Hosting
+selects where the agent runs; strategy selects how it coordinates models,
+retrieval and tools.</p>
 <h2 id="choose-a-source-ingestion-path">Choose a source ingestion path</h2>
 <table>
 <thead>
@@ -1930,7 +1930,7 @@ deployed.</p>
 <tr>
 <td>Independently populated Search index</td>
 <td>Your own ingestion pipeline populates a compatible index</td>
-<td>You bind <code>SEARCH_RAG_INDEX_NAME</code> explicitly, using <code>ai_search</code> or Foundry IQ <code>searchIndex</code>. Disabling Agent App Ingestion does not create this pipeline or populate the index.</td>
+<td>Configure and run that pipeline, then bind <code>SEARCH_RAG_INDEX_NAME</code> explicitly using <code>ai_search</code> or Foundry IQ <code>searchIndex</code>.</td>
 </tr>
 <tr>
 <td>Agent App Ingestion</td>
@@ -1940,26 +1940,30 @@ deployed.</p>
 </tbody>
 </table>
 <p>Agent App Ingestion provides format-specific chunking, text/image embeddings and
-ingestion jobs for Agent Application. It is not simply a deployment wrapper for
-native Foundry IQ ingestion. Neither path is a drop-in replacement for the other.</p>
+ingestion jobs for Agent Application. Native Foundry IQ ingestion uses Search's
+service-managed pipeline. Choose based on processing, source and permission
+requirements; use <a href="../configuration/#ingestion-application-selection">Configuration</a>
+for the source/index settings.</p>
 <h3 id="sharepoint-is-a-separate-integration">SharePoint is a separate integration</h3>
 <p>Agent App Ingestion's Graph-based SharePoint jobs and Foundry IQ's preview
-<code>indexedSharePoint</code> knowledge source are <strong>different implementations</strong>.
-Configuring native Blob ingestion does not configure SharePoint.</p>
+<code>indexedSharePoint</code> knowledge source use separate pipelines and permission
+configuration.</p>
 <p>The platform includes a preview indexed SharePoint registration template, but
 its payload is not compatible with the current documented API contract.
-Supplying identifiers and consent is not enough to make it a working integration.
+Using that source requires a reviewed template update as well as identifiers
+and consent.
 See <a href="../sharepoint/">SharePoint grounding</a> for the supported service setup,
 the hosted integration requirements and the distinction from Agent App Ingestion's
 Graph jobs.</p>
-<p>The Agent Application ingestion opt-out validator supports native <code>azureBlob</code>, or an
-explicit independently populated index. It does <strong>not</strong> establish SharePoint-only
-ingestion-free support or parity with Agent Application's SharePoint jobs. Validate
-the chosen integration and its document authorization before removing an existing
-ingestion dependency.</p>
+<p>The Agent Application ingestion opt-out validator supports native <code>azureBlob</code> or an
+explicit independently populated index. A SharePoint-only deployment without
+Agent App Ingestion needs source-specific integration and document authorization
+validation before removing an existing ingestion dependency.</p>
 <p><span id="select-the-optional-application"></span></p>
 <h2 id="select-agent-app-ingestion">Select Agent App Ingestion</h2>
-<p><code>DEPLOY_INGESTION_CONTAINER_APP</code> accepts only <code>true</code> or <code>false</code>:</p>
+<p>To include or omit Agent App Ingestion, set the deployment input
+<code>DEPLOY_INGESTION_CONTAINER_APP</code> in the selected <code>azd</code> environment before the
+<a href="../deploy-full-stack/">deployment workflow</a>. It accepts only <code>true</code> or <code>false</code>:</p>
 <table>
 <thead>
 <tr>
@@ -1974,24 +1978,24 @@ ingestion dependency.</p>
 </tr>
 <tr>
 <td>Existing Agent Application environment</td>
-<td>Retains its recorded selection. A populated older environment without a selection retains ingestion. A failed state lookup requires restored access or an explicit choice, not a guess.</td>
+<td>Retains its recorded selection. A populated older environment without a selection retains ingestion. After a failed state lookup, restore access or make an explicit choice.</td>
 </tr>
 <tr>
 <td>Explicit custom definition</td>
-<td>Retains its declared component intent and the current additive foundation composition. This switch applies to Agent Application; it does not remove custom components.</td>
+<td>Retains its declared components alongside the foundation. This switch controls Agent Application's ingestion component only.</td>
 </tr>
 </tbody>
 </table>
 <p>An empty azd-created resource group is considered fresh. Pre-provision persists
 the resolved choice, and configuration publishes the effective value under
 App Configuration label <code>agent-lz</code>.</p>
-<p>Contextual setting, applied before the matching <a href="../deploy-full-stack/">deployment runbook</a>:</p>
+<p>For example, to omit Agent App Ingestion:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
 </code></pre></div>
 <p>For Agent Application, opt-out excludes ingestion from subsequent
 provisioning, checkout, build, deployment, endpoint reconciliation and
-identity/role reconciliation. It does not change the retrieval backend,
-source/index bindings, strategy, topology or document authorization.</p>
+identity/role reconciliation. The retrieval backend, source/index bindings,
+strategy, topology and document authorization retain their configured values.</p>
 <p>An ingestion-free <code>ai_search</code> deployment needs <code>SEARCH_RAG_INDEX_NAME</code>.
 For Foundry IQ with an independent index, also select both
 <code>FOUNDRY_IQ_PATTERN=searchIndex</code> and
@@ -2004,18 +2008,17 @@ validation.</p>
 <ul>
 <li><strong><code>false</code></strong> hides attachment controls and rejects server uploads and client
   preflight before ingestion endpoint or Dapr fallback resolution.</li>
-<li><strong><code>true</code></strong> retains upload eligibility checks. It does not give every caller
-  permission to upload.</li>
-<li><strong>Missing</strong> retains legacy behavior, not a safe opt-out.</li>
+<li><strong><code>true</code></strong> permits uploads subject to caller and file eligibility checks.</li>
+<li><strong>Missing</strong> retains legacy behavior. Use an explicit value to control uploads.</li>
 </ul>
 <p>Text chat, delegated authentication and retrieval remain available when uploads
 are disabled. When enabled, authenticated-mode eligibility, anonymous Copilot
 restrictions, conversation ownership/eligibility, supported file types and
 size/count limits still apply. Hosted upload eligibility also requires a
-conversation identifier. Native source ingestion does not implement this chat
-attachment path.</p>
-<p>Custom applications own their upload contract. A published capability flag does
-not prove that a custom application implements uploads.</p>
+conversation identifier. Use <a href="../multimodality/#attach-a-pdf-to-a-conversation">Images and voice</a>
+to configure the conversation-upload retrieval source and test PDF attachments.</p>
+<p>Custom applications define their own upload behavior. Check the application's
+implementation and tests before exposing attachment controls.</p>
 <h2 id="upgrade-and-retirement-safety">Upgrade and retirement safety</h2>
 <p>Before changing an existing selection, record the current platform revision,
 manifest, source/index bindings and ingestion dependencies. Back up relevant
@@ -2040,23 +2043,26 @@ indexes, or revoke existing identity permissions. Resource retirement and RBAC
 cleanup require separate, deliberately authorized actions after validation.</p>
 <p>To restore ingestion, restore the previous explicit selection and source/index
 configuration, rerun the matching full workflow and retest. Enabling Agent App
-Ingestion alone does not repair bindings. Before rolling back to a UI without the upload gate,
-restore ingestion and its required endpoint/source configuration <strong>first</strong>.
+Ingestion requires valid endpoint and source bindings. Before rolling back to
+a UI without the upload gate, restore ingestion and its required endpoint/source
+configuration <strong>first</strong>.
 Rollback must not delete documents or indexes.</p>
 <h2 id="authorization-remains-a-design-requirement">Authorization remains a design requirement</h2>
 <p>Preserve authentication, Entra ID/OBO, RBAC and document-level authorization
-across ingestion and retrieval. Test with both an allowed user and a user who
-must not see the document. A successful indexer, greeting or hook is insufficient.</p>
+across ingestion and retrieval. Test with both an allowed user and a denied
+user. Confirm the allowed user retrieves the document and its citation, and
+the denied user's retrieved document IDs exclude it.</p>
 <p>The default native Blob permission metadata is <code>["rbacScope"]</code>. An explicit <code>[]</code>
 is a deliberate shared-source choice only for supported active non-ADLS native
-Blob ingestion, not a private-link or login repair. See
+Blob ingestion, where every admitted user may read the corpus. Keep
+private-link and sign-in troubleshooting separate from that access policy. See
 <a href="../configuration/#explicit-shared-source-permission-options">permission options</a>
 and <a href="../network-isolation/#private-native-blob-ingestion">private Blob connectivity</a>.</p>
 <h2 id="related-references">Related references</h2>
 <ul>
 <li><a href="../configuration/#ingestion-application-selection">Configuration</a></li>
 <li><a href="../hosted-agents/#topologies">Hosted agents and topologies</a></li>
-<li><a href="../build-your-own-app/">Custom application contracts</a></li>
+<li><a href="../build-your-own-app/">Custom application definitions</a></li>
 <li><a href="https://github.com/Azure/agent-app-ingestion">Ingestion component source</a></li>
 <li><a href="https://github.com/Azure/agent-landing-zone/blob/main/config/deployment/composition.py">Platform ingestion validation</a></li>
 </ul>

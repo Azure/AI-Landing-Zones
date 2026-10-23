@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2027,7 +2027,7 @@ agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook after the hosted agent works and you need Teams or Microsoft
-365 Copilot distribution while Foundry PNA remains disabled. For a Copilot
+365 Copilot distribution while Foundry public network access remains disabled. For a Copilot
 Studio private relay instead, use <a href="../connect-copilot-studio/">Connect Copilot Studio</a>.</p>
 <p>Messages from either client follow the same path:</p>
 <div class="runbook-path">
@@ -2091,8 +2091,8 @@ Foundry model usage, agent hosting or other Azure services. See
 <p>Obtain your organization's approval before sending data through this
 channel. Microsoft 365 processes publishing metadata and conversations under
 its own compliance and data-residency commitments. Validate how the agent
-authenticates users and enforces data permissions through this channel;
-tests through another client do not establish those guarantees.</p>
+authenticates users and enforces data permissions in both Teams and
+Microsoft 365 Copilot before rollout.</p>
 </div>
 <h2 id="procedure">Procedure</h2>
 <p>Complete Steps 1-4 in order, then run all client and configuration checks under
@@ -2191,7 +2191,7 @@ session <strong>before Step 3</strong>, and only after your organization approve
 For a <code>Shared</code> pilot, ask an administrator to grant selected testers
 <strong>Foundry Agent Consumer</strong> at the
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization#grant-access-to-one-agent">agent scope</a>.
-Sharing an app link does not grant invocation permission.</p>
+Grant this access before sharing the app link.</p>
 <div class="admonition note">
 <p class="admonition-title">If the agent identity check fails</p>
 <p>Stop and follow the
@@ -2439,12 +2439,12 @@ under <strong>Built by your org</strong>.</p>
 users:</p>
 <ol>
 <li>Complete any sign-in prompt. Send a greeting, a representative workload
-   question and a follow-up. Confirm that the expected tools and knowledge
-   sources work; receiving a reply alone is not enough.</li>
+   question and a follow-up. Confirm that the answers use the expected tools
+   and knowledge sources.</li>
 <li>For a <code>Shared</code> pilot, test with an authorized user and a tenant member who
    lacks agent permission. The second user must be denied. Use member accounts,
    not guests. With <code>Tenant</code>, all tenant members are authorized to call the
-   agent, so this is not a valid negative test.</li>
+   agent; test protected-data restrictions separately as described next.</li>
 <li>If the agent handles protected data, test with identities that should and
    should not access that data. Confirm the intended restrictions in both
    clients, regardless of publication scope.</li>
@@ -2551,7 +2551,7 @@ block below. A <code>Tenant</code> update can require renewed admin approval.</p
 </tr>
 <tr>
 <td>The agent replies, but tools or retrieval fail.</td>
-<td>Check runtime identity permissions, data authorization and outbound access. A successful test in another client does not validate identity propagation through Teams or Copilot.</td>
+<td>Check runtime identity permissions, data authorization and outbound access. Trace the failing request through Teams or Copilot to verify identity propagation in that client.</td>
 </tr>
 <tr>
 <td>A conversation is stuck or returns <code>no tool output found</code>.</td>

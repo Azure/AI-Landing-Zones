@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1992,15 +1992,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#collect-evidence" class="md-nav__link">
+  <a href="#collect-diagnostics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Collect evidence
+        Collect diagnostics
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Collect evidence">
+    <nav class="md-nav" aria-label="Collect diagnostics">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2519,15 +2519,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#collect-evidence" class="md-nav__link">
+  <a href="#collect-diagnostics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Collect evidence
+        Collect diagnostics
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Collect evidence">
+    <nav class="md-nav" aria-label="Collect diagnostics">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2600,9 +2600,10 @@
 
 
 <h1 id="troubleshooting">Troubleshooting</h1>
-<p>Start with the <strong>first failing stage and its exact error</strong>, not the last command
-that returned success. Provisioning, post-provision configuration, image
-preparation, application deployment and runtime access are separate checks.</p>
+<p>Find the <strong>first failing stage and its exact error</strong>, then use the matching
+section below. Deployment proceeds through resource provisioning, service
+configuration, image preparation and application deployment. Runtime checks
+confirm the application can authenticate and use its dependencies.</p>
 <table>
 <thead>
 <tr>
@@ -2638,14 +2639,14 @@ preparation, application deployment and runtime access are separate checks.</p>
 <li>Run diagnostics from the platform repository root. Confirm the intended
    environment with <code>azd env list</code> and the Azure CLI subscription with
    <code>az account show</code>. Verify the identity used by <code>azd</code> separately from the
-   CLI identity; they need not be the same.</li>
+   CLI identity; each tool can use a different account.</li>
 <li>Record the failing command, time, stage, source revision and relevant
    non-secret settings, such as <code>NETWORK_ISOLATION</code>, <code>BUILD_MODE</code> and
    <code>DEPLOYMENT_TOPOLOGY</code>.</li>
 <li>For private environments, use a host with the required VPN/VNet connectivity.
    Inspect DNS, TLS and authorization separately.</li>
-<li>Preserve local work and data. Do not delete resources, clear bindings,
-   disable authentication or bypass preflight to make an error disappear.</li>
+<li>Preserve local work, data, environment bindings and security controls while
+   investigating. Use the recovery steps below for the failed stage.</li>
 </ol>
 <p>Here, <code>classic</code> means the orchestrator runs in a <strong>Container App</strong>; hosted
 topologies run it in <strong>Foundry Agent Service</strong>. Confirm the selected topology
@@ -2664,39 +2665,37 @@ user identifiers and private environment names.</p>
 an incomplete image handoff.</p>
 <p><strong>Diagnose:</strong> The first provision creates prerequisites and records
 <code>HOSTED_AGENT_PREPARED=true</code>. Preparation records an immutable image digest.
-A subsequent provision materializes the <code>DEPLOY_HOSTED_AGENT=true</code> handoff.
-None of these steps alone creates the data-plane agent version.</p>
+A subsequent provision records the <code>DEPLOY_HOSTED_AGENT=true</code> handoff.
+The deployment step then creates the running agent version.</p>
 <p><strong>Correct:</strong> Follow the hosted sequence in
 <a href="../deploy-full-stack/#step-4-deploy">Deploy the full stack</a> from the first
 incomplete step. For an unchanged, compatible image, use the
 <a href="../deploy-full-stack/#redeploy-applications-only">redeployment guidance</a>.
-Do not set generated output flags manually.</p>
+Let the workflow generate its output flags.</p>
 <p><strong>Verify:</strong> Deployment targets the intended digest and routed agent version.
 Then test authenticated task execution and the retrieval/authorization features
-you use; a protocol greeting alone is not acceptance.</p>
+you use.</p>
 <h3 id="hosted-agent-deployment-returns-an-agent-permission-denial">Hosted agent deployment returns an agent permission denial</h3>
 <p><strong>Symptom:</strong> HTTP 403 names
 <code>Microsoft.CognitiveServices/accounts/AIServices/agents/read</code>.</p>
 <p><strong>Diagnose:</strong> Compare the denied object ID with the actual deployment principal.
-Successful ARM provisioning or a TLS connection does not prove Foundry
-data-plane permission.</p>
+Foundry data-plane permission is granted separately from ARM provisioning access.</p>
 <p><strong>Correct:</strong> Have an authorized administrator review the minimum project-scoped
 agent authoring role for that principal. A runner creating/updating agents needs
 <strong>Foundry User</strong> (formerly <strong>Azure AI User</strong>) or the appropriate equivalent
 custom role. Azure AI Developer targets different hub/workspace scenarios.
-Allow role propagation before retrying; do not grant resource-group Owner as
-a substitute.</p>
+Allow role propagation before retrying, keeping grants scoped to the project.</p>
 <p><strong>Verify:</strong> The same principal can perform the previously denied operation.
 Test delegated-user/OBO access separately.</p>
 <h3 id="application-definition-does-not-match-the-environment">Application definition does not match the environment</h3>
 <p><strong>Symptom:</strong> <code>Application definition binding check failed. No changes were made.</code>
 with exit code <code>2</code>. An invalid definition instead exits with code <code>1</code>.</p>
 <p><strong>Diagnose:</strong> Compare the selected definition's application ID with the existing
-<code>AGENTLZ_APP_ID</code> binding. A custom hosted component does not automatically require
-switching Agent Application's orchestrator topology.</p>
+<code>AGENTLZ_APP_ID</code> binding. The application ID identifies the application selected
+for that environment; orchestrator topology is a separate choice.</p>
 <p><strong>Correct:</strong> Restore the matching definition. For a different application ID,
 use a separate environment and select the definition <strong>before first provision</strong>.
-Do not delete the binding or switch topology to bypass the mismatch.</p>
+Retain the original environment's binding and topology.</p>
 <p><strong>Verify:</strong> Definition validation and binding checks pass for the intended
 environment. See <a href="../build-your-own-app/">Custom applications</a>.</p>
 <p><span id="custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator"></span></p>
@@ -2716,8 +2715,8 @@ cannot. For an external registry, review its supported pull-role mode and
 resource scope separately.</p>
 <p><strong>Verify:</strong> Image activation succeeds and the actual runtime principal receives
 the declared capabilities. Check the routed version before testing the agent.
-Do not enable registry admin credentials, grant broad roles or replace
-delegated-user/OBO authentication with a service identity.</p>
+Keep registry authentication identity-based, grants narrowly scoped and
+delegated-user/OBO authentication intact.</p>
 <h3 id="private-deployment-prerequisites-failed">Private deployment prerequisites failed</h3>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Private deployment prerequisites failed. Use a VPN/VNet-connected host; RUN_FROM_JUMPBOX is not a connectivity bypass.
@@ -2727,9 +2726,10 @@ TLS to App Configuration, or to the Foundry project endpoint for hosted
 topologies. The gate allows up to 20 seconds per endpoint.</p>
 <p><strong>Correct:</strong> Move to the approved jumpbox, VPN or peered-VNet runner and inspect
 the <a href="../network-isolation/#verify-private-connectivity">private connectivity path</a>.
-<code>RUN_FROM_JUMPBOX</code> is not a bypass.</p>
+The <code>RUN_FROM_JUMPBOX</code> input requests a connectivity check from that host.</p>
 <p><strong>Verify:</strong> Resolve and reach each required endpoint from that runner, then
-retry the failed stage. A reachable endpoint can still reject authorization.</p>
+retry the failed stage. If it returns an authorization error, check the
+requesting principal and its permissions next.</p>
 <h3 id="acr-task-agent-pool-is-missing">ACR Task agent pool is missing</h3>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Run 'azd env set DEPLOY_ACR_TASK_AGENT_POOL true' and 'azd provision', or set BUILD_MODE=local on a VNet-connected host with Docker.
@@ -2742,9 +2742,9 @@ a prebuilt digest.</p>
 azd<span class="w"> </span>provision
 </code></pre></div>
 <p>For supported Container App builds, local Docker on a connected host is an
-alternative. The jumpbox does not include Docker by default. Local mode is
-<strong>not</strong> a fallback for automatic hosted image preparation or isolated custom
-source builds. See <a href="../network-isolation/#image-builds-in-isolated-deployments">isolated image builds</a>.</p>
+alternative. The jumpbox does not include Docker by default. Automatic hosted
+image preparation and isolated custom source builds require the supported ACR
+Tasks path. See <a href="../network-isolation/#image-builds-in-isolated-deployments">isolated image builds</a>.</p>
 <p><strong>Verify:</strong> Confirm the selected environment has the provisioned pool output
 and that a build runs in it. Then resume the topology's
 <a href="../deploy-full-stack/#step-4-deploy">deployment sequence</a>; hosted preparation
@@ -2755,7 +2755,7 @@ may still be incomplete.</p>
 <p><strong>Diagnose:</strong> Retrieve the failed ACR run log from a connected host. Correlate
 timestamps and the build-agent source address with firewall deny logs. Check
 the pinned lockfile's <code>resolved</code> URLs, including redirect CDN destinations.
-A pulled base image does not prove package-feed access.</p>
+Base-image registries and package feeds can require separate firewall allowances.</p>
 <p><strong>Correct:</strong> Confirm the pool and <code>extendFirewallForAcrTaskBuilds</code> are enabled
 and the shipped firewall changes are provisioned. The platform includes the
 orchestrator's Microsoft npm feeds, <code>*.vsblob.vsassets.io</code> and the existing
@@ -2764,13 +2764,12 @@ dependencies, use
 <a href="../network-isolation/#application-specific-package-feeds">application-specific package feeds</a>.
 Keep exceptions limited to build-subnet HTTPS traffic.</p>
 <p><strong>Verify:</strong> Retry the same pinned source and confirm package installation and
-compilation both complete. Do not upgrade npm speculatively or assume a missing
-compiler proves a dependency-version defect.</p>
+compilation both complete. If compilation still fails, diagnose its first
+error after confirming dependencies were installed.</p>
 <h3 id="stale-component-checkout">Stale component checkout</h3>
 <p><strong>Symptom:</strong> <code>Remove or relocate the stale sibling checkout</code>.</p>
 <p><strong>Diagnose:</strong> An Agent Application component's sibling folder exists at a different commit
-from <code>manifest.json</code>. Matching <code>HEAD</code> alone would not establish that local work
-is absent.</p>
+from <code>manifest.json</code>. Check <code>HEAD</code> and local modifications before replacing it.</p>
 <p><strong>Correct:</strong> Inspect the named checkout, preserve local modifications and move
 it aside. Retry deployment to obtain the expected source. Delete it only after
 confirming it contains nothing needed; keep component development elsewhere.</p>
@@ -2781,10 +2780,9 @@ the intended application revision is healthy.</p>
 <p><strong>Diagnose:</strong> Find the first failing component and its newest <code>.logs</code> file.
 Separate source checkout, image build/push, role and application-update errors.</p>
 <p><strong>Correct:</strong> Repair the dependency identified by that log. Use the private
-connectivity or build-pool entries above when appropriate. Do not assume every
-component failure is a registry-permission problem.</p>
+connectivity or build-pool entries above when appropriate.</p>
 <p><strong>Verify:</strong> Retry the failed workflow and inspect the actual image, intended
-revision and startup logs, not only the child command's exit status.</p>
+revision and startup logs.</p>
 <h3 id="deploy-succeeds-but-the-ui-or-administrative-panel-does-not-start">Deploy succeeds but the UI or administrative panel does not start</h3>
 <p><strong>Symptom:</strong> Child commands succeed, but the latest revision is unhealthy.
 Logs name <code>OAUTH_AZURE_AD_CLIENT_ID</code>, <code>OAUTH_AZURE_AD_CLIENT_SECRET</code>,
@@ -2797,46 +2795,45 @@ Store the credential in Key Vault and publish its reference, not its value,
 under label <code>agent-lz</code>. Reload configuration through the supported
 <a href="../deploy-full-stack/#change-a-runtime-setting">lifecycle workflow</a>.</p>
 <p><strong>Verify:</strong> Check revision health, the Entra login redirect, real user login,
-OBO and rejection of unauthenticated panel data requests. Do not disable the
-panel or authentication to turn a missing-authentication error into a pass.</p>
+OBO and rejection of unauthenticated panel data requests. Keep panel
+authentication required throughout recovery.</p>
 <h2 id="provision-and-post-provision-stages">Provision and post-provision stages</h2>
 <h3 id="search-shared-private-links-are-not-ready">Search shared private links are not ready</h3>
 <p><strong>Symptom:</strong> Private native <code>azureBlob</code> source configuration reports pending
 approval, denied Search reads or a readiness timeout.</p>
 <p><strong>Diagnose:</strong> Inspect the <strong>exact</strong> reported Search service, link name, target
-and group. Runner private access and successful ARM provisioning do not prove
-Search-managed outbound access. Each required source link must report both
-<code>Approved</code> and <code>Succeeded</code>.</p>
+and group. Search uses its own outbound private links to storage and models,
+separately from the runner's network access. Each required source link must
+report both <code>Approved</code> and <code>Succeeded</code>.</p>
 <p><strong>Correct:</strong></p>
 <ul>
 <li><strong>Pending:</strong> Have an authorized administrator investigate and approve only
   the exact target request using
   <a href="https://learn.microsoft.com/azure/search/search-indexer-howto-access-private">Microsoft's procedure</a>.
-  Configuration does not approve requests automatically.</li>
+  An authorized administrator must approve the requests.</li>
 <li><strong>ARM 401/403:</strong> Review the runner's
   <code>Microsoft.Search/searchServices/sharedPrivateLinkResources/read</code> permission.
-  Target approval does not replace it.</li>
+  The runner needs this read permission in addition to target approval.</li>
 <li><strong>Approved but provisioning:</strong> Allow propagation and inspect the failed
   link's state. Readiness polling has a 600-second budget, 10-second intervals
   and requests bounded by 30 seconds and the remaining budget.</li>
 <li><strong>Missing long-name manifest:</strong> Re-provision the updated template through an
   authorized deployment to publish <code>SEARCH_SHARED_PRIVATE_LINKS</code> under
-  <code>agent-lz</code>. Do not invent a hashed name or edit metadata to approve another
-  request.</li>
+  <code>agent-lz</code>. Use the published link names to identify the matching requests.</li>
 </ul>
 <p><strong>Verify:</strong> Rerun post-provision from a connected host, then verify source
 processing and authorized retrieval. The gate runs before dependent Search
-mutation and source creation. Do not approve unrelated requests, enumerate
-target connections as a workaround, enable public access or bypass the gate.
+mutation and source creation. Retain private access and the readiness gate;
+approve only the requests for the intended source targets.
 See <a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
 <h3 id="ingestion-selection-does-not-match-the-source-configuration">Ingestion selection does not match the source configuration</h3>
 <p><strong>Symptom:</strong> A fresh environment has no ingestion Container App, a source
 combination fails validation, or attachment behavior differs from expectations.</p>
 <p><strong>Diagnose:</strong> Fresh Agent Application deployments default to
 <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>, independently of orchestrator hosting.
-Native source ingestion covers supported Foundry IQ sources, not all Agent App
-Ingestion features or conversation uploads. Existing environments and custom
-definitions retain their component intent.</p>
+Native source ingestion uses Search's service-managed pipeline. Conversation
+uploads and Agent App Ingestion features require separate selection.
+Existing environments and custom definitions retain their component selections.</p>
 <p><strong>Correct:</strong> Check the resolved component selection, retrieval backend, source
 kind and index bindings using <a href="../ingestion/">Ingestion</a>. To retain or restore
 Agent App Ingestion, select it explicitly and run the
@@ -2848,60 +2845,59 @@ An externally populated index must be named explicitly where required.</p>
 On platform v4.2.3 / UI v3.2.2, retain
 <code>DEPLOY_INGESTION_CONTAINER_APP=true</code> until the coordinated
 <a href="../ingestion/#upgrade-and-retirement-safety">upgrade</a> is complete.
-Clearing ingestion endpoints or editing the attachment widget is not a
-supported opt-out. Never switch to anonymous authentication to hide uploads.</p>
+After upgrading, use the explicit ingestion selection to control uploads.
+Retain valid endpoints and authenticated access during the upgrade.</p>
 </div>
 <p><strong>Verify:</strong> Confirm the effective <code>agent-lz</code> key and intended UI revision.
 With supported opt-out, attachment controls must be hidden and direct/stale
 uploads rejected, while text chat, authentication, retrieval and document
 authorization still work. A missing key retains legacy behavior; explicit
-<code>false</code> activates the gate. Do not delete existing apps, documents or indexes
-as incidental cleanup.</p>
+<code>false</code> activates the gate. Retire existing apps and permissions only as a
+separate authorized task, preserving documents and indexes.</p>
 <h3 id="shared-source-permission-options-are-rejected-or-unexpected">Shared-source permission options are rejected or unexpected</h3>
 <p><strong>Symptom:</strong> Source configuration rejects
 <code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS</code>, or a source has unexpected permission
 metadata.</p>
-<p><strong>Diagnose:</strong> Omitted or actual-null values retain <code>["rbacScope"]</code>; explicit
-<code>[]</code> means something different. For active native Blob ingestion, an empty list
-deliberately selects shared access only for recognized non-ADLS <code>azureBlob</code>
+<p><strong>Diagnose:</strong> Omitted or null values retain <code>["rbacScope"]</code>. For active native
+Blob ingestion, explicit <code>[]</code> selects shared access only for recognized non-ADLS <code>azureBlob</code>
 configuration. Unsupported or ambiguous active sources fail closed. In
 non-native <code>ai_search</code> or <code>foundry_iq</code>/<code>searchIndex</code> modes, accepted <code>[]</code> is
-unused metadata, not shared-source activation.</p>
+unused metadata; these modes retain their source's configured access policy.</p>
 <p><strong>Correct:</strong> Supply valid JSON for the intended source policy. For protected
 Blob ingestion, restore <code>["rbacScope"]</code>. Nonempty non-ADLS Blob lists support
 only <code>rbacScope</code> and <code>sensitivityLabels</code>. Review
-<a href="../configuration/#explicit-shared-source-permission-options">the full input contract</a>
+<a href="../configuration/#explicit-shared-source-permission-options">the accepted permission values</a>
 for source/pattern constraints and the historical <code>managed</code> alias.</p>
 <p><strong>Verify:</strong> Rerun source configuration, inspect permission metadata and test
-document allow/deny behavior. Do not use <code>[]</code> to bypass private-link, RBAC or
-authentication failures.</p>
+document allow/deny behavior. Select <code>[]</code> only for an intentionally shared
+corpus; resolve private-link, RBAC and authentication failures separately.</p>
 <h3 id="firewall-dns-proxy-is-enabled-but-clients-still-resolve-incorrectly">Firewall DNS proxy is enabled but clients still resolve incorrectly</h3>
 <p><strong>Symptom:</strong> Private names resolve incorrectly after enabling the DNS proxy.</p>
 <p><strong>Diagnose:</strong> <code>ENABLE_FIREWALL_DNS_PROXY</code> defaults to <code>false</code>; its opt-in applies
-only with firewall deployment and isolation enabled. It does not change VNet/VPN
-client DNS settings or build-feed egress.</p>
+only with firewall deployment and isolation enabled. VNet/VPN client DNS
+settings and build-feed egress are configured separately.</p>
 <p><strong>Correct:</strong> Inspect the affected client's DNS server, zone links and forwarding
 path. Make client DNS changes deliberately and separately from proxy enablement.
 See <a href="../network-isolation/#opt-in-firewall-dns-proxy">Firewall DNS proxy</a>.</p>
 <p><strong>Verify:</strong> Resolve the required names and test private TLS from the actual
-client. Do not enable public access as a workaround.</p>
+client with public access still disabled.</p>
 <h3 id="hosted-configuration-tls-handshake-stalls">Hosted configuration TLS handshake stalls</h3>
 <p><strong>Symptom:</strong> Hosted bootstrap stalls while loading App Configuration or Key
 Vault references.</p>
 <p><strong>Diagnose:</strong> Distinguish name resolution, routing, TLS and HTTP authorization
-errors at both endpoints. Confirm the actual runtime identity. MTU is not an
-established cause of every timeout.</p>
+errors at both endpoints. Confirm the actual runtime identity and identify
+which connection stage stalls before choosing a recovery action.</p>
 <p><strong>Correct:</strong> Only for the confirmed transport compatibility case, use the
 <a href="../hosted-agents/#configuration-tls-compatibility">endpoint-scoped TLS profile</a>.
 It was introduced in platform v4.2.3 with orchestrator v5.2.1. Supply the actual
 <code>KEY_VAULT_URI</code>, deliberately select <code>APP_CONFIG_TLS_COMPATIBILITY=true</code> and
 deploy the corrected agent version. To restore SDK defaults, use <code>false</code> and
-redeploy. Never disable certificate verification, downgrade TLS globally or
-broaden roles to conceal a transport failure.</p>
+redeploy. Keep certificate verification, the minimum TLS version and scoped
+role assignments intact.</p>
 <p>If bootstrap resolves a UI-only secret, inspect the
 <a href="../configuration/#runtime-settings">actual label selectors</a>: in the SDK,
 <code>None</code> selects all labels, while <code>"\0"</code> selects only unlabelled settings.
-Use the corrected selector, not weaker vault permissions or deleted labels.</p>
+Use the corrected selector while retaining the intended vault permissions and labels.</p>
 <p><strong>Verify:</strong> The new version completes configuration using valid TLS and the
 intended identity. Test real application behavior separately.</p>
 <h3 id="search-preflight-region-and-quota">Search preflight region and quota</h3>
@@ -2916,7 +2912,8 @@ Verify local hooks and repository-owned infrastructure match the intended
 coordinated source. Request quota or deliberately select a supported region;
 do not set <code>PREFLIGHT_SKIP</code> or <code>AGENTLZ_REGIONAL_PREFLIGHT_SKIP</code>.</p>
 <p><strong>Verify:</strong> Preflight checks the effective region and full creation count,
-then provisioning succeeds. Preflight does not reserve capacity.</p>
+then provisioning succeeds. Capacity remains subject to availability at
+provisioning time.</p>
 <h3 id="quota-check-rejects-an-unchanged-existing-deployment">Quota check rejects an unchanged existing deployment</h3>
 <p><strong>Symptom:</strong> Re-provision reports insufficient remaining model quota for the
 same account, deployment and configured capacity.</p>
@@ -2929,19 +2926,19 @@ SKU. Use the coordinated correction introduced in v4.2.3
 It credits only verified successful matching capacity and aggregates quota
 pools. Fresh allocations and changed/unverified targets still need capacity.</p>
 <p><strong>Verify:</strong> Both preflight gates evaluate the intended incremental request.
-Do not delete the existing deployment, reduce capacity just to pass or disable
-the gate. Model availability checks still apply.</p>
+Retain the existing deployment, intended capacity and preflight gates.
+Model availability checks still apply.</p>
 <h3 id="foundry-rejects-evaluation-api-key-creation">Foundry rejects evaluation API-key creation</h3>
 <p><strong>Symptom:</strong> <code>Failed to list key. disableLocalAuth is set to be true</code>.</p>
 <p><strong>Diagnose:</strong> The account requires Entra ID. Legacy v4.2.2 post-provision still
-attempted evaluation-key injection; its final success message did not prove
-the secret existed.</p>
+attempted evaluation-key injection and could report success despite failing
+to create the secret.</p>
 <p><strong>Correct:</strong> Keep local authentication disabled and use Entra ID for evaluation.
 The correction introduced in v4.2.3
 (<a href="https://github.com/Azure/agent-landing-zone/pull/773">PR #773</a>) skips
 inapplicable key injection and surfaces unexpected key/Key Vault errors.</p>
 <p><strong>Verify:</strong> Post-provision reports the expected Entra-only path and evaluation
-works with the intended identity. Do not enable keys to hide the error.</p>
+works with the intended identity while local authentication remains disabled.</p>
 <h3 id="administrative-panel-cannot-resolve-its-cosmos-database">Administrative panel cannot resolve its Cosmos database</h3>
 <p><strong>Symptom:</strong> <code>DEPLOY_ADMINISTRATIVE_PANEL is true but DATABASE_ACCOUNT_NAME is not set</code>.</p>
 <p><strong>Diagnose:</strong> Legacy v4.2.2 panel role setup expected process inputs even when
@@ -2951,8 +2948,8 @@ environment. Use the coordinated correction introduced in v4.2.3
 (<a href="https://github.com/Azure/agent-landing-zone/pull/773">PR #773</a>), which reads
 published settings when process inputs are absent.</p>
 <p><strong>Verify:</strong> Panel configuration resolves the actual account/database and
-preserves container-scoped grants. Do not guess a database name or broaden
-permissions to the whole account.</p>
+preserves container-scoped grants. Compare the resolved names with the
+provisioned resources and keep permissions scoped to the required containers.</p>
 <h3 id="missing-endpoint-output">Missing endpoint output</h3>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Missing &lt;KEY&gt;. Run provisioning and load the selected azd environment outputs before this stage.
@@ -2962,8 +2959,7 @@ permissions to the whole account.</p>
 <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code>.</p>
 <p><strong>Correct:</strong> Confirm the environment first. If it is already provisioned and
 you moved machines, use <code>azd env refresh</code>. If provision is incomplete, follow
-<a href="../deploy-infra-only/">Deploy infrastructure only</a>. Do not invent endpoint
-values to satisfy a guard.</p>
+<a href="../deploy-infra-only/">Deploy infrastructure only</a> to generate the required outputs.</p>
 <p><strong>Verify:</strong> The environment's outputs refer to its actual provisioned resources,
 then retry the failed stage.</p>
 <h3 id="private-post-provision-prerequisites-failed">Private post-provision prerequisites failed</h3>
@@ -2974,8 +2970,8 @@ then retry the failed stage.</p>
 Configuration, so configuration has not started.</p>
 <p><strong>Correct:</strong> Connect through an approved jumpbox, VPN or peered VNet. Follow
 <a href="../deploy-infra-only/#complete-a-deferred-post-provision">Complete a deferred post-provision</a>.</p>
-<p><strong>Verify:</strong> The configuration hook actually completes from the connected host.
-Do not infer success from resource provisioning alone.</p>
+<p><strong>Verify:</strong> The configuration hook completes from the connected host, then
+application deployment can resume.</p>
 <h3 id="post-provision-was-deferred">Post-provision was deferred</h3>
 <p><strong>Symptom:</strong></p>
 <div class="highlight"><pre><span></span><code>Post-provision configuration explicitly deferred; application setup is incomplete.
@@ -2987,7 +2983,7 @@ the application. In isolated mode, <code>RUN_FROM_JUMPBOX=false</code> (also <co
 <p><strong>Correct:</strong> Complete
 <a href="../deploy-infra-only/#complete-a-deferred-post-provision">the deferred step</a>
 from a connected host. A truthy <code>RUN_FROM_JUMPBOX</code> requests connectivity
-checking; it does not provide connectivity.</p>
+checking from the runner's existing network path.</p>
 <p><strong>Verify:</strong> Post-provision logs show completed configuration rather than another
 deferral before resuming application deployment.</p>
 <h3 id="network_isolation-is-not-a-boolean"><code>NETWORK_ISOLATION</code> is not a boolean</h3>
@@ -2996,7 +2992,7 @@ deferral before resuming application deployment.</p>
 <code>true</code> or <code>false</code>.</p>
 <p><strong>Correct:</strong> Restore the value required by the intended network design, for
 example <code>azd env set NETWORK_ISOLATION true</code> for an isolated environment.
-Do not flip it to <code>false</code> merely to pass connectivity checks.</p>
+Use <code>false</code> only when the intended network design is non-isolated.</p>
 <p><strong>Verify:</strong> The effective value matches the intended topology and validation
 passes before any provisioning changes.</p>
 <h3 id="provisioning-fails-in-azure">Provisioning fails in Azure</h3>
@@ -3007,36 +3003,36 @@ resource-name error.</p>
 <p><strong>Correct:</strong> Resolve that specific cause. Region/name changes can replace
 stateful resources, so review their impact before retrying the
 <a href="../deploy-infra-only/#reconfigure-or-upgrade-the-foundation">foundation workflow</a>.
-Never delete an existing resource just because its name is occupied.</p>
+For a name conflict, identify the existing resource and its owner before
+deciding whether to reuse it or choose another name.</p>
 <p><strong>Verify:</strong> The failed deployment and post-provision configuration both complete.
-Incremental ARM success is not application acceptance.</p>
+Then deploy the application and run its authenticated task and access checks.</p>
 <h2 id="runtime">Runtime</h2>
 <h3 id="the-orchestrator-returns-http-422">The orchestrator returns HTTP 422</h3>
 <p><strong>Symptom:</strong> The agent rejects a request with validation details.</p>
 <p><strong>Diagnose:</strong> The stateless <strong>Responses 2.0.0</strong> adapter rejects non-null
 <code>previous_response_id</code>, empty asks and message arrays not ending with a user
-message. Top-level <code>conversation</code> is ignored by this adapter, not itself the
-reason for a rejection. The UI's <code>/invocations?api-version=v1</code> uses another
-request shape.</p>
+message. The adapter ignores top-level <code>conversation</code>.
+The UI's <code>/invocations?api-version=v1</code> uses another request shape.</p>
 <p><strong>Correct:</strong> Use the returned validation detail and the correct
-<a href="../hosted-agents/#calling-the-agent">calling contract</a>. For stateless Responses,
+<a href="../hosted-agents/#calling-the-agent">request format</a>. For stateless Responses,
 remove state selectors and supply complete, ordered context.</p>
-<p><strong>Verify:</strong> A valid request succeeds through the intended endpoint. Do not
-interchange endpoint request bodies.</p>
+<p><strong>Verify:</strong> A valid request succeeds through the intended endpoint using that
+endpoint's request shape.</p>
 <h3 id="hosted-chat-works-but-history-is-unavailable">Hosted chat works but history is unavailable</h3>
 <p><strong>Symptom:</strong> A greeting works, but history is unavailable or panel history
 returns 503.</p>
 <p><strong>Diagnose:</strong> Hosted runtime is stateless. Without separately activated
 continuity, context is limited to the active UI session. Agent Application Cosmos DB
 in <code>hosted-panel</code> stores owner/index and feedback metadata, not transcripts.
-Agent Service backing resources alone do not enable UI history.</p>
+UI history requires continuity and the panel settings below.</p>
 <p><strong>Correct:</strong> Review continuity activation, panel gates, owner binding and
 agent-scoped permissions in <a href="../hosted-agents/#calling-the-agent">Hosted agents</a>.
-Apply deliberate configuration changes through the full workflow. Do not
-register the Container App/Dapr history layer for hosted chat or grant broad
-conversation access to the hosted container.</p>
-<p><strong>Verify:</strong> Test intended persistence across sessions, same-owner access and
-cross-user denial. A greeting or a page reload is not sufficient evidence.</p>
+Apply configuration changes through the full workflow using hosted continuity
+and owner-scoped permissions. Keep the classic Container App/Dapr history layer
+separate and the hosted container's conversation access restricted.</p>
+<p><strong>Verify:</strong> Open a saved conversation in a new session as its owner and confirm
+the transcript is available. Repeat as another user and confirm access is denied.</p>
 <h3 id="the-application-starts-but-does-not-answer">The application starts but does not answer</h3>
 <p><strong>Symptom:</strong> The application loads but an authenticated task fails.</p>
 <p><strong>Diagnose:</strong></p>
@@ -3051,23 +3047,23 @@ cross-user denial. A greeting or a page reload is not sufficient evidence.</p>
 <p><strong>Correct:</strong> Repair the identified dependency, then use the appropriate
 <a href="../deploy-full-stack/#change-a-runtime-setting">runtime-setting lifecycle</a>
 or <a href="../deploy-full-stack/#redeploy-applications-only">redeployment</a>.
-Do not assume a restart can apply infrastructure or process-only settings.</p>
+Use provisioning for infrastructure changes and a new process or hosted version
+for startup settings, as specified in those workflows.</p>
 <p><strong>Verify:</strong> Repeat the same authenticated task and test document authorization
 when retrieval is involved. Keep credentials and content out of diagnostics.</p>
 <h3 id="access-denied-between-services">Access denied between services</h3>
 <p><strong>Symptom:</strong> A dependency returns HTTP 401/403 or names a denied action.</p>
 <p><strong>Diagnose:</strong> Identify the caller's actual principal, target, denied action
-and scope. A project identity, deployment principal and hosted runtime identity
-are not interchangeable. Also distinguish a service call from delegated-user
-authorization.</p>
+and scope. Project, deployment and hosted runtime principals each have their own
+grants. Check service authentication separately from delegated-user authorization.</p>
 <p><strong>Correct:</strong> Compare the deployed grants with
 <a href="../build-your-own-app/#capability-profiles">capability profiles</a> and the
 <a href="../hosted-agents/#bootstrap-the-agents-runtime-access">hosted runtime access model</a>.
 Allow new assignments to propagate before requesting additional access. Use
 <a href="../deploy-full-stack/#recover-hosted-runtime-access">hosted recovery</a> where
-required; do not assign blanket roles manually.</p>
-<p>For application-component configuration failures, the catalog's implicit base
-profile is a useful checklist:</p>
+required, keeping role assignments scoped to the required resources.</p>
+<p>For application-component configuration failures, use this checklist of base
+capability permissions:</p>
 <table>
 <thead>
 <tr>
@@ -3095,11 +3091,12 @@ profile is a useful checklist:</p>
 </tbody>
 </table>
 <p>Additional grants depend on declared profiles, selected resources and topology.
-Hosted bootstrap, continuity and panel permissions are reconciled separately;
-this table is not a script for assigning identical grants to every principal.</p>
+Hosted bootstrap, continuity and panel permissions are reconciled separately.
+Use the relevant workflow to grant only the roles required by the actual caller.</p>
 <p><strong>Verify:</strong> The same intended identity can perform the required operation while
 unauthorized users/documents remain denied.</p>
-<h2 id="collect-evidence">Collect evidence</h2>
+<p><span id="collect-evidence"></span></p>
+<h2 id="collect-diagnostics">Collect diagnostics</h2>
 <h3 id="check-application-health">Check application health</h3>
 <p>For <strong>Container Apps</strong>, list the latest and latest-ready revisions:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span><span class="s2">"&lt;resource-group&gt;"</span><span class="w"> </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:properties.runningStatus,latest:properties.latestRevisionName,ready:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
@@ -3116,8 +3113,8 @@ optional ingestion and Container App orchestration, not hosted agent compute.</p
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>logs<span class="w"> </span>show<span class="w"> </span>-g<span class="w"> </span><span class="s2">"&lt;resource-group&gt;"</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"&lt;container-app-name&gt;"</span><span class="w"> </span>--revision<span class="w"> </span><span class="s2">"&lt;revision-name&gt;"</span><span class="w"> </span>--follow
 </code></pre></div>
 <p>If the revision has multiple replicas or containers, select the relevant ones
-using the command's <code>--replica</code> and <code>--container</code> options. Avoid treating output
-from another healthy revision as evidence about the failed image.</p>
+using the command's <code>--replica</code> and <code>--container</code> options. Confirm the logs
+belong to the failed revision and image.</p>
 <h3 id="monitoring">Monitoring</h3>
 <p>Use <strong>Application Insights &gt; Transaction search</strong> to correlate a request with
 its dependencies and traces. Use <strong>Log Analytics</strong> for container output and
@@ -3137,16 +3134,17 @@ expected logs are absent.</p>
 <span class="p">|</span><span class="w"> </span><span class="k">order</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">TimeGenerated</span><span class="w"> </span><span class="n">desc</span>
 </code></pre></div>
 <p>These queries depend on the configured Container Apps log destination and schema;
-they do not query Foundry hosted runtime logs. No matching rows does not establish
-application health.</p>
+they cover Container Apps rather than Foundry hosted runtime logs. If no rows
+match, check the time range, log destination and failing revision, then inspect
+application health directly.</p>
 <p>UI records containing <code>exception_type</code> and <code>failure_site</code> intentionally omit
 dependency error payloads. Correlate the static operation, code location and
 request reference with dependency telemetry. Do not enable raw token, cookie,
 claim, signed-URL or document logging to fill that gap. A failed optional panel
-index write needs repair even when the chat continues; it is not proof the index
-was persisted.</p>
-<p>Telemetry content capture is a separate, default-off privacy choice, not a
-prerequisite for successful chat or safe diagnosis.</p>
+index write needs repair even when the chat continues. Confirm the expected
+owner-index record exists after retrying the write.</p>
+<p>Telemetry content capture is off by default. Use request references and
+dependency status for diagnosis while keeping prompts and answers private.</p>
 <h2 id="related-pages">Related pages</h2>
 <ul>
 <li><a href="../connect-copilot-studio/#troubleshooting">Copilot Studio private integration</a></li>

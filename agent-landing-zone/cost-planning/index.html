@@ -16,7 +16,7 @@
         <link rel="prev" href="../sizing/">
       
       
-        <link rel="next" href="../how-it-works/">
+        <link rel="next" href="../configuration/">
       
       
         
@@ -441,6 +441,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -621,34 +649,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1806,11 +1806,11 @@
 
 
 <h1 id="cost-planning">Cost planning</h1>
-<p>Estimate the <strong>Agent Landing Zone configuration you will run</strong>, not the
-independent foundation's example total. Choose <a href="../planning/">topology and resource reuse</a>
+<p>Estimate the <strong>Agent Landing Zone configuration you will run</strong>.
+Choose <a href="../planning/">topology and resource reuse</a>
 and establish <a href="../sizing/">capacity assumptions</a> first.</p>
 <div class="admonition note">
-<p class="admonition-title">Pricing evidence and date</p>
+<p class="admonition-title">Pricing sources and dates</p>
 <p>Reviewed against platform v4.3.0 on <strong>October 23, 2026</strong>. This page does not
 quote or reprice Azure services. The shared
 <a href="../../bicep/deployed-resources/">resource inventory and estimates</a> uses
@@ -1828,8 +1828,8 @@ regional rates, currency and your organization's agreement.</p>
    preview, including retained migration resources.</li>
 <li><strong>Price allocated capacity.</strong> Include selected Search services, registry
    tier, App Configuration, workload-profile nodes, private endpoints,
-   firewall, Bastion, ingress and other allocation-based services. Idle is
-   not necessarily free.</li>
+   firewall, Bastion, ingress and other allocation-based services. Include
+   their charges during idle periods.</li>
 <li><strong>Add measured usage.</strong> Estimate turns, model/tool calls, input/output tokens,
    embeddings, indexing, compute, requests, stored data, logs and network
    transfer. Include initial corpus ingestion and reindexing separately
@@ -1852,7 +1852,7 @@ regional rates, currency and your organization's agreement.</p>
 <tbody>
 <tr>
 <td>Hosted or classic orchestrator</td>
-<td>Foundry hosted compute where selected, or the classic Container App. Include the frontend and other selected components separately. The root's <code>main</code> D4 profile has a zero-node minimum, but selected apps with minimum replicas can keep a node allocated. Do not assume Consumption scale-to-zero.</td>
+<td>Foundry hosted compute where selected, or the classic Container App. Include the frontend and other selected components separately. The root's <code>main</code> D4 profile has a zero-node minimum, but selected apps with minimum replicas can keep a node allocated and billed while idle.</td>
 </tr>
 <tr>
 <td>Foundry Agent Service</td>
@@ -1880,11 +1880,9 @@ regional rates, currency and your organization's agreement.</p>
 </tr>
 </tbody>
 </table>
-<p>Model deployment <code>sku.capacity</code> is a quota allocation input, <strong>not</strong> a price
-or a guaranteed task rate. Model, deployment type, region, actual tokens and
-any provisioned-capacity purchase determine the relevant billing assumptions.
-Check current service pricing rather than converting that number into a
-monthly token bill.</p>
+<p>Model deployment <code>sku.capacity</code> allocates quota. To estimate model charges,
+use the deployment type, region, expected tokens and any provisioned-capacity
+commitment with the current service prices.</p>
 <h2 id="control-spend-without-weakening-the-design">Control spend without weakening the design</h2>
 <ul>
 <li>Set budgets and alerts in
@@ -1900,8 +1898,8 @@ monthly token bill.</p>
   permissions. Do not enable public access, remove authorization or bypass
   private-link readiness to meet a cost target.</li>
 <li>Retire old components only after dependency, backup and grant review.
-  Changing a selection flag is not a cleanup procedure; use the
-  <a href="../deploy-full-stack/">deployment lifecycle guidance</a>.</li>
+  Selection flags affect future deployments; existing resources require
+  separate cleanup through the <a href="../deploy-full-stack/">deployment lifecycle guidance</a>.</li>
 </ul>
 <p>Keep one estimate per environment with its owner, date, region/currency,
 selected/reused resources, expected monthly usage and contingency. Revisit it

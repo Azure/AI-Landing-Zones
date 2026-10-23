@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2296,8 +2296,8 @@
 <h1 id="bring-your-own-app">Bring your own app</h1>
 <h2 id="objective">Objective</h2>
 <p>Customize the Agent Application or deploy a different, customer-owned application
-with pinned deployment inputs. This does not provide automatic compatibility
-with Agent App UI, authentication or ingestion APIs.</p>
+with pinned deployment inputs. A different application must implement the
+authentication, UI and ingestion API contracts for any components it reuses.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook when documented configuration is insufficient or you need a
 different application. Choose the branch that matches your change:</p>
@@ -2319,14 +2319,13 @@ different application. Choose the branch that matches your change:</p>
 </tr>
 <tr>
 <td>Deploy a different application</td>
-<td>The hosted Agent Application example and its application definition below</td>
+<td>The custom hosted example and its application definition below</td>
 </tr>
 </tbody>
 </table>
 <p>For the Agent Application orchestrator hosted in Foundry, use <a href="../foundry-iq/">Foundry IQ</a> for
-knowledge base retrieval. Custom strategies and tools must support the hosted
-entrypoint and authorization path; registering a strategy does not make a
-classic-only implementation hosted-ready.</p>
+knowledge base retrieval. Custom strategies and tools must implement and test
+the hosted entrypoint and authorization path before deployment to Foundry.</p>
 <p><span id="before-you-start"></span></p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
@@ -2338,8 +2337,8 @@ classic-only implementation hosted-ready.</p>
   runner; Azure sign-in does not grant Git access.</li>
 <li>Hosted components require the runner's Foundry agent-authoring access on the
   exact project, plus account read access. Review the
-  <a href="../deploy-full-stack/#foundry-orchestrator-hosted-no-panel-or-hosted-panel">hosted deployment permissions</a>;
-  network connectivity alone does not grant authoring access.</li>
+  <a href="../deploy-full-stack/#foundry-orchestrator-hosted-no-panel-or-hosted-panel">hosted deployment permissions</a>
+  for the required scopes.</li>
 <li>Private deployments require a connected host with private DNS resolution.
   An ACR build pool does not provide that host's connectivity.</li>
 <li>For a different application, create a <strong>new azd environment</strong> through the
@@ -2389,7 +2388,7 @@ Remote changes do not update pins or migrate Azure deployments; use the
    classic image into a supported hosted image.</p>
 </li>
 <li>Verify the deployed version and changed behavior through the UI. Test both
-   authorized and denied access to protected content; a greeting is insufficient.</li>
+   authorized and denied access to protected content.</li>
 </ol>
 <p>Keep manifest names <code>agent-app-ui</code>, <code>agent-app-orchestrator</code>,
 <code>agent-app-ingestion</code> and definition names <code>ui</code>, <code>orchestrator</code>, <code>ingestion</code>.
@@ -2404,11 +2403,12 @@ repository read access, including for hosted image preparation. Test it as the
 deployment runner. Never put credentials in URLs, definitions, environment files
 or logs. See <a href="../azure-devops/">Azure DevOps</a> for the optional pipeline.</p>
 <h3 id="application-binding-and-selection">Application binding and selection</h3>
-<p>One azd environment hosts one application ID. <code>AGENTLZ_APP_DEFINITION</code> selects
-a definition file or containing folder; omission selects the Agent Application.
-Select it <strong>before first provision</strong>, not merely before deployment.</p>
-<p><code>preup</code> rejects invalid definitions and changed application IDs before Azure
-resource creation. <code>preprovision</code> repeats validation for standalone
+<p>One azd environment hosts one application ID. Set <code>AGENTLZ_APP_DEFINITION</code> in
+that environment with <code>azd env set</code> to select a definition file or containing
+folder; omission selects the Agent Application.
+Select it <strong>before first provision</strong>.</p>
+<p>The <code>preup</code> lifecycle hook rejects invalid definitions and changed application IDs
+before Azure resource creation. The <code>preprovision</code> hook repeats validation for standalone
 <code>azd provision</code>, but cannot guarantee rejection before azd initializes its
 resource group. Run <code>azd hooks run preup</code> first for that safeguard.
 Do not edit a binding to force another application into an existing environment.</p>
@@ -2417,7 +2417,8 @@ Do not edit a binding to force another application into an existing environment.
 <p><code>DEPLOY_INGESTION_CONTAINER_APP</code> selects Agent Application composition, not components in
 an explicit custom definition. Foundation composition remains additive:
 Agent Application Container App placeholders can remain alongside custom resources.
-Published ingestion capability is not proof that your app implements uploads.
+Published ingestion capability describes the platform's ingestion selection;
+your application must implement uploads if it needs them.
 If reusing Agent App UI, preserve its
 <a href="../ingestion/#upgrade-and-retirement-safety">upload-gate contract</a>.</p>
 </details>
@@ -2429,7 +2430,7 @@ the Agent App UI API. Microsoft's
 describes service protocols and identities; the platform contracts below govern
 this release's deployment.</p>
 <ol>
-<li>Inspect the Agent Application example's <code>app-definition.json</code>, <code>azure.yaml</code>
+<li>Inspect the custom hosted example's <code>app-definition.json</code>, <code>azure.yaml</code>
    and <code>src/main.py</code>.
    Keep component/service name <code>agent</code>, the explicit hosted agent name and
    Responses protocol aligned.</li>
@@ -2455,30 +2456,31 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
   accepts the all-zero editing marker; deployment requires actual source HEAD.
 5. Provision the selected definition using
  <a href="../deploy-infra-only/">Deploy infrastructure only</a>, then run root <code>azd deploy</code>.
- For a custom-only deployment, select <code>DEPLOYMENT_TOPOLOGY=classic</code> before
- first provision so the platform does not also select the Agent Application
+ For a custom-only deployment, set <code>DEPLOYMENT_TOPOLOGY=classic</code> in the azd
+ environment before first provision so the platform does not also select the Agent Application
  hosted orchestrator. A custom hosted component still receives its required
  hosted foundation resources. Its declared service uses its own source/image
  contract, not the Agent Application hosted image-preparation handoff.
-6. With the Agent Application example's answer logic, confirm the response names
- the intended project endpoint, not <code>unknown</code> or <code>unavailable</code>. The example can
- greet despite failed configuration access; inspect logs for either value.
+6. With the custom hosted example's answer logic, confirm the response names
+ the intended project endpoint. A value of <code>unknown</code> or <code>unavailable</code> indicates
+ missing project configuration or failed configuration access. Check the
+ published outputs and logs, and resolve the issue before proceeding.
  With your logic, verify actual application behavior and denied-access cases.</p>
 </li>
 </ol>
 <p>The definition <code>id</code> binds the environment; <code>agent</code> names the component/service;
-<code>sample-hosted-agent</code> names the Agent Application example's Foundry agent. None is the project endpoint
-URL. For a Container App instead, use <code>samples/custom-app/containerapp/</code> and its
-matching service file; changing only the hosted example's <code>kind</code> is insufficient.</p>
+<code>sample-hosted-agent</code> names the custom example's Foundry agent. The project endpoint
+URL is supplied separately at runtime. For a Container App instead, use
+<code>samples/custom-app/containerapp/</code> and its matching service file; changing only
+the hosted example's <code>kind</code> is insufficient.</p>
 <h2 id="validation">Validation</h2>
 <ol>
 <li>Confirm definition validation passes and the environment remains bound to its
    intended application ID.</li>
-<li>Verify the intended source commit or image digest and deployed service/version,
-   not a leftover placeholder or another component.</li>
+<li>Confirm the deployed service/version uses the intended source commit or image
+   digest and has replaced its placeholder image.</li>
 <li>Exercise the changed behavior with allowed and denied identities. For the
-   hosted Agent Application example, confirm configuration access as described in Step 6 above;
-   a greeting alone is not sufficient.</li>
+   custom hosted example, confirm configuration access as described in Step 6 above.</li>
 </ol>
 <h3 id="verify-and-recover">Verify and recover</h3>
 <p>Retain the definition, service file, source/image pin and environment together.
@@ -2508,7 +2510,7 @@ rollback. Deleting the local definition does not remove Azure resources.</p>
 <h2 id="application-definition">Application definition</h2>
 <h3 id="shipped-example">Shipped example</h3>
 <p>Use the versioned
-<a href="https://github.com/Azure/agent-landing-zone/tree/v4.3.0/samples/custom-app/hosted">hosted Agent Application example files</a>
+<a href="https://github.com/Azure/agent-landing-zone/tree/v4.3.0/samples/custom-app/hosted">custom hosted example files</a>
 rather than copying an illustrative payload.</p>
 <h3 id="fields">Fields</h3>
 <p>The authoritative
@@ -2524,8 +2526,9 @@ Configure endpoints outside the definition and permissions through profiles.</p>
 <h2 id="capability-profiles">Capability profiles</h2>
 <p>Every component receives <code>base</code>; add only required profiles from the
 <a href="https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/profiles.py">profile catalog</a>.
-These service-resource grants are not user consent or document ACL enforcement.
-Preserve <a href="../application-auth/">authentication and OBO</a> and
+These profiles grant service-resource access to component identities.
+Configure user consent and document authorization separately, preserving
+<a href="../application-auth/">authentication and OBO</a> and
 <a href="../foundry-iq/">Foundry IQ source permissions</a>.</p>
 <p>Container App profiles reconcile during post-provisioning. Hosted image pull
 uses the existing Foundry <strong>project</strong> managed identity. After deployment verifies
@@ -2566,12 +2569,12 @@ Reapplying foundation can repair its declared pull grant; refreshing outputs
 alone cannot. Follow the recovery link above.</p>
 <h2 id="reading-platform-outputs-at-runtime">Reading platform outputs at runtime</h2>
 <p>Read <code>AGENTLZ_PLATFORM_OUTPUTS</code> from <code>APP_CONFIG_ENDPOINT</code> with label <code>agent-lz</code>,
-as both Agent Application examples demonstrate. The publisher exposes selected Container App
+as both custom application examples demonstrate. The publisher exposes selected Container App
 client IDs; hosted instance identities are unavailable during foundation
 provisioning. See <a href="../deploy-infra-only/#platform-outputs">Platform outputs</a>.</p>
-<p>The hosted greeting checks nonempty assistant output using the declared
-protocol, preferring <code>invocations</code> when both are present. It does not verify
-retrieval or authorization.</p>
+<p>The hosted greeting checks for nonempty assistant output using the declared
+protocol, preferring <code>invocations</code> when both are present. Validate retrieval and
+authorization with representative tasks and allowed and denied identities.</p>
 <h2 id="validate-and-select-a-definition">Validate and select a definition</h2>
 <p>Use the validation/selection commands above with your own definition path.
 Pre-deploy rechecks definition and binding; mismatches exit with code 2.

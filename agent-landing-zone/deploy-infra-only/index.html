@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2307,8 +2307,8 @@
 <h2 id="objective">Objective</h2>
 <p>Provision the Azure foundation without building or deploying application images.
 This is the infrastructure procedure for both Agent Landing Zone and the
-standalone AI Landing Zone Bicep foundation. Choose the source first: their
-hooks, parameter files and outputs are not interchangeable.</p>
+standalone AI Landing Zone Bicep foundation. Choose the source first and use
+its hooks, parameter files and outputs throughout the procedure.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook when you need foundation resources first, or will supply your
 own application. To deploy the Agent Application now, use
@@ -2323,10 +2323,10 @@ and <a href="../../bicep/regional-considerations/">regional capacity caveats</a>
 Infrastructure-only still creates billable resources.</p>
 <p>The effective footprint is the combination of enabled services, resource-reuse
 inputs, application definition, orchestrator topology and network settings.
-This affects AI services and their backing resources, runtimes, data stores,
-monitoring, networking and optional add-ons, not just one or two services.
-Use the selected source's <code>main.parameters.json</code>, Bicep conditions and preview
-as the authority; the foundation inventory is not an Agent Application bill of materials.</p>
+This determines which AI services, backing resources, runtimes, data stores,
+monitoring, networking and optional add-ons are deployed.
+Review the selected source's <code>main.parameters.json</code>, Bicep conditions and preview
+to identify the resources for your deployment.</p>
 <h2 id="procedure">Procedure</h2>
 <p><a id="steps"></a></p>
 <h3 id="step-1-choose-the-source">Step 1: Choose the source</h3>
@@ -2368,15 +2368,18 @@ its approved inputs. Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local <code>.azure/</code> state.
 Fork or mirror the source only when maintaining your own inputs or automation.</p>
 <h3 id="step-3-choose-the-foundation-shape">Step 3: Choose the foundation shape</h3>
-<p>The following choices apply before provisioning. <code>DEPLOYMENT_MODE</code> records the
-network design intent; it does not configure routing, DNS or isolation by itself.
-It is separate from Agent's <code>DEPLOYMENT_TOPOLOGY</code>, which chooses the orchestrator.</p>
+<p>Choose the network design before provisioning. Set the scalar deployment inputs
+below in the selected azd environment with <code>azd env set</code>; arrays and objects
+use the root parameter file as described later in this step.
+<code>DEPLOYMENT_MODE</code> records the network design intent; routing, DNS and isolation
+use their own inputs. Agent's separate <code>DEPLOYMENT_TOPOLOGY</code> chooses where the
+orchestrator runs. See <a href="../how-it-works/">How it works</a> for input processing.</p>
 <h4 id="public-service-endpoints">Public service endpoints</h4>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>standalone
 </code></pre></div>
-<p>Service authentication and authorization still apply. This is not a private
-deployment or a way to repair an existing private environment.</p>
+<p>Services use public endpoints with authentication and authorization.
+For an existing private environment, preserve its isolation settings during recovery.</p>
 <h4 id="private-standalone-network">Private standalone network</h4>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>standalone
@@ -2406,13 +2409,13 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 <p>Instead of a next-hop IP, a platform-managed route table can be selected with
 <code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code>; these inputs are mutually
-exclusive. Do not leave both unset if hub egress is required. Shared monitoring
+exclusive. Set one when hub egress is required. Shared monitoring
 uses <code>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID</code> and, when applicable,
 <code>EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID</code> with its protected connection string.</p>
 <p>Apply the <a href="../../bicep/hub-and-spoke/">hub-and-spoke DNS and peering contract</a>
 before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
-The upstream test-hub fixture is not a production connectivity deployment.</p>
+Use an approved production hub; the upstream test-hub fixture is for testing.</p>
 <h4 id="existing-networks-private-dns-and-parameter-files">Existing networks, private DNS and parameter files</h4>
 <table>
 <thead>
@@ -2436,7 +2439,7 @@ The upstream test-hub fixture is not a production connectivity deployment.</p>
 </tr>
 <tr>
 <td>Approved public exception</td>
-<td>Review native <code>allowedIpRanges</code> and Storage trusted-service/resource-instance exceptions explicitly; isolation is not a blanket public-access guarantee</td>
+<td>Review native <code>allowedIpRanges</code> and Storage trusted-service/resource-instance exceptions to confirm the approved service-specific public access</td>
 </tr>
 <tr>
 <td>Controlled public frontend</td>
@@ -2446,8 +2449,8 @@ The upstream test-hub fixture is not a production connectivity deployment.</p>
 </table>
 <p>Set mapped scalar inputs with <code>azd env set</code>. Native arrays/objects such as the
 complete address plan, <code>allowedIpRanges</code>, Storage controls and <code>publicIngress</code>
-belong in the reviewed <strong>root</strong> <code>main.parameters.json</code>, not invented environment
-variables. In the Agent platform, hooks regenerate <code>infra/main.parameters.json</code>;
+belong in the reviewed <strong>root</strong> <code>main.parameters.json</code>.
+In the Agent platform, hooks regenerate <code>infra/main.parameters.json</code>;
 do not edit that generated copy. The
 <a href="../../bicep/parameterization/">parameter reference</a> describes foundation inputs;
 <a href="../configuration/">Agent configuration</a> describes platform composition and overrides.</p>
@@ -2467,8 +2470,9 @@ azd<span class="w"> </span>provision
 </code></pre></div>
 <p>Review the preview's scopes, names, routes, resource changes, public access and
 role assignments before the second command. Resolve quota, Policy, subnet and
-capacity findings rather than skipping preflight. Preview is not an application
-or connectivity test.</p>
+capacity findings rather than skipping preflight. Preview covers planned
+resource changes. Test connectivity after provisioning and application behavior
+after deploying your selected application.</p>
 <table>
 <thead>
 <tr>
@@ -2488,8 +2492,9 @@ or connectivity test.</p>
 </tbody>
 </table>
 <p>Selected Container Apps can run placeholder images at this point.
-An upstream hello-world response proves only that network/runtime smoke test.
-It is not evidence of Agent authentication, tools, ingestion or document authorization.</p>
+An upstream hello-world response checks basic network and runtime reachability.
+Validate sign-in, tools, ingestion and document authorization after deploying
+the Agent Application.</p>
 <p><span id="verify-the-foundation"></span></p>
 <h2 id="validation">Validation</h2>
 <p>Inspect the intended environment and selected resources:</p>
@@ -2499,8 +2504,8 @@ az<span class="w"> </span>resource<span class="w"> </span>list<span class="w"> <
 az<span class="w"> </span>network<span class="w"> </span>private-endpoint<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}"</span><span class="w"> </span>-o<span class="w"> </span>json
 </code></pre></div>
-<p>Compare the inventory with enabled features and reuse inputs, not a fixed
-resource count. For private deployments, verify approved connections, private
+<p>Compare the inventory with enabled features and reuse inputs to account for
+both new and reused resources. For private deployments, verify approved connections, private
 DNS resolution and TCP/TLS reachability from the actual deployment host.
 Then test each required data plane with its authorized identity and confirm
 telemetry reaches the intended workspace. See the
@@ -2607,14 +2612,14 @@ azd<span class="w"> </span>env<span class="w"> </span>refresh
 <p>If the environment is already present, select it instead. Reapply the approved
 deployment inputs: refresh restores outputs, not your full configuration.
 Do not publish or copy another stage's <code>.azure/</code> state as an input artifact.
-Managed-identity sign-in is an option for an appropriately authorized runner,
-not proof that its configuration/build roles are sufficient.</p>
+An authorized runner can use managed-identity sign-in. Verify its scoped
+configuration and build roles before running the hooks.</p>
 <p>From the connected host, clear deferral and finish configuration:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RUN_FROM_JUMPBOX<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SKIP_NETWORK_ISOLATION_WARNING<span class="w"> </span><span class="nb">false</span>
 azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>postprovision
 </code></pre></div>
-<p><code>RUN_FROM_JUMPBOX</code> requests checks; it does not provide connectivity.
+<p><code>RUN_FROM_JUMPBOX</code> requests connectivity checks on the connected host.
 Verify platform outputs and required data-plane access before deploying.
 Private native Blob sources can require an administrator to approve the
 exact Search shared private-link request reported by the readiness gate.
@@ -2631,8 +2636,8 @@ See <a href="../deploy-full-stack/#upgrade-to-a-new-release">platform upgrades a
 Upstream foundation environments use their own source and complete root
 parameter contract, without Agent post-provision commands.</p>
 <p>Retry a partial deployment with the same approved revision and environment after
-repairing the specific failure. Reverting code is not guaranteed to reverse
-resource or data changes. Do not delete data, rename subnets, move existing
+repairing the specific failure. Review resource and data changes separately
+when reverting code. Do not delete data, rename subnets, move existing
 resources to another region, weaken isolation or bypass preflight to recover.
 Turning a deploy flag off is not deletion or permission cleanup.</p>
 <h3 id="add-an-application-later">Add an application later</h3>

@@ -441,6 +441,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -533,34 +561,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1821,7 +1821,7 @@ inputs. For selecting existing resources, use
 <h2 id="defaults">Defaults</h2>
 <p><code>RESOURCE_NAMING_MODE</code> maps to the foundation's <code>resourceNamingMode</code> parameter.
 The allowed values are <code>caf</code> (<strong>default</strong>) and <code>legacy</code>.</p>
-<p>CAF generates names with the general shape
+<p>Cloud Adoption Framework (CAF) naming generates names with the general shape
 <code>type-workload-environment-region-instance</code>, such as
 <code>kv-chatapp-dev-eus2-001</code>.</p>
 <table>
@@ -1860,7 +1860,7 @@ the default workload hash.</p>
 service-specific lengths, so long tokens can lose distinguishing suffixes.
 Keep tokens short and follow Azure's
 <a href="https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules">resource naming rules and uniqueness scopes</a>.
-The deterministic workload hash is not a guarantee of global name availability.</p>
+For globally unique resource names, check availability before deployment.</p>
 <h2 id="set-names-for-a-new-environment">Set names for a new environment</h2>
 <ol>
 <li>Select your new azd environment using the deployment guide. No naming
@@ -1878,8 +1878,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
  <code>aiFoundryAccountName</code>. Supply supported parameters through the reviewed
  root <code>main.parameters.json</code> deployment inputs, not the generated
  <code>infra/main.parameters.json</code>; the shipped root file does <strong>not</strong>
- expose environment-variable mappings for these examples. Setting an
- invented <code>KEY_VAULT_NAME</code> variable will not override <code>keyVaultName</code>.
+ expose environment-variable mappings for these examples.
  For example, add <code>"keyVaultName": { "value": "kv-chatapp-dev-eus2-001" }</code>
  inside the root file's <code>parameters</code> object, preserving valid JSON and
  choosing an available name.</p>

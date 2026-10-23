@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2154,8 +2154,8 @@ or <a href="../deploy-full-stack/">Deploy the full stack</a>. For component chan
 <div class="admonition info">
 <p class="admonition-title">Choose the right pipeline</p>
 <p>The downloadable example below verifies the <strong>same source commit in every
-job</strong> and enforces successful prior stages. It is not a build-once image
-promotion pipeline. The separate <a href="../../bicep/deploy-with-azure-devops/">foundation pipeline guide</a>
+job</strong> and enforces successful prior stages. Images are built per environment.
+The separate <a href="../../bicep/deploy-with-azure-devops/">foundation pipeline guide</a>
 explains upstream service connections and Environment setup; those assets
 provision infrastructure only, allow independent environment selection and
 do not automatically execute their preview template.</p>
@@ -2182,7 +2182,10 @@ foundation checkout. Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.</p>
 <p>The downloadable example initially deploys the <strong>Agent Application</strong> with
 <code>hosted-no-panel</code>, native Blob ingestion and private endpoints. Set the same
-reviewed topology and ingestion selection across the three environments:</p>
+reviewed topology and ingestion selection across the three environments.
+The table lists deployment inputs placed in each stage's YAML <code>settings</code> map
+in Step 3; the task applies them to its selected azd environment.
+<a href="../how-it-works/">How it works</a> explains how the hooks process these inputs.</p>
 <table>
 <thead>
 <tr>
@@ -2232,7 +2235,7 @@ Azure Developer CLI (<code>azd</code>), and Python <strong>3.12+ with pip and ve
 also needs an azd version supporting the pinned <code>hosted-agent/azure.yaml</code> service.
 Install and pin approved tool versions in your agent image; record them in your
 release evidence. Populate the self-hosted agent's Python tool cache for
-<code>UsePythonVersion@0</code> (<code>3.12</code>), rather than assuming it can install Python.
+<code>UsePythonVersion@0</code> (<code>3.12</code>) before queuing a job.
 Allow package, source and container-build dependency egress. Hooks themselves
 bootstrap a temporary pip environment during post-provision.</p>
 <p>From the agent's Bash shell, verify:</p>
@@ -2264,8 +2267,8 @@ inside it, with <code>azd config set auth.useAzCliAuth true</code>. Do not add i
 <p>Set <code>AZURE_PRINCIPAL_ID</code> to the connection identity's <strong>enterprise application /
 service principal object ID</strong>, not its application/client ID or app-registration
 object ID. Set <code>AZURE_PRINCIPAL_TYPE=ServicePrincipal</code>; the default parameter type
-is <code>User</code> and is wrong for this job. A connection that can read the subscription
-does not necessarily have deployment or data-plane permissions.</p>
+is <code>User</code>. Review deployment and data-plane permissions separately from
+subscription read access.</p>
 <p>Have an administrator approve the minimum role plan:</p>
 <table>
 <thead>
@@ -2301,10 +2304,10 @@ does not necessarily have deployment or data-plane permissions.</p>
 AI acceptance in each target subscription. Do not set preflight bypass flags to
 work around an unattended failure. Allow RBAC propagation before retrying.</p>
 <h4 id="complete-the-application-sign-in-setup-separately">Complete the application sign-in setup separately</h4>
-<p>The pipeline service connection is <strong>not</strong> the UI's Entra application registration.
-The inspected root configuration and pinned UI deployment scripts do not create
-that registration or grant tenant consent. Arrange this with an Entra administrator
-for each isolated application environment:</p>
+<p>The pipeline service connection authenticates deployment jobs. The UI uses a
+separate Entra application registration and tenant consent, which must be
+configured outside the deployment scripts. Arrange this with an Entra
+administrator for each isolated application environment:</p>
 <ol>
 <li>Create the confidential application registration; expose its
    <code>api://&lt;client-id&gt;/user_impersonation</code> scope and request version-2 access tokens.</li>
@@ -2326,10 +2329,10 @@ for each isolated application environment:</p>
 <p>Follow <a href="../hosted-agents/#configure-the-uis-delegated-authentication">delegated authentication</a>
 for the exact keys and consent boundaries, and
 <a href="../configuration/#runtime-settings">runtime settings</a> for publishing/restart behavior.
-Tenant consent and this configuration are an <strong>unattended onboarding gap</strong>, not
-work automatically performed by YAML or by granting Azure subscription roles.
-Use a separately reviewed administrative procedure or automation; do not give
-the deployment connection broad Microsoft Graph permissions to hide the gap.</p>
+Complete tenant consent and sign-in configuration through a separately reviewed
+administrative procedure or automation before accepting the deployment.
+Keep these tasks separate from the deployment connection's Azure permissions;
+do not grant it broad Microsoft Graph permissions for onboarding.</p>
 <h3 id="3-fill-the-pipeline-inputs">3. Fill the pipeline inputs</h3>
 <p>Download both files, then place them beside each other in <strong><code>.pipelines/</code> in your
 platform repository</strong>, not in its <code>infra/</code> folder:</p>
@@ -2416,8 +2419,8 @@ reapply approved inputs. Keep <code>.azure</code> and sibling child state privat
 </tr>
 </tbody>
 </table>
-<p>The <code>settings</code> maps are intentionally inline, not an unexplained external
-configuration file. Values are reapplied after environment refresh on every job.
+<p>The inline <code>settings</code> maps keep deployment inputs visible for review.
+Values are reapplied after environment refresh on every job.
 <code>RUN_FROM_JUMPBOX=true</code> <strong>requires</strong> the connected-host check; it does not create
 connectivity. The example leaves <code>AZURE_SKIP_NETWORK_ISOLATION_WARNING=false</code>.
 The inspected POSIX preProvision hook's interactive warning checks the legacy
@@ -2462,8 +2465,8 @@ tree without Git metadata: they check the component's actual <code>git rev-parse
 Source commit checks do not reject uncommitted edits; validate clean trees.</p>
 <p>Extend the template's fixed cleanup list with the custom definition folder's
 explicit <code>.azure</code> and <code>.logs</code> paths; never add a source or workspace root.</p>
-<p>Custom hosted services follow their own definition/image contract, not an assumed
-Agent Application orchestrator build. The downloaded template's preparation branch is for
+<p>Custom hosted services follow their own definition/image contract.
+The downloaded template's preparation branch is for
 the Agent Application; replace that branch with the documented custom hosted
 workflow before using it for a custom hosted definition.</p>
 <h3 id="4-protect-and-register-the-pipeline">4. Protect and register the pipeline</h3>
@@ -2484,15 +2487,15 @@ workflow before using it for a custom hosted definition.</p>
    Leave <strong>all stages selected</strong>; never use stage selection as a promotion bypass.</li>
 </ol>
 <p>CI validates the application definition and manifest JSON, installs the hook
-dependencies, and compiles Bicep without deploying. It is not a complete security
-scan, Bicep what-if, Azure readiness test, or real-user acceptance test. Add your
-existing unit/contract tests and review gates before extending it.</p>
+dependencies, and compiles Bicep without deploying. Add security scanning,
+Bicep what-if, Azure readiness checks, real-user acceptance tests and your
+existing unit/contract tests to the review gates before promotion.</p>
 <p>Each deployment stage requires <code>succeeded()</code> <strong>and an explicit result equal to
 <code>Succeeded</code> for every prerequisite</strong>. <code>Failed</code>, <code>Canceled</code>, <code>Skipped</code> and
 <code>SucceededWithIssues</code> cannot promote. Do not replace these conditions with
 <code>always()</code>, <code>succeededOrFailed()</code> or independent stage-selection parameters.
-Azure DevOps Environment approvals remain external protected-resource checks;
-the YAML does not create or prove their existence.</p>
+Azure DevOps Environment approvals are external protected-resource checks.
+Verify they are configured in Azure DevOps before queuing a run.</p>
 <h3 id="5-understand-what-runs-on-a-fresh-job">5. Understand what runs on a fresh job</h3>
 <p>The template checks out <code>Build.SourceVersion</code> again and fails if <code>HEAD</code> differs.
 It activates Python 3.12 and installs <code>config/requirements.txt</code> <strong>in that job</strong>;
@@ -2546,8 +2549,8 @@ promotion, not build-once immutable-image promotion</strong>: mutable base image
 feeds, tool versions, generated configuration and credentials can affect results.
 Pin dependencies/base images and record actual image digests per environment.
 If identical images are mandatory, design and validate a separate digest-based
-application contract and cross-registry availability/permissions; do not claim
-this source workflow already provides it.</p>
+application contract with cross-registry availability and permissions before
+adopting that promotion model.</p>
 <p>No build artifacts are published or downloaded. Do not add a whole-workspace
 publish step: hooks copy <code>.azure</code> to sibling components and create <code>.logs</code>.
 Exclude <code>.azure</code>, <code>.env</code>/environment files, logs, secret files, credential/config
@@ -2567,8 +2570,8 @@ reimage ephemeral agents or securely clean their disks before reuse.</p>
 <h2 id="validation">Validation</h2>
 <p>Expected pipeline results are a green CI job, successful DEV deployment, TEST
 waiting for its protected Environment check, then PROD waiting after successful
-TEST. Check the recorded <code>Build.SourceVersion</code> and reviewed manifest pins; do not
-approve a different run just because its branch name is the same.</p>
+TEST. Match the recorded <code>Build.SourceVersion</code> and reviewed manifest pins to
+the run being approved.</p>
 <p>Before each promotion, record the following against the preceding environment
 in your release evidence:</p>
 <ol>
@@ -2578,25 +2581,25 @@ in your release evidence:</p>
    not just provisioned placeholders. Record image digests and hosted routed version.</li>
 <li>Complete Entra setup above. Verify HTTPS login/callback, authenticated API
    access and (for hosted mode) real-user OBO invocation. The hook's managed-identity
-   greeting alone is not proof of these.</li>
+   greeting checks basic runtime response; use the UI for these real-user tests.</li>
 <li>Ingest a controlled document through the selected configured source. With an
    authorized user, retrieve its expected content/citations. With a user lacking
    that document's permission, verify the content is not returned. Also verify
    unauthenticated requests are rejected where required. Check that logs do not
    contain tokens or protected document bodies.</li>
 <li>Exercise selected ingestion/upload, history, panel and continuity features;
-   check disabled surfaces are actually unavailable. Native Blob ingestion does
-   not imply conversation uploads work without Agent App Ingestion.</li>
+   check disabled surfaces are unavailable. Conversation uploads require
+   Agent App Ingestion and upload eligibility; native Blob ingestion handles
+   the configured source separately.</li>
 <li>Inspect service health, RBAC and private endpoint resolution, and attach
    sanitized evidence to the run/change record. See
    <a href="../troubleshooting/">application health and diagnostics</a> and
    <a href="../hosted-agents/#configure-the-uis-delegated-authentication">document authorization guidance</a>.</li>
 </ol>
 <p>Do not approve TEST or PROD until the preceding environment meets these checks.
-Hook exit status is necessary but not sufficient: some post-provision setup
-sections currently log a configuration failure and continue. Add organization-owned
-acceptance checks before promotion; this sample does not pretend those sections
-are fail-closed end-to-end tests.</p>
+Some post-provision setup sections currently log a configuration failure and
+continue, so review the logs as well as the hook exit status.
+Require organization-owned acceptance checks to pass before promotion.</p>
 <h2 id="troubleshoot-redeploy-and-recover">Troubleshoot, redeploy and recover</h2>
 <table>
 <thead>

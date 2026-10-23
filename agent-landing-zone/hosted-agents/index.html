@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1984,14 +1984,17 @@
 
 
 <h1 id="hosted-agents">Hosted agents</h1>
-<p>Agent Application's orchestrator runs your selected agent strategy as a
+<p>Agent App Orchestrator runs your selected agent strategy as a
 <strong>Foundry hosted agent</strong> or a <strong>Container App</strong>. Hosting controls where it runs.
-Strategies control how it coordinates models, retrieval and tools. Changing one
-does not automatically change the other.</p>
-<p>Use this page to choose a topology and understand its contracts. Execute the
-ordered procedure in <a href="../deploy-full-stack/">Deploy the full stack</a>, or stop at
+A strategy controls how it coordinates models, retrieval and tools. Choose
+hosting and strategy separately.</p>
+<p>Use this page to choose a deployment layout, called a topology, and understand
+its requirements. Follow the ordered procedure in
+<a href="../deploy-full-stack/">Deploy the full stack</a>, or stop at
 the foundation with <a href="../deploy-infra-only/">Deploy infrastructure only</a>.</p>
 <h2 id="topologies">Topologies</h2>
+<p>The deployment input below selects the layout. Set it in your <code>azd</code> environment
+before provisioning, as shown after the table.</p>
 <table>
 <thead>
 <tr>
@@ -2022,8 +2025,9 @@ the foundation with <a href="../deploy-infra-only/">Deploy infrastructure only</
 </tr>
 </tbody>
 </table>
-<p>This table describes Agent Application, not resources retained after a
-migration. In <code>hosted-panel</code>, Agent Application Cosmos DB stores owner-index and
+<p>These are the Agent Application resources selected by each topology. Existing
+resources are retained during migration until explicitly retired.
+In <code>hosted-panel</code>, Agent Application Cosmos DB stores owner-index and
 feedback metadata, not hosted transcripts. Foundry Agent Service can have its
 own backing Cosmos DB. Continuity and history need separate configuration.</p>
 <p><strong>Topology resolution</strong></p>
@@ -2034,21 +2038,22 @@ own backing Cosmos DB. Continuity and history need separate configuration.</p>
 <li>Older environments without a topology marker resolve to <code>classic</code>, rather
   than silently moving an existing runtime.</li>
 </ul>
-<p>Choose before provisioning, for example:</p>
+<p>Set the topology in the selected <code>azd</code> environment before provisioning, for example:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>hosted-panel
 </code></pre></div>
-<p>Ingestion selection is independent of all three topologies. Native source
-ingestion does not replace conversation uploads or Agent Application's SharePoint
-jobs. See <a href="../ingestion/">Ingestion and conversation uploads</a>.</p>
+<p>Select ingestion separately for any topology. Native source ingestion,
+conversation uploads and Agent Application's SharePoint jobs have different
+requirements. See <a href="../ingestion/">Ingestion and conversation uploads</a>.</p>
 <h2 id="image-and-deployment-handoff">Image and deployment handoff</h2>
 <p>A hosted deployment separates <strong>foundation provisioning</strong>, <strong>image preparation</strong>
 and <strong>agent-version deployment</strong>. Preparation builds the manifest-pinned
 orchestrator, resolves it to an immutable digest and adds the supported hosted
-startup command. Provisioning then records that digest in the deployment handoff.
-Provisioning alone does not create a running agent version.</p>
+startup command. Provisioning then records that digest for the deployment step,
+which creates the running agent version.</p>
 <p>Follow the <a href="../deploy-full-stack/">full-stack runbook</a> for the exact initial
-sequence. A fresh <code>azd up</code> does not build a missing hosted image or replace the
-required handoff provision. Private builds use the VNet's ACR Tasks agent pool.</p>
+sequence: provision the foundation, prepare the image, provision its handoff,
+then deploy. A fresh <code>azd up</code> cannot complete the required intermediate image
+preparation. Private builds use the VNet's ACR Tasks agent pool.</p>
 <h3 id="redeploy-the-same-image-or-prepare-a-new-one">Redeploy the same image or prepare a new one</h3>
 <table>
 <thead>
@@ -2064,7 +2069,7 @@ required handoff provision. Private builds use the VNet's ACR Tasks agent pool.<
 </tr>
 <tr>
 <td>Changed manifest orchestrator commit</td>
-<td>Prepare a new generated image and provision its handoff before deployment. Deploy-only does not rebuild it or check generated source provenance against the new manifest.</td>
+<td>Prepare a new generated image and provision its handoff before deployment. Preparation checks the source revision and rebuilds as needed; deploy-only reuses the recorded image.</td>
 </tr>
 <tr>
 <td>Changed process environment in <code>hosted-agent/azure.yaml</code></td>
@@ -2076,18 +2081,21 @@ required handoff provision. Private builds use the VNet's ACR Tasks agent pool.<
 </tr>
 </tbody>
 </table>
-<p>Generated images are reused only when recorded source and startup-command
-provenance match. Preparation with <code>--image-version sha256:&lt;64-hex-characters&gt;</code>
-skips building and clears generated provenance. Promoting identical source pins
-does not prove that independently built images have identical digests.</p>
+<p>Generated images are reused only when their recorded source revision and
+startup command match. Preparation with <code>--image-version sha256:&lt;64-hex-characters&gt;</code>
+skips building and clears that build record. When promoting an image between
+environments, compare digests; independent builds of the same source can differ.</p>
 <p>Use <a href="../deploy-full-stack/#redeploy-applications-only">Agent Application redeployment</a>
 or the <a href="../deploy-full-stack/#upgrade-to-a-new-release">upgrade workflow</a>.</p>
 <h2 id="validation-rules">Validation rules</h2>
+<p>The deployment workflow validates these inputs and runtime options. Use
+<a href="../configuration/">Configuration</a> to locate each value in the selected
+environment, App Configuration or hosted child definition.</p>
 <table>
 <thead>
 <tr>
 <th>Setting</th>
-<th>Contract</th>
+<th>Required value or behavior</th>
 </tr>
 </thead>
 <tbody>
@@ -2109,7 +2117,7 @@ or the <a href="../deploy-full-stack/#upgrade-to-a-new-release">upgrade workflow
 </tr>
 <tr>
 <td><code>HOSTED_CONTINUITY_ENABLED</code></td>
-<td>Default <code>false</code>. Requests separately validated continuity activation, not generic runtime history.</td>
+<td>Default <code>false</code>. Requests continuity activation after ownership and permission checks have been validated.</td>
 </tr>
 <tr>
 <td><code>PRESERVE_CLASSIC_RUNTIME</code></td>
@@ -2118,9 +2126,9 @@ or the <a href="../deploy-full-stack/#upgrade-to-a-new-release">upgrade workflow
 </tbody>
 </table>
 <p>The Agent Application child definition, <code>hosted-agent/azure.yaml</code>, declares agent
-name, CPU, memory, protocols and startup command as literal fields. Similarly named provisioning
-inputs do not automatically customize those fields. Deliberate child-definition
-changes must remain compatible with the provisioning contract.</p>
+name, CPU, memory, protocols and startup command as literal fields. Change those
+fields in the child definition when customizing them, and keep them compatible
+with the provisioning requirements.</p>
 <p>For a custom definition, <code>source.imageDigest</code> becomes <code>AGENTLZ_IMAGE_DIGEST</code>.
 It is not interchangeable with Agent Application's <code>HOSTED_AGENT_IMAGE_VERSION</code>.
 See <a href="../build-your-own-app/#source-pinning">Custom applications</a>.</p>
@@ -2156,12 +2164,13 @@ See <a href="../build-your-own-app/#source-pinning">Custom applications</a>.</p>
 App Configuration Data Reader on the store and Cognitive Services OpenAI User on
 the Foundry account. If <code>AUDIT_HMAC_KEY</code> is a Key Vault reference, it also plans
 Key Vault Secrets User on that <strong>individual secret</strong>. This is a closed bootstrap
-set, not every component capability profile or a caller-access grant.</p>
+set. Source access, additional secrets and caller permissions require separate
+scoped grants.</p>
 <p>The deployment principal needs scoped role-assignment authority. Alternatively,
 an authorized administrator can review and apply the exact read-only plan.
-Do not grant resource-group/subscription Owner or remove unrelated assignments
-to resolve a denial. ARM grant visibility is not proof of data-plane readiness.
-Allow propagation and use <a href="../deploy-full-stack/#recover-hosted-runtime-access">hosted access recovery</a>.</p>
+Keep grants limited to the required resource or secret and retain unrelated
+assignments. Allow propagation, then test the required data-plane operation
+using <a href="../deploy-full-stack/#recover-hosted-runtime-access">hosted access recovery</a>.</p>
 <p>Custom hosted services instead reconcile their declared capability profiles
 against their discovered runtime principal. See
 <a href="../build-your-own-app/#capability-profiles">Capability profiles</a>.</p>
@@ -2204,13 +2213,14 @@ UI managed identity</strong>. Publish these settings under App Configuration lab
 <p>Expose <code>user_impersonation</code>, request version-2 access tokens and register the
 exact HTTPS <code>/auth/oauth/azure-ad/callback</code> redirect URI. Separately configure
 and consent the downstream delegated permissions for the deployed Foundry
-audience. A Graph token or the UI's API scope is not Foundry OBO consent.</p>
+audience. The UI API scope and Foundry downstream consent are configured separately.</p>
 <div class="admonition warning">
 <p class="admonition-title">Verify the user path</p>
-<p>A successful managed-identity greeting does not prove login, OBO or document
-authorization. Test real-user invocation and document allow/deny behavior,
-and verify unauthenticated panel requests are rejected. The panel has no
-development authentication bypass.</p>
+<p>Test real-user login, delegated Foundry invocation and document allow/deny
+behavior separately. Protected retrieval requires the custom hosted identity
+integration described in <a href="../application-auth/">Agent Application access</a>.
+If the panel is deployed, confirm it rejects unauthenticated requests;
+authentication is required in development as well as production.</p>
 </div>
 <details>
 <summary>Callbacks, credentials and panel requirements</summary>
@@ -2247,19 +2257,20 @@ Review its shared-connection identity boundary
 before using it with protected data.</p>
 <details>
 <summary>Continuity, history and the administrative panel</summary>
-<p>Without continuity, hosted multi-turn context in the active UI session is
-not durable history after reload, browser restart or a new chat. Hosted mode
-does not register the classic orchestrator/Dapr history data layer. Login,
-chat and feedback callbacks remain available.</p>
+<p>Without continuity, hosted multi-turn context lasts only for the active UI
+session and is lost after reload, browser restart or a new chat. Hosted mode
+uses its own history path rather than the classic orchestrator/Dapr data layer.
+Login and chat remain available; the existing feedback callbacks still target
+the classic backend. See <a href="../user-feedback/">User feedback</a> for hosted integration.</p>
 <p>When enabled and activated, continuity coordinates managed Conversations
 reads/writes in the UI with owner binding and agent-scoped permissions. It
 sends the authorized transcript to the stateless runtime; it does not grant
 the container general history access.</p>
 <p>Panel history needs <code>DEPLOY_ADMINISTRATIVE_PANEL</code>, <code>PANEL_HISTORY_ENABLED</code>
 and hosted continuity, plus authentication and owner checks. Disabled
-history surfaces return HTTP 503. Cosmos owner-index/feedback data is
-metadata, not a second transcript store. A topology or enabled flag alone
-proves neither persistence nor cross-user isolation.</p>
+history surfaces return HTTP 503. Cosmos stores owner-index/feedback metadata;
+Foundry stores managed transcripts. Verify persistence by reopening a conversation
+as its owner, then confirm another user is denied.</p>
 </details>
 <h2 id="configuration-tls-compatibility">Configuration TLS compatibility</h2>
 <p><code>APP_CONFIG_TLS_COMPATIBILITY</code> is an opt-in <strong>process environment variable</strong>,
@@ -2274,8 +2285,8 @@ fails startup.</p>
 <p>Change the process input and deploy a new agent version using the
 <a href="../deploy-full-stack/#redeploy-applications-only">redeployment runbook</a>.
 An App Configuration key cannot replace this bootstrap input. Disable the
-profile to revert it and redeploy. Never disable certificate validation or
-infer a proven MTU root cause from a successful compatibility test.
+profile to revert it and redeploy. Keep certificate validation enabled.
+Diagnose the transport separately to establish the cause of the stall.
 See <a href="../troubleshooting/#hosted-configuration-tls-handshake-stalls">TLS diagnosis</a>.</p>
 <h2 id="telemetry-and-topology-changes">Telemetry and topology changes</h2>
 <p>Prompt/completion capture in telemetry is <strong>off by default</strong>. Enable it only
@@ -2283,14 +2294,14 @@ when your organization's policy permits storing that content in Application
 Insights.</p>
 <p>During a migration preserving classic runtime, routing stays classic until
 <code>HOSTED_AGENT_BASE_URL</code>, a valid digest and <code>HOSTED_CUTOVER_COMPLETE=true</code>
-are present. Cutover markers record hook completion, not user acceptance.
+are present. Cutover markers record hook completion; use the checks below
+to validate the application for users.
 A failed greeting or selected component deployment blocks cutover.</p>
 <p>To change topology, use the <a href="../deploy-full-stack/">full-stack runbook</a>, then
 verify routing, intended revisions, authentication, source bindings and
-authorization. Selecting classic does not select ingestion or delete a hosted
-agent. The legacy <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=false</code> selects classic
-only when <code>DEPLOYMENT_TOPOLOGY</code> is absent and the legacy flag pair is consistent.
-Retiring the old runtime is a separate decision.</p>
+authorization. Select ingestion and retire any old hosted agent separately.
+The legacy <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=false</code> selects classic
+only when <code>DEPLOYMENT_TOPOLOGY</code> is absent and the legacy flag pair is consistent.</p>
 
 
 

@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1916,9 +1916,10 @@
 
 
 <h1 id="agent-tools">Agent tools</h1>
-<p>Customize Agent Application's orchestrator with an MCP tool or a code-defined
-strategy, then deploy a new Foundry hosted agent version. The result is a tool
-available to Agent Application, not a portal-only change to a prompt agent.</p>
+<p>Customize Agent App Orchestrator with a Model Context Protocol (MCP) tool or a
+code-defined strategy, then deploy a new Foundry hosted agent version. An MCP server exposes
+operations that the agent can discover and call. A strategy defines how the
+orchestrator uses models, retrieval and tools.</p>
 <h2 id="choose-the-extension-point">Choose the extension point</h2>
 <table>
 <thead>
@@ -1942,33 +1943,31 @@ available to Agent Application, not a portal-only change to a prompt agent.</p>
 </tr>
 </tbody>
 </table>
-<p>An MCP <strong>tool</strong> and an MCP <strong>knowledge source</strong> are different
-contracts. <code>AGENT_STRATEGY=mcp</code> discovers callable tools from an MCP server.
-<code>FOUNDRY_IQ_MCP_SOURCES_JSON</code> describes sources used by the knowledge base; it
-does not register arbitrary actions on Agent Application's orchestrator.</p>
+<p>For callable tools, select the MCP strategy through the runtime setting
+<code>AGENT_STRATEGY=mcp</code>, configured in step 2. For knowledge-base retrieval,
+<code>FOUNDRY_IQ_MCP_SOURCES_JSON</code> defines MCP sources in the
+<a href="../foundry-iq/">Foundry IQ setup</a>. Configure each at the layer that will use it.</p>
 <p>Foundry supports <a href="https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol?view=foundry">MCP tools and Toolbox connections</a>.
-That platform capability does not mean every Agent Application strategy loads
-those connections. <a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry">Hosted agents run your containerized code</a>:
-editing tools or instructions in the Foundry portal does not change the
-source-created hosted orchestrator's code.</p>
+Agent Application loads tools through its strategy code and configuration.
+<a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry">Hosted agents run your containerized code</a>:
+change that source and deploy a new version to update code-defined tools or instructions.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
 <li>Have a working <a href="../hosted-agents/">hosted Agent Application</a> and a nonproduction
   environment for testing.</li>
 <li>Use the <a href="../build-your-own-app/">custom application and source-pin workflow</a>
   to fork the orchestrator and retain reproducible source commits and image
-  digests. Do not patch generated build directories.</li>
+  digests. Make source changes in the fork so builds remain reproducible.</li>
 <li>Arrange permission to deploy agent versions, update Agent Application's App
   Configuration settings, and have an authorized administrator grant narrowly
   scoped runtime access when required.</li>
 <li>For MCP, have a server reachable from the hosted runtime, a documented
   authentication contract, and a small, reviewed set of tools. Start with a
-  read-only operation; do not expose an unrestricted production action catalog.</li>
+  read-only operation and expose only the tools approved for the pilot.</li>
 </ul>
 <h2 id="1-check-what-the-hosted-strategy-loads">1. Check what the hosted strategy loads</h2>
 <p>The shipped hosted allowlist is <code>single_agent_rag</code>, <code>maf_lite</code>,
-<code>maf_agent_service</code> and <code>mcp</code>. Registration in the strategy factory alone is
-not enough: the hosted guard rejects strategies outside that list.
+<code>maf_agent_service</code> and <code>mcp</code>. The hosted guard rejects strategies outside that list.
 <code>multimodal</code> and <code>nl2sql</code> are registered for the classic runtime but are not
 admitted by the hosted guard.</p>
 <p>The shipped <code>mcp</code> strategy opens one configured server <strong>for each request</strong>,
@@ -1976,15 +1975,16 @@ discovers its functions, wraps them for audit, and supplies them to a local
 Microsoft Agent Framework <code>ChatAgent</code> inside the hosted container. It does not
 load MCP prompts, provide a configurable tool allowlist, or merge a list of
 servers. Limit the server's exposed tools or implement filtering in your fork.
-The other hosted strategies do not become general MCP action loaders when you
-set <code>MCP_APP_ENDPOINT</code>.
-If you need both Agent Application's knowledge-base retrieval and a new action,
-extend the retrieval strategy in your fork rather than assuming that switching
-to <code>mcp</code> preserves its retrieval behavior.</p>
+<code>MCP_APP_ENDPOINT</code> configures the MCP strategy's server. If you need both
+Agent Application's knowledge-base retrieval and a new action, extend the
+retrieval strategy in your fork. Switching to <code>mcp</code> replaces that strategy's
+retrieval behavior with MCP tool discovery.</p>
 <p>Hosted <code>mcp</code> also requires a validated Foundry call ID. It forwards that
 platform-provided ID for Toolbox to resolve the caller; it fails closed when
 the context is missing. Use Agent Application's delegated Foundry invocation
-path, not a direct container request with a fabricated identity header.</p>
+path, not a direct container request with a fabricated identity header.
+Authenticated Toolbox retrieval also requires the custom SDK integration in
+<a href="../application-auth/#3-verify-the-retrieval-identity-boundary">Agent Application access</a>.</p>
 <h2 id="2-configure-the-mcp-connection">2. Configure the MCP connection</h2>
 <p>In Agent Application's <strong>Azure App Configuration → Configuration explorer</strong>,
 create or update these nonsecret keys with label <strong><code>agent-lz</code></strong>. This example
@@ -1997,7 +1997,7 @@ the switch. Keep deployment inputs separate from these runtime settings.</p>
 <tr>
 <th>Key</th>
 <th>Example</th>
-<th>Shipped contract</th>
+<th>Supported behavior</th>
 </tr>
 </thead>
 <tbody>
@@ -2009,7 +2009,7 @@ the switch. Keep deployment inputs separate from these runtime settings.</p>
 <tr>
 <td><code>MCP_APP_ENDPOINT</code></td>
 <td><code>https://tools.example.com</code></td>
-<td>Server URL; not an agent ID, project endpoint or resource name.</td>
+<td>URL of the MCP server the hosted runtime will call.</td>
 </tr>
 <tr>
 <td><code>MCP_SERVER_TRANSPORT</code></td>
@@ -2023,8 +2023,8 @@ the switch. Keep deployment inputs separate from these runtime settings.</p>
 </tr>
 </tbody>
 </table>
-<p>These are flat runtime settings, not a <code>servers</code> JSON document. Using the
-shipped <code>.env.sample</code> names:</p>
+<p>Configure these as individual runtime keys rather than a <code>servers</code> JSON document.
+The shipped <code>.env.sample</code> uses these names:</p>
 <div class="highlight"><pre><span></span><code>AGENT_STRATEGY=mcp
 MCP_APP_ENDPOINT=https://tools.example.com
 MCP_SERVER_TRANSPORT=streamable_http
@@ -2032,7 +2032,7 @@ MCP_CLIENT_TIMEOUT=600
 </code></pre></div>
 <p>For Streamable HTTP, the client appends <code>/mcp</code> unless already present. For SSE,
 it appends <code>/sse</code>. A URL ending in the other transport's path is rejected.
-Do not assume Agent Application's default SSE transport matches your server.
+Check the server's supported transport and set it explicitly before deployment.
 Local development has a separate behavior: the strategy overrides the endpoint
 to <code>http://localhost:5000</code> outside Azure.</p>
 <p>If the server requires the client's supported API-key header, store the secret
@@ -2042,27 +2042,26 @@ Never paste the key into a command, source file, <code>.env</code> committed to 
 ordinary App Configuration value.</p>
 <p>The shipped connector does not perform arbitrary server OAuth flows or forward
 the incoming <code>Authorization</code> header. A server requiring a different
-authentication mechanism needs a compatible, reviewed connector change, not
-just a portal connection or a new setting name.</p>
+authentication mechanism needs a compatible, reviewed connector change.</p>
 <h2 id="3-authorize-and-connect-safely">3. Authorize and connect safely</h2>
 <ol>
-<li>Identify the <strong>actual deployed agent runtime principal</strong>. It is not
-   automatically the project's managed identity or the deployment principal.
+<li>Identify the <strong>actual deployed agent runtime principal</strong>, which runs the
+   agent and accesses its dependencies.
    Use <a href="../hosted-agents/">Hosted agents</a> for runtime access and bootstrap recovery.</li>
 <li>If you added <code>MCP_APP_APIKEY</code>, grant that runtime principal secret-read
    access to the individual Key Vault secret and ensure it can reach the vault.
-   Agent Application's bootstrap handling of <code>AUDIT_HMAC_KEY</code> does not grant
-   access to every new secret. App Configuration stores a reference; the
+   Bootstrap grants access to <code>AUDIT_HMAC_KEY</code> separately.
+   App Configuration stores a reference; the
    agent runtime retrieves the secret using its own credentials
    (<a href="https://learn.microsoft.com/azure/azure-app-configuration/use-key-vault-references-dotnet-core">Key Vault reference behavior</a>).</li>
 <li>Confirm DNS, TLS and outbound connectivity from the hosted runtime to the
    exact MCP hostname and port. For an isolated deployment, follow
-   <a href="../network-isolation/">Network isolation</a>; connectivity from your laptop
-   does not prove hosted egress. Do not disable TLS validation to fix a failure.
+   <a href="../network-isolation/">Network isolation</a>. Test from the runtime's network
+   path with TLS validation enabled.
    Review what prompts, arguments and results can leave Agent Application through
    this server; approve the destination before sending protected data.</li>
-<li>Define authorization at the tool or downstream service. A call ID, API key
-   or propagated identity does not by itself enforce source document ACLs.
+<li>Enforce authorization at the tool or downstream service, including
+   source document ACLs for the validated caller.
    Preserve delegated user/OBO handling and test permitted and denied data
    access. Never replace a denied user request with service-identity retrieval.</li>
 </ol>
@@ -2075,8 +2074,8 @@ just a portal connection or a new setting name.</p>
    authorization, bounded output and safe failure behavior.</li>
 <li>For a new strategy, register its key in
    <code>src/strategies/agent_strategy_factory.py</code> and explicitly review hosted
-   eligibility in <code>src/strategies/hosted_strategies.py</code>. Merely adding the key
-   to the allowlist does not make classic dependencies hosted-compatible.
+   eligibility in <code>src/strategies/hosted_strategies.py</code>. Validate every
+   dependency against the hosted runtime before admitting the strategy.
    Keep hosted execution stateless; do not introduce classic Cosmos-backed
    conversation state.</li>
 <li>Extend the existing MCP/strategy tests to cover discovery and invocation,
@@ -2090,10 +2089,8 @@ just a portal connection or a new setting name.</p>
    <a href="../build-your-own-app/">Build your own application</a> for the pin workflow.</li>
 </ol>
 <h2 id="5-deploy-and-verify">5. Deploy and verify</h2>
-<p>The runtime caches App Configuration in process; these steps do not assume
-live reload. After changing settings or secrets, deploy a new hosted version
-so that a fresh process loads them. Do not restart an orchestrator Container
-App as a substitute for updating the hosted agent.</p>
+<p>The runtime loads and caches App Configuration in process. After changing
+settings or secrets, deploy a new hosted version so that a fresh process loads them.</p>
 <p>For changed orchestrator source, prepare a new image from the updated pin,
 provision its immutable-digest handoff, then deploy the agent version using
 <a href="../deploy-full-stack/">the full-stack deployment runbook</a>.
@@ -2104,15 +2101,14 @@ manual settings.</p>
 <p>Verify through signed-in Agent Application:</p>
 <ol>
 <li>Ask for the read-only tool's specific operation. Confirm the downstream
-   server received the expected call and the answer reflects its result;
-   model-generated text alone is not proof of invocation.</li>
+   server received the expected call and the answer reflects its result.</li>
 <li>Inspect Agent Application telemetry for the selected strategy, MCP transport,
    tool count and request status. Do not log credentials, full user-context
    headers or sensitive tool arguments to diagnose a failure.</li>
 <li>Repeat as a user without permission. Expect denial without protected data
    in the answer, citations or tool output.</li>
-<li>Test a server outage and a timeout. Expect an explicit failed request,
-   not a success answer fabricated without the required tool.</li>
+<li>Test a server outage and a timeout. Confirm that requests requiring the tool
+   report failure and return no invented tool result.</li>
 </ol>
 <h2 id="recover-or-undo">Recover or undo</h2>
 <table>
@@ -2125,7 +2121,7 @@ manual settings.</p>
 <tbody>
 <tr>
 <td>Unsupported strategy</td>
-<td>Restore a hosted-eligible key. A classic strategy is not enabled by portal configuration.</td>
+<td>Restore one of the hosted-eligible keys listed in step 1.</td>
 </tr>
 <tr>
 <td>Missing Foundry call context</td>
@@ -2151,7 +2147,7 @@ those labels as well; do not create competing copies of the same setting.</p>
 <p>To undo, restore the prior runtime values and compatible source pins/image,
 then redeploy using the same workflow. Confirm Agent Application invokes the
 intended version before removing obsolete tools, credentials or grants.
-Keep the old server contract available until rollback is no longer needed.</p>
+Keep the previous server API available until rollback is no longer needed.</p>
 
 
 

@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2129,8 +2129,8 @@ The <a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foun
 is <strong>in preview</strong> and follows a separate setup, outside this procedure.
 In the documented lab, native connector requests still arrived through
 public ingress after VNet association and were denied with PNA disabled;
-the flow used the delegated private path successfully. This observation
-does not establish that every native private integration is unsupported.</p>
+the flow used the delegated private path successfully. These results are
+specific to that lab; evaluate the native preview separately for your environment.</p>
 </div>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
@@ -2156,9 +2156,9 @@ does not establish that every native private integration is unsupported.</p>
   it before editing and retain its connection-reference settings. Use a dedicated
   pilot agent so disabling the relay does not interrupt unrelated topics.</li>
 </ul>
-<p>Creating Azure network resources is outside this procedure. A subnet alone is
-not sufficient: the enterprise policy must reference the required regional
-networks and be associated with the environment. Use the
+<p>Creating Azure network resources is outside this procedure. The enterprise
+policy must reference the required regional networks and be associated with
+the environment. Use the
 <a href="https://learn.microsoft.com/power-platform/admin/vnet-support-setup-configure">Power Platform setup requirements</a>
 if the platform handoff is incomplete.</p>
 <div class="admonition warning">
@@ -2278,9 +2278,9 @@ editor (<strong>fx</strong>), not as plain text. Step 4 uses Copilot Studio's
 </tr>
 </tbody>
 </table>
-<p><strong>"Preauthorized" refers to the Microsoft application used by the connector,
-not to access to your Foundry agent.</strong> Requests still use HTTPS and the
-connection user's Microsoft Entra identity, with the permissions from Step 2.</p>
+<p><strong>"Preauthorized" refers to the Microsoft application used by the connector.</strong>
+Requests use HTTPS and the connection user's Microsoft Entra identity.
+The agent-scoped permissions from Step 2 authorize access to Foundry.</p>
 <p>Do not append the project path to the base URL or use the resource hostname as
 the token audience. Do not supply a bearer token, API key or client secret.
 If tenant policy blocks the connector or requires consent, stop and have the
@@ -2338,16 +2338,16 @@ before serializing it preserves quotes, line breaks, backslashes and Unicode.
 Do not concatenate the user's message into a JSON string.</p>
 <p>The flow waits for a complete response; it does not stream tokens.
 <code>store:true</code> requests response storage; approve
-Foundry's retention settings before using real data. It does <strong>not</strong> implement
-multi-turn history: each call sends only the current message.</p>
+Foundry's retention settings before using real data. Each call sends only the
+current message, so the relay has no multi-turn history.</p>
 <h4 id="response-and-publication">Response and publication</h4>
 <p>In <strong>Respond to the agent</strong>, add a <strong>Text</strong> output named <code>foundry_response</code>.
 Set its value using <strong>Expression</strong>:</p>
 <div class="highlight"><pre><span></span><code>if(contains(body('Invoke_an_HTTP_request'), '$content'), base64ToString(body('Invoke_an_HTTP_request')?['$content']), string(body('Invoke_an_HTTP_request')))
 </code></pre></div>
 <p>This decodes the response to JSON text, whether the connector returns JSON
-directly or inside a base64 <code>$content</code> envelope. It is <strong>not the chat reply</strong>;
-Step 4 extracts that text.</p>
+directly or inside a base64 <code>$content</code> envelope. Step 4 extracts the chat reply
+from this JSON.</p>
 <p>Select <strong>Respond to the agent &gt; Settings</strong> and configure:</p>
 <ul>
 <li><strong>Run After:</strong> Run only when <strong>Invoke an HTTP request</strong> <strong>is successful</strong>.
@@ -2386,8 +2386,8 @@ and restrict sharing before adding real users.</p>
    select <strong>Create new</strong> and name the variable <strong><code>FoundryReply</code></strong>
    (shown as <strong><code>Topic.FoundryReply</code></strong>). For <strong>To value</strong>, select <strong>Formula</strong> and
    paste the expression below; the resulting variable must be <strong>Text</strong>.
-   It reads all message <code>output_text</code> parts, rather than assuming the first output
-   item is a message; tool calls can precede it.</p>
+   Tool calls can precede message items in the response. The expression reads
+   all message <code>output_text</code> parts.</p>
 <p><details class="runbook-command" markdown="1">
   <summary>Power Fx: extract text only from a completed, error-free response</summary></p>
 <div class="highlight"><pre><span></span><code>IfError(
@@ -2437,7 +2437,7 @@ handling must report the failed action, not substitute a generated answer.</p>
 test window. In Power Automate, open the flow's details page and select the
 matching run in <strong>Run history</strong>. Keep its run ID; expand the HTTP action to inspect
 its status and outputs, and <strong>Respond to the agent</strong> for the decoded JSON.
-A chatbot reply alone is not proof of backend execution.</p>
+Correlate this run with the Studio topic trace to verify backend execution.</p>
 <table>
 <thead>
 <tr>
@@ -2473,12 +2473,12 @@ A chatbot reply alone is not proof of backend execution.</p>
 </tbody>
 </table>
 <p>Use existing approved diagnostic settings; do not turn on prompt or document
-capture just to obtain network evidence. A jumpbox success establishes only the
-jumpbox path. If gateway logs are unavailable, do not claim that private ingress
-has been independently verified.</p>
+capture just to obtain network evidence. Verify the delegated subnet path
+separately from jumpbox connectivity. If gateway logs are unavailable, record
+private ingress as awaiting independent verification.</p>
 <p>After these checks pass, return to the Studio agent and select <strong>Publish</strong>.
-Repeat the test from the intended authenticated channel with an approved pilot user. Designer success
-does not verify channel authentication, sharing or connection behavior.</p>
+Repeat the test from the intended authenticated channel with an approved pilot
+user to validate channel authentication, sharing and connection behavior.</p>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <table>
 <thead>

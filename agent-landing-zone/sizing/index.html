@@ -441,6 +441,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -657,34 +685,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1900,7 +1900,7 @@ document processing place different demands on the deployment.</p>
 <p>Choose the <a href="../planning/">deployment shape</a> first. Size each service below, then
 use <a href="../cost-planning/">Cost planning</a> to estimate the selected capacity.</p>
 <div class="admonition note">
-<p class="admonition-title">Defaults are not workload tiers</p>
+<p class="admonition-title">Validate defaults against your workload</p>
 <p>The starting points below describe platform v4.3.0, reviewed
 October 23, 2026. They are not benchmarked small/medium/large profiles or
 throughput guarantees. Use your composed parameters and actual deployed
@@ -1941,18 +1941,17 @@ configuration, especially for existing environments and custom applications.</p>
 <p>Start with <a href="../configuration/">Configuration</a> and <a href="../hosted-agents/">Agent hosting</a>
 to identify the applicable inputs and host constraints. Use the
 <a href="../../bicep/deployed-resources/">resource inventory</a> to identify enabled resources,
-then confirm them against your platform's composed parameters: the foundation
-inventory is not a promise that every Agent Landing Zone topology has the same
-resource count.</p>
+then count the resources selected in your generated <code>infra/main.parameters.json</code>.
+The count varies with topology and resource reuse.</p>
 <h2 id="models-and-quota">Models and quota</h2>
 <p>The root <code>main.parameters.json</code> selects a <code>chat</code> deployment of <code>gpt-5-nano</code>
 and a <code>text-embedding</code> deployment of <code>text-embedding-3-large</code>, each with
-<code>sku.capacity=100</code>. This is a deployment capacity input, <strong>not</strong> 100 requests
-per second or a model-independent token rate. Confirm quota units, deployment
-type and regional availability for each model using the
+<code>sku.capacity=100</code>. The token and request limits represented by this value
+depend on the model and deployment type. Confirm those limits and regional
+availability for each model using the
 <a href="https://learn.microsoft.com/azure/ai-services/openai/quotas-limits">model quota reference</a>.
-Change the reviewed root <code>modelDeploymentList</code>, not an invented environment
-variable.</p>
+To change capacity, update <code>modelDeploymentList</code> in the root
+<code>main.parameters.json</code>.</p>
 <p>Estimate input/output tokens per turn, calls per strategy, retries and peak
 turns per minute. For ingestion, measure extracted tokens and embedding batch
 volume as well. Long contexts and multiple tool/model calls can exhaust quota
@@ -2007,7 +2006,7 @@ capacity does not bypass that gate.</p>
 <tr>
 <td>Agent App Ingestion (optional)</td>
 <td>Root entry specifies <code>1.0</code> CPU / <code>3.0Gi</code> and one minimum/maximum replica on <code>main</code>.</td>
-<td>Test large files and expensive formats, peak memory, processing backlog and embedding/Search throttling. Increasing replicas is not proof of safe parallel ingestion; validate duplicate handling and shared source/index writes.</td>
+<td>Test large files and expensive formats, peak memory, processing backlog and embedding/Search throttling. Before adding replicas, test duplicate handling and concurrent writes to shared sources and indexes.</td>
 </tr>
 <tr>
 <td>Container Apps workload profiles</td>
@@ -2057,8 +2056,8 @@ Conversation continuity limits are not compute-sizing controls.</p>
 <li><strong>Choose explicit targets.</strong> Record acceptable response time, error rate,
    ingestion delay and peak concurrency for representative requests.</li>
 <li><strong>Check service limits and quota.</strong> Confirm regional availability and capacity
-   for every enabled service. Template defaults and a passing preflight check
-   are not workload sizing evidence.</li>
+   for every enabled service. Then test the initial configuration against the
+   workload targets from step 1.</li>
 <li><strong>Measure representative behavior.</strong> In a nonproduction environment, exercise
    the selected strategy, configured tools, document sizes and ingestion path.
    Include authentication and document allow/deny checks.</li>
@@ -2074,8 +2073,8 @@ and interactive requests use the same services.</p>
 <h2 id="turn-the-result-into-a-cost-plan">Turn the result into a cost plan</h2>
 <p>Use the Agent-specific <a href="../cost-planning/">Cost planning</a> checklist. Recalculate
 for your region, enabled resources, measured usage and availability requirements.
-Shared foundation example estimates are not a quote or a validated production
-sizing profile.</p>
+Use the shared foundation estimates as pricing examples, with capacity based
+on your workload measurements.</p>
 <p>Record the selected configuration with the workload assumptions and test
 evidence so that a later capacity change can be evaluated against the same
 baseline. Then follow <a href="../deploy-infra-only/">Deploy infrastructure only</a> or

@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../how-it-works/">
+        <link rel="prev" href="../cost-planning/">
       
       
         <link rel="next" href="../resource-naming/">
@@ -441,6 +441,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -533,34 +561,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2126,7 +2126,7 @@
 <p>Set deployment inputs with <code>azd env set &lt;NAME&gt; &lt;value&gt;</code> before provisioning.
 Inspect only the keys you need with <code>azd env get-value &lt;NAME&gt;</code>; a complete
 environment dump can contain secrets.</p>
-<p>This is a settings reference, not another deployment procedure. Follow
+<p>Use this page to look up settings and defaults. Follow
 <a href="../deploy-infra-only/">Deploy infrastructure only</a> or
 <a href="../deploy-full-stack/">Deploy the full stack</a> for the ordered workflow.
 Choose the <a href="../planning/">deployment shape</a>, <a href="../sizing/">capacity</a> and
@@ -2138,7 +2138,8 @@ Choose the <a href="../planning/">deployment shape</a>, <a href="../sizing/">cap
 <h2 id="environment-boundaries">Environment boundaries</h2>
 <p>Use separate azd environments and resource groups for DEV, TEST and PROD.
 Separate subscriptions provide a stronger administrative and quota boundary.
-An environment name or App Configuration label alone is not a security boundary.</p>
+Enforce separation through deployment permissions, service identities and
+dedicated configuration and data stores, as summarized below.</p>
 <table>
 <thead>
 <tr>
@@ -2169,11 +2170,11 @@ An environment name or App Configuration label alone is not a security boundary.
 </tr>
 </tbody>
 </table>
-<p>Keep nonsecret, approved inputs in version control. A folder such as
-<code>environments/</code> is your convention, not an automatically loaded platform input:
-apply its settings explicitly. Local <code>.azure</code> is private deployment state, not
-a promoted configuration artifact. Hooks copy it to child projects; protect
-those workspaces too. Never copy DEV state into TEST or PROD.</p>
+<p>Keep nonsecret, approved inputs in version control. If you organize them in an
+<code>environments/</code> folder, apply those settings explicitly; the platform does not
+load that folder automatically. Local <code>.azure</code> contains private deployment
+state. Hooks copy it to child projects; protect those workspaces too. Never
+copy DEV state into TEST or PROD.</p>
 <h2 id="deployment-parameters">Deployment parameters</h2>
 <h3 id="resource-naming">Resource naming</h3>
 <p>For generated names, naming overrides and preserving existing resource names,
@@ -2337,7 +2338,8 @@ When unset, they use the template defaults shown below.</p>
 They are listed in <a href="#network-and-security">Network and security</a>.
 Foundry backing-service reuse uses native parameter names instead; see
 <a href="../planning/#select-reuse-or-omit-resources">Select, reuse or omit resources</a>.
-Neither a matching name nor disabling a deployment flag attaches an existing service.</p>
+Supply the supported resource ID to attach an existing service; naming and
+deployment flags control resource creation.</p>
 <p><span id="ingestion-application-selection"></span></p>
 <h3 id="agent-app-ingestion-selection">Agent App Ingestion selection</h3>
 <table>
@@ -2463,12 +2465,10 @@ See <a href="../troubleshooting/#search-preflight-region-and-quota">Search prefl
 <code>SEARCH_SHARED_PRIVATE_LINKS</code> as a JSON array under label <code>agent-lz</code>. This is
 post-provision metadata, not an operator switch or a runtime retrieval setting.
 Each entry records the template-owned <code>name</code>, <code>groupId</code> and
-<code>privateLinkResourceId</code>. Configuration cross-checks these against
-<code>SEARCH_SERVICE_RESOURCE_ID</code>, <code>STORAGE_ACCOUNT_RESOURCE_ID</code> and
-<code>AI_FOUNDRY_ACCOUNT_RESOURCE_ID</code>. This manifest identifies the exact source
-GETs for readiness. It is not an automatic target approval allowlist.
-Pending links require administrator approval. Do not substitute unrelated
-resources or edit the manifest to bypass the gate. See
+<code>privateLinkResourceId</code>. Configuration uses these values to verify the Search
+links and their target Storage and Foundry resources before creating a native
+knowledge source. Pending links require administrator approval.
+Keep this deployment-generated metadata unchanged and follow
 <a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
 <p>The exact ARM resource IDs can include Azure-valid resource-group names with
 parentheses, Unicode letters and decimal digits. Resource-group validation
@@ -2476,8 +2476,7 @@ does not relax the expected resource type or allow extra path segments,
 query strings, URL hosts or encoded path separators.</p>
 <h3 id="explicit-shared-source-permission-options">Explicit shared-source permission options</h3>
 <p><code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS</code> controls the configured source's
-ingestion permission metadata. It is an existing setting, not a new runtime
-key. Omission or an actual null value retains the protected default
+ingestion permission metadata. Omission or an actual null value retains the protected default
 <code>["rbacScope"]</code>. An explicit JSON empty array, <code>[]</code>, is an opt-in for a
 deliberately shared source <strong>when native Blob ingestion is active</strong>. It is
 not treated as a missing value.</p>
@@ -2504,8 +2503,8 @@ retrieval authorization, RBAC or private network restrictions. Do not use it
 to work around an authentication or private-link failure. Review the source's
 intended audience and verify allow/deny behavior before enabling it.</p>
 <p>To restore protected ingestion, set <code>["rbacScope"]</code> and rerun the source
-configuration. Verify the resulting source/index permission metadata and
-document authorization. Do not assume changing a setting alone has repaired
+configuration. Before allowing access, verify the source/index permission
+metadata and test document access for allowed and denied users, including
 already-ingested documents. See
 <a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
 <h2 id="network-and-security">Network and security</h2>
@@ -2662,10 +2661,10 @@ already-ingested documents. See
 </ul>
 <p>To use private DNS zones that already exist (for example, in a hub subscription), set <code>EXISTING_PRIVATE_DNS_ZONE_&lt;ZONE&gt;_RESOURCE_ID</code>, where <code>&lt;ZONE&gt;</code> is one of:</p>
 <p><code>COGSVCS</code>, <code>OPENAI</code>, <code>AISERVICES</code>, <code>SEARCH</code>, <code>COSMOS</code>, <code>BLOB</code>, <code>KEYVAULT</code>, <code>APPCONFIG</code>, <code>CONTAINERAPPS</code>, <code>ACR</code>, <code>AZUREMONITOR</code>, <code>OMSOPSINSIGHTS</code>, <code>ODSOPSINSIGHTS</code>, <code>AZUREAUTOMATION</code>, <code>APPINSIGHTS</code>.</p>
-<p>Their owner must provide the required VNet links or resolver forwarding.
-Peering alone does not propagate DNS. With <code>POLICY_MANAGED_PRIVATE_DNS=true</code>,
-the template omits its zone groups and leaves records to policy; supplying BYO
-zone IDs does not make those links or records appear.</p>
+<p>Their owner must provide the required VNet links or resolver forwarding
+separately from network peering. With <code>POLICY_MANAGED_PRIVATE_DNS=true</code>,
+Azure Policy manages DNS records instead of the template. Agree those policy
+assignments and links with the DNS owner before deploying.</p>
 <h2 id="hosted-agent">Hosted agent</h2>
 <p>These parameters apply when the orchestrator runs as a Foundry hosted agent. See <a href="../hosted-agents/">Hosted agents</a>.</p>
 <table>
@@ -2808,9 +2807,9 @@ end with <code>label_filter=None</code>, which leaves the label filter unset and
 read other labels. The orchestrator uses the explicit null label <code>"\0"</code> for its last
 selection, which reads unlabelled keys rather than all labels. Unlabelled
 values can still override <code>agent-lz</code> values.</p>
-<p>Do not rely on labels alone to isolate component configuration or assume
-that unlabelled values are used only when a key is missing. Check for
-conflicting legacy, service and unlabelled values before changing a setting.
+<p>Before changing a setting, check for conflicting legacy, service and unlabelled
+values, since a later selection can replace an earlier value for the same key.
+Use separate stores and identities for environment isolation.
 The component repositories document their version-specific selectors.</p>
 <p>To change a runtime setting:</p>
 <ol>

@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2033,8 +2033,7 @@
 its Container Apps environment private. The optional gateway terminates TLS,
 applies WAF rules, and forwards requests over HTTPS to <strong>one Container App</strong>.
 The basic routing rule forwards all UI paths, including enabled application
-routes; it is not a chat-only path allowlist. Keep application authentication
-and route authorization enabled.</p>
+routes. Keep application authentication and route authorization enabled.</p>
 <p>In the hosted topology, the path is:</p>
 <div class="highlight"><pre><span></span><code>Browser → Application Gateway → UI Container App → Foundry hosted agent
 </code></pre></div>
@@ -2071,9 +2070,9 @@ controlled public entry point. Choose the supported entry point before editing:<
 </tr>
 </tbody>
 </table>
-<p><code>NETWORK_ISOLATION=false</code> does <strong>not</strong> activate this gateway, even when
-<code>publicIngress.enabled</code> is true. Do not enable isolation on an existing public
-deployment merely to add a gateway; plan that network migration separately.</p>
+<p>The gateway requires network isolation. With <code>NETWORK_ISOLATION=false</code>,
+it stays undeployed even when <code>publicIngress.enabled</code> is true. For an existing
+public deployment, plan the network migration separately before adding this gateway.</p>
 <p><span id="before-you-start"></span></p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
@@ -2134,8 +2133,9 @@ azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> 
 <p>Expected: enabled is true; the backend FQDN belongs to the UI Container App.
 With no hostname or certificate configured there is no HTTPS listener.
 The empty source list and subnet Internet deny rule prevent public browser
-access to this staging configuration. They do not deny all VNet-origin traffic
-or replace private-network access controls. This is not an application health test.</p>
+access to this staging configuration. VNet-origin traffic remains subject to
+separate private-network controls. Test application health after configuring
+the listener and UI sign-in URL.</p>
 <h3 id="2-prepare-certificate-access-and-dns">2. Prepare certificate access and DNS</h3>
 <ol>
 <li>Record the certificate's <strong>versionless secret URI</strong>, for example
@@ -2175,8 +2175,9 @@ Configuration; remove or update a conflicting override.</p>
 the UI loads this setting at process startup. This does not require a hosted
 agent restart. Do not rewrite the provisioning-managed <code>FRONTEND_APP_ENDPOINT</code>
 to the public hostname; it describes the deployed Container App endpoint.
-Keep delegated authentication/OBO and source authorization unchanged. A WAF
-or propagated user identity does not itself enforce document permissions.</p>
+Keep delegated authentication/OBO and source authorization unchanged.
+Document permissions are enforced by the application and its data sources,
+separately from the gateway's WAF controls.</p>
 <h3 id="4-admit-https-clients">4. Admit HTTPS clients</h3>
 <p>Update the same <code>publicIngress.value</code> object, replacing the placeholders:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
@@ -2198,8 +2199,9 @@ an HTTP connection timeout is expected.</p>
 <p><span id="5-verify-the-complete-route"></span></p>
 <h2 id="validation">Validation</h2>
 <ol>
-<li>Check <code>azd env get-value PUBLIC_INGRESS_LIVE</code>: true means the hostname and
-   certificate inputs are present, <strong>not</strong> that TLS, reachability, or chat works.</li>
+<li>Check <code>azd env get-value PUBLIC_INGRESS_LIVE</code>: true confirms that the hostname
+   and certificate inputs are present. The following checks validate TLS,
+   reachability and chat.</li>
 <li>In the Azure portal, open the deployed <strong>Application Gateway → Backend
    health</strong>. Confirm that the backend pool contains the UI FQDN and is healthy.
    The shipped HTTPS probe checks <code>/</code> and accepts <strong>200–499</strong>, so a login denial
@@ -2211,11 +2213,11 @@ an HTTP connection timeout is expected.</p>
 <li>Send a chat request and confirm the streamed response completes. Test a
    representative long response and any enabled uploads. The gateway backend
    timeout is <strong>30 seconds</strong> and its WAF has separate request/upload limits;
-   rendering the login page does not validate chat transport.</li>
+   use the completed responses to validate chat transport.</li>
 <li>Repeat the connection test from an unapproved <strong>public</strong> network: TCP/443
    should be blocked. With test accounts and known restricted documents,
    verify permitted retrieval and denial for an unauthorized user through
-   Foundry IQ. Do not infer authorization from gateway health.</li>
+   Foundry IQ. The unauthorized user must not receive restricted content.</li>
 </ol>
 <p>The shipped WAF uses OWASP CRS 3.2 in Prevention mode. Check its logs for
 blocked legitimate requests before widening access. Use narrowly scoped,

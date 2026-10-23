@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1875,26 +1875,26 @@
 
 <p><span id="application-access"></span></p>
 <h1 id="agent-application-access">Agent Application access</h1>
-<p>Require Entra sign-in for Agent App UI, retain the user's identity when
-invoking the Foundry-hosted orchestrator, and verify that retrieval excludes
-documents the user cannot read. Passing one of these checks does not prove
-the others.</p>
-<p>The sign-in recipe below uses shipped settings. Protected hosted retrieval
-has an integration boundary described in step 3; completing sign-in does not
-complete that integration.</p>
+<p>Agent Application access has three parts: signing in to Agent App UI, invoking
+Agent App Orchestrator as that user, and filtering retrieved documents by the
+user's permissions. The UI uses an OAuth on-behalf-of (OBO) exchange to obtain
+a Foundry token for the signed-in user.</p>
+<p>The steps below configure sign-in with shipped settings. Protected hosted
+retrieval also requires the custom integration described in step 3. Validate
+each part before opening access to protected content.</p>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
 <li>A deployed <a href="../deploy-full-stack/">Agent Application</a>, with the UI using
   <code>CHAT_BACKEND=hosted_agent</code>.</li>
 <li>An Entra app registration owner or administrator who can configure a
   confidential web application, plus an administrator authorized to grant the
-  required API consent. Azure subscription access alone does not grant these
-  Entra permissions.</li>
+  required API consent. These Entra permissions are managed separately from
+  Azure subscription access.</li>
 <li>Permission to edit the deployment's App Configuration settings and Key Vault
   secrets, and to redeploy the affected component. Use a connected operator
   host for <a href="../private-access/">private deployments</a>.
   The UI runtime identity also needs access to resolve those Key Vault
-  references; operator access does not grant runtime access.</li>
+  references. Grant that access to the runtime identity separately.</li>
 <li>Two test users in the tenant and nonsensitive test documents: one document
   readable by both, and one restricted to user A. User B must have no inherited
   group, source or administrative access to the restricted document.</li>
@@ -1907,19 +1907,19 @@ ending in <code>/.default</code>, not an endpoint or an ARM scope.</p>
 <ol>
 <li>In <strong>Microsoft Entra admin center → App registrations</strong>, select the
    registration for this UI, or <a href="https://learn.microsoft.com/entra/identity-platform/quickstart-register-app">register a single-tenant application</a>.
-   Record its client and tenant IDs. Do not create another registration just
-   to change the existing UI's access policy.</li>
+   Record its client and tenant IDs. Reuse this registration when changing
+   the existing UI's access policy.</li>
 <li>Under <strong>Expose an API</strong>, use Application ID URI <code>api://&lt;client-id&gt;</code> and
    <a href="https://learn.microsoft.com/entra/identity-platform/quickstart-configure-app-expose-web-apis">add an enabled delegated scope</a>
    named <code>user_impersonation</code>. The Agent App UI callback requires
-   <code>api://&lt;client-id&gt;/user_impersonation</code>; it does not accept a Graph-only token.</li>
+   <code>api://&lt;client-id&gt;/user_impersonation</code> in the UI API token.</li>
 <li>Under <strong>Authentication</strong>, configure the <strong>Web</strong> redirect URI for the actual
    UI origin and callback. After loading the credentials and settings in
    steps 4–5 and redeploying the UI, obtain the exact URI from its
    authorization request (<code>redirect_uri</code> in browser developer tools); register
    that value, including its path and any deployment prefix; an initial Entra
-   redirect-mismatch error can occur until it is registered. Do not substitute
-   the Foundry endpoint. Use HTTPS outside local development.</li>
+   redirect-mismatch error can occur until it is registered. This callback
+   belongs to the UI. Use HTTPS outside local development.</li>
 <li>Under <strong>Certificates &amp; secrets</strong>, create or rotate the confidential-client
    credential. Put its <strong>value</strong>, not its secret ID, in Key Vault and use a
    Key Vault reference for <code>OAUTH_AZURE_AD_CLIENT_SECRET</code>. Do not paste it into
@@ -1970,33 +1970,32 @@ ending in <code>/.default</code>, not an endpoint or an ARM scope.</p>
 </tbody>
 </table>
 <p><code>offline_access</code> is required by the callback's refresh-token exchange.
- Do not add <code>User.Read</code> or other Graph scopes to this scope list: the shipped
- callback explicitly rejects them.
+ The shipped callback rejects <code>User.Read</code> and other Graph scopes in this list.
 6. Review <strong>API permissions</strong> with the tenant administrator. Grant consent
  for the exposed API scope and the downstream delegated permission required
  by the deployed Foundry data-plane resource. The code consumes
- <code>HOSTED_AGENT_RESOURCE_SCOPE</code>; it does not prescribe a universal API
- permission name. Confirm that resource's registration and permission
- rather than guessing a permission from the endpoint hostname. Use
+ <code>HOSTED_AGENT_RESOURCE_SCOPE</code>, whose permission name depends on the resource.
+ Confirm the required permission in that resource's registration. Use
  <a href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow">Microsoft's OBO guidance</a>
  to configure downstream consent. Users must sign in again after consent
  changes.</p>
 </li>
 </ol>
 <p>Complete callback registration in the test environment before opening access.
-Never enable anonymous production access to discover a callback.</p>
+Keep anonymous production access disabled throughout setup.</p>
 <p><span id="2-limit-application-admission"></span></p>
 <h2 id="2-limit-agent-application-admission">2. Limit Agent Application admission</h2>
-<p>In App Configuration, set <code>ALLOWED_USER_PRINCIPALS</code> to a comma-separated list
+<p>To restrict who can open the UI, use App Configuration with label <code>agent-lz</code>.
+Set <code>ALLOWED_USER_PRINCIPALS</code> to a comma-separated list
 of <code>tenant-id:object-id</code> values for admitted users. For the first test, include
 only user A. <code>ALLOWED_USER_NAMES</code> is an alternative comma-separated list of
 sign-in names; the two lists are combined with <strong>OR</strong>, not AND.
 Use canonical GUID formatting. Bare user object IDs are accepted for backwards
 compatibility, but prefer tenant-qualified IDs for new entries.</p>
-<p>Empty lists admit every successfully authenticated user. These are UI admission
-rules, not document ACLs or a replacement for Foundry permissions. The callback
-does not fetch Graph group membership; adding a group name to either list does
-not implement group-based admission.</p>
+<p>Empty lists admit every successfully authenticated user. These lists control
+who can open the UI. Foundry access and document access control lists (ACLs)
+are enforced separately. The callback matches individual users and does not
+fetch Graph group membership; group-based admission requires an extension.</p>
 <p>Apply and reload settings deliberately:</p>
 <ol>
 <li>In <strong>App Configuration → Configuration explorer</strong>, edit only the intended
@@ -2004,15 +2003,12 @@ not implement group-based admission.</p>
    targets for rollback.</li>
 <li>Check for competing process environment settings and component-specific or
    unlabelled keys. The UI reads several labels and bootstraps OAuth settings
-   into process environment; editing one <code>agent-lz</code> key is not proof that it
-   becomes the effective value.</li>
+   into process environment. Confirm the effective value after reloading.</li>
 <li>Redeploy the UI through the existing <a href="../deploy-full-stack/">deployment workflow</a>
    so its process reloads configuration; require a new browser sign-in.
-   These changes are not a hot-reload contract. If changing orchestrator
-   settings, redeploy the <strong>Foundry-hosted agent</strong> through that workflow too,
-   not a nonexistent orchestrator Container App. Verify the routed agent
-   version after redeployment; an existing hosted session is not proof that a
-   new configuration was loaded.</li>
+   The UI loads these settings at startup. For orchestrator settings,
+   deploy a new <strong>Foundry-hosted agent</strong> version through that workflow too.
+   Verify that traffic reaches the new version with the intended configuration.</li>
 </ol>
 <p>Runtime keys are not interchangeable with <code>azd env</code> deployment inputs.
 Provisioning can rewrite template-managed settings: retain approved deployment
@@ -2022,48 +2018,51 @@ inputs and recheck effective values after provisioning. See
 <p>The UI exchanges the user's API token on behalf of the user for the configured
 Foundry data-plane scope. <code>user_delegated</code> is the default and refuses a missing
 user token; it does not silently fall back to a service identity.
-<code>service_identity</code> deliberately makes Foundry see the UI service as caller.
-Do not use it to repair per-user authorization failures.</p>
+<code>service_identity</code> makes Foundry see the UI service as caller, so it cannot
+preserve this per-user authorization boundary.</p>
 <p>The hosted container does <strong>not</strong> receive the caller's <code>Authorization</code> header.
+Toolbox connects hosted agents to tools using the platform's caller context.
 In the pinned orchestrator, <code>AGENT_STRATEGY=mcp</code> uses the platform-injected
 <code>x-agent-foundry-call-id</code> for Toolbox calls and rejects missing or malformed
 call context. It does not trust caller-supplied identity/group fields.
-The other hosted-eligible strategies do not acquire this Toolbox passthrough
-merely by selecting <code>RETRIEVAL_BACKEND=foundry_iq</code>.</p>
-<p><strong>This is not a turnkey protected-retrieval switch.</strong> The shipped generic MCP
-client forwards call context but does not acquire a Toolbox bearer token.
+The other hosted-eligible strategies use the native connector when configured
+with <code>RETRIEVAL_BACKEND=foundry_iq</code>; that path has the token gap described in
+<a href="../foundry-iq/">Foundry IQ</a>.</p>
+<p><strong>Protected retrieval requires a developer integration.</strong> The shipped generic
+MCP client forwards call context but does not acquire a Toolbox bearer token.
 Current Microsoft guidance uses the authenticated <code>FoundryToolbox</code> SDK
 integration, which also forwards hosted call context. A developer must reconcile
 the Agent Application MCP integration with that
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent">hosted Toolbox contract</a>
-before treating it as a working protected-retrieval path. Changing only
-<code>AGENT_STRATEGY=mcp</code> is not sufficient.</p>
+and validate protected retrieval. <code>AGENT_STRATEGY=mcp</code> selects the strategy;
+the authenticated Toolbox integration must be implemented separately.</p>
 <p>The extension path is to connect the
 <a href="../foundry-iq/">Foundry IQ knowledge base</a> through
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox">Toolbox</a>
 using that supported SDK integration, the appropriate end-user connection and
-source permissions, then redeploy and run the tests below. Foundry
-identity propagation is only one link: the knowledge source must ingest or
+source permissions, then redeploy and run the tests below. With this integration,
+Foundry passes the caller's identity; the knowledge source must also ingest or
 honor the relevant permission metadata, and retrieval must enforce it.
 Preview capabilities and source-specific limits still apply; consult
 <a href="https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-retrieve">knowledge-base retrieval permissions</a>.
 Do not forward a browser bearer token or invent identity headers to bypass the
 hosted gateway. A custom integration must preserve the platform call context
 and enforce source authorization; see <a href="../agent-tools/">Agent tools</a>.</p>
-<p><strong>Shared source is a different policy.</strong> Explicit
+<p><strong>Shared-source access:</strong> explicit
 <code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]</code> removes ingestion permission
-metadata for the supported shared native Blob case; it is not an OBO fix.
+metadata for the supported shared native Blob case.
 The protected default is <code>["rbacScope"]</code>. Use the
 <a href="../configuration/">shared-source configuration rules</a> only for a corpus
-deliberately readable by every admitted caller. UI login does not turn that
-corpus into per-user protected content.</p>
+deliberately readable by every admitted caller. This policy provides shared
+access to the corpus rather than per-user filtering.</p>
 <h2 id="4-run-an-allowdeny-test">4. Run an allow/deny test</h2>
 <p>Run the document tests after the authenticated Toolbox integration and source
-permissions are in place. Until then, a successful UI login is only a login
-test, not evidence of document protection.</p>
+permissions are in place. Test UI sign-in and admission separately while that
+integration is being prepared.</p>
 <p>Use separate browser profiles, new conversations and unique phrases that exist
-only in the test documents. Check retrieved sources and citations as well as
-the answer; a fluent refusal alone is not evidence that retrieval was filtered.</p>
+only in the test documents. Inspect retrieved document IDs and citations as
+well as the answer. For the denied user, confirm that the restricted document
+is absent from retrieval results.</p>
 <table>
 <thead>
 <tr>
@@ -2110,29 +2109,30 @@ the answer; a fluent refusal alone is not evidence that retrieval was filtered.<
 source permission assignments and correlation IDs, without tokens or secret
 values. Repeat after permission changes have propagated and the source has
 refreshed permission metadata as required. For an intentionally shared corpus,
-both users retrieving the same document is expected; it does not validate
-per-user trimming.</p>
+both users should retrieve the same document. Use a protected corpus for
+per-user filtering tests.</p>
 <h2 id="recover-safely">Recover safely</h2>
 <ul>
 <li><strong>Redirect mismatch:</strong> compare the request's <code>redirect_uri</code> with the
   registration's Web URI, including scheme, host and prefix.</li>
 <li><strong>UI consent or refresh-token failure:</strong> check API scopes, tenant, credential
-  expiry and consent; sign out and back in after correction. Do not replace
-  the API scope with Graph scopes.</li>
+  expiry and consent; retain the UI API scope and sign out and back in after
+  correction.</li>
 <li><strong>Foundry invocation denied:</strong> distinguish failed OBO consent from missing
   data-plane access for the user. Confirm the deployed resource scope and
-  endpoint. Do not switch to <code>service_identity</code> as a workaround.</li>
+  endpoint. Keep delegated mode while resolving the failure;
+  <code>service_identity</code> would replace the user with the UI service.</li>
 <li><strong>Missing platform call context:</strong> invoke through the deployed Foundry
   endpoint and check the Toolbox strategy/connection. Do not fabricate the
   call ID or enable a manual group-filter fallback.</li>
 <li><strong>Tool requests user consent:</strong> follow the service-generated consent flow
   for that user and resource, then retry. UI login consent and
   <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication">Toolbox per-user consent</a>
-  are different; administrator consent for an Entra registration does not grant
-  document access.</li>
+  apply to different resources. Verify document access separately from
+  application consent.</li>
 <li><strong>B retrieves restricted content:</strong> stop access to the affected corpus,
-  inspect source ACL ingestion and retrieval enforcement, then repeat the
-  two-user test. Restoring login alone does not remediate a disclosure.</li>
+  repair source ACL ingestion or retrieval enforcement, then repeat the
+  two-user test before restoring access.</li>
 </ul>
 <p>To undo a configuration change, restore the recorded values/references and
 redeploy the affected component. Keep <code>ALLOW_ANONYMOUS=false</code> and the delegated

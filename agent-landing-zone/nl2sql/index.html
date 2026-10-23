@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1852,9 +1852,10 @@
 
 
 <h1 id="ask-questions-about-sql-data">Ask questions about SQL data</h1>
-<p>Evaluate a Fabric data agent through Foundry IQ for read-only questions about
-approved relational data. This is the shipped integration path for Agent Application
-hosted in Foundry, not a turnkey connection to an arbitrary SQL server.</p>
+<p>Use this guide to plan a read-only pilot over approved relational data with a
+Fabric data agent and Foundry IQ. Agent Application includes connector code;
+hosted use requires resolving the delegated-identity and preview compatibility
+gaps below.</p>
 <h2 id="choose-the-supported-route">Choose the supported route</h2>
 <table>
 <thead>
@@ -1866,7 +1867,7 @@ hosted in Foundry, not a turnkey connection to an arbitrary SQL server.</p>
 <tbody>
 <tr>
 <td>Legacy <code>nl2sql</code> strategy</td>
-<td>Not supported. The hosted runtime explicitly rejects this strategy. Its SQL plugin and schema/example indexes do not enable it in hosted mode.</td>
+<td>Rejected by the hosted runtime. Available only in the classic runtime.</td>
 </tr>
 <tr>
 <td>Fabric data agent through a Foundry IQ knowledge base</td>
@@ -1879,8 +1880,9 @@ hosted in Foundry, not a turnkey connection to an arbitrary SQL server.</p>
 </tbody>
 </table>
 <p>For Fabric SQL questions, use a <strong>warehouse</strong> or <strong>lakehouse tables</strong> exposed to
-the data agent. A Power BI semantic model uses DAX rather than SQL. This route
-does not install the legacy NL2SQL plugin or require its metadata indexes.</p>
+the data agent. A Power BI semantic model uses DAX rather than SQL. Fabric
+handles queries and schema context, without the legacy NL2SQL plugin or its
+metadata indexes.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>A working hosted Agent Application using Foundry IQ knowledge-base retrieval.</li>
@@ -1893,34 +1895,33 @@ does not install the legacy NL2SQL plugin or require its metadata indexes.</p>
   knowledge-base binding. The Search service and Fabric workspace must use the
   same Microsoft Entra tenant.</li>
 <li>An authenticated Agent Application path that supplies the end user's delegated
-  identity for on-behalf-of (OBO) retrieval. A managed identity alone is not
-  sufficient for this remote source. The connector forwards a Search-audience
-  user token separately from service authentication; do not paste tokens into
+  identity for on-behalf-of (OBO) retrieval. This remote source requires both
+  service authentication and user authorization. The connector forwards a
+  Search-audience user token separately; do not paste tokens into
   configuration or commands. The pinned hosted entry point does not supply this
   delegated token. Resolve the <a href="../foundry-iq/">hosted identity boundary</a> through
   a reviewed integration before running the pilot.</li>
-<li>Network policy allowing the required service connections. A working private
-  Foundry endpoint does not by itself prove connectivity to Fabric. Have the
-  platform owner validate the retrieval path and any Fabric workspace outbound
-  access rules without weakening private-access policies.</li>
+<li>Network policy allowing the required service connections. Have the platform
+  owner validate connectivity along the retrieval path to Fabric and any Fabric
+  workspace outbound access rules without weakening private-access policies.</li>
 </ul>
 <p>The Foundry IQ <strong>Fabric Data Agent knowledge source</strong> is preview, independently
 of the Fabric data agent's own release status. Confirm regional availability,
 data residency and preview acceptance before using real business data. Review
 the <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent">connector requirements and limits</a>.</p>
 <div class="admonition warning">
-<p class="admonition-title">Check the preview contract before connecting</p>
+<p class="admonition-title">Validate preview API compatibility before connecting</p>
 <p>Agent App Orchestrator v5.2.1's data-agent parser expects <code>dataAgentAnswer</code>
 and <code>dataAgentRawData</code> in retrieval references. Current Microsoft documentation
 instead describes <code>fabricAnswer</code> and <code>fabricEmbeddedResources</code>, using
 <code>2026-08-01-preview</code>; the platform and orchestrator defaults use
-<code>2026-05-01-preview</code>. This is not a confirmed turnkey hosted combination.
-Have the Agent Application owner verify the deployed API and response contract
-before proceeding. Its separate ontology parser can read <code>fabricAnswer</code>,
+<code>2026-05-01-preview</code>. Have the Agent Application owner validate the deployed
+API and response fields together before proceeding. Its separate ontology
+parser can read <code>fabricAnswer</code>,
 but does not handle <code>fabricEmbeddedResources</code> and classifies that answer
-as ontology content. Do not assume correct data-agent evidence or table/chart
-support. If the deployed contract differs, obtain a compatible, validated
-Agent Application release; changing an API-version setting alone is insufficient.</p>
+as ontology content. Data-agent result parsing and table/chart handling
+therefore need explicit validation. If the deployed fields differ, obtain
+a compatible, validated Agent Application release covering the API and parser.</p>
 </div>
 <h2 id="run-a-read-only-pilot">Run a read-only pilot</h2>
 <ol>
@@ -1945,7 +1946,7 @@ Agent Application release; changing an API-version setting alone is insufficient
    not the ontology route. Provide the Fabric workspace ID and data-agent
    item ID, plus a name for the Search knowledge source. The IDs identify
    Fabric objects; the knowledge-source name identifies the binding in Search.
-   They are not SQL connection strings or endpoints.
+   Obtain the Fabric IDs from the item's URL.
    The shipped opt-in is <code>FABRIC_DATA_AGENT_ENABLED</code> with
    <code>FABRIC_DATA_AGENT_KNOWLEDGE_SOURCE_NAME</code>; <code>FABRIC_IQ_ENABLED</code> selects the
    separate ontology integration. Use the provisioning and runtime activation
@@ -1961,19 +1962,17 @@ Agent Application release; changing an API-version setting alone is insufficient
 <p><strong>Test from hosted Agent Application.</strong> Sign in as an authorized pilot user
    and ask the same fixed-period question. Compare the result with the Fabric
    test and the owner's expected answer. Check retrieval diagnostics for
-   activity from the intended Fabric data-agent knowledge source; a plausible
-   answer alone is not proof that the integration ran.</p>
+   activity from the intended Fabric data-agent knowledge source and confirm
+   that the result came from that source.</p>
 </li>
 <li>
 <p><strong>Check the permission boundary.</strong> Repeat the question with a test user
    without access to the pilot data. Confirm that no protected result is
-   returned. Sharing a data agent must not be treated as granting access to
-   its underlying data.</p>
+   returned. Grant access to the data agent and its underlying data separately.</p>
 </li>
 </ol>
 <p>Fabric data agents enforce read-only queries. Keep source permissions
-least-privileged too; a prompt such as “do not modify data” is not an
-authorization control.</p>
+least-privileged so the data service enforces the approved access policy.</p>
 <h2 id="diagnose-or-undo">Diagnose or undo</h2>
 <table>
 <thead>
@@ -1989,7 +1988,7 @@ authorization control.</p>
 </tr>
 <tr>
 <td>Fabric succeeds, but Agent Application returns no Fabric result</td>
-<td>Check the preview response contract, source binding, enabled integration and OBO identity. Without a per-user OBO token, the connector skips this source. Do not substitute a broadly privileged service identity.</td>
+<td>Check the preview response fields, source binding, enabled integration and OBO identity. Without a per-user OBO token, the connector skips this source. Repair delegated-token delivery while retaining scoped service permissions.</td>
 </tr>
 <tr>
 <td>Access denied</td>
@@ -2007,13 +2006,12 @@ other knowledge sources and the underlying database. Keep deployment inputs
 consistent with the rollback so later provisioning does not restore the
 pilot binding; use the lifecycle procedure in <a href="../fabric-iq/">Fabric integration</a>.</p>
 <h2 id="need-a-direct-sql-connection">Need a direct SQL connection?</h2>
-<p>There is no shipped hosted switch that turns an arbitrary database into a
-safe NL2SQL tool. If Fabric is unsuitable, plan a
+<p>For a database outside Fabric, plan a
 <a href="../agent-tools/">custom tool extension</a>: enforce read-only database permissions,
 allowlisted data access, bounded query time and result size, caller
 authorization and audit logging in the service that executes queries. Validate
 identity and network access end to end before exposing it to the hosted agent.
-This is development work, not a configuration alternative to the pilot above.</p>
+This path requires custom development and security validation.</p>
 
 
 

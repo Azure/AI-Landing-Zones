@@ -16,7 +16,7 @@
         <link rel="prev" href="../../agent-landing-zone/whats-new/">
       
       
-        <link rel="next" href="../../agent-landing-zone/planning/">
+        <link rel="next" href="../../agent-landing-zone/how-it-works/">
       
       
         
@@ -574,6 +574,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../agent-landing-zone/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../agent-landing-zone/planning/" class="md-nav__link">
         
   
@@ -666,34 +694,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../agent-landing-zone/how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1916,10 +1916,9 @@
 <h1 id="design-checklist">Design Checklist</h1>
 <p>Use this checklist when designing an AI workload landing zone, before approving
 a deployment, and when reviewing a significant change. For each applicable row,
-record your decision, owner and verification evidence. These are design
-recommendations, not a list of features automatically enabled by a template.
-Check the selected implementation and deployment parameters before assuming a
-control is present.</p>
+record your decision, owner and how you will verify it. Use the deployment
+documentation to identify which controls the selected template configures and
+which your team needs to implement.</p>
 <h2 id="compute-and-cost">Compute and cost</h2>
 <table>
 <thead>
@@ -1934,7 +1933,7 @@ control is present.</p>
 <tr>
 <td>C-R1</td>
 <td>Where will models, agents and application components run?</td>
-<td>Choose compute for each component's scaling, network and operational needs. Standardize where useful, but do not assume model hosting and application hosting have identical requirements.</td>
+<td>Evaluate scaling, network and operational needs separately for models and application components, then choose compute for each. Standardize where their requirements align.</td>
 <td><a href="https://learn.microsoft.com/azure/architecture/guide/technology-choices/compute-decision-tree">Compute decision guide</a></td>
 </tr>
 <tr>
@@ -1946,7 +1945,7 @@ control is present.</p>
 <tr>
 <td>CO-R2</td>
 <td>Is model traffic predictable enough for provisioned throughput?</td>
-<td>Compare measured utilization and commitment costs with pay-as-you-go. If using spillover, explicitly design gateway routing and test quota exhaustion. Provisioned capacity is not automatically cheaper.</td>
+<td>Compare measured utilization and commitment costs with pay-as-you-go to choose the lower-cost option for the workload. If using spillover, design gateway routing and test quota exhaustion.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/provisioned-throughput">Provisioned throughput</a>, <a href="https://learn.microsoft.com/azure/architecture/ai-ml/guide/azure-openai-gateway-multi-backend">Multi-backend gateway</a></td>
 </tr>
 <tr>
@@ -2014,19 +2013,19 @@ control is present.</p>
 <tr>
 <td>G-R2</td>
 <td>Which regulatory and organizational obligations apply?</td>
-<td>Map risks and applicable controls to evidence. A policy initiative or checklist does not establish compliance by itself.</td>
+<td>Map each obligation to required controls and verification results. Use policy initiatives to assess supported Azure controls and document any additional reviews needed to demonstrate compliance.</td>
 <td><a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf">NIST AI RMF</a>, <a href="https://learn.microsoft.com/azure/governance/policy/samples/#regulatory-compliance">Regulatory compliance initiatives</a></td>
 </tr>
 <tr>
 <td>G-R3</td>
 <td>How will responsible AI risks be evaluated?</td>
-<td>Define evaluation datasets, human review, acceptance thresholds and escalation for the actual agent tasks. Do not assume a machine-learning dashboard supports every generative AI workflow.</td>
+<td>Define evaluation datasets, human review, acceptance thresholds and escalation for the actual agent tasks. Select evaluation tools that support the models, inputs and outputs in use.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-approach-gen-ai">Generative AI evaluation</a></td>
 </tr>
 <tr>
 <td>G-R4</td>
 <td>What content safety controls are needed?</td>
-<td>Select supported filters and Content Safety APIs for the model and modalities in use. Test prompts, outputs and failure handling. Content filtering does not replace authorization.</td>
+<td>Select supported filters and Content Safety APIs for the model and modalities in use. Test prompts, outputs and failure handling. Configure access to tools and documents separately through authorization controls.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-services/content-safety/overview">Content Safety overview</a></td>
 </tr>
 <tr>
@@ -2069,19 +2068,19 @@ control is present.</p>
 <tr>
 <td>I-R4</td>
 <td>Which sign-in conditions should be enforced?</td>
-<td>Evaluate risk, device and location policies for human access. Test workload identities separately; interactive Conditional Access is not a replacement for service authorization.</td>
+<td>Evaluate risk, device and location policies for human access. Configure service authorization for workload identities and test those identities separately from interactive sign-in.</td>
 <td><a href="https://learn.microsoft.com/entra/identity/conditional-access/overview">Conditional Access</a></td>
 </tr>
 <tr>
 <td>I-R5</td>
 <td>What can each user and service read or modify?</td>
-<td>Grant minimal control-plane and data-plane permissions at the smallest supported scope. Verify document allow/deny behavior, not just successful authentication.</td>
+<td>Grant minimal control-plane and data-plane permissions at the smallest supported scope. Test retrieval with allowed and denied users to verify document access.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-azure-ai-foundry">Foundry RBAC</a></td>
 </tr>
 <tr>
 <td>I-R6</td>
 <td>Can local key authentication be disabled?</td>
-<td>Confirm every dependent client supports Entra ID, then disable local authentication where supported. Plan a tested migration rather than breaking existing clients.</td>
+<td>Inventory dependent clients, migrate them to Entra ID and verify their workflows before disabling local authentication where supported.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/managed-identity">Azure OpenAI managed identity authentication</a></td>
 </tr>
 </tbody>
@@ -2106,7 +2105,7 @@ control is present.</p>
 <tr>
 <td>M-R2</td>
 <td>Which failures require an alert?</td>
-<td>Enable applicable baseline alerts and route them to an owner. Tune thresholds and test delivery rather than enabling alerts without a response plan.</td>
+<td>Enable applicable baseline alerts, assign a response owner and document the response procedure. Tune thresholds and test alert delivery.</td>
 <td><a href="https://azure.github.io/azure-monitor-baseline-alerts/patterns/artificial-intelligence/">Azure Monitor Baseline Alerts</a></td>
 </tr>
 <tr>
@@ -2149,13 +2148,13 @@ control is present.</p>
 <tr>
 <td>R-R1</td>
 <td>What are the recovery time and recovery point objectives?</td>
-<td>Plan backup, restore and regional recovery for each stateful dependency. Test recovery and application routing. A second region alone does not guarantee continuity.</td>
+<td>Plan backup, restore and regional recovery for each stateful dependency. For a secondary region, prepare the required services, data recovery and application routing, then test failover against the recovery objectives.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/business-continuity-disaster-recovery">Azure OpenAI continuity</a>, <a href="https://learn.microsoft.com/azure/storage/common/storage-disaster-recovery-guidance">Storage disaster recovery</a>, <a href="https://learn.microsoft.com/azure/cosmos-db/online-backup-and-restore">Cosmos DB backup</a></td>
 </tr>
 <tr>
 <td>RO-R1</td>
 <td>Are the required services and models available in the selected regions?</td>
-<td>Check current service, model, deployment-type and feature availability. Do not rely on a fixed region list copied into a design document.</td>
+<td>Check the current service, model, deployment-type and feature availability references when choosing regions and again before deployment.</td>
 <td><a href="https://azure.microsoft.com/explore/global-infrastructure/products-by-region/">Products by region</a>, <a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/models">Model availability</a></td>
 </tr>
 <tr>
@@ -2167,13 +2166,13 @@ control is present.</p>
 <tr>
 <td>RO-R3</td>
 <td>How will growth affect subscription and regional limits?</td>
-<td>Record capacity headroom, ownership and the process for requesting quota. A passing preflight is not a guarantee of service capacity at deployment time.</td>
+<td>Record capacity headroom, ownership and the process for requesting quota. Run preflight checks and confirm current service capacity when scheduling the deployment.</td>
 <td><a href="https://learn.microsoft.com/azure/quotas/quotas-overview">Quota overview</a></td>
 </tr>
 <tr>
 <td>RO-R4</td>
 <td>What are the account, project and billing boundaries?</td>
-<td>Align Foundry accounts and projects with access, network and operational boundaries. Verify supported isolation instead of assuming a project is a complete security boundary.</td>
+<td>Align Foundry accounts and projects with access, network and operational requirements. Identify which isolation controls apply at account level and which apply at project level.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/architecture">Foundry architecture</a></td>
 </tr>
 </tbody>
@@ -2204,7 +2203,7 @@ control is present.</p>
 <tr>
 <td>S-R3</td>
 <td>How is sensitive data discovered and protected?</td>
-<td>Assess data classification, oversharing and insider-risk requirements. Evaluate Purview coverage and licensing without assuming it enforces retrieval permissions.</td>
+<td>Assess data classification, oversharing and insider-risk requirements. Evaluate Purview coverage and licensing, and configure retrieval permissions in the source and application authorization paths.</td>
 <td><a href="https://learn.microsoft.com/purview/insider-risk-management">Purview Insider Risk Management</a></td>
 </tr>
 <tr>
@@ -2235,25 +2234,25 @@ control is present.</p>
 <tr>
 <td>N-R1</td>
 <td>Does public ingress need DDoS protection?</td>
-<td>Assess coverage for the actual public IP resources. Reuse platform protection where appropriate; VNet DDoS protection does not cover every PaaS endpoint.</td>
+<td>Identify public endpoints and check the supported protection for each resource type. Reuse platform DDoS protection for eligible public IP resources.</td>
 <td><a href="https://learn.microsoft.com/azure/ddos-protection/ddos-protection-overview">DDoS Protection overview</a></td>
 </tr>
 <tr>
 <td>N-R2</td>
 <td>How will operators reach private resources?</td>
-<td>Use an approved VPN, connected runner or jumpbox. Reuse central Bastion and administrative access when available rather than adding unnecessary public VM access.</td>
+<td>Use an approved VPN, connected runner or jumpbox. Reuse central Bastion and administrative access where available, keeping VM administration on an approved private path.</td>
 <td><a href="https://learn.microsoft.com/azure/bastion/bastion-overview">Azure Bastion</a></td>
 </tr>
 <tr>
 <td>N-R3</td>
 <td>Which services require private endpoints?</td>
-<td>Design private ingress and service-managed outbound links separately. Verify DNS and disable public access only after the intended path works. Foundry account/project networking is not interchangeable with hub-based managed networking.</td>
+<td>Design private ingress and service-managed outbound links separately. Select networking controls for the Foundry resource type in use: account/project or hub-based. Verify DNS and the intended private path before disabling public access.</td>
 <td><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/configure-private-link">Foundry private networking</a></td>
 </tr>
 <tr>
 <td>N-R4</td>
 <td>Where should NSGs enforce traffic policy?</td>
-<td>Apply supported NSG rules to subnets or network interfaces, not to a VNet itself. Preserve service-specific subnet and platform connectivity requirements.</td>
+<td>Apply supported NSG rules to subnets or network interfaces. Preserve service-specific subnet and platform connectivity requirements.</td>
 <td><a href="https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview">Network security groups</a></td>
 </tr>
 <tr>
@@ -2277,7 +2276,7 @@ control is present.</p>
 <tr>
 <td>N-R8</td>
 <td>How will private service names resolve from every client network?</td>
-<td>Plan zone links, conditional forwarding and connected-network resolution. Private DNS provides name resolution, not traffic routing or authorization.</td>
+<td>Plan zone links, conditional forwarding and connected-network resolution. Configure routes and service permissions alongside DNS so clients can reach and use the resolved endpoints.</td>
 <td><a href="https://learn.microsoft.com/azure/private-link/private-endpoint-dns-integration">Private endpoint DNS integration</a></td>
 </tr>
 <tr>

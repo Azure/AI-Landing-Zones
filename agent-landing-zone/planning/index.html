@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../../architecture/design-checklist/">
+        <link rel="prev" href="../how-it-works/">
       
       
         <link rel="next" href="../network-isolation/">
@@ -438,6 +438,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -624,34 +652,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1831,6 +1831,11 @@
 <p>Decide <strong>where the workload connects, which deployment tool owns it and what
 resources it needs</strong> before provisioning. Capacity and spending are separate
 steps: <a href="../sizing/">Sizing and capacity</a>, then <a href="../cost-planning/">Cost planning</a>.</p>
+<p>Start with <a href="../how-it-works/#how-to-read-deployment-settings">How it works</a> for
+the deployment flow and the two forms of input used below. Uppercase names
+such as <code>DEPLOYMENT_MODE</code> are <code>azd</code> inputs; set them in the selected environment
+with <code>azd env set</code>. Record your choices here, then apply them using a deployment
+runbook.</p>
 <h2 id="choose-the-network-and-gateway-shape">Choose the network and gateway shape</h2>
 <table>
 <thead>
@@ -1844,26 +1849,26 @@ steps: <a href="../sizing/">Sizing and capacity</a>, then <a href="../cost-plann
 <tr>
 <td>Standalone</td>
 <td>The workload team owns its network, DNS and operations, without a platform hub dependency.</td>
-<td><code>DEPLOYMENT_MODE=standalone</code>. Choose public service endpoints or <code>NETWORK_ISOLATION=true</code> explicitly; standalone does not mean public. For private deployments, plan egress, private DNS and a connected runner.</td>
+<td>Set <code>DEPLOYMENT_MODE=standalone</code> and choose service access separately: public endpoints or <code>NETWORK_ISOLATION=true</code>. For private deployments, plan egress, private DNS and a deployment host connected to the network.</td>
 </tr>
 <tr>
 <td>Integrate with a hub</td>
 <td>A platform team already owns connectivity, firewall, DNS or monitoring.</td>
-<td><code>DEPLOYMENT_MODE=ailz-integrated</code> plus explicit isolation, hub peering, routing, DNS and reuse inputs. The mode alone connects nothing and does not suppress duplicate spoke resources.</td>
+<td>Set <code>DEPLOYMENT_MODE=ailz-integrated</code>, then supply isolation, peering, routing, DNS and reuse inputs. Select which spoke resources to omit when the hub provides them.</td>
 </tr>
 <tr>
 <td>Add AI Gateway</td>
 <td>Multiple workloads need centrally governed model access, such as routing, authentication or token policies.</td>
-<td>Use the separate <a href="../../#ai-gateway-landing-zone">AI Gateway implementation</a>. Agree endpoint/authentication contracts, supported APIs, policies and network reachability with its owner. Agent Bicep does not automatically deploy or wire this gateway.</td>
+<td>Use the separate <a href="../../#ai-gateway-landing-zone">AI Gateway implementation</a>. Confirm its endpoint, authentication method, supported APIs, policies and network access with the gateway owner, then plan the application integration. Agent Bicep does not deploy or connect this gateway automatically.</td>
 </tr>
 </tbody>
 </table>
-<p>AI Gateway is an additional decision, not a third network security mode. It
-can accompany a standalone or hub-integrated deployment. It does not replace
-Private Link, DNS, firewall controls, Entra ID/OBO or document authorization.
-It is also different from <a href="../application-gateway/">Application Gateway</a>, which
-provides optional WAF-protected ingress to the web UI.</p>
-<p>For a hub, agree these items <strong>before</strong> running the deployment:</p>
+<p>AI Gateway governs model access and can accompany either network topology.
+Plan workload connectivity and user/document authorization separately.
+<a href="../application-gateway/">Application Gateway</a> serves a different purpose:
+optional web application firewall (WAF) protection for access to the web UI.</p>
+<p>For a hub, confirm the network design with the platform team, then record the
+corresponding deployment inputs:</p>
 <ul>
 <li><strong>Routes and peering:</strong> identify both peering owners. Use
   <code>HUB_INTEGRATION_HUB_VNET_RESOURCE_ID</code>; choose either
@@ -1877,11 +1882,12 @@ provides optional WAF-protected ingress to the web UI.</p>
   <code>POLICY_MANAGED_PRIVATE_DNS=true</code>. Policy-managed DNS and BYO zone IDs are
   alternative modes. Zone owners must supply the required links/forwarding;
   peering alone does not propagate DNS.</li>
-<li><strong>Runner:</strong> confirm the deployment host can resolve and reach private
-  services for lifecycle hooks. A private ACR build pool does not connect it.</li>
+<li><strong>Runner:</strong> connect the host that executes deployment commands to the
+  private network and verify service DNS resolution. This connection is
+  required separately from the private ACR pool used for image builds.</li>
 </ul>
-<p>See <a href="../network-isolation/">Network isolation</a> for the reviewed warnings and
-<a href="../../bicep/hub-and-spoke/">hub-and-spoke design</a> for the shared network contract.</p>
+<p>See <a href="../network-isolation/">Network isolation</a> for connectivity requirements and
+<a href="../../bicep/hub-and-spoke/">hub-and-spoke design</a> for supported network settings.</p>
 <h2 id="choose-the-deployment-tool">Choose the deployment tool</h2>
 <table>
 <thead>
@@ -1915,8 +1921,8 @@ Do not run different deployment implementations over the same environment as
 if they were interchangeable. Reuse or migration needs explicit ownership,
 state and dependency planning.</p>
 <h2 id="select-reuse-or-omit-resources">Select, reuse or omit resources</h2>
-<p>Start from the selected application's definition and composed parameters, not
-the shared foundation's all-resources catalog.</p>
+<p>Use the selected application's definition and the generated
+<code>infra/main.parameters.json</code> to identify the resources your deployment selects.</p>
 <table>
 <thead>
 <tr>
@@ -1931,7 +1937,7 @@ the shared foundation's all-resources catalog.</p>
 </tr>
 <tr>
 <td>Agent App Ingestion</td>
-<td><code>DEPLOY_INGESTION_CONTAINER_APP=false</code> is the fresh default. Select this component for supported application-managed processing or conversation uploads. Native Blob ingestion and independently populated indexes have different contracts; see <a href="../ingestion/">Ingestion</a>. Omitting the component does not delete old resources or grants.</td>
+<td><code>DEPLOY_INGESTION_CONTAINER_APP=false</code> is the fresh default. Select this component for supported application-managed processing or conversation uploads. For native Blob ingestion or an independently populated index, follow the corresponding <a href="../ingestion/">Ingestion</a> path. Omitting the component leaves existing resources and grants in place.</td>
 </tr>
 <tr>
 <td>Search, Storage and Foundry agent backing services</td>
@@ -1963,14 +1969,14 @@ selected hosting/strategy depends on it.</p>
    regions and <a href="../resource-naming/">naming inputs</a>. One azd environment binds to
    one application ID.</li>
 <li>Confirm regional service/model availability and quota. Hosted strategies,
-   history and image preparation have specific <a href="../hosted-agents/">host limitations</a>;
-   selecting a host does not select a strategy.</li>
+   history and image preparation have specific <a href="../hosted-agents/">host requirements</a>.
+   Choose a strategy supported by that host.</li>
 <li>Obtain resource creation and scoped role-assignment permissions. Contributor
    alone cannot assign roles. Agree access to shared hub/DNS resources with
    their owners; hosted authoring also needs project data-plane access.</li>
 <li>Verify runner DNS, routes and TLS, plus administrator approval for private
-   native Blob shared links where required. An ARM deployment or greeting is
-   not evidence of real-user access or document allow/deny behavior.</li>
+   native Blob shared links where required. After deploying the Agent
+   Application, also test sign-in and retrieval with allowed and denied users.</li>
 <li>Review the deployment preview, <a href="../sizing/">size each service</a>, and approve
    a dated <a href="../cost-planning/">cost plan</a>. Then execute
    <a href="../deploy-infra-only/">Deploy infra only</a> or <a href="../deploy-full-stack/">Deploy full stack</a>.</li>

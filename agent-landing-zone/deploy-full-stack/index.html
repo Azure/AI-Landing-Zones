@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -2350,8 +2350,8 @@
 <p><span id="full-stack-deploy"></span></p>
 <h1 id="deploy-the-full-stack">Deploy the full stack</h1>
 <h2 id="objective">Objective</h2>
-<p>Deploy the Azure foundation and the Agent Application: Agent App UI, an
-orchestrator and, when selected, Agent App Ingestion. Choose where the
+<p>Deploy the Azure foundation and the Agent Application: Agent App UI,
+Agent App Orchestrator and, when selected, Agent App Ingestion. Choose where the
 orchestrator runs and how the deployment connects to Azure before provisioning.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook for a new Agent Application deployment or to add it to its
@@ -2359,7 +2359,7 @@ already configured Agent foundation. For a customer-owned application, use
 <a href="../build-your-own-app/">Bring your own app</a> for its deployment branch.
 Only need the foundation? Use <a href="../deploy-infra-only/">Deploy infrastructure only</a>.
 For the relationship between the template, its manifest and lifecycle hooks,
-see <a href="../how-it-works/">How the template works</a>.</p>
+see <a href="../how-it-works/">How it works</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li><strong>Permissions:</strong> Owner, or Contributor plus User Access Administrator, at the
@@ -2367,8 +2367,8 @@ see <a href="../how-it-works/">How the template works</a>.</p>
   additional permissions in their own scopes. See <a href="../../bicep/permissions/">Permissions</a>.</li>
 <li><strong>Subscription readiness:</strong> accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
-  selected parameters. <a href="../../bicep/regional-considerations/">Regional considerations</a>
-  explain why passing preflight does not guarantee available capacity.</li>
+  selected parameters. Review <a href="../../bicep/regional-considerations/">regional considerations</a>
+  for capacity constraints that can still affect deployment after preflight.</li>
 <li><strong>Private deployments:</strong> an authorized VPN/VNet-connected deployment host with
   private DNS resolution. An ACR Tasks build pool is not that host.</li>
 </ul>
@@ -2466,12 +2466,16 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 </code></pre></div>
 <p>For an existing environment, use <code>azd env select &lt;environment-name&gt;</code> instead
-and preserve its approved inputs. Use separate environments, resource groups,
-identities, secrets and data for DEV, TEST and PROD. An environment name or the
-App Configuration label alone is not a security boundary. Promote the same
-reviewed source revision with stage-specific inputs.</p>
+and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
+environments, resource groups, identities, configuration stores, secrets and
+data. Promote the same reviewed source revision with stage-specific inputs.</p>
 <p><a id="step-3-choose-a-topology"></a></p>
 <h3 id="step-3-choose-the-application-and-network">Step 3: Choose the application and network</h3>
+<p>Set the deployment choices below in the selected azd environment with
+<code>azd env set</code> before provisioning. Native foundation arrays and objects go in the root
+parameter file, as described in the linked infrastructure choices.
+<a href="../how-it-works/">How it works</a> explains how these inputs become
+deployment parameters; runtime application settings are configured separately.</p>
 <h4 id="orchestrator-topology">Orchestrator topology</h4>
 <p><code>DEPLOYMENT_TOPOLOGY</code> chooses where the agent orchestrator runs. It is independent
 of the foundation's standalone or hub-and-spoke network shape.</p>
@@ -2521,11 +2525,11 @@ Agent App Ingestion before provisioning if its ingestion features or eligible
 conversation uploads are required:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
-<p>This does not switch the retrieval backend or rewrite source/index bindings.
-Existing environments keep their selection. Before disabling Agent App Ingestion
-in an existing environment, review
+<p>The ingestion selection leaves the retrieval backend and source/index bindings
+unchanged. Existing environments keep their selection. Before disabling
+Agent App Ingestion in an existing environment, review
 <a href="../ingestion/">ingestion choices and the older-UI migration warning</a>.
-Disabling uploads must not be inferred from a missing endpoint.</p>
+When disabling it, verify that the UI's upload gate also disables uploads.</p>
 <p>For a different application, set <code>AGENTLZ_APP_DEFINITION</code> to its definition
 path <strong>before the first provision</strong>. The environment binds to that application
 ID. Use <a href="../build-your-own-app/">Custom applications</a> for its contract and
@@ -2587,9 +2591,9 @@ connected host. If creating that host first, use the
 </tr>
 </tbody>
 </table>
-<p>Automatic hosted image preparation and isolated custom source builds still
-require the private pool. <code>BUILD_MODE=local</code> is not a local-build alternative
-for those paths. See <a href="../network-isolation/">network isolation</a> for build egress,
+<p>With network isolation enabled, automatic hosted image preparation and custom
+source builds require the private pool, including when <code>BUILD_MODE=local</code> is selected.
+See <a href="../network-isolation/">network isolation</a> for build egress,
 DNS and private-link readiness requirements.</p>
 <h3 id="step-4-deploy">Step 4: Deploy</h3>
 <p>Confirm the target before creating or changing resources:</p>
@@ -2609,8 +2613,8 @@ application deployment.</p>
 <p>Confirm the runner has Foundry agent authoring access on the exact project
 (Foundry User, previously Azure AI User, or an appropriate equivalent),
 account read access and the required scoped role-assignment authority.
-Azure sign-in or network connectivity alone is insufficient; see
-<a href="../network-isolation/">private-runner permissions</a> and <a href="../hosted-agents/">hosted identities</a>.</p>
+Review <a href="../network-isolation/">private-runner permissions</a> and
+<a href="../hosted-agents/">hosted identities</a> for the required scopes.</p>
 <p>A fresh hosted Agent Application deployment needs this order:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
 pwsh<span class="w"> </span>scripts/prepareHostedDeployment.ps1
@@ -2659,8 +2663,8 @@ In a hosted Agent Application topology, continue at preparation above.</p>
 <h2 id="validation">Validation</h2>
 <ol>
 <li>
-<p>Inspect the selected resource group and intended deployed revisions, not just
-   an older healthy placeholder:</p>
+<p>Inspect the selected resource group and confirm the intended application
+   revisions are running in place of placeholder images:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
 az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
@@ -2677,11 +2681,12 @@ az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w
    ingestion, and test both allowed and denied document access. Test uploads only
    when Agent App Ingestion and upload eligibility are selected.</li>
 <li>In a hosted topology, verify the intended routed version and runtime telemetry
-   as well as the remaining Container Apps. A greeting smoke test is not evidence
-   of user login, OBO or document authorization.</li>
+   as well as the remaining Container Apps. The deployment's greeting smoke test
+   checks basic agent response. Test user login, OBO and document authorization
+   through the UI.</li>
 </ol>
-<p>Use <a href="../troubleshooting/">Troubleshooting</a> for failures. Do not authorize a cutover
-based only on a successful hook or HTTP 200.</p>
+<p>Complete these application checks before cutover. Use
+<a href="../troubleshooting/">Troubleshooting</a> for failures.</p>
 <p>To make a hosted agent available in Teams and Microsoft 365 Copilot, continue with
 <a href="../publish-to-teams/">Publish to Teams and M365</a>. Bot creation and channel publication
 are separate manual tasks, not part of this deployment.</p>
@@ -2708,7 +2713,8 @@ azd<span class="w"> </span>deploy
 <li>If infrastructure or configuration changed, review the previous inputs and
    preview foundation changes before rerunning the matching full workflow.
    Restore directly managed runtime keys separately using their recorded values
-   and reload the affected components. Do not assume checkout restores them.</li>
+   and reload the affected components. These settings are managed separately
+   from the source checkout.</li>
 <li>Repeat <a href="#validation">Validation</a> before reopening access or promotion.</li>
 </ol>
 <p>Checking out an old tag does not reverse data migrations or recover lost data.
@@ -2755,8 +2761,8 @@ are under each component's <code>.logs</code> directory and can contain sensitiv
 <p>Hosted deployment reuses the prepared digest. A changed generated source pin or
 image requires preparation, provisioning the handoff and deployment again.
 An operator-managed digest is not rebuilt automatically: verify its provenance,
-compatibility and registry availability. Rebuilding identical source separately
-in each environment does not prove identical image digests.</p>
+compatibility and registry availability. When rebuilding the same source in
+each environment, compare the resulting image digests before promotion.</p>
 <p>Infrastructure, RBAC, topology or ingestion-selection changes require the full
 workflow, not deploy-only. Changing a selection does not delete previously
 deployed resources or revoke old permissions; retirement is separately authorized.</p>
@@ -2775,7 +2781,7 @@ the full workflow. For a directly managed, nonsecret runtime key:</p>
 Process environment inputs declared in <code>hosted-agent/azure.yaml</code> are immutable
 version inputs and require a new agent version. An App Configuration edit
 cannot replace a process-only setting such as <code>APP_CONFIG_TLS_COMPATIBILITY</code>.
-The <code>agent-lz</code> label is not an environment-isolation mechanism.</p>
+Use <code>agent-lz</code> within each environment's separate configuration store.</p>
 <h3 id="rotate-a-secret">Rotate a secret</h3>
 <p>Inspect the Key Vault reference before rotating. An unversioned URI resolves
 the current secret version when configuration reloads; a versioned URI must be

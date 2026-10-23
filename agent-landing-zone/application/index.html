@@ -439,6 +439,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -531,34 +559,6 @@
     
   
     Cost planning
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How the template works
   
 
     
@@ -1907,7 +1907,7 @@
 
 <p><span id="configure-the-application"></span></p>
 <h1 id="agent-application">Agent Application</h1>
-<p>Agent Application means the customizable reference app supplied by Agent Landing Zone.
+<p>Agent Application is the customizable reference app supplied by Agent Landing Zone.
 It includes Agent App UI, Agent App Orchestrator and optional Agent App Ingestion.
 These guides focus on the orchestrator in Foundry Agent Service, with the UI in
 Azure Container Apps. Start with a <a href="../deploy-full-stack/">full stack deployment</a>,
@@ -1916,7 +1916,7 @@ then choose a task below. To deploy a customer-owned application instead, use
 <h2 id="choose-a-task">Choose a task</h2>
 <h3 id="agent-hosting">Agent hosting</h3>
 <p>Use <a href="../hosted-agents/">Agent hosting</a> to choose where the orchestrator runs and
-understand image handoff, runtime access and caller contracts.</p>
+understand image deployment, runtime access and how clients call the agent.</p>
 <h3 id="frontend">Frontend</h3>
 <table>
 <thead>
@@ -1941,8 +1941,8 @@ understand image handoff, runtime access and caller contracts.</p>
 </tbody>
 </table>
 <h3 id="ingestion">Ingestion</h3>
-<p>Use <a href="../ingestion/">Ingestion and conversation uploads</a> to distinguish native
-source ingestion from Agent App Ingestion and chat attachments.</p>
+<p>Use <a href="../ingestion/">Ingestion and conversation uploads</a> to choose how documents
+enter the shared collection and how users attach files to a chat.</p>
 <h3 id="grounding">Grounding</h3>
 <table>
 <thead>
@@ -1993,24 +1993,22 @@ source ingestion from Agent App Ingestion and chat attachments.</p>
 </tr>
 </tbody>
 </table>
-<p>Each guide identifies the supported hosted path and any feature-specific
-requirements. A capability available in Microsoft Foundry is not automatically
-enabled in Agent Application.</p>
+<p>Each guide identifies the features integrated into Agent Application, their
+supported hosted path and any additional setup or development required.</p>
 <h2 id="know-what-you-are-changing">Know what you are changing</h2>
-<p><strong>Deployment inputs</strong> select Azure resources and the selected application's components.
+<p><strong>Deployment inputs</strong> select Azure resources and application components.
 Set them in the selected <code>azd</code> environment before the deployment step that reads
-them. <strong>Runtime settings</strong> configure the selected application's behavior, typically through
+them. <strong>Runtime settings</strong> configure application behavior, typically through
 Azure App Configuration with label <code>agent-lz</code>. The
 <a href="../configuration/">configuration reference</a> distinguishes the two.</p>
-<p><strong>Knowledge sources</strong> supply evidence through a Foundry IQ knowledge base.
-<strong>Tools</strong> let the agent call an additional service or operation. Adding a
-knowledge source does not register an agent tool, and registering a tool does
-not ingest documents. Start with <a href="../foundry-iq/">Foundry IQ</a> for knowledge or
+<p><strong>Knowledge sources</strong> supply content through a Foundry IQ knowledge base.
+<strong>Tools</strong> let the agent call an additional service or operation. Configure
+retrieval sources and callable tools separately. Start with
+<a href="../foundry-iq/">Foundry IQ</a> for knowledge or
 <a href="../agent-tools/">Tools and MCP</a> for an additional operation.</p>
-<p>Use the activation and verification steps in the relevant guide. Saving a
-setting or editing a Foundry resource alone does not prove the running hosted
-agent is using the change. Before granting access to real data, verify the
-result with both an authorized and an unauthorized user.</p>
+<p>Follow the activation steps in the relevant guide, then verify the change
+through the running agent. Before granting access to real data, confirm that
+an authorized user can retrieve it and an unauthorized user cannot.</p>
 
 
 
