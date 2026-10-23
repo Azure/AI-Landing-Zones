@@ -1,16 +1,16 @@
 # Ask questions about SQL data
 
 Evaluate a Fabric data agent through Foundry IQ for read-only questions about
-approved relational data. This is the shipped integration path for the bundled
-application hosted in Foundry—not a turnkey connection to an arbitrary SQL server.
+approved relational data. This is the shipped integration path for Agent Application
+hosted in Foundry, not a turnkey connection to an arbitrary SQL server.
 
 ## Choose the supported route
 
-| Route | Hosted application compatibility |
+| Route | Hosted Agent Application compatibility |
 | --- | --- |
 | Legacy `nl2sql` strategy | Not supported. The hosted runtime explicitly rejects this strategy. Its SQL plugin and schema/example indexes do not enable it in hosted mode. |
 | Fabric data agent through a Foundry IQ knowledge base | Integration code is shipped, but service compatibility must be checked below. Fabric generates and executes read-only queries. The knowledge-source connector is a Microsoft preview. |
-| Custom SQL tool | An application extension, not a supplied SQL integration. You must implement, secure, deploy and validate it with a hosted-compatible strategy. See [Agent tools](agent-tools.md). |
+| Custom SQL tool | An Agent Application extension, not a supplied SQL integration. You must implement, secure, deploy and validate it with a hosted-compatible strategy. See [Agent tools](agent-tools.md). |
 
 For Fabric SQL questions, use a **warehouse** or **lakehouse tables** exposed to
 the data agent. A Power BI semantic model uses DAX rather than SQL. This route
@@ -18,7 +18,7 @@ does not install the legacy NL2SQL plugin or require its metadata indexes.
 
 ## Prerequisites
 
-- A working hosted application using Foundry IQ knowledge-base retrieval.
+- A working hosted Agent Application using Foundry IQ knowledge-base retrieval.
 - A Fabric workspace with supported capacity and tenant settings, and an owner
   able to create, publish and share a data agent. See Microsoft's
   [Fabric data agent requirements](https://learn.microsoft.com/fabric/data-science/concept-data-agent).
@@ -27,11 +27,13 @@ does not install the legacy NL2SQL plugin or require its metadata indexes.
 - A platform operator able to provision the knowledge source and update its
   knowledge-base binding. The Search service and Fabric workspace must use the
   same Microsoft Entra tenant.
-- An authenticated application path that supplies the end user's delegated
+- An authenticated Agent Application path that supplies the end user's delegated
   identity for on-behalf-of (OBO) retrieval. A managed identity alone is not
   sufficient for this remote source. The connector forwards a Search-audience
   user token separately from service authentication; do not paste tokens into
-  configuration or commands.
+  configuration or commands. The pinned hosted entry point does not supply this
+  delegated token. Resolve the [hosted identity boundary](foundry-iq.md) through
+  a reviewed integration before running the pilot.
 - Network policy allowing the required service connections. A working private
   Foundry endpoint does not by itself prove connectivity to Fabric. Have the
   platform owner validate the retrieval path and any Fabric workspace outbound
@@ -43,17 +45,17 @@ data residency and preview acceptance before using real business data. Review
 the [connector requirements and limits](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent).
 
 !!! warning "Check the preview contract before connecting"
-    The bundled orchestrator v5.2.1's data-agent parser expects `dataAgentAnswer`
+    Agent App Orchestrator v5.2.1's data-agent parser expects `dataAgentAnswer`
     and `dataAgentRawData` in retrieval references. Current Microsoft documentation
     instead describes `fabricAnswer` and `fabricEmbeddedResources`, using
     `2026-08-01-preview`; the platform and orchestrator defaults use
     `2026-05-01-preview`. This is not a confirmed turnkey hosted combination.
-    Have the application owner verify the deployed API and response contract
+    Have the Agent Application owner verify the deployed API and response contract
     before proceeding. Its separate ontology parser can read `fabricAnswer`,
     but does not handle `fabricEmbeddedResources` and classifies that answer
     as ontology content. Do not assume correct data-agent evidence or table/chart
     support. If the deployed contract differs, obtain a compatible, validated
-    application release; changing an API-version setting alone is insufficient.
+    Agent Application release; changing an API-version setting alone is insufficient.
 
 ## Run a read-only pilot
 
@@ -86,7 +88,7 @@ the [connector requirements and limits](https://learn.microsoft.com/azure/search
    intended workspace and data-agent IDs. Use `low` or `medium` retrieval
    reasoning effort; this source does not support `minimal`.
 
-5. **Test from the hosted application.** Sign in as an authorized pilot user
+5. **Test from hosted Agent Application.** Sign in as an authorized pilot user
    and ask the same fixed-period question. Compare the result with the Fabric
    test and the owner's expected answer. Check retrieval diagnostics for
    activity from the intended Fabric data-agent knowledge source; a plausible
@@ -105,10 +107,10 @@ authorization control.
 
 | Symptom | Check |
 | --- | --- |
-| Hosted startup or requests reject `nl2sql` | Restore the previous hosted-compatible strategy through the application deployment process. Do not remove the hosted guard or provision more SQL metadata indexes. |
-| Fabric succeeds, but the application returns no Fabric result | Check the preview response contract, source binding, enabled integration and OBO identity. Without a per-user OBO token, the connector skips this source. Do not substitute a broadly privileged service identity. |
-| Access denied | Check the actual user's data-agent and underlying-data permissions, then the application's OBO path. See [Application authentication](application-auth.md). |
-| A result is incorrect | Recheck the fixed period, selected tables, schema, business definitions and Fabric example queries. Compare the same question directly in Fabric before changing the hosted application. |
+| Hosted startup or requests reject `nl2sql` | Restore the previous hosted-compatible strategy through the Agent Application deployment process. Do not remove the hosted guard or provision more SQL metadata indexes. |
+| Fabric succeeds, but Agent Application returns no Fabric result | Check the preview response contract, source binding, enabled integration and OBO identity. Without a per-user OBO token, the connector skips this source. Do not substitute a broadly privileged service identity. |
+| Access denied | Check the actual user's data-agent and underlying-data permissions, then Agent Application's OBO path. See [Agent Application authentication](application-auth.md). |
+| A result is incorrect | Recheck the fixed period, selected tables, schema, business definitions and Fabric example queries. Compare the same question directly in Fabric before changing hosted Agent Application. |
 
 To undo the pilot, remove its knowledge-source reference from the knowledge
 base before deleting the source, and revoke pilot sharing in Fabric. Preserve

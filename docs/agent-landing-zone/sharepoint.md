@@ -1,11 +1,11 @@
 # SharePoint
 
-Let a signed-in employee ask the hosted application about a SharePoint document
+Let a signed-in employee ask hosted Agent Application about a SharePoint document
 and follow its citation back to SharePoint. Start with a **remote SharePoint
 knowledge source** in Foundry IQ: documents are queried in Microsoft 365 rather
-than copied into a retrieval index. Retrieved text still reaches the application
-and model. Retrieval uses the employee's permissions. The optional ingestion
-application is not needed for this source.
+than copied into a retrieval index. Retrieved text still reaches Agent Application
+and model. Retrieval uses the employee's permissions. Optional Agent App
+Ingestion is not needed for this source.
 
 !!! warning "Preview and licensing"
     Remote SharePoint and its Copilot Retrieval API are previews, not recommended
@@ -29,12 +29,14 @@ application is not needed for this source.
   authorizing source access are different identities. Do not use anonymous chat
   for this scenario. The hosted caller token must reach the orchestrator for
   its delegated exchange; signing into the Foundry portal alone is not this
-  application sign-in flow.
+  Agent Application sign-in flow. The pinned hosted entry point does not supply
+  that delegated token. Resolve the [hosted identity boundary](foundry-iq.md)
+  through a reviewed integration before following this source recipe.
 - Use SharePoint in the same Microsoft Entra tenant as Azure. Have an
   administrator confirm licensing or pay-as-you-go eligibility.
 - Have permission to create knowledge sources and update the selected knowledge
   base. Microsoft recommends Search Service Contributor for keyless source
-  management. Updating application settings separately requires App
+  management. Updating Agent Application settings separately requires App
   Configuration data-plane write access.
 - Prepare one text document in a test site, a user allowed to read it and a
   second user denied access. Use non-sensitive test content with a distinctive
@@ -47,20 +49,20 @@ before choosing a document.
 
 ## Connect the source
 
-1. Record the application's existing Foundry IQ knowledge base name and
+1. Record Agent Application's existing Foundry IQ knowledge base name and
    configuration. A **knowledge source name** identifies a registered source;
    it is not the SharePoint site URL, a tenant ID or a knowledge base name.
 
 2. Follow Microsoft's
    [remote SharePoint source procedure](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-sharepoint-remote)
    to create a `remoteSharePoint` source and add it to the knowledge base used
-   by the application. Keep the existing source references.
-   The bundled platform does not provision a remote source merely because a
+   by Agent Application. Keep the existing source references.
+   Agent Landing Zone does not provision a remote source merely because a
    runtime setting names it.
 
-   Use the service API version supported by your deployed application.
+   Use the service API version supported by your deployed Agent Application.
    Current Microsoft examples can target a newer preview than the pinned
-   application; do not change `FOUNDRY_IQ_API_VERSION` just to match an example.
+   Agent Application; do not change `FOUNDRY_IQ_API_VERSION` just to match an example.
    Record this manually added source reference: a later provisioning run can
    reapply the template-managed knowledge base definition. Check membership
    again after provisioning or an upgrade.
@@ -82,7 +84,7 @@ before choosing a document.
    It is an optional additional KQL filter, not an ACL setting. Do not paste
    tokens, passwords or connection strings into these settings.
 
-5. Redeploy the hosted application through the existing
+5. Redeploy hosted Agent Application through the existing
    [deployment workflow](deploy-full-stack.md). The connector caches its
    configuration in-process; do not assume changing the store updates a running
    hosted version. Ensure the newly deployed version is serving the UI.
@@ -92,7 +94,8 @@ The connector sends the delegated token in
 `x-ms-query-source-authorization`. Remote SharePoint uses that token to enforce
 SharePoint permissions and Microsoft Purview sensitivity labels. Enabling the
 source does not grant the user access, repair OBO consent or create a source.
-The application acquires the source-authorization token for the Search audience;
+The Agent Application connector acquires the source-authorization token for the
+Search audience when supplied with the required delegated context;
 do not substitute a manually copied Graph token or an application-only token.
 See [query-time permissions](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-retrieve#enforce-permissions-at-query-time-preview).
 
@@ -117,14 +120,14 @@ after changing site permissions, OBO configuration or source bindings.
 | Symptom | Check |
 | --- | --- |
 | Source is absent | Exact source name, knowledge base membership, `agent-lz` label and the serving hosted version. |
-| Authentication failure or no delegated token | User sign-in, the application's OBO configuration and required consent. Do not replace user authorization with a service identity or enable anonymous access. |
+| Authentication failure or no delegated token | User sign-in, Agent Application's OBO configuration and required consent. Do not replace user authorization with a service identity or enable anonymous access. |
 | Empty results | User can open the document in SharePoint; content is supported; licensing/billing is enabled; filters are valid. Ask about document content rather than its location. |
 | Private deployment cannot retrieve | Validate the permitted outbound path and DNS from the actual runtime. Private Azure endpoints do not make Microsoft 365 SharePoint a private-link source. |
 | Denied user sees restricted content | Stop rollout. Inspect source ACLs, delegated identity and duplicate content in other sources before retesting. |
 
-To disconnect, restore the recorded application settings (or set
-`SHAREPOINT_REMOTE_ENABLED=false`) and redeploy the hosted application. Remove
-the source reference from the application's knowledge base as well; delete the
+To disconnect, restore the recorded Agent Application settings (or set
+`SHAREPOINT_REMOTE_ENABLED=false`) and redeploy hosted Agent Application. Remove
+the source reference from Agent Application's knowledge base as well; delete the
 source only if no other application needs it. Disabling the runtime flag alone
 does not remove knowledge base membership or revoke permissions.
 
@@ -134,8 +137,8 @@ Do not confuse these alternatives with remote, user-authorized retrieval:
 
 | Path | Who ingests content | Authorization requirement |
 | --- | --- | --- |
-| Native `indexedSharePoint` source (preview) | A service-managed indexing pipeline; no bundled ingestion app | Configure supported permission ingestion and forward the querying user's token. App permission to read a site is not document-level enforcement for end users. |
-| Bundled SharePoint jobs | The optional Agent App Ingestion application, using Microsoft Graph application credentials | Preserve the application's indexed permission metadata and retrieval filtering; validate allowed and denied users. Not the remote source's live permission check. |
+| Native `indexedSharePoint` source (preview) | A service-managed indexing pipeline; no Agent App Ingestion required | Configure supported permission ingestion and forward the querying user's token. App permission to read a site is not document-level enforcement for end users. |
+| Agent Application SharePoint jobs | Optional Agent App Ingestion, using Microsoft Graph application credentials | Preserve Agent Application's indexed permission metadata and retrieval filtering; validate allowed and denied users. Not the remote source's live permission check. |
 
 The shipped indexed SharePoint registration payload uses `indexName`, `siteUrl`
 and `tenantId`. It is not compatible with the current documented
@@ -147,10 +150,10 @@ provisioning template with the supported service API and complete the
 [official indexed SharePoint prerequisites and permission configuration](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-sharepoint-indexed)
 before adopting it. Do not copy newer preview API fields into runtime settings.
 
-If you specifically need the bundled application's SharePoint jobs, select and
-deploy the optional ingestion application using
+If you specifically need Agent Application's SharePoint jobs, select and
+deploy optional Agent App Ingestion using
 [Ingestion and conversation uploads](ingestion.md). Those jobs use the
-`SHAREPOINT_*` application credential settings, not the
+`SHAREPOINT_*` Entra app credential settings, not the
 `SHAREPOINT_REMOTE_*` settings above. Store secrets in Key Vault, not shell
 history. Native source registration does not deploy those jobs, and disabling
 ingestion is not a migration for existing indexed content.

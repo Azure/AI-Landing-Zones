@@ -1,20 +1,30 @@
 # Private access over VPN
 
+## Objective
+
 Connect a deployment host or developer workstation to an isolated Agent Landing
 Zone using a point-to-site (P2S) VPN. The result is private DNS resolution and
 HTTPS access to the workload services from that computer. Once connected,
 you can run deployment hooks or development tools directly; **Bastion and a
 jumpbox are not required for this path**.
 
+## When to use
+
+Use this runbook when a workstation must reach private workload endpoints
+without using a jumpbox. Reuse an approved corporate VPN when available; create
+a new gateway only with the network owner's approval.
+
 The foundation creates private endpoints and DNS zones when isolation is
 enabled. It does **not** create a VPN gateway, configure P2S authentication,
 issue certificates, distribute client profiles or create a DNS Private
 Resolver. These are network-administrator tasks, not automatic `azd` steps.
 
-## Before you start
+<span id="before-you-start"></span>
+
+## Prerequisites
 
 - Use the reviewed platform checkout, intended azd environment and approved
-  inputs from [Full stack deploy](deploy-full-stack.md). This procedure does
+  inputs from [Deploy the full stack](deploy-full-stack.md). This procedure does
   not change the hosted orchestrator topology or Foundry IQ configuration.
 - Arrange network permissions at the gateway, VNet, peering and DNS scopes.
   The network administrator needs permission to create or update those
@@ -26,7 +36,13 @@ Resolver. These are network-administrator tasks, not automatic `azd` steps.
   an authorized Microsoft Entra account. VPN authentication is separate from
   Azure CLI, azd and application authentication.
 
-## 1. Select the private network
+## Procedure
+
+Run azd commands from the reviewed platform root with the intended environment
+selected. Record any existing gateway, peering, route and DNS settings before
+changing them, and identify which changes affect other users.
+
+### 1. Select the private network
 
 For a **new** isolated environment, before provisioning:
 
@@ -80,7 +96,7 @@ cannot exist until the VNet is provisioned, use that runbook's deferred
 post-provision procedure, then return here. Deferral leaves application setup
 incomplete and does not bypass earlier private-access checks.
 
-## 2. Configure the gateway and authentication
+### 2. Configure the gateway and authentication
 
 For an existing hub VPN, ask its administrator for an approved client profile
 and continue to step 3. For a new gateway, follow Microsoft's
@@ -119,7 +135,7 @@ or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/poi
 The gateway administrator controls admission to the VPN. Having an Entra account
 or a foundation deployment role is not, by itself, an approved VPN access policy.
 
-## 3. Connect DNS and routes
+### 3. Connect DNS and routes
 
 A connected tunnel is not enough: the client needs routes to the workload's
 private endpoint addresses **and** a DNS server that can resolve its private
@@ -155,7 +171,9 @@ zones.
 spoke firewall. It does not configure VPN client DNS, link missing zones or
 create a resolver. Leave it unchanged unless the approved DNS design uses it.
 
-## 4. Verify from the actual host
+<span id="4-verify-from-the-actual-host"></span>
+
+## Validation
 
 Run these checks on **each** deployment host and developer workstation, not
 only on a VM in Azure. Select the intended environment and refresh outputs
@@ -197,12 +215,14 @@ TCP/TLS reachability: App Configuration before post-provision and deployment,
 the Foundry project additionally before hosted deployment, and ACR before hosted
 image builds. Passing it does not test every service listed above.
 
-## 5. Deploy or develop
+## After validation: deploy or develop
+
+<span id="5-deploy-or-develop"></span>
 
 - **Deployment host:** authenticate Azure CLI and azd with the approved deployment
   identity. Complete deferred post-provision using
   [Deploy infrastructure only](deploy-infra-only.md), then continue
-  [Full stack deploy](deploy-full-stack.md) for hosted image preparation and
+  [Deploy the full stack](deploy-full-stack.md) for hosted image preparation and
   application deployment. `RUN_FROM_JUMPBOX=true` requests connectivity checks;
   despite its name, it works from a VPN-connected host and does not require
   a jumpbox. Keep the private ACR Task pool for hosted image preparation;
@@ -220,7 +240,9 @@ exact project and account read access as described in
 [Network isolation](network-isolation.md). Do not grant Owner to solve a
 data-plane denial.
 
-## Recover or disconnect
+<span id="recover-or-disconnect"></span>
+
+## Troubleshooting
 
 | Symptom | Check first |
 | --- | --- |
@@ -230,8 +252,20 @@ data-plane denial.
 | TLS fails | Original hostname, client trust and any approved inspection path. Do not disable certificate validation. |
 | HTTP 401/403 after successful TLS | Correct tenant, token audience and scoped service roles. Check authorization separately from connectivity. |
 
-Disconnect the VPN when finished. To withdraw access, use the gateway's approved
-certificate-revocation or Entra access policy process; deleting a local profile
-does not revoke credentials. Remove profiles/certificates from retired devices.
-Keep shared hub resources intact, and coordinate gateway/DNS removal with other
-consumers rather than deleting them as application cleanup.
+## Rollback
+
+1. Disconnect the VPN on the affected workstation. Restore its previous approved
+   DNS and route/profile configuration if changed, then confirm normal corporate
+   connectivity. Keep an existing administrative access path available.
+2. To revoke newly granted access, have the gateway administrator use the
+   approved certificate-revocation or Entra access policy process. Deleting a
+   local profile does not revoke credentials. Remove pilot profiles and device
+   certificates only after recording which credential was revoked.
+3. Have the network owner review the recorded changes and restore only the
+   pilot-specific peering, route or DNS settings that are no longer needed.
+   Verify existing consumers still resolve and reach their services.
+4. If a dedicated gateway was created only for this pilot, authorize its
+   itemized retirement with the network owner after checking dependencies.
+   Do not delete a shared hub gateway, resolver, private DNS zone or workload
+   private endpoint. Keep workload isolation and application authentication
+   unchanged.

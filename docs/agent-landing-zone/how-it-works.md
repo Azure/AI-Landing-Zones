@@ -1,9 +1,10 @@
 # How the template works
 
-Agent Landing Zone connects deployment inputs, Azure infrastructure and agent
+Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (`azd`). This page explains
 that connection for the **Bicep/azd implementation**. Use the deployment runbooks
-for the commands to execute.
+for the commands to execute. Start with [Deployment choices](planning.md) if
+you have not selected the implementation and topology.
 
 ## Repository boundaries
 
@@ -14,7 +15,7 @@ application's runtime source.
 | --- | --- |
 | Foundation: platform `infra/` | Repository-owned Bicep source for Azure resources, identities and access. `manifest.json` → `infra.source` records the upstream AI Landing Zone source it incorporates. |
 | Platform integration: root files, `scripts/` and `config/` | Selects the application, composes deployment parameters, configures provisioned services and coordinates deployment. |
-| Runtime component repositories | Own the UI, agent strategies and tools, and optional application ingestion code. The manifest identifies their repositories and source pins. |
+| Runtime component repositories | Own Agent App UI, Agent App Orchestrator (strategies and tools), and optional Agent App Ingestion. The manifest identifies their repositories and source pins. |
 
 The `infra.source` entry is **provenance**, not a separately deployed package or
 submodule. Deploy the platform's reviewed `infra/` tree, including its platform
@@ -23,17 +24,17 @@ changes, rather than substituting an upstream infrastructure tag.
 ## The manifest records a validated combination
 
 [`manifest.json`](https://github.com/Azure/agent-landing-zone/blob/main/manifest.json)
-records the platform release and each bundled component's repository, ref and
+records the platform release and each Agent Application component's repository, ref and
 exact commit. It is the authoritative source for the coordinated combination;
 the documentation does not maintain a second component-version table.
 
-The hooks fetch selected bundled Container App components into sibling
+The hooks fetch selected Agent Application Container App components into sibling
 directories and verify their commits. Hosted image preparation fetches the
 pinned orchestrator separately for its build. You do not need to fork every
-repository to deploy the unmodified application.
+repository to deploy the unmodified Agent Application.
 
 If you change component source, its repository and the platform's pins must
-agree. The bundled `app-definition.json` also declares component source pins and
+agree. The Agent Application's `app-definition.json` also declares component source pins and
 is validated against the manifest. A modified combination needs its own
 integration validation. See [Custom applications](build-your-own-app.md) for
 repository customization and pinning rules.
@@ -103,6 +104,7 @@ workload must support workspace-identity authentication and reach the Foundry
 endpoint. Existing Search provisioning remains unchanged.
 
 For bundled Container Apps, deployment uses the verified component checkouts
+For Agent Application Container Apps, deployment uses the verified component checkouts
 and their child `azure.yaml` projects to build and deploy the code. Hosted
 orchestration uses the prepared image described below. Custom applications
 provide their own definition and child project.
@@ -113,10 +115,11 @@ Deployment inputs describe what to create. **Runtime settings** describe how
 applications use the resulting services.
 
 Provisioning and configuration publish settings to Azure App Configuration
-under the **`agent-lz` label**. Runtime components read that label, while bootstrap
-values such as the store endpoint must be available before remote configuration
-can load. Secrets belong in Key Vault and are referenced rather than copied into
-checked-in settings.
+under the **`agent-lz` label**. The Agent Application loaders also select other
+labels, so check the [runtime selector warnings](configuration.md#runtime-settings)
+before changing keys. Bootstrap values such as the store endpoint must be
+available before remote configuration can load. Secrets belong in Key Vault
+and are referenced rather than copied into checked-in settings.
 
 The label is a shared convention, not an environment boundary. Keep development,
 test and production configuration, identities and data separated, following the
@@ -156,7 +159,8 @@ strategy eligibility and image behavior, see [Agent hosting](hosted-agents.md).
 
 ## From understanding to deployment
 
-Review the [design checklist](../architecture/design-checklist.md), then choose
+Review [deployment choices](planning.md), [sizing](sizing.md) and
+[cost planning](cost-planning.md), then choose
 [Deploy infrastructure only](deploy-infra-only.md) or
 [Deploy the full stack](deploy-full-stack.md). Those runbooks contain the
 prerequisites, topology-specific sequence and validation steps.

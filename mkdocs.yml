@@ -39,40 +39,44 @@ nav:
   - Home: index.md
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
-      - "How the template works": agent-landing-zone/how-it-works.md
+      - "What's new": agent-landing-zone/whats-new.md
       - "Design Checklist": architecture/design-checklist.md
       - Plan your deployment:
-          - "Resources and cost estimates": bicep/deployed-resources.md
-          - "Cost planning": architecture/cost-guide.md
+          - "Deployment choices": agent-landing-zone/planning.md
+          - "Network isolation": agent-landing-zone/network-isolation.md
           - "Sizing and capacity": agent-landing-zone/sizing.md
+          - "Cost planning": agent-landing-zone/cost-planning.md
+          - "How the template works": agent-landing-zone/how-it-works.md
+          - Configuration:
+              - "Settings": agent-landing-zone/configuration.md
+              - "Resource naming": agent-landing-zone/resource-naming.md
+      - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
+      - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
+      - Agent Application:
+          - "Overview": agent-landing-zone/application.md
+          - "Agent hosting": agent-landing-zone/hosted-agents.md
+          - Frontend:
+              - "Sign-in & access": agent-landing-zone/application-auth.md
+              - "Embed chat": agent-landing-zone/embed-chat.md
+              - "User feedback": agent-landing-zone/user-feedback.md
+          - "Ingestion": agent-landing-zone/ingestion.md
+          - "Multimodality": agent-landing-zone/multimodality.md
+          - Grounding:
+              - "Foundry IQ": agent-landing-zone/foundry-iq.md
+              - "Work IQ": agent-landing-zone/work-iq.md
+              - "Fabric IQ": agent-landing-zone/fabric-iq.md
+              - "SharePoint": agent-landing-zone/sharepoint.md
+              - "NL2SQL": agent-landing-zone/nl2sql.md
+          - "Tools & MCP": agent-landing-zone/agent-tools.md
       - Runbooks:
-          - "Infrastructure only": agent-landing-zone/deploy-infra-only.md
-          - "Full stack deploy": agent-landing-zone/deploy-full-stack.md
           - "Application Gateway": agent-landing-zone/application-gateway.md
           - "Private access (VPN)": agent-landing-zone/private-access.md
           - "Bring your own app": agent-landing-zone/build-your-own-app.md
           - "Teams & M365": agent-landing-zone/publish-to-teams.md
           - "Copilot Studio": agent-landing-zone/connect-copilot-studio.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
-      - Application:
-          - "Overview": agent-landing-zone/application.md
-          - "Sign-in & access": agent-landing-zone/application-auth.md
-          - "Embed chat": agent-landing-zone/embed-chat.md
-          - "Multimodality": agent-landing-zone/multimodality.md
-          - "NL2SQL": agent-landing-zone/nl2sql.md
-          - "User feedback": agent-landing-zone/user-feedback.md
-          - Grounding:
-              - "Foundry IQ": agent-landing-zone/foundry-iq.md
-              - "Work IQ": agent-landing-zone/work-iq.md
-              - "Fabric IQ": agent-landing-zone/fabric-iq.md
-              - "SharePoint": agent-landing-zone/sharepoint.md
-          - "Tools & MCP": agent-landing-zone/agent-tools.md
-      - Reference:
-          - "Configuration": agent-landing-zone/configuration.md
-          - "Agent hosting": agent-landing-zone/hosted-agents.md
-          - "Network isolation": agent-landing-zone/network-isolation.md
-          - "Terraform": terraform/index.md
-          - "Portal": portal/Readme.md
+      - "Terraform templates": terraform/index.md
+      - "Deploy via portal": portal/Readme.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
   - What's New: whatisnew.md
   - FAQ: architecture/faq.md
@@ -83,12 +87,11 @@ not_in_nav: |
   /AI-Landing-Zones-Design-ACA.md
   /terraform-parity.md
   /bicep/*.md
+  /architecture/cost-guide.md
   /agent-landing-zone/customer-environments.md
   /agent-landing-zone/operations.md
   /agent-landing-zone/deploy-bicep.md
   /agent-landing-zone/deploy-terraform.md
-  /agent-landing-zone/ingestion.md
-  /agent-landing-zone/resource-naming.md
 
 extra:
   generator: false

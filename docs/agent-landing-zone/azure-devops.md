@@ -1,9 +1,16 @@
 # Deploy applications with Azure DevOps
 
-Use this optional CI/CD runbook when you want to promote one reviewed application
-revision through **DEV → TEST → PROD** with protected approvals. It automates the
+## Objective
+
+Promote one reviewed application revision through **DEV → TEST → PROD** with
+protected approvals. This optional CI/CD flow automates the
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.
+
+## When to use
+
+Use this runbook when your team needs repeatable source promotion with separate
+deployment identities and approval gates for each environment.
 
 For interactive execution, use [Deploy infrastructure only](deploy-infra-only.md)
 or [Deploy the full stack](deploy-full-stack.md). For component changes, see
@@ -17,7 +24,22 @@ or [Deploy the full stack](deploy-full-stack.md). For component changes, see
     provision infrastructure only, allow independent environment selection and
     do not automatically execute their preview template.
 
-## 1. Prepare the repository and runners
+## Prerequisites
+
+- A reviewed platform revision and stage-specific deployment inputs.
+- An Azure DevOps project with administrators authorized to manage agent pools,
+  service connections, variable groups and protected Environments.
+- Azure administrators who can approve the scoped deployment/runtime role plan,
+  and an Entra administrator for application sign-in and consent.
+- A connected Linux runner path to each private environment. Bootstrap that
+  connectivity before running a pipeline that depends on it.
+
+Steps 1-3 detail the toolchain, identity and input preparation. Do not queue
+a deployment until they and the protected checks in Step 4 are complete.
+
+## Procedure
+
+### 1. Prepare the repository and runners
 
 Use your reviewed platform revision. Keep
 `manifest.json`, `app-definition.json`, `main.parameters.json`,
@@ -26,7 +48,7 @@ Infrastructure is incorporated under `infra/`; do not deploy it from a second
 foundation checkout. Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
-The downloadable example initially deploys the **bundled application** with
+The downloadable example initially deploys the **Agent Application** with
 `hosted-no-panel`, native Blob ingestion and private endpoints. Set the same
 reviewed topology and ingestion selection across the three environments:
 
@@ -34,7 +56,7 @@ reviewed topology and ingestion selection across the three environments:
 | --- | --- |
 | `DEPLOYMENT_TOPOLOGY` | `hosted-no-panel`, `hosted-panel`, or `classic`. Classic runs orchestration in Container Apps. |
 | `HOSTED_AGENT_RESOURCE_SCOPE` | Required **before first provision** for hosted modes: the deployed Foundry delegated-user audience followed by `/.default`. It has no implicit runtime default. |
-| `DEPLOY_INGESTION_CONTAINER_APP` | Explicit `'false'` in this example; set `'true'` if the optional app and conversation uploads are required. Native source ingestion is not feature-equivalent. Retain an existing environment's selection during upgrades. |
+| `DEPLOY_INGESTION_CONTAINER_APP` | Explicit `'false'` in this example; set `'true'` if Agent App Ingestion and conversation uploads are required. Native source ingestion is not feature-equivalent. Retain an existing environment's selection during upgrades. |
 | `NETWORK_ISOLATION` | Explicit `'true'`. Do not change it merely to make a pipeline pass. |
 | `BUILD_MODE` | `acr-task`; private image builds use the foundation's ACR Tasks pool. Local Docker is not required. |
 
@@ -46,7 +68,7 @@ environments are treated as classic. This example deliberately makes the choice
 explicit: **do not use it to switch an existing classic environment to hosted**
 without the migration and recovery review.
 
-### Runner requirements
+#### Runner requirements
 
 Create authorized **Linux self-hosted Azure Pipelines agent pools**, with a runner
 able to reach each environment's private endpoints through its VNet or a peered
@@ -88,7 +110,7 @@ temporary tool configuration, leaving source checkouts intact. Do not place
 unrelated files in the agent workspace or run untrusted pull requests on
 deployment agents.
 
-## 2. Establish identities and permissions
+### 2. Establish identities and permissions
 
 Create an **Azure Resource Manager workload identity federation (WIF)** service
 connection per environment, following the foundation setup. Restrict each
@@ -117,7 +139,7 @@ Also confirm service/model availability, quota, provider registration and Respon
 AI acceptance in each target subscription. Do not set preflight bypass flags to
 work around an unattended failure. Allow RBAC propagation before retrying.
 
-### Complete the application sign-in setup separately
+#### Complete the application sign-in setup separately
 
 The pipeline service connection is **not** the UI's Entra application registration.
 The inspected root configuration and pinned UI deployment scripts do not create
@@ -149,7 +171,7 @@ work automatically performed by YAML or by granting Azure subscription roles.
 Use a separately reviewed administrative procedure or automation; do not give
 the deployment connection broad Microsoft Graph permissions to hide the gap.
 
-## 3. Fill the pipeline inputs
+### 3. Fill the pipeline inputs
 
 Download both files, then place them beside each other in **`.pipelines/` in your
 platform repository**, not in its `infra/` folder:
@@ -183,7 +205,7 @@ reapply approved inputs. Keep `.azure` and sibling child state private.
 | `environment: agentlz-dev`, `agentlz-test`, `agentlz-prod` | Precreated Azure DevOps Environment resource names. Rename consistently if required; these are approval resources, not azd environments. |
 | `AZURE_ENV_NAME: agentlz-dev`, `agentlz-test`, `agentlz-prod` | Unique azd names, retained exactly for subsequent refresh/deploy runs. |
 | `variableGroup: agentlz-dev-secrets`, `agentlz-test-secrets`, `agentlz-prod-secrets` | Create these Library variable groups and authorize only this pipeline. Each must contain the secret variable `AGENTLZ_SECRET_SETTINGS_JSON`, initially the string `{}`. |
-| `AGENTLZ_SECRET_SETTINGS_JSON` in each group | JSON object of additional documented azd/hook inputs, with string values. It cannot override the inline deployment controls. Empty `{}` is valid for the bundled example. This is **not** automatic publication of OAuth/runtime settings or a private Git credential mechanism. |
+| `AGENTLZ_SECRET_SETTINGS_JSON` in each group | JSON object of additional documented azd/hook inputs, with string values. It cannot override the inline deployment controls. Empty `{}` is valid for the Agent Application example. This is **not** automatic publication of OAuth/runtime settings or a private Git credential mechanism. |
 | Inline `settings` in each stage | Review topology, ingestion, isolation and regional settings. Add required [configuration](configuration.md) inputs for your approved network, source, models or reused resources. Keep nonsecret configuration reviewable here; never put secret values in YAML. |
 
 The `settings` maps are intentionally inline, not an unexplained external
@@ -203,12 +225,12 @@ data-loss prevention system; keep pipeline debug and shell tracing off.
 Use Key Vault references for runtime secrets instead of literal secret JSON
 wherever the contract supports them.
 
-### Private component repositories and custom definitions
+#### Private component repositories and custom definitions
 
 The platform connection authenticates **Azure**, not GitHub or Azure Repos Git.
 See [Private Git authentication](build-your-own-app.md#private-git-authentication)
 for repository access.
-The root deploy hook clones selected bundled components as **sibling checkouts**
+The root deploy hook clones selected Agent Application components as **sibling checkouts**
 using manifest repository/tag pins, then verifies the expected commit. Use
 approved read-only Git credentials for those private repositories separately.
 The example does not install a private-Git credential: before adopting private
@@ -241,11 +263,11 @@ Extend the template's fixed cleanup list with the custom definition folder's
 explicit `.azure` and `.logs` paths; never add a source or workspace root.
 
 Custom hosted services follow their own definition/image contract, not an assumed
-bundled orchestrator build. The downloaded template's preparation branch is for
-the bundled application; replace that branch with the documented custom hosted
+Agent Application orchestrator build. The downloaded template's preparation branch is for
+the Agent Application; replace that branch with the documented custom hosted
 workflow before using it for a custom hosted definition.
 
-## 4. Protect and register the pipeline
+### 4. Protect and register the pipeline
 
 1. In **Pipelines → Environments**, create the three exact Environment names.
    On **agentlz-test** and **agentlz-prod**, configure **Approvals and checks** outside
@@ -274,7 +296,7 @@ Each deployment stage requires `succeeded()` **and an explicit result equal to
 Azure DevOps Environment approvals remain external protected-resource checks;
 the YAML does not create or prove their existence.
 
-## 5. Understand what runs on a fresh job
+### 5. Understand what runs on a fresh job
 
 The template checks out `Build.SourceVersion` again and fails if `HEAD` differs.
 It activates Python 3.12 and installs `config/requirements.txt` **in that job**;
@@ -301,7 +323,7 @@ After refresh, reviewed environment settings are applied, then the template runs
 | Topology | Ordered commands from the platform root |
 | --- | --- |
 | Classic | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
-| Bundled hosted | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `bash scripts/prepareHostedDeployment.sh` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
+| Hosted Agent Application | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `bash scripts/prepareHostedDeployment.sh` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
 
 Preup validates/checks binding before standalone provisioning. Preprovision
 resolves topology using `python -m config.deployment.topology` and composes
@@ -314,7 +336,7 @@ the hosted version plus the other selected components.
 This full workflow is deliberately repeatable on fresh agents. A hosted
 preparation may reuse a compatible digest when its provenance is available, but
 disposable local state and different environment registries can cause rebuilding.
-Bundled Container App scripts build per environment. **This is immutable source
+Agent Application Container App scripts build per environment. **This is immutable source
 promotion, not build-once immutable-image promotion**: mutable base images, package
 feeds, tool versions, generated configuration and credentials can affect results.
 Pin dependencies/base images and record actual image digests per environment.
@@ -339,7 +361,9 @@ it with recursive deletion of source/workspace roots. AzureCLI@2 owns its isolat
 Azure CLI authentication context. Abrupt agent loss can prevent cleanup:
 reimage ephemeral agents or securely clean their disks before reuse.
 
-## 6. Verify DEV, approve TEST, then approve PROD
+<span id="6-verify-dev-approve-test-then-approve-prod"></span>
+
+## Validation
 
 Expected pipeline results are a green CI job, successful DEV deployment, TEST
 waiting for its protected Environment check, then PROD waiting after successful
@@ -363,7 +387,7 @@ in your release evidence:
    contain tokens or protected document bodies.
 4. Exercise selected ingestion/upload, history, panel and continuity features;
    check disabled surfaces are actually unavailable. Native Blob ingestion does
-   not imply conversation uploads work without the optional app.
+   not imply conversation uploads work without Agent App Ingestion.
 5. Inspect service health, RBAC and private endpoint resolution, and attach
    sanitized evidence to the run/change record. See
    [application health and diagnostics](troubleshooting.md) and
@@ -394,12 +418,32 @@ and hosted handoff, use the same initialization/authentication procedure and
 Do not replace full provisioning with deploy-only for infrastructure, RBAC,
 topology or ingestion-selection changes.
 
-For recovery, select the last accepted **complete pinned combination** and
-review configuration/data compatibility before rerunning the protected flow.
-Follow [Roll back to a previous release](deploy-full-stack.md#roll-back-to-a-previous-release).
+## Rollback
+
+Plan recovery before each deployment: back up required data and configuration
+through a separately authorized process, and retain known-good images and their
+verified digests under your retention policy. A source-promotion rerun is not
+an image-digest rollback.
+
+1. Stop the failed run and do not approve later stages. Identify which
+   environments changed from their recorded target, source and image evidence.
+2. Select the last accepted **complete pinned combination**. Review its
+   compatibility with current configuration, data and application binding using
+   [release rollback](deploy-full-stack.md#roll-back-to-a-previous-release).
+   A source-promotion rerun may rebuild images; it does not guarantee the previous
+   image digest.
+3. For affected environments, restore reviewed stage inputs and rerun the
+   protected flow from the accepted commit with all prerequisite stages selected.
+   Keep WIF identities, scoped permissions and Environment checks in place.
+   Do not approve promotion until [Validation](#validation) passes again.
+4. If abandoning pipeline onboarding, disable the pipeline and have the Azure
+   DevOps administrator revoke only its resource authorizations. Retire newly
+   created WIF connections, grants and variable groups only after confirming no
+   other pipelines use them. Keep deployed application resources and data intact.
+
 Rechecking an old commit does not reverse schema, infrastructure or data changes.
-Back up required data/configuration under a separate authorized process, retain
-known-good images, and do not use `azd down --purge` as rollback.
+Use service-specific recovery where required, not `azd down --purge`. Do not
+relax PNA, bypass auth or weaken promotion conditions to make recovery pass.
 
 ## Local example validation
 

@@ -114,7 +114,7 @@ semantic model. The model stays in Fabric; this is live querying, not document
 ingestion.
 
 !!! warning "Hosted integration requires custom work"
-    The bundled hosted application does **not** currently provide an end-to-end,
+    Hosted Agent Application does **not** currently provide an end-to-end,
     configuration-only connection to a Fabric data agent. The platform can
     register the knowledge source, but the native retrieval connector requires a
     delegated user token. The shipped hosted entry point does not supply that
@@ -168,7 +168,7 @@ for the actual workspace region; results returned to Search can cross regions.
 
 ## 2. Understand the shipped registration contract
 
-If you have the unmodified bundled hosted application, stop after Fabric
+If you have unmodified hosted Agent Application, stop after Fabric
 verification and plan the extension in Step 3 before provisioning this source.
 The following are registration inputs, not a hosted enablement recipe.
 In a platform checkout with the intended `azd` environment selected:
@@ -201,7 +201,7 @@ inputs aligned with any approved runtime change.
 The shipped platform defaults to knowledge API `2026-05-01-preview`; current
 Microsoft Learn examples use `2026-08-01-preview`. Do not copy a newer API
 version into only one part of the deployment. Validate provisioning and runtime
-retrieval together before changing the pinned application's API contract.
+retrieval together before changing the pinned Agent Application API contract.
 
 The [Fabric data agent knowledge source requires low or medium retrieval reasoning](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent),
 but the shipped non-MCP knowledge-base template hardcodes **minimal**. There is
@@ -217,7 +217,7 @@ For an ontology, the separate inputs are `FABRIC_IQ_ENABLED`,
 
 ## 3. Plan the hosted extension
 
-Choose the integration boundary before changing application code:
+Choose the integration boundary before changing Agent Application code:
 
 - **Knowledge-base retrieval:** retain the native `fabricDataAgent` source and
   make the following coordinated changes:
@@ -238,16 +238,16 @@ Choose the integration boundary before changing application code:
   [agent tools](agent-tools.md) extension path. This requires a compatible server,
   tool contract and authentication implementation; the native `FABRIC_DATA_AGENT_*`
   settings do not configure MCP. Do not point `MCP_APP_ENDPOINT` at a Fabric item
-  URL or assume the bundled MCP strategy supplies Fabric delegated authentication.
+  URL or assume Agent Application's MCP strategy supplies Fabric delegated authentication.
 
 For custom development, start from [Custom applications](build-your-own-app.md).
 Keep tokens server-side, validate the caller and token audience, and obtain the
 required delegated permissions and consent for the selected integration.
 Never accept a token, user ID or group list from model-generated tool arguments
 as proof of authorization. Preserve Fabric's model permissions and row-level
-security; application sign-in alone does not establish source access.
+security; Agent Application sign-in alone does not establish source access.
 
-Use the [application authentication](application-auth.md) guidance for application
+Use the [Agent Application authentication](application-auth.md) guidance for UI
 sign-in, not as evidence that Fabric delegation is already implemented. Validate
 network reachability from the service making the remote call as well as the
 hosted runtime. Agent Landing Zone private networking does not automatically
@@ -259,7 +259,7 @@ configure Fabric workspace networking.
   Expect `kind: fabricDataAgent`, the intended workspace/data agent IDs and a
   matching knowledge-base reference. This proves registration only.
 - **Hosted extension acceptance:** repeat the known-answer question through the
-  hosted application and inspect retrieval activity for the Fabric source.
+  hosted Agent Application and inspect retrieval activity for the Fabric source.
   Repeat with a user lacking model access and with users subject to different
   row-level security. A plausible answer or successful sign-in is not proof.
 - **No Fabric grounding:** check the native connector's logs for “no OBO token”
@@ -279,4 +279,4 @@ configure Fabric workspace networking.
 Runtime configuration is loaded into memory. Apply approved changes through the
 [hosted deployment workflow](hosted-agents.md), rather than restarting a
 Container App or assuming a portal edit refreshes a running hosted process.
-Keep the previous application version and configuration for rollback.
+Keep the previous Agent Application version and configuration for rollback.

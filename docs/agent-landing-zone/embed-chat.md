@@ -1,8 +1,8 @@
 # Embed chat
 
-Add the bundled chat UI to a customer portal as a floating **Chainlit Copilot**
-widget. In UI v3.3.0 (Chainlit 2.12.0), this is a script rendered in an open
-Shadow DOM, **not an iframe**. It is not the Copilot Studio web widget.
+Embed Agent Application in a customer portal using Agent App UI's floating
+**Chainlit Copilot** widget. In UI v3.3.0 (Chainlit 2.12.0), this is a script
+rendered in an open Shadow DOM, **not an iframe**. It is not the Copilot Studio web widget.
 The [pinned UI embedding contract](https://github.com/Azure/agent-app-ui/blob/v3.3.0/docs/copilot-embedding.md)
 describes the component's session and transport behavior.
 
@@ -13,7 +13,7 @@ neither the hosted agent nor its Foundry IQ knowledge base.
 ## Before you start
 
 - Have a working [hosted deployment](hosted-agents.md) and confirm a signed-in
-  user can chat in the standalone UI. Complete [application authentication](application-auth.md),
+  user can chat in the standalone UI. Complete [Agent Application authentication](application-auth.md),
   including the UI API's delegated scope and server-side OBO configuration.
 - Have an existing portal MSAL sign-in/token-acquisition integration. In
   **Entra ID → App registrations**, select the **portal's own client app
@@ -102,7 +102,7 @@ Keep your nonce/hash policy for portal JavaScript. Do **not** relax
 `frame-ancestors` or `X-Frame-Options`; the widget does not frame the UI.
 The bundle executes in the portal page; an open Shadow DOM is not a security
 sandbox. Serve it only from the UI origin you control and trust.
-The pinned bundle also injects inline styles into its Shadow DOM. If your
+The pinned widget bundle also injects inline styles into its Shadow DOM. If your
 portal blocks these, review CSP compatibility before adopting it; the example
 above is not a complete policy for every portal. Do not broadly enable
 `unsafe-inline` to bypass a failed security review.
@@ -236,8 +236,8 @@ not restored after restart.
   [Custom applications](build-your-own-app.md); that is custom code, not an
   iframe enable switch.
 - The UI also implements `anonymous` embedding, but it supplies no user token
-  and cannot call the default user-delegated hosted path. It disables durable
-  threads, uploads and private citation downloads. Portal login alone does
-  not protect an anonymously reachable UI endpoint.
+  and cannot call Agent Application's default user-delegated hosted path.
+  It disables durable threads, uploads and private citation downloads.
+  Portal login alone does not protect an anonymously reachable UI endpoint.
 - Upload controls require the separately deployed ingestion capability;
   embedding does not add native hosted-agent uploads.

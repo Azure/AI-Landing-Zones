@@ -7,13 +7,13 @@ retrieval time; it does not require an ingestion pipeline or copying Microsoft
 
 ## Check hosted support first
 
-**The bundled hosted agent does not currently provide an end-to-end Work IQ
+**Hosted Agent Application does not currently provide an end-to-end Work IQ
 setup through configuration alone.** Its Work IQ connector requires a delegated
 user token, but the hosted entrypoint does not supply that token to the
 retrieval strategies. Signing in to the web UI or giving the agent a managed
 identity does not complete this flow.
 
-There is also a service-contract gap: the bundled provisioning targets
+There is also a service-contract gap: Agent Landing Zone provisioning targets
 `2026-05-01-preview` and emits a Work IQ source without the app-authentication
 properties required by Microsoft's current `2026-08-01-preview` recipe.
 Changing only the API-version setting does not implement that migration.
@@ -27,7 +27,7 @@ for the shared knowledge-base integration.
 ## Prepare the tenant
 
 The following is preparation for a custom hosted integration, not a recipe
-that enables the bundled agent.
+that enables Agent Application.
 
 1. **Approve the preview and billing.** Review Microsoft's
    [Work IQ knowledge-source requirements](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq).
@@ -43,7 +43,7 @@ that enables the bundled agent.
    and resource group assigned to that plan, and each querying user assigned
    to it. A Microsoft 365 Copilot license alone is not a substitute for these
    prerequisites. Use the current billing requirements rather than the
-   bundle's older consent-form and Copilot-license warning.
+   Agent Landing Zone's older consent-form and Copilot-license warning.
 
 3. **Have a Global Administrator enable the tenant.** Follow that guide to
    create the Work IQ service principal, if it does not already exist.
@@ -94,7 +94,7 @@ in this order. These are prerequisites for the custom implementation.
    invocation. Use Microsoft's current retrieve authentication instructions.
    The current contract uses `x-ms-query-work-iq-source-authorization` for the
    raw app-audience user assertion, separately from service authentication.
-   The bundled connector instead uses `x-ms-query-source-authorization` with
+   The Agent Application connector instead uses `x-ms-query-source-authorization` with
    its older delegated-token contract; that must change too.
    Do not pass bearer tokens in prompts, chat history, or unvalidated
    user-supplied metadata.
@@ -105,12 +105,12 @@ the credential ID is not its display name. The app's tenant ID is also required
 when the app and retrieval service are in different tenants. A knowledge-source
 name identifies the source object; it is not any of these IDs or an endpoint.
 
-The bundled settings `WORK_IQ_ENABLED` and `WORK_IQ_KNOWLEDGE_SOURCE_NAME`
+The Agent Application settings `WORK_IQ_ENABLED` and `WORK_IQ_KNOWLEDGE_SOURCE_NAME`
 only select a source for retrieval; they do not establish consent, billing,
 federation, or user-token delivery. Runtime settings use the `agent-lz`
 App Configuration label. Do not hand-edit provisioned source definitions as a
 durable fix: subsequent provisioning can overwrite them. Deliver the template
-and application changes together through the
+and Agent Application changes together through the
 [custom application deployment](build-your-own-app.md), including a new hosted
 deployment/version as required; restarting a Container App does not update a
 Foundry-hosted agent.
@@ -141,7 +141,7 @@ without a Work IQ reference is not proof of successful grounding.
 
 ## Diagnose or back out
 
-- **No source after provisioning:** the bundle's consent preflight skips Work IQ
+- **No source after provisioning:** Agent Landing Zone's consent preflight skips Work IQ
   when its service-principal lookup is negative or inconclusive. Check
   provisioning logs; a successful overall deployment does not establish that
   Work IQ was created. Service-principal existence alone also does not prove
@@ -154,17 +154,17 @@ without a Work IQ reference is not proof of successful grounding.
   custom client's timeout with that budget; increasing it does not fix
   authentication failures.
 - **Undo a pilot:** restore the previous reviewed deployment inputs and hosted
-  application version. Remove the pilot source reference from its knowledge
+  Agent Application version. Remove the pilot source reference from its knowledge
   base before deleting the source. Revoke pilot-only client grants or
   credentials only after checking that no other application uses them; do not
-  delete a shared tenant service principal as an application rollback.
+  delete a shared tenant service principal as an Agent Application rollback.
 
 ## Direct Work IQ MCP is different
 
 [Work IQ MCP](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/mcp/overview)
 exposes tools to an MCP client. Wiring those tools into a custom agent is not
 the same as registering a `workIQ` knowledge source with Foundry IQ and does
-not activate the bundle's Work IQ connector. If you choose direct tools, treat
+not activate Agent Application's Work IQ connector. If you choose direct tools, treat
 that as [agent-tool customization](agent-tools.md), with its own authentication,
-allowed operations, and permission tests—not a workaround that bypasses the
+allowed operations, and permission tests, not a workaround that bypasses the
 knowledge base's user-identity requirements.

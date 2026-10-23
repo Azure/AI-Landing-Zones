@@ -8,6 +8,9 @@ resources or migrate their data.
 Use the selected environment and deployment permissions from
 [Full stack deploy](deploy-full-stack.md). Keep the same subscription,
 environment and location when updating an existing deployment.
+Return to [Configuration](configuration.md#resource-naming) for other deployment
+inputs. For selecting existing resources, use
+[resource reuse](planning.md#select-reuse-or-omit-resources), not naming overrides.
 
 ## Defaults
 

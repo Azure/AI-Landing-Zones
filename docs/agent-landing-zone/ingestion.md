@@ -13,16 +13,16 @@ deployed.
 | Path | What processes the source | When to use it |
 | --- | --- | --- |
 | Native Foundry IQ Blob source | Azure AI Search processes the configured `azureBlob` knowledge source | Your documents and permission model fit the supported native Blob configuration. No ingestion Container App is required for this path. |
-| Independently populated Search index | Your own ingestion pipeline populates a compatible index | You bind `SEARCH_RAG_INDEX_NAME` explicitly, using `ai_search` or Foundry IQ `searchIndex`. Disabling the bundled app does not create this pipeline or populate the index. |
-| Agent App Ingestion | The optional ingestion Container App processes documents and writes Search content | You need the application's processing pipeline, its SharePoint jobs, or the conversation-upload path. Review the selected component's supported formats and configuration. |
+| Independently populated Search index | Your own ingestion pipeline populates a compatible index | You bind `SEARCH_RAG_INDEX_NAME` explicitly, using `ai_search` or Foundry IQ `searchIndex`. Disabling Agent App Ingestion does not create this pipeline or populate the index. |
+| Agent App Ingestion | The optional ingestion Container App processes documents and writes Search content | You need Agent Application's processing pipeline, its SharePoint jobs, or the conversation-upload path. Review the selected component's supported formats and configuration. |
 
 Agent App Ingestion provides format-specific chunking, text/image embeddings and
-application-managed ingestion jobs. It is not simply a deployment wrapper for
+ingestion jobs for Agent Application. It is not simply a deployment wrapper for
 native Foundry IQ ingestion. Neither path is a drop-in replacement for the other.
 
 ### SharePoint is a separate integration
 
-The optional application's Graph-based SharePoint jobs and Foundry IQ's preview
+Agent App Ingestion's Graph-based SharePoint jobs and Foundry IQ's preview
 `indexedSharePoint` knowledge source are **different implementations**.
 Configuring native Blob ingestion does not configure SharePoint.
 
@@ -30,24 +30,26 @@ The platform includes a preview indexed SharePoint registration template, but
 its payload is not compatible with the current documented API contract.
 Supplying identifiers and consent is not enough to make it a working integration.
 See [SharePoint grounding](sharepoint.md) for the supported service setup,
-the hosted integration requirements and the distinction from application-managed
+the hosted integration requirements and the distinction from Agent App Ingestion's
 Graph jobs.
 
-The bundled ingestion opt-out validator supports native `azureBlob`, or an
+The Agent Application ingestion opt-out validator supports native `azureBlob`, or an
 explicit independently populated index. It does **not** establish SharePoint-only
-ingestion-free support or parity with the application's SharePoint jobs. Validate
+ingestion-free support or parity with Agent Application's SharePoint jobs. Validate
 the chosen integration and its document authorization before removing an existing
 ingestion dependency.
 
-## Select the optional application
+<span id="select-the-optional-application"></span>
+
+## Select Agent App Ingestion
 
 `DEPLOY_INGESTION_CONTAINER_APP` accepts only `true` or `false`:
 
 | Environment | Resolution |
 | --- | --- |
-| New bundled application | Defaults to `false`. |
-| Existing bundled application | Retains its recorded selection. A populated older environment without a selection retains ingestion. A failed state lookup requires restored access or an explicit choice, not a guess. |
-| Explicit custom definition | Retains its declared component intent and the current additive foundation composition. The bundled-only switch does not remove its components. |
+| New Agent Application environment | Defaults to `false`. |
+| Existing Agent Application environment | Retains its recorded selection. A populated older environment without a selection retains ingestion. A failed state lookup requires restored access or an explicit choice, not a guess. |
+| Explicit custom definition | Retains its declared component intent and the current additive foundation composition. This switch applies to Agent Application; it does not remove custom components. |
 
 An empty azd-created resource group is considered fresh. Pre-provision persists
 the resolved choice, and configuration publishes the effective value under
@@ -59,7 +61,7 @@ Contextual setting, applied before the matching [deployment runbook](deploy-full
 azd env set DEPLOY_INGESTION_CONTAINER_APP false
 ```
 
-For the bundled application, opt-out excludes ingestion from subsequent
+For Agent Application, opt-out excludes ingestion from subsequent
 provisioning, checkout, build, deployment, endpoint reconciliation and
 identity/role reconciliation. It does not change the retrieval backend,
 source/index bindings, strategy, topology or document authorization.
@@ -74,7 +76,7 @@ validation.
 
 ## Conversation uploads are not native source ingestion
 
-The bundled UI reads the effective ingestion flag:
+Agent App UI reads the effective ingestion flag:
 
 - **`false`** hides attachment controls and rejects server uploads and client
   preflight before ingestion endpoint or Dapr fallback resolution.
@@ -113,13 +115,13 @@ Check that App Configuration publishes the resolved flag and the deployed UI
 consumes it. Verify attachment controls are hidden and stale/direct uploads are
 rejected, while sign-in, chat, retrieval and document allow/deny tests still work.
 
-Opt-out does not delete an existing app, documents or indexes, or revoke existing
-identity permissions. Resource retirement and RBAC cleanup require separate,
-deliberately authorized actions after validation.
+Opt-out does not delete an existing Agent App Ingestion deployment, documents or
+indexes, or revoke existing identity permissions. Resource retirement and RBAC
+cleanup require separate, deliberately authorized actions after validation.
 
 To restore ingestion, restore the previous explicit selection and source/index
-configuration, rerun the matching full workflow and retest. Enabling the app alone
-does not repair bindings. Before rolling back to a UI without the upload gate,
+configuration, rerun the matching full workflow and retest. Enabling Agent App
+Ingestion alone does not repair bindings. Before rolling back to a UI without the upload gate,
 restore ingestion and its required endpoint/source configuration **first**.
 Rollback must not delete documents or indexes.
 
