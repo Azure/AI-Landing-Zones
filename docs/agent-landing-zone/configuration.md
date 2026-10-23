@@ -40,6 +40,22 @@ those workspaces too. Never copy DEV state into TEST or PROD.
 
 ## Deployment parameters
 
+### Optional Fabric foundation
+
+On a platform revision containing the Fabric foundation integration,
+`DEPLOY_FABRIC=false` maps to Bicep `deployFabric=false` by default.
+Opt in before provisioning to create/reuse a capacity and workspace, establish
+baseline workspace access, and grant the native Fabric workspace identity
+Cognitive Services OpenAI User at the deployed Foundry account scope.
+No Lakehouse, Data Agent, or knowledge-source connection is created.
+This is independent of the application's retrieval backend and does not attach
+an Azure UAMI to the workspace.
+
+See [Fabric foundation inputs and outputs](fabric-iq.md#optional-fabric-foundation)
+for the complete settings, permissions, existing-capacity reuse, rerun and
+disable behavior. Existing `FABRIC_DATA_AGENT_*` connector settings remain
+independently managed and are not generated or changed by the foundation.
+
 ### Resource naming
 
 For generated names, naming overrides and preserving existing resource names,

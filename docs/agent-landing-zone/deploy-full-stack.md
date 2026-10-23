@@ -173,6 +173,22 @@ ID. Use [Custom applications](build-your-own-app.md) for its contract and
 component-specific deployment requirements; do not substitute Agent Application hosted
 preparation for a custom definition's build flow.
 
+### Optional Fabric foundation
+
+For the Fabric foundation integration, use a platform feature revision containing
+the Fabric module and hook changes. Before provision, set `DEPLOY_FABRIC=true`
+and review the [Fabric inputs and permissions](fabric-iq.md#optional-fabric-foundation).
+Leave it unset or `false` for the existing deployment behavior.
+
+The same `azd provision` command creates/reuses the capacity and workspace,
+provisions the native workspace identity, and grants it Cognitive Services
+OpenAI User on the deployed Foundry account. Verify capacity assignment,
+workspace access, identity IDs and the account-scoped role assignment.
+No Lakehouse, Data Agent, or Foundry IQ knowledge source is created.
+A supported Fabric workload must select workspace-identity authentication and
+have network access to the model endpoint before inference can work.
+
+### Network and build mode
 #### Network and build mode
 
 Choose one network posture for this new environment:
