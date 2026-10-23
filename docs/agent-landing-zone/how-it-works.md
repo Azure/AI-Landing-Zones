@@ -4,8 +4,9 @@
 
 Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (`azd`). This page explains
-that connection for the **Bicep/azd implementation**. Use the deployment runbooks
-for the commands to execute. Read how settings work below, then use
+that connection for the **Bicep/azd implementation**. For step-by-step commands,
+use [Deploy infra only](deploy-infra-only.md) or
+[Deploy full stack](deploy-full-stack.md). Read how settings work below, then use
 [Deployment choices](planning.md) to select the implementation and topology.
 
 ## How to read deployment settings
@@ -21,8 +22,9 @@ values:
 | Uppercase input, such as `NETWORK_ISOLATION` | In the selected `azd` environment, using `azd env set <NAME> <value>`. The platform maps it to a template parameter or reads it in a deployment hook. |
 | Native parameter, such as `modelDeploymentList` | In the root `main.parameters.json`, inside `parameters.<name>.value`. Use this for documented parameters without an environment-variable mapping. |
 
-For example, after creating and selecting an environment in the deployment
-runbook, enable private networking with:
+For example, `NETWORK_ISOLATION` controls private networking. After creating
+or selecting an environment using [Deploy infra only](deploy-infra-only.md#procedure)
+or [Deploy full stack](deploy-full-stack.md#procedure), set this input with:
 
 ```bash
 azd env set NETWORK_ISOLATION true
@@ -31,7 +33,8 @@ azd env set NETWORK_ISOLATION true
 Set deployment inputs before provisioning. The platform combines them with
 the root parameter file to generate `infra/main.parameters.json`.
 The [Configuration reference](configuration.md) lists available inputs and
-defaults; the runbooks provide the order in which to apply them.
+defaults; the two deployment guides linked above provide the order in which
+to apply them.
 
 **Runtime settings** control application behavior after deployment and are
 usually stored in Azure App Configuration. Each Agent Application guide
