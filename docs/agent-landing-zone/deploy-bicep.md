@@ -5,12 +5,13 @@ search:
 
 # Bicep deployment guidance has moved
 
-Use one of the two deployment runbooks:
+This compatibility address directs existing links to the current runbooks.
+Choose the procedure for your intended result:
 
-- [Deploy infrastructure only](deploy-infra-only.md) — choose the Agent
+- [Deploy infrastructure only](deploy-infra-only.md): choose the Agent
   foundation or independent AI Landing Zone Bicep source, then provision it.
-- [Deploy the full stack](deploy-full-stack.md) — provision the Agent
-  foundation and deploy the selected application.
+- [Deploy the full stack](deploy-full-stack.md): provision the Agent
+  foundation and deploy the Agent Application.
 
 <a id="how-azd-uses-bicep"></a>
 <a id="change-parameters"></a>

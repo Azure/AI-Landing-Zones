@@ -1,9 +1,9 @@
 # Hosted agents
 
-The orchestrator runs your selected agent strategy as a **Foundry hosted agent**
-or a **Container App**. Hosting controls where it runs. Strategies control how it
-coordinates models, retrieval and tools. Changing one does not automatically
-change the other.
+Agent Application's orchestrator runs your selected agent strategy as a
+**Foundry hosted agent** or a **Container App**. Hosting controls where it runs.
+Strategies control how it coordinates models, retrieval and tools. Changing one
+does not automatically change the other.
 
 Use this page to choose a topology and understand its contracts. Execute the
 ordered procedure in [Deploy the full stack](deploy-full-stack.md), or stop at
@@ -11,14 +11,14 @@ the foundation with [Deploy infrastructure only](deploy-infra-only.md).
 
 ## Topologies
 
-| `DEPLOYMENT_TOPOLOGY` | Orchestrator runs as | Administrative panel | Application Cosmos DB |
+| `DEPLOYMENT_TOPOLOGY` | Orchestrator runs as | Administrative panel | Agent Application Cosmos DB |
 | --- | --- | --- | --- |
 | `hosted-no-panel` (fresh default) | Foundry hosted agent | Not deployed | Not deployed |
 | `hosted-panel` | Foundry hosted agent | Deployed | Deployed |
 | `classic` | Container App | Not applicable | Deployed |
 
-This table describes the bundled application, not resources retained after a
-migration. In `hosted-panel`, application Cosmos DB stores owner-index and
+This table describes Agent Application, not resources retained after a
+migration. In `hosted-panel`, Agent Application Cosmos DB stores owner-index and
 feedback metadata, not hosted transcripts. Foundry Agent Service can have its
 own backing Cosmos DB. Continuity and history need separate configuration.
 
@@ -37,7 +37,7 @@ azd env set DEPLOYMENT_TOPOLOGY hosted-panel
 ```
 
 Ingestion selection is independent of all three topologies. Native source
-ingestion does not replace conversation uploads or the application's SharePoint
+ingestion does not replace conversation uploads or Agent Application's SharePoint
 jobs. See [Ingestion and conversation uploads](ingestion.md).
 
 ## Image and deployment handoff
@@ -66,7 +66,7 @@ provenance match. Preparation with `--image-version sha256:<64-hex-characters>`
 skips building and clears generated provenance. Promoting identical source pins
 does not prove that independently built images have identical digests.
 
-Use [application redeployment](deploy-full-stack.md#redeploy-applications-only)
+Use [Agent Application redeployment](deploy-full-stack.md#redeploy-applications-only)
 or the [upgrade workflow](deploy-full-stack.md#upgrade-to-a-new-release).
 
 ## Validation rules
@@ -80,13 +80,13 @@ or the [upgrade workflow](deploy-full-stack.md#upgrade-to-a-new-release).
 | `HOSTED_CONTINUITY_ENABLED` | Default `false`. Requests separately validated continuity activation, not generic runtime history. |
 | `PRESERVE_CLASSIC_RUNTIME` | Default `false`. Can retain classic orchestration during a reviewed hosted migration. |
 
-The bundled child `hosted-agent/azure.yaml` declares agent name, CPU, memory,
-protocols and startup command as literal fields. Similarly named provisioning
+The Agent Application child definition, `hosted-agent/azure.yaml`, declares agent
+name, CPU, memory, protocols and startup command as literal fields. Similarly named provisioning
 inputs do not automatically customize those fields. Deliberate child-definition
 changes must remain compatible with the provisioning contract.
 
 For a custom definition, `source.imageDigest` becomes `AGENTLZ_IMAGE_DIGEST`.
-It is not interchangeable with the bundled `HOSTED_AGENT_IMAGE_VERSION`.
+It is not interchangeable with Agent Application's `HOSTED_AGENT_IMAGE_VERSION`.
 See [Custom applications](build-your-own-app.md#source-pinning).
 
 ## Bootstrap the agent's runtime access
@@ -100,7 +100,7 @@ These identities serve different purposes:
 | Actual deployed agent runtime principal | Reads its runtime configuration and calls authorized services. |
 | Delegated user | Needs caller/agent access and permission to the requested data. |
 
-The bundled post-deploy hook discovers the actual runtime principal and grants
+Agent Landing Zone's post-deploy hook discovers the actual runtime principal and grants
 App Configuration Data Reader on the store and Cognitive Services OpenAI User on
 the Foundry account. If `AUDIT_HMAC_KEY` is a Key Vault reference, it also plans
 Key Vault Secrets User on that **individual secret**. This is a closed bootstrap
@@ -165,7 +165,7 @@ generated temporary signing secret.
 - **Responses 2.0.0 is stateless.** A non-null `previous_response_id` returns
   HTTP 422. Top-level `conversation` and other unhandled routing/sampling fields
   do not load history. Supply bounded, ordered input ending in the user message.
-- The bundled UI uses **`/invocations?api-version=v1`**. Its `conversation_id`
+- Agent App UI uses **`/invocations?api-version=v1`**. Its `conversation_id`
   labels conversation-scoped retrieval, not permission to load managed history.
   The UI accepts `response.conversation.id` and the compatibility
   `response.conversation_id`; malformed or conflicting IDs fail explicitly.
@@ -212,7 +212,7 @@ after verifying private connectivity when App Configuration or Key Vault TLS
 handshakes stall. It applies to the orchestrator loader, not every HTTP client.
 
 When enabled, the profile uses P-256 and TCP MSS 1200 only for the configured
-App Configuration and application Key Vault endpoints. Certificate/hostname
+App Configuration and Agent Application Key Vault endpoints. Certificate/hostname
 verification, custom CAs, TLS 1.2 or later, credentials and retries remain intact.
 It requires the actual HTTPS `KEY_VAULT_URI`; missing URI or invalid boolean
 fails startup.

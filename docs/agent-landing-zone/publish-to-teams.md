@@ -2,6 +2,8 @@
 
 <a id="publish-to-teams"></a>
 
+## Objective
+
 Publish an agent already **hosted in Microsoft Foundry** to **Teams and
 Microsoft 365 Copilot**. Start with a tested agent in a private-network Foundry
 project, then use its endpoint, identity and version throughout this runbook.
@@ -10,6 +12,12 @@ The agent can be part of your own application.
 You will create a Bot Service resource, enable channel access and publish the
 agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.
+
+## When to use
+
+Use this runbook after the hosted agent works and you need Teams or Microsoft
+365 Copilot distribution while Foundry PNA remains disabled. For a Copilot
+Studio private relay instead, use [Connect Copilot Studio](connect-copilot-studio.md).
 
 Messages from either client follow the same path:
 
@@ -33,7 +41,7 @@ Foundry private endpoint. Management requests still use the private endpoint.
 - **Agent:** Have a working hosted agent in a Foundry project, with its own
   agent identity, a stable endpoint and a version you have tested. If you still
   need to deploy an application, start with
-  [Full stack deploy](deploy-full-stack.md) or
+  [Deploy the full stack](deploy-full-stack.md) or
   [Custom applications](build-your-own-app.md), then return here.
 - **Network access:** Run the commands from a
   [VNet-connected host](network-isolation.md#reach-the-private-network) that
@@ -76,7 +84,12 @@ Foundry private endpoint. Management requests still use the private endpoint.
     authenticates users and enforces data permissions through this channel;
     tests through another client do not establish those guarantees.
 
-## Step 1: Select the agent and save its configuration
+## Procedure
+
+Complete Steps 1-4 in order, then run all client and configuration checks under
+[Validation](#validation). Keep the backup and publication results for rollback.
+
+### Step 1: Select the agent and save its configuration
 
 In the Azure portal, collect the subscription ID, resource group name, Foundry
 resource name and project name. Then open the agent in
@@ -172,7 +185,7 @@ Sharing an app link does not grant invocation permission.
     (`instance_identity.client_id`), not the project's managed identity or an
     application registration belonging to another client.
 
-## Step 2: Create the bot and Teams channel
+### Step 2: Create the bot and Teams channel
 
 Complete the three sections below in order. This creates a separate Bot Service
 resource and its Teams channel; the same channel also serves Microsoft 365
@@ -265,7 +278,7 @@ URL, and its network setting is `"pna": "Disabled"`. The bot uses the agent's
 identity; you do not need a client secret, public VNet ingress or a custom
 connector.
 
-## Step 3: Enable the restricted Activity route
+### Step 3: Enable the restricted Activity route
 
 Run the block below to enable the restricted Activity route, apply the Bot
 Service authorization scheme for your chosen audience and send traffic to the
@@ -324,9 +337,9 @@ Invoke-RestMethod -Method Patch -Uri "${agentUri}?api-version=v1" `
 </details>
 
 **Expected result:** The update completes without errors and prints no output.
-You will check the final configuration in Step 5.
+You will check the final configuration under [Validation](#validation).
 
-## Step 4: Publish the app
+### Step 4: Publish the app
 
 This step submits the listing directly to the catalogs. If your organization
 requires package review **before submission**, follow the
@@ -398,7 +411,9 @@ Downloading this copy does not require uploading it again.
 
 </details>
 
-## Step 5: Install and verify
+<span id="step-5-install-and-verify"></span>
+
+## Validation
 
 <a id="resume-in-a-new-session"></a>
 
@@ -494,7 +509,7 @@ before running the maintenance commands.
 | Release a new runtime version | Test the version, then follow the **REST API** tab in the [active-version instructions](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version) from the connected host. Keep the existing bot and listing. |
 | Roll back agent behavior | Use the same REST instructions to select the previous tested version. This changes the version for every consumer of the stable endpoint. |
 | Change the listing name, descriptions or URLs | Edit `publish-request.json`, increase `appVersion` and run **Update listing metadata** below. Keep `botServiceArmId` and `publishScope` unchanged for a metadata-only update. |
-| Check publication after redeployment | Recheck the active version, Activity exception and authorization, then repeat the client tests in Step 5. The landing zone template does not manage this manual configuration. |
+| Check publication after redeployment | Recheck the active version, Activity exception and authorization, then repeat [Validation](#validation). The landing zone template does not manage this manual configuration. |
 
 <details class="runbook-command" markdown="1">
 <summary>Update listing metadata</summary>
@@ -513,6 +528,35 @@ $result
 ```
 
 </details>
+
+## Troubleshooting
+
+| Symptom | What to check or do |
+| --- | --- |
+| A project GET or PATCH fails or times out. | Check private DNS and connectivity, the selected tenant, the Foundry User role and the token audience (`https://ai.azure.com`). If the token expired, [resume the session](#resume-in-a-new-session). Do not enable PNA to bypass the error. |
+| The bot deployment is denied. | Check `Microsoft.BotService` registration, bot and deployment permissions, and any Azure Policy denial. |
+| The agent is missing from either client. | Check the signed-in account, publication scope, admin approval and app policies. Refresh the store or sign out and back in; catalog caching can delay discovery. |
+| Activity returns `403 NetworkAccessDenied`. | Check that the Activity exception is enabled and test through Teams or Copilot. A public `curl` request from an arbitrary IP remains blocked by design. |
+| A user can open the app but receives an authorization error. | Check that the user is signed in to the Foundry tenant and, for `Shared`, has Foundry Agent Consumer access. Do not switch to `Tenant` just to remove the error. |
+| The Teams sign-in card opens, but its redirect page does not load. | Ask the network administrator to allow outbound HTTPS (TCP 443) to `*.azureml.ms` from the user's network, then retry sign-in. |
+| The agent replies, but tools or retrieval fail. | Check runtime identity permissions, data authorization and outbound access. A successful test in another client does not validate identity propagation through Teams or Copilot. |
+| A conversation is stuck or returns `no tool output found`. | In Teams, send `/foundry_new_preview`; in Copilot, start a new chat with the agent. Previous conversation context cannot be restored after a reset. |
+| Publication returns `version already exists`. | Increase `appVersion` and submit the listing again. Do not change the runtime version to fix a listing-version error. |
+
+For other errors, use [Foundry publishing troubleshooting](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot)
+and [published-agent authorization](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization).
+
+## Rollback
+
+1. For a runtime-only regression, select the previous tested version using the
+   [active-version REST instructions](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent#select-the-active-agent-version).
+   This affects every consumer of the stable endpoint. Repeat
+   [Validation](#validation) before reopening access.
+2. To withdraw the newly introduced publication, disable the Activity exception
+   using the block below, then ask the Microsoft 365 administrator to block or
+   remove its listing from both catalogs. If other approved channel consumers
+   already use this exception, coordinate withdrawal rather than interrupting
+   their access.
 
 To stop channel access from **both clients**, run the block below. It disables
 only the public Activity exception, leaving the other endpoint protocols and
@@ -545,19 +589,8 @@ catalogs. Uninstalling the app alone does not revoke endpoint access. Do not
 delete shared Foundry resources or restore an old backup over later
 configuration changes.
 
-## Troubleshooting
-
-| Symptom | What to check or do |
-| --- | --- |
-| A project GET or PATCH fails or times out. | Check private DNS and connectivity, the selected tenant, the Foundry User role and the token audience (`https://ai.azure.com`). If the token expired, [resume the session](#resume-in-a-new-session). Do not enable PNA to bypass the error. |
-| The bot deployment is denied. | Check `Microsoft.BotService` registration, bot and deployment permissions, and any Azure Policy denial. |
-| The agent is missing from either client. | Check the signed-in account, publication scope, admin approval and app policies. Refresh the store or sign out and back in; catalog caching can delay discovery. |
-| Activity returns `403 NetworkAccessDenied`. | Check that the Activity exception is enabled and test through Teams or Copilot. A public `curl` request from an arbitrary IP remains blocked by design. |
-| A user can open the app but receives an authorization error. | Check that the user is signed in to the Foundry tenant and, for `Shared`, has Foundry Agent Consumer access. Do not switch to `Tenant` just to remove the error. |
-| The Teams sign-in card opens, but its redirect page does not load. | Ask the network administrator to allow outbound HTTPS (TCP 443) to `*.azureml.ms` from the user's network, then retry sign-in. |
-| The agent replies, but tools or retrieval fail. | Check runtime identity permissions, data authorization and outbound access. A successful test in another client does not validate identity propagation through Teams or Copilot. |
-| A conversation is stuck or returns `no tool output found`. | In Teams, send `/foundry_new_preview`; in Copilot, start a new chat with the agent. Previous conversation context cannot be restored after a reset. |
-| Publication returns `version already exists`. | Increase `appVersion` and submit the listing again. Do not change the runtime version to fix a listing-version error. |
-
-For other errors, use [Foundry publishing troubleshooting](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot)
-and [published-agent authorization](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization).
+For full pilot retirement, remove only the newly created bot and pilot-only
+agent-scoped grants after their owners confirm no other consumers depend on
+them. Retain the Foundry agent, its identity and data. If reverting listing
+metadata rather than withdrawing access, use the previous approved metadata
+with an increased `appVersion`; do not reuse an already published version.

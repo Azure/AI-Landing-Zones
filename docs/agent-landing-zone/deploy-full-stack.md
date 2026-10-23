@@ -1,11 +1,18 @@
-# Full stack deploy
+<span id="full-stack-deploy"></span>
 
-<a id="deploy-the-full-stack"></a>
+# Deploy the full stack
 
-Deploy the Azure foundation and the bundled agent application: a web UI, an
-orchestrator and, when selected, an ingestion application. Choose where the
+## Objective
+
+Deploy the Azure foundation and the Agent Application: Agent App UI, an
+orchestrator and, when selected, Agent App Ingestion. Choose where the
 orchestrator runs and how the deployment connects to Azure before provisioning.
 
+## When to use
+
+Use this runbook for a new Agent Application deployment or to add it to its
+already configured Agent foundation. For a customer-owned application, use
+[Bring your own app](build-your-own-app.md) for its deployment branch.
 Only need the foundation? Use [Deploy infrastructure only](deploy-infra-only.md).
 For the relationship between the template, its manifest and lifecycle hooks,
 see [How the template works](how-it-works.md).
@@ -40,7 +47,12 @@ see [How the template works](how-it-works.md).
     creation, image builds, role propagation and private-link approvals.
     There is no fixed completion time.
 
-## Step 1: Get the code
+## Procedure
+
+Run Steps 1-4 in order. After selecting a checkout, run lifecycle commands from
+its platform root with the intended environment selected.
+
+### Step 1: Get the code
 
 ```bash
 git clone https://github.com/Azure/agent-landing-zone.git
@@ -56,7 +68,7 @@ Alternatively, `azd init -t Azure/agent-landing-zone` initializes the current
 default template in an empty directory. Reuse the environment it creates rather
 than creating it again in Step 2.
 
-### Prepare Python
+#### Prepare Python
 
 From the repository root:
 
@@ -74,7 +86,7 @@ python -m pip install -r config/requirements.txt
 
 Keep this environment active for the lifecycle commands.
 
-### Working from your own repository
+#### Working from your own repository
 
 An unmodified deployment needs only the platform checkout. Hooks fetch selected
 runtime components automatically; four forks are not required. Fork or mirror
@@ -90,7 +102,7 @@ See [Custom applications](build-your-own-app.md) for source pinning and composit
 
 <a id="step-2-sign-in-and-create-an-environment"></a>
 
-## Step 2: Select the deployment target
+### Step 2: Select the deployment target
 
 The following creates a **new** environment. Replace all placeholders:
 
@@ -112,14 +124,14 @@ reviewed source revision with stage-specific inputs.
 
 <a id="step-3-choose-a-topology"></a>
 
-## Step 3: Choose the application and network
+### Step 3: Choose the application and network
 
-### Orchestrator topology
+#### Orchestrator topology
 
 `DEPLOYMENT_TOPOLOGY` chooses where the agent orchestrator runs. It is independent
 of the foundation's standalone or hub-and-spoke network shape.
 
-| Value | Orchestrator runs in | Administrative panel | Application Cosmos DB |
+| Value | Orchestrator runs in | Administrative panel | Agent Application Cosmos DB |
 | --- | --- | --- | --- |
 | `hosted-no-panel` | Foundry Agent Service | Not deployed | Not deployed |
 | `hosted-panel` | Foundry Agent Service | Deployed | Deployed |
@@ -138,11 +150,11 @@ match a new-install default. The table describes application resources, not the
 Foundry Agent Service's separate backing resources. See [Hosted agents](hosted-agents.md)
 for identity, continuity and panel semantics.
 
-### Ingestion and custom applications
+#### Ingestion and custom applications
 
 Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false`, using
-native Foundry IQ ingestion for the configured default Blob source. Select the
-optional app before provisioning if its ingestion features or eligible
+native Foundry IQ ingestion for the configured default Blob source. Enable
+Agent App Ingestion before provisioning if its ingestion features or eligible
 conversation uploads are required:
 
 ```bash
@@ -150,17 +162,18 @@ azd env set DEPLOY_INGESTION_CONTAINER_APP true
 ```
 
 This does not switch the retrieval backend or rewrite source/index bindings.
-Existing environments keep their selection. Before disabling an existing app,
-review [ingestion choices and the older-UI migration warning](ingestion.md).
+Existing environments keep their selection. Before disabling Agent App Ingestion
+in an existing environment, review
+[ingestion choices and the older-UI migration warning](ingestion.md).
 Disabling uploads must not be inferred from a missing endpoint.
 
 For a different application, set `AGENTLZ_APP_DEFINITION` to its definition
 path **before the first provision**. The environment binds to that application
 ID. Use [Custom applications](build-your-own-app.md) for its contract and
-component-specific deployment requirements; do not substitute bundled hosted
+component-specific deployment requirements; do not substitute Agent Application hosted
 preparation for a custom definition's build flow.
 
-### Network and build mode
+#### Network and build mode
 
 Choose one network posture for this new environment:
 
@@ -189,7 +202,7 @@ require the private pool. `BUILD_MODE=local` is not a local-build alternative
 for those paths. See [network isolation](network-isolation.md) for build egress,
 DNS and private-link readiness requirements.
 
-## Step 4: Deploy
+### Step 4: Deploy
 
 Confirm the target before creating or changing resources:
 
@@ -203,7 +216,7 @@ Resolve validation, quota, Policy and connectivity failures rather than bypassin
 checks. The explicit `preup` check also validates binding before standalone
 provisioning, which otherwise runs its check after azd may initialize a resource group.
 
-### Container Apps orchestrator (`classic`)
+#### Container Apps orchestrator (`classic`)
 
 ```bash
 azd up
@@ -212,7 +225,7 @@ azd up
 This runs provisioning, post-provision service configuration, image builds and
 application deployment.
 
-### Foundry orchestrator (`hosted-no-panel` or `hosted-panel`)
+#### Foundry orchestrator (`hosted-no-panel` or `hosted-panel`)
 
 Confirm the runner has Foundry agent authoring access on the exact project
 (Foundry User, previously Azure AI User, or an appropriate equivalent),
@@ -220,7 +233,7 @@ account read access and the required scoped role-assignment authority.
 Azure sign-in or network connectivity alone is insufficient; see
 [private-runner permissions](network-isolation.md) and [hosted identities](hosted-agents.md).
 
-A fresh bundled hosted deployment needs this order:
+A fresh hosted Agent Application deployment needs this order:
 
 ```bash
 azd provision
@@ -250,9 +263,11 @@ If the second provision rejects quota for an unchanged deployment, inspect
 
 For an already configured infrastructure-only environment, reuse the same
 checkout, inputs and bound application. In `classic`, continue with `azd deploy`.
-In a bundled hosted topology, continue at preparation above.
+In a hosted Agent Application topology, continue at preparation above.
 
-## Verify
+<span id="verify"></span>
+
+## Validation
 
 1. Inspect the selected resource group and intended deployed revisions, not just
    an older healthy placeholder:
@@ -270,7 +285,7 @@ In a bundled hosted topology, continue at preparation above.
 3. Exercise an agent task and its configured tools with representative identities.
    If using documents, add a test document to the configured source, confirm its
    ingestion, and test both allowed and denied document access. Test uploads only
-   when the ingestion app and upload eligibility are selected.
+   when Agent App Ingestion and upload eligibility are selected.
 4. In a hosted topology, verify the intended routed version and runtime telemetry
    as well as the remaining Container Apps. A greeting smoke test is not evidence
    of user login, OBO or document authorization.
@@ -281,6 +296,37 @@ based only on a successful hook or HTTP 200.
 To make a hosted agent available in Teams and Microsoft 365 Copilot, continue with
 [Publish to Teams and M365](publish-to-teams.md). Bot creation and channel publication
 are separate manual tasks, not part of this deployment.
+
+<span id="roll-back-to-a-previous-release"></span>
+
+## Rollback
+
+1. Stop promotion and record the failed revision, inputs and deployed state.
+   Select the previous tested **complete compatible combination**, not an
+   independent component tip. Review migration constraints before applying it.
+2. When only classic application pins changed and the foundation is compatible,
+   run from the platform root with the same environment selected:
+
+    ```bash
+    git checkout <previous-release-tag>
+    azd deploy
+    ```
+
+3. For a hosted Agent Application, follow
+   [Step 4](#step-4-deploy) with the previous compatible source and approved
+   inputs: provision, prepare the pinned image, provision its handoff, then
+   deploy. Retain any operator-managed digest and verify its availability and
+   compatibility; preparation does not rebuild that image for you.
+4. If infrastructure or configuration changed, review the previous inputs and
+   preview foundation changes before rerunning the matching full workflow.
+   Restore directly managed runtime keys separately using their recorded values
+   and reload the affected components. Do not assume checkout restores them.
+5. Repeat [Validation](#validation) before reopening access or promotion.
+
+Checking out an old tag does not reverse data migrations or recover lost data.
+Restore ingestion requirements before downgrading to a UI without the upload
+gate. If reversal is unsupported, use an approved forward repair or a new
+environment with data migration. `azd down --purge` is not rollback.
 
 ## Lifecycle
 
@@ -296,7 +342,7 @@ service-specific procedures.
    component versions and migrations. Upgrade the compatible platform combination,
    including its repository-owned `infra/`, rather than independent component tips.
 2. Fetch and check out the approved release tag. Reconcile local platform/runtime
-   changes and update bundled manifest/definition pins together.
+   changes and update Agent Application manifest/definition pins together.
 3. Preserve the existing topology, ingestion selection, resource naming and
    source/index bindings. Follow [ingestion migration guidance](ingestion.md)
    before opting out or downgrading an older UI.
@@ -320,7 +366,7 @@ handoff remain compatible:
 azd deploy
 ```
 
-Bundled Container Apps use the manifest's verified sibling checkouts. Preserve
+Agent Application Container Apps use the manifest's verified sibling checkouts. Preserve
 local work and relocate a stale checkout so the hook can fetch the selected
 revision; it does not advance an existing checkout automatically. Child logs
 are under each component's `.logs` directory and can contain sensitive details.
@@ -370,7 +416,7 @@ old one. Never place secrets in plaintext App Configuration or command logs.
 
 ### Recover hosted runtime access
 
-The bundled post-deploy hook normally bootstraps the discovered runtime principal.
+The Agent Application post-deploy hook normally bootstraps the discovered runtime principal.
 To review the exact read-only role plan from the root's selected environment:
 
 ```bash
@@ -394,33 +440,17 @@ and, when configured, access to the exact audit secret. It is not a grant to
 delegated users or a replacement for all capability profiles. Do not grant
 Owner or remove unrelated assignments to recover. See [hosted identities](hosted-agents.md).
 
-### Roll back to a previous release
-
-Review migration constraints and restore the previous complete compatible
-combination and its inputs. When only classic application pins changed and the
-foundation remains compatible:
-
-```bash
-git checkout <previous-release-tag>
-azd deploy
-```
-
-If infrastructure or configuration changed, review and rerun the full workflow.
-Hosted rollback requires the previous pinned image to be prepared, or its
-verified digest deliberately restored, then provisioned and deployed.
-Checking out an old tag does not reverse data migrations. Restore ingestion
-requirements before downgrading to a UI without the upload gate.
-Some changes require forward repair or a new environment with data migration.
-`azd down --purge` is not rollback.
-
 <a id="clean-up"></a>
 
 ### Remove an environment
 
 !!! warning "Destructive action"
-    Confirm the subscription, resource group and deletion prompt. Export or
-    back up required documents, indexes, configuration and conversation data.
-    Check retention obligations and shared-resource dependencies first.
+    Use the commands below only for an environment whose entire deletion scope
+    is dedicated to this deployment and approved for removal. Confirm the
+    subscription, resource group and deletion prompt. Export or back up required
+    documents, indexes, configuration and conversation data. If the scope
+    contains shared resources or retained data, stop and arrange itemized removal
+    with the owners instead. Check retention obligations first.
 
 ```bash
 azd env select <environment-name>
@@ -441,4 +471,4 @@ do not delete shared hub, DNS or monitoring resources.
 
 - [Connect Copilot Studio to a private Foundry agent](connect-copilot-studio.md)
 - [Deploy infrastructure only](deploy-infra-only.md)
-- [Deploy with Azure DevOps](azure-devops.md) — optional reviewed promotion and automation
+- [Deploy with Azure DevOps](azure-devops.md) for optional reviewed promotion and automation

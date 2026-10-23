@@ -1,6 +1,8 @@
 # Application Gateway
 
-Give the bundled web UI a controlled public HTTPS entry point while keeping
+## Objective
+
+Give the Agent Application web UI a controlled public HTTPS entry point while keeping
 its Container Apps environment private. The optional gateway terminates TLS,
 applies WAF rules, and forwards requests over HTTPS to **one Container App**.
 The basic routing rule forwards all UI paths, including enabled application
@@ -21,19 +23,26 @@ Start with a working [full-stack deployment](deploy-full-stack.md) and
 For hosted runtime/network prerequisites, use [Hosted agents](hosted-agents.md)
 and Microsoft's [hosted-agent networking and limitations](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents).
 
-## Choose the entry point
+## When to use
+
+Use this runbook when the UI already works privately and approved users need a
+controlled public entry point. Choose the supported entry point before editing:
+
+### Choose the entry point
 
 | Need | Choice |
 | --- | --- |
-| Public UI for approved client networks, private backend services | Use the bundled public gateway below, with explicit client egress CIDRs. |
+| Public UI for approved client networks, private backend services | Use the template's public gateway below, with explicit client egress CIDRs. |
 | UI accessible only from your corporate network | Leave `publicIngress.enabled` false and use VPN/peering plus private DNS. See [Network isolation](network-isolation.md). |
-| An internal Application Gateway or an existing corporate ingress | Integrate it separately with the UI backend. The bundled option has a public IP only; it has no private-frontend switch. |
+| An internal Application Gateway or an existing corporate ingress | Integrate it separately with the UI backend. The template option has a public IP only; it has no private-frontend switch. |
 
 `NETWORK_ISOLATION=false` does **not** activate this gateway, even when
 `publicIngress.enabled` is true. Do not enable isolation on an existing public
 deployment merely to add a gateway; plan that network migration separately.
 
-## Before you start
+<span id="before-you-start"></span>
+
+## Prerequisites
 
 - A deployed UI in an isolated Container Apps environment, and a deployment
   host with the private connectivity required by the full-stack runbook.
@@ -54,7 +63,12 @@ deployment merely to add a gateway; plan that network migration separately.
 
 WAF_v2 and its Standard public IP incur charges even without traffic.
 
-## 1. Provision a closed staging gateway
+## Procedure
+
+Run Steps 1-4 in order. Record the previous `publicIngress` object, DNS record,
+UI URL setting and redirect URIs before changing them.
+
+### 1. Provision a closed staging gateway
 
 In your **platform checkout**, edit only the `publicIngress` entry under
 `parameters` in `main.parameters.json`. This is a provisioning input, not a
@@ -105,7 +119,7 @@ The empty source list and subnet Internet deny rule prevent public browser
 access to this staging configuration. They do not deny all VNet-origin traffic
 or replace private-network access controls. This is not an application health test.
 
-## 2. Prepare certificate access and DNS
+### 2. Prepare certificate access and DNS
 
 1. Record the certificate's **versionless secret URI**, for example
    `https://<vault-name>.vault.azure.net/secrets/<certificate-secret-name>/`.
@@ -132,7 +146,7 @@ do not replace the backend with the public gateway hostname. Microsoft's
 [Container Apps gateway guidance](https://learn.microsoft.com/azure/container-apps/waf-app-gateway)
 explains this backend routing pattern.
 
-## 3. Configure the UI's external sign-in URL
+### 3. Configure the UI's external sign-in URL
 
 Before user testing, set the UI's `CHAINLIT_URL` to
 `https://<your-hostname>` using the safe configuration procedure in
@@ -153,7 +167,7 @@ to the public hostname; it describes the deployed Container App endpoint.
 Keep delegated authentication/OBO and source authorization unchanged. A WAF
 or propagated user identity does not itself enforce document permissions.
 
-## 4. Admit HTTPS clients
+### 4. Admit HTTPS clients
 
 Update the same `publicIngress.value` object, replacing the placeholders:
 
@@ -177,7 +191,9 @@ The gateway also configures an HTTP-to-HTTPS redirect, but the shipped subnet
 NSG does **not** open Internet port 80. Distribute the `https://` URL directly;
 an HTTP connection timeout is expected.
 
-## 5. Verify the complete route
+<span id="5-verify-the-complete-route"></span>
+
+## Validation
 
 1. Check `azd env get-value PUBLIC_INGRESS_LIVE`: true means the hostname and
    certificate inputs are present, **not** that TLS, reachability, or chat works.
@@ -206,7 +222,9 @@ and return to Prevention. See [WAF modes and policy behavior](https://learn.micr
 Application Gateway supports WebSockets, but
 [WAF does not inspect frames after the upgrade](https://learn.microsoft.com/azure/application-gateway/application-gateway-websocket).
 
-## Recover or withdraw access
+<span id="recover-or-withdraw-access"></span>
+
+## Troubleshooting
 
 | Symptom | Check and recovery |
 | --- | --- |
@@ -217,15 +235,30 @@ Application Gateway supports WebSockets, but
 | Sign-in redirects to an internal hostname | Recheck `CHAINLIT_URL`, environment overrides, exact Web redirect URI, and UI process reload. Do not change Foundry endpoints to the gateway URL. |
 | UI loads but chat fails or disconnects | Inspect UI/Foundry errors separately from WAF logs and gateway timeouts. Repair delegated auth or private connectivity rather than switching to service identity. Timeout/transport changes beyond the exposed parameter contract require a reviewed infrastructure extension. |
 
-To withdraw public client access, restore
-`allowedSourceAddressPrefixes: []` and provision while ingress remains enabled;
-verify the Internet connection is blocked. This removes the shipped client
-allow rule, but does not remove separately added rules or revoke application
-sessions. Review those separately.
+## Rollback
+
+1. To withdraw newly introduced public client access, set
+   `allowedSourceAddressPrefixes: []` in the reviewed root parameter object.
+   Run `azd provision` from the connected platform root while ingress remains
+   enabled. If reverting an existing gateway update, review and restore its
+   recorded backend, hostname, certificate reference and approved source list
+   only when the previous certificate and route are still usable. Preview those
+   changes before provisioning. If they are not usable, keep public access closed.
+2. From the withdrawn public client network, verify TCP/443 is blocked.
+   This removes the shipped client allow rule, but does not remove separately
+   added rules or revoke application sessions. Review those separately.
+3. Restore any changed DNS record with its owner. If reverting the UI URL
+   change, first verify the previous approved private
+   or gateway route is usable. Restore its recorded `CHAINLIT_URL` and any
+   changed environment override, retain its Web redirect URI, and reload the
+   UI. Test sign-in on that route before removing the newly added redirect URI.
+4. Remove the new DNS record if no approved route uses it. Keep certificates
+   and Key Vault access needed by other consumers.
 
 Setting `publicIngress.enabled` to false **does not delete** previously created
 resources in incremental deployments, and is not an access-revocation procedure.
-After closing access, arrange explicit deletion of only the ingress resources
+After closing access and checking remaining references with their owners,
+arrange explicit deletion of only the dedicated ingress resources
 (gateway, public IP, WAF policy, subnet NSG and gateway identity), clean up their
 role assignments, DNS record and obsolete redirect URI, and remove any subnet
 NSG reference before deleting that NSG. Coordinate with the network owner;

@@ -8,6 +8,9 @@ Use this reference to plan connectivity, DNS and image builds. For the ordered
 procedure, follow [Deploy infrastructure only](deploy-infra-only.md) or
 [Deploy the full stack](deploy-full-stack.md). Optional pipeline automation is
 covered separately in the [Azure DevOps runbook](azure-devops.md).
+Choose standalone or hub integration in [Deployment choices](planning.md).
+An AI Gateway can govern model requests, but does not replace private
+endpoints, DNS, routing, firewall policy or application authorization.
 
 !!! note "Teams and Microsoft 365 Copilot publication"
     [Publish to Teams and M365](publish-to-teams.md) adds a manual, source-IP-filtered
@@ -140,7 +143,7 @@ provision the updated configuration. This is an explicit array, not an `azd`
 environment variable. Copy the same parameter file to a VNet-connected runner
 so a later provision preserves the setting.
 
-The bundled orchestrator frontend lockfile uses
+The Agent Application orchestrator frontend lockfile uses
 `ms-feed-2.pkgs.visualstudio.com`, `ms-feed-12.pkgs.visualstudio.com`,
 `ms-feed-17.pkgs.visualstudio.com`, and `ms-feed-25.pkgs.visualstudio.com`.
 Their public package downloads redirect to `*.vsblob.vsassets.io`.
@@ -217,7 +220,7 @@ connections: pending links require authorized administrator approval.
 
 The gate is limited to `NETWORK_ISOLATION=true`, `RETRIEVAL_BACKEND=foundry_iq`
 and rendered native `azureBlob` sources, excluding the `searchIndex` pattern.
-It checks the application Search link to deployment Blob storage (`blob`)
+It checks the Agent Application Search link to deployment Blob storage (`blob`)
 and the links to the deployment Foundry account (`openai_account`,
 `foundry_account`, `cognitiveservices_account`). It does not configure the
 separate Foundry Search service or unrelated services. Exact names come from
@@ -272,7 +275,7 @@ To place the landing zone in an existing hub-and-spoke network, use the `ailz-in
 | --- | --- |
 | `DEPLOYMENT_MODE=ailz-integrated` | Declares integration intent; does not attach a hub or override component flags by itself |
 | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | Hub VNet to peer with |
-| `HUB_INTEGRATION_CREATE_HUB_PEERING` | Create the peering (default `true`) |
+| `HUB_INTEGRATION_CREATE_HUB_PEERING` | Create spoke-to-hub peering for a new spoke VNet (default `true`); hub owner supplies reverse peering. Existing VNet peerings are externally managed |
 | `HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT` | Allow gateway transit (default `false`) |
 | `HUB_INTEGRATION_PEERING_USE_REMOTE_GATEWAYS` | Use the hub gateway (default `false`) |
 | `HUB_INTEGRATION_EGRESS_NEXT_HOP_IP` | Next hop for egress, for example the hub firewall |

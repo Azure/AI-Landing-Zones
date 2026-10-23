@@ -1,13 +1,21 @@
 # Deploy infrastructure only
 
+## Objective
+
 Provision the Azure foundation without building or deploying application images.
 This is the infrastructure procedure for both Agent Landing Zone and the
 standalone AI Landing Zone Bicep foundation. Choose the source first: their
 hooks, parameter files and outputs are not interchangeable.
 
-To run the agent application as well, use [Deploy the full stack](deploy-full-stack.md).
+## When to use
 
-## Before you start
+Use this runbook when you need foundation resources first, or will supply your
+own application. To deploy the Agent Application now, use
+[Deploy the full stack](deploy-full-stack.md).
+
+<span id="before-you-start"></span>
+
+## Prerequisites
 
 Complete the [permissions and tooling prerequisites](deploy-full-stack.md#prerequisites).
 The upstream foundation requires Git, Azure CLI, azd and PowerShell 7; the
@@ -19,17 +27,19 @@ Infrastructure-only still creates billable resources.
 The effective footprint is the combination of enabled services, resource-reuse
 inputs, application definition, orchestrator topology and network settings.
 This affects AI services and their backing resources, runtimes, data stores,
-monitoring, networking and optional add-ons—not just one or two services.
+monitoring, networking and optional add-ons, not just one or two services.
 Use the selected source's `main.parameters.json`, Bicep conditions and preview
-as the authority; the foundation inventory is not an Agent application bill of materials.
+as the authority; the foundation inventory is not an Agent Application bill of materials.
+
+## Procedure
 
 <a id="steps"></a>
 
-## Step 1: Choose the source
+### Step 1: Choose the source
 
-### Agent Landing Zone foundation
+#### Agent Landing Zone foundation
 
-Use this source if you will deploy the bundled agent application or a compatible
+Use this source if you will deploy the Agent Application or a compatible
 custom application later:
 
 ```bash
@@ -42,7 +52,7 @@ commands from this root, not from `infra/`. Its `infra/` is repository-owned
 source, and `manifest.json` records the coordinated component pins and
 upstream foundation provenance.
 
-### AI Landing Zone foundation without the Agent platform
+#### AI Landing Zone foundation without the Agent platform
 
 Use this source for independent foundation resources and their placeholder app:
 
@@ -53,7 +63,7 @@ cd bicep-ptn-aiml-landing-zone
 
 Run from that repository's root, where its `main.bicep`, `main.parameters.json`
 and `azure.yaml` live. Its lifecycle does not configure or deploy the Agent
-application. Do not provision this separate project into an Agent environment.
+Application. Do not provision this separate project into an Agent environment.
 For application deployment, start from the Agent source instead.
 
 Both clones use the current default `main`, not `develop`. Record the resolved
@@ -61,7 +71,7 @@ commit and reviewed nonsecret inputs for repeatability. The
 [full-stack source guidance](deploy-full-stack.md#step-1-get-the-code) explains
 optional release selection.
 
-## Step 2: Create and confirm the target
+### Step 2: Create and confirm the target
 
 Replace the placeholders for a **new**, dedicated environment:
 
@@ -80,13 +90,13 @@ its approved inputs. Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local `.azure/` state.
 Fork or mirror the source only when maintaining your own inputs or automation.
 
-## Step 3: Choose the foundation shape
+### Step 3: Choose the foundation shape
 
 The following choices apply before provisioning. `DEPLOYMENT_MODE` records the
 network design intent; it does not configure routing, DNS or isolation by itself.
 It is separate from Agent's `DEPLOYMENT_TOPOLOGY`, which chooses the orchestrator.
 
-### Public service endpoints
+#### Public service endpoints
 
 ```bash
 azd env set NETWORK_ISOLATION false
@@ -96,7 +106,7 @@ azd env set DEPLOYMENT_MODE standalone
 Service authentication and authorization still apply. This is not a private
 deployment or a way to repair an existing private environment.
 
-### Private standalone network
+#### Private standalone network
 
 ```bash
 azd env set NETWORK_ISOLATION true
@@ -113,7 +123,7 @@ subnets, NSGs, egress and private DNS. For native Bastion RDP, choose
 does not require the native tunneling workflow. Have a connected host ready
 for Agent post-provision configuration, or use explicit deferral below.
 
-### Private spoke using an existing hub
+#### Private spoke using an existing hub
 
 Agree hub routing, reverse peering, DNS and permissions with their owners first.
 For a **new** spoke VNet with a hub firewall:
@@ -142,7 +152,7 @@ before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
 The upstream test-hub fixture is not a production connectivity deployment.
 
-### Existing networks, private DNS and parameter files
+#### Existing networks, private DNS and parameter files
 
 | Choice | Required review |
 | --- | --- |
@@ -160,7 +170,7 @@ do not edit that generated copy. The
 [parameter reference](../bicep/parameterization.md) describes foundation inputs;
 [Agent configuration](configuration.md) describes platform composition and overrides.
 
-### Bind the future application (Agent source only)
+#### Bind the future application (Agent source only)
 
 Choose the [orchestrator topology and ingestion selection](deploy-full-stack.md#step-3-choose-the-application-and-network)
 now, even if images will be deployed later. For a different application:
@@ -169,11 +179,11 @@ now, even if images will be deployed later. For a different application:
 azd env set AGENTLZ_APP_DEFINITION <path-to-app-definition.json>
 ```
 
-Otherwise use the bundled definition. The first provision binds the environment
+Otherwise use the Agent Application definition. The first provision binds the environment
 to its application ID; a different ID requires a new environment.
 Keep the existing topology and ingestion selection on upgrades.
 
-## Step 4: Preview and provision
+### Step 4: Preview and provision
 
 For Agent source, first run `azd hooks run preup` to validate the definition and
 binding before azd's resource-group initialization. Then, in either source:
@@ -197,7 +207,9 @@ Selected Container Apps can run placeholder images at this point.
 An upstream hello-world response proves only that network/runtime smoke test.
 It is not evidence of Agent authentication, tools, ingestion or document authorization.
 
-## Verify the foundation
+<span id="verify-the-foundation"></span>
+
+## Validation
 
 Inspect the intended environment and selected resources:
 
@@ -259,6 +271,24 @@ python -m config.deployment.outputs
 ```
 
 This does not replace deferred or failed service configuration.
+
+## Rollback
+
+1. Stop deployment retries and record which resources and configuration changed.
+   If only local inputs changed, restore the reviewed inputs before provisioning.
+2. After provisioning, compare the previous inputs with the deployed state.
+   Preview the previous compatible source and parameters using
+   `azd provision --preview` from the selected source root. Apply with
+   `azd provision` only if the reviewed changes preserve data, shared resources
+   and the approved network posture.
+3. Repeat [Validation](#validation). If the old inputs cannot safely reverse
+   a resource or configuration change, stop and arrange a service-specific
+   forward repair or recovery with its owner. A successful provision does not
+   restore deleted data or undo migrations.
+
+Disabling a deployment flag does not delete existing resources or revoke grants.
+For a new foundation you no longer need, use the separately authorized
+[removal procedure](#remove-the-foundation), not deletion as a retry.
 
 ## Lifecycle
 
@@ -327,7 +357,7 @@ Turning a deploy flag off is not deletion or permission cleanup.
 
 In an Agent foundation, deploy the same bound application and selected components.
 Follow [Step 4 of the full-stack runbook](deploy-full-stack.md#step-4-deploy):
-classic can deploy after configuration; bundled hosted needs image preparation
+classic can deploy after configuration; the hosted Agent Application needs image preparation
 and a second provision first. Custom definitions follow their own component
 contract. An upstream-only foundation is not a configured Agent environment.
 

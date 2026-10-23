@@ -12,6 +12,8 @@ environment dump can contain secrets.
 This is a settings reference, not another deployment procedure. Follow
 [Deploy infrastructure only](deploy-infra-only.md) or
 [Deploy the full stack](deploy-full-stack.md) for the ordered workflow.
+Choose the [deployment shape](planning.md), [capacity](sizing.md) and
+[cost assumptions](cost-planning.md) before setting inputs.
 
 !!! note
     `main.parameters.json` is the checked-in input to composition. The `preprovision` hook generates `infra/main.parameters.json` from it and the selected environment. Do not edit the generated file. In a Git checkout, the hook attempts to hide local regeneration from `git status` with `skip-worktree`.
@@ -61,9 +63,9 @@ When unset, they use the template defaults shown below.
 | --- | --- | --- |
 | `NETWORK_ISOLATION` | `false` | Enables private networking. Jumpbox, Bastion and firewall deployment also depend on their component flags. See [Network isolation](network-isolation.md). |
 | `AZURE_AI_FOUNDRY_LOCATION` | Deployment region | Region for the Microsoft Foundry account. |
-| `AZURE_COSMOS_LOCATION` | Deployment region | Region for application Cosmos DB. |
+| `AZURE_COSMOS_LOCATION` | Deployment region | Region for Agent Application Cosmos DB. |
 | `USE_UAI` | `false` | Uses user-assigned managed identities instead of system-assigned identities. |
-| `ENABLE_AGENTIC_RETRIEVAL` | `false` | Enables the template's agentic retrieval resource configuration. This is separate from the application setting `RETRIEVAL_BACKEND`. |
+| `ENABLE_AGENTIC_RETRIEVAL` | `false` | Enables the template's agentic retrieval resource configuration. This is separate from the Agent Application setting `RETRIEVAL_BACKEND`. |
 | `USE_EXISTING_VNET` | `false` | Deploys into a virtual network you already have when network isolation is enabled. |
 | `EXISTING_VNET_RESOURCE_ID` | Empty | Resource ID required when reusing a virtual network. |
 | `DEPLOY_SUBNETS` | `true` | Creates the required subnets in the selected virtual network. |
@@ -75,23 +77,30 @@ When unset, they use the template defaults shown below.
 | --- | --- | --- |
 | `AZURE_PRINCIPAL_TYPE` | `User` | Type of `AZURE_PRINCIPAL_ID`. Use `ServicePrincipal` in pipelines. |
 | `DEPLOYMENT_MODE` | `standalone` | Declares deployment intent for tags and preflight. `ailz-integrated` does not automatically attach a hub or override component flags. Supply the hub, routing, resource reuse and DNS inputs explicitly. |
+| `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
 | `RESOURCE_NAMING_MODE` | `caf` | `caf` uses Cloud Adoption Framework prefixes. `legacy` keeps the naming of older environments. |
 | `USE_CAPP_API_KEY` | `false` | Enables the optional classic Container App API-key mechanism. It does not configure Entra ID sign-in. Hosted composition disables this key mechanism. |
-| `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | Applications read runtime settings from App Configuration. |
-| `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Cosmos DB analytical store. |
-| `AZURE_SEARCH_LOCATION` | Empty | Region for both the general Azure AI Search service and the Search service created for Foundry Agent Service. Leave empty to use `AZURE_LOCATION`. |
+| `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | The Agent Application reads runtime settings from App Configuration. |
+| `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
+| `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
 | `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Resource group for private endpoints. Defaults to the deployment resource group, or the existing VNet's resource group when `USE_EXISTING_VNET=true` and `SIDE_BY_SIDE=false`. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
-Parameters that start with `EXISTING_` reuse a resource instead of creating one. They are listed in [Network and security](#network-and-security).
+Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.
+They are listed in [Network and security](#network-and-security).
+Foundry backing-service reuse uses native parameter names instead; see
+[Select, reuse or omit resources](planning.md#select-reuse-or-omit-resources).
+Neither a matching name nor disabling a deployment flag attaches an existing service.
 
-### Ingestion application selection
+<span id="ingestion-application-selection"></span>
+
+### Agent App Ingestion selection
 
 | Variable | Fresh-environment default | Description |
 | --- | --- | --- |
-| `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects the optional Agent App Ingestion Container App in the bundled application, independently of `DEPLOYMENT_TOPOLOGY`. |
+| `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects the optional Agent App Ingestion component of the Agent Application, independently of `DEPLOYMENT_TOPOLOGY`. |
 
 The boolean is persisted by pre-provision and published under label `agent-lz`.
 Existing environments retain their selection; they do not silently adopt the
@@ -100,7 +109,7 @@ foundation composition.
 
 | Selection | Effect |
 | --- | --- |
-| `false` | Omits the bundled ingestion app from subsequent composition/deployment and reconciliation. The UI disables attachment controls and upload paths, not text chat, authentication or retrieval. |
+| `false` | Omits Agent App Ingestion from subsequent Agent Application composition/deployment and reconciliation. The UI disables attachment controls and upload paths, not text chat, authentication or retrieval. |
 | `true` | Selects the app and retains the UI's existing upload eligibility checks. It does not grant every caller permission to upload. |
 
 Opt-out supports native Foundry IQ `azureBlob`, or an explicitly bound,
@@ -122,7 +131,7 @@ Search services use this effective region. Provider availability and Search
 quota checks must use that same region, not the primary region when an override
 is set.
 
-Search quota must cover the complete enabled service count: one general service
+Search quota must cover the complete enabled service count: one Agent Application service
 when `deploySearchService` (`DEPLOY_SEARCH_SERVICE`) is enabled, plus one Foundry
 Search service when `deployAiFoundry` and `deployAAfAgentSvc`
 (`DEPLOY_AAF_AGENT_SVC`) are enabled and `aiSearchResourceId` is not supplied.
@@ -135,7 +144,7 @@ See [Search preflight region and quota](troubleshooting.md#search-preflight-regi
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `RETRIEVAL_BACKEND` | `foundry_iq` | Retrieval implementation used by the orchestrator. |
+| `RETRIEVAL_BACKEND` | `foundry_iq` | Retrieval implementation used by the Agent Application orchestrator. |
 | `FOUNDRY_IQ_PATTERN` | `azureBlob` | Foundry IQ pattern. |
 | `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND` | `azureBlob` | Kind of knowledge source. |
 | `FOUNDRY_IQ_API_VERSION` | `2026-05-01-preview` | Azure AI Search API version used for Foundry IQ objects. |
@@ -220,12 +229,12 @@ These parameters matter mostly when `NETWORK_ISOLATION=true`. Read [Network isol
 | `DEPLOY_NAT_GATEWAY` | Enabled with network isolation and jumpbox deployment | Deploys a NAT gateway unless an existing gateway is selected. |
 | `ENABLE_ACS_MEDIA_EGRESS` | `false` | Opens firewall egress for Azure Communication Services media. |
 | `DEPLOY_GROUNDING_WITH_BING` | `false` | Deploys Grounding with Bing Search. |
-| `DEPLOY_KEY_VAULT` | `true` | Deploys the application Key Vault. |
+| `DEPLOY_KEY_VAULT` | `true` | Deploys the Agent Application Key Vault. |
 | `DEPLOY_VM_KEY_VAULT` | `false` | Deploys a separate Key Vault for the jumpbox. |
 | `DEPLOY_LOG_ANALYTICS` | `true` | Deploys a Log Analytics workspace unless an existing workspace is selected. |
 | `ENABLE_PRIVATE_LOG_ANALYTICS` | `true` | Configures Azure Monitor Private Link when network isolation is enabled and a central workspace is not being reused. |
 | `ALLOW_MIXED_OBSERVABILITY_WORKSPACES` | `false` | Allows Application Insights and Log Analytics from different sources. |
-| `DEPLOY_SEARCH_SERVICE` | `true` | Deploys Azure AI Search. |
+| `DEPLOY_SEARCH_SERVICE` | `true` | Deploys the Agent Application Search service. |
 | `DEPLOY_SPEECH_SERVICE` | `false` | Deploys Azure AI Speech (SKU `S0`). |
 | `DEPLOY_STORAGE_ACCOUNT` | `true` | Deploys the document storage account. |
 
@@ -238,7 +247,7 @@ Use these parameters to connect the spoke virtual network to an existing hub. Se
 | Variable | Default | Description |
 | --- | --- | --- |
 | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | None | Resource ID of the hub virtual network. |
-| `HUB_INTEGRATION_CREATE_HUB_PEERING` | `true` | Creates the peering from the hub side. |
+| `HUB_INTEGRATION_CREATE_HUB_PEERING` | `true` | Creates spoke-to-hub peering for a newly created spoke VNet. The hub owner supplies reverse peering. With an existing VNet, both directions are externally managed. |
 | `HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT` | `false` | Allows gateway transit on the peering. |
 | `HUB_INTEGRATION_PEERING_USE_REMOTE_GATEWAYS` | `false` | Uses the hub gateways from the spoke. |
 | `HUB_INTEGRATION_EGRESS_NEXT_HOP_IP` | None | Private IP of the hub firewall used as the default route. |
@@ -259,13 +268,18 @@ To use private DNS zones that already exist (for example, in a hub subscription)
 
 `COGSVCS`, `OPENAI`, `AISERVICES`, `SEARCH`, `COSMOS`, `BLOB`, `KEYVAULT`, `APPCONFIG`, `CONTAINERAPPS`, `ACR`, `AZUREMONITOR`, `OMSOPSINSIGHTS`, `ODSOPSINSIGHTS`, `AZUREAUTOMATION`, `APPINSIGHTS`.
 
+Their owner must provide the required VNet links or resolver forwarding.
+Peering alone does not propagate DNS. With `POLICY_MANAGED_PRIVATE_DNS=true`,
+the template omits its zone groups and leaves records to policy; supplying BYO
+zone IDs does not make those links or records appear.
+
 ## Hosted agent
 
 These parameters apply when the orchestrator runs as a Foundry hosted agent. See [Hosted agents](hosted-agents.md).
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `DEPLOYMENT_TOPOLOGY` | `hosted-no-panel` | Application topology. See [Topologies](hosted-agents.md#topologies). |
+| `DEPLOYMENT_TOPOLOGY` | `hosted-no-panel` | Agent Application topology. See [Topologies](hosted-agents.md#topologies). |
 | `DEPLOY_AAF_AGENT_SVC` | `true` | Enables the Foundry Agent Service capability host. |
 | `HOSTED_AGENT_NAME` | `agent-app-orchestrator` | Name of the hosted agent in the Foundry project. |
 | `HOSTED_AGENT_IMAGE` | `agent-app-orchestrator` | Repository name of the agent image in Container Registry. |
@@ -273,9 +287,16 @@ These parameters apply when the orchestrator runs as a Foundry hosted agent. See
 | `HOSTED_CONTINUITY_ENABLED` | `false` | Managed activation state for continuity endpoints. Hosted topology alone does not enable them. See [Hosted agents](hosted-agents.md). |
 | `HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS` | `60` | Idle timeout for streamed responses. |
 | `PRESERVE_CLASSIC_RUNTIME` | `false` | Keeps the classic orchestrator Container App while an existing environment moves to hosted. |
-| `APP_CONFIG_TLS_COMPATIBILITY` | `false` | Opt-in bootstrap transport for App Configuration and application Key Vault endpoints. Requires the coordinated runtime correction and `KEY_VAULT_URI`. See [Configuration TLS compatibility](hosted-agents.md#configuration-tls-compatibility). |
+| `APP_CONFIG_TLS_COMPATIBILITY` | `false` | Opt-in bootstrap transport for App Configuration and Agent Application Key Vault endpoints. Requires the coordinated runtime correction and `KEY_VAULT_URI`. See [Configuration TLS compatibility](hosted-agents.md#configuration-tls-compatibility). |
 
-Other hosted defaults: CPU `2`, memory `4Gi`, Responses protocol `2.0.0`,
+Hosted provisioning inputs `HOSTED_AGENT_CONTAINER_CPU` and
+`HOSTED_AGENT_CONTAINER_MEMORY` default to `2` and `4Gi`. The Agent Application's
+child `hosted-agent/azure.yaml` also declares CPU and memory as **literal
+fields**; changing those environment variables alone does not resize the
+deployed agent. Keep any reviewed child-definition change compatible with
+the provisioned handoff and deploy a new version. See [Sizing](sizing.md#application-hosting).
+
+Other hosted defaults: Responses protocol `2.0.0`,
 Invocations protocol `1.0.0`, capability key ID `v1` and capability TTL
 `900` seconds. The platform configures continuity history with `100` items
 and `32000` estimated tokens. These are not character limits or a limit
@@ -294,7 +315,7 @@ Configuration key: it is read before remote configuration can load. Only `true`
 and `false` are accepted. The foundation's additive `KEY_VAULT_URI` output
 provides the deployed vault URI without hardcoding a cloud DNS suffix and is
 empty when the vault is not deployed. Use the complete manifest-pinned
-application and infrastructure combination so the loader and hosted definition
+Agent Application and infrastructure combination so the loader and hosted definition
 agree on these inputs.
 
 ## Deployment controls
@@ -332,9 +353,9 @@ custom source-build path. See
 Post-provision publishes runtime settings to Azure App Configuration with
 the label `agent-lz`. Use that label for platform-owned settings.
 
-The bundled components do not read exclusively from `agent-lz`. Their startup
+The Agent Application components do not read exclusively from `agent-lz`. Their startup
 loaders also select service or legacy labels, and later matching selections
-can overwrite earlier values. UI and ingestion endpoint loaders
+can overwrite earlier values. Agent App UI and Agent App Ingestion endpoint loaders
 end with `label_filter=None`, which leaves the label filter unset and can
 read other labels. The orchestrator uses the explicit null label `"\0"` for its last
 selection, which reads unlabelled keys rather than all labels. Unlabelled

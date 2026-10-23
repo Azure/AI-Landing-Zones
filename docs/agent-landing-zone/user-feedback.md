@@ -1,31 +1,30 @@
 # User feedback
 
 Collect answer ratings and comments through the optional hosted-panel API.
-The default **hosted-no-panel** deployment has no application feedback store
+The default **hosted-no-panel** deployment has no Agent Application feedback store
 or feedback administration surface. Foundry conversation persistence does not
 add either feature. [Foundry hosted agents](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents)
-provide the hosting runtime; the feedback APIs below belong to the bundled
-application.
+provide the hosting runtime; the feedback APIs below belong to Agent Application.
 
 ## Choose the supported path
 
 | Deployment or control | What is available |
 | --- | --- |
-| `hosted-no-panel` | Hosted chat, but no supported application feedback collection. |
+| `hosted-no-panel` | Hosted chat, but no supported Agent Application feedback collection. |
 | `hosted-panel` | Optional Cosmos-backed feedback APIs. User-facing routes require additional gates; deploying the panel alone does not activate them. |
 | `ENABLE_USER_FEEDBACK=true` | Shows the existing Chainlit thumbs controls on eligible nonempty answers. The callbacks still call the classic orchestrator, not the hosted-panel API. Do not enable this as a hosted feedback solution. |
 | `USER_FEEDBACK_RATING=true` | Changes those existing controls from immediate thumbs submission to a rating/comment form. It does not change their backend. Both UI flags default to `false`; anonymous embedded sessions cannot use feedback actions. |
 
 For hosted chat, adding a rating/comment control that calls the panel API is
-**application customization**, not a Foundry setting. Keep hosted chat on
+**Agent Application customization**, not a Foundry setting. Keep hosted chat on
 `CHAT_BACKEND=hosted_agent`; do not deploy a classic orchestrator just to make
 the old callbacks work.
 
 ## Prepare a hosted-panel integration
 
-You need an application developer, a deployment operator, and an Entra
+You need an Agent Application developer, a deployment operator, and an Entra
 administrator for the token audience and permissions. Use approved test
-conversations and a connected development host if the application is private.
+conversations and a connected development host if Agent Application is private.
 
 1. Follow [Deploy the full stack](deploy-full-stack.md) to select
    `DEPLOYMENT_TOPOLOGY=hosted-panel`. This selects hosted orchestration plus

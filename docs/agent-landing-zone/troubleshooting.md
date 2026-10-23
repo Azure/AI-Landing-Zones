@@ -31,7 +31,7 @@ topologies run it in **Foundry Agent Service**. Confirm the selected topology
 before following a recovery path.
 
 !!! tip "Share useful, redacted diagnostics"
-    Hooks write to the terminal. Bundled Container App component deployments
+    Hooks write to the terminal. Agent Application Container App component deployments
     also write child logs under `<component>/.logs`. Share the exact error and
     relevant log excerpt, not the full output of `azd env get-values`.
     Remove tokens, cookies, credentials, signed URLs, document contents,
@@ -85,7 +85,7 @@ with exit code `2`. An invalid definition instead exits with code `1`.
 
 **Diagnose:** Compare the selected definition's application ID with the existing
 `AGENTLZ_APP_ID` binding. A custom hosted component does not automatically require
-switching the bundled orchestrator's topology.
+switching Agent Application's orchestrator topology.
 
 **Correct:** Restore the matching definition. For a different application ID,
 use a separate environment and select the definition **before first provision**.
@@ -94,14 +94,16 @@ Do not delete the binding or switch topology to bypass the mismatch.
 **Verify:** Definition validation and binding checks pass for the intended
 environment. See [Custom applications](build-your-own-app.md).
 
-### Custom hosted image pull fails with a classic bundled orchestrator
+<span id="custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator"></span>
+
+### Custom hosted image pull fails with a classic Agent Application orchestrator
 
 **Symptom:** A custom `azure.ai.agent` service cannot activate its private image,
 although Foundry project and registry outputs exist.
 
 **Diagnose:** Check the Foundry **project identity's** registry pull grant and
 the exact image/registry. A legacy composition defect omitted hosted foundation
-preparation when the bundled orchestrator stayed in a Container App. The
+preparation when Agent Application's orchestrator stayed in a Container App. The
 correction shipped in v4.2.3
 ([PR #779](https://github.com/Azure/agent-landing-zone/pull/779)).
 
@@ -191,7 +193,7 @@ compiler proves a dependency-version defect.
 
 **Symptom:** `Remove or relocate the stale sibling checkout`.
 
-**Diagnose:** A bundled component's sibling folder exists at a different commit
+**Diagnose:** An Agent Application component's sibling folder exists at a different commit
 from `manifest.json`. Matching `HEAD` alone would not establish that local work
 is absent.
 
@@ -275,15 +277,15 @@ See [Private native Blob ingestion](network-isolation.md#private-native-blob-ing
 **Symptom:** A fresh environment has no ingestion Container App, a source
 combination fails validation, or attachment behavior differs from expectations.
 
-**Diagnose:** Fresh bundled deployments default
+**Diagnose:** Fresh Agent Application deployments default to
 `DEPLOY_INGESTION_CONTAINER_APP=false`, independently of orchestrator hosting.
-Native source ingestion covers supported Foundry IQ sources, not all ingestion
-application features or conversation uploads. Existing environments and custom
+Native source ingestion covers supported Foundry IQ sources, not all Agent App
+Ingestion features or conversation uploads. Existing environments and custom
 definitions retain their component intent.
 
 **Correct:** Check the resolved component selection, retrieval backend, source
-kind and index bindings using [Ingestion](ingestion.md). To retain or restore the
-application, select it explicitly and run the
+kind and index bindings using [Ingestion](ingestion.md). To retain or restore
+Agent App Ingestion, select it explicitly and run the
 [full workflow](deploy-full-stack.md#step-4-deploy), not only `azd deploy`.
 An externally populated index must be named explicitly where required.
 
@@ -547,7 +549,7 @@ interchange endpoint request bodies.
 returns 503.
 
 **Diagnose:** Hosted runtime is stateless. Without separately activated
-continuity, context is limited to the active UI session. Application Cosmos DB
+continuity, context is limited to the active UI session. Agent Application Cosmos DB
 in `hosted-panel` stores owner/index and feedback metadata, not transcripts.
 Agent Service backing resources alone do not enable UI history.
 

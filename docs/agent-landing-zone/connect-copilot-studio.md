@@ -1,10 +1,18 @@
 # Connect Copilot Studio to a private Foundry agent
 
+## Objective
+
 Connect a **Copilot Studio agent** to an existing **Microsoft Foundry hosted
 agent** without enabling Foundry public network access.
 
 You will reuse the existing Foundry agent and network, then create a relay flow
 and a dedicated pilot agent in Copilot Studio.
+
+## When to use
+
+Use this runbook when Copilot Studio needs to call an existing private Foundry
+agent through an authenticated flow. It is a shared-connection relay, not the
+native connected-agent setup or automatic per-user delegation.
 
 Messages follow this path:
 
@@ -30,6 +38,10 @@ Messages follow this path:
     allowing HTTPS requests to reach Foundry through its private endpoint.
     The [native Microsoft Foundry integration](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent)
     is **in preview** and follows a separate setup, outside this procedure.
+    In the documented lab, native connector requests still arrived through
+    public ingress after VNet association and were denied with PNA disabled;
+    the flow used the delegated private path successfully. This observation
+    does not establish that every native private integration is unsupported.
 
 ## Prerequisites
 
@@ -50,6 +62,10 @@ Messages follow this path:
   together. Confirm Copilot Studio capacity and premium-connector entitlements;
   this connector is Premium. Azure hosting and model charges are separate.
   See [agent-flow licensing](https://learn.microsoft.com/microsoft-copilot-studio/flows-faqs).
+- **Recovery record:** Record the current enterprise-policy association and any
+  existing agent-scoped grant. If changing an existing solution, export/version
+  it before editing and retain its connection-reference settings. Use a dedicated
+  pilot agent so disabling the relay does not interrupt unrelated topics.
 
 Creating Azure network resources is outside this procedure. A subnet alone is
 not sufficient: the enterprise policy must reference the required regional
@@ -69,7 +85,12 @@ if the platform handoff is incomplete.
     are not enabled by forwarding a user name in the prompt. See
     [flow connection credentials](https://learn.microsoft.com/microsoft-copilot-studio/advanced-flow-create#manage-which-connections-are-used-by-the-flow).
 
-## Step 1: Associate the environment with the private network
+## Procedure
+
+Complete Steps 1-4 in order with the named administrators and maker, then run
+[Validation](#validation) before publishing to users.
+
+### Step 1: Associate the environment with the private network
 
 A **Power Platform administrator** performs this step. Schedule the change first:
 the environment's other supported workloads are also affected, and connections
@@ -94,7 +115,7 @@ can be unstable for up to 30 minutes.
 **Expected result:** The Managed Environment is linked to the intended policy,
 and all its regional paths can reach the Foundry private endpoint.
 
-## Step 2: Authorize the connection user
+### Step 2: Authorize the connection user
 
 Have an authorized Azure RBAC administrator grant the connection user
 **Foundry Agent Consumer** on the **specific agent**, if equivalent access is
@@ -137,7 +158,7 @@ Do not grant subscription Owner, broad Contributor or extra project-authoring
 roles to resolve an invocation failure. See
 [Foundry RBAC and agent scopes](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry#agent-scope-role-assignments).
 
-## Step 3: Create the authenticated agent flow
+### Step 3: Create the authenticated agent flow
 
 In Copilot Studio, select **Flows > New flow > Agent flow**. Use the environment
 from Step 1 and name the flow **Call private Foundry agent**. Keep it in a solution
@@ -149,7 +170,7 @@ package for these items.
     editor (**fx**), not as plain text. Step 4 uses Copilot Studio's
     **Formula** tab instead.
 
-### Input and connection
+#### Input and connection
 
 1. In **When an agent calls the flow**, add one **Text** input named `message`.
    Open the trigger's **Code view / Peek code** and find the property whose
@@ -178,7 +199,7 @@ do not bypass the policy with another connector.
 
 <a id="http-request"></a>
 
-### HTTPS request
+#### HTTPS request
 
 Keep the action name **Invoke an HTTP request**. The expressions below reference
 its internal name, `Invoke_an_HTTP_request`; check that name in Code view if the
@@ -221,7 +242,7 @@ The flow waits for a complete response; it does not stream tokens.
 Foundry's retention settings before using real data. It does **not** implement
 multi-turn history: each call sends only the current message.
 
-### Response and publication
+#### Response and publication
 
 In **Respond to the agent**, add a **Text** output named `foundry_response`.
 Set its value using **Expression**:
@@ -254,7 +275,7 @@ POST and one text output. Its complete synchronous execution must stay within
 the [100-second agent-action limit](https://learn.microsoft.com/microsoft-copilot-studio/advanced-flow-create).
 Streaming and background completion are not handled by this relay.
 
-## Step 4: Relay the actual response in Copilot Studio
+### Step 4: Relay the actual response in Copilot Studio
 
 In Copilot Studio, create or open a **dedicated pilot agent**. The topic below
 handles every nonempty message; do not add it unchanged to an agent with other
@@ -323,7 +344,9 @@ actual text. Invalid JSON, an incomplete/failed response or missing text produce
 an explicit failure message. If the HTTP action itself fails, Studio's error
 handling must report the failed action, not substitute a generated answer.
 
-## Step 5: Verify the private path, then publish
+<span id="step-5-verify-the-private-path-then-publish"></span>
+
+## Validation
 
 Use harmless test data in a **new** Studio test conversation and record the UTC
 test window. In Power Automate, open the flow's details page and select the
@@ -372,13 +395,29 @@ timestamps, run/request IDs and status codes during diagnosis.
 
 - **Change:** Export/version the solution and record the endpoint, active agent
   version and connection reference before editing. Rebind the connection in each
-  target environment and repeat Step 5 after an agent, policy or identity change.
+  target environment and repeat [Validation](#validation) after an agent, policy or identity change.
 - **Maintain:** Assign an owner for connection reauthentication, monitor failures,
   latency and capacity, and review access and response-retention policies.
   This relay supplies neither multi-turn history nor the chat user's identity
   in Foundry.
-- **Stop:** Disable the relay topic/flow and republish the Studio agent. Remove a
-  pilot-only role assignment only if it was created for this integration and is
-  not shared. Do not delete the delegated subnet or detach the environment's VNet
-  policy as routine rollback: other workloads may depend on it. Keep Foundry public network access
-  disabled throughout.
+
+## Rollback
+
+1. Disable the relay topic and republish the dedicated Studio agent, then turn
+   off the **Call private Foundry agent** flow in Power Automate. Test from the
+   published channel and confirm no new relay run reaches Foundry.
+2. For an update to an existing relay, restore the previous versioned solution
+   through the approved solution-import process, rebind its intended connection
+   reference and repeat [Validation](#validation) before re-enabling it.
+   Importing a solution does not restore Foundry data or the active agent version.
+3. If Step 2 created a pilot-only RBAC assignment, have its administrator remove
+   that exact recorded assignment ID after confirming it is not shared.
+   In Azure **Access control (IAM)** at the recorded agent scope, verify the
+   principal and role before removing it. Preserve pre-existing grants.
+4. Keep the delegated subnet, private endpoint and environment VNet policy.
+   If Step 1 changed an existing association, the Power Platform administrator
+   must review its other consumers before restoring the recorded association
+   through the same policy screen. Verify those workloads after any restoration.
+
+Do not detach shared networking or delete connections used by other flows as
+routine rollback. Keep Foundry PNA disabled and retain authentication throughout.

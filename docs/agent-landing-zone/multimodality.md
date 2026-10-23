@@ -1,6 +1,6 @@
 # Images and voice
 
-For the bundled application hosted in Foundry, start by choosing **where the
+For Agent Application hosted in Foundry, start by choosing **where the
 image is processed**. Extracting a diagram during ingestion is not the same as
 sending image pixels with a chat prompt.
 
@@ -10,8 +10,8 @@ sending image pixels with a chat prompt.
 | --- | --- |
 | Ask about diagrams in a shared document collection | Native Foundry IQ Blob ingestion can verbalize images; the hosted agent retrieves the resulting content through the knowledge base. |
 | Attach a document to this conversation | Optional Agent App Ingestion processes PDF uploads. This is conversation-scoped retrieval, not direct image input to the model. |
-| Paste a screenshot and ask the model to inspect it | Not implemented by the bundled hosted adapter. Its Responses input is text-only; the UI upload handler accepts PDFs, not standalone images. |
-| Speak to the agent or receive spoken answers | No shipped end-to-end voice flow in the bundled UI/hosted adapter. A Speech resource or an audio-capable model does not enable one. |
+| Paste a screenshot and ask the model to inspect it | Not implemented by Agent Application's hosted adapter. Its Responses input is text-only; the UI upload handler accepts PDFs, not standalone images. |
+| Speak to the agent or receive spoken answers | No shipped end-to-end voice flow in Agent App UI and Agent Application's hosted adapter. A Speech resource or an audio-capable model does not enable one. |
 
 Use the hosted default strategy, `maf_lite`, for these recipes.
 **`multimodal` is not admitted by the hosted runtime.** Do not select that classic
@@ -82,7 +82,7 @@ is available to retrieval.
 
 1. Follow [Ingestion and conversation uploads](ingestion.md) to select
    `DEPLOY_INGESTION_CONTAINER_APP=true` through the full deployment workflow.
-   Fresh bundled deployments default to `false`, which hides and rejects uploads.
+   Fresh Agent Application deployments default to `false`, which hides and rejects uploads.
 2. For a native Blob primary source, configure the Foundry IQ conversation-upload
    source as well: `FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` and a provisioned
    `FOUNDRY_IQ_CONVERSATION_KNOWLEDGE_SOURCE_NAME`. Retain the pinned
@@ -100,7 +100,7 @@ is available to retrieval.
    ```
 
    Retain the provisioned source name and rerun the full workflow to reconcile
-   the knowledge source and deploy applications with the updated settings.
+   the knowledge source and deploy the affected components with the updated settings.
 3. Sign in with an eligible user and send a text message first to establish the
    hosted conversation identifier. Attach a small PDF and ask a question specific
    to its contents. The handler accepts at most five PDFs, 15 MiB each and
@@ -138,17 +138,19 @@ deployment workflow, rather than trying to restart a classic orchestrator
 Container App. See [Configuration](configuration.md) and
 [Hosted agents](hosted-agents.md).
 
-## Direct images or voice need an application extension
+<span id="direct-images-or-voice-need-an-application-extension"></span>
+
+## Direct images or voice need an Agent Application extension
 
 For screenshot inspection, implement a caller and adapter that validate and
 forward image content to a compatible model; changing only the model deployment
-does not change this application's text-only contract. See Microsoft's
+does not change Agent Application's text-only contract. See Microsoft's
 [vision input guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision).
 
 For voice, build a client/service integration for capture, transcription or
 realtime audio and playback. Microsoft's
 [Realtime audio guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/realtime-audio)
-describes the service capability, not a bundled UI feature. Use
+describes the service capability, not an Agent App UI feature. Use
 [Build your own application](build-your-own-app.md) for the extension boundary.
 Preserve user authentication, OBO and source authorization when connecting either
 extension to retrieval.

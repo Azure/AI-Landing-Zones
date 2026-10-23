@@ -1,6 +1,8 @@
-# Application access
+<span id="application-access"></span>
 
-Require Entra sign-in for the bundled web UI, retain the user's identity when
+# Agent Application access
+
+Require Entra sign-in for Agent App UI, retain the user's identity when
 invoking the Foundry-hosted orchestrator, and verify that retrieval excludes
 documents the user cannot read. Passing one of these checks does not prove
 the others.
@@ -11,14 +13,14 @@ complete that integration.
 
 ## Before you start
 
-- A deployed [bundled application](deploy-full-stack.md), with the UI using
+- A deployed [Agent Application](deploy-full-stack.md), with the UI using
   `CHAT_BACKEND=hosted_agent`.
-- An application registration owner or administrator who can configure a
+- An Entra app registration owner or administrator who can configure a
   confidential web application, plus an administrator authorized to grant the
   required API consent. Azure subscription access alone does not grant these
   Entra permissions.
 - Permission to edit the deployment's App Configuration settings and Key Vault
-  secrets, and to redeploy the affected application. Use a connected operator
+  secrets, and to redeploy the affected component. Use a connected operator
   host for [private deployments](private-access.md).
   The UI runtime identity also needs access to resolve those Key Vault
   references; operator access does not grant runtime access.
@@ -36,10 +38,10 @@ ending in `/.default`, not an endpoint or an ARM scope.
 1. In **Microsoft Entra admin center → App registrations**, select the
    registration for this UI, or [register a single-tenant application](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app).
    Record its client and tenant IDs. Do not create another registration just
-   to change an existing application's access policy.
+   to change the existing UI's access policy.
 2. Under **Expose an API**, use Application ID URI `api://<client-id>` and
    [add an enabled delegated scope](https://learn.microsoft.com/entra/identity-platform/quickstart-configure-app-expose-web-apis)
-   named `user_impersonation`. The bundled callback requires
+   named `user_impersonation`. The Agent App UI callback requires
    `api://<client-id>/user_impersonation`; it does not accept a Graph-only token.
 3. Under **Authentication**, configure the **Web** redirect URI for the actual
    UI origin and callback. After loading the credentials and settings in
@@ -82,7 +84,9 @@ ending in `/.default`, not an endpoint or an ARM scope.
 Complete callback registration in the test environment before opening access.
 Never enable anonymous production access to discover a callback.
 
-## 2. Limit application admission
+<span id="2-limit-application-admission"></span>
+
+## 2. Limit Agent Application admission
 
 In App Configuration, set `ALLOWED_USER_PRINCIPALS` to a comma-separated list
 of `tenant-id:object-id` values for admitted users. For the first test, include
@@ -137,7 +141,7 @@ merely by selecting `RETRIEVAL_BACKEND=foundry_iq`.
 client forwards call context but does not acquire a Toolbox bearer token.
 Current Microsoft guidance uses the authenticated `FoundryToolbox` SDK
 integration, which also forwards hosted call context. A developer must reconcile
-the bundled MCP integration with that
+the Agent Application MCP integration with that
 [hosted Toolbox contract](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent)
 before treating it as a working protected-retrieval path. Changing only
 `AGENT_STRATEGY=mcp` is not sufficient.
@@ -207,8 +211,8 @@ per-user trimming.
 - **Tool requests user consent:** follow the service-generated consent flow
   for that user and resource, then retry. UI login consent and
   [Toolbox per-user consent](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication)
-  are different; administrator application consent does not grant document
-  access.
+  are different; administrator consent for an Entra registration does not grant
+  document access.
 - **B retrieves restricted content:** stop access to the affected corpus,
   inspect source ACL ingestion and retrieval enforcement, then repeat the
   two-user test. Restoring login alone does not remediate a disclosure.
