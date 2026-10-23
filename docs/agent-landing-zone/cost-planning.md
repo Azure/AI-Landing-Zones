@@ -1,10 +1,10 @@
 # Cost planning
 
-Estimate the **Agent Landing Zone configuration you will run**, not the
-independent foundation's example total. Choose [topology and resource reuse](planning.md)
+Estimate the **Agent Landing Zone configuration you will run**.
+Choose [topology and resource reuse](planning.md)
 and establish [capacity assumptions](sizing.md) first.
 
-!!! note "Pricing evidence and date"
+!!! note "Pricing sources and dates"
     Reviewed against platform v4.3.0 on **October 23, 2026**. This page does not
     quote or reprice Azure services. The shared
     [resource inventory and estimates](../bicep/deployed-resources.md) uses
@@ -22,8 +22,8 @@ and establish [capacity assumptions](sizing.md) first.
    preview, including retained migration resources.
 2. **Price allocated capacity.** Include selected Search services, registry
    tier, App Configuration, workload-profile nodes, private endpoints,
-   firewall, Bastion, ingress and other allocation-based services. Idle is
-   not necessarily free.
+   firewall, Bastion, ingress and other allocation-based services. Include
+   their charges during idle periods.
 3. **Add measured usage.** Estimate turns, model/tool calls, input/output tokens,
    embeddings, indexing, compute, requests, stored data, logs and network
    transfer. Include initial corpus ingestion and reindexing separately
@@ -39,7 +39,7 @@ and establish [capacity assumptions](sizing.md) first.
 
 | Decision | Include in the estimate |
 | --- | --- |
-| Hosted or classic orchestrator | Foundry hosted compute where selected, or the classic Container App. Include the frontend and other selected components separately. The root's `main` D4 profile has a zero-node minimum, but selected apps with minimum replicas can keep a node allocated. Do not assume Consumption scale-to-zero. |
+| Hosted or classic orchestrator | Foundry hosted compute where selected, or the classic Container App. Include the frontend and other selected components separately. The root's `main` D4 profile has a zero-node minimum, but selected apps with minimum replicas can keep a node allocated and billed while idle. |
 | Foundry Agent Service | Separate Search, Storage and Cosmos DB backing resources where created. `hosted-no-panel` omits Agent Application Cosmos DB, not these Foundry backing resources. Reused dedicated backing resources still have costs. |
 | Retrieval and ingestion | Agent Application Search replicas/partitions plus any separately billed retrieval features, model calls and embeddings. Omitting Agent App Ingestion does not remove native ingestion or indexing charges. With the component selected, include its compute and processing dependencies. |
 | Private networking | Count the actual private endpoints, DNS, firewall/NAT, peering/data transfer and connected runner. Include Bastion, VM and disks only where selected or retained. Hub reuse changes allocation and ownership, not the connectivity requirements. |
@@ -47,11 +47,9 @@ and establish [capacity assumptions](sizing.md) first.
 | UI ingress or AI Gateway | Add Application Gateway/WAF only if enabled. A separately operated AI Gateway has its own tier, capacity, policy and usage charges; it is not included automatically in an Agent deployment. |
 | Observability and protection | Workspace ingestion/retention, configured tests, backup and redundancy. Avoid double-counting Application Insights ingestion billed through its Log Analytics workspace. |
 
-Model deployment `sku.capacity` is a quota allocation input, **not** a price
-or a guaranteed task rate. Model, deployment type, region, actual tokens and
-any provisioned-capacity purchase determine the relevant billing assumptions.
-Check current service pricing rather than converting that number into a
-monthly token bill.
+Model deployment `sku.capacity` allocates quota. To estimate model charges,
+use the deployment type, region, expected tokens and any provisioned-capacity
+commitment with the current service prices.
 
 ## Control spend without weakening the design
 
@@ -68,8 +66,8 @@ monthly token bill.
   permissions. Do not enable public access, remove authorization or bypass
   private-link readiness to meet a cost target.
 - Retire old components only after dependency, backup and grant review.
-  Changing a selection flag is not a cleanup procedure; use the
-  [deployment lifecycle guidance](deploy-full-stack.md).
+  Selection flags affect future deployments; existing resources require
+  separate cleanup through the [deployment lifecycle guidance](deploy-full-stack.md).
 
 Keep one estimate per environment with its owner, date, region/currency,
 selected/reused resources, expected monthly usage and contingency. Revisit it

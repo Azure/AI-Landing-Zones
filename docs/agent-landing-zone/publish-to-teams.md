@@ -16,7 +16,7 @@ template does not perform them.
 ## When to use
 
 Use this runbook after the hosted agent works and you need Teams or Microsoft
-365 Copilot distribution while Foundry PNA remains disabled. For a Copilot
+365 Copilot distribution while Foundry public network access remains disabled. For a Copilot
 Studio private relay instead, use [Connect Copilot Studio](connect-copilot-studio.md).
 
 Messages from either client follow the same path:
@@ -81,8 +81,8 @@ Foundry private endpoint. Management requests still use the private endpoint.
     Obtain your organization's approval before sending data through this
     channel. Microsoft 365 processes publishing metadata and conversations under
     its own compliance and data-residency commitments. Validate how the agent
-    authenticates users and enforces data permissions through this channel;
-    tests through another client do not establish those guarantees.
+    authenticates users and enforces data permissions in both Teams and
+    Microsoft 365 Copilot before rollout.
 
 ## Procedure
 
@@ -176,7 +176,7 @@ session **before Step 3**, and only after your organization approves that access
 For a `Shared` pilot, ask an administrator to grant selected testers
 **Foundry Agent Consumer** at the
 [agent scope](https://learn.microsoft.com/azure/foundry/agents/how-to/troubleshoot-publish-copilot-authorization#grant-access-to-one-agent).
-Sharing an app link does not grant invocation permission.
+Grant this access before sharing the app link.
 
 !!! note "If the agent identity check fails"
     Stop and follow the
@@ -459,12 +459,12 @@ Complete these checks in **each client** before making the agent available to
 users:
 
 1. Complete any sign-in prompt. Send a greeting, a representative workload
-   question and a follow-up. Confirm that the expected tools and knowledge
-   sources work; receiving a reply alone is not enough.
+   question and a follow-up. Confirm that the answers use the expected tools
+   and knowledge sources.
 2. For a `Shared` pilot, test with an authorized user and a tenant member who
    lacks agent permission. The second user must be denied. Use member accounts,
    not guests. With `Tenant`, all tenant members are authorized to call the
-   agent, so this is not a valid negative test.
+   agent; test protected-data restrictions separately as described next.
 3. If the agent handles protected data, test with identities that should and
    should not access that data. Confirm the intended restrictions in both
    clients, regardless of publication scope.
@@ -539,7 +539,7 @@ $result
 | Activity returns `403 NetworkAccessDenied`. | Check that the Activity exception is enabled and test through Teams or Copilot. A public `curl` request from an arbitrary IP remains blocked by design. |
 | A user can open the app but receives an authorization error. | Check that the user is signed in to the Foundry tenant and, for `Shared`, has Foundry Agent Consumer access. Do not switch to `Tenant` just to remove the error. |
 | The Teams sign-in card opens, but its redirect page does not load. | Ask the network administrator to allow outbound HTTPS (TCP 443) to `*.azureml.ms` from the user's network, then retry sign-in. |
-| The agent replies, but tools or retrieval fail. | Check runtime identity permissions, data authorization and outbound access. A successful test in another client does not validate identity propagation through Teams or Copilot. |
+| The agent replies, but tools or retrieval fail. | Check runtime identity permissions, data authorization and outbound access. Trace the failing request through Teams or Copilot to verify identity propagation in that client. |
 | A conversation is stuck or returns `no tool output found`. | In Teams, send `/foundry_new_preview`; in Copilot, start a new chat with the agent. Previous conversation context cannot be restored after a reset. |
 | Publication returns `version already exists`. | Increase `appVersion` and submit the listing again. Do not change the runtime version to fix a listing-version error. |
 

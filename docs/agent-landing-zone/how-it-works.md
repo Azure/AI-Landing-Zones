@@ -1,15 +1,46 @@
-# How the template works
+<span id="how-the-template-works"></span>
+
+# How it works
 
 Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (`azd`). This page explains
 that connection for the **Bicep/azd implementation**. Use the deployment runbooks
-for the commands to execute. Start with [Deployment choices](planning.md) if
-you have not selected the implementation and topology.
+for the commands to execute. Read how settings work below, then use
+[Deployment choices](planning.md) to select the implementation and topology.
+
+## How to read deployment settings
+
+A **deployment parameter** tells the template what to create or reuse, such
+as a private network or an existing hub. An **`azd` environment** groups the
+settings and deployment state for one deployment, such as development or
+production. With Bicep and `azd`, the guides use two ways to supply parameter
+values:
+
+| Form in the guide | Where you set it |
+| --- | --- |
+| Uppercase input, such as `NETWORK_ISOLATION` | In the selected `azd` environment, using `azd env set <NAME> <value>`. The platform maps it to a template parameter or reads it in a deployment hook. |
+| Native parameter, such as `modelDeploymentList` | In the root `main.parameters.json`, inside `parameters.<name>.value`. Use this for documented parameters without an environment-variable mapping. |
+
+For example, after creating and selecting an environment in the deployment
+runbook, enable private networking with:
+
+```bash
+azd env set NETWORK_ISOLATION true
+```
+
+Set deployment inputs before provisioning. The platform combines them with
+the root parameter file to generate `infra/main.parameters.json`.
+The [Configuration reference](configuration.md) lists available inputs and
+defaults; the runbooks provide the order in which to apply them.
+
+**Runtime settings** control application behavior after deployment and are
+usually stored in Azure App Configuration. Each Agent Application guide
+identifies the settings to change and how to reload them.
 
 ## Repository boundaries
 
-The platform repository composes the solution. It does not contain every
-application's runtime source.
+The platform repository coordinates infrastructure and application deployment.
+The Agent Application's runtime code lives in separate component repositories.
 
 | Area | Responsibility |
 | --- | --- |
@@ -17,16 +48,15 @@ application's runtime source.
 | Platform integration: root files, `scripts/` and `config/` | Selects the application, composes deployment parameters, configures provisioned services and coordinates deployment. |
 | Runtime component repositories | Own Agent App UI, Agent App Orchestrator (strategies and tools), and optional Agent App Ingestion. The manifest identifies their repositories and source pins. |
 
-The `infra.source` entry is **provenance**, not a separately deployed package or
-submodule. Deploy the platform's reviewed `infra/` tree, including its platform
-changes, rather than substituting an upstream infrastructure tag.
+The `infra.source` entry records the upstream version incorporated into this
+repository. Deploy the platform's own `infra/` tree, which also contains
+Agent Landing Zone changes.
 
 ## The manifest records a validated combination
 
 [`manifest.json`](https://github.com/Azure/agent-landing-zone/blob/main/manifest.json)
 records the platform release and each Agent Application component's repository, ref and
-exact commit. It is the authoritative source for the coordinated combination;
-the documentation does not maintain a second component-version table.
+exact commit. Use it to identify the component versions validated together.
 
 The hooks fetch selected Agent Application Container App components into sibling
 directories and verify their commits. Hosted image preparation fetches the
@@ -58,8 +88,8 @@ Bicep consumes that generated file.
 
 An **application definition** describes the selected application's components
 and capabilities. Select a custom definition before the first provision: one
-azd environment is bound to one application ID. It is not a late switch that
-changes only the deployment command.
+azd environment is bound to one application ID throughout provisioning and
+deployment.
 
 Hosting, orchestration strategy and ingestion selection are separate decisions.
 For example, choosing a hosted orchestrator does not select an ingestion path.
@@ -80,9 +110,9 @@ application projects.
 | After provisioning (`postprovision`) | Configures Azure services, reconciles application access and publishes runtime settings and outputs. |
 | Before deployment (`predeploy`) | Checks foundation readiness and application binding, validates topology and required connectivity, then coordinates the selected application deployments. |
 
-`azd provision` therefore includes service configuration through its
-post-provision hook. It does **not** mean the pinned application code is running:
-some provisioned Container Apps initially contain placeholder images.
+`azd provision` includes service configuration through its post-provision hook.
+Some Container Apps initially contain placeholder images; `azd deploy` replaces
+them with the selected application code.
 
 For Agent Application Container Apps, deployment uses the verified component checkouts
 and their child `azure.yaml` projects to build and deploy the code. Hosted
@@ -96,13 +126,13 @@ applications use the resulting services.
 
 Provisioning and configuration publish settings to Azure App Configuration
 under the **`agent-lz` label**. The Agent Application loaders also select other
-labels, so check the [runtime selector warnings](configuration.md#runtime-settings)
+labels, so check [which setting takes precedence](configuration.md#runtime-settings)
 before changing keys. Bootstrap values such as the store endpoint must be
 available before remote configuration can load. Secrets belong in Key Vault
 and are referenced rather than copied into checked-in settings.
 
-The label is a shared convention, not an environment boundary. Keep development,
-test and production configuration, identities and data separated, following the
+The same label is used across environments. Keep development, test and
+production configuration, identities and data separated, following the
 [environment boundaries](configuration.md#environment-boundaries) guidance. Local
 `.azure/` state is private deployment state, not a source-controlled input file;
 the hooks also copy state into child projects, so protect those workspaces.
@@ -139,7 +169,7 @@ strategy eligibility and image behavior, see [Agent hosting](hosted-agents.md).
 
 ## From understanding to deployment
 
-Review [deployment choices](planning.md), [sizing](sizing.md) and
+Continue with [deployment choices](planning.md), [sizing](sizing.md) and
 [cost planning](cost-planning.md), then choose
 [Deploy infrastructure only](deploy-infra-only.md) or
 [Deploy the full stack](deploy-full-stack.md). Those runbooks contain the

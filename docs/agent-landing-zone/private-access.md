@@ -44,7 +44,10 @@ changing them, and identify which changes affect other users.
 
 ### 1. Select the private network
 
-For a **new** isolated environment, before provisioning:
+The following deployment inputs control workload isolation and hub connectivity.
+Set them in the selected azd environment with `azd env set`; see
+[How it works](how-it-works.md) for input processing.
+For a **new** isolated environment, enable isolation before provisioning:
 
 ```bash
 azd env set NETWORK_ISOLATION true
@@ -60,7 +63,7 @@ Choose one network path:
 | Path | Foundation inputs and network work |
 | --- | --- |
 | Standalone VNet | Keep `DEPLOYMENT_MODE=standalone`. The administrator adds a route-based Azure VPN Gateway and P2S configuration to the target VNet separately. |
-| Existing hub VPN | Set `DEPLOYMENT_MODE=ailz-integrated` and `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` to the hub's full ARM resource ID. Reuse its approved gateway, P2S policy and DNS path. Peering alone is not VPN connectivity. |
+| Existing hub VPN | Set `DEPLOYMENT_MODE=ailz-integrated` and `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` to the hub's full ARM resource ID. Reuse its approved gateway, P2S policy and DNS path, and configure gateway transit and client routes as described below. |
 
 For a newly created spoke using a hub-owned gateway, the shipped inputs are:
 
@@ -78,8 +81,8 @@ allowed, and confirm the hub gateway exists before applying the spoke inputs.
 The template does not configure that reverse peering. Do not set the
 spoke's `ALLOW_GATEWAY_TRANSIT` flag to true to share a hub-owned gateway.
 For an existing VNet (`USE_EXISTING_VNET=true` with
-`EXISTING_VNET_RESOURCE_ID`), arrange peering separately rather than assuming
-the new-spoke peering resource applies.
+`EXISTING_VNET_RESOURCE_ID`), have the network owner configure both peering
+directions separately.
 
 Preserve approved egress routing through
 `HUB_INTEGRATION_EGRESS_NEXT_HOP_IP` or
@@ -122,24 +125,22 @@ or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/poi
      source control, command history or the root-certificate upload field.
    - **Microsoft Entra ID:** use **OpenVPN (SSL)** and Azure VPN Client.
      Enter the tenant, audience and issuer values from the current Microsoft
-     procedure for your Azure cloud. Prefer its Microsoft-registered audience;
-     do not add legacy app registration or tenant-wide consent steps by guesswork.
+     procedure for your Azure cloud. Prefer its Microsoft-registered audience
+     and follow its registration and consent requirements.
      Use a currently supported Windows or macOS client. Microsoft's Azure VPN
      Client for Linux preview retired on August 31, 2026; select a supported
-     certificate/client combination for Linux rather than assuming Entra
-     client support.
+     certificate/client combination for Linux.
 3. Save the configuration, then select **Download VPN client**. This generates
    a configuration package, not the client application. Install the supported
    client and import the profile using the matching Microsoft instructions.
 
-The gateway administrator controls admission to the VPN. Having an Entra account
-or a foundation deployment role is not, by itself, an approved VPN access policy.
+The gateway administrator controls admission to the VPN. Confirm the approved
+certificate or Entra access policy before distributing client profiles.
 
 ### 3. Connect DNS and routes
 
-A connected tunnel is not enough: the client needs routes to the workload's
-private endpoint addresses **and** a DNS server that can resolve its private
-zones.
+The VPN client needs routes to the workload's private endpoint addresses
+**and** a DNS server that can resolve its private zones.
 
 1. Provide a reachable DNS path: an existing hub DNS forwarder, or a separately
    deployed [Azure DNS Private Resolver inbound endpoint](https://learn.microsoft.com/azure/dns/private-resolver-hybrid-dns).
@@ -157,8 +158,8 @@ zones.
    when distributing custom DNS settings in its profile.
 3. Confirm the VPN profile includes the destination VNet/spoke routes and the
    resolver's network. Check the return path to the P2S pool and any intervening
-   firewall, NSGs and route tables. A default route to a hub firewall does not
-   prove a working return path. Follow
+   firewall, NSGs and route tables. For a hub VPN, verify traffic can return
+   from the workload to the client through the approved hub route. Follow
    [Microsoft's P2S routing guidance](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-about-point-to-site-routing)
    for your OS and peering topology; peering is not generally transitive.
 4. Connect the VPN. On Windows, inspect `route print` and, for Azure VPN Client,
@@ -203,8 +204,8 @@ Expected results:
   VPN NRPT rules can make `nslookup` differ from the operating system resolver;
   inspect both.
 - `TcpTestSucceeded` is `True`, and TLS completes with normal certificate
-  validation. An HTTP 401 or 403 can confirm network reachability, **not**
-  application readiness or correct permissions. Do not use `--insecure`.
+  validation. A service HTTP 401 or 403 response confirms reachability;
+  test service operations with the authorized identity separately. Do not use `--insecure`.
 
 Repeat for the required service hosts. For the registry, assign its
 `AZURE_CONTAINER_REGISTRY_ENDPOINT` value directly to `$serviceHost` rather
@@ -213,7 +214,7 @@ do not replace application endpoints with IP addresses or `privatelink` aliases.
 The lifecycle prerequisite check rejects public or mixed DNS answers and checks
 TCP/TLS reachability: App Configuration before post-provision and deployment,
 the Foundry project additionally before hosted deployment, and ACR before hosted
-image builds. Passing it does not test every service listed above.
+image builds. Test the remaining service hosts individually.
 
 ## After validation: deploy or develop
 
@@ -230,11 +231,11 @@ image builds. Passing it does not test every service listed above.
 - **Developer workstation:** keep the VPN connected while using private Azure
   endpoints. Authenticate development tools separately and use the approved
   project and service roles. Local application development guidance belongs
-  in [Custom applications](build-your-own-app.md); VPN access does not make a
-  hosted agent run locally.
+  in [Custom applications](build-your-own-app.md). Hosted agents continue to
+  run in Foundry.
 
-Network access grants no service RBAC, user impersonation or document
-permissions. Preserve application authentication, OBO and source ACL enforcement.
+Configure service RBAC and document permissions separately from network access.
+Preserve application authentication, OBO and source ACL enforcement.
 For hosted-agent authoring, verify the runner's **Foundry User** role on the
 exact project and account read access as described in
 [Network isolation](network-isolation.md). Do not grant Owner to solve a

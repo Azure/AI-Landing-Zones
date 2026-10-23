@@ -21,7 +21,7 @@ Choose the procedure for your intended result:
 <a id="related-pages"></a>
 
 For the Bicep entry point, lifecycle hooks, generated parameters and manifest
-contract, read [How the template works](how-it-works.md).
+contract, read [How it works](how-it-works.md).
 For supported settings and naming, use [Configuration](configuration.md) and
 the [foundation parameter reference](../bicep/parameterization.md).
 Run the supported lifecycle from the platform root: calling `infra/main.bicep`

@@ -2,8 +2,8 @@
 
 Use a Foundry IQ knowledge base as Agent Application's retrieval target.
 A **knowledge source** describes searchable content; a **knowledge base** binds
-sources and handles retrieval. Agent Application consumes that knowledge base.
-Changing Agent Application settings does not create a source or ingest documents.
+sources and handles retrieval. Set up and test the sources first, then point
+Agent Application at the knowledge base.
 
 This page covers the orchestrator hosted in Foundry. Start with a working
 [full-stack deployment](deploy-full-stack.md) and its pinned Agent Application sources.
@@ -12,38 +12,39 @@ This page covers the orchestrator hosted in Foundry. Start with a working
     In the pinned hosted runtime, the entrypoint clears caller identity context
     and does not pass a delegated user token to the Foundry IQ connector.
     The connector's authenticated retrieval path requires that token and fails
-    closed when it is absent. A signed-in UI session or a project connection
-    does not fix this. Do not enable anonymous access or remove source permission
-    checks to make retrieval succeed. For permission-sensitive content, stop
-    before Agent Application cutover until a reviewed hosted identity integration
+    closed when it is absent. Hosted retrieval requires a reviewed integration
+    that carries trusted delegated context from invocation to retrieval.
+    Keep authentication and source permission checks enabled. For protected
+    content, wait to switch Agent Application to the knowledge base until that integration
     supplies the required trusted token and passes allow/deny tests.
     See [Agent Application authentication](application-auth.md).
 
 To implement that integration, use the
 [custom application workflow](build-your-own-app.md) to pin and deploy reviewed
 orchestrator changes. Preserve the trust boundary at hosted request handling,
-the connector's OBO requirements and each source's permission enforcement.
-This is custom code and security validation, not a shipped enable switch.
+the connector's on-behalf-of (OBO) token requirements and each source's
+permission enforcement.
+Plan for custom code and security validation.
 
 ## Before you start
 
 - Record the deployed Search endpoint, knowledge-base name, knowledge-source
   name and Foundry project connection ID. Read the current App Configuration
-  values with label **`agent-lz`**; do not infer names from examples.
+  values with label **`agent-lz`**.
 - The source administrator needs Search Service Contributor to manage knowledge
   objects. Native Blob setup also requires Search Index Data Contributor.
   Role assignment changes require separate scoped authorization.
 - The retrieval identity needs Search Index Data Reader on the target Search
-  service. The hosted bootstrap grants configuration/model access, not every
-  source permission; see [Hosted agents](hosted-agents.md).
+  service. Grant source permissions separately from the hosted bootstrap's
+  configuration/model access; see [Hosted agents](hosted-agents.md).
 - For private deployments, use an authorized network-connected administration
   host. Verify runtime-to-Search connectivity and Search-to-storage/model
   connectivity separately. See [Network isolation](network-isolation.md).
 
 The shipped connector pins `FOUNDRY_IQ_API_VERSION=2026-05-01-preview`.
-Current Microsoft examples can use newer API versions. Do not replace the
-shipped version or copy newer request fields without testing compatibility
-with the pinned Agent Application and platform.
+Current Microsoft examples can use newer API versions. Validate API and request
+field compatibility with the pinned Agent Application and platform before
+adopting a newer version.
 
 ## 1. Choose who manages the source
 
@@ -63,14 +64,14 @@ Foundry IQ manages the generated ingestion assets.
 1. Read `FOUNDRY_IQ_STORAGE_CONTAINER_NAME` and
    `FOUNDRY_IQ_STORAGE_FOLDER_PATH` from the deployed configuration.
 2. With an approved storage data-write role, upload a small document with a
-   distinctive test sentence to that location. Do not use chat file upload
-   to populate this shared corpus.
+   distinctive test sentence to that location. This populates the shared corpus;
+   chat uploads belong to individual conversations.
 3. Inspect the source's generated indexer status and retrieve the test sentence
    from the knowledge base. Expect a reference to that document before
    attempting Agent Application cutover.
 
-Agent App Ingestion is optional for this native source. It is
-not the same pipeline as conversation uploads or SharePoint jobs; follow
+Agent App Ingestion is optional for this native source. Conversation uploads
+and SharePoint jobs use separate pipelines; follow
 [Ingestion](ingestion.md) for those.
 
 For source setup, use Microsoft's
@@ -78,12 +79,14 @@ For source setup, use Microsoft's
 The Search managed identity needs Storage Blob Data Reader on the source
 storage account and Cognitive Services User on the Foundry resource.
 An asset store can additionally require Storage Blob Data Contributor.
-These grants belong to the ingestion identity, not the signed-in chat user.
+Assign these grants to the ingestion identity. Chat users need their own
+retrieval permissions.
 
 **Optional permission ingestion:** `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS`
 controls which permission metadata is ingested; `FOUNDRY_IQ_IS_ADLS_GEN2`
-describes an ADLS Gen2 source. These are source-setup inputs, not Agent Application
-authorization switches. Preserve the source's RBAC/ACL model, rebuild or rerun
+describes an ADLS Gen2 source. Configure these during source setup.
+Preserve the source's role-based access control (RBAC) and access control
+lists (ACLs), rebuild or rerun
 ingestion as required by the source procedure, and verify denied users cannot
 retrieve restricted content. The hosted token limitation above still applies.
 
@@ -91,8 +94,8 @@ retrieve restricted content. The hosted token limitation above still applies.
 attempts to set generated indexers to private execution for isolated deployments.
 If an indexer has not been created yet, setup skips that update: inspect the
 generated indexer's execution environment before ingesting sensitive content.
-Approvals, DNS and source/model reachability must be ready; a private endpoint
-for inbound Search traffic alone is insufficient. Review the current service
+Verify approvals, DNS and Search's outbound connectivity to storage and models
+as well as inbound Search access. Review the current service
 tier and preview requirements in the Microsoft Blob procedure before changing
 the source or isolation settings.
 
@@ -101,13 +104,13 @@ the source or isolation settings.
 Do this as the source administrator, separately from Agent Application deployment.
 
 1. Export the existing knowledge-base and source definitions and record their
-   owner. Do not use the platform's generated source or knowledge-base names
-   for externally managed objects.
+   owner. Give externally managed objects names distinct from the platform's
+   generated sources and knowledge bases.
 2. For an existing knowledge source, confirm it is on the same Search service
    as the target knowledge base. For an existing index, follow
    [Create a Search index knowledge source](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-search-index).
    Validate its semantic configuration and the content/reference fields.
-   Registering an index does not create missing permission metadata.
+   For protected content, verify that the index includes the required permission metadata.
 3. Create an operator-owned knowledge base, or update one you already own,
    using [Create a knowledge base](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-create-knowledge-base).
    Include the approved source in `knowledgeSources`. When updating, preserve
@@ -120,31 +123,26 @@ Do this as the source administrator, separately from Agent Application deploymen
 !!! warning "Provisioning can overwrite manual changes"
     Platform Search setup creates or updates the named sources and knowledge
     bases from `config/search/search.j2`. A later provision can replace manual
-    edits to those objects, including added source references. Setting an
-    existing object's name as a provisioning input does not make it read-only.
+    edits to those objects, including added source references. Provisioning
+    manages an object whenever its name is selected as a provisioning input.
     Keep externally managed objects under distinct names and endpoints as
     appropriate. For additions to platform-managed objects, maintain a reviewed
     platform template change in your deployment repository instead of relying
-    on a portal edit. This page does not change those templates.
+    on a portal edit.
 
-An additional source is not automatically supported by Agent Application.
-Some kinds require source-specific request parameters, consent or delegated
-identity. Use [SharePoint](sharepoint.md), [Work IQ](work-iq.md),
-[Fabric IQ](fabric-iq.md) or [Agent tools](agent-tools.md) for those contracts;
-do not invent a generic “enable source” setting.
-
-Current Microsoft procedures describe service capability, not a guarantee that
-every source kind is supported by this pinned hosted Agent Application.
+Source kinds have different request parameters, consent requirements and
+delegated-identity needs. Use [SharePoint](sharepoint.md), [Work IQ](work-iq.md),
+[Fabric IQ](fabric-iq.md) or [Agent tools](agent-tools.md) to check Agent Application
+support and setup for each kind alongside Microsoft's service procedures.
 
 <span id="3-configure-application-consumption"></span>
 
 ## 3. Configure Agent Application consumption
 
 For Agent Application's `single_agent_rag` strategy, verify these runtime settings in
-App Configuration. Changing the source kind does not change the hosting mode.
-This is the consumption contract, not a configuration-only solution to the
-hosted authorization boundary. Complete source setup independently; perform
-an authenticated Agent Application cutover only after that boundary is resolved.
+App Configuration. These settings select the retrieval target while retaining
+the hosting mode. Complete source setup and the hosted identity integration
+before switching authenticated Agent Application traffic to the knowledge base.
 
 | Key | Value or meaning |
 | --- | --- |
@@ -166,18 +164,17 @@ Search service. Its ID has this shape:
 /subscriptions/<subscription>/resourceGroups/<group>/providers/Microsoft.CognitiveServices/accounts/<account>/projects/<project>/connections/<connection>
 ```
 
-In this release the retrieval connector does **not** read
-`KNOWLEDGE_BASE_CONNECTION_ID`: it calls the configured Search endpoint and
-knowledge-base name directly. Changing only the connection ID cannot redirect
-retrieval, authorize a user or register a source. Have the foundation owner
-reconcile connection metadata separately when connecting another service;
-do not hand-edit a provisioning-owned connection as a retrieval fix.
+In this release the retrieval connector calls the configured Search endpoint
+and knowledge-base name directly. It does **not** read
+`KNOWLEDGE_BASE_CONNECTION_ID`. To change the retrieval target, update the
+endpoint and name. Have the foundation owner reconcile the provisioning-owned
+connection metadata separately when connecting another service.
 
 ### Apply a runtime change safely
 
 1. Record the previous values for rollback. Check your deployment inputs too:
-   provisioning writes these keys again. A runtime-only edit is not a durable
-   change to a platform-managed deployment.
+   provisioning writes these keys again. Keep approved deployment inputs
+   aligned with changes to platform-managed settings.
 2. With App Configuration Data Owner on the store, update only the reviewed
    nonsecret keys using Entra authentication. For example, in PowerShell:
 
@@ -195,40 +192,39 @@ do not hand-edit a provisioning-owned connection as a retrieval fix.
 3. Deploy a new hosted agent version through the
    [Agent Application redeployment procedure](deploy-full-stack.md#redeploy-applications-only).
    The configuration is cached in-process and the backend selector is cached
-   separately. A portal save is not a refresh of running versions. Do not
-   restart a Container App to refresh a Foundry hosted agent.
+   separately, so running versions retain their loaded values.
 4. Confirm traffic uses the new hosted version before verification. Reuse a
    compatible immutable image for configuration-only changes; code changes
    require the image preparation and handoff workflow in
    [Hosted agents](hosted-agents.md).
 
-Do not run provisioning merely to activate a runtime edit against an
-operator-owned knowledge base: it can reconcile generated objects and settings.
-Record runtime overrides and their reapplication in your deployment process.
+For a runtime edit against an operator-owned knowledge base, use the agent
+deployment steps above. Provisioning also reconciles generated objects and
+settings. Record runtime overrides and their reapplication in your deployment process.
 
 ## 4. Verify and recover
 
 - **Source check:** the source's indexing run completes and a known document
   is retrievable from the intended knowledge base with an expected reference.
 - **Agent Application check:** use a question unique to that document. Confirm the
-  new hosted version attempts Foundry IQ retrieval and returns grounded
-  content/references, rather than treating a fluent answer as proof.
+  new hosted version retrieves from Foundry IQ and returns the expected
+  document ID, grounded content and source reference.
   This success criterion applies only once the hosted identity integration
   is in place; the pinned authenticated path otherwise stops at its token check.
 - **Authorization check:** verify allow/deny behavior independently. If the
-  pinned hosted connector reports a missing incoming user token, this is the
-  documented boundary, not a reason to grant broader data access.
+  pinned hosted connector reports a missing incoming user token, investigate
+  the hosted identity integration. Keep existing data access
+  restrictions while resolving token delivery.
 
 | Symptom | Check or recovery |
 | --- | --- |
 | Knowledge base/source not found | Confirm Search endpoint, object names and knowledge-base membership; a project connection does not create these objects. |
 | Ingestion fails | Check Search identity roles, generated indexer status and private-link approvals/reachability before changing Agent Application keys. |
-| Search returns 403 | Check the actual retrieval principal's scoped data role. Do not confuse it with the project identity or ingestion identity. |
+| Search returns 403 | Identify the principal making the retrieval request and check its scoped data role. Project and ingestion identities have separate grants. |
 | Missing user token or OBO failure | Preserve authentication and source ACLs. A hosted extension must supply validated delegated context; configuration alone cannot do so. |
 | Old target still used | Verify the new version is deployed and receiving traffic; review cached settings and later provisioning overwrites. |
 | Added source disappears after provision | Restore the saved definition under an operator-owned name, or reconcile the approved source into your managed template. |
 
 To undo a runtime cutover, restore the recorded settings and deploy a new hosted
 version using the previous compatible image. Leave the prior knowledge base
-and documents intact until verification succeeds; deleting a generated index
-is not a rollback procedure.
+and documents intact until verification succeeds.

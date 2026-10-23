@@ -4,8 +4,8 @@
 
 ## Objective
 
-Deploy the Azure foundation and the Agent Application: Agent App UI, an
-orchestrator and, when selected, Agent App Ingestion. Choose where the
+Deploy the Azure foundation and the Agent Application: Agent App UI,
+Agent App Orchestrator and, when selected, Agent App Ingestion. Choose where the
 orchestrator runs and how the deployment connects to Azure before provisioning.
 
 ## When to use
@@ -15,7 +15,7 @@ already configured Agent foundation. For a customer-owned application, use
 [Bring your own app](build-your-own-app.md) for its deployment branch.
 Only need the foundation? Use [Deploy infrastructure only](deploy-infra-only.md).
 For the relationship between the template, its manifest and lifecycle hooks,
-see [How the template works](how-it-works.md).
+see [How it works](how-it-works.md).
 
 ## Prerequisites
 
@@ -24,8 +24,8 @@ see [How the template works](how-it-works.md).
   additional permissions in their own scopes. See [Permissions](../bicep/permissions.md).
 - **Subscription readiness:** accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
-  selected parameters. [Regional considerations](../bicep/regional-considerations.md)
-  explain why passing preflight does not guarantee available capacity.
+  selected parameters. Review [regional considerations](../bicep/regional-considerations.md)
+  for capacity constraints that can still affect deployment after preflight.
 - **Private deployments:** an authorized VPN/VNet-connected deployment host with
   private DNS resolution. An ACR Tasks build pool is not that host.
 
@@ -117,14 +117,19 @@ azd env set AZURE_LOCATION <region>
 ```
 
 For an existing environment, use `azd env select <environment-name>` instead
-and preserve its approved inputs. Use separate environments, resource groups,
-identities, secrets and data for DEV, TEST and PROD. An environment name or the
-App Configuration label alone is not a security boundary. Promote the same
-reviewed source revision with stage-specific inputs.
+and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
+environments, resource groups, identities, configuration stores, secrets and
+data. Promote the same reviewed source revision with stage-specific inputs.
 
 <a id="step-3-choose-a-topology"></a>
 
 ### Step 3: Choose the application and network
+
+Set the deployment choices below in the selected azd environment with
+`azd env set` before provisioning. Native foundation arrays and objects go in the root
+parameter file, as described in the linked infrastructure choices.
+[How it works](how-it-works.md) explains how these inputs become
+deployment parameters; runtime application settings are configured separately.
 
 #### Orchestrator topology
 
@@ -161,11 +166,11 @@ conversation uploads are required:
 azd env set DEPLOY_INGESTION_CONTAINER_APP true
 ```
 
-This does not switch the retrieval backend or rewrite source/index bindings.
-Existing environments keep their selection. Before disabling Agent App Ingestion
-in an existing environment, review
+The ingestion selection leaves the retrieval backend and source/index bindings
+unchanged. Existing environments keep their selection. Before disabling
+Agent App Ingestion in an existing environment, review
 [ingestion choices and the older-UI migration warning](ingestion.md).
-Disabling uploads must not be inferred from a missing endpoint.
+When disabling it, verify that the UI's upload gate also disables uploads.
 
 For a different application, set `AGENTLZ_APP_DEFINITION` to its definition
 path **before the first provision**. The environment binds to that application
@@ -197,9 +202,9 @@ connected host. If creating that host first, use the
 | Private registry, remote builds | Keep `DEPLOY_ACR_TASK_AGENT_POOL=true` before provision and use `BUILD_MODE=acr-task`; builds use the provisioned VNet pool |
 | Supported Container Apps, local Docker | `azd env set BUILD_MODE local`; the host must reach the registry and service endpoints |
 
-Automatic hosted image preparation and isolated custom source builds still
-require the private pool. `BUILD_MODE=local` is not a local-build alternative
-for those paths. See [network isolation](network-isolation.md) for build egress,
+With network isolation enabled, automatic hosted image preparation and custom
+source builds require the private pool, including when `BUILD_MODE=local` is selected.
+See [network isolation](network-isolation.md) for build egress,
 DNS and private-link readiness requirements.
 
 ### Step 4: Deploy
@@ -230,8 +235,8 @@ application deployment.
 Confirm the runner has Foundry agent authoring access on the exact project
 (Foundry User, previously Azure AI User, or an appropriate equivalent),
 account read access and the required scoped role-assignment authority.
-Azure sign-in or network connectivity alone is insufficient; see
-[private-runner permissions](network-isolation.md) and [hosted identities](hosted-agents.md).
+Review [private-runner permissions](network-isolation.md) and
+[hosted identities](hosted-agents.md) for the required scopes.
 
 A fresh hosted Agent Application deployment needs this order:
 
@@ -269,8 +274,8 @@ In a hosted Agent Application topology, continue at preparation above.
 
 ## Validation
 
-1. Inspect the selected resource group and intended deployed revisions, not just
-   an older healthy placeholder:
+1. Inspect the selected resource group and confirm the intended application
+   revisions are running in place of placeholder images:
 
     ```bash
     azd env get-value AZURE_RESOURCE_GROUP
@@ -287,11 +292,12 @@ In a hosted Agent Application topology, continue at preparation above.
    ingestion, and test both allowed and denied document access. Test uploads only
    when Agent App Ingestion and upload eligibility are selected.
 4. In a hosted topology, verify the intended routed version and runtime telemetry
-   as well as the remaining Container Apps. A greeting smoke test is not evidence
-   of user login, OBO or document authorization.
+   as well as the remaining Container Apps. The deployment's greeting smoke test
+   checks basic agent response. Test user login, OBO and document authorization
+   through the UI.
 
-Use [Troubleshooting](troubleshooting.md) for failures. Do not authorize a cutover
-based only on a successful hook or HTTP 200.
+Complete these application checks before cutover. Use
+[Troubleshooting](troubleshooting.md) for failures.
 
 To make a hosted agent available in Teams and Microsoft 365 Copilot, continue with
 [Publish to Teams and M365](publish-to-teams.md). Bot creation and channel publication
@@ -320,7 +326,8 @@ are separate manual tasks, not part of this deployment.
 4. If infrastructure or configuration changed, review the previous inputs and
    preview foundation changes before rerunning the matching full workflow.
    Restore directly managed runtime keys separately using their recorded values
-   and reload the affected components. Do not assume checkout restores them.
+   and reload the affected components. These settings are managed separately
+   from the source checkout.
 5. Repeat [Validation](#validation) before reopening access or promotion.
 
 Checking out an old tag does not reverse data migrations or recover lost data.
@@ -374,8 +381,8 @@ are under each component's `.logs` directory and can contain sensitive details.
 Hosted deployment reuses the prepared digest. A changed generated source pin or
 image requires preparation, provisioning the handoff and deployment again.
 An operator-managed digest is not rebuilt automatically: verify its provenance,
-compatibility and registry availability. Rebuilding identical source separately
-in each environment does not prove identical image digests.
+compatibility and registry availability. When rebuilding the same source in
+each environment, compare the resulting image digests before promotion.
 
 Infrastructure, RBAC, topology or ingestion-selection changes require the full
 workflow, not deploy-only. Changing a selection does not delete previously
@@ -403,7 +410,7 @@ For a hosted version, run root `azd deploy` with the compatible handoff.
 Process environment inputs declared in `hosted-agent/azure.yaml` are immutable
 version inputs and require a new agent version. An App Configuration edit
 cannot replace a process-only setting such as `APP_CONFIG_TLS_COMPATIBILITY`.
-The `agent-lz` label is not an environment-isolation mechanism.
+Use `agent-lz` within each environment's separate configuration store.
 
 ### Rotate a secret
 

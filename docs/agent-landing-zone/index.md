@@ -16,10 +16,11 @@ Deployment parameters and application selection determine what is created.
 | Foundation | Azure resources, identities and service configuration selected by the deployment inputs | `azd provision` and its configuration hooks |
 | Application | The selected application components and, for hosted orchestration, the agent version | `azd deploy` and its deployment hooks |
 
-For the file layout and lifecycle, read [How the template works](how-it-works.md).
-Start with [Deployment choices](planning.md) to choose a topology, tool and
-resource footprint. The shared [foundation inventory](../bicep/deployed-resources.md)
-is a reference, not the exact bill of materials for every Agent deployment.
+Start with [How it works](how-it-works.md) for the deployment flow and how to
+set parameters. Then use [Deployment choices](planning.md) to choose a topology, tool and
+resource footprint. Compare the shared
+[foundation inventory](../bicep/deployed-resources.md) with your selected
+topology and reuse settings to identify the resources in your deployment.
 
 ## Agent Application
 
@@ -62,11 +63,10 @@ provides application-managed document processing, including format-aware
 chunking, embeddings and configured SharePoint ingestion. Native Foundry IQ can
 instead ingest configured Blob sources without Agent App Ingestion.
 
-These paths are not feature-equivalent. Conversation attachments require
-Agent App Ingestion and the existing upload eligibility checks. SharePoint has
-separate connector and permission requirements; the native Blob path does not
-establish ingestion-free SharePoint support. See [Ingestion choices](ingestion.md)
-before selecting or changing the ingestion path.
+Choose the path for the sources and features you need. Conversation attachments
+require Agent App Ingestion and the UI's upload eligibility checks. SharePoint
+requires its own connector and permissions. See [Ingestion choices](ingestion.md)
+for the supported paths and their setup requirements.
 
 ## Choose your path
 
@@ -76,11 +76,12 @@ runbook. [What's new](whats-new.md) covers recent changes.
 | I want to | Guidance |
 | --- | --- |
 | Review architecture and security decisions | [Design checklist](../architecture/design-checklist.md) |
+| Understand the deployment flow and how to set parameters | [How it works](how-it-works.md) |
 | Choose standalone, hub integration or AI Gateway, and a deployment tool | [Deployment choices](planning.md) |
 | Plan private connectivity, DNS and a connected runner | [Network isolation](network-isolation.md) |
 | Size models, Search, compute and data services | [Sizing and capacity](sizing.md) |
 | Estimate and control spending | [Cost planning](cost-planning.md) |
-| Understand the template and set deployment inputs | [How the template works](how-it-works.md), then [Configuration](configuration.md) |
+| Look up deployment inputs and runtime settings | [Configuration](configuration.md) |
 | Provision a foundation without deploying application code | [Deploy infrastructure only](deploy-infra-only.md) |
 | Deploy the foundation and Agent Application | [Deploy full stack](deploy-full-stack.md) |
 | Put the web UI behind Application Gateway | [Application Gateway](application-gateway.md) |

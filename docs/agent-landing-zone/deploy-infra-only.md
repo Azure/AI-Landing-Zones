@@ -4,8 +4,8 @@
 
 Provision the Azure foundation without building or deploying application images.
 This is the infrastructure procedure for both Agent Landing Zone and the
-standalone AI Landing Zone Bicep foundation. Choose the source first: their
-hooks, parameter files and outputs are not interchangeable.
+standalone AI Landing Zone Bicep foundation. Choose the source first and use
+its hooks, parameter files and outputs throughout the procedure.
 
 ## When to use
 
@@ -26,10 +26,10 @@ Infrastructure-only still creates billable resources.
 
 The effective footprint is the combination of enabled services, resource-reuse
 inputs, application definition, orchestrator topology and network settings.
-This affects AI services and their backing resources, runtimes, data stores,
-monitoring, networking and optional add-ons, not just one or two services.
-Use the selected source's `main.parameters.json`, Bicep conditions and preview
-as the authority; the foundation inventory is not an Agent Application bill of materials.
+This determines which AI services, backing resources, runtimes, data stores,
+monitoring, networking and optional add-ons are deployed.
+Review the selected source's `main.parameters.json`, Bicep conditions and preview
+to identify the resources for your deployment.
 
 ## Procedure
 
@@ -92,9 +92,12 @@ Fork or mirror the source only when maintaining your own inputs or automation.
 
 ### Step 3: Choose the foundation shape
 
-The following choices apply before provisioning. `DEPLOYMENT_MODE` records the
-network design intent; it does not configure routing, DNS or isolation by itself.
-It is separate from Agent's `DEPLOYMENT_TOPOLOGY`, which chooses the orchestrator.
+Choose the network design before provisioning. Set the scalar deployment inputs
+below in the selected azd environment with `azd env set`; arrays and objects
+use the root parameter file as described later in this step.
+`DEPLOYMENT_MODE` records the network design intent; routing, DNS and isolation
+use their own inputs. Agent's separate `DEPLOYMENT_TOPOLOGY` chooses where the
+orchestrator runs. See [How it works](how-it-works.md) for input processing.
 
 #### Public service endpoints
 
@@ -103,8 +106,8 @@ azd env set NETWORK_ISOLATION false
 azd env set DEPLOYMENT_MODE standalone
 ```
 
-Service authentication and authorization still apply. This is not a private
-deployment or a way to repair an existing private environment.
+Services use public endpoints with authentication and authorization.
+For an existing private environment, preserve its isolation settings during recovery.
 
 #### Private standalone network
 
@@ -143,14 +146,14 @@ azd env set HUB_INTEGRATION_EGRESS_NEXT_HOP_IP <hub-firewall-private-ip>
 
 Instead of a next-hop IP, a platform-managed route table can be selected with
 `HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID`; these inputs are mutually
-exclusive. Do not leave both unset if hub egress is required. Shared monitoring
+exclusive. Set one when hub egress is required. Shared monitoring
 uses `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID` and, when applicable,
 `EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID` with its protected connection string.
 
 Apply the [hub-and-spoke DNS and peering contract](../bicep/hub-and-spoke.md)
 before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
-The upstream test-hub fixture is not a production connectivity deployment.
+Use an approved production hub; the upstream test-hub fixture is for testing.
 
 #### Existing networks, private DNS and parameter files
 
@@ -159,13 +162,13 @@ The upstream test-hub fixture is not a production connectivity deployment.
 | Existing VNet | Set `USE_EXISTING_VNET=true` and `EXISTING_VNET_RESOURCE_ID`. Decide who owns subnets, NSGs and delegations before setting `DEPLOY_SUBNETS`; both peering directions are externally managed for BYO VNet |
 | Shared private DNS | Supply the applicable `EXISTING_PRIVATE_DNS_ZONE_*_RESOURCE_ID` inputs. Their owner supplies VNet links or resolver forwarding; peering alone does not propagate DNS |
 | Azure Policy-managed DNS | Use `POLICY_MANAGED_PRIVATE_DNS=true` instead of BYO zone overrides and agree who creates zone groups, records and links |
-| Approved public exception | Review native `allowedIpRanges` and Storage trusted-service/resource-instance exceptions explicitly; isolation is not a blanket public-access guarantee |
+| Approved public exception | Review native `allowedIpRanges` and Storage trusted-service/resource-instance exceptions to confirm the approved service-specific public access |
 | Controlled public frontend | Review [Application Gateway ingress](../bicep/public-ingress.md), certificate ownership, WAF policy and cost before opting in |
 
 Set mapped scalar inputs with `azd env set`. Native arrays/objects such as the
 complete address plan, `allowedIpRanges`, Storage controls and `publicIngress`
-belong in the reviewed **root** `main.parameters.json`, not invented environment
-variables. In the Agent platform, hooks regenerate `infra/main.parameters.json`;
+belong in the reviewed **root** `main.parameters.json`.
+In the Agent platform, hooks regenerate `infra/main.parameters.json`;
 do not edit that generated copy. The
 [parameter reference](../bicep/parameterization.md) describes foundation inputs;
 [Agent configuration](configuration.md) describes platform composition and overrides.
@@ -195,8 +198,9 @@ azd provision
 
 Review the preview's scopes, names, routes, resource changes, public access and
 role assignments before the second command. Resolve quota, Policy, subnet and
-capacity findings rather than skipping preflight. Preview is not an application
-or connectivity test.
+capacity findings rather than skipping preflight. Preview covers planned
+resource changes. Test connectivity after provisioning and application behavior
+after deploying your selected application.
 
 | Source | What provisioning completes |
 | --- | --- |
@@ -204,8 +208,9 @@ or connectivity test.
 | Upstream Bicep foundation | Foundation preflight and resource deployment; no Agent post-provision modules or application image deployment |
 
 Selected Container Apps can run placeholder images at this point.
-An upstream hello-world response proves only that network/runtime smoke test.
-It is not evidence of Agent authentication, tools, ingestion or document authorization.
+An upstream hello-world response checks basic network and runtime reachability.
+Validate sign-in, tools, ingestion and document authorization after deploying
+the Agent Application.
 
 <span id="verify-the-foundation"></span>
 
@@ -221,8 +226,8 @@ az network private-endpoint list -g <resource-group> \
   --query "[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}" -o json
 ```
 
-Compare the inventory with enabled features and reuse inputs, not a fixed
-resource count. For private deployments, verify approved connections, private
+Compare the inventory with enabled features and reuse inputs to account for
+both new and reused resources. For private deployments, verify approved connections, private
 DNS resolution and TCP/TLS reachability from the actual deployment host.
 Then test each required data plane with its authorized identity and confirm
 telemetry reaches the intended workspace. See the
@@ -316,8 +321,8 @@ azd env refresh
 If the environment is already present, select it instead. Reapply the approved
 deployment inputs: refresh restores outputs, not your full configuration.
 Do not publish or copy another stage's `.azure/` state as an input artifact.
-Managed-identity sign-in is an option for an appropriately authorized runner,
-not proof that its configuration/build roles are sufficient.
+An authorized runner can use managed-identity sign-in. Verify its scoped
+configuration and build roles before running the hooks.
 
 From the connected host, clear deferral and finish configuration:
 
@@ -327,7 +332,7 @@ azd env set AZURE_SKIP_NETWORK_ISOLATION_WARNING false
 azd hooks run postprovision
 ```
 
-`RUN_FROM_JUMPBOX` requests checks; it does not provide connectivity.
+`RUN_FROM_JUMPBOX` requests connectivity checks on the connected host.
 Verify platform outputs and required data-plane access before deploying.
 Private native Blob sources can require an administrator to approve the
 exact Search shared private-link request reported by the readiness gate.
@@ -348,8 +353,8 @@ Upstream foundation environments use their own source and complete root
 parameter contract, without Agent post-provision commands.
 
 Retry a partial deployment with the same approved revision and environment after
-repairing the specific failure. Reverting code is not guaranteed to reverse
-resource or data changes. Do not delete data, rename subnets, move existing
+repairing the specific failure. Review resource and data changes separately
+when reverting code. Do not delete data, rename subnets, move existing
 resources to another region, weaken isolation or bypass preflight to recover.
 Turning a deploy flag off is not deletion or permission cleanup.
 

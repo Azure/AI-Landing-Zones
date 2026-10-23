@@ -40,8 +40,8 @@ Messages follow this path:
     is **in preview** and follows a separate setup, outside this procedure.
     In the documented lab, native connector requests still arrived through
     public ingress after VNet association and were denied with PNA disabled;
-    the flow used the delegated private path successfully. This observation
-    does not establish that every native private integration is unsupported.
+    the flow used the delegated private path successfully. These results are
+    specific to that lab; evaluate the native preview separately for your environment.
 
 ## Prerequisites
 
@@ -67,9 +67,9 @@ Messages follow this path:
   it before editing and retain its connection-reference settings. Use a dedicated
   pilot agent so disabling the relay does not interrupt unrelated topics.
 
-Creating Azure network resources is outside this procedure. A subnet alone is
-not sufficient: the enterprise policy must reference the required regional
-networks and be associated with the environment. Use the
+Creating Azure network resources is outside this procedure. The enterprise
+policy must reference the required regional networks and be associated with
+the environment. Use the
 [Power Platform setup requirements](https://learn.microsoft.com/power-platform/admin/vnet-support-setup-configure)
 if the platform handoff is incomplete.
 
@@ -187,9 +187,9 @@ package for these items.
 | Base Resource URL | `https://<foundry-resource>.services.ai.azure.com` |
 | Sign-in account | The connection user authorized in Step 2 |
 
-**"Preauthorized" refers to the Microsoft application used by the connector,
-not to access to your Foundry agent.** Requests still use HTTPS and the
-connection user's Microsoft Entra identity, with the permissions from Step 2.
+**"Preauthorized" refers to the Microsoft application used by the connector.**
+Requests use HTTPS and the connection user's Microsoft Entra identity.
+The agent-scoped permissions from Step 2 authorize access to Foundry.
 
 Do not append the project path to the base URL or use the resource hostname as
 the token audience. Do not supply a bearer token, API key or client secret.
@@ -239,8 +239,8 @@ Do not concatenate the user's message into a JSON string.
 
 The flow waits for a complete response; it does not stream tokens.
 `store:true` requests response storage; approve
-Foundry's retention settings before using real data. It does **not** implement
-multi-turn history: each call sends only the current message.
+Foundry's retention settings before using real data. Each call sends only the
+current message, so the relay has no multi-turn history.
 
 #### Response and publication
 
@@ -252,8 +252,8 @@ if(contains(body('Invoke_an_HTTP_request'), '$content'), base64ToString(body('In
 ```
 
 This decodes the response to JSON text, whether the connector returns JSON
-directly or inside a base64 `$content` envelope. It is **not the chat reply**;
-Step 4 extracts that text.
+directly or inside a base64 `$content` envelope. Step 4 extracts the chat reply
+from this JSON.
 
 Select **Respond to the agent > Settings** and configure:
 
@@ -296,8 +296,8 @@ and restrict sharing before adding real users.
    select **Create new** and name the variable **`FoundryReply`**
    (shown as **`Topic.FoundryReply`**). For **To value**, select **Formula** and
    paste the expression below; the resulting variable must be **Text**.
-   It reads all message `output_text` parts, rather than assuming the first output
-   item is a message; tool calls can precede it.
+   Tool calls can precede message items in the response. The expression reads
+   all message `output_text` parts.
 
     <details class="runbook-command" markdown="1">
     <summary>Power Fx: extract text only from a completed, error-free response</summary>
@@ -352,7 +352,7 @@ Use harmless test data in a **new** Studio test conversation and record the UTC
 test window. In Power Automate, open the flow's details page and select the
 matching run in **Run history**. Keep its run ID; expand the HTTP action to inspect
 its status and outputs, and **Respond to the agent** for the decoded JSON.
-A chatbot reply alone is not proof of backend execution.
+Correlate this run with the Studio topic trace to verify backend execution.
 
 | Check | Acceptance evidence |
 | --- | --- |
@@ -364,13 +364,13 @@ A chatbot reply alone is not proof of backend execution.
 | Runtime limit | Representative calls complete below **100 seconds**, including connector and agent processing. |
 
 Use existing approved diagnostic settings; do not turn on prompt or document
-capture just to obtain network evidence. A jumpbox success establishes only the
-jumpbox path. If gateway logs are unavailable, do not claim that private ingress
-has been independently verified.
+capture just to obtain network evidence. Verify the delegated subnet path
+separately from jumpbox connectivity. If gateway logs are unavailable, record
+private ingress as awaiting independent verification.
 
 After these checks pass, return to the Studio agent and select **Publish**.
-Repeat the test from the intended authenticated channel with an approved pilot user. Designer success
-does not verify channel authentication, sharing or connection behavior.
+Repeat the test from the intended authenticated channel with an approved pilot
+user to validate channel authentication, sharing and connection behavior.
 
 ## Troubleshooting
 

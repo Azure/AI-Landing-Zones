@@ -42,11 +42,11 @@ nav:
       - "What's new": agent-landing-zone/whats-new.md
       - "Design Checklist": architecture/design-checklist.md
       - Plan your deployment:
+          - "How it works": agent-landing-zone/how-it-works.md
           - "Deployment choices": agent-landing-zone/planning.md
           - "Network isolation": agent-landing-zone/network-isolation.md
           - "Sizing and capacity": agent-landing-zone/sizing.md
           - "Cost planning": agent-landing-zone/cost-planning.md
-          - "How the template works": agent-landing-zone/how-it-works.md
           - Configuration:
               - "Settings": agent-landing-zone/configuration.md
               - "Resource naming": agent-landing-zone/resource-naming.md

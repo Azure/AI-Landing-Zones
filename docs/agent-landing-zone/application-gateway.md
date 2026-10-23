@@ -6,8 +6,7 @@ Give the Agent Application web UI a controlled public HTTPS entry point while ke
 its Container Apps environment private. The optional gateway terminates TLS,
 applies WAF rules, and forwards requests over HTTPS to **one Container App**.
 The basic routing rule forwards all UI paths, including enabled application
-routes; it is not a chat-only path allowlist. Keep application authentication
-and route authorization enabled.
+routes. Keep application authentication and route authorization enabled.
 
 In the hosted topology, the path is:
 
@@ -36,9 +35,9 @@ controlled public entry point. Choose the supported entry point before editing:
 | UI accessible only from your corporate network | Leave `publicIngress.enabled` false and use VPN/peering plus private DNS. See [Network isolation](network-isolation.md). |
 | An internal Application Gateway or an existing corporate ingress | Integrate it separately with the UI backend. The template option has a public IP only; it has no private-frontend switch. |
 
-`NETWORK_ISOLATION=false` does **not** activate this gateway, even when
-`publicIngress.enabled` is true. Do not enable isolation on an existing public
-deployment merely to add a gateway; plan that network migration separately.
+The gateway requires network isolation. With `NETWORK_ISOLATION=false`,
+it stays undeployed even when `publicIngress.enabled` is true. For an existing
+public deployment, plan the network migration separately before adding this gateway.
 
 <span id="before-you-start"></span>
 
@@ -116,8 +115,9 @@ azd env get-value CONTAINER_APP_INTERNAL_FQDN
 Expected: enabled is true; the backend FQDN belongs to the UI Container App.
 With no hostname or certificate configured there is no HTTPS listener.
 The empty source list and subnet Internet deny rule prevent public browser
-access to this staging configuration. They do not deny all VNet-origin traffic
-or replace private-network access controls. This is not an application health test.
+access to this staging configuration. VNet-origin traffic remains subject to
+separate private-network controls. Test application health after configuring
+the listener and UI sign-in URL.
 
 ### 2. Prepare certificate access and DNS
 
@@ -164,8 +164,9 @@ Apply the URL change by restarting/redeploying the **UI Container App**:
 the UI loads this setting at process startup. This does not require a hosted
 agent restart. Do not rewrite the provisioning-managed `FRONTEND_APP_ENDPOINT`
 to the public hostname; it describes the deployed Container App endpoint.
-Keep delegated authentication/OBO and source authorization unchanged. A WAF
-or propagated user identity does not itself enforce document permissions.
+Keep delegated authentication/OBO and source authorization unchanged.
+Document permissions are enforced by the application and its data sources,
+separately from the gateway's WAF controls.
 
 ### 4. Admit HTTPS clients
 
@@ -195,8 +196,9 @@ an HTTP connection timeout is expected.
 
 ## Validation
 
-1. Check `azd env get-value PUBLIC_INGRESS_LIVE`: true means the hostname and
-   certificate inputs are present, **not** that TLS, reachability, or chat works.
+1. Check `azd env get-value PUBLIC_INGRESS_LIVE`: true confirms that the hostname
+   and certificate inputs are present. The following checks validate TLS,
+   reachability and chat.
 2. In the Azure portal, open the deployed **Application Gateway → Backend
    health**. Confirm that the backend pool contains the UI FQDN and is healthy.
    The shipped HTTPS probe checks `/` and accepts **200–499**, so a login denial
@@ -208,11 +210,11 @@ an HTTP connection timeout is expected.
 4. Send a chat request and confirm the streamed response completes. Test a
    representative long response and any enabled uploads. The gateway backend
    timeout is **30 seconds** and its WAF has separate request/upload limits;
-   rendering the login page does not validate chat transport.
+   use the completed responses to validate chat transport.
 5. Repeat the connection test from an unapproved **public** network: TCP/443
    should be blocked. With test accounts and known restricted documents,
    verify permitted retrieval and denial for an unauthorized user through
-   Foundry IQ. Do not infer authorization from gateway health.
+   Foundry IQ. The unauthorized user must not receive restricted content.
 
 The shipped WAF uses OWASP CRS 3.2 in Prevention mode. Check its logs for
 blocked legitimate requests before widening access. Use narrowly scoped,

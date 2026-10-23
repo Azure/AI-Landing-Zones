@@ -1,9 +1,10 @@
 # Embed chat
 
 Embed Agent Application in a customer portal using Agent App UI's floating
-**Chainlit Copilot** widget. In UI v3.3.0 (Chainlit 2.12.0), this is a script
-rendered in an open Shadow DOM, **not an iframe**. It is not the Copilot Studio web widget.
-The [pinned UI embedding contract](https://github.com/Azure/agent-app-ui/blob/v3.3.0/docs/copilot-embedding.md)
+**Chainlit Copilot** widget. In UI v3.3.0 (Chainlit 2.12.0), a script renders
+the widget in an open Shadow DOM. This integration uses Agent App UI rather
+than Copilot Studio.
+The [pinned UI embedding reference](https://github.com/Azure/agent-app-ui/blob/v3.3.0/docs/copilot-embedding.md)
 describes the component's session and transport behavior.
 
 This recipe keeps the orchestrator hosted in Foundry and uses Entra
@@ -15,20 +16,21 @@ neither the hosted agent nor its Foundry IQ knowledge base.
 - Have a working [hosted deployment](hosted-agents.md) and confirm a signed-in
   user can chat in the standalone UI. Complete [Agent Application authentication](application-auth.md),
   including the UI API's delegated scope and server-side OBO configuration.
-- Have an existing portal MSAL sign-in/token-acquisition integration. In
+- Have an existing portal sign-in and token-acquisition integration using
+  Microsoft Authentication Library (MSAL). In
   **Entra ID → App registrations**, select the **portal's own client app
-  registration**, not the UI API registration. Open **API permissions →
+  registration**. Open **API permissions →
   Add a permission → My APIs → your UI API → Delegated permissions**.
   Select `user_impersonation` (or your exposed scope name), then **Add
   permissions**. Obtain consent according to tenant policy; have an
   authorized administrator grant tenant-wide consent where required. See
   [Configure a client application's API permissions](https://learn.microsoft.com/entra/identity-platform/quickstart-configure-app-access-web-apis).
-- Be able to change the portal's code and CSP, the UI's configuration and
+- Be able to change the portal's code and content security policy (CSP), the UI's configuration and
   Container App deployment. App Configuration data changes require an
   appropriate data-plane role, such as App Configuration Data Owner.
 - Choose two distinct HTTPS origins, for example
-  `https://portal.contoso.com` and `https://chat.contoso.com`. An origin is
-  scheme, host and optional port, not a page URL.
+  `https://portal.contoso.com` and `https://chat.contoso.com`. An origin consists
+  of the scheme, host and optional port.
 - Ensure users' browsers can reach the UI through the existing authorized
   network/gateway path. Do not make private ingress public for the widget.
   See [Private access](private-access.md).
@@ -36,7 +38,9 @@ neither the hosted agent nor its Foundry IQ knowledge base.
 ## 1. Configure the UI
 
 Keep embedding disabled in production until a staged portal is ready. Apply
-the following settings to the **UI**, not the hosted orchestrator:
+the following runtime settings to the **UI** through App Configuration with
+label `agent-lz`, following [Configuration](configuration.md), or explicit
+UI environment variables:
 
 | Setting | Value |
 | --- | --- |
@@ -49,36 +53,35 @@ the following settings to the **UI**, not the hosted orchestrator:
 | `CHAINLIT_COPILOT_ENTRA_REQUIRED_SCOPE` | `user_impersonation`, or your configured delegated scope name |
 
 Use exact origins: no wildcard, `null`, credentials, application path, query
-or fragment. Do not include the UI origin in the portal allow-list.
+or fragment. Include only portal origins in the allow-list.
 `CHAINLIT_ROOT_PATH` must be empty; same-origin path multiplexing is unsupported.
 
-The audience is **not** the chat URL or the portal client ID. For a v2 access
+The audience identifies the UI API that receives the token. For a v2 access
 token, Microsoft documents `aud` as the API's application (client) ID. Request
 the API's fully qualified scope in the portal, but configure only the scope
-name above. Do not copy an `api://...` scope URI into the audience setting
-without checking the actual API token contract. See
+name above. Check the token's audience before using an `api://...` value in
+the audience setting. See
 [Access token claims](https://learn.microsoft.com/entra/identity-platform/access-token-claims-reference).
-The validator accepts the configured tenant and v2 issuer only. An existing
-customer-portal login from another identity provider or tenant is not
-automatically a supported API identity.
+The validator accepts the configured tenant and v2 issuer only. Portals using
+another identity provider or tenant need a compatible Entra token-acquisition
+flow for this API.
 
-Use runtime App Configuration keys with label `agent-lz`, following
-[Configuration](configuration.md), or explicit UI environment variables.
 In the Azure portal, open the deployment's App Configuration store →
 **Operations → Configuration explorer → Create → Key-value**. Add each
 nonsecret key/value above with **Label** set to `agent-lz`, or edit its existing
 entry. See [Create a key-value](https://learn.microsoft.com/azure/azure-app-configuration/quickstart-azure-app-configuration-create).
-Nonempty environment variables override these embedding settings. These are
-not new `azd` deployment inputs. Keep the existing `CHAINLIT_AUTH_SECRET`
+Nonempty environment variables override these embedding settings. Configure
+them as runtime keys rather than `azd` deployment inputs. Keep the existing
+`CHAINLIT_AUTH_SECRET`
 protected through the deployment's secret mechanism; never hard-code a token
 or secret in portal code, a config command or source control.
 
 The UI loads these settings at startup, not on every request. After saving,
 restart/redeploy the **UI Container App** through your normal deployment
-process; do not restart the hosted agent for an embedding-only change.
+process. An embedding-only change requires only the UI reload.
 Keep one Uvicorn process, one active Container Apps revision (Single revision
-mode), and exactly one replica. Sessions and rate limits are process-local;
-affinity alone does not make multiple replicas safe.
+mode), and exactly one replica. Sessions and rate limits are process-local,
+so the widget requires this single-process, single-replica deployment.
 
 Prefer same-site HTTPS subdomains. For a cross-site portal,
 `CHAINLIT_COOKIE_SAMESITE=none` is required; cookies remain `Secure` and
@@ -97,14 +100,14 @@ script-src 'self' https://chat.contoso.com;
 connect-src 'self' https://chat.contoso.com wss://chat.contoso.com;
 ```
 
-These are additions to your policy, not a replacement for its other directives.
-Keep your nonce/hash policy for portal JavaScript. Do **not** relax
-`frame-ancestors` or `X-Frame-Options`; the widget does not frame the UI.
-The bundle executes in the portal page; an open Shadow DOM is not a security
-sandbox. Serve it only from the UI origin you control and trust.
+Add these directives to your existing policy, retaining its other protections.
+Keep your nonce/hash policy for portal JavaScript and the existing
+`frame-ancestors` and `X-Frame-Options` restrictions. The bundle executes with
+the portal page's JavaScript privileges; its Shadow DOM provides presentation
+isolation only. Serve it only from the UI origin you control and trust.
 The pinned widget bundle also injects inline styles into its Shadow DOM. If your
-portal blocks these, review CSP compatibility before adopting it; the example
-above is not a complete policy for every portal. Do not broadly enable
+portal blocks these, review CSP compatibility before adopting it. Adapt the
+example to your portal's complete policy. Do not broadly enable
 `unsafe-inline` to bypass a failed security review.
 
 The gateway must preserve the external UI origin, cookies, browser `Origin`,
@@ -114,18 +117,21 @@ and WebSocket upgrades. Preserve `/copilot/index.js`,
 See [Container Apps ingress](https://learn.microsoft.com/azure/container-apps/ingress-overview)
 for the service's WebSocket support.
 
-An exact-origin allow-list is a browser control, not authentication. A direct
-HTTP client can forge `Origin`; keep Entra validation and network/gateway
-authorization in place.
+The exact-origin allow-list restricts browser access. Entra validation and
+network/gateway authorization authenticate and authorize requests, including
+direct HTTP clients that can forge `Origin`.
 
 ## 3. Bootstrap, then mount
+
+Bootstrap exchanges the portal's API token for a UI session before the widget
+opens a chat connection.
 
 Use the portal's existing MSAL integration to acquire a **delegated v2 access
 token for the UI API**, not an ID token or Microsoft Graph token. See
 [Acquire a token in a SPA](https://learn.microsoft.com/entra/identity-platform/scenario-spa-acquire-token).
 MSAL's `clientId` is the portal app's client ID; its requested scope is the
 UI API's exposed Application ID URI plus `/user_impersonation` (or your
-configured scope name), not a Microsoft Graph scope.
+configured scope name).
 Keep it in memory and send it only to the UI bootstrap endpoint. Do not pass
 it as the widget's `accessToken` or put it in a URL.
 
@@ -173,9 +179,9 @@ Bootstrap validates the token and user authorization policy, then sets an
 opaque server-side session cookie. The embedded session retains the delegated
 token server-side for the hosted client's OBO exchange. Keep
 `HOSTED_AGENT_AUTH_MODE=user_delegated`; do not switch to service identity to
-work around a token failure. Identity propagation does not itself enforce
-document permissions: preserve the knowledge base's source ACLs and retrieval
-authorization. See [Foundry IQ](foundry-iq.md).
+work around a token failure. Document access also requires the knowledge base's
+source ACLs, retrieval authorization and the hosted identity integration
+described in [Foundry IQ](foundry-iq.md).
 An embedded session expires at the earlier of token expiry and its TTL
 (`CHAINLIT_COPILOT_SESSION_TTL_SECONDS`, default 3600 seconds); it does not
 silently refresh through standalone OAuth.
@@ -189,8 +195,9 @@ From a staged, allow-listed portal in a browser:
    Confirm the socket connects and a question receives a hosted-agent answer.
 2. Test an invalid/expired token: bootstrap should return `401`. Test a
    non-allow-listed portal origin: access should be denied (`403`).
-3. Test two users with different source permissions. An answer or citation
-   must not expose a source the current user cannot access.
+3. Test two users with different source permissions. Inspect retrieved
+   document IDs and confirm that protected documents are absent for the
+   denied user, including their content and citations.
 4. Exercise logout, account switching and expiry before enabling the widget
    for production users.
 
@@ -233,11 +240,10 @@ not restored after restart.
 - An iframe, same-origin subpath deployment and multi-process/multi-replica
   embedded sessions are not supported by this widget integration.
   For a custom presentation, build a separately authenticated client through
-  [Custom applications](build-your-own-app.md); that is custom code, not an
-  iframe enable switch.
+  [Custom applications](build-your-own-app.md).
 - The UI also implements `anonymous` embedding, but it supplies no user token
   and cannot call Agent Application's default user-delegated hosted path.
   It disables durable threads, uploads and private citation downloads.
-  Portal login alone does not protect an anonymously reachable UI endpoint.
+  The anonymous UI endpoint remains reachable independently of portal login.
 - Upload controls require the separately deployed ingestion capability;
   embedding does not add native hosted-agent uploads.

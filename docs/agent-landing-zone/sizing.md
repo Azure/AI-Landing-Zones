@@ -7,7 +7,7 @@ document processing place different demands on the deployment.
 Choose the [deployment shape](planning.md) first. Size each service below, then
 use [Cost planning](cost-planning.md) to estimate the selected capacity.
 
-!!! note "Defaults are not workload tiers"
+!!! note "Validate defaults against your workload"
     The starting points below describe platform v4.3.0, reviewed
     October 23, 2026. They are not benchmarked small/medium/large profiles or
     throughput guarantees. Use your composed parameters and actual deployed
@@ -28,20 +28,19 @@ Record these inputs before choosing resource capacity.
 Start with [Configuration](configuration.md) and [Agent hosting](hosted-agents.md)
 to identify the applicable inputs and host constraints. Use the
 [resource inventory](../bicep/deployed-resources.md) to identify enabled resources,
-then confirm them against your platform's composed parameters: the foundation
-inventory is not a promise that every Agent Landing Zone topology has the same
-resource count.
+then count the resources selected in your generated `infra/main.parameters.json`.
+The count varies with topology and resource reuse.
 
 ## Models and quota
 
 The root `main.parameters.json` selects a `chat` deployment of `gpt-5-nano`
 and a `text-embedding` deployment of `text-embedding-3-large`, each with
-`sku.capacity=100`. This is a deployment capacity input, **not** 100 requests
-per second or a model-independent token rate. Confirm quota units, deployment
-type and regional availability for each model using the
+`sku.capacity=100`. The token and request limits represented by this value
+depend on the model and deployment type. Confirm those limits and regional
+availability for each model using the
 [model quota reference](https://learn.microsoft.com/azure/ai-services/openai/quotas-limits).
-Change the reviewed root `modelDeploymentList`, not an invented environment
-variable.
+To change capacity, update `modelDeploymentList` in the root
+`main.parameters.json`.
 
 Estimate input/output tokens per turn, calls per strategy, retries and peak
 turns per minute. For ingestion, measure extracted tokens and embedding batch
@@ -83,7 +82,7 @@ capacity does not bypass that gate.
 | --- | --- | --- |
 | Foundry hosted orchestrator | The Agent Application's `hosted-agent/azure.yaml` declares `2` CPU and `4Gi` memory. | Measure memory peaks, streaming latency and concurrent turns on the supported strategy. `HOSTED_AGENT_CONTAINER_CPU` / `HOSTED_AGENT_CONTAINER_MEMORY` affect provisioning, but do not override the child's literal deployment fields. Coordinate a compatible definition/handoff change and deploy a new agent version. Container Apps scale settings do not control this host. |
 | Frontend and classic orchestrator Container Apps | Root entries use `profile_name=main`, `min_replicas=1`, `max_replicas=1`. With no explicit resource size, foundation placeholders use `0.5` CPU / `1.0Gi`. Hosted topology normally omits the classic orchestrator. | Inspect active revisions after application deployment. Measure CPU, memory, concurrent streams and startup latency. Review `containerAppsList` resource/replica settings and the child deployment behavior together; a placeholder size is not a runtime performance guarantee. |
-| Agent App Ingestion (optional) | Root entry specifies `1.0` CPU / `3.0Gi` and one minimum/maximum replica on `main`. | Test large files and expensive formats, peak memory, processing backlog and embedding/Search throttling. Increasing replicas is not proof of safe parallel ingestion; validate duplicate handling and shared source/index writes. |
+| Agent App Ingestion (optional) | Root entry specifies `1.0` CPU / `3.0Gi` and one minimum/maximum replica on `main`. | Test large files and expensive formats, peak memory, processing backlog and embedding/Search throttling. Before adding replicas, test duplicate handling and concurrent writes to shared sources and indexes. |
 | Container Apps workload profiles | `Consumption` plus `main` D4 with `minimumCount=0`, `maximumCount=1`. | Check aggregate CPU/memory placement as well as per-app limits. Raising app replicas alone does not raise the profile's node ceiling. Minimum app replicas can keep a node allocated despite the zero-node profile minimum. |
 
 The root arrays/objects above belong in reviewed `main.parameters.json`;
@@ -107,8 +106,8 @@ Conversation continuity limits are not compute-sizing controls.
 1. **Choose explicit targets.** Record acceptable response time, error rate,
    ingestion delay and peak concurrency for representative requests.
 2. **Check service limits and quota.** Confirm regional availability and capacity
-   for every enabled service. Template defaults and a passing preflight check
-   are not workload sizing evidence.
+   for every enabled service. Then test the initial configuration against the
+   workload targets from step 1.
 3. **Measure representative behavior.** In a nonproduction environment, exercise
    the selected strategy, configured tools, document sizes and ingestion path.
    Include authentication and document allow/deny checks.
@@ -126,8 +125,8 @@ and interactive requests use the same services.
 
 Use the Agent-specific [Cost planning](cost-planning.md) checklist. Recalculate
 for your region, enabled resources, measured usage and availability requirements.
-Shared foundation example estimates are not a quote or a validated production
-sizing profile.
+Use the shared foundation estimates as pricing examples, with capacity based
+on your workload measurements.
 
 Record the selected configuration with the workload assumptions and test
 evidence so that a later capacity change can be evaluated against the same

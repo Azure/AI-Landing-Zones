@@ -4,21 +4,27 @@ Decide **where the workload connects, which deployment tool owns it and what
 resources it needs** before provisioning. Capacity and spending are separate
 steps: [Sizing and capacity](sizing.md), then [Cost planning](cost-planning.md).
 
+Start with [How it works](how-it-works.md#how-to-read-deployment-settings) for
+the deployment flow and the two forms of input used below. Uppercase names
+such as `DEPLOYMENT_MODE` are `azd` inputs; set them in the selected environment
+with `azd env set`. Record your choices here, then apply them using a deployment
+runbook.
+
 ## Choose the network and gateway shape
 
 | Choice | Use it when | What you must arrange |
 | --- | --- | --- |
-| Standalone | The workload team owns its network, DNS and operations, without a platform hub dependency. | `DEPLOYMENT_MODE=standalone`. Choose public service endpoints or `NETWORK_ISOLATION=true` explicitly; standalone does not mean public. For private deployments, plan egress, private DNS and a connected runner. |
-| Integrate with a hub | A platform team already owns connectivity, firewall, DNS or monitoring. | `DEPLOYMENT_MODE=ailz-integrated` plus explicit isolation, hub peering, routing, DNS and reuse inputs. The mode alone connects nothing and does not suppress duplicate spoke resources. |
-| Add AI Gateway | Multiple workloads need centrally governed model access, such as routing, authentication or token policies. | Use the separate [AI Gateway implementation](../index.md#ai-gateway-landing-zone). Agree endpoint/authentication contracts, supported APIs, policies and network reachability with its owner. Agent Bicep does not automatically deploy or wire this gateway. |
+| Standalone | The workload team owns its network, DNS and operations, without a platform hub dependency. | Set `DEPLOYMENT_MODE=standalone` and choose service access separately: public endpoints or `NETWORK_ISOLATION=true`. For private deployments, plan egress, private DNS and a deployment host connected to the network. |
+| Integrate with a hub | A platform team already owns connectivity, firewall, DNS or monitoring. | Set `DEPLOYMENT_MODE=ailz-integrated`, then supply isolation, peering, routing, DNS and reuse inputs. Select which spoke resources to omit when the hub provides them. |
+| Add AI Gateway | Multiple workloads need centrally governed model access, such as routing, authentication or token policies. | Use the separate [AI Gateway implementation](../index.md#ai-gateway-landing-zone). Confirm its endpoint, authentication method, supported APIs, policies and network access with the gateway owner, then plan the application integration. Agent Bicep does not deploy or connect this gateway automatically. |
 
-AI Gateway is an additional decision, not a third network security mode. It
-can accompany a standalone or hub-integrated deployment. It does not replace
-Private Link, DNS, firewall controls, Entra ID/OBO or document authorization.
-It is also different from [Application Gateway](application-gateway.md), which
-provides optional WAF-protected ingress to the web UI.
+AI Gateway governs model access and can accompany either network topology.
+Plan workload connectivity and user/document authorization separately.
+[Application Gateway](application-gateway.md) serves a different purpose:
+optional web application firewall (WAF) protection for access to the web UI.
 
-For a hub, agree these items **before** running the deployment:
+For a hub, confirm the network design with the platform team, then record the
+corresponding deployment inputs:
 
 - **Routes and peering:** identify both peering owners. Use
   `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID`; choose either
@@ -32,11 +38,12 @@ For a hub, agree these items **before** running the deployment:
   `POLICY_MANAGED_PRIVATE_DNS=true`. Policy-managed DNS and BYO zone IDs are
   alternative modes. Zone owners must supply the required links/forwarding;
   peering alone does not propagate DNS.
-- **Runner:** confirm the deployment host can resolve and reach private
-  services for lifecycle hooks. A private ACR build pool does not connect it.
+- **Runner:** connect the host that executes deployment commands to the
+  private network and verify service DNS resolution. This connection is
+  required separately from the private ACR pool used for image builds.
 
-See [Network isolation](network-isolation.md) for the reviewed warnings and
-[hub-and-spoke design](../bicep/hub-and-spoke.md) for the shared network contract.
+See [Network isolation](network-isolation.md) for connectivity requirements and
+[hub-and-spoke design](../bicep/hub-and-spoke.md) for supported network settings.
 
 ## Choose the deployment tool
 
@@ -54,13 +61,13 @@ state and dependency planning.
 
 ## Select, reuse or omit resources
 
-Start from the selected application's definition and composed parameters, not
-the shared foundation's all-resources catalog.
+Use the selected application's definition and the generated
+`infra/main.parameters.json` to identify the resources your deployment selects.
 
 | Resource family | Selection or reuse decision |
 | --- | --- |
 | Agent Application hosts and stores | Fresh environments use `DEPLOYMENT_TOPOLOGY=hosted-no-panel`: hosted orchestrator, frontend, no panel and no Agent Application Cosmos DB. `hosted-panel` adds panel metadata storage; `classic` uses a Container App orchestrator and that database. Existing/migrated resources can remain. See [Agent hosting](hosted-agents.md). |
-| Agent App Ingestion | `DEPLOY_INGESTION_CONTAINER_APP=false` is the fresh default. Select this component for supported application-managed processing or conversation uploads. Native Blob ingestion and independently populated indexes have different contracts; see [Ingestion](ingestion.md). Omitting the component does not delete old resources or grants. |
+| Agent App Ingestion | `DEPLOY_INGESTION_CONTAINER_APP=false` is the fresh default. Select this component for supported application-managed processing or conversation uploads. For native Blob ingestion or an independently populated index, follow the corresponding [Ingestion](ingestion.md) path. Omitting the component leaves existing resources and grants in place. |
 | Search, Storage and Foundry agent backing services | Agent Application Search/Storage and Agent Service backing resources are separate. Where enabled and not reused, Agent Service can add another Search, Storage and Cosmos DB. Native parameters `aiSearchResourceId`, `aiFoundryStorageAccountResourceId` and `aiFoundryCosmosDBAccountResourceId` reuse a dedicated backing trio for the same Foundry instance, not arbitrary shared workload stores. |
 | Network and access infrastructure | `USE_EXISTING_VNET=true` requires `EXISTING_VNET_RESOURCE_ID`. Agree subnet/delegation ownership before setting `DEPLOY_SUBNETS`. Supported jumpbox, Bastion and NAT reuse have their own `EXISTING_*` inputs. Existing VNet peerings are externally managed. |
 | Monitoring | Use supported existing Log Analytics/Application Insights inputs with their owners. Preserve workspace compatibility and the intended private monitoring path; do not mix sources merely to avoid creating a workspace. |
@@ -79,14 +86,14 @@ selected hosting/strategy depends on it.
    regions and [naming inputs](resource-naming.md). One azd environment binds to
    one application ID.
 2. Confirm regional service/model availability and quota. Hosted strategies,
-   history and image preparation have specific [host limitations](hosted-agents.md);
-   selecting a host does not select a strategy.
+   history and image preparation have specific [host requirements](hosted-agents.md).
+   Choose a strategy supported by that host.
 3. Obtain resource creation and scoped role-assignment permissions. Contributor
    alone cannot assign roles. Agree access to shared hub/DNS resources with
    their owners; hosted authoring also needs project data-plane access.
 4. Verify runner DNS, routes and TLS, plus administrator approval for private
-   native Blob shared links where required. An ARM deployment or greeting is
-   not evidence of real-user access or document allow/deny behavior.
+   native Blob shared links where required. After deploying the Agent
+   Application, also test sign-in and retrieval with allowed and denied users.
 5. Review the deployment preview, [size each service](sizing.md), and approve
    a dated [cost plan](cost-planning.md). Then execute
    [Deploy infra only](deploy-infra-only.md) or [Deploy full stack](deploy-full-stack.md).

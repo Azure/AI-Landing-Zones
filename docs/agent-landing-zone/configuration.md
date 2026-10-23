@@ -9,7 +9,7 @@ Set deployment inputs with `azd env set <NAME> <value>` before provisioning.
 Inspect only the keys you need with `azd env get-value <NAME>`; a complete
 environment dump can contain secrets.
 
-This is a settings reference, not another deployment procedure. Follow
+Use this page to look up settings and defaults. Follow
 [Deploy infrastructure only](deploy-infra-only.md) or
 [Deploy the full stack](deploy-full-stack.md) for the ordered workflow.
 Choose the [deployment shape](planning.md), [capacity](sizing.md) and
@@ -22,7 +22,8 @@ Choose the [deployment shape](planning.md), [capacity](sizing.md) and
 
 Use separate azd environments and resource groups for DEV, TEST and PROD.
 Separate subscriptions provide a stronger administrative and quota boundary.
-An environment name or App Configuration label alone is not a security boundary.
+Enforce separation through deployment permissions, service identities and
+dedicated configuration and data stores, as summarized below.
 
 | Boundary | Keep separate |
 | --- | --- |
@@ -32,11 +33,11 @@ An environment name or App Configuration label alone is not a security boundary.
 | Data | Sources, indexes, conversation/history stores and retention. Use approved test data instead of copying production documents. |
 | Network and builds | DNS, routes, private endpoints and a connected runner. An ACR build pool does not connect the deployment host. |
 
-Keep nonsecret, approved inputs in version control. A folder such as
-`environments/` is your convention, not an automatically loaded platform input:
-apply its settings explicitly. Local `.azure` is private deployment state, not
-a promoted configuration artifact. Hooks copy it to child projects; protect
-those workspaces too. Never copy DEV state into TEST or PROD.
+Keep nonsecret, approved inputs in version control. If you organize them in an
+`environments/` folder, apply those settings explicitly; the platform does not
+load that folder automatically. Local `.azure` contains private deployment
+state. Hooks copy it to child projects; protect those workspaces too. Never
+copy DEV state into TEST or PROD.
 
 ## Deployment parameters
 
@@ -92,7 +93,8 @@ Supported `EXISTING_*` inputs select reuse, subject to each resource's condition
 They are listed in [Network and security](#network-and-security).
 Foundry backing-service reuse uses native parameter names instead; see
 [Select, reuse or omit resources](planning.md#select-reuse-or-omit-resources).
-Neither a matching name nor disabling a deployment flag attaches an existing service.
+Supply the supported resource ID to attach an existing service; naming and
+deployment flags control resource creation.
 
 <span id="ingestion-application-selection"></span>
 
@@ -160,12 +162,10 @@ For network-isolated native Blob configuration, infrastructure publishes
 `SEARCH_SHARED_PRIVATE_LINKS` as a JSON array under label `agent-lz`. This is
 post-provision metadata, not an operator switch or a runtime retrieval setting.
 Each entry records the template-owned `name`, `groupId` and
-`privateLinkResourceId`. Configuration cross-checks these against
-`SEARCH_SERVICE_RESOURCE_ID`, `STORAGE_ACCOUNT_RESOURCE_ID` and
-`AI_FOUNDRY_ACCOUNT_RESOURCE_ID`. This manifest identifies the exact source
-GETs for readiness. It is not an automatic target approval allowlist.
-Pending links require administrator approval. Do not substitute unrelated
-resources or edit the manifest to bypass the gate. See
+`privateLinkResourceId`. Configuration uses these values to verify the Search
+links and their target Storage and Foundry resources before creating a native
+knowledge source. Pending links require administrator approval.
+Keep this deployment-generated metadata unchanged and follow
 [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
 The exact ARM resource IDs can include Azure-valid resource-group names with
@@ -176,8 +176,7 @@ query strings, URL hosts or encoded path separators.
 ### Explicit shared-source permission options
 
 `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS` controls the configured source's
-ingestion permission metadata. It is an existing setting, not a new runtime
-key. Omission or an actual null value retains the protected default
+ingestion permission metadata. Omission or an actual null value retains the protected default
 `["rbacScope"]`. An explicit JSON empty array, `[]`, is an opt-in for a
 deliberately shared source **when native Blob ingestion is active**. It is
 not treated as a missing value.
@@ -209,8 +208,8 @@ to work around an authentication or private-link failure. Review the source's
 intended audience and verify allow/deny behavior before enabling it.
 
 To restore protected ingestion, set `["rbacScope"]` and rerun the source
-configuration. Verify the resulting source/index permission metadata and
-document authorization. Do not assume changing a setting alone has repaired
+configuration. Before allowing access, verify the source/index permission
+metadata and test document access for allowed and denied users, including
 already-ingested documents. See
 [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
@@ -268,10 +267,10 @@ To use private DNS zones that already exist (for example, in a hub subscription)
 
 `COGSVCS`, `OPENAI`, `AISERVICES`, `SEARCH`, `COSMOS`, `BLOB`, `KEYVAULT`, `APPCONFIG`, `CONTAINERAPPS`, `ACR`, `AZUREMONITOR`, `OMSOPSINSIGHTS`, `ODSOPSINSIGHTS`, `AZUREAUTOMATION`, `APPINSIGHTS`.
 
-Their owner must provide the required VNet links or resolver forwarding.
-Peering alone does not propagate DNS. With `POLICY_MANAGED_PRIVATE_DNS=true`,
-the template omits its zone groups and leaves records to policy; supplying BYO
-zone IDs does not make those links or records appear.
+Their owner must provide the required VNet links or resolver forwarding
+separately from network peering. With `POLICY_MANAGED_PRIVATE_DNS=true`,
+Azure Policy manages DNS records instead of the template. Agree those policy
+assignments and links with the DNS owner before deploying.
 
 ## Hosted agent
 
@@ -361,9 +360,9 @@ read other labels. The orchestrator uses the explicit null label `"\0"` for its 
 selection, which reads unlabelled keys rather than all labels. Unlabelled
 values can still override `agent-lz` values.
 
-Do not rely on labels alone to isolate component configuration or assume
-that unlabelled values are used only when a key is missing. Check for
-conflicting legacy, service and unlabelled values before changing a setting.
+Before changing a setting, check for conflicting legacy, service and unlabelled
+values, since a later selection can replace an earlier value for the same key.
+Use separate stores and identities for environment isolation.
 The component repositories document their version-specific selectors.
 
 To change a runtime setting:

@@ -17,7 +17,7 @@ inputs. For selecting existing resources, use
 `RESOURCE_NAMING_MODE` maps to the foundation's `resourceNamingMode` parameter.
 The allowed values are `caf` (**default**) and `legacy`.
 
-CAF generates names with the general shape
+Cloud Adoption Framework (CAF) naming generates names with the general shape
 `type-workload-environment-region-instance`, such as
 `kv-chatapp-dev-eus2-001`.
 
@@ -39,7 +39,7 @@ Storage and registry names omit hyphens. Generated names are truncated to
 service-specific lengths, so long tokens can lose distinguishing suffixes.
 Keep tokens short and follow Azure's
 [resource naming rules and uniqueness scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules).
-The deterministic workload hash is not a guarantee of global name availability.
+For globally unique resource names, check availability before deployment.
 
 ## Set names for a new environment
 
@@ -60,8 +60,7 @@ The deterministic workload hash is not a guarantee of global name availability.
    `aiFoundryAccountName`. Supply supported parameters through the reviewed
    root `main.parameters.json` deployment inputs, not the generated
    `infra/main.parameters.json`; the shipped root file does **not**
-   expose environment-variable mappings for these examples. Setting an
-   invented `KEY_VAULT_NAME` variable will not override `keyVaultName`.
+   expose environment-variable mappings for these examples.
    For example, add `"keyVaultName": { "value": "kv-chatapp-dev-eus2-001" }`
    inside the root file's `parameters` object, preserving valid JSON and
    choosing an available name.

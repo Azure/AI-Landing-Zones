@@ -2,32 +2,31 @@
 
 Use Work IQ to ground answers in the signed-in user's Microsoft 365 context.
 As a **Foundry IQ knowledge source**, Work IQ queries live information at
-retrieval time; it does not require an ingestion pipeline or copying Microsoft
-365 content into the landing zone.
+retrieval time, without an ingestion pipeline or a copy of the Microsoft 365
+corpus in the landing zone.
 
 ## Check hosted support first
 
 **Hosted Agent Application does not currently provide an end-to-end Work IQ
 setup through configuration alone.** Its Work IQ connector requires a delegated
 user token, but the hosted entrypoint does not supply that token to the
-retrieval strategies. Signing in to the web UI or giving the agent a managed
-identity does not complete this flow.
+retrieval strategies. A custom integration must deliver the trusted user token
+separately from the agent's service authentication.
 
-There is also a service-contract gap: Agent Landing Zone provisioning targets
+Source registration also needs an update: Agent Landing Zone provisioning targets
 `2026-05-01-preview` and emits a Work IQ source without the app-authentication
 properties required by Microsoft's current `2026-08-01-preview` recipe.
-Changing only the API-version setting does not implement that migration.
+Migration requires coordinated provisioning, authentication and connector changes.
 
-Do not enable `WORK_IQ_ENABLED` on an existing hosted deployment as a test.
-It can make retrieval require user credentials that the hosted path cannot
+Keep `WORK_IQ_ENABLED` disabled on an unmodified hosted deployment: enabling
+it can make retrieval require user credentials that the hosted path cannot
 provide. Keep the working knowledge base unchanged while preparing a
 [custom application](build-your-own-app.md). See [Foundry IQ](foundry-iq.md)
 for the shared knowledge-base integration.
 
 ## Prepare the tenant
 
-The following is preparation for a custom hosted integration, not a recipe
-that enables Agent Application.
+Complete the following tenant setup while developing the custom hosted integration.
 
 1. **Approve the preview and billing.** Review Microsoft's
    [Work IQ knowledge-source requirements](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq).
@@ -41,25 +40,27 @@ that enables Agent Application.
    [tenant setup guide](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/enable-work-iq)
    requires a usage-based billing plan in Copilot Studio, an Azure subscription
    and resource group assigned to that plan, and each querying user assigned
-   to it. A Microsoft 365 Copilot license alone is not a substitute for these
-   prerequisites. Use the current billing requirements rather than the
+   to it. These billing requirements apply separately from Microsoft 365 Copilot
+   licensing. Use the current requirements rather than the
    Agent Landing Zone's older consent-form and Copilot-license warning.
 
 3. **Have a Global Administrator enable the tenant.** Follow that guide to
    create the Work IQ service principal, if it does not already exist.
    Confirm the enterprise application has application ID
-   `fdcc1f02-fc51-4226-8753-f668596af7f7`. This enables the Work IQ resource;
-   it does not grant your client application delegated access.
+   `fdcc1f02-fc51-4226-8753-f668596af7f7`. Then configure the client application's
+   delegated access in the authentication steps below.
 
 4. **Prepare the Foundry IQ service.** Use a region supporting agentic
    retrieval. The operator creating knowledge sources needs the service's
    **Search Service Contributor** role when using keyless authentication.
    For isolated environments, verify the supported network path before
-   proceeding; private access to the landing zone alone does not prove
-   connectivity to Work IQ or Microsoft Entra endpoints. See
+   proceeding. Verify connectivity to Work IQ and Microsoft Entra endpoints
+   from the services making those calls. See
    [Network isolation](network-isolation.md).
 
-## Configure the authentication contract
+<span id="configure-the-authentication-contract"></span>
+
+## Configure authentication
 
 Follow the authentication section of Microsoft's
 [knowledge-source setup](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq)
@@ -81,8 +82,8 @@ in this order. These are prerequisites for the custom implementation.
 
 3. **Authorize the client application.** On the app that signs users in, add
    delegated access to the Work IQ app's `access_as_user` scope and complete
-   consent under your tenant policy. The client must obtain a user assertion
-   for that app, not reuse a service token or a token with a different
+   consent under your tenant policy. The client must obtain a user assertion,
+   a delegated access token for that app, rather than reuse a service token or a token with a different
    audience. Validate that `aud` identifies the Work IQ app, `scp` includes
    `access_as_user`, and `oid` and `tid` identify the signed-in user and app
    tenant.
@@ -100,20 +101,19 @@ in this order. These are prerequisites for the custom implementation.
    user-supplied metadata.
 
 The source needs the app's **Application (client) ID** and the **object ID of
-the federated credential**. Neither is the service identity's principal ID;
-the credential ID is not its display name. The app's tenant ID is also required
+the federated credential**. Record each ID from its corresponding Entra object.
+The app's tenant ID is also required
 when the app and retrieval service are in different tenants. A knowledge-source
-name identifies the source object; it is not any of these IDs or an endpoint.
+name identifies the registered source object in Search.
 
-The Agent Application settings `WORK_IQ_ENABLED` and `WORK_IQ_KNOWLEDGE_SOURCE_NAME`
-only select a source for retrieval; they do not establish consent, billing,
-federation, or user-token delivery. Runtime settings use the `agent-lz`
-App Configuration label. Do not hand-edit provisioned source definitions as a
-durable fix: subsequent provisioning can overwrite them. Deliver the template
+After consent, billing, federation and user-token delivery are ready, select the
+retrieval source through App Configuration with label `agent-lz`. The runtime
+keys are `WORK_IQ_ENABLED` and `WORK_IQ_KNOWLEDGE_SOURCE_NAME`.
+Maintain provisioned source definitions in the template;
+subsequent provisioning can overwrite portal edits. Deliver the template
 and Agent Application changes together through the
 [custom application deployment](build-your-own-app.md), including a new hosted
-deployment/version as required; restarting a Container App does not update a
-Foundry-hosted agent.
+deployment/version so a fresh hosted process loads the changes.
 
 ## Verify before connecting users
 
@@ -135,17 +135,16 @@ different Microsoft 365 permissions:
    refuse user-scoped retrieval, not fall back to the agent's managed identity.
    Verify that simultaneous users do not share tokens or retrieval results.
 
-Work IQ enforces Microsoft 365 permissions per request. Identity propagation
-alone is not evidence that this enforcement is working. A fluent answer
-without a Work IQ reference is not proof of successful grounding.
+Work IQ enforces Microsoft 365 permissions per request. Inspect retrieved
+document IDs and references: the allowed user should retrieve the pilot policy,
+and the denied user's results must exclude it.
 
 ## Diagnose or back out
 
 - **No source after provisioning:** Agent Landing Zone's consent preflight skips Work IQ
   when its service-principal lookup is negative or inconclusive. Check
-  provisioning logs; a successful overall deployment does not establish that
-  Work IQ was created. Service-principal existence alone also does not prove
-  the current app consent and federation requirements are satisfied.
+  provisioning logs and confirm the source exists in Search. Verify app consent
+  and federation separately against the current requirements.
 - **User-token or authentication failure:** check token audience, tenant,
   delegated consent, user billing assignment, and federated credential
   subject. Do not log bearer tokens or relax authorization to make the test pass.
@@ -162,9 +161,9 @@ without a Work IQ reference is not proof of successful grounding.
 ## Direct Work IQ MCP is different
 
 [Work IQ MCP](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/mcp/overview)
-exposes tools to an MCP client. Wiring those tools into a custom agent is not
-the same as registering a `workIQ` knowledge source with Foundry IQ and does
-not activate Agent Application's Work IQ connector. If you choose direct tools, treat
-that as [agent-tool customization](agent-tools.md), with its own authentication,
-allowed operations, and permission tests, not a workaround that bypasses the
-knowledge base's user-identity requirements.
+exposes tools to an MCP client. Choose between direct tools and a `workIQ`
+knowledge source based on where you want retrieval to run. Direct tools require
+[agent-tool customization](agent-tools.md), with their own authentication,
+allowed operations and permission tests. The knowledge-source route uses
+Agent Application's Work IQ connector and requires the user-identity integration
+described above.
