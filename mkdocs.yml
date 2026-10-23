@@ -48,14 +48,29 @@ nav:
       - Runbooks:
           - "Infrastructure only": agent-landing-zone/deploy-infra-only.md
           - "Full stack deploy": agent-landing-zone/deploy-full-stack.md
+          - "Application Gateway": agent-landing-zone/application-gateway.md
+          - "Private access (VPN)": agent-landing-zone/private-access.md
+          - "Bring your own app": agent-landing-zone/build-your-own-app.md
           - "Teams & M365": agent-landing-zone/publish-to-teams.md
           - "Copilot Studio": agent-landing-zone/connect-copilot-studio.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
+      - Application:
+          - "Overview": agent-landing-zone/application.md
+          - "Sign-in & access": agent-landing-zone/application-auth.md
+          - "Embed chat": agent-landing-zone/embed-chat.md
+          - "Multimodality": agent-landing-zone/multimodality.md
+          - "NL2SQL": agent-landing-zone/nl2sql.md
+          - "User feedback": agent-landing-zone/user-feedback.md
+          - Grounding:
+              - "Foundry IQ": agent-landing-zone/foundry-iq.md
+              - "Work IQ": agent-landing-zone/work-iq.md
+              - "Fabric IQ": agent-landing-zone/fabric-iq.md
+              - "SharePoint": agent-landing-zone/sharepoint.md
+          - "Tools & MCP": agent-landing-zone/agent-tools.md
       - Reference:
           - "Configuration": agent-landing-zone/configuration.md
           - "Agent hosting": agent-landing-zone/hosted-agents.md
           - "Network isolation": agent-landing-zone/network-isolation.md
-          - "Custom applications": agent-landing-zone/build-your-own-app.md
           - "Terraform": terraform/index.md
           - "Portal": portal/Readme.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
@@ -73,6 +88,7 @@ not_in_nav: |
   /agent-landing-zone/deploy-bicep.md
   /agent-landing-zone/deploy-terraform.md
   /agent-landing-zone/ingestion.md
+  /agent-landing-zone/resource-naming.md
 
 extra:
   generator: false

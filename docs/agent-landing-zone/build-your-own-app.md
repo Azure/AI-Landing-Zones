@@ -1,372 +1,290 @@
-# Custom applications
+# Bring your own app
 
-You can extend a bundled component or bring a different application to the
-foundation. Choose the contract that matches your change:
+Choose whether to customize the bundled application or deploy a different one.
+The result is a pinned, reproducible application deployment—not automatic
+compatibility with the bundled UI, authentication or ingestion APIs.
 
-| Goal | Approach |
+| Goal | Start here |
 | --- | --- |
-| Change a documented setting | Use [Configuration](configuration.md); no source fork is needed. |
-| Extend the bundled UI, agent strategies/tools or ingestion code | Fork only the component you change and update its coordinated pins below. |
-| Deploy a different application composition | Supply an application definition and its matching `azure.yaml`. |
+| Change a documented setting | [Configuration](configuration.md); no source fork needed |
+| Extend the bundled agent or tools | [Agent tools](agent-tools.md), then pin only changed components below |
+| Deploy a different application | The shipped hosted sample and its application definition below |
 
-The orchestrator is an extensible agent architecture. Its registered strategies
-include model/tool coordination, MCP, NL2SQL, multimodal and retrieval-oriented
-behavior. A strategy is not a hosting topology: Foundry hosting versus Container
-Apps is a separate choice, and each strategy still needs its own configured
-tools, data sources and authorization.
+For the bundled agent hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
+knowledge base retrieval. Custom strategies and tools must support the hosted
+entrypoint and authorization path; registering a strategy does not make a
+classic-only implementation hosted-ready.
 
-The platform owns identity, networking, and permissions. Your application declares only what it is, where its code lives, and which capabilities it needs.
+## Before you start
 
-For the platform-wide mechanism, read [How the template works](how-it-works.md).
-For execution, use [Deploy infrastructure only](deploy-infra-only.md) or
-[Deploy the full stack](deploy-full-stack.md).
+- Prepare the platform checkout, Python hook dependencies, Azure sign-in and
+  deployment permissions in [Full stack deploy](deploy-full-stack.md).
+  Commands below run from the platform root unless stated otherwise.
+- The deployment identity must be able to create scoped role assignments.
+  Private Git sources also require noninteractive read access on the actual
+  runner; Azure sign-in does not grant Git access.
+- Private deployments require a connected host with private DNS resolution.
+  An ACR build pool does not provide that host's connectivity.
+- For a different application, create a **new azd environment** through the
+  deployment runbook and select its definition before provisioning.
+
+Definitions and manifests are deployment inputs, not runtime configuration.
+Keep secrets out of both. For App Configuration updates under label `agent-lz`
+and hosted redeployment requirements, follow [Configuration](configuration.md).
+Do not restart a Container App to refresh a Foundry-hosted agent.
 
 ## Customize a bundled component
 
-An unmodified deployment does not require four forks. Fork or mirror the platform
-when you need versioned deployment inputs, automation or platform changes. Fork
-only the runtime repositories whose source you change. The platform fetches the
-selected components; changing its Git remote does not change their repository
-URLs.
-
-Prefer configuration over source changes. Forking the orchestrator to add a
-strategy does not require forking the UI, ingestion or upstream infrastructure.
-Keep your platform changes in its repository-owned `infra/` tree when needed,
-with upstream provenance recorded separately in `manifest.json`.
+Prefer configuration first. Fork only runtime repositories whose source you
+change; an orchestrator extension does not require UI or ingestion forks.
+Fork or mirror the platform when maintaining deployment inputs or automation.
+Changing its Git remote does not change component repository URLs.
 
 <details markdown="1">
 <summary>Updating older repository remotes</summary>
 
-Older clones can still use the previous repository names. Update your remotes
-and automation to the current names even where GitHub redirects still work:
-
-| Previous | Current |
-| --- | --- |
-| `Azure/GPT-RAG` | `Azure/agent-landing-zone` |
-| `Azure/gpt-rag-ui` | `Azure/agent-app-ui` |
-| `Azure/gpt-rag-orchestrator` | `Azure/agent-app-orchestrator` |
-| `Azure/gpt-rag-ingestion` | `Azure/agent-app-ingestion` |
-
-Changing a remote does not update component pins or migrate an Azure deployment.
-Use the [upgrade runbook](deploy-full-stack.md#upgrade-to-a-new-release) for that.
+The current repositories are `Azure/agent-landing-zone`, `Azure/agent-app-ui`,
+`Azure/agent-app-orchestrator` and `Azure/agent-app-ingestion`, replacing
+`Azure/GPT-RAG` and the corresponding `Azure/gpt-rag-*` runtime names.
+Remote changes do not update pins or migrate Azure deployments; use the
+[upgrade runbook](deploy-full-stack.md#upgrade-to-a-new-release).
 
 </details>
 
 ### Pin the modified component
 
-For example, when using your organization's orchestrator fork:
+For an orchestrator customization:
 
-1. Test and commit the component change, then publish a stable tag that resolves
-   to its intended **full 40-character SHA**. The fetch path selects a published
-   tag, or a branch when no tag is set, and verifies that `HEAD` matches the SHA.
-   A SHA alone is not a selectable fetch ref.
-2. Update that component's `repo`, `tag` and `commit` together in the platform
-   `manifest.json`. Keep unchanged components at their coordinated release pins.
-3. Set the bundled `app-definition.json` orchestrator `source.commit` to the
-   **same SHA**. Keep application ID `agent-lz-default`. A manifest-only change
-   fails bundled definition validation.
-4. Validate both files with the existing hook dependencies installed:
+1. Implement and test the hosted entrypoint and changed behavior, including
+   Foundry IQ retrieval where relevant. Commit and publish a stable tag.
+2. Update its `repo`, `tag` and full 40-character `commit` together in the
+   platform `manifest.json`. The fetch path selects a tag, or branch when no
+   tag is set, then verifies HEAD. A SHA alone is not a selectable fetch ref.
+3. Set the bundled definition's orchestrator `source.commit` to the **same SHA**.
+   Keep application ID `agent-lz-default` and unchanged component pins.
+4. Validate:
 
     ```bash
     python -m config.appdefinition --validate app-definition.json
     ```
 
-5. Commit the two pin files together and validate the complete combination before
-   promotion. Upstream release validation does not cover your modified component.
+5. Commit both pin files together. Follow [Full stack deploy](deploy-full-stack.md)
+   and [hosted image preparation](hosted-agents.md), which builds from the
+   manifest-pinned orchestrator. A startup-variable change cannot convert a
+   classic image into a supported hosted image.
+6. Verify the deployed version and changed behavior through the UI. Test both
+   authorized and denied access to protected content; a greeting is insufficient.
 
-Keep manifest names `agent-app-ui`, `agent-app-orchestrator` and
-`agent-app-ingestion`, and bundled definition names `ui`, `orchestrator` and
-`ingestion`. Hooks use those names to map entries and sibling folders.
+Keep manifest names `agent-app-ui`, `agent-app-orchestrator`,
+`agent-app-ingestion` and definition names `ui`, `orchestrator`, `ingestion`.
+Hooks use these to map sibling folders. Existing checkouts are verified, not
+advanced automatically: preserve local work before relocating stale checkouts.
+Matching HEAD does not detect uncommitted source changes.
 
-Existing sibling checkouts are verified, not advanced automatically. Preserve
-local work and relocate stale checkouts before allowing hooks to fetch selected
-versions. Keep deployment working trees clean: a matching `HEAD` does not prove
-there are no uncommitted changes.
-
-Bundled hosted image preparation fetches and verifies the manifest-pinned
-orchestrator separately. It builds the hosted entrypoint from that source, not a
-different platform implementation. Changing only a startup variable does not
-convert a classic image into a supported hosted image. See
-[Image provenance and redeployment](hosted-agents.md#redeploy-the-same-image-or-prepare-a-new-one).
+To undo, restore both pin files to the previous tested combination and redeploy
+its hosted image. Upstream release validation does not cover your modifications.
 
 ### Private Git authentication
 
-Azure authentication does not authorize GitHub or Azure Repos clones. The actual
-deployment runner needs noninteractive **read access** to every selected private
-repository, including hosted image preparation's orchestrator checkout.
-
-Use an approved credential helper, short-lived token or SSH identity with explicit
-repository access. Test access using that runner identity. Never embed tokens in
-manifest URLs, definitions, environment files or logs. Avoid shared write-enabled
-credentials when read-only access is sufficient. For a protected promotion
-pipeline, see the optional [Azure DevOps runbook](azure-devops.md).
+Use an approved credential helper, short-lived token or SSH identity with
+repository read access, including for hosted image preparation. Test it as the
+deployment runner. Never put credentials in URLs, definitions, environment files
+or logs. See [Azure DevOps](azure-devops.md) for the optional pipeline.
 
 ## Application binding and selection
 
-An **application definition** is validated against
-`contracts/app-definition-v1.schema.json`. Its folder supplies the matching
-`azure.yaml`. Select `AGENTLZ_APP_DEFINITION` before the first provision, not just
-before deployment. When omitted, the bundled application is selected.
+One azd environment hosts one application ID. `AGENTLZ_APP_DEFINITION` selects
+a definition file or containing folder; omission selects the bundled app.
+Select it **before first provision**, not merely before deployment.
 
-The platform's `preup` hook rejects invalid definitions and changed application
-IDs before the deployment pipeline can create Azure resources, including an
-empty resource group. The `preprovision` hook repeats validation for standalone
-`azd provision`, but that later hook cannot guarantee rejection before azd's
-own resource-group initialization. For a strict no-Azure-change check before
-standalone provisioning, run `azd hooks run preup` first.
-
-!!! note
-    One azd environment hosts exactly one application. To deploy a different application, create a new azd environment.
+`preup` rejects invalid definitions and changed application IDs before Azure
+resource creation. `preprovision` repeats validation for standalone
+`azd provision`, but cannot guarantee rejection before azd initializes its
+resource group. Run `azd hooks run preup` first for that safeguard.
+Do not edit a binding to force another application into an existing environment.
 
 <details markdown="1">
 <summary>Ingestion and additive composition</summary>
 
-`DEPLOY_INGESTION_CONTAINER_APP` selects the bundled app, not components in an
-explicit custom definition. Custom definitions keep their declared intent,
-including any component named `ingestion`.
-
-Current foundation composition is additive: bundled Container App
-placeholders, including ingestion, remain alongside custom resources even
-with the bundled-only switch set to `false`. Deployment uses the definition's
-declared components. The effective published ingestion capability is `true`;
-it is not evidence that your custom app implements uploads.
-
-Preserve your application's upload/source/authentication contracts. Native
-source ingestion does not replace conversation uploads or every application
-ingestion feature. Applications reusing the bundled UI must also meet its
-[upload-gate migration requirements](ingestion.md#upgrade-and-retirement-safety).
+`DEPLOY_INGESTION_CONTAINER_APP` selects bundled composition, not components in
+an explicit custom definition. Foundation composition remains additive:
+bundled Container App placeholders can remain alongside custom resources.
+Published ingestion capability is not proof that your app implements uploads.
+If reusing the bundled UI, preserve its
+[upload-gate contract](ingestion.md#upgrade-and-retirement-safety).
 
 </details>
 
 ## Application definition
 
-Minimal Container App example, taken from `samples/custom-app/containerapp/app-definition.json`:
+### Deploy a different application
 
-```json
-{
-  "schemaVersion": 1,
-  "id": "sample-containerapp",
-  "displayName": "Sample custom application (Container App)",
-  "components": [
-    {
-      "name": "web",
-      "kind": "containerapp",
-      "path": "src",
-      "source": { "commit": "0000000000000000000000000000000000000000" },
-      "profiles": [],
-      "ingress": "external",
-      "resources": { "cpu": 0.5, "memory": "1.0Gi" }
-    }
-  ],
-  "settings": [
-    { "key": "SAMPLE_GREETING", "value": "Hello from the sample application" }
-  ]
-}
-```
+Use `samples/custom-app/hosted/`. Its minimal Responses server demonstrates
+deployment and configuration access, not retrieval, conversation storage or
+the bundled UI API. Microsoft's
+[Hosted agents documentation](https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents)
+describes service protocols and identities; the platform contracts below govern
+this release's deployment.
 
-The all-zero commit is a placeholder. Replace it with the commit you deploy (see [Source pinning](#source-pinning)).
+1. Inspect the sample's `app-definition.json`, `azure.yaml` and `src/main.py`.
+   Keep component/service name `agent`, the explicit hosted agent name and
+   Responses protocol aligned.
+2. Replace the answer logic, preserving the protocol and health endpoints.
+   Implement authentication, authorization and runtime configuration loading;
+   capability profiles do not implement these behaviors.
+3. Commit source changes. Obtain the full source repository commit:
+
+    ```bash
+    git rev-parse HEAD
+    ```
+
+    Replace the definition's all-zero `components[0].source.commit` with that
+    value. The shipped `src` belongs to the platform repository; a separate
+    source repository needs its own HEAD. Set the pin in the deployment
+    workspace **after checkout**; another commit changes HEAD again. Keep source
+    files unchanged. For durable committed inputs in a single-repository layout,
+    consider the prebuilt image digest contract below.
+4. Validate and select in the **new** environment:
+
+    ```bash
+    python -m config.appdefinition --validate samples/custom-app/hosted
+    azd env set AGENTLZ_APP_DEFINITION samples/custom-app/hosted/app-definition.json
+    azd hooks run preup
+    ```
+
+    Expect validation to pass. This checks schema, folder/service contracts and
+    binding—not image availability or application behavior. Schema validation
+    accepts the all-zero editing marker; deployment requires actual source HEAD.
+5. Follow the **custom-application path** in [Full stack deploy](deploy-full-stack.md),
+   not the bundled hosted-orchestrator image handoff. The platform deploys the
+   declared service and runs its greeting smoke.
+6. With the sample answer logic, confirm the response names the intended project
+   endpoint, not `unknown` or `unavailable`. The sample can greet successfully
+   despite failed configuration access; inspect logs for either value. With your
+   logic, verify actual application behavior and denied-access cases.
+
+The definition `id` binds the environment; `agent` names the component/service;
+`sample-hosted-agent` names the sample Foundry agent. None is the project endpoint
+URL. For a Container App instead, use `samples/custom-app/containerapp/` and its
+matching service file; changing only the hosted sample's `kind` is insufficient.
+
+### Verify and recover
+
+Retain the definition, service file, source/image pin and environment together.
+For HEAD mismatches, compare `git rev-parse HEAD` inside the source folder with
+the pin; do not remove the check.
+
+For image-pull or role failures, keep the same application ID and immutable image.
+Use [custom hosted image-pull recovery](troubleshooting.md#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator).
+Do not substitute another environment's endpoints, broad grants or registry admin
+credentials. Role propagation can require an explicit retry.
+
+Rollback restores the tested definition, service configuration and pinned
+source/image before redeployment; it does not reverse data/schema changes.
+Use [Full stack deploy](deploy-full-stack.md) for environment cleanup; deleting
+the local definition does not remove Azure resources.
+
+### Shipped example
+
+Use the versioned
+[hosted sample files](https://github.com/Azure/agent-landing-zone/tree/v4.3.0/samples/custom-app/hosted)
+rather than copying an illustrative payload.
 
 ### Fields
 
-| Field | Required | Rules |
-| --- | --- | --- |
-| `schemaVersion` | Yes | Must be `1`. |
-| `id` | Yes | Application identifier matching `^[a-z][a-z0-9-]{2,39}$`. Bound to the environment at the first provision. |
-| `displayName` | No | Human-readable name. |
-| `components[].source` | Yes | Either `commit` (40 lowercase hex characters) or `imageDigest` (`sha256:` followed by 64 lowercase hex characters). |
-| `components[].name` | Yes | Matches `^[a-z][a-z0-9-]{1,23}$`. Must match the service name in `azure.yaml`. |
-| `components[].kind` | Yes | `containerapp` or `azure.ai.agent`. |
-| `components[].path` | Yes | Relative path to the component source. Must not contain `..`. |
-| `components[].profiles` | No | Capability profiles. See [Capability profiles](#capability-profiles). |
-| `components[].ingress` | No | `external` or `internal`. Default `internal`. Container Apps only. |
-| `components[].resources.cpu` | No | `0.25`, `0.5`, `0.75`, `1.0`, `1.5`, or `2.0`. Default `0.5`. Container Apps only. |
-| `components[].resources.memory` | No | One of `0.5Gi`, `1.0Gi`, `1.5Gi`, `2.0Gi`, `3.0Gi` or `4.0Gi`. Default `1.0Gi`. Container Apps only. |
-| `settings[]` | No | Each entry requires an uppercase `key` of 2 to 64 characters that does not start with `AGENTLZ_`. Optional `value` and `secret: true` are mutually exclusive. |
-| `components[].settings[]` | No | Component settings with the same key and value rules as application settings. They cannot duplicate an application setting. |
+The authoritative
+[v1 schema](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/contracts/app-definition-v1.schema.json)
+defines required fields and allowed values. In particular, names must match
+services, paths stay inside the application folder, and hosted components
+cannot set Container App `ingress` or `resources`.
 
-Components of kind `azure.ai.agent` run as Foundry hosted agents and cannot set `ingress` or `resources`. The hosted sample in `samples/custom-app/hosted/app-definition.json` defines one component named `agent` with `profiles: ["model-user"]`.
-
-Settings are validated against the schema. They are not published to App Configuration by the platform.
+Definition settings are validated but **not published to App Configuration**.
+Arrange runtime configuration separately.
 
 ### What a definition cannot contain
 
-- Lifecycle hooks.
-- Remote URLs in definition fields, including setting values. The optional
-  `$schema` field is exempt. Configure runtime endpoints outside the
-  definition, and keep source code in the local working tree.
-- Azure role names. Permissions come only from capability profiles.
+No lifecycle hooks, Azure role names or remote URLs (except `$schema`).
+Configure endpoints outside the definition and permissions through profiles.
 
 ## Capability profiles
 
-Every component receives the `base` profile. Add the others only when the component needs them.
+Every component receives `base`; add only required profiles from the
+[profile catalog](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/profiles.py).
+These service-resource grants are not user consent or document ACL enforcement.
+Preserve [authentication and OBO](application-auth.md) and
+[Foundry IQ source permissions](foundry-iq.md).
 
-Container App profile assignments are reconciled during post-provisioning.
-For custom hosted services, foundation provisioning prepares registry pull
-access for the existing Foundry project managed identity. This is separate
-from capability-profile reconciliation for each hosted instance: deployment
-first verifies the actual routed agent version and its instance identity
-against the selected Foundry project, then
-reconciles the declared profiles before running the greeting smoke. No bundled
-orchestrator permissions are substituted for the custom definition, and this
-runtime check does not mean all instance grants precede image pull. The
-deployment identity needs permission to create these scoped role assignments.
-Denied or ambiguous assignments fail deployment. RBAC propagation may require
-an explicit, idempotent retry with the same application and image after the
-reported failure. Deployment does not silently bypass reconciliation.
+Container App profiles reconcile during post-provisioning. Hosted image pull
+uses the existing Foundry **project** managed identity. After deployment verifies
+the routed agent version and **instance** identity, it reconciles that instance's
+declared profiles before greeting smoke. Bundled orchestrator grants are not
+substituted; denied or ambiguous assignments fail deployment.
 
-Key Vault profile assignments use the explicit `AZURE_KEY_VAULT_NAME` override
-when present, otherwise the foundation's `KEY_VAULT_NAME` output, followed by
-the vault endpoint inputs. The named vault must exist in the selected resource
-group. If no name is supplied and more than one vault exists, deployment fails
-rather than guessing which vault should receive application permissions.
-
-| Profile | Roles assigned to the component identity |
-| --- | --- |
-| `base` (always applied) | App Configuration Data Reader, AcrPull, Key Vault Secrets User |
-| `model-user` | Cognitive Services User, Cognitive Services OpenAI User |
-| `retrieval-reader` | Search Index Data Reader, Storage Blob Data Reader |
-| `conversation-store` | Cosmos DB Built-in Data Contributor |
-| `blob-delegator` | Storage Blob Data Reader, Storage Blob Delegator |
-| `ingestion-writer` | Search Index Data Contributor, Storage Blob Data Contributor |
-
-For reference, the default application uses these profiles:
-
-| Component | Profiles |
-| --- | --- |
-| UI | `blob-delegator` |
-| Orchestrator | `model-user`, `retrieval-reader`, `conversation-store` |
-| Ingestion (when selected) | `model-user`, `conversation-store`, `ingestion-writer` |
+Key Vault targeting and scope resolution follow the
+[role assignment contract](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/roles.py);
+ambiguous resources are not guessed.
 
 ## Folder layout and `azure.yaml`
 
-The folder that contains the definition must also contain a root `azure.yaml` with one service per component. Service names must equal component names, and the file must not declare hooks.
-
-`components[].path` points to the service source, not to another azd project.
-Keep `azure.yaml` next to `app-definition.json` and set each service's `project`
-to its source folder. The pre-deploy hook reuses the selected environment in
-the definition folder and deploys each declared service by name, rather than
-deploying all services repeatedly.
-
-```yaml
-name: sample-containerapp
-services:
-  web:
-    host: containerapp
-    project: ./src
-    language: docker
-    docker:
-      remoteBuild: true
-```
+Keep `azure.yaml` beside the definition, with a matching service for each
+component and no project/service hooks. `components[].path` points to source,
+not another azd project; align the service's `project` with it.
+Hosted services need an explicit agent `name` and `responses` or `invocations`.
+Deployment reuses the selected environment and deploys each service by name.
 
 ## Source pinning
 
-- **`components[].source.commit`**: must equal the `HEAD` commit of that component's local source folder. Nothing is cloned. The platform builds from the working tree and refuses to deploy if `HEAD` differs. Keep the working tree clean because the commit check does not reject uncommitted source changes.
-- **`components[].source.imageDigest`**: deploys a prebuilt image. Set the
-  corresponding service's `image` in `azure.yaml` to a qualified registry and
-  repository, such as `myregistry.azurecr.io/my-app:v1`. The platform replaces
-  its tag or existing digest with the definition's exact digest and deploys it
-  with `docker.imagePassthrough: true`. It does not build a different image.
-  Environment substitutions in `image` must resolve before deployment.
+- **`source.commit`:** must equal the local source folder's HEAD. Nothing is
+  cloned; builds use the working tree, including uncommitted changes.
+- **`source.imageDigest`:** requires a qualified service `image` in `azure.yaml`.
+  Deployment replaces its tag/digest with the exact declared digest and uses
+  image passthrough, not a new build. Environment substitutions must resolve.
 
-With `NETWORK_ISOLATION=true`, source-pinned Docker components build through
-the foundation's dedicated `ACR_TASK_AGENT_POOL`, and the platform deploys the
-immutable digest returned by the completed ACR task. The service `project`
-must match `components[].path`, with `Dockerfile` and context `.` in that
-folder. Other Docker options or source-build layouts fail with actionable
-guidance to supply a prebuilt digest instead. They are not silently ignored.
-Public source builds keep the service's normal azd build behavior.
+With `NETWORK_ISOLATION=true`, source Docker builds use `ACR_TASK_AGENT_POOL`
+and deploy the resulting digest. Service `project` must match component path,
+with `Dockerfile` and context `.` there. Unsupported layouts/options fail;
+provide a prebuilt digest instead. Public builds retain normal azd behavior.
+See the [deployment contract](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/deployment/custom_application.py).
 
-For image handoff, the platform temporarily updates the selected service's
-image and Docker settings in the child `azure.yaml`, then restores the
-original file even if deployment fails. It deploys that service by name.
-Do not run concurrent deploys or edit that file during a deployment.
-For a custom Container App using the platform ACR, deployment automatically
-wires registry pull authentication to the component's existing sole attached
-managed identity before deploying an immutable image. This adds no identity or
-RBAC assignment. The automatic wiring is specific to Container Apps and the
-platform ACR. Configure access separately for other private registries. Hosted
-agents use the existing Foundry project managed identity for image pull, with
-the foundation's declarative `AcrPull` assignment on the platform ACR, not
-Container App registry wiring or a per-instance preactivation grant.
-Digest pinning does not bypass registry authorization.
+Deployment temporarily rewrites image settings in the child `azure.yaml` and
+restores it even on failure. Do not edit it or deploy concurrently.
+Digest pins do not bypass registry authorization. Custom Container Apps using
+the platform ACR receive registry wiring to their sole attached identity;
+other registries need separate access configuration. Hosted agents use the
+project identity's declarative platform-ACR pull grant.
 
-Foundation provisioning publishes the Foundry project and registry deployment
-outputs whenever those resources are enabled, even in classic topology.
-
-Selecting any custom `azure.ai.agent` component must also prepare the hosted
-foundation (`prepareHostedAgent=true`), even when the bundled orchestrator
-topology is classic. This does not deploy the bundled hosted orchestrator
-(`deployHostedAgent=false` for that classic topology) or change the topology.
-The current platform prepares these prerequisites for custom hosted
-components independently of the bundled orchestrator topology.
-
-For recovery, retain the same application definition and immutable image, then
-apply the current coordinated platform's foundation through the
-[full-stack runbook](deploy-full-stack.md). Provisioning applies the declared
-project-identity pull grant; refreshing outputs alone cannot create it.
-
-Use a connected host for private environments. Never substitute another
-environment's endpoints, broad manual grants, registry admin credentials or
-an OIDC connection workaround. See
-[Custom hosted image-pull recovery](troubleshooting.md#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator).
-
-When an older environment has an empty project output, the quota preflight
-can discover a single existing Foundry project in the selected resource group.
-It credits only matching, successfully provisioned model allocations after
-verifying the account scope and region. Ambiguous projects receive no credit.
-Select the intended project explicitly instead of bypassing the quota check.
+Custom hosted components receive hosted foundation prerequisites even with a
+classic bundled topology; this does not deploy the bundled hosted orchestrator.
+Reapplying foundation can repair its declared pull grant; refreshing outputs
+alone cannot. Follow the recovery link above.
 
 ## Reading platform outputs at runtime
 
-Components find platform resources through App Configuration. Each component receives `APP_CONFIG_ENDPOINT` and reads the `AGENTLZ_PLATFORM_OUTPUTS` key with label `agent-lz`. Both samples show the pattern: the Container App sample serves `GET /health` and `GET /`, and the hosted sample answers the Responses protocol.
+Read `AGENTLZ_PLATFORM_OUTPUTS` from `APP_CONFIG_ENDPOINT` with label `agent-lz`,
+as both samples demonstrate. The publisher exposes selected Container App
+client IDs; hosted instance identities are unavailable during foundation
+provisioning. See [Platform outputs](deploy-infra-only.md#platform-outputs).
 
-The platform-output publisher discovers the provisioned Container App identities for the selected definition and publishes their client IDs in `identities` and the matching `AGENTLZ_IDENTITY_<COMPONENT>_CLIENT_ID` keys. Hosted-agent instance identities are not available during foundation provisioning. Missing or ambiguous Container App identities fail publication rather than producing an empty map. See [Platform outputs](deploy-infra-only.md#platform-outputs).
-
-Custom hosted services must declare an explicit agent `name` and either
-`invocations` or `responses` in their `azure.yaml` service definition.
-The greeting smoke uses the selected service name and
-declared protocol, preferring `invocations` when both are available. For
-Responses services, it validates either Responses SSE or a completed JSON
-response with nonempty assistant output. A greeting is not evidence of
-document retrieval or authorization.
+The hosted greeting checks nonempty assistant output using the declared
+protocol, preferring `invocations` when both are present. It does not verify
+retrieval or authorization.
 
 ## Validate and select a definition
 
-From the platform root, with the hook dependencies installed:
-
-```bash
-python -m config.appdefinition --validate path/to/your-app
-```
-
-The deployment input is a file or its containing folder:
-
-```bash
-azd env set AGENTLZ_APP_DEFINITION path/to/your-app/app-definition.json
-```
-
-Apply it to a **new environment before provisioning**, following
-[Deploy infrastructure only](deploy-infra-only.md) or
-[Deploy the full stack](deploy-full-stack.md). Pre-deploy revalidates the
-definition and binding; a mismatch exits with code 2.
-
-Selecting the bundled foundation's `classic` topology avoids a bundled hosted
-orchestrator handoff. It does not prevent custom `azure.ai.agent` components from
-receiving their own hosted prerequisites. Custom hosted services use their own
-definition and service configuration, not the bundled image preparation script.
+Use the validation/selection commands above with your own definition path.
+Pre-deploy rechecks definition and binding; mismatches exit with code 2.
+For foundation without application deployment, follow
+[Deploy infrastructure only](deploy-infra-only.md).
 
 ## `config.appdefinition` reference
 
-| Option | Description |
-| --- | --- |
-| `--validate [PATH]` | Validate a definition file or folder. Without a path, validates the definition selected for the environment. |
-| `--bind` | Bind the selected definition to the environment. |
-| `--check-binding` | Verify that the environment is bound to the selected definition. Cannot be combined with `--bind`. |
-| `--assign-roles` | Assign capability-profile roles to the identities of `containerapp` components. |
-| `--env-name NAME` | azd environment. Defaults to `AZURE_ENV_NAME` or the azd default environment. |
-| `--azure-dir PATH` | azd folder. Defaults to `<repo>/.azure`. |
+Use `python -m config.appdefinition --help` for options. The
+[CLI source](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/__main__.py)
+defines validation, binding checks, environment selection and Container App
+profile assignment. Binding commands are not a migration mechanism.
 
 ## Related pages
 
-- [Deploy infra only](deploy-infra-only.md)
+- [Full stack deploy](deploy-full-stack.md)
 - [Hosted agents](hosted-agents.md)
 - [Configuration](configuration.md)

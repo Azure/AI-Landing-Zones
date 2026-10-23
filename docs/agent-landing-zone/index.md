@@ -27,6 +27,9 @@ coordinates models, knowledge sources and configured tools through a selected
 workload's behavior. The [Agent App UI](https://github.com/Azure/agent-app-ui)
 provides the conversational interface.
 
+Use [Configure the application](application.md) for sign-in, document access,
+grounding sources, agent tools and the bundled UI.
+
 ```mermaid
 flowchart LR
     user[User] <--> ui[Agent App UI]
@@ -76,8 +79,11 @@ Follow the planning steps in order, then choose a deployment runbook.
 | Choose deployment settings, hosting and connectivity | [Configuration](configuration.md), [Agent hosting](hosted-agents.md) and [Network isolation](network-isolation.md) |
 | Provision a foundation without deploying application code | [Deploy infrastructure only](deploy-infra-only.md) |
 | Deploy the foundation and agent application | [Full stack deploy](deploy-full-stack.md) |
+| Put the web UI behind Application Gateway | [Application Gateway](application-gateway.md) |
+| Reach private services from a workstation | [Private access over VPN](private-access.md) |
 | Make a hosted agent available in Teams and Microsoft 365 Copilot | [Publish to Teams and M365](publish-to-teams.md) |
 | Call a private Foundry agent from Copilot Studio | [Connect Copilot Studio](connect-copilot-studio.md) |
 | Integrate my own application or modify a component | [Custom applications](build-your-own-app.md) |
+| Configure the bundled hosted agent and its knowledge sources | [Configure the application](application.md) |
 | Automate deployments with Azure DevOps (optional) | [Deploy with Azure DevOps](azure-devops.md) |
 | Diagnose a deployment or runtime problem | [Troubleshooting](troubleshooting.md) |

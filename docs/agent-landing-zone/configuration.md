@@ -38,6 +38,12 @@ those workspaces too. Never copy DEV state into TEST or PROD.
 
 ## Deployment parameters
 
+### Resource naming
+
+For generated names, naming overrides and preserving existing resource names,
+see [Resource naming](resource-naming.md). Choose naming inputs before the
+first provision; changing them later can create replacement resources.
+
 ### Values set by azd or by you
 
 | Variable | Description |

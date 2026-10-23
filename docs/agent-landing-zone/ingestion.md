@@ -26,12 +26,12 @@ The optional application's Graph-based SharePoint jobs and Foundry IQ's preview
 `indexedSharePoint` knowledge source are **different implementations**.
 Configuring native Blob ingestion does not configure SharePoint.
 
-The platform can register the preview indexed SharePoint source when its required
-identifiers are supplied. It still requires an Entra application, a federated
-identity credential for the configured managed identity, Graph administrator
-consent and, for `Sites.Selected`, explicit site access. Incomplete identifiers
-cause that source to be omitted with a warning. Registration is not evidence that
-the manual permissions work.
+The platform includes a preview indexed SharePoint registration template, but
+its payload is not compatible with the current documented API contract.
+Supplying identifiers and consent is not enough to make it a working integration.
+See [SharePoint grounding](sharepoint.md) for the supported service setup,
+the hosted integration requirements and the distinction from application-managed
+Graph jobs.
 
 The bundled ingestion opt-out validator supports native `azureBlob`, or an
 explicit independently populated index. It does **not** establish SharePoint-only
