@@ -1,4 +1,6 @@
-# Deploy infrastructure only
+<span id="deploy-infrastructure-only"></span>
+
+# Deploy infra only
 
 ## Objective
 
@@ -11,7 +13,7 @@ its hooks, parameter files and outputs throughout the procedure.
 
 Use this runbook when you need foundation resources first, or will supply your
 own application. To deploy the Agent Application now, use
-[Deploy the full stack](deploy-full-stack.md).
+the [Deploy full stack](deploy-full-stack.md) runbook.
 
 <span id="before-you-start"></span>
 
@@ -23,6 +25,10 @@ Agent platform additionally requires Python and the platform hook dependencies.
 Review the [resource inventory and cost scenarios](../bicep/deployed-resources.md)
 and [regional capacity caveats](../bicep/regional-considerations.md).
 Infrastructure-only still creates billable resources.
+
+Blocks marked `bash` use Bash syntax. In PowerShell, put commands with a
+trailing backslash (`\`) on one line and remove the continuation backslashes.
+Replace every `<placeholder>` before running a command.
 
 The effective footprint is the combination of enabled services, resource-reuse
 inputs, application definition, orchestrator topology and network settings.
@@ -47,8 +53,8 @@ git clone https://github.com/Azure/agent-landing-zone.git
 cd agent-landing-zone
 ```
 
-Follow [Python setup](deploy-full-stack.md#prepare-python). Run all lifecycle
-commands from this root, not from `infra/`. Its `infra/` is repository-owned
+Run all lifecycle commands from this root, not from `infra/`.
+Its `infra/` is repository-owned
 source, and `manifest.json` records the coordinated component pins and
 upstream foundation provenance.
 
@@ -66,10 +72,19 @@ and `azure.yaml` live. Its lifecycle does not configure or deploy the Agent
 Application. Do not provision this separate project into an Agent environment.
 For application deployment, start from the Agent source instead.
 
-Both clones use the current default `main`, not `develop`. Record the resolved
-commit and reviewed nonsecret inputs for repeatability. The
-[full-stack source guidance](deploy-full-stack.md#step-1-get-the-code) explains
-optional release selection.
+Select the approved full Git commit in the chosen repository before continuing:
+
+```bash
+git checkout --detach <approved-source-commit>
+git rev-parse HEAD
+git status --short
+```
+
+Expect HEAD to match that commit and no unexpected changes. Record the reviewed
+nonsecret root parameters alongside the commit.
+
+For Agent source, [set up Python](deploy-full-stack.md#prepare-python) from
+the selected revision before lifecycle commands.
 
 ### Step 2: Create and confirm the target
 
@@ -107,7 +122,7 @@ azd env set DEPLOYMENT_MODE standalone
 ```
 
 Services use public endpoints with authentication and authorization.
-For an existing private environment, preserve its isolation settings during recovery.
+Preserve an existing private environment's isolation settings during recovery.
 
 #### Private standalone network
 
@@ -121,7 +136,8 @@ azd env set DEPLOY_NAT_GATEWAY true
 ```
 
 Review the [standalone reference](../bicep/standalone.md) for nonoverlapping
-subnets, NSGs, egress and private DNS. For native Bastion RDP, choose
+subnets, network security groups (NSGs), outbound routing and private DNS.
+For native Bastion Remote Desktop Protocol (RDP), choose
 `BASTION_SKU_NAME=Standard` and `BASTION_ENABLE_TUNNELING=true`; portal access
 does not require the native tunneling workflow. Have a connected host ready
 for Agent post-provision configuration, or use explicit deferral below.
@@ -153,7 +169,7 @@ uses `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID` and, when applicable,
 Apply the [hub-and-spoke DNS and peering contract](../bicep/hub-and-spoke.md)
 before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
-Use an approved production hub; the upstream test-hub fixture is for testing.
+Use an approved production hub, not the upstream test-hub fixture.
 
 #### Existing networks, private DNS and parameter files
 
@@ -171,7 +187,7 @@ belong in the reviewed **root** `main.parameters.json`.
 In the Agent platform, hooks regenerate `infra/main.parameters.json`;
 do not edit that generated copy. The
 [parameter reference](../bicep/parameterization.md) describes foundation inputs;
-[Agent configuration](configuration.md) describes platform composition and overrides.
+[Deployment settings](configuration.md) describes platform composition and overrides.
 
 #### Bind the future application (Agent source only)
 
@@ -184,7 +200,12 @@ azd env set AGENTLZ_APP_DEFINITION <path-to-app-definition.json>
 
 Otherwise use the Agent Application definition. The first provision binds the environment
 to its application ID; a different ID requires a new environment.
-Keep the existing topology and ingestion selection on upgrades.
+Preserve the existing layout and ingestion selection during recovery.
+The default Agent layout is `hosted-no-panel`, using `maf_lite` and Foundry IQ
+without Agent App Ingestion. Set `HOSTED_AGENT_RESOURCE_SCOPE` to the approved
+delegated Foundry audience followed by `/.default` before provisioning, even
+when application deployment will happen later. See the linked full-stack
+runbook for the identity inputs and protected-retrieval integration gate.
 
 ### Step 4: Preview and provision
 
@@ -193,14 +214,18 @@ binding before azd's resource-group initialization. Then, in either source:
 
 ```bash
 azd provision --preview
-azd provision
 ```
 
 Review the preview's scopes, names, routes, resource changes, public access and
-role assignments before the second command. Resolve quota, Policy, subnet and
-capacity findings rather than skipping preflight. Preview covers planned
-resource changes. Test connectivity after provisioning and application behavior
-after deploying your selected application.
+role assignments. Resolve quota, Policy, subnet and capacity findings rather
+than skipping preflight. Approve the planned resource changes before applying:
+
+```bash
+azd provision
+```
+
+Test connectivity after provisioning and application behavior after deploying
+your selected application.
 
 | Source | What provisioning completes |
 | --- | --- |
@@ -211,28 +236,8 @@ Selected Container Apps can run placeholder images at this point.
 An upstream hello-world response checks basic network and runtime reachability.
 Validate sign-in, tools, ingestion and document authorization after deploying
 the Agent Application.
-
-<span id="verify-the-foundation"></span>
-
-## Validation
-
-Inspect the intended environment and selected resources:
-
-```bash
-azd env get-value AZURE_SUBSCRIPTION_ID
-azd env get-value AZURE_RESOURCE_GROUP
-az resource list -g <resource-group> --query "[].{name:name,type:type}" -o table
-az network private-endpoint list -g <resource-group> \
-  --query "[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}" -o json
-```
-
-Compare the inventory with enabled features and reuse inputs to account for
-both new and reused resources. For private deployments, verify approved connections, private
-DNS resolution and TCP/TLS reachability from the actual deployment host.
-Then test each required data plane with its authorized identity and confirm
-telemetry reaches the intended workspace. See the
-[standalone checks](../bicep/standalone.md#verify-private-connectivity) and
-[hub-specific checks](../bicep/hub-and-spoke.md#verify-the-network-contract).
+For initial infrastructure provisioning, inspect platform outputs below and
+continue to [Validation](#validation). Use lifecycle tasks only when needed.
 
 <a id="platform-outputs"></a>
 
@@ -277,25 +282,9 @@ python -m config.deployment.outputs
 
 This does not replace deferred or failed service configuration.
 
-## Rollback
+<span id="lifecycle"></span>
 
-1. Stop deployment retries and record which resources and configuration changed.
-   If only local inputs changed, restore the reviewed inputs before provisioning.
-2. After provisioning, compare the previous inputs with the deployed state.
-   Preview the previous compatible source and parameters using
-   `azd provision --preview` from the selected source root. Apply with
-   `azd provision` only if the reviewed changes preserve data, shared resources
-   and the approved network posture.
-3. Repeat [Validation](#validation). If the old inputs cannot safely reverse
-   a resource or configuration change, stop and arrange a service-specific
-   forward repair or recovery with its owner. A successful provision does not
-   restore deleted data or undo migrations.
-
-Disabling a deployment flag does not delete existing resources or revoke grants.
-For a new foundation you no longer need, use the separately authorized
-[removal procedure](#remove-the-foundation), not deletion as a retry.
-
-## Lifecycle
+<span id="lifecycle-tasks"></span>
 
 ### Complete a deferred post-provision
 
@@ -338,17 +327,20 @@ Private native Blob sources can require an administrator to approve the
 exact Search shared private-link request reported by the readiness gate.
 Do not approve every pending connection or bypass the gate.
 
-### Reconfigure or upgrade the foundation
+<span id="reconfigure-or-upgrade-the-foundation"></span>
+
+### Reconfigure the foundation
 
 Record the deployed source revision, approved parameters, outputs and dependent
-applications. Back up required data and configuration, review the new source's
-migrations and retain existing names, locations, topology and ingestion intent.
+applications. Back up required data and configuration, check compatibility and
+retain existing names, locations, layout and ingestion intent.
 Review preview before applying approved root parameter changes with the
 provisioning step above.
 
 For Agent environments, integrate the coordinated platform and its `infra/`
 tree together; do not replace only its foundation folder with upstream main.
-See [platform upgrades and rollback](deploy-full-stack.md#upgrade-to-a-new-release).
+Use the [reapply procedure](deploy-full-stack.md#upgrade-to-a-new-release)
+and [rollback](deploy-full-stack.md#rollback) in the Deploy full stack runbook.
 Upstream foundation environments use their own source and complete root
 parameter contract, without Agent post-provision commands.
 
@@ -361,15 +353,57 @@ Turning a deploy flag off is not deletion or permission cleanup.
 ### Add an application later
 
 In an Agent foundation, deploy the same bound application and selected components.
-Follow [Step 4 of the full-stack runbook](deploy-full-stack.md#step-4-deploy):
-classic can deploy after configuration; the hosted Agent Application needs image preparation
-and a second provision first. Custom definitions follow their own component
-contract. An upstream-only foundation is not a configured Agent environment.
+Follow [Step 4 of the Deploy full stack runbook](deploy-full-stack.md#step-4-deploy):
+prepare the hosted image, provision its digest handoff, then deploy.
+Custom definitions follow their own component contract. An upstream-only
+foundation is not a configured Agent environment.
 
 ### Remove the foundation
 
 Use the [safe environment removal procedure](deploy-full-stack.md#remove-an-environment)
-from this source's root and selected environment. Confirm ownership and backups
+from the selected source root and environment. Confirm ownership and backups
 before deletion. For a spoke, have network/DNS owners remove only the recorded
 spoke-specific attachments and preserve shared services. Purge is a separate
 irreversible decision, not a normal retry or rollback.
+
+<span id="verify-the-foundation"></span>
+
+## Validation
+
+1. Inspect the selected target and inventory:
+
+    ```bash
+    azd env get-value AZURE_SUBSCRIPTION_ID
+    azd env get-value AZURE_RESOURCE_GROUP
+    az resource list -g <resource-group> --query "[].{name:name,type:type}" -o table
+    az network private-endpoint list -g <resource-group> \
+      --query "[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}" -o json
+    ```
+
+2. Compare the inventory with enabled features and reuse inputs. Account for
+   both new and reused resources.
+3. For private deployments, verify approved connections, private DNS and TCP/TLS
+   reachability from the actual deployment host. Use the
+   [standalone checks](../bicep/standalone.md#verify-private-connectivity) or
+   [hub checks](../bicep/hub-and-spoke.md#verify-the-network-contract).
+4. Test required service operations with the authorized configuration identity
+   and confirm telemetry reaches the intended workspace.
+5. For Agent source, inspect post-provision logs and platform outputs.
+   Record explicit deferral or any logged configuration failure as incomplete.
+   A placeholder HTTP response does not prove application readiness.
+
+## Rollback
+
+1. Stop retries and record which resources and configuration changed. If only
+   local inputs changed, restore reviewed inputs before provisioning.
+2. Compare previous inputs with deployed state. Preview the previous compatible
+   source and parameters with `azd provision --preview` from the selected root.
+3. Apply with `azd provision` only if reviewed changes preserve data, shared
+   resources and the approved network posture.
+4. Repeat [Validation](#validation). If inputs cannot safely reverse a change,
+   stop and arrange service-specific forward repair or recovery with its owner.
+
+Successful provisioning does not restore deleted data or reverse schema changes.
+Disabling a flag does not delete resources or revoke grants. Use the separately
+authorized [removal procedure](#remove-the-foundation) only for intentional
+retirement, not as a retry.

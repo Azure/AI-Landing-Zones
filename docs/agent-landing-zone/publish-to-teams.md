@@ -41,15 +41,14 @@ Foundry private endpoint. Management requests still use the private endpoint.
 - **Agent:** Have a working hosted agent in a Foundry project, with its own
   agent identity, a stable endpoint and a version you have tested. If you still
   need to deploy an application, start with
-  [Deploy the full stack](deploy-full-stack.md) or
+  the [Deploy full stack runbook](deploy-full-stack.md) or
   [Custom applications](build-your-own-app.md), then return here.
 - **Network access:** Run the commands from a
   [VNet-connected host](network-isolation.md#reach-the-private-network) that
   resolves and reaches the Foundry project's private endpoint. This procedure
   **requires Foundry PNA to be disabled**. For a project with public access
   enabled, use the
-  [Foundry portal publishing procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot)
-  instead.
+  [Foundry portal publishing procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot).
 - **Tools:** Install [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli),
   [Bicep CLI](https://learn.microsoft.com/azure/azure-resource-manager/bicep/install#azure-cli)
   and **PowerShell 7.4 or later**. Run Steps 1-4 in the same PowerShell session;
@@ -62,7 +61,7 @@ Foundry private endpoint. Management requests still use the private endpoint.
 - **Microsoft 365 access:** Use member accounts in the **same tenant as Foundry**,
   with access to Teams and Microsoft 365 Copilot and app policies that allow the
   agent. Guest accounts cannot call these agents. Tenant-wide publication
-  requires a Microsoft 365 administrator's approval.
+  needs approval from a Microsoft 365 administrator.
 
 !!! note "Licensing and costs"
     To use the agent in Microsoft Copilot Chat, users need an eligible
@@ -83,6 +82,9 @@ Foundry private endpoint. Management requests still use the private endpoint.
     its own compliance and data-residency commitments. Validate how the agent
     authenticates users and enforces data permissions in both Teams and
     Microsoft 365 Copilot before rollout.
+    The Agent Application's default hosted runtime has a protected-retrieval
+    integration gap described in the Deploy full stack runbook. Channel
+    publication does not resolve it or prove per-user document authorization.
 
 ## Procedure
 
@@ -99,6 +101,8 @@ Use these values for the agent you want to publish.
 Expand the block below, replace every placeholder and run it on the connected
 host. The commands check the agent's identity and save its configuration before
 you change it.
+Keep `Shared` for the initial pilot. Tenant-wide access requires the separate
+approval described below before enabling it.
 
 <details class="runbook-command" markdown="1">
 <summary>PowerShell: select the target and save a backup</summary>
@@ -179,8 +183,8 @@ For a `Shared` pilot, ask an administrator to grant selected testers
 Grant this access before sharing the app link.
 
 !!! note "If the agent identity check fails"
-    Stop and follow the
-    [Foundry migration guidance](https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications).
+    Stop and have the agent owner supply a supported agent identity and stable
+    endpoint before retrying this runbook.
     Bot Service needs the agent identity's client ID
     (`instance_identity.client_id`), not the project's managed identity or an
     application registration belonging to another client.
@@ -294,8 +298,8 @@ before proceeding.
     array. Keep the protocols and authorization schemes your agent already
     uses, such as `responses`, `invocations` and `Entra`. Removing them can break
     other clients. Pinning the version also affects **all consumers** of the
-    stable endpoint, not just Teams and Copilot. Do not run concurrent agent
-    configuration changes.
+    stable endpoint, not just Teams and Copilot. Avoid concurrent
+    agent configuration changes.
 
 <details class="runbook-command" markdown="1">
 <summary>PowerShell: enable Activity and pin the tested version</summary>
@@ -342,9 +346,9 @@ You will check the final configuration under [Validation](#validation).
 ### Step 4: Publish the app
 
 This step submits the listing directly to the catalogs. If your organization
-requires package review **before submission**, follow the
+requires package review **before submission**, use the
 [REST package-download procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#download-and-inspect-the-app-package)
-instead of running this publish request.
+rather than publishing directly.
 
 Replace the placeholders below with approved listing details, including your
 organization's HTTPS website, privacy statement and terms of use. These details
@@ -498,7 +502,11 @@ matches your publication scope. **Both PNA values must remain `Disabled`.**
     [Foundry publishing limitations](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#limitations)
     before rollout.
 
-## Update or stop publication
+    Channel support does not add upload or image-generation handlers to the
+    supplied Agent Application. Its [images and voice](multimodality.md)
+    contract and protected-retrieval integration gate still apply.
+
+### Update or stop publication
 
 Use the following actions to maintain the published agent. If your PowerShell
 session ended or its token expired, [resume the session](#resume-in-a-new-session)
@@ -529,7 +537,7 @@ $result
 
 </details>
 
-## Troubleshooting
+### Troubleshooting
 
 | Symptom | What to check or do |
 | --- | --- |

@@ -3,7 +3,8 @@
 ## Objective
 
 Promote one reviewed application revision through **DEV → TEST → PROD** with
-protected approvals. This optional CI/CD flow automates the
+protected approvals. This optional continuous integration and deployment
+(CI/CD) flow automates the
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.
 
@@ -12,8 +13,8 @@ for an interactive deployment.
 Use this runbook when your team needs repeatable source promotion with separate
 deployment identities and approval gates for each environment.
 
-For interactive execution, use [Deploy infrastructure only](deploy-infra-only.md)
-or [Deploy the full stack](deploy-full-stack.md). For component changes, see
+For interactive execution, use the [Deploy infra only](deploy-infra-only.md)
+or [Deploy full stack](deploy-full-stack.md) runbook. For component changes, see
 [Custom applications](build-your-own-app.md#customize-a-bundled-component).
 
 !!! info "Choose the right pipeline"
@@ -57,19 +58,23 @@ in Step 3; the task applies them to its selected azd environment.
 
 | Input | Choices and effect |
 | --- | --- |
-| `DEPLOYMENT_TOPOLOGY` | `hosted-no-panel`, `hosted-panel`, or `classic`. Classic runs orchestration in Container Apps. |
+| `DEPLOYMENT_TOPOLOGY` | Keep `hosted-no-panel` for this default deployment. |
 | `HOSTED_AGENT_RESOURCE_SCOPE` | Required **before first provision** for hosted modes: the deployed Foundry delegated-user audience followed by `/.default`. It has no implicit runtime default. |
-| `DEPLOY_INGESTION_CONTAINER_APP` | Explicit `'false'` in this example; set `'true'` if Agent App Ingestion and conversation uploads are required. Native source ingestion is not feature-equivalent. Retain an existing environment's selection during upgrades. |
+| `DEPLOY_INGESTION_CONTAINER_APP` | Keep `'false'` for native Foundry IQ source ingestion. Additional ingestion and upload capabilities require their own acceptance checks. Preserve existing selections during recovery. |
 | `NETWORK_ISOLATION` | Explicit `'true'`. Do not change it merely to make a pipeline pass. |
 | `BUILD_MODE` | `acr-task`; private image builds use the foundation's ACR Tasks pool. Local Docker is not required. |
 
-See [Configuration](configuration.md), [Hosted agents](hosted-agents.md) and
+See [Deployment settings](configuration.md), [Hosted agents](hosted-agents.md) and
 [ingestion compatibility](configuration.md#ingestion-application-selection).
-An explicit topology overrides legacy flags; fresh environments otherwise default
-to hosted, existing recorded topologies remain sticky, and unmarked older
-environments are treated as classic. This example deliberately makes the choice
-explicit: **do not use it to switch an existing classic environment to hosted**
-without the migration and recovery review.
+Preserve an existing environment's recorded layout. This example is not a
+procedure for changing runtime layouts.
+
+!!! warning "Automation does not close runtime capability gaps"
+    Keep `maf_lite` and Foundry IQ as the default runtime choices. The
+    protected-retrieval gate in the Deploy full stack runbook applies to CI/CD.
+    Do not promote until the developer-owned identity integration and real-user
+    allow/deny tests pass. Pipeline settings, weaker source permissions and
+    successful greetings are not substitutes.
 
 #### Runner requirements
 
@@ -128,13 +133,13 @@ object ID. Set `AZURE_PRINCIPAL_TYPE=ServicePrincipal`; the default parameter ty
 is `User`. Review deployment and data-plane permissions separately from
 subscription read access.
 
-Have an administrator approve the minimum role plan:
+Have an administrator approve these minimum roles:
 
 | Identity | Required access to review |
 | --- | --- |
 | Deployment service principal | Contributor for resource deployment plus scoped role-assignment authority (for example User Access Administrator) wherever Bicep and hooks create grants. Subscription-scope deployments, provider registration and hub/shared resources can require additional scope; use the foundation guide's scope review. Do not solve data-plane denials by adding Owner. |
 | Deployment service principal, configuration/build operations | App Configuration Data Owner for publishing settings; required Key Vault secret access when resolving references; Search service/index configuration permissions and the Foundry configuration/model/deployment actions used by the enabled hooks. ACR Tasks build/run and registry/Container Apps update permissions must also be authorized. These are separate from ARM Contributor. Check the effective grants from Bicep for the explicit principal and add only missing scoped roles. |
-| Deployment service principal, hosted authoring | Foundry User (previously Azure AI User) on the exact project, plus account read access; authority to create the scoped runtime assignments in the [hosted access plan](hosted-agents.md#bootstrap-the-agents-runtime-access). Cognitive Services Contributor/OpenAI User alone do not grant hosted-agent data-plane authoring. |
+| Deployment service principal, hosted authoring | Foundry User on the exact project, plus account read access; authority to create the scoped runtime assignments in the [hosted access plan](hosted-agents.md#bootstrap-the-agents-runtime-access). Cognitive Services Contributor/OpenAI User alone do not grant hosted-agent data-plane authoring. |
 | Runtime managed identities | [Capability-profile roles](build-your-own-app.md#capability-profiles) and separate [hosted project/image-pull/runtime grants](hosted-agents.md#bootstrap-the-agents-runtime-access). Do not substitute the pipeline identity for the runtime identity. |
 | Delegated application users | Application consent, Foundry caller/agent access where applicable, and the intended source/document permissions. Pipeline success grants none of these to users. |
 
@@ -159,14 +164,14 @@ administrator for each isolated application environment:
    publish a **Key Vault reference** as `OAUTH_AZURE_AD_CLIENT_SECRET`, and publish
    `OAUTH_AZURE_AD_CLIENT_ID`, `OAUTH_AZURE_AD_TENANT_ID` and
    `OAUTH_AZURE_AD_SCOPES` under App Configuration label `agent-lz`.
-   Keep `CHAINLIT_AUTH_SECRET` stable and protected as well.
+   Protect `CHAINLIT_AUTH_SECRET` and keep it stable.
 4. Configure and consent the downstream delegated permissions for the deployed
    audience, including Foundry OBO for hosted mode. Graph scopes are not a
    replacement for the UI's single-token API scope. Grant intended caller access.
-5. Review conflicting unlabelled/service settings, restart affected components,
-   then perform actual user sign-in and document allow/deny tests.
+5. Review conflicting unlabelled/service settings and restart affected components.
+   Then test actual user sign-in and document allow/deny behavior.
 
-Follow [delegated authentication](hosted-agents.md#configure-the-uis-delegated-authentication)
+Follow [delegated authentication](application-auth.md)
 for the exact keys and consent boundaries, and
 [runtime settings](configuration.md#runtime-settings) for publishing/restart behavior.
 Complete tenant consent and sign-in configuration through a separately reviewed
@@ -183,11 +188,11 @@ platform repository**, not in its `infra/` folder:
 - [deploy-stage.yml](examples/azure-devops/deploy-stage.yml)
 - Optional local check: [validate.py](examples/azure-devops/validate.py)
 
-Replace the following values before authorization. DEV, TEST and PROD must have
+Replace these values before authorization. DEV, TEST and PROD must have
 separate resource groups, azd environments, connection identities, configuration
 stores, secrets and data. Apply the
-[environment boundaries](configuration.md#environment-boundaries), including
-runtime identities, sign-in, test data and network isolation.
+[environment boundaries](configuration.md#environment-boundaries) for
+runtime identities, sign-in, network isolation and test data.
 
 Never copy DEV's `.azure` state into TEST or PROD. Initialize or securely restore
 the intended environment on each runner, refresh its outputs when needed and
@@ -204,21 +209,21 @@ reapply approved inputs. Keep `.azure` and sibling child state private.
 | `REPLACE_DEV_FOUNDRY_REGION`, `REPLACE_TEST_FOUNDRY_REGION`, `REPLACE_PROD_FOUNDRY_REGION` | Foundry/model locations with quota (`AZURE_AI_FOUNDRY_LOCATION`). |
 | `REPLACE_DEV_COSMOS_REGION`, `REPLACE_TEST_COSMOS_REGION`, `REPLACE_PROD_COSMOS_REGION` | Cosmos locations supported by the selected topology/foundation (`AZURE_COSMOS_LOCATION`). |
 | `REPLACE_DEV_SERVICE_PRINCIPAL_OBJECT_ID`, `REPLACE_TEST_SERVICE_PRINCIPAL_OBJECT_ID`, `REPLACE_PROD_SERVICE_PRINCIPAL_OBJECT_ID` | Connection service principal **object IDs**; keep `AZURE_PRINCIPAL_TYPE: ServicePrincipal`. |
-| `REPLACE_DEV_HOSTED_RESOURCE_SCOPE`, `REPLACE_TEST_HOSTED_RESOURCE_SCOPE`, `REPLACE_PROD_HOSTED_RESOURCE_SCOPE` | Explicit delegated-user Foundry scope ending in `/.default`, matched to the deployed audience and consent (for example `https://ai.azure.com/.default` where that is the target audience). Required for both hosted topologies before provisioning; not the UI's `api://<client-id>/user_impersonation` scope. Classic does not consume this hosted input. |
+| `REPLACE_DEV_HOSTED_RESOURCE_SCOPE`, `REPLACE_TEST_HOSTED_RESOURCE_SCOPE`, `REPLACE_PROD_HOSTED_RESOURCE_SCOPE` | Explicit delegated-user Foundry scope ending in `/.default`, matched to the deployed audience and consent (for example `https://ai.azure.com/.default` where that is the target audience). Required before provisioning; not the UI's `api://<client-id>/user_impersonation` scope. |
 | `environment: agentlz-dev`, `agentlz-test`, `agentlz-prod` | Precreated Azure DevOps Environment resource names. Rename consistently if required; these are approval resources, not azd environments. |
 | `AZURE_ENV_NAME: agentlz-dev`, `agentlz-test`, `agentlz-prod` | Unique azd names, retained exactly for subsequent refresh/deploy runs. |
 | `variableGroup: agentlz-dev-secrets`, `agentlz-test-secrets`, `agentlz-prod-secrets` | Create these Library variable groups and authorize only this pipeline. Each must contain the secret variable `AGENTLZ_SECRET_SETTINGS_JSON`, initially the string `{}`. |
 | `AGENTLZ_SECRET_SETTINGS_JSON` in each group | JSON object of additional documented azd/hook inputs, with string values. It cannot override the inline deployment controls. Empty `{}` is valid for the Agent Application example. This is **not** automatic publication of OAuth/runtime settings or a private Git credential mechanism. |
-| Inline `settings` in each stage | Review topology, ingestion, isolation and regional settings. Add required [configuration](configuration.md) inputs for your approved network, source, models or reused resources. Keep nonsecret configuration reviewable here; never put secret values in YAML. |
+| Inline `settings` in each stage | Review topology, ingestion, isolation and regional settings. Add required [Deployment settings](configuration.md) inputs for your approved network, source, models or reused resources. Keep nonsecret configuration reviewable here; never put secret values in YAML. |
 
 The inline `settings` maps keep deployment inputs visible for review.
 Values are reapplied after environment refresh on every job.
 `RUN_FROM_JUMPBOX=true` **requires** the connected-host check; it does not create
 connectivity. The example leaves `AZURE_SKIP_NETWORK_ISOLATION_WARNING=false`.
-The inspected POSIX preProvision hook's interactive warning checks the legacy
+The inspected POSIX preProvision hook's interactive warning checks the separate
 `AZURE_NETWORK_ISOLATION` variable, not the example's `NETWORK_ISOLATION` input.
-Do not inherit that legacy alias in the runner or environment. If an existing
-workflow must retain a truthy legacy alias, explicitly review setting the warning
+Do not inherit that alias in the runner or environment. If an existing
+workflow must retain a truthy alias, explicitly review setting the warning
 flag to `true` for unattended execution while retaining `RUN_FROM_JUMPBOX=true`.
 The warning flag alone can defer configuration when `RUN_FROM_JUMPBOX` is not
 truthy; never use that combination as a private deployment shortcut.
@@ -253,7 +258,7 @@ it into the credential mechanism. It is not a GitHub credential.
 For a [custom application](build-your-own-app.md), adapt CI validation to the
 selected definition and add `AGENTLZ_APP_DEFINITION` to each stage **before first
 provision**. Keep the application ID stable. Custom definitions accept **local
-sources or immutable image digests**, not remote repository URLs.
+sources or immutable image digests**, not remote Git URLs.
 
 Materialize local source in every job with a clean Git checkout at its declared
 `source.commit`, preserving `.git` metadata and the definition's relative layout.
@@ -262,8 +267,8 @@ using the separate Git credentials above. Do not feed these hooks a `git archive
 tree without Git metadata: they check the component's actual `git rev-parse HEAD`.
 Source commit checks do not reject uncommitted edits; validate clean trees.
 
-Extend the template's fixed cleanup list with the custom definition folder's
-explicit `.azure` and `.logs` paths; never add a source or workspace root.
+Add the custom definition folder's explicit `.azure` and `.logs` paths to the
+fixed cleanup list. Never include source or workspace roots.
 
 Custom hosted services follow their own definition/image contract.
 The downloaded template's preparation branch is for
@@ -277,20 +282,20 @@ workflow before using it for a custom hosted definition.
    YAML, with accountable reviewers, no self-approval where policy requires it,
    and restricted administrator/pipeline permissions. Approval for TEST accepts
    DEV evidence; approval for PROD accepts TEST evidence. Configure branch control
-   and an exclusive lock where appropriate, and avoid overlapping release runs.
+   and an exclusive lock where appropriate. Do not overlap release runs.
 2. Authorize this pipeline, not all pipelines, to use the environments, pools,
    WIF connections and variable groups. Protect the release branch and require
-   review of pipeline/template changes.
+   pipeline/template review.
 3. In **Pipelines → New pipeline**, select your platform repository and
    **Existing Azure Pipelines YAML file**, then `.pipelines/azure-pipelines.yml`.
-   Save it without starting a production run until all inputs/checks are ready.
+   Save it. Do not start production until all inputs and checks are ready.
 4. Queue a run from a reviewed branch/commit. This sample has no automatic trigger.
    Leave **all stages selected**; never use stage selection as a promotion bypass.
 
-CI validates the application definition and manifest JSON, installs the hook
-dependencies, and compiles Bicep without deploying. Add security scanning,
-Bicep what-if, Azure readiness checks, real-user acceptance tests and your
-existing unit/contract tests to the review gates before promotion.
+CI validates the application definition and manifest JSON, installs hook
+dependencies and compiles Bicep without deploying. Before promotion, require
+security scanning, Bicep what-if, Azure readiness checks, real-user acceptance
+and your existing unit/contract tests.
 
 Each deployment stage requires `succeeded()` **and an explicit result equal to
 `Succeeded` for every prerequisite**. `Failed`, `Canceled`, `Skipped` and
@@ -299,7 +304,13 @@ Each deployment stage requires `succeeded()` **and an explicit result equal to
 Azure DevOps Environment approvals are external protected-resource checks.
 Verify they are configured in Azure DevOps before queuing a run.
 
-### 5. Understand what runs on a fresh job
+<span id="5-understand-what-runs-on-a-fresh-job"></span>
+
+### 5. Run and inspect the deployment
+
+Open the queued run, select each stage and inspect the authenticated task's
+logs. Confirm the target and command order below. Stop promotion on an
+unexpected target, deferred configuration or failed capability check.
 
 The template checks out `Build.SourceVersion` again and fails if `HEAD` differs.
 It activates Python 3.12 and installs `config/requirements.txt` **in that job**;
@@ -313,19 +324,18 @@ one already present), sets the intended resource group, and checks group existen
   the previous azd deployment outputs. Access, discovery or refresh errors fail
   the job; there is no `|| true`. An existing empty/unrelated resource group is
   not a prior azd deployment. Use a fresh target for this example or explicitly
-  onboard/review the existing foundation before using it.
+  review and onboard the existing foundation first.
 
 The same azd name and subscription must locate the previous deployment. Review
 the refreshed target and outputs for an existing environment; do not create a
 second deployment by renaming the environment. Local `.azure` is disposable here,
-not a promoted artifact or backup. Review migration state and application binding
+not a promoted artifact or backup. Review deployed state and application binding
 before adopting an existing environment into CI.
 
 After refresh, reviewed environment settings are applied, then the template runs:
 
 | Topology | Ordered commands from the platform root |
 | --- | --- |
-| Classic | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
 | Hosted Agent Application | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `bash scripts/prepareHostedDeployment.sh` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
 
 Preup validates/checks binding before standalone provisioning. Preprovision
@@ -373,8 +383,7 @@ waiting for its protected Environment check, then PROD waiting after successful
 TEST. Match the recorded `Build.SourceVersion` and reviewed manifest pins to
 the run being approved.
 
-Before each promotion, record the following against the preceding environment
-in your release evidence:
+Before promotion, record release evidence for the preceding environment:
 
 1. `azd env get-value AZURE_RESOURCE_GROUP` identifies the intended target.
    App Configuration has the expected platform outputs and effective settings
@@ -395,14 +404,29 @@ in your release evidence:
 5. Inspect service health, RBAC and private endpoint resolution, and attach
    sanitized evidence to the run/change record. See
    [application health and diagnostics](troubleshooting.md) and
-   [document authorization guidance](hosted-agents.md#configure-the-uis-delegated-authentication).
+   [document authorization guidance](application-auth.md#3-verify-the-retrieval-identity-boundary).
 
 Do not approve TEST or PROD until the preceding environment meets these checks.
 Some post-provision setup sections currently log a configuration failure and
 continue, so review the logs as well as the hook exit status.
-Require organization-owned acceptance checks to pass before promotion.
+Require your organization's acceptance checks to pass.
 
-## Troubleshoot, redeploy and recover
+### Local example validation
+
+With Python and PyYAML installed, run from the downloaded example directory:
+
+```bash
+python -m pip install PyYAML==6.0.3
+python validate.py
+```
+
+Expect the local checks to pass. They exercise stage conditions for prerequisite
+result combinations, embedded script syntax and exact cleanup targets with
+`rm` intercepted, without deleting anything or calling Azure. They cannot
+validate live service connections, approvals, RBAC, private networking or
+tenant consent. Perform those acceptance checks separately.
+
+### Troubleshoot, redeploy and recover
 
 | Symptom | Action |
 | --- | --- |
@@ -432,7 +456,7 @@ an image-digest rollback.
    environments changed from their recorded target, source and image evidence.
 2. Select the last accepted **complete pinned combination**. Review its
    compatibility with current configuration, data and application binding using
-   [release rollback](deploy-full-stack.md#roll-back-to-a-previous-release).
+   [deployment rollback](deploy-full-stack.md#roll-back-to-a-previous-release).
    A source-promotion rerun may rebuild images; it does not guarantee the previous
    image digest.
 3. For affected environments, restore reviewed stage inputs and rerun the
@@ -442,25 +466,10 @@ an image-digest rollback.
 4. If abandoning pipeline onboarding, disable the pipeline and have the Azure
    DevOps administrator revoke only its resource authorizations. Retire newly
    created WIF connections, grants and variable groups only after confirming no
-   other pipelines use them. Keep deployed application resources and data intact.
+   other pipelines use them. Preserve deployed application resources and data.
 
 Rechecking an old commit does not reverse schema, infrastructure or data changes.
-Use service-specific recovery where required, not `azd down --purge`. Do not
+Use service-specific recovery where required, not environment deletion. Do not
 relax PNA, bypass auth or weaken promotion conditions to make recovery pass.
 
-## Local example validation
-
-With Python and PyYAML installed, run from the downloaded example directory:
-
-```bash
-python -m pip install PyYAML==6.0.3
-python validate.py
-```
-
-This checks YAML/template wiring, stage conditions against prerequisite result
-combinations, embedded Bash/Python syntax, and the exact cleanup targets with
-`rm` intercepted (no real deletion) without Azure. It is not the Azure
-DevOps template-expansion service and cannot check real service connections,
-approvals, RBAC, private connectivity, tenant consent or application behavior.
-The example has not been executed against Azure or registered as a live pipeline
-as part of this documentation change.
+This documentation procedure does not establish live pipeline acceptance.

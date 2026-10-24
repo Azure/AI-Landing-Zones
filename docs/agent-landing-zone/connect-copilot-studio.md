@@ -28,7 +28,7 @@ Messages follow this path:
   </li>
   <li><strong>Foundry agent</strong> <span class="runbook-path__detail">Responses API</span></li>
 </ol>
-<p class="runbook-path__route"><strong>Private connectivity:</strong> the HTTPS request goes through the Power Platform delegated subnet and Foundry private endpoint.</p>
+<p class="runbook-path__route"><strong>Private connectivity:</strong> HTTPS uses the Power Platform delegated subnet to reach the Foundry private endpoint.</p>
 </div>
 
 !!! note "Why use a flow in this scenario?"
@@ -37,17 +37,21 @@ Messages follow this path:
     [virtual network integration](https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation),
     allowing HTTPS requests to reach Foundry through its private endpoint.
     The [native Microsoft Foundry integration](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent)
-    is **in preview** and follows a separate setup, outside this procedure.
+    follows a separate setup, outside this procedure.
     In the documented lab, native connector requests still arrived through
-    public ingress after VNet association and were denied with PNA disabled;
+    public ingress after VNet association and returned HTTP 403 with PNA disabled;
     the flow used the delegated private path successfully. These results are
-    specific to that lab; evaluate the native preview separately for your environment.
+    specific to that lab, not proof that native integration is impossible in
+    every environment. Evaluate the native integration separately.
 
 ## Prerequisites
 
 - **Foundry:** A running, tested hosted agent. Ask its owner for the stable
   **Responses URL** and **active agent version**. Use the agent endpoint shown in
   Step 3, not a Container Apps `/invocations` URL or an Activity endpoint.
+  If using the Agent Application, resolve its protected-retrieval integration
+  gate in the [Deploy full stack runbook](deploy-full-stack.md) before using
+  protected sources. A working relay is not evidence of source authorization.
 - **Azure network:** The platform team has already delivered the Power Platform
   delegated subnet, regional connectivity, an enterprise policy and its
   **Azure resource ID**, an approved Foundry private endpoint and private DNS.
@@ -92,9 +96,9 @@ Complete Steps 1-4 in order with the named administrators and maker, then run
 
 ### Step 1: Associate the environment with the private network
 
-A **Power Platform administrator** performs this step. Schedule the change first:
-the environment's other supported workloads are also affected, and connections
-can be unstable for up to 30 minutes.
+A **Power Platform administrator** performs this step. Schedule the change:
+it affects other supported workloads in the environment and can cause up to
+30 minutes of connection instability.
 
 1. In the [Power Platform admin center](https://admin.powerplatform.microsoft.com/),
    open **Manage > Environments**, select the target environment and record its
@@ -102,7 +106,7 @@ can be unstable for up to 30 minutes.
    Select this same environment in Copilot Studio and Power Automate.
 2. Open **Security > Data and privacy > Azure Virtual Network policies**.
    Select the environment, select the prepared policy and **Save**. If the
-   correct association already exists, leave it unchanged.
+   association is already correct, make no change.
 3. Open **Manage > Environments**, select the environment, then **History**.
    Wait for the policy operation to show **Succeeded** before testing.
 4. Have the platform team confirm private DNS, routing and HTTPS access from
@@ -297,7 +301,7 @@ and restrict sharing before adding real users.
    (shown as **`Topic.FoundryReply`**). For **To value**, select **Formula** and
    paste the expression below; the resulting variable must be **Text**.
    Tool calls can precede message items in the response. The expression reads
-   all message `output_text` parts.
+   every `output_text` part in those messages.
 
     <details class="runbook-command" markdown="1">
     <summary>Power Fx: extract text only from a completed, error-free response</summary>
@@ -337,7 +341,7 @@ and restrict sharing before adding real users.
    Insert its value with the variable picker; do not type its name as message text.
 5. End **both branches** with **Topic management > End all topics**.
    Do not enable a second Foundry tool as an automatic fallback. Run the topic
-   checker and resolve every error before saving.
+   checker, fix every error, then save.
 
 **Expected result:** One message invokes the flow once and displays Foundry's
 actual text. Invalid JSON, an incomplete/failed response or missing text produces
@@ -372,7 +376,7 @@ After these checks pass, return to the Studio agent and select **Publish**.
 Repeat the test from the intended authenticated channel with an approved pilot
 user to validate channel authentication, sharing and connection behavior.
 
-## Troubleshooting
+### Troubleshooting
 
 | Symptom | Check and action |
 | --- | --- |
@@ -386,12 +390,12 @@ user to validate channel authentication, sharing and connection behavior.
 | Topic checker rejects the formula | Confirm `Topic.FoundryResponse` is Text, paste into the **Formula** tab, and preserve the `As m` / `As c` aliases. Use commas as Power Fx argument separators. |
 | Studio action times out | Check full execution time and synchronous response settings. Optimize the agent or design an explicit asynchronous integration; do not increase retries or send a fake success. |
 
-Restrict run-history access. Once validation is complete, apply your organization's
-**Secure inputs / Secure outputs** policy to the HTTP and response actions:
-these can contain prompts, retrieved data and replies. Share only sanitized UTC
-timestamps, run/request IDs and status codes during diagnosis.
+Restrict run-history access. After validation, apply your organization's
+**Secure inputs / Secure outputs** policy to HTTP and response actions:
+these can contain prompts, retrieved data and replies. Share only sanitized
+UTC timestamps, run/request IDs and status codes.
 
-## Operate or stop the integration
+### Operate or stop the integration
 
 - **Change:** Export/version the solution and record the endpoint, active agent
   version and connection reference before editing. Rebind the connection in each
@@ -405,7 +409,7 @@ timestamps, run/request IDs and status codes during diagnosis.
 
 1. Disable the relay topic and republish the dedicated Studio agent, then turn
    off the **Call private Foundry agent** flow in Power Automate. Test from the
-   published channel and confirm no new relay run reaches Foundry.
+   published channel and confirm the relay no longer reaches Foundry.
 2. For an update to an existing relay, restore the previous versioned solution
    through the approved solution-import process, rebind its intended connection
    reference and repeat [Validation](#validation) before re-enabling it.

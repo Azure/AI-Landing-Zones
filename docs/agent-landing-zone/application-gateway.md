@@ -4,7 +4,7 @@
 
 Give the Agent Application web UI a controlled public HTTPS entry point while keeping
 its Container Apps environment private. The optional gateway terminates TLS,
-applies WAF rules, and forwards requests over HTTPS to **one Container App**.
+applies web application firewall (WAF) rules, and forwards requests over HTTPS to **one Container App**.
 The basic routing rule forwards all UI paths, including enabled application
 routes. Keep application authentication and route authorization enabled.
 
@@ -17,7 +17,7 @@ Browser → Application Gateway → UI Container App → Foundry hosted agent
 The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
 bases. Their private connectivity, authentication, and authorization still apply.
-Start with a working [full-stack deployment](deploy-full-stack.md) and
+Start with a working deployment from the [Deploy full stack runbook](deploy-full-stack.md) and
 [application authentication](application-auth.md).
 For hosted runtime/network prerequisites, use [Hosted agents](hosted-agents.md)
 and Microsoft's [hosted-agent networking and limitations](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents).
@@ -31,13 +31,14 @@ controlled public entry point. Choose the supported entry point before editing:
 
 | Need | Choice |
 | --- | --- |
-| Public UI for approved client networks, private backend services | Use the template's public gateway below, with explicit client egress CIDRs. |
+| Public UI for approved client networks, private backend services | Use the template's public gateway below, with explicit public outbound IP address ranges (CIDRs). |
 | UI accessible only from your corporate network | Leave `publicIngress.enabled` false and use VPN/peering plus private DNS. See [Network isolation](network-isolation.md). |
 | An internal Application Gateway or an existing corporate ingress | Integrate it separately with the UI backend. The template option has a public IP only; it has no private-frontend switch. |
 
 The gateway requires network isolation. With `NETWORK_ISOLATION=false`,
 it stays undeployed even when `publicIngress.enabled` is true. For an existing
-public deployment, plan the network migration separately before adding this gateway.
+public deployment, obtain a separately reviewed private-network design before
+adding this gateway. Do not change isolation as part of an ingress retry.
 
 <span id="before-you-start"></span>
 
@@ -49,16 +50,19 @@ public deployment, plan the network migration separately before adding this gate
   the gateway identity's Key Vault role. Certificate import, DNS changes, and
   Entra app-registration changes may require separate administrators.
 - An approved DNS name, such as `chat.contoso.com`, and control of its DNS
-  record. Identify the public **egress CIDRs** of allowed users or proxies.
+  record. Identify allowed users' or proxies' public outbound address ranges
+  in CIDR notation, such as a single approved IPv4 address followed by `/32`.
 - A valid certificate covering that DNS name, with an exportable private key,
-  stored as an enabled PFX certificate in Key Vault. Follow Microsoft's
+  stored as an enabled PFX certificate in Key Vault. A PFX file packages the
+  certificate and its private key. Follow Microsoft's
   [Key Vault certificate integration requirements](https://learn.microsoft.com/azure/application-gateway/key-vault-certs).
   Use your approved certificate import process; never paste a PFX, password,
   private key, or client secret into deployment parameters or shell history.
 - A dedicated Application Gateway subnet. The template defaults to `/27`;
   Microsoft [recommends `/24` for v2 capacity and maintenance headroom](https://learn.microsoft.com/azure/application-gateway/configuration-infrastructure).
-  For a BYO VNet, have its owner verify the subnet, NSG attachment, routing,
-  and DNS before provisioning. Do not share the subnet with other workloads.
+  For an existing VNet, have its owner verify the subnet, network security
+  group (NSG) attachment, routing and DNS before provisioning.
+  Do not share the subnet with other workloads.
 
 WAF_v2 and its Standard public IP incur charges even without traffic.
 
@@ -88,10 +92,12 @@ runtime App Configuration setting or an `azd env set` gateway flag:
 `containerAppsList`, not an app name or resource ID. For a new, unmodified
 hosted deployment, composition removes the orchestrator Container App and the
 UI (`service_name: frontend`) becomes index `0`. The raw parameter file still
-lists the orchestrator first. Custom or migrated environments can differ:
+lists the orchestrator first. Custom compositions can differ:
 confirm the selected backend is the UI, never ingestion or an old orchestrator.
 
-Keep your existing hosted deployment inputs and use the connected host:
+Keep the existing hosted deployment inputs. Preview with
+`azd provision --preview` and confirm only approved resources and roles change.
+Apply from the connected host:
 
 ```bash
 azd provision
@@ -100,9 +106,10 @@ azd provision
 This applies foundation changes and runs provisioning hooks; it is not a
 gateway-only deployment. Follow the full-stack procedure if application
 deployment is incomplete. Keep the reviewed parameter file on every runner
-so a later provision does not restore different ingress settings.
+to preserve ingress settings on later provisions.
 
-Read the resulting identifiers:
+Read the resulting identifiers. `CONTAINER_APP_INTERNAL_FQDN` is the backend's
+fully qualified DNS hostname:
 
 ```bash
 azd env get-value PUBLIC_INGRESS_ENABLED
@@ -141,16 +148,18 @@ the listener and UI sign-in URL.
    to the internal Container Apps environment.
 
 The client-facing certificate covers your public hostname. The backend uses
-the Container App's own FQDN for Host/SNI and HTTPS certificate validation;
-do not replace the backend with the public gateway hostname. Microsoft's
+the Container App's own hostname for the HTTP Host header, TLS server name
+indication (SNI) and certificate validation. Do not replace the backend with the
+public gateway hostname. Microsoft's
 [Container Apps gateway guidance](https://learn.microsoft.com/azure/container-apps/waf-app-gateway)
 explains this backend routing pattern.
 
 ### 3. Configure the UI's external sign-in URL
 
 Before user testing, set the UI's `CHAINLIT_URL` to
-`https://<your-hostname>` using the safe configuration procedure in
-[Application authentication](application-auth.md), with App Configuration
+`https://<your-hostname>` using the
+[runtime-setting change procedure](deploy-full-stack.md#change-a-runtime-setting),
+with App Configuration
 label **`agent-lz`**. An explicit UI environment variable overrides App
 Configuration; remove or update a conflicting override.
 
@@ -189,8 +198,8 @@ from those CIDRs. Do not substitute `0.0.0.0/0` without an explicit public
 exposure decision.
 
 The gateway also configures an HTTP-to-HTTPS redirect, but the shipped subnet
-NSG does **not** open Internet port 80. Distribute the `https://` URL directly;
-an HTTP connection timeout is expected.
+NSG does **not** open Internet port 80, so HTTP connections time out.
+Distribute the `https://` URL directly.
 
 <span id="5-verify-the-complete-route"></span>
 
@@ -202,21 +211,24 @@ an HTTP connection timeout is expected.
 2. In the Azure portal, open the deployed **Application Gateway → Backend
    health**. Confirm that the backend pool contains the UI FQDN and is healthy.
    The shipped HTTPS probe checks `/` and accepts **200–499**, so a login denial
-   or even a missing page can pass. Inspect the actual UI next.
+   or even a missing page can pass. Then test the UI.
 3. From an allowed client network, run `nslookup <your-hostname>` and open
    `https://<your-hostname>` in a browser. Expect the public gateway IP, a
    trusted certificate for that hostname, the UI, and a successful sign-in
    returning to the same hostname. Do not bypass certificate validation.
 4. Send a chat request and confirm the streamed response completes. Test a
    representative long response and any enabled uploads. The gateway backend
-   timeout is **30 seconds** and its WAF has separate request/upload limits;
-   use the completed responses to validate chat transport.
+   timeout is **30 seconds**, with separate WAF request/upload limits.
+   Validate transport with completed chat responses.
 5. Repeat the connection test from an unapproved **public** network: TCP/443
    should be blocked. With test accounts and known restricted documents,
    verify permitted retrieval and denial for an unauthorized user through
-   Foundry IQ. The unauthorized user must not receive restricted content.
+   Foundry IQ **after the protected-retrieval integration gate in the
+   Deploy full stack runbook is resolved**. The gateway does not implement
+   that missing runtime identity integration.
 
-The shipped WAF uses OWASP CRS 3.2 in Prevention mode. Check its logs for
+The shipped WAF uses the Open Worldwide Application Security Project Core Rule
+Set (OWASP CRS) 3.2 in Prevention mode. Check its logs for
 blocked legitimate requests before widening access. Use narrowly scoped,
 reviewed rules rather than disabling the WAF. Detection mode logs without
 blocking; if temporarily approved for tuning, retain the source allowlist
@@ -226,7 +238,7 @@ Application Gateway supports WebSockets, but
 
 <span id="recover-or-withdraw-access"></span>
 
-## Troubleshooting
+### Troubleshooting
 
 | Symptom | Check and recovery |
 | --- | --- |
@@ -263,6 +275,6 @@ After closing access and checking remaining references with their owners,
 arrange explicit deletion of only the dedicated ingress resources
 (gateway, public IP, WAF policy, subnet NSG and gateway identity), clean up their
 role assignments, DNS record and obsolete redirect URI, and remove any subnet
-NSG reference before deleting that NSG. Coordinate with the network owner;
-do not delete the shared subnet, vault or UI. `azd down` tears down the broader
-environment and is not a gateway-only undo.
+NSG reference before deleting that NSG. Coordinate with the network owner.
+Do not delete the shared subnet, vault or UI, or tear down the environment to
+undo a gateway change.

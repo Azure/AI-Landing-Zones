@@ -1,152 +1,114 @@
 # Images and voice
 
-Agent Application can answer questions about image descriptions extracted
-from documents. Choose the document-processing path below. Direct image input
-and voice require an application extension.
+Agent Application can ground text answers in image descriptions extracted
+from documents. This differs from passing an image or audio directly to a
+model. The default hosted `maf_lite` path uses text input and retrieved text.
+This page explains capability boundaries; the
+[Deploy full stack runbook](deploy-full-stack.md) contains deployment procedures.
 
-## Choose a scenario
+<span id="choose-a-scenario"></span>
 
-| You want to… | Shipped hosted path |
+## Supported content
+
+| Content | Hosted application behavior |
 | --- | --- |
-| Ask about diagrams in a shared document collection | Native Foundry IQ Blob ingestion can verbalize images; the hosted agent retrieves the resulting content through the knowledge base. |
-| Attach a document to this conversation | Optional Agent App Ingestion processes PDF uploads. This is conversation-scoped retrieval, not direct image input to the model. |
-| Paste a screenshot and ask the model to inspect it | Not implemented by Agent Application's hosted adapter. Its Responses input is text-only; the UI upload handler accepts PDFs, not standalone images. |
-| Speak to the agent or receive spoken answers | Requires a custom voice flow connecting Agent App UI and the hosted adapter to audio services. |
+| Diagrams in a shared collection | Native Foundry IQ Blob ingestion can produce image descriptions when its model and extraction requirements are met. |
+| Conversation PDF | Optional Agent App Ingestion processes uploads; hosted retrieval also needs the owner/identity integration described below. |
+| Screenshot or standalone image | Not accepted by the supplied hosted input adapter or PDF upload handler. |
+| Voice | No supplied capture, transcription, realtime audio or playback integration. |
 
-Use the hosted default strategy, `maf_lite`, for these recipes.
-The classic `multimodal` strategy is rejected by the hosted runtime.
+<span id="ground-answers-in-document-images"></span>
 
-## Ground answers in document images
+## Document image grounding
 
-**Result:** a text answer grounded in content extracted from documents, including
-image descriptions. The model receives retrieved text.
+Native Blob ingestion can verbalize images during document processing. The
+knowledge base then returns extracted content to the orchestrator; the model
+receives text, not the original image.
 
-Before starting, use a working [hosted deployment](hosted-agents.md) with Foundry
-IQ retrieval. You need deployment/configuration access, permission to upload test
-documents to the configured Blob container, and an approved test document with a
-clearly identifiable diagram. Use a test environment for model or ingestion changes.
-The Search ingestion identity needs source/model access independently of the
-signed-in user's retrieval access. In private deployments, follow
-[Network isolation](network-isolation.md) for connected-runner and native Blob
-connectivity checks. Retain source permissions and delegated-user retrieval
-throughout allow/deny testing.
+This path uses `RETRIEVAL_BACKEND=foundry_iq`,
+`FOUNDRY_IQ_PATTERN=azureBlob`, `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=azureBlob`
+and `FOUNDRY_IQ_CONTENT_EXTRACTION_MODE=standard`.
+Agent App Ingestion is not required.
 
-1. Select native Blob ingestion before following the
-   [full-stack deployment workflow](deploy-full-stack.md):
+The provisioning template sets `disableImageVerbalization=false`, but only
+supplies `chatCompletionModel` for its supported Content Understanding model
+names. `gpt-4.1` is supported; the default `gpt-5-nano` is not in that allowlist.
+The flag alone therefore does **not** establish working image verbalization
+in a fresh deployment. Standard extraction also requires a compatible region,
+Foundry AI Services endpoint and embedding deployment.
+[Blob source prerequisites](https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-blob)
+describe service requirements.
 
-   ```bash
-   azd env set RETRIEVAL_BACKEND foundry_iq
-   azd env set FOUNDRY_IQ_PATTERN azureBlob
-   azd env set FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND azureBlob
-   azd env set FOUNDRY_IQ_CONTENT_EXTRACTION_MODE standard
-   ```
+In `main.parameters.json`, the chat entry of `modelDeploymentList` uses
+`canonical_name: CHAT_DEPLOYMENT_NAME`; `model.name` identifies the family
+and `name` identifies the deployment. A model change affects availability,
+quota and extraction compatibility.
+[Deployment settings](configuration.md) identifies the configuration inputs.
+The rendered source's model binding and extracted diagram content are the
+evidence of successful processing, not the model name alone.
 
-2. Check the deployed model and extraction prerequisites. The shipped template
-   enables image verbalization and supplies a chat completion model only for its
-   supported Content Understanding model names. `gpt-4.1` is one supported choice;
-   the checked-in default chat model, `gpt-5-nano`, is **not** in that template
-   allowlist. Select a model in that allowlist for image verbalization.
-   Use the [model configuration](configuration.md) and Microsoft's
-   [Blob knowledge source prerequisites](https://learn.microsoft.com/en-us/azure/search/agentic-knowledge-source-how-to-blob)
-   to select an available model/version and supported Content Understanding
-   region. Standard extraction also needs the Foundry AI Services endpoint and
-   an embedding deployment.
-   In the checked-in `main.parameters.json`, the chat entry in
-   `modelDeploymentList` has `canonical_name: CHAT_DEPLOYMENT_NAME`: its
-   `model.name` is the model family, while its `name` is the deployment name.
-   Keep the selected model version and regional quota compatible with that entry.
-3. Apply changes through the full deployment workflow. Inspect the provisioned
-   Blob knowledge source: expect `contentExtractionMode` to be `standard`,
-   `disableImageVerbalization` to be `false`, and a non-null `chatCompletionModel`
-   bound to the intended deployment. Native Blob ingestion does not require the
-   optional ingestion Container App.
-4. Upload the approved document to the configured source container/folder and
-   wait for its ingestion to complete. Ask a specific question whose answer
-   depends on the diagram, not just its surrounding prose.
-5. Check the answer against the diagram and open its source reference. Repeat as
-   a user denied access to the document. Inspect retrieved document IDs and
-   confirm that the document, its content and its citation are absent.
+The ingestion identity's source/model access is independent of the user's
+retrieval permissions. Private connectivity follows
+[Network isolation](network-isolation.md). Protected hosted retrieval still
+requires the [identity integration](application-auth.md#3-verify-the-retrieval-identity-boundary)
+and allow/deny evidence; image extraction does not provide it.
 
-Microsoft's service documentation can describe newer API capabilities than the
-pinned release. Keep the release's API configuration unless a coordinated
-compatibility change has been validated.
+<span id="attach-a-pdf-to-a-conversation"></span>
 
-## Attach a PDF to a conversation
+## Conversation PDFs
 
-**Result:** the PDF is ingested and retrieved as text within the caller's
-conversation. Start with a text-bearing PDF. For a scanned PDF or a diagram-only
-page, check the extracted content before testing retrieval.
+`DEPLOY_INGESTION_CONTAINER_APP` defaults to `false`, so fresh deployments hide
+and reject uploads. Optional Agent App Ingestion is required for eligible PDF
+attachments, as described in [Ingestion and conversation uploads](ingestion.md).
 
-1. Follow [Ingestion and conversation uploads](ingestion.md) to select
-   `DEPLOY_INGESTION_CONTAINER_APP=true` through the full deployment workflow.
-   Fresh Agent Application deployments default to `false`, which hides and rejects uploads.
-2. For a native Blob primary source, configure the Foundry IQ conversation-upload
-   source as well: `FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` and a provisioned
-   `FOUNDRY_IQ_CONVERSATION_KNOWLEDGE_SOURCE_NAME`. Retain the pinned
-   `2026-05-01-preview` API required by this upload filter. This source connects
-   processed uploads to knowledge-base retrieval.
-   The source name identifies the registered knowledge source, not a URL or
-   conversation ID. Runtime settings use App Configuration label `agent-lz`;
-   configure them separately from `azd env set` deployment inputs.
-   An operator with App Configuration data-write permission can set the nonsecret
-   opt-in using Entra authentication (replace `<store-name>` with the store name,
-   not its endpoint):
+With a native Blob primary source, conversation retrieval requires
+`FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` and provisioned
+`FOUNDRY_IQ_CONVERSATION_KNOWLEDGE_SOURCE_NAME`. The name identifies a Search
+knowledge source, not a URL or conversation ID. Its upload filter requires the
+pinned `2026-05-01-preview` API. Missing or failed upload sources can be skipped;
+shared-corpus retrieval can continue.
 
-   ```bash
-   az appconfig kv set --name "<store-name>" --auth-mode login --label agent-lz --key FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED --value true
-   ```
+The UI needs an established hosted conversation ID and an eligible signed-in
+session. It accepts at most five PDFs, 15 MiB each and 25 MiB combined.
+Anonymous embedded sessions cannot upload. Processing confirmation does not
+prove retrieval isolation: the hosted entry point supplies no authenticated
+owner context to the default connector, so the native Blob conversation-upload
+source is skipped. Working protected conversation retrieval requires a reviewed
+owner-identity integration, delegated retrieval authorization and cross-user
+validation.
 
-   Retain the provisioned source name and rerun the full workflow to reconcile
-   the knowledge source and deploy the affected components with the updated settings.
-3. Sign in with an eligible user and send a text message first to establish the
-   hosted conversation identifier. Attach a small PDF and ask a question specific
-   to its contents. The handler accepts at most five PDFs, 15 MiB each and
-   25 MiB combined. Anonymous Copilot sessions cannot upload.
-4. Expect a processed-files confirmation and an answer grounded in that PDF.
-   Test a different user's conversation to confirm the upload is not exposed.
+Agent App Ingestion's separate `MULTIMODAL` setting controls figure extraction
+and captioning in its custom pipeline. It does not enable direct screenshot
+input. Scanned or diagram-only PDFs depend on the extracted content.
 
-Agent App Ingestion also has a `MULTIMODAL` setting for extracting and captioning
-figures in its own pipeline. It is separate from the classic `multimodal`
-strategy and native Blob processing. Screenshot input still requires the
-extension described below.
+<span id="diagnose-a-missing-image-answer"></span>
 
-## Diagnose a missing image answer
+## Evidence and configuration lifecycle
 
-- **No attachment control:** check the effective ingestion selection first.
-  Native Blob ingestion alone never enables conversation uploads.
-- **PDF processing failed:** the UI does not send the question after an ingestion
-  failure. Reattach the PDF and retry after resolving the reported ingestion
-  problem; retain the UI's reference ID for support.
-- **PDF processed, but answer uses only the shared collection:** verify the
-  conversation-upload knowledge source, conversation ID and authenticated caller
-  ownership. The optional upload source can be skipped or fail without failing
-  shared-corpus retrieval. Confirm the returned references include the uploaded PDF.
-- **Diagram missing from the answer:** check ingestion completion, extracted
-  content and the provisioned chat model binding before changing prompts.
-  An unsupported model name can leave the Blob source's `chatCompletionModel`
-  null.
+Grounded image answers depend on completed ingestion, extracted content, a
+compatible model binding and the intended source reference. A processed PDF
+can still be absent from retrieval; shared-source answers alone do not prove
+conversation-upload retrieval works.
 
-Record the previous model/source settings before changing them. Restore those
-inputs and rerun the matching full workflow to undo a configuration experiment,
-keeping indexes and documents intact. Provisioning-managed settings
-can overwrite portal edits. Runtime settings load at startup: deploy a new hosted
-agent version and reload the affected UI/ingestion services through the documented
-deployment workflow. See [Configuration](configuration.md) and
-[Hosted agents](hosted-agents.md).
+Runtime configuration is cached. A changed hosted setting needs a new agent
+version; affected UI and ingestion processes also need to reload. Source/model
+changes follow the [Deploy full stack runbook](deploy-full-stack.md).
+The pinned API remains part of the application contract rather than an
+independent setting to change without compatibility validation.
 
 <span id="direct-images-or-voice-need-an-application-extension"></span>
+<span id="direct-images-or-voice-need-an-agent-application-extension"></span>
 
-## Direct images or voice need an Agent Application extension
+## Direct image and voice extensions
 
-For screenshot inspection, extend the caller and hosted adapter to validate and
-forward image content to a compatible model. The shipped adapter accepts text
-only. See Microsoft's
-[vision input guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision).
+Screenshot input requires caller and adapter development to validate and
+forward image content to a compatible model. Microsoft's
+[vision input guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision)
+describes model APIs, not an enabled Agent Application feature.
 
-For voice, build a client/service integration for capture, transcription or
-realtime audio and playback. Microsoft's
+Voice requires client/service integration for capture, transcription or
+realtime audio, and playback. The
 [Realtime audio guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/realtime-audio)
-describes the service APIs for that extension. Use
-[Build your own application](build-your-own-app.md) for the extension boundary.
-Preserve user authentication, OBO and source authorization when connecting either
-extension to retrieval.
+describes those APIs. [Bring your own app](build-your-own-app.md) covers the
+application boundary. Both extensions need authentication, input limits and
+source authorization when connected to retrieval.

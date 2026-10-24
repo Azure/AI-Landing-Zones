@@ -1,23 +1,20 @@
 # Resource naming
 
-Choose foundation resource names **before provisioning**. These are deployment
-inputs, not runtime App Configuration settings; they apply equally when the
-orchestrator is hosted in Foundry. Changing them does not rename existing Azure
-resources or migrate their data.
+Infrastructure resource names are deployment inputs, not runtime settings.
+They are resolved before provisioning, including when the orchestrator is
+hosted in Foundry. Changing an input does not rename an existing Azure
+resource or move its data.
 
-Use the selected environment and deployment permissions from
-[Full stack deploy](deploy-full-stack.md). Keep the same subscription,
-environment and location when updating an existing deployment.
-Return to [Configuration](configuration.md#resource-naming) for other deployment
-inputs. For selecting existing resources, use
-[resource reuse](planning.md#select-reuse-or-omit-resources), not naming overrides.
+This page explains the naming model. The
+[Deploy infra only](deploy-infra-only.md) and
+[Deploy full stack](deploy-full-stack.md) runbooks provide the input and
+preview steps. [Deployment settings](configuration.md) describes other inputs;
+[resource reuse](planning.md#select-reuse-or-omit-resources) is separate from naming.
 
 ## Defaults
 
-`RESOURCE_NAMING_MODE` maps to the foundation's `resourceNamingMode` parameter.
-The allowed values are `caf` (**default**) and `legacy`.
-
-Cloud Adoption Framework (CAF) naming generates names with the general shape
+Cloud Adoption Framework (CAF) naming is the default
+(`RESOURCE_NAMING_MODE=caf`). Generated names have the general shape
 `type-workload-environment-region-instance`, such as
 `kv-chatapp-dev-eus2-001`.
 
@@ -30,83 +27,53 @@ Cloud Adoption Framework (CAF) naming generates names with the general shape
 
 Tokens are lowercased. Region input also has spaces removed; unmapped regions
 use its first five characters. The naming region is based on the deployment
-location, not individual service-location overrides. Setting `CAF_REGION_NAME`
+location, not individual service-location overrides. `CAF_REGION_NAME`
 changes the name token, **not** where resources deploy.
 Overriding the CAF environment or region token does not change the inputs to
-the default workload hash.
+the workload's deterministic six-character hash.
 
 Storage and registry names omit hyphens. Generated names are truncated to
 service-specific lengths, so long tokens can lose distinguishing suffixes.
-Keep tokens short and follow Azure's
-[resource naming rules and uniqueness scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules).
-For globally unique resource names, check availability before deployment.
+Azure's [resource naming rules and uniqueness scopes](https://learn.microsoft.com/azure/azure-resource-manager/management/resource-name-rules)
+still apply, including global name availability where required.
 
-## Set names for a new environment
+<span id="set-names-for-a-new-environment"></span>
 
-1. Select your new azd environment using the deployment guide. No naming
-   settings are required to use the CAF defaults.
-2. Optionally choose a readable workload token before provisioning:
+## Naming inputs and explicit overrides
 
-   ```bash
-   azd env set RESOURCE_NAMING_MODE caf
-   azd env set CAF_WORKLOAD_NAME chatapp
-   ```
+CAF defaults need no extra inputs. A readable `CAF_WORKLOAD_NAME` can express
+the workload name; the other tokens support organizational naming policies.
+The instance token distinguishes deliberately separate parallel copies,
+not successive updates to one deployment.
 
-   Override `CAF_ENVIRONMENT_NAME`, `CAF_REGION_NAME` or `CAF_INSTANCE` only
-   when the defaults do not suit your naming policy. Use another instance token
-   for a deliberately separate parallel copy; do not increment it for updates.
-3. For a specific resource, the foundation supports explicit parameters such
-   as `keyVaultName`, `storageAccountName`, `searchServiceName` and
-   `aiFoundryAccountName`. Supply supported parameters through the reviewed
-   root `main.parameters.json` deployment inputs, not the generated
-   `infra/main.parameters.json`; the shipped root file does **not**
-   expose environment-variable mappings for these examples.
-   For example, add `"keyVaultName": { "value": "kv-chatapp-dev-eus2-001" }`
-   inside the root file's `parameters` object, preserving valid JSON and
-   choosing an available name.
+Explicit infrastructure parameters include `keyVaultName`,
+`storageAccountName`, `searchServiceName` and `aiFoundryAccountName`.
+They belong in the reviewed root `main.parameters.json`, not the generated
+`infra/main.parameters.json`. The root file does not map these examples to
+environment variables.
 
-   A nonempty explicit name normally wins over generated naming. **Exception:**
-   in CAF mode, a value equal to that resource's legacy-generated name is
-   treated as the old default and replaced by its CAF name. Use `legacy` mode
-   to preserve those names. Explicit names must satisfy the service's rules;
-   the CAF truncation logic does not sanitize explicit overrides.
-4. Review the resolved resource names before provisioning, using your
-   deployment workflow's
-   [ARM/Bicep what-if preview](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deploy-what-if).
-   What-if requires deployment permissions, not just Reader access.
-   Confirm names remain distinct after truncation, then continue provisioning.
+A nonempty explicit name normally takes precedence. The template can
+recognize an explicit value as a generated default and substitute the CAF
+name, so the deployment preview is the authority for the resolved result.
+Explicit names must satisfy each service's rules; CAF truncation does not
+sanitize them.
 
-## Preserve an existing deployment
+<span id="preserve-an-existing-deployment"></span>
 
-For an environment created with legacy resource-token naming, set this
-**before the next provision**, including after upgrading the template:
+## Naming stability
 
-```bash
-azd env set RESOURCE_NAMING_MODE legacy
-```
+Stable subscription, environment, location and naming inputs keep generated
+names stable. Changing a token or explicit resource name can create parallel
+resources or require replacement. Endpoints, identities, role assignments and
+private connections can change, while data remains in the original resources.
+Parallel resources can also incur duplicate costs.
 
-Record the deployed names and previous naming inputs before upgrading.
-Retain the original explicit overrides and any custom `resourceToken` input.
-The default legacy token is the lowercased
-`uniqueString(subscription().id, environmentName, location)`, not the six-character
-CAF workload token. Keep the original CAF inputs instead if the environment
-was already deployed with CAF naming.
+The runbooks' preview allows comparison with existing names and resource IDs.
+It needs deployment permissions, not just Reader access, and can reveal naming
+collisions after truncation. Unexpected creates or deletes need review before
+any resource changes proceed.
 
-**Verify:** compare the preview's resource names and IDs with the existing
-deployment. Investigate unexpected creates or deletes before proceeding.
-After provisioning, confirm
-the expected names in the Azure portal resource group resource list.
-
-Switching modes, changing a token or changing an explicit resource name can
-create parallel resources or require replacement, rather than update the
-existing resource. This can change endpoints, identities, role assignments and
-private connections, leave data in the old resources and incur duplicate cost.
-Naming is not an existing-resource reuse mechanism.
-
-**Recovery:** if the preview shows unintended names, stop and restore the
-previous inputs before provisioning. If new resources were already created,
-restoring inputs alone does not migrate data or clean them up. Identify which
-resources hold production data and dependencies, plan migration or rollback,
-and remove duplicates only after verification. See
-[Operations](operations.md) for ongoing deployment management and
-[Configuration](configuration.md) for the broader input model.
+Restoring earlier inputs does not move data or clean up resources already
+created under different names. Recovery requires dependency, data and access
+review before any cleanup. [Operations](operations.md) covers ongoing
+deployment management.

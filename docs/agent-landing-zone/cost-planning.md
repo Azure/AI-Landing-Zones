@@ -1,45 +1,45 @@
 # Cost planning
 
-Estimate the **Agent Landing Zone configuration you will run**.
-Choose [topology and resource reuse](planning.md)
-and establish [capacity assumptions](sizing.md) first.
+Cost depends on the **Agent Landing Zone configuration that runs**:
+[topology and resource reuse](planning.md), [capacity](sizing.md) and usage.
+The default has a Foundry hosted orchestrator, frontend, no panel and native
+Foundry IQ Blob ingestion, without Agent App Ingestion.
+
+This page explains cost drivers, not deployment steps. The
+[Deploy infra only](deploy-infra-only.md) and
+[Deploy full stack](deploy-full-stack.md) runbooks cover execution.
 
 !!! note "Pricing sources and dates"
-    Reviewed against platform v4.3.0 on **October 23, 2026**. This page does not
-    quote or reprice Azure services. The shared
+    This page does not quote or reprice Azure services. The shared
     [resource inventory and estimates](../bicep/deployed-resources.md) uses
-    **May 29, 2026, East US 2 USD PAYG** example prices. Its scenarios are not
+    **May 29, 2026, East US 2, US dollars, pay-as-you-go** example prices. Its scenarios are not
     Agent Application defaults or a full-stack quote. The
-    [shared cost guide](../architecture/cost-guide.md) explains the older
-    calculator example's date and limitations. Recalculate using current
-    regional rates, currency and your organization's agreement.
+    [shared cost guide](../architecture/cost-guide.md) explains its calculator
+    example's date and limitations. An estimate needs current regional rates,
+    currency and your organization's agreement.
 
-## Build the estimate
+<span id="build-the-estimate"></span>
 
-1. **Count the resolved footprint.** Record the platform revision, application
-   definition, `DEPLOYMENT_TOPOLOGY`, ingestion selection, network mode and
-   existing-resource IDs. Compare composed parameters and the deployment
-   preview, including retained migration resources.
-2. **Price allocated capacity.** Include selected Search services, registry
-   tier, App Configuration, workload-profile nodes, private endpoints,
-   firewall, Bastion, ingress and other allocation-based services. Include
-   their charges during idle periods.
-3. **Add measured usage.** Estimate turns, model/tool calls, input/output tokens,
-   embeddings, indexing, compute, requests, stored data, logs and network
-   transfer. Include initial corpus ingestion and reindexing separately
-   from steady-state traffic.
-4. **Account for shared services.** Agree the workload's share of hub, DNS,
-   gateway and monitoring charges with their owners. Reuse avoids some new
-   allocations, not all usage charges.
-5. **Approve a dated estimate.** Use the
-   [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/),
-   record assumptions and exclusions, then compare actual spend after deployment.
+## Estimate inputs
 
-## Check the Agent-specific cost drivers
+| Input | What it contributes |
+| --- | --- |
+| Resolved resources | Platform Git commit or release tag, selected application, `DEPLOYMENT_TOPOLOGY`, ingestion selection, network mode and reused resources. Composed parameters and the deployment preview show planned resources; the deployed inventory also reveals retained allocations. |
+| Allocated capacity | Search services, registry tier, App Configuration, workload-profile nodes, private endpoints, firewall, Bastion and ingress can incur idle-period charges. |
+| Measured usage | Turns, model/tool calls, tokens, embeddings, indexing, compute, requests, data, logs and transfer. Initial corpus ingestion and reindexing are separate from steady-state traffic. |
+| Shared services | Hub, DNS, gateway and monitoring costs allocated with their owners. Reuse avoids some new allocations, not all usage charges. |
+
+The [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/)
+supports a dated estimate with explicit assumptions and exclusions.
+Actual spend after deployment provides the comparison baseline.
+
+<span id="check-the-agent-specific-cost-drivers"></span>
+
+## Agent-specific cost drivers
 
 | Decision | Include in the estimate |
 | --- | --- |
-| Hosted or classic orchestrator | Foundry hosted compute where selected, or the classic Container App. Include the frontend and other selected components separately. The root's `main` D4 profile has a zero-node minimum, but selected apps with minimum replicas can keep a node allocated and billed while idle. |
+| Application hosting | Foundry hosted compute, plus the frontend and other selected components separately. The root's `main` D4 profile has a zero-node minimum, but selected Container Apps with minimum replicas can keep a node allocated and billed while idle. |
 | Foundry Agent Service | Separate Search, Storage and Cosmos DB backing resources where created. `hosted-no-panel` omits Agent Application Cosmos DB, not these Foundry backing resources. Reused dedicated backing resources still have costs. |
 | Retrieval and ingestion | Agent Application Search replicas/partitions plus any separately billed retrieval features, model calls and embeddings. Omitting Agent App Ingestion does not remove native ingestion or indexing charges. With the component selected, include its compute and processing dependencies. |
 | Private networking | Count the actual private endpoints, DNS, firewall/NAT, peering/data transfer and connected runner. Include Bastion, VM and disks only where selected or retained. Hub reuse changes allocation and ownership, not the connectivity requirements. |
@@ -51,26 +51,28 @@ Model deployment `sku.capacity` allocates quota. To estimate model charges,
 use the deployment type, region, expected tokens and any provisioned-capacity
 commitment with the current service prices.
 
-## Control spend without weakening the design
+<span id="control-spend-without-weakening-the-design"></span>
 
-- Set budgets and alerts in
-  [Azure Cost Management](https://learn.microsoft.com/azure/cost-management-billing/costs/overview-cost-management).
-  Budgets notify; they do not automatically stop resources or cap spend.
-- Compare the estimate with service-level usage after the initial ingestion
-  and after representative interactive traffic. Investigate idle allocations,
-  unexpected retained resources, retry loops and excessive log volume.
-- Tune model choice, Search capacity, replica minimums and retention using
-  measured quality, latency, availability and compliance requirements.
-  Revalidate [sizing](sizing.md) after each change.
-- Reuse shared infrastructure only with approved ownership, routing and
-  permissions. Do not enable public access, remove authorization or bypass
-  private-link readiness to meet a cost target.
-- Retire old components only after dependency, backup and grant review.
-  Selection flags affect future deployments; existing resources require
-  separate cleanup through the [deployment lifecycle guidance](deploy-full-stack.md).
+## Spend controls and security
 
-Keep one estimate per environment with its owner, date, region/currency,
-selected/reused resources, expected monthly usage and contingency. Revisit it
-after a topology, model, corpus or traffic change. The
+[Azure Cost Management](https://learn.microsoft.com/azure/cost-management-billing/costs/overview-cost-management)
+budgets and alerts notify; they do not automatically stop resources or cap spend.
+Service-level usage after ingestion and representative traffic can reveal idle
+allocations, retained resources, retry loops and excessive logs.
+
+Model choice, Search capacity, replica minimums and retention can be tuned
+against measured quality, latency, availability and compliance needs.
+Each change affects [sizing](sizing.md) as well as cost.
+
+Shared infrastructure needs approved ownership, routing and permissions.
+Public access, removed authorization and bypassed private-link readiness are
+not cost controls. Selection flags affect future deployments; existing
+resources and grants require separate dependency, backup and access review
+before cleanup, as covered by the
+[Deploy full stack](deploy-full-stack.md) runbook.
+
+An environment estimate records its owner, date, region/currency,
+selected/reused resources, expected monthly usage and contingency.
+Topology, model, corpus or traffic changes can invalidate it. The
 [shared cost guide](../architecture/cost-guide.md) provides additional pricing
 references without repeating the generic catalog here.

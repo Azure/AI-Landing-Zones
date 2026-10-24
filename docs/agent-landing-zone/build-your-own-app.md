@@ -13,24 +13,28 @@ different application. Choose the branch that matches your change:
 
 | Goal | Start here |
 | --- | --- |
-| Change a documented setting | [Configuration](configuration.md); no source fork needed |
+| Change a documented setting | [Deployment settings](configuration.md); no source fork needed |
 | Extend the Agent Application orchestrator or tools | [Agent tools](agent-tools.md), then pin only changed components below |
 | Deploy a different application | The custom hosted example and its application definition below |
 
 For the Agent Application orchestrator hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
 knowledge base retrieval. Custom strategies and tools must implement and test
 the hosted entrypoint and authorization path before deployment to Foundry.
+The default remains `maf_lite` with Foundry IQ. A source fork or capability
+profile does not close the protected-retrieval integration gate in the
+Deploy full stack runbook. Implement and test that identity boundary before
+using protected documents; do not substitute a strategy flag.
 
 <span id="before-you-start"></span>
 
 ## Prerequisites
 
 - Prepare the platform checkout, Python hook dependencies, Azure sign-in and
-  deployment permissions in [Deploy the full stack](deploy-full-stack.md).
+  deployment permissions in the [Deploy full stack runbook](deploy-full-stack.md).
   Commands below run from the platform root unless stated otherwise.
 - The deployment identity must be able to create scoped role assignments.
   Private Git sources also require noninteractive read access on the actual
-  runner; Azure sign-in does not grant Git access.
+  runner; Azure sign-in does not authorize Git.
 - Hosted components require the runner's Foundry agent-authoring access on the
   exact project, plus account read access. Review the
   [hosted deployment permissions](deploy-full-stack.md#foundry-orchestrator-hosted-no-panel-or-hosted-panel)
@@ -42,14 +46,15 @@ the hosted entrypoint and authorization path before deployment to Foundry.
 
 Definitions and manifests are deployment inputs, not runtime configuration.
 Keep secrets out of both. For App Configuration updates under label `agent-lz`
-and hosted redeployment requirements, follow [Configuration](configuration.md).
+and hosted redeployment requirements, follow [Deployment settings](configuration.md).
 Do not restart a Container App to refresh a Foundry-hosted agent.
 
 ## Procedure
 
 Choose **Customize an Agent Application component** for a source change.
 For a different application, follow **Application binding and selection**, then
-**Deploy a different application**. The contract reference follows the runbook.
+**Deploy a different application**. Inspect the contract reference below when
+editing the definition.
 
 <span id="customize-a-bundled-component"></span>
 
@@ -60,27 +65,16 @@ change; an orchestrator extension does not require UI or ingestion forks.
 Fork or mirror the platform when maintaining deployment inputs or automation.
 Changing its Git remote does not change component repository URLs.
 
-<details markdown="1">
-<summary>Updating older repository remotes</summary>
-
-The current repositories are `Azure/agent-landing-zone`, `Azure/agent-app-ui`,
-`Azure/agent-app-orchestrator` and `Azure/agent-app-ingestion`, replacing
-`Azure/GPT-RAG` and the corresponding `Azure/gpt-rag-*` runtime names.
-Remote changes do not update pins or migrate Azure deployments; use the
-[upgrade runbook](deploy-full-stack.md#upgrade-to-a-new-release).
-
-</details>
-
 #### Pin the modified component
 
 For an orchestrator customization:
 
 1. Implement and test the hosted entrypoint and changed behavior, including
    Foundry IQ retrieval where relevant. Commit and publish a stable tag.
-2. Update its `repo`, `tag` and full 40-character `commit` together in the
+2. Update its `repo`, `tag` and full 40-character Git commit hash together in the
    platform `manifest.json`. The fetch path selects a tag, or branch when no
-   tag is set, then verifies HEAD. A SHA alone is not a selectable fetch ref.
-3. Set the Agent Application definition's orchestrator `source.commit` to the **same SHA**.
+   tag is set, then verifies HEAD. A commit hash alone is not a selectable fetch reference.
+3. Set the Agent Application definition's orchestrator `source.commit` to the **same hash**.
    Keep application ID `agent-lz-default` and unchanged component pins.
 4. Validate:
 
@@ -88,10 +82,10 @@ For an orchestrator customization:
     python -m config.appdefinition --validate app-definition.json
     ```
 
-5. Commit both pin files together. Follow [Deploy the full stack](deploy-full-stack.md)
+5. Commit both pin files together. Follow the [Deploy full stack runbook](deploy-full-stack.md)
    and [hosted image preparation](hosted-agents.md), which builds from the
    manifest-pinned orchestrator. A startup-variable change cannot convert a
-   classic image into a supported hosted image.
+   Container App image into a supported hosted image.
 6. Verify the deployed version and changed behavior through the UI. Test both
    authorized and denied access to protected content.
 
@@ -99,10 +93,12 @@ Keep manifest names `agent-app-ui`, `agent-app-orchestrator`,
 `agent-app-ingestion` and definition names `ui`, `orchestrator`, `ingestion`.
 Hooks use these to map sibling folders. Existing checkouts are verified, not
 advanced automatically: preserve local work before relocating stale checkouts.
-Matching HEAD does not detect uncommitted source changes.
+Matching HEAD does not detect uncommitted source changes. Run
+`git status --porcelain` in each source folder and require no output for the
+source being built; retain reviewed deployment-input edits separately.
 
-Upstream release validation does not cover your modifications. Record the previous
-tested pin files and image provenance before deployment for [rollback](#rollback).
+Upstream validation does not cover your modifications. Before deployment,
+record the previous tested pin files and image provenance for [deployment rollback](#rollback).
 
 #### Private Git authentication
 
@@ -133,7 +129,7 @@ Agent Application Container App placeholders can remain alongside custom resourc
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
 If reusing Agent App UI, preserve its
-[upload-gate contract](ingestion.md#upgrade-and-retirement-safety).
+[upload-gate contract](ingestion.md).
 
 </details>
 
@@ -177,12 +173,14 @@ this release's deployment.
     Expect validation to pass. This checks schema, folder/service contracts and
     binding, not image availability or application behavior. Schema validation
     accepts the all-zero editing marker; deployment requires actual source HEAD.
-5. Provision the selected definition using
-   [Deploy infrastructure only](deploy-infra-only.md), then run root `azd deploy`.
-   For a custom-only deployment, set `DEPLOYMENT_TOPOLOGY=classic` in the azd
-   environment before first provision so the platform does not also select the Agent Application
-   hosted orchestrator. A custom hosted component still receives its required
-   hosted foundation resources. Its declared service uses its own source/image
+5. For a custom-only deployment, set `DEPLOYMENT_TOPOLOGY=classic` in the azd
+   environment **before first provision** to suppress the bundled hosted
+   orchestrator selection. This is a custom-definition composition requirement,
+   not a second Agent Application deployment path. The custom hosted component
+   receives its required hosted foundation resources.
+   Then provision the selected definition using
+   the [Deploy infra only runbook](deploy-infra-only.md), and run root `azd deploy`.
+   Its service uses its own source/image
    contract, not the Agent Application hosted image-preparation handoff.
 6. With the custom hosted example's answer logic, confirm the response names
    the intended project endpoint. A value of `unknown` or `unavailable` indicates
@@ -196,56 +194,30 @@ URL is supplied separately at runtime. For a Container App instead, use
 `samples/custom-app/containerapp/` and its matching service file; changing only
 the hosted example's `kind` is insufficient.
 
-## Validation
-
-1. Confirm definition validation passes and the environment remains bound to its
-   intended application ID.
-2. Confirm the deployed service/version uses the intended source commit or image
-   digest and has replaced its placeholder image.
-3. Exercise the changed behavior with allowed and denied identities. For the
-   custom hosted example, confirm configuration access as described in Step 6 above.
-
 ### Verify and recover
 
 Retain the definition, service file, source/image pin and environment together.
 For HEAD mismatches, compare `git rev-parse HEAD` inside the source folder with
-the pin; do not remove the check.
+the declared pin without disabling validation.
 
 For image-pull or role failures, keep the same application ID and immutable image.
 Use [custom hosted image-pull recovery](troubleshooting.md#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator).
 Do not substitute another environment's endpoints, broad grants or registry admin
 credentials. Role propagation can require an explicit retry.
 
-## Rollback
+### Application definition
 
-1. Stop promotion. Restore the previous tested definition and service file,
-   keeping the same application ID. For Agent Application customizations,
-   restore both manifest and definition pins together.
-2. Restore the source checkout to its declared commit, preserving local work
-   separately, or verify the previous immutable image remains available to the
-   runtime identity. Do not replace a digest with a mutable tag.
-3. Redeploy through the same branch used above. A hosted Agent Application needs
-   preparation and a provisioned handoff; a custom service follows its definition
-   contract. Preview any foundation changes before applying them.
-4. Restore separately managed settings using recorded values and repeat
-   [Validation](#validation). Redeployment does not reverse data/schema changes;
-   use an owner-approved recovery plan if the previous application is incompatible.
+#### Shipped example
 
-Do not edit the environment binding, delete data or broaden permissions to force
-rollback. Deleting the local definition does not remove Azure resources.
-
-## Application definition
-
-### Shipped example
-
-Use the versioned
-[custom hosted example files](https://github.com/Azure/agent-landing-zone/tree/v4.3.0/samples/custom-app/hosted)
+Inspect the
+[custom hosted example files](https://github.com/Azure/agent-landing-zone/tree/main/samples/custom-app/hosted)
 rather than copying an illustrative payload.
+Read them at your recorded platform commit; the default branch can advance.
 
-### Fields
+#### Fields
 
 The authoritative
-[v1 schema](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/contracts/app-definition-v1.schema.json)
+[v1 schema](https://github.com/Azure/agent-landing-zone/blob/main/contracts/app-definition-v1.schema.json)
 defines required fields and allowed values. In particular, names must match
 services, paths stay inside the application folder, and hosted components
 cannot set Container App `ingress` or `resources`.
@@ -253,15 +225,15 @@ cannot set Container App `ingress` or `resources`.
 Definition settings are validated but **not published to App Configuration**.
 Arrange runtime configuration separately.
 
-### What a definition cannot contain
+#### What a definition cannot contain
 
 No lifecycle hooks, Azure role names or remote URLs (except `$schema`).
-Configure endpoints outside the definition and permissions through profiles.
+Configure endpoints separately and grant permissions through capability profiles.
 
-## Capability profiles
+### Capability profiles
 
 Every component receives `base`; add only required profiles from the
-[profile catalog](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/profiles.py).
+[profile catalog](https://github.com/Azure/agent-landing-zone/blob/main/config/appdefinition/profiles.py).
 These profiles grant service-resource access to component identities.
 Configure user consent and document authorization separately, preserving
 [authentication and OBO](application-auth.md) and
@@ -274,10 +246,10 @@ declared profiles before greeting smoke. Agent Application orchestrator grants a
 substituted; denied or ambiguous assignments fail deployment.
 
 Key Vault targeting and scope resolution follow the
-[role assignment contract](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/roles.py);
+[role assignment contract](https://github.com/Azure/agent-landing-zone/blob/main/config/appdefinition/roles.py);
 ambiguous resources are not guessed.
 
-## Folder layout and `azure.yaml`
+### Folder layout and `azure.yaml`
 
 Keep `azure.yaml` beside the definition, with a matching service for each
 component and no project/service hooks. `components[].path` points to source,
@@ -285,19 +257,19 @@ not another azd project; align the service's `project` with it.
 Hosted services need an explicit agent `name` and `responses` or `invocations`.
 Deployment reuses the selected environment and deploys each service by name.
 
-## Source pinning
+### Source pinning
 
 - **`source.commit`:** must equal the local source folder's HEAD. Nothing is
-  cloned; builds use the working tree, including uncommitted changes.
+  cloned; builds include uncommitted working-tree changes.
 - **`source.imageDigest`:** requires a qualified service `image` in `azure.yaml`.
   Deployment replaces its tag/digest with the exact declared digest and uses
-  image passthrough, not a new build. Environment substitutions must resolve.
+  image passthrough, not a new build. All environment substitutions must resolve.
 
 With `NETWORK_ISOLATION=true`, source Docker builds use `ACR_TASK_AGENT_POOL`
 and deploy the resulting digest. Service `project` must match component path,
 with `Dockerfile` and context `.` there. Unsupported layouts/options fail;
 provide a prebuilt digest instead. Public builds retain normal azd behavior.
-See the [deployment contract](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/deployment/custom_application.py).
+See the [deployment contract](https://github.com/Azure/agent-landing-zone/blob/main/config/deployment/custom_application.py).
 
 Deployment temporarily rewrites image settings in the child `azure.yaml` and
 restores it even on failure. Do not edit it or deploy concurrently.
@@ -307,37 +279,69 @@ other registries need separate access configuration. Hosted agents use the
 project identity's declarative platform-ACR pull grant.
 
 Custom hosted components receive hosted foundation prerequisites even with a
-classic Agent Application topology; this does not deploy the Agent Application hosted orchestrator.
+Container App layout for the bundled orchestrator; this does not deploy the
+bundled hosted orchestrator.
 Reapplying foundation can repair its declared pull grant; refreshing outputs
 alone cannot. Follow the recovery link above.
 
-## Reading platform outputs at runtime
+### Reading platform outputs at runtime
 
 Read `AGENTLZ_PLATFORM_OUTPUTS` from `APP_CONFIG_ENDPOINT` with label `agent-lz`,
 as both custom application examples demonstrate. The publisher exposes selected Container App
 client IDs; hosted instance identities are unavailable during foundation
-provisioning. See [Platform outputs](deploy-infra-only.md#platform-outputs).
+provisioning. See [published platform outputs](deploy-infra-only.md#platform-outputs).
 
 The hosted greeting checks for nonempty assistant output using the declared
 protocol, preferring `invocations` when both are present. Validate retrieval and
 authorization with representative tasks and allowed and denied identities.
 
-## Validate and select a definition
+### Validate and select a definition
 
 Use the validation/selection commands above with your own definition path.
 Pre-deploy rechecks definition and binding; mismatches exit with code 2.
 For foundation without application deployment, follow
-[Deploy infrastructure only](deploy-infra-only.md).
+the [Deploy infra only runbook](deploy-infra-only.md).
 
-## `config.appdefinition` reference
+### `config.appdefinition` reference
 
 Use `python -m config.appdefinition --help` for options. The
-[CLI source](https://github.com/Azure/agent-landing-zone/blob/v4.3.0/config/appdefinition/__main__.py)
+[CLI source](https://github.com/Azure/agent-landing-zone/blob/main/config/appdefinition/__main__.py)
 defines validation, binding checks, environment selection and Container App
-profile assignment. Binding commands are not a migration mechanism.
+profile assignment. Do not use binding commands to replace an environment's application.
 
-## Related pages
+### Related pages
 
-- [Deploy the full stack](deploy-full-stack.md)
+- [Deploy full stack runbook](deploy-full-stack.md)
 - [Hosted agents](hosted-agents.md)
-- [Configuration](configuration.md)
+- [Deployment settings](configuration.md)
+
+## Validation
+
+1. Run definition validation and confirm the environment remains bound to its
+   intended application ID.
+2. In each source folder, compare `git rev-parse HEAD` with its declared commit.
+   Inspect `git status --porcelain`; permit only recorded deployment-input edits,
+   not uncommitted application source changes.
+3. Compare the registry digest and selected service/version image with the
+   recorded build or prebuilt digest. Confirm placeholders are no longer serving.
+4. Exercise the changed behavior with allowed and denied identities. For the
+   custom hosted example, confirm configuration access as described in Step 6.
+   Do not accept protected retrieval until its identity integration is proven.
+
+## Rollback
+
+1. Stop promotion. Restore the previous tested definition and service file,
+   keeping the same application ID. For Agent Application customizations,
+   restore both manifest and definition pins together.
+2. Restore the source checkout to its declared commit, preserving local work
+   separately, or verify the previous immutable image remains available to the
+   runtime identity. Do not replace a digest with a mutable tag.
+3. Preview foundation changes before applying them. Redeploy through the same
+   procedure used above: hosted Agent Application preparation and provisioned
+   digest handoff, or the custom service's own definition contract.
+4. Restore separately managed settings using recorded values and repeat
+   [Validation](#validation). Redeployment does not reverse data/schema changes;
+   use an owner-approved recovery plan if the previous application is incompatible.
+
+Do not edit the binding, delete data or broaden permissions to force rollback.
+Deleting the local definition does not remove Azure resources.

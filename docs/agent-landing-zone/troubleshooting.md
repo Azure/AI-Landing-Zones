@@ -1,9 +1,16 @@
 # Troubleshooting
 
+## Objective
+
 Find the **first failing stage and its exact error**, then use the matching
 section below. Deployment proceeds through resource provisioning, service
 configuration, image preparation and application deployment. Runtime checks
 confirm the application can authenticate and use its dependencies.
+
+## When to use
+
+Use this runbook after a provisioning, configuration, deployment or runtime
+failure. Diagnose the failing stage before retrying or changing inputs.
 
 | What you see | Start here |
 | --- | --- |
@@ -13,7 +20,9 @@ confirm the application can authenticate and use its dependencies.
 | Deploy reports success but the application fails | [Revision health](#check-application-health), [startup authentication](#deploy-succeeds-but-the-ui-or-administrative-panel-does-not-start) |
 | Chat, history or authorization fails | [Runtime diagnostics](#runtime) |
 
-## Before changing anything
+<span id="before-changing-anything"></span>
+
+## Prerequisites
 
 1. Run diagnostics from the platform repository root. Confirm the intended
    environment with `azd env list` and the Azure CLI subscription with
@@ -27,31 +36,38 @@ confirm the application can authenticate and use its dependencies.
 4. Preserve local work, data, environment bindings and security controls while
    investigating. Use the recovery steps below for the failed stage.
 
-Here, `classic` means the orchestrator runs in a **Container App**; hosted
-topologies run it in **Foundry Agent Service**. Confirm the selected topology
-before following a recovery path.
+The default `hosted-no-panel` layout runs the orchestrator in Foundry, with
+`maf_lite` and Foundry IQ. Confirm the recorded layout before recovery.
+Do not switch runtimes or weaken authentication to diagnose a failure.
 
 !!! tip "Share useful, redacted diagnostics"
     Hooks write to the terminal. Agent Application Container App component deployments
     also write child logs under `<component>/.logs`. Share the exact error and
     relevant log excerpt, not the full output of `azd env get-values`.
-    Remove tokens, cookies, credentials, signed URLs, document contents,
-    user identifiers and private environment names.
+    Remove private environment names, user identifiers, document contents,
+    signed URLs, tokens, cookies and credentials.
 
-## Deploy stage
+## Procedure
 
-### Hosted deployment is not prepared
+1. Capture the first error and match it to a diagnostic entry below.
+2. Check the named source, identity, endpoint and selected environment.
+3. Apply only the entry's scoped correction, then run its verification.
+4. Complete [Validation](#validation) before reopening access or promotion.
 
-**Symptom:** Deployment asks you to run the hosted preparation script or reports
-an incomplete image handoff.
+### Deploy stage
+
+#### Hosted deployment is not prepared
+
+**Symptom:** Deployment reports missing hosted preparation or an incomplete
+image handoff.
 
 **Diagnose:** The first provision creates prerequisites and records
 `HOSTED_AGENT_PREPARED=true`. Preparation records an immutable image digest.
 A subsequent provision records the `DEPLOY_HOSTED_AGENT=true` handoff.
-The deployment step then creates the running agent version.
+Deployment then creates the running agent version.
 
 **Correct:** Follow the hosted sequence in
-[Deploy the full stack](deploy-full-stack.md#step-4-deploy) from the first
+the [Deploy full stack runbook](deploy-full-stack.md#step-4-deploy) from the first
 incomplete step. For an unchanged, compatible image, use the
 [redeployment guidance](deploy-full-stack.md#redeploy-applications-only).
 Let the workflow generate its output flags.
@@ -60,7 +76,7 @@ Let the workflow generate its output flags.
 Then test authenticated task execution and the retrieval/authorization features
 you use.
 
-### Hosted agent deployment returns an agent permission denial
+#### Hosted agent deployment returns an agent permission denial
 
 **Symptom:** HTTP 403 names
 `Microsoft.CognitiveServices/accounts/AIServices/agents/read`.
@@ -70,14 +86,14 @@ Foundry data-plane permission is granted separately from ARM provisioning access
 
 **Correct:** Have an authorized administrator review the minimum project-scoped
 agent authoring role for that principal. A runner creating/updating agents needs
-**Foundry User** (formerly **Azure AI User**) or the appropriate equivalent
+**Foundry User** or the appropriate equivalent
 custom role. Azure AI Developer targets different hub/workspace scenarios.
 Allow role propagation before retrying, keeping grants scoped to the project.
 
 **Verify:** The same principal can perform the previously denied operation.
 Test delegated-user/OBO access separately.
 
-### Application definition does not match the environment
+#### Application definition does not match the environment
 
 **Symptom:** `Application definition binding check failed. No changes were made.`
 with exit code `2`. An invalid definition instead exits with code `1`.
@@ -95,20 +111,20 @@ environment. See [Custom applications](build-your-own-app.md).
 
 <span id="custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator"></span>
 
-### Custom hosted image pull fails with a classic Agent Application orchestrator
+<span id="custom-hosted-image-pull-fails-with-a-classic-agent-application-orchestrator"></span>
+
+#### Custom hosted image pull fails
 
 **Symptom:** A custom `azure.ai.agent` service cannot activate its private image,
 although Foundry project and registry outputs exist.
 
 **Diagnose:** Check the Foundry **project identity's** registry pull grant and
-the exact image/registry. A legacy composition defect omitted hosted foundation
-preparation when Agent Application's orchestrator stayed in a Container App. The
-correction shipped in v4.2.3
-([PR #779](https://github.com/Azure/agent-landing-zone/pull/779)).
+the exact image/registry. Custom hosted components require hosted foundation
+preparation regardless of where any other component runs.
 
-**Correct:** Use the complete corrected platform combination. Preserve the
+**Correct:** Preserve the
 environment, definition and immutable image, then rerun the
-[full-stack provisioning workflow](deploy-full-stack.md#step-4-deploy).
+[custom application workflow](build-your-own-app.md#deploy-a-different-application).
 Provisioning applies the declarative pull grant; refreshing outputs alone
 cannot. For an external registry, review its supported pull-role mode and
 resource scope separately.
@@ -118,7 +134,7 @@ the declared capabilities. Check the routed version before testing the agent.
 Keep registry authentication identity-based, grants narrowly scoped and
 delegated-user/OBO authentication intact.
 
-### Private deployment prerequisites failed
+#### Private deployment prerequisites failed
 
 **Symptom:**
 
@@ -138,7 +154,7 @@ The `RUN_FROM_JUMPBOX` input requests a connectivity check from that host.
 retry the failed stage. If it returns an authorization error, check the
 requesting principal and its permissions next.
 
-### ACR Task agent pool is missing
+#### ACR Task agent pool is missing
 
 **Symptom:**
 
@@ -167,7 +183,7 @@ and that a build runs in it. Then resume the topology's
 [deployment sequence](deploy-full-stack.md#step-4-deploy); hosted preparation
 may still be incomplete.
 
-### Package installation fails inside the build pool
+#### Package installation fails inside the build pool
 
 **Symptom:** An ACR run starts, but package installation fails. npm can report
 `Exit handler never called!`, followed by `tsc: not found`.
@@ -186,10 +202,10 @@ dependencies, use
 Keep exceptions limited to build-subnet HTTPS traffic.
 
 **Verify:** Retry the same pinned source and confirm package installation and
-compilation both complete. If compilation still fails, diagnose its first
-error after confirming dependencies were installed.
+compilation both complete. Once dependencies are installed, diagnose the first
+remaining compilation error.
 
-### Stale component checkout
+#### Stale component checkout
 
 **Symptom:** `Remove or relocate the stale sibling checkout`.
 
@@ -203,12 +219,12 @@ confirming it contains nothing needed; keep component development elsewhere.
 **Verify:** The deployed source matches the manifest's tag **and commit**, and
 the intended application revision is healthy.
 
-### A component deployment fails
+#### A component deployment fails
 
 **Symptom:** `One or more components failed. See logs above.`
 
 **Diagnose:** Find the first failing component and its newest `.logs` file.
-Separate source checkout, image build/push, role and application-update errors.
+Distinguish source checkout, image build/push, role and application-update failures.
 
 **Correct:** Repair the dependency identified by that log. Use the private
 connectivity or build-pool entries above when appropriate.
@@ -216,7 +232,7 @@ connectivity or build-pool entries above when appropriate.
 **Verify:** Retry the failed workflow and inspect the actual image, intended
 revision and startup logs.
 
-### Deploy succeeds but the UI or administrative panel does not start
+#### Deploy succeeds but the UI or administrative panel does not start
 
 **Symptom:** Child commands succeed, but the latest revision is unhealthy.
 Logs name `OAUTH_AZURE_AD_CLIENT_ID`, `OAUTH_AZURE_AD_CLIENT_SECRET`,
@@ -226,7 +242,7 @@ Logs name `OAUTH_AZURE_AD_CLIENT_ID`, `OAUTH_AZURE_AD_CLIENT_SECRET`,
 placeholder can still serve HTTP 200 while the new revision fails.
 
 **Correct:** Configure
-[delegated authentication](hosted-agents.md#configure-the-uis-delegated-authentication).
+[delegated authentication](application-auth.md).
 Store the credential in Key Vault and publish its reference, not its value,
 under label `agent-lz`. Reload configuration through the supported
 [lifecycle workflow](deploy-full-stack.md#change-a-runtime-setting).
@@ -235,9 +251,9 @@ under label `agent-lz`. Reload configuration through the supported
 OBO and rejection of unauthenticated panel data requests. Keep panel
 authentication required throughout recovery.
 
-## Provision and post-provision stages
+### Provision and post-provision stages
 
-### Search shared private links are not ready
+#### Search shared private links are not ready
 
 **Symptom:** Private native `azureBlob` source configuration reports pending
 approval, denied Search reads or a readiness timeout.
@@ -252,14 +268,13 @@ report both `Approved` and `Succeeded`.
 - **Pending:** Have an authorized administrator investigate and approve only
   the exact target request using
   [Microsoft's procedure](https://learn.microsoft.com/azure/search/search-indexer-howto-access-private).
-  An authorized administrator must approve the requests.
 - **ARM 401/403:** Review the runner's
   `Microsoft.Search/searchServices/sharedPrivateLinkResources/read` permission.
   The runner needs this read permission in addition to target approval.
 - **Approved but provisioning:** Allow propagation and inspect the failed
   link's state. Readiness polling has a 600-second budget, 10-second intervals
   and requests bounded by 30 seconds and the remaining budget.
-- **Missing long-name manifest:** Re-provision the updated template through an
+- **Missing link manifest:** Re-provision the reviewed template through an
   authorized deployment to publish `SEARCH_SHARED_PRIVATE_LINKS` under
   `agent-lz`. Use the published link names to identify the matching requests.
 
@@ -269,7 +284,7 @@ mutation and source creation. Retain private access and the readiness gate;
 approve only the requests for the intended source targets.
 See [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
-### Ingestion selection does not match the source configuration
+#### Ingestion selection does not match the source configuration
 
 **Symptom:** A fresh environment has no ingestion Container App, a source
 combination fails validation, or attachment behavior differs from expectations.
@@ -286,22 +301,18 @@ Agent App Ingestion, select it explicitly and run the
 [full workflow](deploy-full-stack.md#step-4-deploy), not only `azd deploy`.
 An externally populated index must be named explicitly where required.
 
-!!! warning "Older UI compatibility"
-    The upload gate was introduced with platform v4.3.0 / UI v3.3.0.
-    On platform v4.2.3 / UI v3.2.2, retain
-    `DEPLOY_INGESTION_CONTAINER_APP=true` until the coordinated
-    [upgrade](ingestion.md#upgrade-and-retirement-safety) is complete.
-    After upgrading, use the explicit ingestion selection to control uploads.
-    Retain valid endpoints and authenticated access during the upgrade.
-
 **Verify:** Confirm the effective `agent-lz` key and intended UI revision.
-With supported opt-out, attachment controls must be hidden and direct/stale
-uploads rejected, while text chat, authentication, retrieval and document
-authorization still work. A missing key retains legacy behavior; explicit
-`false` activates the gate. Retire existing apps and permissions only as a
+With ingestion disabled, attachment controls must be hidden and direct/stale
+uploads rejected. Verify text chat and retrieval separately, including the
+[protected-retrieval integration gate](#protected-retrieval-fails-after-hosted-sign-in).
+Ingestion selection is not a source of delegated user or owner context.
+If ingestion is selected, confirm the selection is `true` and test only
+eligible authenticated uploads. Processing success does not prove authorized
+conversation retrieval.
+Retire existing apps and permissions only as a
 separate authorized task, preserving documents and indexes.
 
-### Shared-source permission options are rejected or unexpected
+#### Shared-source permission options are rejected or unexpected
 
 **Symptom:** Source configuration rejects
 `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS`, or a source has unexpected permission
@@ -311,19 +322,19 @@ metadata.
 Blob ingestion, explicit `[]` selects shared access only for recognized non-ADLS `azureBlob`
 configuration. Unsupported or ambiguous active sources fail closed. In
 non-native `ai_search` or `foundry_iq`/`searchIndex` modes, accepted `[]` is
-unused metadata; these modes retain their source's configured access policy.
+unused metadata; the source's access policy remains unchanged.
 
 **Correct:** Supply valid JSON for the intended source policy. For protected
 Blob ingestion, restore `["rbacScope"]`. Nonempty non-ADLS Blob lists support
 only `rbacScope` and `sensitivityLabels`. Review
 [the accepted permission values](configuration.md#explicit-shared-source-permission-options)
-for source/pattern constraints and the historical `managed` alias.
+for source and pattern constraints.
 
 **Verify:** Rerun source configuration, inspect permission metadata and test
 document allow/deny behavior. Select `[]` only for an intentionally shared
 corpus; resolve private-link, RBAC and authentication failures separately.
 
-### Firewall DNS proxy is enabled but clients still resolve incorrectly
+#### Firewall DNS proxy is enabled but clients still resolve incorrectly
 
 **Symptom:** Private names resolve incorrectly after enabling the DNS proxy.
 
@@ -338,7 +349,7 @@ See [Firewall DNS proxy](network-isolation.md#opt-in-firewall-dns-proxy).
 **Verify:** Resolve the required names and test private TLS from the actual
 client with public access still disabled.
 
-### Hosted configuration TLS handshake stalls
+#### Hosted configuration TLS handshake stalls
 
 **Symptom:** Hosted bootstrap stalls while loading App Configuration or Key
 Vault references.
@@ -349,27 +360,26 @@ which connection stage stalls before choosing a recovery action.
 
 **Correct:** Only for the confirmed transport compatibility case, use the
 [endpoint-scoped TLS profile](hosted-agents.md#configuration-tls-compatibility).
-It was introduced in platform v4.2.3 with orchestrator v5.2.1. Supply the actual
-`KEY_VAULT_URI`, deliberately select `APP_CONFIG_TLS_COMPATIBILITY=true` and
-deploy the corrected agent version. To restore SDK defaults, use `false` and
+Supply the actual `KEY_VAULT_URI`, deliberately select
+`APP_CONFIG_TLS_COMPATIBILITY=true` and deploy a new agent version.
+To restore SDK defaults, use `false` and
 redeploy. Keep certificate verification, the minimum TLS version and scoped
 role assignments intact.
 
 If bootstrap resolves a UI-only secret, inspect the
 [actual label selectors](configuration.md#runtime-settings): in the SDK,
 `None` selects all labels, while `"\0"` selects only unlabelled settings.
-Use the corrected selector while retaining the intended vault permissions and labels.
+Use the intended selector while retaining scoped vault permissions and labels.
 
 **Verify:** The new version completes configuration using valid TLS and the
 intended identity. Test real application behavior separately.
 
-### Search preflight region and quota
+#### Search preflight region and quota
 
 **Symptom:** Preflight checks `AZURE_LOCATION` despite
 `AZURE_SEARCH_LOCATION`, or counts only one service when two will be created.
 
-**Diagnose:** Earlier hooks had region/count defects corrected in v4.2.3.
-An empty `AZURE_SEARCH_LOCATION` falls back to `AZURE_LOCATION`. Both workload
+**Diagnose:** An empty `AZURE_SEARCH_LOCATION` falls back to `AZURE_LOCATION`. Both workload
 and newly created Agent Service Search must be accounted for.
 
 **Correct:** Check the effective region and selected resources using
@@ -382,58 +392,55 @@ do not set `PREFLIGHT_SKIP` or `AGENTLZ_REGIONAL_PREFLIGHT_SKIP`.
 then provisioning succeeds. Capacity remains subject to availability at
 provisioning time.
 
-### Quota check rejects an unchanged existing deployment
+#### Quota check rejects an unchanged existing deployment
 
 **Symptom:** Re-provision reports insufficient remaining model quota for the
 same account, deployment and configured capacity.
 
-**Diagnose:** The v4.2.2 preflight compared full requested capacity with unused
-regional quota, without crediting an existing matching deployment. This could
-block the second provision of a hosted deployment.
+**Diagnose:** Compare the requested capacity with the existing successful
+deployment and remaining regional quota. A second hosted provision must use
+the same reviewed account and model inputs.
 
 **Correct:** Verify environment, account region, deployment, model/version and
-SKU. Use the coordinated correction introduced in v4.2.3
-([PR #773](https://github.com/Azure/agent-landing-zone/pull/773)).
-It credits only verified successful matching capacity and aggregates quota
+SKU. Preflight credits only verified successful matching capacity and aggregates quota
 pools. Fresh allocations and changed/unverified targets still need capacity.
+If a matching deployment is not credited, retain the gates and escalate with
+sanitized account, region, model and capacity evidence.
 
 **Verify:** Both preflight gates evaluate the intended incremental request.
 Retain the existing deployment, intended capacity and preflight gates.
 Model availability checks still apply.
 
-### Foundry rejects evaluation API-key creation
+#### Foundry rejects evaluation API-key creation
 
 **Symptom:** `Failed to list key. disableLocalAuth is set to be true`.
 
-**Diagnose:** The account requires Entra ID. Legacy v4.2.2 post-provision still
-attempted evaluation-key injection and could report success despite failing
-to create the secret.
+**Diagnose:** The account requires Entra ID. Identify the caller still trying
+to obtain an API key.
 
 **Correct:** Keep local authentication disabled and use Entra ID for evaluation.
-The correction introduced in v4.2.3
-([PR #773](https://github.com/Azure/agent-landing-zone/pull/773)) skips
-inapplicable key injection and surfaces unexpected key/Key Vault errors.
+The supported configuration skips inapplicable key injection. Investigate
+unexpected key or Key Vault errors instead of enabling local authentication.
 
 **Verify:** Post-provision reports the expected Entra-only path and evaluation
 works with the intended identity while local authentication remains disabled.
 
-### Administrative panel cannot resolve its Cosmos database
+#### Administrative panel cannot resolve its Cosmos database
 
 **Symptom:** `DEPLOY_ADMINISTRATIVE_PANEL is true but DATABASE_ACCOUNT_NAME is not set`.
 
-**Diagnose:** Legacy v4.2.2 panel role setup expected process inputs even when
-`DATABASE_ACCOUNT_NAME` and `DATABASE_NAME` were published in App Configuration.
+**Diagnose:** Identify the selected database account and name, then check
+process inputs and the settings published in App Configuration.
 
 **Correct:** Confirm the two settings under `agent-lz` for the selected
-environment. Use the coordinated correction introduced in v4.2.3
-([PR #773](https://github.com/Azure/agent-landing-zone/pull/773)), which reads
-published settings when process inputs are absent.
+environment. Setup reads published settings when process inputs are absent.
+Resolve missing or conflicting values in their provisioning source.
 
 **Verify:** Panel configuration resolves the actual account/database and
 preserves container-scoped grants. Compare the resolved names with the
 provisioned resources and keep permissions scoped to the required containers.
 
-### Missing endpoint output
+#### Missing endpoint output
 
 **Symptom:**
 
@@ -447,12 +454,12 @@ Missing <KEY>. Run provisioning and load the selected azd environment outputs be
 
 **Correct:** Confirm the environment first. If it is already provisioned and
 you moved machines, use `azd env refresh`. If provision is incomplete, follow
-[Deploy infrastructure only](deploy-infra-only.md) to generate the required outputs.
+the [Deploy infra only runbook](deploy-infra-only.md) to generate the required outputs.
 
-**Verify:** The environment's outputs refer to its actual provisioned resources,
-then retry the failed stage.
+**Verify:** Confirm the outputs identify this environment's resources before
+retrying the failed stage.
 
-### Private post-provision prerequisites failed
+#### Private post-provision prerequisites failed
 
 **Symptom:**
 
@@ -466,10 +473,10 @@ Configuration, so configuration has not started.
 **Correct:** Connect through an approved jumpbox, VPN or peered VNet. Follow
 [Complete a deferred post-provision](deploy-infra-only.md#complete-a-deferred-post-provision).
 
-**Verify:** The configuration hook completes from the connected host, then
-application deployment can resume.
+**Verify:** Complete the configuration hook from the connected host before
+resuming application deployment.
 
-### Post-provision was deferred
+#### Post-provision was deferred
 
 **Symptom:**
 
@@ -490,7 +497,7 @@ checking from the runner's existing network path.
 **Verify:** Post-provision logs show completed configuration rather than another
 deferral before resuming application deployment.
 
-### `NETWORK_ISOLATION` is not a boolean
+#### `NETWORK_ISOLATION` is not a boolean
 
 **Symptom:** A hook rejects the isolation value.
 
@@ -501,12 +508,12 @@ deferral before resuming application deployment.
 example `azd env set NETWORK_ISOLATION true` for an isolated environment.
 Use `false` only when the intended network design is non-isolated.
 
-**Verify:** The effective value matches the intended topology and validation
+**Verify:** The effective value matches the intended network design and validation
 passes before any provisioning changes.
 
-### Provisioning fails in Azure
+#### Provisioning fails in Azure
 
-**Symptom:** A resource deployment fails after preflight.
+**Symptom:** Preflight passes but Azure resource deployment fails.
 
 **Diagnose:** Open **Resource group > Deployments** in the Azure portal and
 inspect the first failed operation, including its policy, quota, region or
@@ -521,9 +528,29 @@ deciding whether to reuse it or choose another name.
 **Verify:** The failed deployment and post-provision configuration both complete.
 Then deploy the application and run its authenticated task and access checks.
 
-## Runtime
+### Runtime
 
-### The orchestrator returns HTTP 422
+#### Protected retrieval fails after hosted sign-in
+
+**Symptom:** UI login and a greeting work, but protected Foundry IQ retrieval
+lacks delegated user context, is denied or omits documents.
+
+**Diagnose:** Distinguish UI-to-Foundry OBO from downstream source authorization.
+The hosted gateway does not forward the caller's `Authorization` header.
+The shipped `maf_lite` direct connector does not complete the authenticated
+Toolbox integration needed for protected per-user retrieval.
+
+**Correct:** Stop protected-data rollout and have a developer implement and
+validate the supported hosted identity integration. Follow the capability gate
+in the [Deploy full stack runbook](deploy-full-stack.md#prerequisites).
+Do not select another strategy as a workaround, invent identity headers, enable
+anonymous retrieval or replace the user with a service identity.
+
+**Verify:** Use two users with different source permissions and confirm
+permitted retrieval and denial through the actual UI or channel. If that
+integration is absent, mark the capability **blocked**.
+
+#### The orchestrator returns HTTP 422
 
 **Symptom:** The agent rejects a request with validation details.
 
@@ -536,10 +563,9 @@ The UI's `/invocations?api-version=v1` uses another request shape.
 [request format](hosted-agents.md#calling-the-agent). For stateless Responses,
 remove state selectors and supply complete, ordered context.
 
-**Verify:** A valid request succeeds through the intended endpoint using that
-endpoint's request shape.
+**Verify:** A request in the intended endpoint's format succeeds through that endpoint.
 
-### Hosted chat works but history is unavailable
+#### Hosted chat works but history is unavailable
 
 **Symptom:** A greeting works, but history is unavailable or panel history
 returns 503.
@@ -547,18 +573,18 @@ returns 503.
 **Diagnose:** Hosted runtime is stateless. Without separately activated
 continuity, context is limited to the active UI session. Agent Application Cosmos DB
 in `hosted-panel` stores owner/index and feedback metadata, not transcripts.
-UI history requires continuity and the panel settings below.
+UI history requires continuity and the separately documented panel gates.
 
 **Correct:** Review continuity activation, panel gates, owner binding and
 agent-scoped permissions in [Hosted agents](hosted-agents.md#calling-the-agent).
 Apply configuration changes through the full workflow using hosted continuity
-and owner-scoped permissions. Keep the classic Container App/Dapr history layer
-separate and the hosted container's conversation access restricted.
+and owner-scoped permissions. Keep the hosted container's conversation access
+restricted; do not enable the panel merely to obtain persistence.
 
 **Verify:** Open a saved conversation in a new session as its owner and confirm
 the transcript is available. Repeat as another user and confirm access is denied.
 
-### The application starts but does not answer
+#### The application starts but does not answer
 
 **Symptom:** The application loads but an authenticated task fails.
 
@@ -580,7 +606,7 @@ for startup settings, as specified in those workflows.
 **Verify:** Repeat the same authenticated task and test document authorization
 when retrieval is involved. Keep credentials and content out of diagnostics.
 
-### Access denied between services
+#### Access denied between services
 
 **Symptom:** A dependency returns HTTP 401/403 or names a denied action.
 
@@ -613,11 +639,11 @@ unauthorized users/documents remain denied.
 
 <span id="collect-evidence"></span>
 
-## Collect diagnostics
+### Collect diagnostics
 
-### Check application health
+#### Check application health
 
-For **Container Apps**, list the latest and latest-ready revisions:
+List the latest and latest-ready **Container Apps** revisions:
 
 ```bash
 az containerapp list -g "<resource-group>" --query "[].{name:name,state:properties.runningStatus,latest:properties.latestRevisionName,ready:properties.latestReadyRevisionName}" -o table
@@ -632,7 +658,7 @@ For a **Foundry hosted orchestrator**, inspect its routed version, immutable
 image and Foundry runtime logs separately. Container Apps commands cover the UI,
 optional ingestion and Container App orchestration, not hosted agent compute.
 
-### Stream logs from a container app
+#### Stream logs from a container app
 
 Select the failing revision explicitly:
 
@@ -644,7 +670,7 @@ If the revision has multiple replicas or containers, select the relevant ones
 using the command's `--replica` and `--container` options. Confirm the logs
 belong to the failed revision and image.
 
-### Monitoring
+#### Monitoring
 
 Use **Application Insights > Transaction search** to correlate a request with
 its dependencies and traces. Use **Log Analytics** for container output and
@@ -682,13 +708,37 @@ claim, signed-URL or document logging to fill that gap. A failed optional panel
 index write needs repair even when the chat continues. Confirm the expected
 owner-index record exists after retrying the write.
 
-Telemetry content capture is off by default. Use request references and
-dependency status for diagnosis while keeping prompts and answers private.
+Telemetry content capture is off by default. Keep prompts and answers private;
+diagnose with request references and dependency status.
 
-## Related pages
+## Validation
+
+1. Repeat the exact operation that failed, from the intended host and identity.
+2. Confirm the intended source commit, immutable image and routed hosted version
+   or Container App revision. A placeholder response is not application health.
+3. Test user sign-in, the required tool or retrieval operation, and allowed and
+   denied access to protected data. Keep unresolved runtime integration gates
+   explicitly blocked.
+4. Record sanitized timestamps, request IDs, statuses and the scoped correction.
+   Do not claim success from a green hook exit alone.
+
+## Rollback
+
+1. Stop retries and promotion. Preserve the diagnostic record and known-good
+   source, input and image records.
+2. Restore only the settings or grants changed during diagnosis, using the
+   recorded values and exact assignment IDs. Preserve unrelated access.
+3. If an application or infrastructure redeployment is required, follow
+   [deployment rollback](deploy-full-stack.md#rollback) or
+   [infrastructure rollback](deploy-infra-only.md#rollback).
+4. Repeat [Validation](#validation). Keep access closed if safe reversal or
+   protected-data enforcement is not established. Arrange service-specific
+   data recovery with the owner when necessary.
+
+### Related pages
 
 - [Copilot Studio private integration](connect-copilot-studio.md#troubleshooting)
-- [Deployment runbook](deploy-full-stack.md)
-- [Configuration](configuration.md)
+- [Deploy full stack runbook](deploy-full-stack.md)
+- [Deployment settings](configuration.md)
 - [Network isolation](network-isolation.md)
 - [Ingestion](ingestion.md)

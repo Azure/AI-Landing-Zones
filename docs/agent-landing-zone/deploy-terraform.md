@@ -3,8 +3,12 @@ search:
   exclude: true
 ---
 
-# Deployment guidance has moved
+<span id="deployment-guidance-has-moved"></span>
 
-Use [Deploy infrastructure only](deploy-infra-only.md) or
-[Deploy the full stack](deploy-full-stack.md) for Agent Landing Zone.
-The separate [Terraform foundation reference](../terraform/index.md) remains available.
+# Terraform deployment scope
+
+Use the [Deploy infra only](deploy-infra-only.md) or
+[Deploy full stack](deploy-full-stack.md) runbook for Agent Landing Zone.
+Read [Terraform templates](terraform.md) for the infrastructure-only scope and
+its separate reference. Terraform does not run the Agent Application lifecycle
+or hosted image preparation.

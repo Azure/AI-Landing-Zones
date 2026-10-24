@@ -40,18 +40,15 @@ nav:
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
       - "What's new": agent-landing-zone/whats-new.md
-      - "Design Checklist": architecture/design-checklist.md
       - Plan your deployment:
           - "How it works": agent-landing-zone/how-it-works.md
           - "Deployment choices": agent-landing-zone/planning.md
           - "Network isolation": agent-landing-zone/network-isolation.md
           - "Sizing and capacity": agent-landing-zone/sizing.md
           - "Cost planning": agent-landing-zone/cost-planning.md
-          - Configuration:
-              - "Settings": agent-landing-zone/configuration.md
-              - "Resource naming": agent-landing-zone/resource-naming.md
-      - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
-      - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
+          - "Deployment settings": agent-landing-zone/configuration.md
+          - "Resource naming": agent-landing-zone/resource-naming.md
+      - "Design Checklist": architecture/design-checklist.md
       - Agent Application:
           - "Overview": agent-landing-zone/application.md
           - "Agent hosting": agent-landing-zone/hosted-agents.md
@@ -69,14 +66,16 @@ nav:
               - "NL2SQL": agent-landing-zone/nl2sql.md
           - "Tools & MCP": agent-landing-zone/agent-tools.md
       - Runbooks:
+          - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
+          - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
           - "Application Gateway": agent-landing-zone/application-gateway.md
           - "Private access (VPN)": agent-landing-zone/private-access.md
           - "Bring your own app": agent-landing-zone/build-your-own-app.md
           - "Teams & M365": agent-landing-zone/publish-to-teams.md
           - "Copilot Studio": agent-landing-zone/connect-copilot-studio.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
-      - "Terraform templates": terraform/index.md
-      - "Deploy via portal": portal/Readme.md
+      - "Terraform templates": agent-landing-zone/terraform.md
+      - "Deploy via portal": agent-landing-zone/portal.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
   - What's New: whatisnew.md
   - FAQ: architecture/faq.md

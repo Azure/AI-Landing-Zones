@@ -1,29 +1,37 @@
-# Configuration
+<span id="configuration"></span>
 
-Agent Landing Zone has two kinds of configuration:
+# Deployment settings
 
-- **Deployment inputs** are `azd` environment variables read by Bicep or the lifecycle hooks. They control resource provisioning, application selection and image builds.
-- **Runtime settings** are Azure App Configuration keys read by applications at startup. Some bootstrap values must be container environment variables because they are needed before remote configuration can load.
+Agent Landing Zone separates:
 
-Set deployment inputs with `azd env set <NAME> <value>` before provisioning.
-Inspect only the keys you need with `azd env get-value <NAME>`; a complete
-environment dump can contain secrets.
+- **Deployment inputs**, supplied through the `azd` environment or root `main.parameters.json`. They select resources and the application, and control image builds.
+- **Runtime settings**, read by applications from Azure App Configuration at startup. Bootstrap values, such as the store endpoint, must be available before remote reads begin.
 
-Use this page to look up settings and defaults. Follow
-[Deploy infrastructure only](deploy-infra-only.md) or
-[Deploy the full stack](deploy-full-stack.md) for the ordered workflow.
-Choose the [deployment shape](planning.md), [capacity](sizing.md) and
-[cost assumptions](cost-planning.md) before setting inputs.
+The default Agent Application uses Foundry hosted orchestration with
+`maf_lite`, no panel and native Foundry IQ Blob ingestion.
+This page explains settings and defaults, not an execution sequence.
+[How it works](how-it-works.md) introduces the concepts;
+[deployment design](planning.md), [capacity](sizing.md) and
+[cost planning](cost-planning.md) explain the planning decisions.
+
+The [Deploy infra only](deploy-infra-only.md) and
+[Deploy full stack](deploy-full-stack.md) runbooks describe input commands,
+provisioning and validation. Read individual keys instead of dumping
+environments that may contain secrets.
+
+!!! note "Application-specific runtime settings"
+    Runtime settings vary by application. Those described here belong to
+    **Agent Application**, the supplied reference app; a custom app can have
+    different requirements.
 
 !!! note
     `main.parameters.json` is the checked-in input to composition. The `preprovision` hook generates `infra/main.parameters.json` from it and the selected environment. Do not edit the generated file. In a Git checkout, the hook attempts to hide local regeneration from `git status` with `skip-worktree`.
 
 ## Environment boundaries
 
-Use separate azd environments and resource groups for DEV, TEST and PROD.
-Separate subscriptions provide a stronger administrative and quota boundary.
-Enforce separation through deployment permissions, service identities and
-dedicated configuration and data stores, as summarized below.
+DEV, TEST and PROD need separate azd environments and resource groups.
+Separate subscriptions strengthen administrative and quota boundaries.
+Permissions, identities and dedicated stores enforce the following boundaries.
 
 | Boundary | Keep separate |
 | --- | --- |
@@ -33,21 +41,24 @@ dedicated configuration and data stores, as summarized below.
 | Data | Sources, indexes, conversation/history stores and retention. Use approved test data instead of copying production documents. |
 | Network and builds | DNS, routes, private endpoints and a connected runner. An ACR build pool does not connect the deployment host. |
 
-Keep nonsecret, approved inputs in version control. If you organize them in an
-`environments/` folder, apply those settings explicitly; the platform does not
-load that folder automatically. Local `.azure` contains private deployment
-state. Hooks copy it to child projects; protect those workspaces too. Never
-copy DEV state into TEST or PROD.
+Approved nonsecret inputs can be version-controlled. An `environments/`
+folder is not loaded automatically; its settings need explicit application.
+Local `.azure` contains private deployment state, which hooks copy to child
+projects. Those workspaces need the same protection and cannot safely be
+copied between DEV, TEST and PROD.
 
 ## Deployment parameters
 
 ### Resource naming
 
-For generated names, naming overrides and preserving existing resource names,
-see [Resource naming](resource-naming.md). Choose naming inputs before the
-first provision; changing them later can create replacement resources.
+[Resource naming](resource-naming.md) explains defaults, overrides and name
+stability. Names resolve before the first provision; later changes can create
+new resources instead of updating existing ones.
 
 ### Values set by azd or by you
+
+A **principal** is a user or service identity. Its **object ID** identifies
+that identity in the Entra directory; it is not an application's client ID.
 
 | Variable | Description |
 | --- | --- |
@@ -79,8 +90,8 @@ When unset, they use the template defaults shown below.
 | `AZURE_PRINCIPAL_TYPE` | `User` | Type of `AZURE_PRINCIPAL_ID`. Use `ServicePrincipal` in pipelines. |
 | `DEPLOYMENT_MODE` | `standalone` | Declares deployment intent for tags and preflight. `ailz-integrated` does not automatically attach a hub or override component flags. Supply the hub, routing, resource reuse and DNS inputs explicitly. |
 | `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
-| `RESOURCE_NAMING_MODE` | `caf` | `caf` uses Cloud Adoption Framework prefixes. `legacy` keeps the naming of older environments. |
-| `USE_CAPP_API_KEY` | `false` | Enables the optional classic Container App API-key mechanism. It does not configure Entra ID sign-in. Hosted composition disables this key mechanism. |
+| `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
+| `USE_CAPP_API_KEY` | `false` | Hosted composition keeps this API-key mechanism disabled. It does not configure Entra ID sign-in. |
 | `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | The Agent Application reads runtime settings from App Configuration. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
@@ -92,9 +103,9 @@ When unset, they use the template defaults shown below.
 Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.
 They are listed in [Network and security](#network-and-security).
 Foundry backing-service reuse uses native parameter names instead; see
-[Select, reuse or omit resources](planning.md#select-reuse-or-omit-resources).
-Supply the supported resource ID to attach an existing service; naming and
-deployment flags control resource creation.
+[Resource selection and reuse](planning.md#select-reuse-or-omit-resources).
+A supported resource ID selects reuse; naming and deployment flags control
+resource creation.
 
 <span id="ingestion-application-selection"></span>
 
@@ -105,32 +116,31 @@ deployment flags control resource creation.
 | `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects the optional Agent App Ingestion component of the Agent Application, independently of `DEPLOYMENT_TOPOLOGY`. |
 
 The boolean is persisted by pre-provision and published under label `agent-lz`.
-Existing environments retain their selection; they do not silently adopt the
-fresh default. Custom definitions retain their declared intent and additive
-foundation composition.
+Existing environments retain their selection rather than silently adopting the
+fresh default. Custom definitions retain their declared components and additive
+infrastructure composition.
 
 | Selection | Effect |
 | --- | --- |
 | `false` | Omits Agent App Ingestion from subsequent Agent Application composition/deployment and reconciliation. The UI disables attachment controls and upload paths, not text chat, authentication or retrieval. |
 | `true` | Selects the app and retains the UI's existing upload eligibility checks. It does not grant every caller permission to upload. |
 
-Opt-out supports native Foundry IQ `azureBlob`, or an explicitly bound,
+Omission supports native Foundry IQ `azureBlob`, or an explicitly configured,
 independently populated `SEARCH_RAG_INDEX_NAME` for `ai_search` / Foundry IQ
 `searchIndex`. It does not select a strategy, configure SharePoint, rewrite
-source bindings, populate an index or remove authorization.
+source configuration, populate an index or remove authorization.
 `FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` requires the app.
 
-See [Ingestion and conversation uploads](ingestion.md) for source choices,
-SharePoint distinctions, custom-definition behavior and
-[older-UI migration and safe retirement](ingestion.md#upgrade-and-retirement-safety).
-Disabling the component does not delete existing resources or revoke old grants.
+See [Ingestion](ingestion.md) for native ingestion, conversation uploads and
+custom processing. Disabling the component does not delete existing resources
+or revoke their grants.
 
 ### Search region and quota
 
 `AZURE_SEARCH_LOCATION` resolves the effective Bicep `searchServiceLocation`.
 An unset or empty value falls back to `AZURE_LOCATION`. Both newly created
 Search services use this effective region. Provider availability and Search
-quota checks must use that same region, not the primary region when an override
+quota checks use that same region, not the primary region when an override
 is set.
 
 Search quota must cover the complete enabled service count: one Agent Application service
@@ -139,18 +149,28 @@ Search service when `deployAiFoundry` and `deployAAfAgentSvc`
 (`DEPLOY_AAF_AGENT_SVC`) are enabled and `aiSearchResourceId` is not supplied.
 When both creation paths are enabled, the check requires quota for two services.
 Reusing a Foundry Search resource does not request a new service for that path.
-Do not bypass preflight to work around a region mismatch or insufficient quota.
+Bypassing preflight does not resolve region mismatches or insufficient quota.
 See [Search preflight region and quota](troubleshooting.md#search-preflight-region-and-quota).
 
 ### Retrieval
 
+A **knowledge source** describes retrievable data; a **knowledge base**
+combines sources for retrieval. The pattern identifies the setup arrangement,
+such as native Blob processing or an independently populated Search index.
+The source kind identifies the data connector. Both default to `azureBlob`.
+
+Foundry IQ manages the default Blob knowledge source and knowledge base.
+Native source processing does not require Agent App Ingestion. The application
+uses the knowledge base for retrieval; source permissions and application
+authorization still apply.
+
 | Variable | Default | Description |
 | --- | --- | --- |
 | `RETRIEVAL_BACKEND` | `foundry_iq` | Retrieval implementation used by the Agent Application orchestrator. |
-| `FOUNDRY_IQ_PATTERN` | `azureBlob` | Foundry IQ pattern. |
-| `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND` | `azureBlob` | Kind of knowledge source. |
+| `FOUNDRY_IQ_PATTERN` | `azureBlob` | Native Blob source processing and knowledge-base setup. |
+| `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND` | `azureBlob` | Blob connector for the knowledge source. |
 | `FOUNDRY_IQ_API_VERSION` | `2026-05-01-preview` | Azure AI Search API version used for Foundry IQ objects. |
-| `FOUNDRY_IQ_IS_ADLS_GEN2` | `false` | `true` when the source storage account has a hierarchical namespace. |
+| `FOUNDRY_IQ_IS_ADLS_GEN2` | `false` | Identifies Azure Data Lake Storage (ADLS) Gen2: Blob storage with a hierarchical directory namespace. `true` when the source account uses that namespace. |
 | `KNOWLEDGE_BASE_NAME` | `knowledge-base` | Knowledge base name. |
 | `KNOWLEDGE_BASE_CONNECTION_NAME` | `knowledge-base-connection` | Foundry project connection to the knowledge base. |
 | `FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME` | `knowledge-base-blob-ks` | Knowledge source name. |
@@ -165,25 +185,25 @@ Each entry records the template-owned `name`, `groupId` and
 `privateLinkResourceId`. Configuration uses these values to verify the Search
 links and their target Storage and Foundry resources before creating a native
 knowledge source. Pending links require administrator approval.
-Keep this deployment-generated metadata unchanged and follow
+This deployment-generated metadata is not an operator override. See
 [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
-The exact ARM resource IDs can include Azure-valid resource-group names with
-parentheses, Unicode letters and decimal digits. Resource-group validation
-does not relax the expected resource type or allow extra path segments,
-query strings, URL hosts or encoded path separators.
-
 ### Explicit shared-source permission options
+
+Ingestion permission metadata records access information alongside indexed
+content. `rbacScope` records Azure RBAC scopes; `sensitivityLabels` records
+information-protection labels. Retrieval must still enforce the applicable
+permissions for the caller.
 
 `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS` controls the configured source's
 ingestion permission metadata. Omission or an actual null value retains the protected default
 `["rbacScope"]`. An explicit JSON empty array, `[]`, is an opt-in for a
-deliberately shared source **when native Blob ingestion is active**. It is
-not treated as a missing value.
+deliberately shared source **when native Blob ingestion is active**.
+An empty array is distinct from an omitted setting.
 
 For active native Blob ingestion, the shared-source empty list is accepted
-with `RETRIEVAL_BACKEND=foundry_iq`, `FOUNDRY_IQ_PATTERN=azureBlob` (or the
-historical `managed` compatibility alias), `azureBlob` knowledge source kind
+with `RETRIEVAL_BACKEND=foundry_iq`, `FOUNDRY_IQ_PATTERN=azureBlob`,
+`azureBlob` knowledge source kind
 and a recognized non-ADLS source. Active ADLS Gen2, mismatched source
 configuration and ambiguous ADLS configuration fail closed. Nonempty Blob
 permission lists accept only `rbacScope` and `sensitivityLabels`.
@@ -194,28 +214,30 @@ the `searchIndex` pattern. Those empty lists remain accepted because no
 native Blob knowledge source is rendered. They are not shared-source opt-ins
 and do not change the independently populated index's authorization.
 
-Malformed JSON, scalar values, textual `null`, non-string or blank list
-entries, and unsupported permission names fail with actionable diagnostics.
-Invalid input fails closed rather than silently falling back or removing
-protection. An actual null value and the text `null` are not interchangeable.
+Malformed JSON, scalar values, textual `null`, invalid list entries and
+unsupported permission names fail with actionable diagnostics.
+Invalid input fails closed rather than silently removing protection.
+An actual null and the text `null` are different inputs.
 
-For active native Blob ingestion, use `[]` only when policy permits the
-source's documents to be shared without that ingestion permission metadata.
+For active native Blob ingestion, `[]` is appropriate only when policy permits
+the source's documents to be shared without that ingestion permission metadata.
 It does not grant document access by
 itself or change other sources, application authentication, Entra ID/OBO,
-retrieval authorization, RBAC or private network restrictions. Do not use it
-to work around an authentication or private-link failure. Review the source's
-intended audience and verify allow/deny behavior before enabling it.
+retrieval authorization, RBAC or private network restrictions. It is not a
+workaround for an authentication or private-link failure. Its use requires
+audience review and allow/deny tests with real user identities before activation.
 
-To restore protected ingestion, set `["rbacScope"]` and rerun the source
-configuration. Before allowing access, verify the source/index permission
-metadata and test document access for allowed and denied users, including
-already-ingested documents. See
+Restoring `["rbacScope"]` requires source reconfiguration and verification
+of source/index permission metadata, including already-ingested documents.
+Allowed and denied users both need validation before access resumes. The
+[Deploy full stack](deploy-full-stack.md) runbook covers reconfiguration.
+See also
 [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
 ## Network and security
 
-These parameters matter mostly when `NETWORK_ISOLATION=true`. Read [Network isolation](network-isolation.md) first.
+These parameters apply mainly when `NETWORK_ISOLATION=true`.
+[Network isolation](network-isolation.md) explains connectivity and DNS requirements.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -241,7 +263,8 @@ Bastion tunneling is disabled by default.
 
 ### Hub integration
 
-Use these parameters to connect the spoke virtual network to an existing hub. See [Integrate with an existing hub](network-isolation.md#integrate-with-an-existing-hub).
+These parameters describe spoke integration with an existing hub.
+[Hub integration](network-isolation.md#integrate-with-an-existing-hub) explains the network design.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -254,7 +277,7 @@ Use these parameters to connect the spoke virtual network to an existing hub. Se
 
 ### Existing resources
 
-Set any of these to reuse a resource instead of creating it:
+Supported resource-ID inputs select reuse instead of creation:
 
 - `EXISTING_VNET_RESOURCE_ID`
 - `EXISTING_JUMPBOX_RESOURCE_ID`
@@ -263,18 +286,28 @@ Set any of these to reuse a resource instead of creating it:
 - `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID`
 - `EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID`
 
-To use private DNS zones that already exist (for example, in a hub subscription), set `EXISTING_PRIVATE_DNS_ZONE_<ZONE>_RESOURCE_ID`, where `<ZONE>` is one of:
+Existing private DNS zones, such as hub-owned zones, use
+`EXISTING_PRIVATE_DNS_ZONE_<ZONE>_RESOURCE_ID`, where `<ZONE>` is one of:
 
 `COGSVCS`, `OPENAI`, `AISERVICES`, `SEARCH`, `COSMOS`, `BLOB`, `KEYVAULT`, `APPCONFIG`, `CONTAINERAPPS`, `ACR`, `AZUREMONITOR`, `OMSOPSINSIGHTS`, `ODSOPSINSIGHTS`, `AZUREAUTOMATION`, `APPINSIGHTS`.
 
 Their owner must provide the required VNet links or resolver forwarding
 separately from network peering. With `POLICY_MANAGED_PRIVATE_DNS=true`,
-Azure Policy manages DNS records instead of the template. Agree those policy
-assignments and links with the DNS owner before deploying.
+Azure Policy manages DNS records instead of the template. Policy coverage
+and links need agreement with the DNS owner. Policy-managed DNS and explicit
+existing-zone IDs are mutually exclusive DNS arrangements.
 
 ## Hosted agent
 
-These parameters apply when the orchestrator runs as a Foundry hosted agent. See [Hosted agents](hosted-agents.md).
+The orchestrator runs as a Foundry hosted agent by default. The
+`hosted-no-panel` topology omits the panel and Agent Application Cosmos DB,
+not Foundry's separate backing services. See [Agent hosting](hosted-agents.md)
+for supported capabilities and conversation-history limitations.
+
+Ordinary chat uses history supplied by the UI on each turn. Hosted orchestration
+does not itself provide durable cross-session history. **Continuity**, the UI's
+optional ability to resume a saved conversation, is a separate, gated capability,
+not enabled by hosted topology alone.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -282,18 +315,22 @@ These parameters apply when the orchestrator runs as a Foundry hosted agent. See
 | `DEPLOY_AAF_AGENT_SVC` | `true` | Enables the Foundry Agent Service capability host. |
 | `HOSTED_AGENT_NAME` | `agent-app-orchestrator` | Name of the hosted agent in the Foundry project. |
 | `HOSTED_AGENT_IMAGE` | `agent-app-orchestrator` | Repository name of the agent image in Container Registry. |
-| `HOSTED_CONVERSATION_OWNER_BINDING` | `delegated` | How conversation ownership is bound to the caller. |
+| `HOSTED_CONVERSATION_OWNER_BINDING` | `delegated` | Associates continuity conversations with the authenticated user. Its identity and validation gates are described in [Agent hosting](hosted-agents.md). |
 | `HOSTED_CONTINUITY_ENABLED` | `false` | Managed activation state for continuity endpoints. Hosted topology alone does not enable them. See [Hosted agents](hosted-agents.md). |
-| `HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS` | `60` | Idle timeout for streamed responses. |
-| `PRESERVE_CLASSIC_RUNTIME` | `false` | Keeps the classic orchestrator Container App while an existing environment moves to hosted. |
-| `APP_CONFIG_TLS_COMPATIBILITY` | `false` | Opt-in bootstrap transport for App Configuration and Agent Application Key Vault endpoints. Requires the coordinated runtime correction and `KEY_VAULT_URI`. See [Configuration TLS compatibility](hosted-agents.md#configuration-tls-compatibility). |
+| `HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS` | `60` | Idle timeout for server-sent event (SSE) response streams. |
+| `APP_CONFIG_TLS_COMPATIBILITY` | `false` | Opt-in bootstrap transport for App Configuration and Agent Application Key Vault endpoints. Requires `KEY_VAULT_URI` and a compatible runtime and hosted definition. Certificate verification remains enabled. See [Configuration TLS compatibility](hosted-agents.md#configuration-tls-compatibility). |
 
 Hosted provisioning inputs `HOSTED_AGENT_CONTAINER_CPU` and
 `HOSTED_AGENT_CONTAINER_MEMORY` default to `2` and `4Gi`. The Agent Application's
 child `hosted-agent/azure.yaml` also declares CPU and memory as **literal
 fields**; changing those environment variables alone does not resize the
-deployed agent. Keep any reviewed child-definition change compatible with
-the provisioned handoff and deploy a new version. See [Sizing](sizing.md#application-hosting).
+deployed agent. Resizing requires a reviewed child-definition change compatible
+with the provisioned deployment metadata, followed by a new version. See
+[host capacity requirements](sizing.md#application-hosting).
+
+The child definition also fixes the deployed agent name, startup command and
+protocol versions. Their provisioning inputs alone do not override those
+deployment fields.
 
 Other hosted defaults: Responses protocol `2.0.0`,
 Invocations protocol `1.0.0`, capability key ID `v1` and capability TTL
@@ -302,44 +339,43 @@ and `32000` estimated tokens. These are not character limits or a limit
 on ordinary session chat. See [Hosted agents](hosted-agents.md) for the
 continuity activation and history limitations.
 
-For the UI's owner-binding gates, capability signing requirements and
-conversation-store settings, see
-[UI continuity configuration](https://github.com/Azure/agent-app-ui/blob/main/docs/python-development.md#optional-continuity).
-These are runtime settings, not additional infrastructure parameters.
+[UI continuity configuration](https://github.com/Azure/agent-app-ui/blob/main/docs/python-development.md#optional-continuity)
+explains user-ownership checks, signed access capabilities and conversation
+storage. These belong to the application runtime, not infrastructure inputs.
 
-`PREPARE_HOSTED_AGENT`, `HOSTED_AGENT_PREPARED` and `DEPLOY_HOSTED_AGENT` are managed by the deployment scripts. Do not set them by hand.
+`PREPARE_HOSTED_AGENT`, `HOSTED_AGENT_PREPARED` and `DEPLOY_HOSTED_AGENT` are
+script-managed state, not operator inputs.
 
 `APP_CONFIG_TLS_COMPATIBILITY` is a container environment variable, not an App
 Configuration key: it is read before remote configuration can load. Only `true`
-and `false` are accepted. The foundation's additive `KEY_VAULT_URI` output
+and `false` are accepted. The infrastructure's `KEY_VAULT_URI` output
 provides the deployed vault URI without hardcoding a cloud DNS suffix and is
-empty when the vault is not deployed. Use the complete manifest-pinned
-Agent Application and infrastructure combination so the loader and hosted definition
-agree on these inputs.
+empty when the vault is not deployed. The manifest-pinned Agent Application
+and infrastructure combination keeps the loader and hosted definition compatible.
 
 ## Deployment controls
 
-These variables control hook execution and application selection. Selecting
-a different application can change which resources are provisioned.
+Hook execution and application selection use the variables below.
+The selected application also affects the resource footprint.
 
 | Variable | Description |
 | --- | --- |
 | `BUILD_MODE` | `local` uses Docker on the deployment host. `acr-task` uses Azure Container Registry. Unset values select a mode as described below. |
 | `RUN_FROM_JUMPBOX` | `false` defers post-provision configuration in an isolated deployment. It is not a connectivity bypass. See [Post-provision can be deferred](network-isolation.md#post-provision-can-be-deferred). |
-| `AZURE_SKIP_NETWORK_ISOLATION_WARNING` | `true` also defers post-provision configuration in an isolated deployment. |
+| `AZURE_SKIP_NETWORK_ISOLATION_WARNING` | `true` defers isolated post-provision configuration unless `RUN_FROM_JUMPBOX` explicitly requests a connectivity check. |
 | `PREFLIGHT_SKIP` | `true` skips regional and infrastructure preflight checks, not application-definition or topology validation. |
 | `AGENTLZ_REGIONAL_PREFLIGHT_SKIP` | `true` skips only the regional quota and availability check. |
 | `AGENTLZ_APP_DEFINITION` | Path to a custom application definition. See [Custom applications](build-your-own-app.md). |
 
 Preflight skip flags are diagnostic controls, not a supported fix for quota,
-region, permission or network failures. Resolve the reported cause before
-deploying.
+region, permission or network failures.
 
-When `BUILD_MODE` is unset, component scripts first apply recognized legacy
-`USE_DOCKER` values. Otherwise, network isolation or a configured task pool
-selects ACR Tasks. Without either, usable Docker selects a local build,
-and unavailable Docker selects ACR Tasks. Explicit `local` fails if Docker
-is unusable rather than falling back silently.
+An explicit `BUILD_MODE` takes precedence. When it is unset, component scripts
+first apply recognized `USE_DOCKER` values: `true`, `1` or `yes` select local;
+`false`, `0` or `no` select ACR Tasks. Without either override, network
+isolation or a configured task pool selects ACR Tasks. Otherwise, usable Docker
+selects local and unavailable Docker selects ACR Tasks. Explicit `local`
+fails if Docker is unusable rather than falling back silently.
 
 Hosted orchestrator image preparation always uses ACR Tasks.
 `BUILD_MODE=local` does not change that preparation path or the isolated
@@ -350,33 +386,41 @@ custom source-build path. See
 ## Runtime settings
 
 Post-provision publishes runtime settings to Azure App Configuration with
-the label `agent-lz`. Use that label for platform-owned settings.
+the label `agent-lz`. That is the label for platform-owned settings.
 
 The Agent Application components do not read exclusively from `agent-lz`. Their startup
-loaders also select service or legacy labels, and later matching selections
+loaders also select other component labels, and later matching selections
 can overwrite earlier values. Agent App UI and Agent App Ingestion endpoint loaders
 end with `label_filter=None`, which leaves the label filter unset and can
 read other labels. The orchestrator uses the explicit null label `"\0"` for its last
 selection, which reads unlabelled keys rather than all labels. Unlabelled
 values can still override `agent-lz` values.
 
-Before changing a setting, check for conflicting legacy, service and unlabelled
-values, since a later selection can replace an earlier value for the same key.
-Use separate stores and identities for environment isolation.
-The component repositories document their version-specific selectors.
+Conflicting component-labelled or unlabelled values can therefore replace a
+value written under `agent-lz`. Environment isolation needs separate stores
+and identities, not just different labels.
 
-To change a runtime setting:
+Process variables can also override remote values in the orchestrator and
+optional ingestion component when `allow_environment_variables` is enabled.
+Their parsing differs: the orchestrator recognizes `1`, `true` and `yes`,
+whereas ingestion treats any nonempty string, including `false`, as enabled.
+This parsing difference is a risk, not a recommended way to override settings.
 
-1. Update the key in App Configuration with the label `agent-lz`.
-2. Restart the affected Container App revision or deploy a new hosted version
-   so it reloads startup configuration. Running hosted versions are immutable.
+An unavailable store does not make every component stop: some loaders disable
+remote reads or use configured fallback paths. Runtime validation therefore
+needs to confirm the effective settings and authorization behavior, not only
+that the process started.
 
-Deployment-owned keys can be overwritten by the next provision or
-post-provision run. Change their deployment inputs as well when the new
-value must persist. Settings declared by a custom application definition are
-validated but not published. Publish them yourself.
+Settings are loaded at startup. A changed key requires the affected Container
+App to restart, or a new hosted version to be deployed, before the new startup
+configuration is loaded. Running hosted versions are immutable.
 
-Use the [runtime-setting runbook](deploy-full-stack.md#change-a-runtime-setting)
-for commands and [secret rotation](deploy-full-stack.md#rotate-a-secret) for
+Provisioning or post-provision can overwrite deployment-owned keys, so
+persistent changes need matching deployment inputs. Custom application
+definitions validate settings but do not publish them; the application
+must publish its own runtime settings.
+
+The [Deploy full stack](deploy-full-stack.md#change-a-runtime-setting)
+runbook provides commands, including [secret rotation](deploy-full-stack.md#rotate-a-secret) for
 versioned versus unversioned Key Vault references. Changing deployment selection,
 RBAC or infrastructure requires the matching full workflow, not just a key edit.

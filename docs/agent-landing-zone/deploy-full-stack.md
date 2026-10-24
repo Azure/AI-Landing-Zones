@@ -1,19 +1,23 @@
 <span id="full-stack-deploy"></span>
 
-# Deploy the full stack
+<span id="deploy-the-full-stack"></span>
+
+# Deploy full stack
 
 ## Objective
 
-Deploy the Azure foundation and the Agent Application: Agent App UI,
-Agent App Orchestrator and, when selected, Agent App Ingestion. Choose where the
-orchestrator runs and how the deployment connects to Azure before provisioning.
+Deploy the Azure infrastructure and the Agent Application with its default
+layout: Foundry hosts the orchestrator, Agent App UI runs in Container Apps,
+and Foundry IQ manages source ingestion and retrieval. The default
+`hosted-no-panel` layout omits the administrative panel and Agent Application
+Cosmos DB. Foundry can require separate backing resources.
 
 ## When to use
 
 Use this runbook for a new Agent Application deployment or to add it to its
 already configured Agent foundation. For a customer-owned application, use
-[Bring your own app](build-your-own-app.md) for its deployment branch.
-Only need the foundation? Use [Deploy infrastructure only](deploy-infra-only.md).
+the [Bring your own app](build-your-own-app.md) runbook.
+Only need infrastructure? Use the [Deploy infra only](deploy-infra-only.md) runbook.
 For the relationship between the template, its manifest and lifecycle hooks,
 see [How it works](how-it-works.md).
 
@@ -25,9 +29,31 @@ see [How it works](how-it-works.md).
 - **Subscription readiness:** accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
   selected parameters. Review [regional considerations](../bicep/regional-considerations.md)
-  for capacity constraints that can still affect deployment after preflight.
-- **Private deployments:** an authorized VPN/VNet-connected deployment host with
-  private DNS resolution. An ACR Tasks build pool is not that host.
+  for constraints that preflight cannot eliminate.
+- **Private deployments:** an authorized deployment host connected to the Azure
+  virtual network (VNet), directly or through a virtual private network (VPN).
+  It must resolve private service hostnames. An Azure Container Registry (ACR)
+  Tasks build pool is not that host.
+- **Identity inputs:** obtain the delegated Foundry audience and tenant consent
+  plan from your identity administrator. `HOSTED_AGENT_RESOURCE_SCOPE` must be
+  that audience followed by `/.default`, for example
+  `https://ai.azure.com/.default` when that is the deployed audience.
+  It is not the UI's `api://<client-id>/user_impersonation` login scope.
+- **Application access:** arrange the Entra registration, HTTPS callback,
+  Key Vault credential reference and user permissions in
+  [Application authentication](application-auth.md). Deployment does not
+  perform tenant consent.
+
+!!! warning "Protected retrieval is an integration gate"
+    The shipped hosted entrypoint does not receive the browser's bearer token.
+    The default `maf_lite` strategy uses a direct Foundry IQ connector, but
+    does not implement the complete authenticated Foundry Toolbox path for
+    per-user protected retrieval. UI on-behalf-of (OBO) sign-in authenticates
+    the Foundry call; it does not close that downstream integration gap.
+    Assign a developer to implement and validate the supported identity path
+    before admitting protected data. No topology, strategy or permission flag
+    makes this turnkey. Do not enable anonymous retrieval, use service identity
+    or weaken source permissions to make a test pass.
 
 | Tool | Required for |
 | --- | --- |
@@ -36,8 +62,11 @@ see [How it works](how-it-works.md).
 | Bash, jq and curl on Linux/macOS | POSIX hooks and dependency bootstrap |
 | Git | Fetching selected, pinned application sources |
 | Python 3.12 with pip and venv | Validation, composition and service configuration |
-| Docker, when using local builds | Optional for supported Container App builds; hosted preparation uses ACR Tasks |
 | Foundry agents azd extension (`azure.ai.agents`) | Hosted deployment; install with `azd extension install azure.ai.agents` if absent |
+
+Blocks marked `bash` use Bash syntax. In PowerShell, put commands with a
+trailing backslash (`\`) on one line and remove the continuation backslashes.
+Replace every `<placeholder>`. Run `powershell` blocks as written.
 
 !!! warning "Cost and time"
     Provisioning creates billable resources before the application is ready.
@@ -45,7 +74,7 @@ see [How it works](how-it-works.md).
     and [cost guide](../architecture/cost-guide.md), then budget for application runtime,
     model usage and data. First deployments take longer because of resource
     creation, image builds, role propagation and private-link approvals.
-    There is no fixed completion time.
+    No fixed completion time is guaranteed.
 
 ## Procedure
 
@@ -59,10 +88,18 @@ git clone https://github.com/Azure/agent-landing-zone.git
 cd agent-landing-zone
 ```
 
-The repository's default `main` branch is the stable deployment source, not
-`develop`. Record the resolved commit for repeatable deployments. To deliberately
-select a published release instead, use `git fetch --tags` and
-`git checkout <release-tag>` before continuing.
+Use the reviewed deployment commit, not an unreviewed branch tip. Replace the
+placeholder with that full Git commit to select and record the revision:
+
+```bash
+git checkout --detach <approved-platform-commit>
+git rev-parse HEAD
+git status --short
+```
+
+Keep `manifest.json`, `app-definition.json` and the root `main.parameters.json`
+with that record. The manifest pins the compatible component commits.
+Expect HEAD to match the approved commit and no unexpected local changes.
 
 Alternatively, `azd init -t Azure/agent-landing-zone` initializes the current
 default template in an empty directory. Reuse the environment it creates rather
@@ -78,7 +115,7 @@ python -m venv .venv
 
 On Linux/macOS, use `python3` if `python` is unavailable. Activate
 `.\.venv\Scripts\Activate.ps1` in PowerShell or
-`source .venv/bin/activate` in Bash, then install:
+`source .venv/bin/activate` in Bash. Install the dependencies:
 
 ```bash
 python -m pip install -r config/requirements.txt
@@ -128,55 +165,38 @@ data. Promote the same reviewed source revision with stage-specific inputs.
 Set the deployment choices below in the selected azd environment with
 `azd env set` before provisioning. Native foundation arrays and objects go in the root
 parameter file, as described in the linked infrastructure choices.
-[How it works](how-it-works.md) explains how these inputs become
-deployment parameters; runtime application settings are configured separately.
+[How it works](how-it-works.md) explains input processing;
+[Deployment settings](configuration.md) identifies input ownership.
 
 #### Orchestrator topology
 
-`DEPLOYMENT_TOPOLOGY` chooses where the agent orchestrator runs. It is independent
-of the foundation's standalone or hub-and-spoke network shape.
-
-| Value | Orchestrator runs in | Administrative panel | Agent Application Cosmos DB |
-| --- | --- | --- | --- |
-| `hosted-no-panel` | Foundry Agent Service | Not deployed | Not deployed |
-| `hosted-panel` | Foundry Agent Service | Deployed | Deployed |
-| `classic` | Azure Container Apps | Not applicable | Deployed |
-
-A new environment defaults to `hosted-no-panel`. To choose another value before
-first provision, for example Container Apps:
+Set the default layout explicitly for this new environment.
+`DEPLOYMENT_TOPOLOGY` chooses the runtime layout, not the VNet design:
 
 ```bash
-azd env set DEPLOYMENT_TOPOLOGY classic
+azd env set DEPLOYMENT_TOPOLOGY hosted-no-panel
+azd env set HOSTED_AGENT_RESOURCE_SCOPE <approved-foundry-audience>/.default
+azd env set DEPLOY_INGESTION_CONTAINER_APP false
 ```
 
-Existing environments retain their recorded topology. Older environments
-without a topology marker resolve to `classic`; do not change them merely to
-match a new-install default. The table describes application resources, not the
-Foundry Agent Service's separate backing resources. See [Hosted agents](hosted-agents.md)
-for identity, continuity and panel semantics.
+Expect no administrative panel or Agent Application Cosmos DB. Preserve the
+recorded layout when recovering an existing environment. See
+[Hosted agents](hosted-agents.md) for separately configured capabilities.
+Keep the runtime strategy `AGENT_STRATEGY=maf_lite` and retrieval backend
+`RETRIEVAL_BACKEND=foundry_iq`; inspect their effective `agent-lz` settings
+after service configuration. Runtime keys are not all `azd env` inputs.
 
 #### Ingestion and custom applications
 
-Fresh environments default to `DEPLOY_INGESTION_CONTAINER_APP=false`, using
-native Foundry IQ ingestion for the configured default Blob source. Enable
-Agent App Ingestion before provisioning if its ingestion features or eligible
-conversation uploads are required:
+Use native Foundry IQ ingestion for the configured Blob source. Keep its
+protected source policy; source ingestion does not prove user-authorized
+retrieval works. Review [Ingestion](ingestion.md) if conversation uploads or
+custom processing are required. They are additional capabilities, not default
+deployment steps.
 
-```bash
-azd env set DEPLOY_INGESTION_CONTAINER_APP true
-```
-
-The ingestion selection leaves the retrieval backend and source/index bindings
-unchanged. Existing environments keep their selection. Before disabling
-Agent App Ingestion in an existing environment, review
-[ingestion choices and the older-UI migration warning](ingestion.md).
-When disabling it, verify that the UI's upload gate also disables uploads.
-
-For a different application, set `AGENTLZ_APP_DEFINITION` to its definition
-path **before the first provision**. The environment binds to that application
-ID. Use [Custom applications](build-your-own-app.md) for its contract and
-component-specific deployment requirements; do not substitute Agent Application hosted
-preparation for a custom definition's build flow.
+For a different application, stop here and follow the
+[Bring your own app runbook](build-your-own-app.md) before first provision.
+One environment binds to one application ID.
 
 #### Network and build mode
 
@@ -198,12 +218,21 @@ connected host. If creating that host first, use the
 
 | Image build path | Selection |
 | --- | --- |
-| Public registry, remote builds | `azd env set BUILD_MODE acr-task`; supported components use regular ACR Tasks |
-| Private registry, remote builds | Keep `DEPLOY_ACR_TASK_AGENT_POOL=true` before provision and use `BUILD_MODE=acr-task`; builds use the provisioned VNet pool |
-| Supported Container Apps, local Docker | `azd env set BUILD_MODE local`; the host must reach the registry and service endpoints |
+| Public registry, remote builds | Set `BUILD_MODE` to `acr-task` with the command below; builds use regular ACR Tasks |
+| Private registry, remote builds | Also set `DEPLOY_ACR_TASK_AGENT_POOL` to `true` before provision; builds use the provisioned VNet pool |
 
-With network isolation enabled, automatic hosted image preparation and custom
-source builds require the private pool, including when `BUILD_MODE=local` is selected.
+```bash
+azd env set BUILD_MODE acr-task
+```
+
+For the private registry path, also run:
+
+```bash
+azd env set DEPLOY_ACR_TASK_AGENT_POOL true
+```
+
+Hosted image preparation uses Azure Container Registry (ACR) Tasks, not local
+Docker. With isolation enabled, keep the private build pool.
 See [network isolation](network-isolation.md) for build egress,
 DNS and private-link readiness requirements.
 
@@ -220,20 +249,17 @@ azd hooks run preup
 Resolve validation, quota, Policy and connectivity failures rather than bypassing
 checks. The explicit `preup` check also validates binding before standalone
 provisioning, which otherwise runs its check after azd may initialize a resource group.
+Run `azd provision --preview` and review resource scopes, public access, routes
+and role changes before applying the sequence below. Expect only changes
+authorized for the selected environment.
 
-#### Container Apps orchestrator (`classic`)
+<span id="container-apps-orchestrator-classic"></span>
+<span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
 
-```bash
-azd up
-```
-
-This runs provisioning, post-provision service configuration, image builds and
-application deployment.
-
-#### Foundry orchestrator (`hosted-no-panel` or `hosted-panel`)
+#### Default Foundry orchestrator (`hosted-no-panel`)
 
 Confirm the runner has Foundry agent authoring access on the exact project
-(Foundry User, previously Azure AI User, or an appropriate equivalent),
+(Foundry User or an appropriate equivalent),
 account read access and the required scoped role-assignment authority.
 Review [private-runner permissions](network-isolation.md) and
 [hosted identities](hosted-agents.md) for the required scopes.
@@ -257,7 +283,7 @@ On Linux/macOS replace the preparation command with
 | First provision | Creates the foundation and configures its services |
 | Preparation | Fetches the pinned orchestrator source, builds its hosted image and records an immutable digest |
 | Second provision | Materializes the image and Foundry deployment handoff |
-| Deploy | Creates the hosted version, bootstraps runtime access, smoke-tests it and deploys the other selected apps |
+| Deploy | Creates the hosted version, bootstraps its limited runtime grants, tests a greeting and deploys selected apps |
 
 A fresh `azd up` does not build the missing hosted handoff. If you started with
 it, complete preparation, the second provision and deployment. If the first
@@ -267,75 +293,14 @@ If the second provision rejects quota for an unchanged deployment, inspect
 [quota diagnostics](troubleshooting.md) rather than bypassing the gate.
 
 For an already configured infrastructure-only environment, reuse the same
-checkout, inputs and bound application. In `classic`, continue with `azd deploy`.
-In a hosted Agent Application topology, continue at preparation above.
+checkout, inputs and bound application. Continue at preparation above.
+Review hook logs even after success: some configuration sections can log
+failures and continue. Resolve those failures before validation.
 
-<span id="verify"></span>
+For an initial deployment, continue to [Validation](#validation) now.
+Use the maintenance procedures below only for a later operational change.
 
-## Validation
-
-1. Inspect the selected resource group and confirm the intended application
-   revisions are running in place of placeholder images:
-
-    ```bash
-    azd env get-value AZURE_RESOURCE_GROUP
-    az containerapp list -g <resource-group> \
-      --query "[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}" -o table
-    ```
-
-2. Open the frontend URL from the deployment outputs or its Container App
-   ingress configuration. Private endpoints require a connected browser.
-   Complete [Entra sign-in and delegated-authentication configuration](configuration.md)
-   for the intended users.
-3. Exercise an agent task and its configured tools with representative identities.
-   If using documents, add a test document to the configured source, confirm its
-   ingestion, and test both allowed and denied document access. Test uploads only
-   when Agent App Ingestion and upload eligibility are selected.
-4. In a hosted topology, verify the intended routed version and runtime telemetry
-   as well as the remaining Container Apps. The deployment's greeting smoke test
-   checks basic agent response. Test user login, OBO and document authorization
-   through the UI.
-
-Complete these application checks before cutover. Use
-[Troubleshooting](troubleshooting.md) for failures.
-
-To make a hosted agent available in Teams and Microsoft 365 Copilot, continue with
-[Publish to Teams and M365](publish-to-teams.md). Bot creation and channel publication
-are separate manual tasks, not part of this deployment.
-
-<span id="roll-back-to-a-previous-release"></span>
-
-## Rollback
-
-1. Stop promotion and record the failed revision, inputs and deployed state.
-   Select the previous tested **complete compatible combination**, not an
-   independent component tip. Review migration constraints before applying it.
-2. When only classic application pins changed and the foundation is compatible,
-   run from the platform root with the same environment selected:
-
-    ```bash
-    git checkout <previous-release-tag>
-    azd deploy
-    ```
-
-3. For a hosted Agent Application, follow
-   [Step 4](#step-4-deploy) with the previous compatible source and approved
-   inputs: provision, prepare the pinned image, provision its handoff, then
-   deploy. Retain any operator-managed digest and verify its availability and
-   compatibility; preparation does not rebuild that image for you.
-4. If infrastructure or configuration changed, review the previous inputs and
-   preview foundation changes before rerunning the matching full workflow.
-   Restore directly managed runtime keys separately using their recorded values
-   and reload the affected components. These settings are managed separately
-   from the source checkout.
-5. Repeat [Validation](#validation) before reopening access or promotion.
-
-Checking out an old tag does not reverse data migrations or recover lost data.
-Restore ingestion requirements before downgrading to a UI without the upload
-gate. If reversal is unsupported, use an approved forward repair or a new
-environment with data migration. `azd down --purge` is not rollback.
-
-## Lifecycle
+### Lifecycle preparation
 
 Run these tasks from the platform root with the intended environment selected,
 Python active, both CLIs authenticated and private connectivity available when
@@ -343,26 +308,19 @@ required. Record the source revision, manifest, definition, approved inputs and
 hosted digest before a change. Back up configuration and relevant data using
 service-specific procedures.
 
-### Upgrade to a new release
+<span id="lifecycle"></span>
+<span id="upgrade-to-a-new-release"></span>
 
-1. Read the target [release notes](https://github.com/Azure/agent-landing-zone/releases),
-   component versions and migrations. Upgrade the compatible platform combination,
-   including its repository-owned `infra/`, rather than independent component tips.
-2. Fetch and check out the approved release tag. Reconcile local platform/runtime
-   changes and update Agent Application manifest/definition pins together.
-3. Preserve the existing topology, ingestion selection, resource naming and
-   source/index bindings. Follow [ingestion migration guidance](ingestion.md)
-   before opting out or downgrading an older UI.
-4. Run the matching [deployment workflow](#step-4-deploy). For a generated hosted
-   image with a changed source pin, prepare it again and provision its handoff
-   before deployment. Validate in DEV before promoting the same revision.
-5. Repeat the [application checks](#verify), including authorization and any
-   ingestion, history or continuity features in use.
+### Reapply a reviewed deployment
 
-!!! warning "GPT-RAG v3 environments"
-    A v3 environment cannot be upgraded in place to Agent Landing Zone v4.
-    Deploy a new environment, migrate the required documents, indexes and
-    conversation data, and validate it before retiring the old environment.
+1. Select the reviewed compatible source and pin files. Keep the platform's
+   `infra/` with that source, rather than replacing only that directory.
+2. Preserve the environment's layout, component selection, names and source
+   bindings. Back up affected data and separately managed configuration.
+3. Preview infrastructure changes with `azd provision --preview`.
+4. Run [Step 4](#step-4-deploy), including image preparation and the second
+   provision when the source or generated image changes.
+5. Repeat [Validation](#validation) before promotion.
 
 ### Redeploy applications only
 
@@ -390,7 +348,7 @@ deployed resources or revoke old permissions; retirement is separately authorize
 
 ### Change a runtime setting
 
-First check [configuration ownership and overwrite behavior](configuration.md).
+First check [Deployment settings](configuration.md) for ownership and overwrite behavior.
 Provisioning-managed inputs must be changed in their source and applied through
 the full workflow. For a directly managed, nonsecret runtime key:
 
@@ -399,7 +357,7 @@ az appconfig kv set --endpoint <app-config-endpoint> --auth-mode login \
   --key <KEY> --value <value> --label agent-lz --yes
 ```
 
-Restart each affected Container App revision to reload it:
+Restart each affected Container App revision to reload configuration:
 
 ```bash
 az containerapp revision restart -g <resource-group> -n <container-app-name> \
@@ -466,16 +424,90 @@ azd env get-value AZURE_RESOURCE_GROUP
 azd down
 ```
 
-Use `--purge` only when permanent removal of supported soft-deleted resources is
-explicitly intended. It removes recovery options. Reused resources outside the
+Do not add purge options as a retry. Permanent deletion requires separate
+authorization and removes recovery options. Reused resources outside the
 deletion scope and manually created links can remain and continue incurring
 charges. For a spoke, retire only its own hub peering/DNS links with their owners;
 do not delete shared hub, DNS or monitoring resources.
 
 <a id="next-steps"></a>
 
-## Related runbooks
+### Related runbooks
 
 - [Connect Copilot Studio to a private Foundry agent](connect-copilot-studio.md)
-- [Deploy infrastructure only](deploy-infra-only.md)
+- [Deploy infra only](deploy-infra-only.md)
 - [Deploy with Azure DevOps](azure-devops.md) for optional reviewed promotion and automation
+
+<span id="verify"></span>
+
+## Validation
+
+1. Confirm the intended application revisions are running, not placeholders:
+
+    ```bash
+    git rev-parse HEAD
+    git -C ../agent-app-orchestrator rev-parse HEAD
+    git -C ../agent-app-ui rev-parse HEAD
+    azd env get-value AZURE_RESOURCE_GROUP
+    az containerapp list -g <resource-group> \
+      --query "[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}" -o table
+    ```
+
+    Compare the platform commit with your approved record and each component
+    commit with its `manifest.json` entry. Inspect source worktrees for unexpected
+    edits; matching HEAD alone does not prove the built source was unchanged.
+2. Read `AZURE_CONTAINER_REGISTRY_ENDPOINT` for the registry login hostname.
+   The hosted repository is `HOSTED_AGENT_IMAGE` when explicitly set, otherwise
+   `agent-app-orchestrator`, as declared in `hosted-agent/azure.yaml`.
+   Use that registry's resource name, repository and recorded digest below:
+
+    ```bash
+    azd env get-value HOSTED_AGENT_IMAGE_VERSION
+    az acr repository show --name <registry-name> \
+      --image <hosted-repository>@<sha256-digest> --query digest -o tsv
+    ```
+
+    Expect the exact same `sha256:` value, not merely matching tags. In Foundry,
+    inspect the routed version's image and confirm it uses that digest.
+3. Open the frontend URL from the deployment outputs or UI ingress configuration.
+   Use a connected browser for private endpoints. Complete
+   [Entra sign-in and delegated authentication](application-auth.md).
+4. Exercise an agent task and configured tools with representative identities.
+   For documents, ingest a harmless test document through the configured source.
+   After resolving the protected-retrieval integration gate, test both permitted
+   retrieval and denial to a user without that document's permission.
+   Test uploads only when their additional capabilities are selected.
+5. Correlate the task with runtime telemetry. The deployment's greeting checks
+   basic response only; test actual UI login, OBO and source authorization.
+
+Record unmet capability gates as **blocked**, not passed. Without validated
+continuity, chat context lasts only for the active UI session. Default deployment
+does not promise persistent history, feedback integration or uploads.
+Use [Troubleshooting](troubleshooting.md) for failures.
+
+For optional channel distribution after acceptance, use the
+[Publish to Teams and M365 runbook](publish-to-teams.md). Publication is not
+part of this deployment.
+
+<span id="roll-back-to-a-previous-release"></span>
+
+## Rollback
+
+1. Stop promotion and record the failed revision, inputs and deployed state.
+   Select the previous tested **complete compatible combination**, not an
+   independent component tip. Check compatibility with current data and settings.
+2. Restore the recorded platform commit, manifest, definition and reviewed
+   parameters without overwriting uncommitted work. Align existing sibling
+   checkouts with the restored manifest after preserving their local work.
+3. Preview infrastructure or configuration reversals before applying them.
+   Keep the approved authentication and network posture.
+4. Follow [Step 4](#step-4-deploy) with the previous compatible source and inputs:
+   provision, prepare the pinned image, provision its digest handoff, then deploy.
+   If retaining an operator-managed digest, verify its availability and
+   compatibility; preparation does not rebuild it.
+5. Restore directly managed runtime keys separately from the source checkout,
+   reload affected components and repeat [Validation](#validation) before cutover.
+
+Restoring code does not restore data or reverse schema changes. If reversal is
+unsupported, arrange an approved forward repair or service-specific recovery.
+Do not delete the environment as rollback.

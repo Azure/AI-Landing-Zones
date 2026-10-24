@@ -3,42 +3,50 @@
 # How it works
 
 Agent Landing Zone connects deployment inputs, Azure infrastructure and
-application code through the Azure Developer CLI (`azd`). This page explains
-that connection for the **Bicep/azd implementation**. For step-by-step commands,
-use [Deploy infra only](deploy-infra-only.md) or
-[Deploy full stack](deploy-full-stack.md). Read how settings work below, then use
-[Deployment choices](planning.md) to select the implementation and topology.
+application code through the Azure Developer CLI (`azd`). This page introduces
+those concepts for the **Bicep/azd implementation**, so you can understand what
+the deployment does without memorizing commands or parameters.
+
+A **command-line interface (CLI)** runs commands in a terminal. Bicep describes
+Azure resources as code; `azd` coordinates their creation and application
+deployment. **Azure Blob Storage** stores files, and **Azure AI Search** indexes
+content so the application can retrieve relevant passages.
+An **application programming interface (API)** lets code send requests to a
+service.
+
+An **orchestrator** coordinates model calls, retrieval and tools. The default
+Agent Application runs it in Foundry Agent Service with `maf_lite`, the
+supplied orchestration **strategy** (the code path that coordinates a turn).
+It has no administration panel and uses native Foundry IQ Blob ingestion,
+where Azure AI Search prepares Blob documents for retrieval.
+The sections below explain how that application and its
+infrastructure are prepared. The **Deploy infra only** and
+**Deploy full stack** runbooks provide the execution steps.
 
 ## How to read deployment settings
 
 A **deployment parameter** tells the template what to create or reuse, such
 as a private network or an existing hub. An **`azd` environment** groups the
 settings and deployment state for one deployment, such as development or
-production. With Bicep and `azd`, the guides use two ways to supply parameter
+production. With Bicep and `azd`, the runbooks use two ways to supply parameter
 values:
 
-| Form in the guide | Where you set it |
+| Input form | Source |
 | --- | --- |
-| Uppercase input, such as `NETWORK_ISOLATION` | In the selected `azd` environment, using `azd env set <NAME> <value>`. The platform maps it to a template parameter or reads it in a deployment hook. |
-| Native parameter, such as `modelDeploymentList` | In the root `main.parameters.json`, inside `parameters.<name>.value`. Use this for documented parameters without an environment-variable mapping. |
+| Uppercase input, such as `NETWORK_ISOLATION` | The selected `azd` environment. The platform maps it to a template parameter or reads it in a deployment hook. |
+| Native parameter, such as `modelDeploymentList` | The root `main.parameters.json`, inside `parameters.<name>.value`, for parameters without an environment-variable mapping. |
 
-For example, `NETWORK_ISOLATION` controls private networking. After creating
-or selecting an environment using [Deploy infra only](deploy-infra-only.md#procedure)
-or [Deploy full stack](deploy-full-stack.md#procedure), set this input with:
-
-```bash
-azd env set NETWORK_ISOLATION true
-```
-
-Set deployment inputs before provisioning. The platform combines them with
+For example, `NETWORK_ISOLATION=true` selects private networking. Deployment
+inputs are resolved before provisioning. The platform combines them with
 the root parameter file to generate `infra/main.parameters.json`.
-The [Configuration reference](configuration.md) lists available inputs and
-defaults; the two deployment guides linked above provide the order in which
-to apply them.
+The [Deployment settings](configuration.md) reference lists inputs and defaults;
+the [Deploy infra only](deploy-infra-only.md) and
+[Deploy full stack](deploy-full-stack.md) runbooks provide their application order.
 
-**Runtime settings** control application behavior after deployment and are
-usually stored in Azure App Configuration. Each Agent Application guide
-identifies the settings to change and how to reload them.
+!!! note "Application-specific runtime settings"
+    Runtime settings control an application's behavior and vary by application.
+    Here they describe **Agent Application**, the supplied reference app.
+    Its settings are usually stored in Azure App Configuration.
 
 ## Repository boundaries
 
@@ -47,28 +55,28 @@ The Agent Application's runtime code lives in separate component repositories.
 
 | Area | Responsibility |
 | --- | --- |
-| Foundation: platform `infra/` | Repository-owned Bicep source for Azure resources, identities and access. `manifest.json` → `infra.source` records the upstream AI Landing Zone source it incorporates. |
+| Infrastructure: platform `infra/` | Repository-owned Bicep source for Azure resources, identities and access. `manifest.json` → `infra.source` records the upstream AI Landing Zone source it incorporates. |
 | Platform integration: root files, `scripts/` and `config/` | Selects the application, composes deployment parameters, configures provisioned services and coordinates deployment. |
 | Runtime component repositories | Own Agent App UI, Agent App Orchestrator (strategies and tools), and optional Agent App Ingestion. The manifest identifies their repositories and source pins. |
 
 The `infra.source` entry records the upstream version incorporated into this
-repository. Deploy the platform's own `infra/` tree, which also contains
+repository. Deployment uses the platform's own `infra/` tree, which includes
 Agent Landing Zone changes.
 
 ## The manifest records a validated combination
 
 [`manifest.json`](https://github.com/Azure/agent-landing-zone/blob/main/manifest.json)
-records the platform release and each Agent Application component's repository, ref and
-exact commit. Use it to identify the component versions validated together.
+records the platform release and each Agent Application component's repository,
+release tag and exact Git commit. A **Git commit** identifies an exact source
+revision; a tag is a readable label for a version. These identify the code
+versions validated together.
 
-The hooks fetch selected Agent Application Container App components into sibling
-directories and verify their commits. Hosted image preparation fetches the
-pinned orchestrator separately for its build. You do not need to fork every
-repository to deploy the unmodified Agent Application.
+The hooks fetch selected Container App components into sibling directories
+and verify their commits. Hosted image preparation fetches the pinned
+orchestrator separately. Deploying the reference app needs no repository forks.
 
-If you change component source, its repository and the platform's pins must
-agree. The Agent Application's `app-definition.json` also declares component source pins and
-is validated against the manifest. A modified combination needs its own
+The Agent Application's `app-definition.json` also records component commits
+and is validated against the manifest. A modified combination needs its own
 integration validation. See [Custom applications](build-your-own-app.md) for
 repository customization and pinning rules.
 
@@ -80,47 +88,52 @@ maps deployment inputs to infrastructure parameters. Values can be literals or
 references to the selected azd environment's variables. Inline defaults apply
 where declared; other unset inputs can use Bicep defaults.
 
-Before provisioning, the hooks resolve the selected application and hosting
-topology, apply the environment inputs and generate `infra/main.parameters.json`.
-Bicep consumes that generated file.
+Before provisioning, the hooks resolve the application and hosting topology,
+apply environment inputs and generate `infra/main.parameters.json` for Bicep.
 
 !!! note "Edit the source, not the generated output"
     Use documented deployment inputs and the root parameter file. Do not edit
     `infra/main.parameters.json`; the next composition can overwrite it.
-    See [Configuration](configuration.md) for the available inputs and defaults.
+    See [Deployment settings](configuration.md) for inputs and defaults.
 
 An **application definition** describes the selected application's components
-and capabilities. Select a custom definition before the first provision: one
-azd environment is bound to one application ID throughout provisioning and
-deployment.
+and capabilities. The environment records that definition's `id` on first
+provision and rejects a different one later. This identifies the deployed
+application; it is not a Microsoft Entra ID application registration ID.
+Microsoft Entra ID handles sign-in and service identities in an organization's
+directory, called a **tenant**. An application registration describes a sign-in
+application to that service. Custom application selection therefore happens
+before the first provision.
 
 Hosting, orchestration strategy and ingestion selection are separate decisions.
 For example, choosing a hosted orchestrator does not select an ingestion path.
 The configuration and application definition must form a supported combination.
+The hosted runtime rejects unsupported strategies rather than silently
+switching strategy or host. The `multimodal` and `nl2sql` strategies are not
+supported by this host.
 
 ## `azure.yaml` connects azd to the lifecycle
 
 The root
 [`azure.yaml`](https://github.com/Azure/agent-landing-zone/blob/main/azure.yaml)
-points azd at `infra/` and registers PowerShell and shell lifecycle hooks. Those
-hooks run the platform's configuration modules and coordinate the child
-application projects.
+points azd at `infra/` and registers PowerShell and shell lifecycle hooks.
+The hooks configure Azure services and coordinate application deployment.
 
 | Stage | What the platform does |
 | --- | --- |
-| Before `azd up` (`preup`) | Validates the application definition and checks its environment binding. |
+| Before `azd up` (`preup`) | Validates the application definition and checks that it matches the environment's recorded application. |
 | Before provisioning (`preprovision`) | Resolves application selection and topology, composes infrastructure parameters and runs preflight checks. |
 | After provisioning (`postprovision`) | Configures Azure services, reconciles application access and publishes runtime settings and outputs. |
-| Before deployment (`predeploy`) | Checks foundation readiness and application binding, validates topology and required connectivity, then coordinates the selected application deployments. |
+| Before deployment (`predeploy`) | Checks infrastructure readiness and the recorded application, validates topology and required connectivity, then coordinates the selected application deployments. |
 
 `azd provision` includes service configuration through its post-provision hook.
 Some Container Apps initially contain placeholder images; `azd deploy` replaces
 them with the selected application code.
 
-For Agent Application Container Apps, deployment uses the verified component checkouts
-and their child `azure.yaml` projects to build and deploy the code. Hosted
-orchestration uses the prepared image described below. Custom applications
-provide their own definition and child project.
+Container App deployment builds verified component code through each
+component's `azure.yaml`. Hosted orchestration uses the prepared image
+described below. Custom applications supply their own definitions and projects
+for deployment.
 
 ## App Configuration carries runtime settings
 
@@ -129,18 +142,18 @@ applications use the resulting services.
 
 Provisioning and configuration publish settings to Azure App Configuration
 under the **`agent-lz` label**. The Agent Application loaders also select other
-labels, so check [which setting takes precedence](configuration.md#runtime-settings)
-before changing keys. Bootstrap values such as the store endpoint must be
+labels, which can affect [which setting takes precedence](configuration.md#runtime-settings).
+Bootstrap values such as the store endpoint must be
 available before remote configuration can load. Secrets belong in Key Vault
 and are referenced rather than copied into checked-in settings.
 
-The same label is used across environments. Keep development, test and
-production configuration, identities and data separated, following the
-[environment boundaries](configuration.md#environment-boundaries) guidance. Local
-`.azure/` state is private deployment state, not a source-controlled input file;
-the hooks also copy state into child projects, so protect those workspaces.
+The same label is used across environments, so separation depends on distinct
+configuration, identities and data, as described in
+[Environment boundaries](configuration.md#environment-boundaries). Local
+`.azure/` state is private deployment state, not a source-controlled input file.
+Child workspaces receive copies and need the same protection.
 
-See [Configuration](configuration.md) for setting names, sources and restart
+See [Deployment settings](configuration.md) for setting names, sources and reload
 requirements.
 
 ## Why hosted agents need image preparation
@@ -149,14 +162,16 @@ A Foundry hosted agent needs an immutable image before its agent version can be
 deployed. That creates a bootstrap dependency on the registry and Foundry
 resources.
 
-1. **Create the prerequisites.** Initial provisioning establishes the foundation
-   and runs its service configuration.
-2. **Prepare the image.** The preparation script builds the pinned orchestrator
-   and a derived image with the supported hosted entrypoint, then records the
-   image digest and build provenance.
-3. **Record the handoff.** A further provision materializes the immutable
-   deployment handoff using that digest.
-4. **Deploy the application.** Deployment creates the hosted agent version and
+An **image digest** identifies the built container image by its content.
+It is not a source commit or a mutable image tag.
+
+1. **Infrastructure prerequisites.** Initial provisioning creates and configures
+   the required Azure services and access rules.
+2. **Image preparation.** The script builds the pinned orchestrator and its
+   hosted entrypoint image, recording the digest and build details.
+3. **Deployment metadata.** A further provision records the prepared digest and
+   configuration for the deployment hook.
+4. **Application deployment.** Deployment creates the hosted agent version and
    deploys the other selected application components.
 
 Image preparation does not start the agent, and provisioning does not create
@@ -165,15 +180,16 @@ image rather than rebuilding changed orchestrator source.
 
 The same source pins do not guarantee the same image digest when images are
 built independently. If a promotion process requires the identical image,
-preserve and verify its digest and registry availability separately.
+its digest and registry availability need separate preservation and verification.
 
-For execution steps, use [Deploy the full stack](deploy-full-stack.md). For
+The [Deploy full stack](deploy-full-stack.md) runbook provides execution steps. For
 strategy eligibility and image behavior, see [Agent hosting](hosted-agents.md).
 
 ## From understanding to deployment
 
-Continue with [deployment choices](planning.md), [sizing](sizing.md) and
-[cost planning](cost-planning.md), then choose
-[Deploy infrastructure only](deploy-infra-only.md) or
-[Deploy the full stack](deploy-full-stack.md). Those runbooks contain the
+The planning references explain [deployment design](planning.md),
+[sizing](sizing.md) and [cost](cost-planning.md).
+For execution, the named runbooks are
+[Deploy infra only](deploy-infra-only.md) or
+[Deploy full stack](deploy-full-stack.md). Those runbooks contain the
 prerequisites, topology-specific sequence and validation steps.

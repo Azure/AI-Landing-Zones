@@ -17,14 +17,14 @@ a new gateway only with the network owner's approval.
 The foundation creates private endpoints and DNS zones when isolation is
 enabled. It does **not** create a VPN gateway, configure P2S authentication,
 issue certificates, distribute client profiles or create a DNS Private
-Resolver. These are network-administrator tasks, not automatic `azd` steps.
+Resolver. These tasks need network administration outside `azd`.
 
 <span id="before-you-start"></span>
 
 ## Prerequisites
 
 - Use the reviewed platform checkout, intended azd environment and approved
-  inputs from [Deploy the full stack](deploy-full-stack.md). This procedure does
+  inputs from the [Deploy full stack runbook](deploy-full-stack.md). This procedure does
   not change the hosted orchestrator topology or Foundry IQ configuration.
 - Arrange network permissions at the gateway, VNet, peering and DNS scopes.
   The network administrator needs permission to create or update those
@@ -92,9 +92,9 @@ not configure P2S client routes or authentication. Use the
 
 For a fresh VPN-only deployment, you may explicitly set `DEPLOY_JUMPBOX=false`
 and `DEPLOY_BASTION=false` before provisioning. They otherwise default on for
-isolation. Do not remove an existing access path until VPN verification passes.
+isolation. Verify the VPN before removing an existing access path.
 
-Provision using [Deploy infrastructure only](deploy-infra-only.md). If the VPN
+Provision using the [Deploy infra only runbook](deploy-infra-only.md). If the VPN
 cannot exist until the VNet is provisioned, use that runbook's deferred
 post-provision procedure, then return here. Deferral leaves application setup
 incomplete and does not bypass earlier private-access checks.
@@ -127,9 +127,8 @@ or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/poi
      Enter the tenant, audience and issuer values from the current Microsoft
      procedure for your Azure cloud. Prefer its Microsoft-registered audience
      and follow its registration and consent requirements.
-     Use a currently supported Windows or macOS client. Microsoft's Azure VPN
-     Client for Linux preview retired on August 31, 2026; select a supported
-     certificate/client combination for Linux.
+     Use a currently supported Windows or macOS client. For Linux, select a
+     supported certificate/client combination from the Microsoft procedure.
 3. Save the configuration, then select **Download VPN client**. This generates
    a configuration package, not the client application. Install the supported
    client and import the profile using the matching Microsoft instructions.
@@ -200,9 +199,11 @@ curl.exe --verbose --output NUL "https://$serviceHost/"
 
 Expected results:
 
-- Both DNS checks return only the intended private IPv4 addresses. On Windows,
-  VPN NRPT rules can make `nslookup` differ from the operating system resolver;
-  inspect both.
+- The operating system resolver returns only the intended private IPv4
+  addresses. Windows Name Resolution Policy Table (NRPT) rules can make
+  `nslookup` differ. If it does, inspect `Get-DnsClientNrptPolicy` and query the
+  VPN's intended DNS server directly with `nslookup <hostname> <dns-server-ip>`.
+  Resolve the difference before accepting the host's DNS path.
 - `TcpTestSucceeded` is `True`, and TLS completes with normal certificate
   validation. A service HTTP 401 or 403 response confirms reachability;
   test service operations with the authorized identity separately. Do not use `--insecure`.
@@ -216,14 +217,14 @@ TCP/TLS reachability: App Configuration before post-provision and deployment,
 the Foundry project additionally before hosted deployment, and ACR before hosted
 image builds. Test the remaining service hosts individually.
 
-## After validation: deploy or develop
+### After validation: deploy or develop
 
 <span id="5-deploy-or-develop"></span>
 
 - **Deployment host:** authenticate Azure CLI and azd with the approved deployment
   identity. Complete deferred post-provision using
-  [Deploy infrastructure only](deploy-infra-only.md), then continue
-  [Deploy the full stack](deploy-full-stack.md) for hosted image preparation and
+  the [Deploy infra only runbook](deploy-infra-only.md), then continue
+  the [Deploy full stack runbook](deploy-full-stack.md) for hosted image preparation and
   application deployment. `RUN_FROM_JUMPBOX=true` requests connectivity checks;
   despite its name, it works from a VPN-connected host and does not require
   a jumpbox. Keep the private ACR Task pool for hosted image preparation;
@@ -235,7 +236,7 @@ image builds. Test the remaining service hosts individually.
   run in Foundry.
 
 Configure service RBAC and document permissions separately from network access.
-Preserve application authentication, OBO and source ACL enforcement.
+Preserve application authentication, OBO and source access-control lists.
 For hosted-agent authoring, verify the runner's **Foundry User** role on the
 exact project and account read access as described in
 [Network isolation](network-isolation.md). Do not grant Owner to solve a
@@ -243,7 +244,7 @@ data-plane denial.
 
 <span id="recover-or-disconnect"></span>
 
-## Troubleshooting
+### Troubleshooting
 
 | Symptom | Check first |
 | --- | --- |

@@ -1,95 +1,53 @@
 # Agent Landing Zone
 
-Agent Landing Zone provides a secure Azure foundation and the extensible
-**Agent Application** built on Microsoft Foundry. Deploy the foundation on its
-own, deploy it with the Agent Application, or bring your own application.
+Agent Landing Zone provides **Azure infrastructure for agents** and the
+**Agent Application**, a reference application built on Microsoft Foundry.
+The infrastructure includes the selected networking, identities, AI services
+and data stores. It can run the Agent Application or your own application.
+
+An **agent** uses an AI model to answer questions and can call configured
+tools. The supplied application provides web chat and can retrieve information
+from connected knowledge sources.
 
 Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 
-## Foundation and application
+<span id="foundation-and-application"></span>
 
-The template separates Azure resource provisioning from application deployment.
-Deployment parameters and application selection determine what is created.
+## Infrastructure and application
 
-| Layer | What it contains | Deployed by |
-| --- | --- | --- |
-| Foundation | Azure resources, identities and service configuration selected by the deployment inputs | `azd provision` and its configuration hooks |
-| Application | The selected application components and, for hosted orchestration, the agent version | `azd deploy` and its deployment hooks |
+The deployment template creates Azure resources separately from the application
+code that runs on them. This supports two deployment runbooks:
 
-Start with [How it works](how-it-works.md) for the deployment flow and how to
-set parameters. Then use [Deployment choices](planning.md) to choose a topology, tool and
-resource footprint. Compare the shared
-[foundation inventory](../bicep/deployed-resources.md) with your selected
-topology and reuse settings to identify the resources in your deployment.
-
-## Agent Application
-
-The [Agent App Orchestrator](https://github.com/Azure/agent-app-orchestrator)
-coordinates models, knowledge sources and configured tools through a selected
-**orchestration strategy**. Extend its strategies and tools to implement your
-workload's behavior. The [Agent App UI](https://github.com/Azure/agent-app-ui)
-provides the conversational interface.
-
-Use [Agent Application](application.md) for sign-in, document access,
-grounding sources, agent tools and its UI.
-
-```mermaid
-flowchart LR
-    user[User] <--> ui[Agent App UI]
-    ui <--> orchestrator[Orchestrator and selected strategy]
-    orchestrator --> models[Models]
-    orchestrator --> tools[Configured tools]
-    orchestrator --> knowledge[Knowledge sources]
-```
-
-### Strategies and hosting
-
-A strategy determines how the agent uses models, obtains context and invokes
-tools. Hosting determines where the orchestrator runs. These are separate
-choices, and not every strategy supports both hosts.
-
-| Hosting option | Execution model |
+| Runbook | Result |
 | --- | --- |
-| Foundry hosted agent | The default for a fresh environment. Foundry Agent Service runs the orchestrator image with a supported strategy. |
-| Azure Container Apps | Runs the orchestrator as a Container App, including strategies that are not yet supported by the hosted runtime. |
+| [Deploy infra only](deploy-infra-only.md) | Creates and configures the selected Azure resources without deploying application code. |
+| [Deploy full stack](deploy-full-stack.md) | Creates the infrastructure and deploys the Agent Application, including a Foundry hosted agent. |
 
-See [Agent hosting](hosted-agents.md) for supported strategies and the differences
-in history, continuity and optional administration features.
+The default full-stack deployment runs the agent in **Foundry Agent Service**,
+the Microsoft Foundry service that hosts and operates agents. A web chat
+interface connects users to it. [Agent Application](application.md) explains
+the components, knowledge sources and application behavior.
 
-### Knowledge ingestion
+The planning and Agent Application pages explain concepts and settings.
+Execution steps stay together in the **Runbooks**, with prerequisites,
+commands, validation and rollback.
 
-The optional [Agent App Ingestion](https://github.com/Azure/agent-app-ingestion)
-provides application-managed document processing, including format-aware
-chunking, embeddings and configured SharePoint ingestion. Native Foundry IQ can
-instead ingest configured Blob sources without Agent App Ingestion.
+<span id="choose-your-path"></span>
+<span id="agent-application"></span>
+<span id="strategies-and-hosting"></span>
+<span id="knowledge-ingestion"></span>
 
-Choose the path for the sources and features you need. Conversation attachments
-require Agent App Ingestion and the UI's upload eligibility checks. SharePoint
-requires its own connector and permissions. See [Ingestion choices](ingestion.md)
-for the supported paths and their setup requirements.
+## Where do I start?
 
-## Choose your path
-
-Review the design checklist, plan the deployment, then choose a deployment
-runbook. [What's new](whats-new.md) covers recent changes.
-
-| I want to | Guidance |
-| --- | --- |
-| Review architecture and security decisions | [Design checklist](../architecture/design-checklist.md) |
-| Understand the deployment flow and how to set parameters | [How it works](how-it-works.md) |
-| Choose standalone, hub integration or AI Gateway, and a deployment tool | [Deployment choices](planning.md) |
-| Plan private connectivity, DNS and a connected runner | [Network isolation](network-isolation.md) |
-| Size models, Search, compute and data services | [Sizing and capacity](sizing.md) |
-| Estimate and control spending | [Cost planning](cost-planning.md) |
-| Look up deployment inputs and runtime settings | [Configuration](configuration.md) |
-| Provision a foundation without deploying application code | [Deploy infrastructure only](deploy-infra-only.md) |
-| Deploy the foundation and Agent Application | [Deploy full stack](deploy-full-stack.md) |
-| Put the web UI behind Application Gateway | [Application Gateway](application-gateway.md) |
-| Reach private services from a workstation | [Private access over VPN](private-access.md) |
-| Make a hosted agent available in Teams and Microsoft 365 Copilot | [Publish to Teams and M365](publish-to-teams.md) |
-| Call a private Foundry agent from Copilot Studio | [Connect Copilot Studio](connect-copilot-studio.md) |
-| Integrate my own application or modify a component | [Custom applications](build-your-own-app.md) |
-| Configure the Agent Application and its knowledge sources | [Agent Application](application.md) |
-| Evaluate foundation-only tools | [Terraform templates](../terraform/index.md) or [Deploy via portal](../portal/Readme.md). Neither runs the Agent Application lifecycle. |
-| Automate deployments with Azure DevOps (optional) | [Deploy with Azure DevOps](azure-devops.md) |
-| Diagnose a deployment or runtime problem | [Troubleshooting](troubleshooting.md) |
+- **What does the template do?** [How it works](how-it-works.md) introduces the
+  deployment flow and explains where settings belong.
+- **What needs planning?** [Deployment choices](planning.md) covers resources,
+  network integration and deployment tools. The
+  [Design checklist](../architecture/design-checklist.md) supports architecture
+  and security review.
+- **How much capacity and budget are needed?** [Sizing and capacity](sizing.md)
+  and [Cost planning](cost-planning.md) describe the starting points.
+- **Do I only need Azure resources?** [Deploy infra only](deploy-infra-only.md)
+  provisions the infrastructure without deploying an application.
+- **Do I want the supplied application running?** [Deploy full stack](deploy-full-stack.md)
+  provisions the infrastructure and deploys the Agent Application.

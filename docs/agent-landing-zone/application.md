@@ -3,66 +3,111 @@
 # Agent Application
 
 Agent Application is the customizable reference app supplied by Agent Landing Zone.
-It includes Agent App UI, Agent App Orchestrator and optional Agent App Ingestion.
-These guides focus on the orchestrator in Foundry Agent Service, with the UI in
-Azure Container Apps. Start with a [full stack deployment](deploy-full-stack.md),
-then choose a task below. To deploy a customer-owned application instead, use
-[Bring your own app](build-your-own-app.md).
+The supplied `app-definition.json` identifies its UI, orchestrator and optional
+ingestion components. Deployment composition applies the selected topology to
+that definition. A fresh environment uses `hosted-no-panel`: Agent App UI runs
+in Azure Container Apps and Agent App Orchestrator runs as a container in
+Foundry Agent Service. Its default strategy is `maf_lite`.
 
-## Choose a task
+These pages explain the components and their integration boundaries.
+The [Deploy full stack runbook](deploy-full-stack.md) contains the deployment
+procedure. [Bring your own app](build-your-own-app.md) covers customer-owned
+applications.
 
-### Agent hosting
+<span id="choose-a-task"></span>
 
-Use [Agent hosting](hosted-agents.md) to choose where the orchestrator runs and
-understand image deployment, runtime access and how clients call the agent.
+## Application components
 
 ### Frontend
 
-| I want to | Guide |
+An Entra **tenant** is an organization's identity directory. An API **access
+token** is a credential: its **audience** identifies the receiving API, and a
+delegated **scope** identifies a permitted operation on behalf of a user.
+It is a **bearer** token because possession lets a caller present it, so it
+must stay protected. A **delegated call** acts for the signed-in user;
+on-behalf-of (OBO) exchanges that user's token for a downstream API token.
+
+Agent App UI supplies chat, sign-in and the delegated call to the hosted agent.
+Its optional embedding and feedback surfaces have separate integration limits.
+
+| Concept | Reference |
 | --- | --- |
-| Control who can sign in and which documents they can retrieve | [Sign-in and document access](application-auth.md) |
-| Put the chat interface inside an existing portal | [Embed chat](embed-chat.md) |
-| Collect ratings and comments | [User feedback](user-feedback.md) |
+| UI admission, Foundry invocation and document authorization | [Sign-in and document access](application-auth.md) |
+| Chat inside an existing portal | [Embed chat](embed-chat.md) |
+| Ratings and comments | [User feedback](user-feedback.md) |
+
+### Agent hosting
+
+[Agent hosting](hosted-agents.md) explains the hosted container, immutable image
+handoff and runtime identities. Hosting the container in Foundry does not turn
+its code into a portal-managed prompt agent.
+
+### Model, tools and knowledge base
+
+**Grounding** supplies retrieved information so the model can answer from
+connected sources.
+
+The default `maf_lite` code calls the configured model deployment directly.
+Its configured grounding path is the Foundry IQ knowledge-base connector,
+with `RETRIEVAL_BACKEND=foundry_iq` as the fresh default. A knowledge base
+binds sources and returns retrieved content; it is not the model or the
+hosted container.
+
+Foundry offers native tools and Toolbox connections. A **Toolbox** groups tools
+and their connections, including tools exposed through **Model Context Protocol
+(MCP)**, a protocol for making operations callable by agents.
+These are the service integration path for additional operations. The supplied
+`maf_lite` code does **not** automatically consume a Toolbox added in the portal.
+An authenticated Toolbox integration requires application development.
+[Agent tools](agent-tools.md) describes that contract.
+
+```mermaid
+flowchart LR
+    User <--> UI["Agent App UI"]
+    UI <-->|Delegated Foundry invocation| Agent["Hosted orchestrator"]
+    Agent <--> Model["Model deployment"]
+    Agent <--> KB["Foundry IQ knowledge base"]
+    Agent -.->|Custom authenticated integration| Tools["Foundry tools / Toolbox"]
+```
+
+The flow shows request dependencies, not proof of document authorization.
+The hosted entry point supplies neither authenticated user context nor a
+user bearer to default retrieval. Required-user retrieval fails without that
+token. Protected retrieval needs the integration and allow/deny validation
+described in [Agent Application access](application-auth.md).
 
 ### Ingestion
 
-Use [Ingestion and conversation uploads](ingestion.md) to choose how documents
-enter the shared collection and how users attach files to a chat.
+Fresh environments use native Foundry IQ ingestion for the configured Blob
+source, without Agent App Ingestion. The optional ingestion Container App
+provides application-managed processing and eligible conversation PDF uploads.
+Native source ingestion alone does not enable chat attachments.
+[Ingestion and conversation uploads](ingestion.md) explains these boundaries.
 
 ### Grounding
 
-| I want to | Guide |
+| Knowledge | Reference |
 | --- | --- |
-| Answer questions from my documents or an existing knowledge base | [Foundry IQ](foundry-iq.md) |
-| Use Microsoft 365 knowledge | [Work IQ](work-iq.md) |
-| Connect Fabric data, including a data agent over a semantic model | [Fabric IQ](fabric-iq.md) |
-| Answer questions from SharePoint content | [SharePoint](sharepoint.md) |
+| Documents and knowledge-base retrieval | [Foundry IQ](foundry-iq.md) |
+| Microsoft 365 knowledge | [Work IQ](work-iq.md) |
+| Fabric data and data agents | [Fabric IQ](fabric-iq.md) |
+| SharePoint content | [SharePoint](sharepoint.md) |
 
 ### Capabilities and extensions
 
-| I want to | Guide |
-| --- | --- |
-| Work with images, documents or voice | [Multimodality](multimodality.md) |
-| Ask questions about structured data | [NL2SQL](nl2sql.md) |
-| Add an agent tool or connect an MCP server | [Tools and MCP](agent-tools.md) |
-
-Each guide identifies the features integrated into Agent Application, their
-supported hosted path and any additional setup or development required.
+[Multimodality](multimodality.md) distinguishes document image extraction from
+direct image or voice input. [NL2SQL](nl2sql.md) explains structured-data
+grounding and the boundary for custom SQL tools.
 
 ## Know what you are changing
 
 **Deployment inputs** select Azure resources and application components.
-Set them in the selected `azd` environment before the deployment step that reads
-them. **Runtime settings** configure application behavior, typically through
-Azure App Configuration with label `agent-lz`. The
-[configuration reference](configuration.md) distinguishes the two.
+**Runtime settings** control the supplied application's behavior, typically in
+Azure App Configuration with label `agent-lz`. Other applications can have
+different runtime settings. [Deployment settings](configuration.md) identifies
+the owner and location of each value.
 
-**Knowledge sources** supply content through a Foundry IQ knowledge base.
-**Tools** let the agent call an additional service or operation. Configure
-retrieval sources and callable tools separately. Start with
-[Foundry IQ](foundry-iq.md) for knowledge or
-[Tools and MCP](agent-tools.md) for an additional operation.
-
-Follow the activation steps in the relevant guide, then verify the change
-through the running agent. Before granting access to real data, confirm that
-an authorized user can retrieve it and an unauthorized user cannot.
+Runtime configuration is cached in process. A changed hosted runtime setting
+requires a new agent version; affected UI or ingestion processes also need to
+reload their settings. The [Deploy full stack runbook](deploy-full-stack.md)
+covers deployment and redeployment.

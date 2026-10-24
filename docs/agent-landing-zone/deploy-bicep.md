@@ -3,14 +3,15 @@ search:
   exclude: true
 ---
 
-# Bicep deployment guidance has moved
+<span id="bicep-deployment-guidance-has-moved"></span>
 
-This compatibility address directs existing links to the current runbooks.
-Choose the procedure for your intended result:
+# Deploy with Bicep
 
-- [Deploy infrastructure only](deploy-infra-only.md): choose the Agent
+Follow the runbook for the required result:
+
+- [Deploy infra only](deploy-infra-only.md): choose the Agent
   foundation or independent AI Landing Zone Bicep source, then provision it.
-- [Deploy the full stack](deploy-full-stack.md): provision the Agent
+- [Deploy full stack](deploy-full-stack.md): provision the Agent
   foundation and deploy the Agent Application.
 
 <a id="how-azd-uses-bicep"></a>
@@ -22,7 +23,7 @@ Choose the procedure for your intended result:
 
 For the Bicep entry point, lifecycle hooks, generated parameters and manifest
 contract, read [How it works](how-it-works.md).
-For supported settings and naming, use [Configuration](configuration.md) and
+For supported settings and naming, use [Deployment settings](configuration.md) and
 the [foundation parameter reference](../bicep/parameterization.md).
 Run the supported lifecycle from the platform root: calling `infra/main.bicep`
 directly omits required validation, configuration and application work.
