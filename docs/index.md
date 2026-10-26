@@ -66,7 +66,21 @@ Agent Landing Zone provides an Azure foundation for AI applications and agents,
 with a default application built on Microsoft Foundry. Deploy the infrastructure,
 the application, or both using the [Agent Landing Zone guide](agent-landing-zone/index.md).
 
-![Agent Landing Zone reference architecture](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zone-Foundry.png)
+These reference architectures show private-network deployment options. Resource
+selection and reuse depend on the implementation and deployment settings.
+
+#### Standalone
+
+The workload owns its networking and supporting services without a shared platform hub.
+
+[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png)](architecture/media/AI-Landing-Zone-without-platform.png)
+
+#### With Platform Hub
+
+The workload connects to a platform hub that provides shared connectivity, DNS
+and egress services.
+
+[![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png)](architecture/media/AI-Landing-Zone-with-platform.png)
 
 ### AI Gateway Landing Zone
 
@@ -74,7 +88,11 @@ AI Gateway Landing Zone provides a shared gateway for AI applications and agents
 using Azure API Management to centrally manage access to Microsoft Foundry models.
 Choose a Bicep or Terraform implementation [below](#extensible-implementations).
 
-![AI Gateway Landing Zone reference architecture](https://raw.githubusercontent.com/Azure/AI-Landing-Zones/main/media/AI-Landing-Zones-APIM.png)
+The integrated scenario below combines an Agent Landing Zone, a Platform Hub and
+a separate AI Gateway Landing Zone. The gateway has its own deployment and
+connectivity requirements; it is not provisioned automatically by Agent Landing Zone.
+
+[![AI Gateway and Platform Hub integrated reference architecture](architecture/media/AI-Landing-Zones-APIM.png)](architecture/media/AI-Landing-Zones-APIM.png)
 
 <span id="foundry-modules"></span>
 <span id="agent-landing-zone_1"></span>
