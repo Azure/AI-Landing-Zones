@@ -26,6 +26,12 @@ The [Azure DevOps runbook](azure-devops.md) covers optional pipeline automation.
 An AI Gateway governs model requests, not workload networking or user access.
 Private endpoints, DNS, routes, firewall rules and authorization remain necessary.
 
+For the **unreleased v4.4.0** [resource group destinations](configuration.md#resource-group-destinations),
+locally owned private endpoints default to the resolved network group, which
+can differ from their services' groups. The explicit
+`AZURE_PE_RESOURCE_GROUP_NAME` override and existing-VNet/`SIDE_BY_SIDE`
+precedence in [Deployment settings](configuration.md#general) still apply.
+
 !!! note "Teams and Microsoft 365 Copilot publication"
     [Publish to Teams and M365](publish-to-teams.md) adds a manual, source-IP-filtered
     public exception for the Foundry Activity route while Foundry and Bot Service
@@ -54,6 +60,19 @@ private endpoint; it does not require the Activity-route public exception.
 ## Isolation and provisioning
 
 `NETWORK_ISOLATION=true` is resolved before provisioning.
+
+The **unreleased v4.4.0**
+[application private endpoint subnet pair](configuration.md#optional-application-private-endpoint-subnet)
+is optional regardless of whether the workload uses one, two or three resource
+groups. Empty `AZURE_APPLICATION_PE_SUBNET_NAME` and
+`AZURE_APPLICATION_PE_SUBNET_PREFIX` retain the shared subnet. Supply both to
+place enabled application Cosmos DB, Key Vault, App Configuration, Container
+Apps, ACR and Azure Monitor Private Link Scope endpoints on a separate subnet;
+Foundry/grounding keeps the existing `peSubnetName`/`peSubnetPrefix` subnet.
+The application subnet needs a distinct name and an aligned IPv4 CIDR of `/29`
+or shorter within the VNet, without overlap with base subnet prefixes.
+Existing-VNet ownership and compatibility checks still apply; no extra subnet
+is selected merely by splitting resource groups.
 
 Azure Resource Manager (ARM) creates and manages Azure resources through a
 public control plane, but `azd provision` also

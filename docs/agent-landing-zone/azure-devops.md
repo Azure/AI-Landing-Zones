@@ -194,6 +194,11 @@ stores, secrets and data. Apply the
 [environment boundaries](configuration.md#environment-boundaries) for
 runtime identities, sign-in, network isolation and test data.
 
+The example keeps the single-resource-group default. Adopting the
+**unreleased** [optional destinations](configuration.md#resource-group-destinations)
+requires a reviewed platform revision, explicit stage-specific settings and
+permission/inventory checks for every target, not just the root group's refresh.
+
 Never copy DEV's `.azure` state into TEST or PROD. Initialize or securely restore
 the intended environment on each runner, refresh its outputs when needed and
 reapply approved inputs. Keep `.azure` and sibling child state private.

@@ -18,6 +18,15 @@ Run lifecycle commands from the platform root with the intended azd environment
 selected. Record the deployed revision and approved inputs before changing them.
 Environment removal is a separate destructive task, not a rollback procedure.
 
+For the unreleased [multi-resource-group path](configuration.md#resource-group-destinations),
+preserve the approved destination mapping on retries and inventory every target
+before cleanup. A `predown` safety hook blocks `azd down` when the destinations
+span distinct groups; no automatic deletion or bypass option is provided. Use separately
+authorized, itemized manual cleanup after owner review, preserving shared
+resources and required data. Created additional groups do not have an
+`azd-env-name` tag. Single-group teardown remains unchanged. No automatic
+resource migration, permission elevation or destructive group rollback is provided.
+
 <span id="upgrade-ingestion-selection-to-v430"></span>
 <span id="change-ingestion-selection-safely"></span>
 For ingestion selection and safe retirement, see [Ingestion](ingestion.md).

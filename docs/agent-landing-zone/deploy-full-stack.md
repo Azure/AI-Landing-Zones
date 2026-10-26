@@ -23,9 +23,13 @@ see [How it works](how-it-works.md).
 
 ## Prerequisites
 
-- **Permissions:** Owner, or Contributor plus User Access Administrator, at the
-  required deployment scopes. Shared networks, DNS and monitoring can require
-  additional permissions in their own scopes. See [Permissions](../bicep/permissions.md).
+- **Permissions:** Contributor for resource deployment plus
+  `Microsoft.Authorization/roleAssignments/write` at the required scopes,
+  for example through Role Based Access Control Administrator. Service
+  configuration needs separate data-plane roles. Shared networks, DNS and
+  monitoring can require additional scoped access. Subscription Owner is not
+  a blanket prerequisite; see [resource group permissions](configuration.md#resource-group-permissions)
+  and [foundation permissions](../bicep/permissions.md).
 - **Subscription readiness:** accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
   selected parameters. Review [regional considerations](../bicep/regional-considerations.md)
@@ -157,6 +161,12 @@ For an existing environment, use `azd env select <environment-name>` instead
 and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
+
+For a **new environment on a reviewed revision with the unreleased feature**,
+optionally set [Foundry and network resource group destinations](configuration.md#resource-group-destinations)
+now. Without those overrides, keep the single-group procedure unchanged.
+Additional groups must already exist unless their explicit creation is enabled
+and authorized. Do not change an existing environment's mapping to move resources.
 
 <a id="step-3-choose-a-topology"></a>
 
@@ -416,6 +426,15 @@ Owner or remove unrelated assignments to recover. See [hosted identities](hosted
     documents, indexes, configuration and conversation data. If the scope
     contains shared resources or retained data, stop and arrange itemized removal
     with the owners instead. Check retention obligations first.
+
+For the unreleased multi-group path, inventory **every configured destination**
+and its shared dependencies before cleanup. The root group alone is not the
+complete inventory. A `predown` safety hook **blocks `azd down` for split-group
+deployments**, with no automatic deletion or bypass option. Arrange itemized,
+owner-approved manual removal instead; do not bypass the hook or delete shared
+groups. Additional groups created by the feature are not tagged `azd-env-name`.
+Partial provisioning is not authorization to delete a group. The single-group
+path below is unchanged.
 
 ```bash
 azd env select <environment-name>
