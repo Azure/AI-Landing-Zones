@@ -218,15 +218,46 @@ runbook for the identity inputs and protected-retrieval integration gate.
 ### Step 4: Preview and provision
 
 For Agent source, first run `azd hooks run preup` to validate the definition and
-binding before azd's resource-group initialization. Then, in either source:
+binding before azd's resource-group initialization.
+Normal `azd provision` automatically runs the Agent preprovision hook to
+compose parameters and bootstrap authorized additional groups. Manual
+preparation is needed only if you choose to preview first.
+
+#### Optional preview (Agent source)
+
+!!! warning "Preview preparation can create resource groups"
+    With azd 1.37.1, `azd provision --preview` does **not** run preprovision
+    hooks. It reads the existing `infra/main.parameters.json`, which may still
+    be the checked-in seed or another environment's composition, and cannot
+    bootstrap missing additional destination groups.
+
+    Before an optional Agent preview, select the intended azd environment,
+    activate the prepared Python environment and run **one** matching hook
+    from the platform root: `pwsh -File scripts/preProvision.ps1` on Windows,
+    or `sh scripts/preProvision.sh` on Linux/macOS. These hooks load selected
+    azd values, compose parameters and can create missing additional groups
+    when `CREATE_RESOURCE_GROUPS=true`. Otherwise those groups must already
+    exist, or a composed split-group preview can fail with `NotFound`.
+
+    Native preview can also create the empty application/root resource group.
+    Neither fresh-environment preparation nor preview is guaranteed write-free;
+    authorize group creation before running them. A successful preview does
+    not prove private connectivity, service configuration or application readiness.
+
+After this preparation for Agent source, or using the independent foundation's
+own inputs and lifecycle, the optional preview command is:
 
 ```bash
 azd provision --preview
 ```
 
-Review the preview's scopes, names, routes, resource changes, public access and
-role assignments. Resolve quota, Policy, subnet and capacity findings rather
-than skipping preflight. Approve the planned resource changes before applying:
+If previewing, review its scopes, names, routes, resource changes, public access
+and role assignments. Resolve quota, Policy, subnet and capacity findings rather
+than skipping preflight.
+
+#### Provision
+
+With the resource changes approved, provision normally:
 
 ```bash
 azd provision
@@ -344,8 +375,9 @@ Do not approve every pending connection or bypass the gate.
 Record the deployed source revision, approved parameters, outputs and dependent
 applications. Back up required data and configuration, check compatibility and
 retain existing names, locations, layout and ingestion intent.
-Review preview before applying approved root parameter changes with the
-provisioning step above.
+If previewing Agent changes, repeat the
+[selected-environment preparation](#optional-preview-agent-source) before
+reviewing the preview. Apply approved root parameter changes with the provisioning step above.
 
 For Agent environments, integrate the coordinated platform and its `infra/`
 tree together; do not replace only its foundation folder with upstream main.
@@ -411,7 +443,8 @@ irreversible decision, not a normal retry or rollback.
 1. Stop retries and record which resources and configuration changed. If only
    local inputs changed, restore reviewed inputs before provisioning.
 2. Compare previous inputs with deployed state. Preview the previous compatible
-   source and parameters with `azd provision --preview` from the selected root.
+   source and parameters with `azd provision --preview` from the selected root,
+   following the [Agent preview preparation](#optional-preview-agent-source) when applicable.
 3. Apply with `azd provision` only if reviewed changes preserve data, shared
    resources and the approved network posture.
 4. Repeat [Validation](#validation). If inputs cannot safely reverse a change,

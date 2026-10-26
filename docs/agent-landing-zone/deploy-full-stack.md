@@ -259,9 +259,14 @@ azd hooks run preup
 Resolve validation, quota, Policy and connectivity failures rather than bypassing
 checks. The explicit `preup` check also validates binding before standalone
 provisioning, which otherwise runs its check after azd may initialize a resource group.
-Run `azd provision --preview` and review resource scopes, public access, routes
-and role changes before applying the sequence below. Expect only changes
-authorized for the selected environment.
+For an optional `azd provision --preview`, first follow the
+[Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):
+preview skips preprovision hooks, so the selected environment's parameters and
+additional groups must be prepared first. Preparation/preview can create
+resource groups and do not establish private application readiness. Review
+resource scopes, public access, routes and role changes before applying the
+sequence below. Normal `azd provision` runs its preprovision hook automatically;
+manual preparation is not required when proceeding without preview.
 
 <span id="container-apps-orchestrator-classic"></span>
 <span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
@@ -327,7 +332,8 @@ service-specific procedures.
    `infra/` with that source, rather than replacing only that directory.
 2. Preserve the environment's layout, component selection, names and source
    bindings. Back up affected data and separately managed configuration.
-3. Preview infrastructure changes with `azd provision --preview`.
+3. If previewing, follow the [selected-environment preparation](deploy-infra-only.md#optional-preview-agent-source),
+   then review infrastructure changes with `azd provision --preview`.
 4. Run [Step 4](#step-4-deploy), including image preparation and the second
    provision when the source or generated image changes.
 5. Repeat [Validation](#validation) before promotion.
