@@ -195,7 +195,7 @@ stores, secrets and data. Apply the
 runtime identities, sign-in, network isolation and test data.
 
 The example keeps the single-resource-group default. Adopting the
-**unreleased** [optional destinations](configuration.md#resource-group-destinations)
+[optional destinations available from v4.4.0](configuration.md#resource-group-destinations)
 requires a reviewed platform revision, explicit stage-specific settings and
 permission/inventory checks for every target, not just the root group's refresh.
 

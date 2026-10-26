@@ -82,7 +82,7 @@ The default remains one workload resource group. The optional
 [resource group destinations](configuration.md#resource-group-destinations)
 separate application, Foundry/grounding and workload networking ownership,
 with one, two or three distinct groups in the same subscription. This is an
-**unreleased Agent Bicep/azd feature**, not a Terraform or portal parity claim.
+**Agent Bicep/azd feature available from v4.4.0**, not a Terraform or portal parity claim.
 Network isolation and hub/BYO integration remain separate decisions.
 
 Agree names, owners, scoped deployment/RBAC/data permissions and retention

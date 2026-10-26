@@ -11,8 +11,8 @@ This page explains the naming model. The
 preview steps. [Deployment settings](configuration.md) describes other inputs;
 [resource reuse](planning.md#select-reuse-or-omit-resources) is separate from naming.
 
-The unreleased [resource group destination inputs](configuration.md#resource-group-destinations)
-select where resources belong, not a naming mode. Select them before first
+The [resource group destination inputs](configuration.md#resource-group-destinations),
+available from v4.4.0, select where resources belong, not a naming mode. Select them before first
 provision; changing a group's input is not an existing-resource move or migration.
 
 ## Defaults

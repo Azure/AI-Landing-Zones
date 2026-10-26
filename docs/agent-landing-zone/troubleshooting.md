@@ -14,7 +14,7 @@ failure. Diagnose the failing stage before retrying or changing inputs.
 
 | What you see | Start here |
 | --- | --- |
-| Unreleased multi-group setup reports a missing target or denied access | [Resource group destination checks](#resource-group-destination-checks) |
+| Multi-group setup reports a missing target or denied access | [Resource group destination checks](#resource-group-destination-checks) |
 | `azd down` is blocked for split resource group destinations | [Split-group cleanup safety check](#split-group-cleanup-safety-check) |
 | Hosted deployment asks for preparation | [Hosted handoff](#hosted-deployment-is-not-prepared) |
 | Private endpoint or build-pool failure | [Private prerequisites](#private-deployment-prerequisites-failed), [package installation](#package-installation-fails-inside-the-build-pool) |
@@ -60,7 +60,7 @@ Do not switch runtimes or weaken authentication to diagnose a failure.
 
 #### Resource group destination checks
 
-For the **unreleased Agent Bicep/azd feature**, compare the selected environment's
+For **Agent Bicep/azd deployments from v4.4.0**, compare the selected environment's
 `AZURE_RESOURCE_GROUP`, optional `AZURE_FOUNDRY_RESOURCE_GROUP` and
 `AZURE_NETWORK_RESOURCE_GROUP` with the approved
 [destination mapping](configuration.md#resource-group-destinations).
@@ -80,7 +80,7 @@ IDs and scoped permissions in every destination before continuing.
 
 #### Split-group cleanup safety check
 
-For the **unreleased feature planned for v4.4.0**, the `predown` hook blocks
+From **v4.4.0**, the `predown` hook blocks
 `azd down` when the workload destinations span distinct resource groups.
 This is an intentional safety check, not a provisioning or permission failure.
 No automatic deletion or bypass option is provided; do not bypass the hook or change the

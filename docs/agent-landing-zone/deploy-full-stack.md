@@ -162,7 +162,7 @@ and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
 
-For a **new environment on a reviewed revision with the unreleased feature**,
+For a **new environment on v4.4.0 or a later reviewed compatible revision**,
 optionally set [Foundry and network resource group destinations](configuration.md#resource-group-destinations)
 now. Without those overrides, keep the single-group procedure unchanged.
 Additional groups must already exist unless their explicit creation is enabled
@@ -427,7 +427,7 @@ Owner or remove unrelated assignments to recover. See [hosted identities](hosted
     contains shared resources or retained data, stop and arrange itemized removal
     with the owners instead. Check retention obligations first.
 
-For the unreleased multi-group path, inventory **every configured destination**
+For the multi-group path, inventory **every configured destination**
 and its shared dependencies before cleanup. The root group alone is not the
 complete inventory. A `predown` safety hook **blocks `azd down` for split-group
 deployments**, with no automatic deletion or bypass option. Arrange itemized,

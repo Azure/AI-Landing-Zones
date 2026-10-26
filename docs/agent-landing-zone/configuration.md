@@ -57,12 +57,13 @@ new resources instead of updating existing ones.
 
 ### Resource group destinations
 
-!!! warning "Unreleased — planned for v4.4.0"
-    The optional resource group destinations below are being prepared for new
-    Agent Landing Zone **Bicep/azd** deployments. Use only a reviewed source
-    revision containing this feature; do not assume it is in a published
-    release. Terraform, portal and the independent Bicep foundation are not
-    claimed to support this Agent platform contract.
+!!! note "Available from v4.4.0"
+    The optional resource group destinations below support new Agent Landing
+    Zone **Bicep/azd** deployments from
+    [v4.4.0](https://github.com/Azure/agent-landing-zone/releases/tag/v4.4.0).
+    Use a reviewed compatible source revision. Terraform, portal and the
+    independent Bicep foundation are not claimed to support this Agent
+    platform contract.
 
 Without overrides, deployment keeps the existing single-resource-group path.
 All workload destinations must be in `AZURE_SUBSCRIPTION_ID`. Equal names are
@@ -168,7 +169,7 @@ When unset, they use the template defaults shown below.
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
-| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`, falling back to `AZURE_RESOURCE_GROUP`). Optional multi-group placement is unreleased, planned for v4.4.0; the single-group default is unchanged. |
+| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`, falling back to `AZURE_RESOURCE_GROUP`). Optional multi-group placement is available from v4.4.0; the single-group default is unchanged. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
 Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.
@@ -334,7 +335,7 @@ Bastion tunneling is disabled by default.
 
 ### Optional application private endpoint subnet
 
-**Unreleased, planned for v4.4.0:** new Agent Bicep/azd deployments can separate
+**Available from v4.4.0:** new Agent Bicep/azd deployments can separate
 application private endpoints from Foundry/grounding private endpoints.
 This choice is independent of resource group count and does not enable network
 isolation or additional services.

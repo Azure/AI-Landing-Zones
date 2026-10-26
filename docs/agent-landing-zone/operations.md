@@ -18,7 +18,7 @@ Run lifecycle commands from the platform root with the intended azd environment
 selected. Record the deployed revision and approved inputs before changing them.
 Environment removal is a separate destructive task, not a rollback procedure.
 
-For the unreleased [multi-resource-group path](configuration.md#resource-group-destinations),
+For the [multi-resource-group path available from v4.4.0](configuration.md#resource-group-destinations),
 preserve the approved destination mapping on retries and inventory every target
 before cleanup. A `predown` safety hook blocks `azd down` when the destinations
 span distinct groups; no automatic deletion or bypass option is provided. Use separately

@@ -26,7 +26,7 @@ The [Azure DevOps runbook](azure-devops.md) covers optional pipeline automation.
 An AI Gateway governs model requests, not workload networking or user access.
 Private endpoints, DNS, routes, firewall rules and authorization remain necessary.
 
-For the **unreleased v4.4.0** [resource group destinations](configuration.md#resource-group-destinations),
+With the [resource group destinations available from v4.4.0](configuration.md#resource-group-destinations),
 locally owned private endpoints default to the resolved network group, which
 can differ from their services' groups. The explicit
 `AZURE_PE_RESOURCE_GROUP_NAME` override and existing-VNet/`SIDE_BY_SIDE`
@@ -61,7 +61,7 @@ private endpoint; it does not require the Activity-route public exception.
 
 `NETWORK_ISOLATION=true` is resolved before provisioning.
 
-The **unreleased v4.4.0**
+The **v4.4.0**
 [application private endpoint subnet pair](configuration.md#optional-application-private-endpoint-subnet)
 is optional regardless of whether the workload uses one, two or three resource
 groups. Empty `AZURE_APPLICATION_PE_SUBNET_NAME` and

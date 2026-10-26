@@ -105,7 +105,7 @@ its approved inputs. Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local `.azure/` state.
 Fork or mirror the source only when maintaining your own inputs or automation.
 
-**Agent source only, unreleased:** a reviewed revision can optionally select
+**Agent source only, from v4.4.0:** a reviewed revision can optionally select
 [Foundry and network resource group destinations](configuration.md#resource-group-destinations)
 before first provision. The default remains one group; additional targets
 share its subscription and must exist unless optional creation is authorized.
@@ -317,7 +317,7 @@ azd env refresh
 
 If the environment is already present, select it instead. Reapply the approved
 deployment inputs: refresh restores outputs, not your full configuration.
-For the unreleased multi-group path, restore the same approved Foundry/network
+For the multi-group path, restore the same approved Foundry/network
 destination mapping as well; the root group alone is not sufficient.
 Do not publish or copy another stage's `.azure/` state as an input artifact.
 An authorized runner can use managed-identity sign-in. Verify its scoped
@@ -390,7 +390,7 @@ irreversible decision, not a normal retry or rollback.
       --query "[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}" -o json
     ```
 
-    For the unreleased multi-group path, repeat resource inventory for every
+    For the multi-group path, repeat resource inventory for every
     distinct destination, and inspect private endpoints in their actual group.
     Do not infer a Foundry or network resource's group from the application group.
 
