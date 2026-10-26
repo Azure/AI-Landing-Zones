@@ -117,6 +117,12 @@ multi-step lifecycle.
   Management-plane Contributor does not replace them. External network/DNS
   resources require their owners' scoped permissions.
 
+Resource-group Contributor and scoped RBAC administration do not grant Entra
+directory reads; for platform-output client-ID discovery, restricted automation
+can instead supply `AGENTLZ_COMPONENT_IDENTITIES` as a nonsecret JSON map of
+Container App component names to pre-resolved managed-identity client IDs,
+without granting broad directory rights.
+
 The workflow does not elevate its own permissions. Record the approved mapping
 with the environment; changing a provisioned environment's mapping is not a
 supported resource migration. After partial failure, repair the cause and
