@@ -1751,7 +1751,7 @@ range. Replace it as a unit if it conflicts with your approved design.</p>
 </tr>
 <tr>
 <td><code>acaEnvironmentSubnetPrefix</code></td>
-<td><code>10.200.4.0/23</code></td>
+<td><code>10.200.6.0/23</code></td>
 </tr>
 <tr>
 <td><code>peSubnetPrefix</code></td>
@@ -1781,10 +1781,25 @@ range. Replace it as a unit if it conflicts with your approved design.</p>
 <td><code>devopsBuildAgentsSubnetPrefix</code></td>
 <td><code>10.200.3.96/27</code></td>
 </tr>
+<tr>
+<td><code>applicationPeSubnetPrefix</code></td>
+<td><code>10.200.3.128/26</code></td>
+</tr>
+<tr>
+<td><code>powerPlatformSubnetPrefix</code></td>
+<td><code>10.200.4.0/24</code></td>
+</tr>
+<tr>
+<td><code>aiGatewaySubnetPrefix</code></td>
+<td><code>10.200.5.0/24</code></td>
+</tr>
 </tbody>
 </table>
-<p>These native values belong in the selected source's reviewed root
-<code>main.parameters.json</code>; there is no <code>VNET_ADDRESS_PREFIXES</code> mapping.
+<p>Set <code>vnetAddressPrefixes</code> as an explicit array in reviewed root
+<code>main.parameters.json</code>; there is no <code>VNET_ADDRESS_PREFIXES</code> mapping. All twelve
+subnet names and prefixes also have <a href="../../agent-landing-zone/configuration/#subnet-creation-and-addressing">environment bindings</a>
+in that root file. A reused VNet's actual address space is authoritative and is
+not resized by these inputs.
 Keep the complete file with the deployment inputs and carry it to a connected
 host. Environment refresh does not restore file customizations.</p>
 <p>Every subnet must fit without overlap. Keep <code>AzureBastionSubnet</code> and
@@ -1843,8 +1858,12 @@ Optional <a href="../public-ingress/">Application Gateway ingress</a> is a separ
 explicitly reviewed public entry point.</p>
 <h2 id="existing-vnet-and-dns-ownership">Existing VNet and DNS ownership</h2>
 <p>With <code>USE_EXISTING_VNET=true</code>, decide who manages each subnet, NSG, route table
-and delegation. Do not update existing subnets under isolation with
-<code>DEPLOY_NSGS=false</code>; retain managed NSGs or use <code>DEPLOY_SUBNETS=false</code> and have
+and delegation. All twelve subnets are selected by default for both new and
+existing VNets; use the <a href="../../agent-landing-zone/configuration/#subnet-creation-and-addressing">individual creation flags</a>
+to select ownership per subnet. A false creation flag requires an existing
+valid subnet for each enabled consumer, or that consumer must be disabled.
+Do not update selected existing subnets under isolation with
+native root <code>deployNsgs=false</code>; retain managed NSGs or use <code>DEPLOY_SUBNETS=false</code> and have
 the network owner prepare the complete subnet configuration.</p>
 <p>Choose local DNS, per-zone BYO IDs or Azure Policy-managed DNS deliberately.
 Shared zones require links or forwarding for every actual client VNet;
@@ -1853,6 +1872,8 @@ zones. See <a href="../parameterization/#private-dns-zones">private DNS paramete
 and <a href="../hub-and-spoke/#private-dns-ownership">Policy ownership</a>.</p>
 <p>The BYO-VNet reserved <code>AzureBastionSubnet</code> is excluded from generic NSG attachment
 when Bastion is disabled; enabled Bastion uses its dedicated compliant NSG.
+The reserved <code>GatewaySubnet</code> at default <code>192.168.2.192/26</code> must have no NSG,
+default-route UDR or delegation.
 Do not rename subnets, renumber prefixes or reapply an older workaround
 automatically on existing deployments. Plan such migrations explicitly.</p>
 <h2 id="provisioning-boundary">Provisioning boundary</h2>
@@ -1863,8 +1884,9 @@ regional readiness, not successful bootstrap or data-plane access.
 Inspect the VM Custom Script Extension result if software bootstrap is selected;
 it is not evidence that all Agent prerequisites are installed.</p>
 <p>For a new build subnet created in a BYO VNet, the ACR Tasks pool depends on the
-conditional subnet deployment. With <code>DEPLOY_SUBNETS=false</code>, subnet readiness is
-the external network owner's responsibility. A first-attempt cold-start check
+conditional subnet deployment. With <code>DEPLOY_SUBNETS=false</code> or
+<code>DEPLOY_DEVOPS_BUILD_AGENTS_SUBNET=false</code>, subnet readiness is the external
+network owner's responsibility for an enabled pool. A first-attempt cold-start check
 must start with that subnet absent, record successful operations and the pool's
 final state, and distinguish retries from the first attempt. Source availability
 and offline CI do not prove this live result.</p>

@@ -2121,7 +2121,9 @@ every environment. Evaluate the native integration separately.</p>
   gate in the <a href="../deploy-full-stack/">Deploy full stack runbook</a> before using
   protected sources. A working relay is not evidence of source authorization.</li>
 <li><strong>Azure network:</strong> The platform team has already delivered the Power Platform
-  delegated subnet, regional connectivity, an enterprise policy and its
+  subnet (default <code>powerplatform-subnet</code>, <code>192.168.4.0/24</code>, delegated to
+  <code>Microsoft.PowerPlatform/enterprisePolicies</code>), regional connectivity,
+  an enterprise policy and its
   <strong>Azure resource ID</strong>, an approved Foundry private endpoint and private DNS.
   Every subnet referenced by the
   policy must resolve and reach Foundry over HTTPS. Foundry <strong>public network

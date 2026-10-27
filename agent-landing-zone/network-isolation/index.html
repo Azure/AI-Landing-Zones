@@ -2184,20 +2184,115 @@ private endpoint; it does not require the Activity-route public exception.</p>
 </div>
 <p><span id="enable-isolation"></span></p>
 <h2 id="isolation-and-provisioning">Isolation and provisioning</h2>
-<p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning.</p>
-<p>The
-<a href="../configuration/#optional-application-private-endpoint-subnet">application private endpoint subnet pair</a>
-is optional regardless of whether the workload uses one, two or three resource
-groups. Empty <code>AZURE_APPLICATION_PE_SUBNET_NAME</code> and
-<code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code> retain the shared subnet.</p>
-<p>Supply both to
-place enabled application Cosmos DB, Key Vault, App Configuration, Container
-Apps, ACR and Azure Monitor Private Link Scope endpoints on a separate subnet;
-Foundry/grounding keeps the existing <code>peSubnetName</code>/<code>peSubnetPrefix</code> subnet.</p>
-<p>The application subnet needs a distinct name and an aligned IPv4 CIDR of <code>/29</code>
-or shorter within the VNet, without overlap with base subnet prefixes.
-Existing-VNet ownership and compatibility checks still apply; no extra subnet
-is selected merely by splitting resource groups.</p>
+<p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning. All twelve subnets
+are created by default for both new and existing VNets. The default VNet
+address space is <code>192.168.0.0/21</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Default name</th>
+<th>Default CIDR</th>
+<th>Delegation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundry Agent Service</td>
+<td><code>agent-subnet</code></td>
+<td><code>192.168.0.0/24</code></td>
+<td><code>Microsoft.App/environments</code></td>
+</tr>
+<tr>
+<td>Container Apps environment</td>
+<td><code>aca-environment-subnet</code></td>
+<td><code>192.168.1.0/24</code></td>
+<td><code>Microsoft.App/environments</code></td>
+</tr>
+<tr>
+<td>Foundry/grounding private endpoints</td>
+<td><code>pe-subnet</code></td>
+<td><code>192.168.2.0/26</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Bastion</td>
+<td><code>AzureBastionSubnet</code></td>
+<td><code>192.168.2.64/26</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Firewall</td>
+<td><code>AzureFirewallSubnet</code></td>
+<td><code>192.168.2.128/26</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>VPN/ExpressRoute reservation</td>
+<td><code>GatewaySubnet</code></td>
+<td><code>192.168.2.192/26</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Application Gateway</td>
+<td><code>AppGatewaySubnet</code></td>
+<td><code>192.168.3.0/27</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Jumpbox</td>
+<td><code>jumpbox-subnet</code></td>
+<td><code>192.168.3.64/27</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Build agents</td>
+<td><code>devops-build-agents-subnet</code></td>
+<td><code>192.168.3.96/27</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Application private endpoints</td>
+<td><code>application-pe-subnet</code></td>
+<td><code>192.168.3.128/26</code></td>
+<td>None</td>
+</tr>
+<tr>
+<td>Power Platform</td>
+<td><code>powerplatform-subnet</code></td>
+<td><code>192.168.4.0/24</code></td>
+<td><code>Microsoft.PowerPlatform/enterprisePolicies</code></td>
+</tr>
+<tr>
+<td>AI Gateway</td>
+<td><code>ai-gateway-subnet</code></td>
+<td><code>192.168.5.0/24</code></td>
+<td><code>Microsoft.Web/serverFarms</code></td>
+</tr>
+</tbody>
+</table>
+<p><a href="../configuration/#subnet-creation-and-addressing">Subnet creation and addressing</a>
+lists the global <code>DEPLOY_SUBNETS</code> switch, twelve individual flags (all <code>true</code>)
+and root name/CIDR overrides. These controls have the same selection semantics
+for new and BYO VNets. A false creation flag does not disable a consumer:
+its valid subnet must already exist, or the consumer must be explicitly disabled.
+With isolation off, no VNet or subnets are provisioned.</p>
+<p>Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
+ACR and Azure Monitor Private Link Scope endpoints use the
+<a href="../configuration/#optional-application-private-endpoint-subnet">application private endpoint subnet</a>.
+Foundry/grounding endpoints use <code>pe-subnet</code> by default. Application endpoints
+never fall back to the Foundry subnet, including when application subnet
+creation is disabled. This separation is independent of resource group count.</p>
+<p>Keep the reserved name <code>GatewaySubnet</code>; do not attach an NSG, default-route
+UDR or delegation to it. AI Gateway uses APIM Standard v2/Premium v2 outbound
+VNet integration, with a subnet of <code>/27</code> or larger, delegated to
+<code>Microsoft.Web/serverFarms</code> and associated with an NSG. Preserve an outbound
+HTTPS path to Azure Key Vault. No reserved subnet name is required for APIM;
+do not place APIM private endpoints in its delegated integration subnet.</p>
+<p>The Power Platform <code>/24</code> is a capacity default, not a platform minimum.
+Size for environment demand: approximately 25–30 IPs per production
+environment or 6–10 per nonproduction environment, plus five subnet-reserved IPs.
+See <a href="https://learn.microsoft.com/power-platform/admin/vnet-support-overview#estimating-subnet-size-for-power-platform-environments">Power Platform subnet sizing</a>.</p>
 <p>Azure Resource Manager (ARM) creates and manages Azure resources through a
 public control plane, but <code>azd provision</code> also
 runs lifecycle hooks. An existing environment can need private App Configuration

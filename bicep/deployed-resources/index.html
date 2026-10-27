@@ -2182,14 +2182,14 @@ can also differ from native Bicep defaults.</p>
 <tr>
 <td>VNet + subnets</td>
 <td>🔒 🔧</td>
-<td><code>useExistingVNet</code> / <code>deploySubnets</code></td>
-<td>Workload, PE, jumpbox, agent, ACA, NAT, Bastion subnets</td>
+<td><code>useExistingVNet</code> / <code>deploySubnets</code> / individual subnet flags</td>
+<td><a href="../../agent-landing-zone/network-isolation/#isolation-and-provisioning">Twelve default subnets</a>, including separate Foundry/application PEs, Power Platform, AI Gateway and reserved <code>GatewaySubnet</code></td>
 </tr>
 <tr>
 <td>NSGs</td>
 <td>🔒</td>
 <td><code>deployNsgs</code></td>
-<td>One per subnet, locked-down rules</td>
+<td>Service-specific attachments and locked-down rules; no NSG on <code>GatewaySubnet</code>; AI Gateway integration requires an NSG</td>
 </tr>
 <tr>
 <td>Private endpoints</td>

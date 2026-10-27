@@ -1757,13 +1757,15 @@ address, DNS, routing, access and ownership contracts. Optional
 service access.</p>
 <h3 id="private-build-pool-ordering">Private build pool ordering</h3>
 <p>The private Container Registry build agent pool has an explicit <code>dependsOn</code> on the <strong>conditionally deployed BYO-VNet subnet module</strong>. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.</p>
-<p>The existing <code>networkIsolation</code>, <code>useExistingVNet</code>, <code>deploySubnets</code>, <code>deployNsgs</code>, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When <code>deploySubnets=false</code>, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.</p>
+<p>Build subnet creation and pool ordering respect <code>networkIsolation</code>, <code>useExistingVNet</code>, <code>deploySubnets</code>, <code>deployDevopsBuildAgentsSubnet</code>, <code>deployNsgs</code>, registry-deployment and pool-deployment gates. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When <code>deploySubnets=false</code> or <code>deployDevopsBuildAgentsSubnet=false</code>, the build subnet must already exist and be valid before provisioning the enabled pool; a creation flag does not disable the pool.</p>
 <p>For a cold-start verification, record that the target build subnet is <strong>absent before the first attempt</strong> in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and <code>countSucceeded</code>, counting only operations that actually reached <code>Succeeded</code>.</p>
 <p>A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.</p>
 <h3 id="byo-vnet-bastion-subnet-nsgs">BYO VNet Bastion subnet NSGs</h3>
 <p>For BYO-VNet subnet creation, the reserved <code>AzureBastionSubnet</code> is excluded
 from generic NSG attachment. When Bastion is enabled, its explicit, dedicated
 Bastion-compliant NSG takes precedence and is preserved.</p>
+<p>The reserved <code>GatewaySubnet</code> is also excluded from generic NSG attachment.
+It must have no NSG, default-route UDR or delegation.</p>
 <p>Do not automatically rename existing subnets, renumber <code>subnetCidr</code> entries,
 or move their assigned address prefixes to undo an older workaround. Plan
 migration explicitly to avoid prefix overlap and disruption to existing subnets.</p>

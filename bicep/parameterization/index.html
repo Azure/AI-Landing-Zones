@@ -2186,7 +2186,7 @@ pinned AVM to apply these settings. See
 <tr>
 <td><code>deployAiFoundrySubnet</code></td>
 <td><code>true</code></td>
-<td>Dedicated subnet for AI Foundry agents</td>
+<td>Foundry Agent Service subnet association; <code>deployAgentSubnet</code> independently controls subnet creation</td>
 </tr>
 <tr>
 <td><code>deployAppConfig</code></td>
@@ -2736,7 +2736,13 @@ BYO overrides and agree who creates zone groups, records and links.</p>
 <td><code>deploySubnets</code></td>
 <td><code>true</code></td>
 <td><code>DEPLOY_SUBNETS</code></td>
-<td>Create the workload subnets (PE, jumpbox, agent, ACA, NAT, Bastion). Set to <code>false</code> to BYO subnets in an existing VNet.</td>
+<td>Global creation switch for all twelve subnets, in both new and existing VNets. Effective creation also requires <code>networkIsolation</code> and the individual subnet flag.</td>
+</tr>
+<tr>
+<td><code>vnetAddressPrefixes</code></td>
+<td><code>["192.168.0.0/21"]</code></td>
+<td>— (explicit root array)</td>
+<td>Address space for a new VNet. A reused VNet's actual address space is authoritative and is not resized.</td>
 </tr>
 <tr>
 <td><code>sideBySideDeploy</code></td>
@@ -2746,6 +2752,14 @@ BYO overrides and agree who creates zone groups, records and links.</p>
 </tr>
 </tbody>
 </table>
+<p>See <a href="../../agent-landing-zone/configuration/#subnet-creation-and-addressing">subnet creation and addressing</a>
+for all twelve creation flags (each defaults to <code>true</code>), root name/prefix
+parameters and their exact environment bindings. A false creation flag does
+not disable a consumer: its valid subnet must already exist in the selected
+VNet, or the consumer must be explicitly disabled. Application private endpoints
+use their configured subnet without falling back to the Foundry PE subnet.
+The <a href="../../agent-landing-zone/network-isolation/#isolation-and-provisioning">default allocation table</a>
+lists names, CIDRs and delegations.</p>
 <h2 id="virtual-machine">Virtual Machine</h2>
 <table>
 <thead>

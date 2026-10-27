@@ -2081,10 +2081,11 @@ or <a href="https://learn.microsoft.com/azure/vpn-gateway/point-to-site-entra-ga
 <li>Identify the target VNet from the provisioned environment:
    <code>azd env get-value VNET_RESOURCE_ID</code>. This is a resource ID, not a VPN server
    address. Create a route-based VPN gateway with a supported SKU and a
-   subnet named exactly <strong><code>GatewaySubnet</code></strong>, using the sizing in the Microsoft
-   procedure. The foundation's <code>gateway-subnet</code> is <strong>not</strong> that subnet; do
-   not rename or repurpose it. Reserve a separate, nonoverlapping range.
-   Record ownership of the added gateway and subnet with the network team
+   subnet named exactly <strong><code>GatewaySubnet</code></strong>. The foundation reserves
+   <code>192.168.2.192/26</code> by default; verify the selected range against the sizing
+   in the Microsoft procedure. Do not attach an NSG, default-route UDR or
+   delegation to <code>GatewaySubnet</code>.
+   Record ownership of the gateway and subnet with the network team
    before subsequent foundation provisioning.</li>
 <li>In the gateway's <strong>Settings &gt; Point-to-site configuration</strong>, select
    <strong>Configure now</strong> for a new configuration and enter the approved client
