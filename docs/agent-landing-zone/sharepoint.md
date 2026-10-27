@@ -88,6 +88,55 @@ to maintain permissions and enforce them during retrieval.
 [Ingestion](ingestion.md#3-custom-ingestion-only-when-needed) explains optional
 application selection.
 
+### Permission synchronization
+
+Each custom SharePoint indexing run reads current permissions independently of
+content modification timestamps. It compares the stored user and group ACLs on
+every indexed document for each selected item, including all document-library
+chunks and previously indexed file names. Changed ACLs are replaced, so
+revocations remove stale principals. A successful empty permission result clears
+the stored principal lists. Equal ACL sets cause no writes; unchanged content
+is not downloaded, chunked or embedded. ACL-only merges change neither content,
+vectors nor content timestamps.
+Custom target indexes need a filterable `parent_id`, sortable `id`, and
+retrievable ACL fields, as provided by the bundled index. Rebuild indexes that
+explicitly disable these attributes before running the connector.
+
+The cadence is the ingestion application's `CRON_RUN_SHAREPOINT_INDEX`
+schedule, not real-time notification. An unset schedule performs no automatic
+refresh; the SharePoint index job can also be run manually. Refresh applies
+only to configured collections and items returned by their source filters.
+A modification-time-only filter can omit permission-only changes: include
+every item whose access must be synchronized in the scheduled selection.
+Content retry blocking does not stop permission refresh for already indexed
+documents.
+
+The supported representation is Graph-visible **Entra user and group object
+IDs**, with the connector's existing limit of 32 IDs in each ACL field.
+Document libraries read effective drive-item sharing permissions, including
+inherited grants returned by Graph. Breaking or restoring inheritance replaces
+the stored ACL with the current effective result; the connector does not union
+parent grants into an item that has broken inheritance. Generic lists use the
+permissions returned by the Graph list-item endpoint. This is not a complete
+SharePoint authorization-model replica: SharePoint-local group expansion,
+anonymous or organization-wide sharing-link semantics, and grants not exposed
+to the connector's application identity are not synthesized. Configure
+application access so Graph can return the permissions required for the selected
+content, and validate both allowed and denied retrieval. Purview sensitivity
+label enforcement and document decryption are outside this connector's ACL
+synchronization.
+
+Permission pages must all succeed before applying an item's ACL. A failed
+lookup is not treated as an empty ACL. Search must confirm every merge; a
+lookup or partial-update failure marks the item and job failed rather than
+reporting complete synchronization. Successful merges are not rolled back.
+After restoring Graph/Search access, run the index job again: it compares
+current state and retries stale ACLs without reprocessing unchanged content.
+Item logs use `acl-updated` for a successful permission-only change, and run
+summaries expose `aclUpdatedItems` and `aclUpdatedDocuments` for completed
+items. Keep restricted content unavailable until deny-path checks confirm
+revocations have reached every indexed copy.
+
 <span id="verify"></span>
 <span id="recover-or-disconnect"></span>
 

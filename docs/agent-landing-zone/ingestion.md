@@ -110,7 +110,13 @@ can instead populate a compatible index exposed through a Foundry IQ
 The optional application's SharePoint connector uses Microsoft Graph application
 credentials and indexing/purge jobs. It copies content and permission metadata
 into Search; permission synchronization and query-time enforcement still need
-validation. It is separate from native SharePoint knowledge sources and the
+validation. Every selected item's supported ACLs are reconciled on each
+SharePoint index run, even when content is unchanged, without re-downloading or
+embedding that content. Grants and revocations replace stored permissions on
+all affected documents and chunks. See
+[SharePoint permission synchronization](sharepoint.md#permission-synchronization)
+for scheduling, filter boundaries, inherited-permission support and recovery.
+It is separate from native SharePoint knowledge sources and the
 native Foundry tool. Its `SHAREPOINT_*` credentials are not the
 `SHAREPOINT_REMOTE_*` retrieval settings. Secrets belong in Key Vault.
 
