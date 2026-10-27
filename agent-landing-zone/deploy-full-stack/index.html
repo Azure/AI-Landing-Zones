@@ -2368,15 +2368,8 @@ its platform root with the intended environment selected.</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
 <span class="nb">cd</span><span class="w"> </span>agent-landing-zone
 </code></pre></div>
-<p>Use the reviewed deployment commit, not an unreviewed branch tip. Replace the
-placeholder with that full Git commit to select and record the revision:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>--detach<span class="w"> </span>&lt;approved-platform-commit&gt;
-git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
-git<span class="w"> </span>status<span class="w"> </span>--short
-</code></pre></div>
-<p>Keep <code>manifest.json</code>, <code>app-definition.json</code> and the root <code>main.parameters.json</code>
-with that record. The manifest pins the compatible component commits.
-Expect HEAD to match the approved commit and no unexpected local changes.</p>
+<p>The checkout's <code>manifest.json</code> pins the compatible runtime components;
+the deployment hooks fetch them automatically.</p>
 <p>Alternatively, <code>azd init -t Azure/agent-landing-zone</code> initializes the current
 default template in an empty directory. Reuse the environment it creates rather
 than creating it again in Step 2.</p>

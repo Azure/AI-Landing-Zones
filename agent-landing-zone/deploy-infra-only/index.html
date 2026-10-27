@@ -2310,15 +2310,8 @@ upstream foundation provenance.</p>
 and <code>azure.yaml</code> live. Its lifecycle does not configure or deploy the Agent
 Application. Do not provision this separate project into an Agent environment.
 For application deployment, start from the Agent source instead.</p>
-<p>Select the approved full Git commit in the chosen repository before continuing:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>--detach<span class="w"> </span>&lt;approved-source-commit&gt;
-git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
-git<span class="w"> </span>status<span class="w"> </span>--short
-</code></pre></div>
-<p>Expect HEAD to match that commit and no unexpected changes. Record the reviewed
-nonsecret root parameters alongside the commit.</p>
 <p>For Agent source, <a href="../deploy-full-stack/#prepare-python">set up Python</a> from
-the selected revision before lifecycle commands.</p>
+the cloned repository before lifecycle commands.</p>
 <h3 id="step-2-create-and-confirm-the-target">Step 2: Create and confirm the target</h3>
 <p>Replace the placeholders for a <strong>new</strong>, dedicated environment:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
