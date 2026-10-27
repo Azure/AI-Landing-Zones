@@ -2084,7 +2084,8 @@ instead becomes <code>AGENTLZ_IMAGE_DIGEST</code>; it is not interchangeable wit
 <p>The post-deploy hook discovers the runtime principal and grants App Configuration
 Data Reader on the store and Cognitive Services OpenAI User on the Foundry
 account. If <code>AUDIT_HMAC_KEY</code> is a Key Vault reference, the bootstrap plan also
-includes Key Vault Secrets User on that individual secret. Source access,
+includes Key Vault Secrets User on that individual secret.</p>
+<p>Source access,
 other secrets and caller permissions are outside this closed bootstrap set.
 Role reconciliation needs scoped role-assignment authority or an authorized
 administrator applying the reviewed plan.

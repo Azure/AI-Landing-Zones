@@ -1686,9 +1686,14 @@ the hooks with submodule initialization scripts.
 See <a href="../../agent-landing-zone/how-it-works/">How it works</a> and
 <a href="../../agent-landing-zone/configuration/">Deployment settings</a>.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
-<p>Structured inputs must retain their native types. Set only mapped scalar
-inputs with <code>azd env set</code>; keep arrays, objects and unmapped native parameters
-in the reviewed root parameter file. Follow the
+<p>Use <code>azd env set</code> for documented environment variables that take one value,
+such as <code>NETWORK_ISOLATION</code>. Settings containing lists (<code>[...]</code>) or groups of
+named fields (<code>{...}</code>) belong in the reviewed root <code>main.parameters.json</code> file.
+Parameters without a documented environment-variable equivalent also go in
+that file.</p>
+<p>Keep the JSON value types shown in the parameter examples: for instance, use
+<code>true</code> for a boolean, not the text <code>"true"</code>, and keep lists and objects in their
+original JSON format. Follow the
 <a href="../parameterization/">parameter reference</a> rather than copying legacy hook
 starters.</p>
 <h2 id="changes-and-upgrades">Changes and upgrades</h2>

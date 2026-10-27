@@ -1813,6 +1813,14 @@ network; a <strong>spoke</strong> is a workload network connected to it. <strong
 VNets, while routes determine where traffic goes. <strong>Egress</strong> means outbound
 traffic. A <strong>NAT gateway</strong> translates private outbound addresses to a public
 address.</p>
+<p>For production and workloads with sensitive data, choose a private network,
+whether standalone or connected to an existing hub. Set
+<code>NETWORK_ISOLATION=true</code> explicitly: the template currently defaults to <code>false</code>.
+Standalone describes who manages the network; it does not mean the services
+should be public.</p>
+<p>Use public service endpoints only for approved, short-lived evaluations or
+demonstrations without sensitive data. Authentication remains required, but
+does not provide private network access.</p>
 <table>
 <thead>
 <tr>
@@ -1823,9 +1831,9 @@ address.</p>
 </thead>
 <tbody>
 <tr>
-<td>Standalone (default)</td>
+<td>Standalone (default network ownership)</td>
 <td>The workload team owns its network, DNS and operations, without a platform hub dependency.</td>
-<td><code>DEPLOYMENT_MODE=standalone</code>. Public endpoints are the default; <code>NETWORK_ISOLATION=true</code> adds private networking, with egress, private DNS and a connected deployment host.</td>
+<td><code>DEPLOYMENT_MODE=standalone</code> and <code>NETWORK_ISOLATION=true</code> for private networking. Plan outbound access, private DNS and a connected deployment host.</td>
 </tr>
 <tr>
 <td>Hub integration</td>

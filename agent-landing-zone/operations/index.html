@@ -1636,7 +1636,8 @@ Environment removal is a separate destructive task, not a rollback procedure.</p
 <p>For <a href="../configuration/#resource-group-destinations">multi-resource-group deployments</a>,
 preserve the approved destination mapping on retries and inventory every target
 before cleanup. A <code>predown</code> safety hook blocks <code>azd down</code> when the destinations
-span distinct groups; no automatic deletion or bypass option is provided. Use separately
+span distinct groups; no automatic deletion or bypass option is provided.</p>
+<p>Use separately
 authorized, itemized manual cleanup after owner review, preserving shared
 resources and required data. Created additional groups do not have an
 <code>azd-env-name</code> tag. Single-group teardown remains unchanged. No automatic

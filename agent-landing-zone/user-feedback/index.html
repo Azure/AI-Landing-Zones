@@ -1931,7 +1931,8 @@ reload without deleting stored metadata or changing hosted chat routing.</p>
 <code>GET /api/panel/feedback</code> and counts in <code>GET /api/panel/overview</code>. It validates
 an Entra bearer with the <code>Admin</code> app role and rejects missing tenant configuration.
 Its schema uses <code>conversationId</code>, <code>messageId</code>, <code>rating: "up" | "down"</code>, <code>comment</code>
-and <code>tags</code>. The UI schema instead uses <code>message_ref</code> and numeric ratings.
+and <code>tags</code>.</p>
+<p>The UI schema instead uses <code>message_ref</code> and numeric ratings.
 There is no shipped adapter joining these schemas into an administrative view.</p>
 <p>Operator overview/curation is separately gated by
 <code>PANEL_OPERATOR_SURFACES_ENABLED</code>, actual deployment, an explicit

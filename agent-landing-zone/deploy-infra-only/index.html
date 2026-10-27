@@ -1348,27 +1348,16 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-3-choose-the-foundation-shape" class="md-nav__link">
+  <a href="#step-3-choose-the-network-setup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3: Choose the foundation shape
+        Step 3: Choose the network setup
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Step 3: Choose the foundation shape">
+    <nav class="md-nav" aria-label="Step 3: Choose the network setup">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#public-service-endpoints" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Public service endpoints
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#private-standalone-network" class="md-nav__link">
@@ -1386,6 +1375,17 @@
     <span class="md-ellipsis">
       
         Private spoke using an existing hub
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-service-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public service endpoints
       
     </span>
   </a>
@@ -1992,27 +1992,16 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-3-choose-the-foundation-shape" class="md-nav__link">
+  <a href="#step-3-choose-the-network-setup" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3: Choose the foundation shape
+        Step 3: Choose the network setup
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Step 3: Choose the foundation shape">
+    <nav class="md-nav" aria-label="Step 3: Choose the network setup">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#public-service-endpoints" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Public service endpoints
-      
-    </span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#private-standalone-network" class="md-nav__link">
@@ -2030,6 +2019,17 @@
     <span class="md-ellipsis">
       
         Private spoke using an existing hub
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#public-service-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public service endpoints
       
     </span>
   </a>
@@ -2257,33 +2257,71 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 </code></pre></div>
 <p>Use <code>azd env select &lt;environment-name&gt;</code> for an existing environment and keep
-its approved inputs. Use separate environment, resource-group, identity,
+its approved inputs.</p>
+<p>Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local <code>.azure/</code> state.
 Fork or mirror the source only when maintaining your own inputs or automation.</p>
-<p><strong>Agent Bicep/azd deployments:</strong> new environments use three resource groups
-by default. The <code>AZURE_RESOURCE_GROUP</code> above is Foundry/root; application and
-network groups default to that name plus <code>-app</code> and <code>-network</code>.
-The hook creates missing additional groups unless <code>CREATE_RESOURCE_GROUPS=false</code>;
-the deploying identity needs permission to create them.
-To choose pre-created groups or a one/two-group layout, set the
+<p>The Bicep deployment through <code>azd</code> uses three resource groups by default:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>What it contains</th>
+<th>Default name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundry</td>
+<td>Foundry and its related resources</td>
+<td>The <code>AZURE_RESOURCE_GROUP</code> name you set above</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>The selected application's services and data resources</td>
+<td>The same name with <code>-app</code> added</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>Workload networking and private connectivity resources</td>
+<td>The same name with <code>-network</code> added</td>
+</tr>
+</tbody>
+</table>
+<p>For example, choosing <code>rg-agent-dev</code> above gives you <code>rg-agent-dev</code>,
+<code>rg-agent-dev-app</code> and <code>rg-agent-dev-network</code>.</p>
+<p>The deployment scripts, also called <strong>hooks</strong>, create missing application and
+network groups. The identity running deployment needs permission to create
+them. If an administrator creates those groups in advance, set
+<code>CREATE_RESOURCE_GROUPS=false</code> so the scripts do not create groups.</p>
+<p>To use different group names or combine resources into one or two groups, set the
 <a href="../configuration/#resource-group-destinations">resource group destinations</a>
-before first provision.
-Keep the normal root <code>azd provision</code> flow, not separate manual deployments per
-group. Terraform and portal deployments have separate contracts.</p>
-<h3 id="step-3-choose-the-foundation-shape">Step 3: Choose the foundation shape</h3>
-<p>Choose the network design before provisioning. Set the scalar deployment inputs
-below in the selected azd environment with <code>azd env set</code>; arrays and objects
-use the root parameter file as described later in this step.
-<code>DEPLOYMENT_MODE</code> records the network design intent; routing, DNS and isolation
-use their own inputs. Agent's separate <code>DEPLOYMENT_TOPOLOGY</code> chooses where the
-orchestrator runs. See <a href="../how-it-works/">How it works</a> for input processing.</p>
-<h4 id="public-service-endpoints">Public service endpoints</h4>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span>
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>standalone
-</code></pre></div>
-<p>Services use public endpoints with authentication and authorization.
-Preserve an existing private environment's isolation settings during recovery.</p>
+before first provision.</p>
+<p>Run one <code>azd provision</code> command from the repository root to deploy across all
+three groups. Do not run a separate deployment for each group. These instructions
+apply to Bicep with <code>azd</code>; Terraform and portal deployments have their own settings.</p>
+<p><span id="step-3-choose-the-foundation-shape"></span></p>
+<h3 id="step-3-choose-the-network-setup">Step 3: Choose the network setup</h3>
+<p>For production and workloads with sensitive data, use <strong>private service
+endpoints</strong>. Choose a self-contained private network or connect the workload's
+private network to an existing corporate hub. Both options are described below.</p>
+<p>The template currently defaults to <code>NETWORK_ISOLATION=false</code>. Set it to <code>true</code>
+explicitly for a private deployment; the template default is not the recommended
+production configuration.</p>
+<p>Use <code>azd env set</code> for the individual settings shown below. For example,
+<code>azd env set NETWORK_ISOLATION true</code> selects private networking for the
+selected environment.</p>
+<p>Settings containing a list of values or a group of related fields, such as
+allowed IP ranges or the network address plan, go in the root
+<code>main.parameters.json</code> file. See <strong>Existing networks, private DNS and parameter
+files</strong> below for details.</p>
+<p><code>DEPLOYMENT_MODE</code> identifies the network design, but does not configure routing,
+DNS or isolation by itself. Configure those through the settings for your chosen
+approach below. <code>DEPLOYMENT_TOPOLOGY</code> separately chooses where the orchestrator
+runs. See <a href="../how-it-works/">How it works</a> for how deployment settings are applied.</p>
 <h4 id="private-standalone-network">Private standalone network</h4>
+<p>Choose this when your workload team will manage its own network, private DNS
+and outbound firewall rather than use shared hub services.</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>standalone
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AZURE_FIREWALL<span class="w"> </span><span class="nb">true</span>
@@ -2298,6 +2336,9 @@ For native Bastion Remote Desktop Protocol (RDP), choose
 does not require the native tunneling workflow. Have a connected host ready
 for Agent post-provision configuration, or use explicit deferral below.</p>
 <h4 id="private-spoke-using-an-existing-hub">Private spoke using an existing hub</h4>
+<p>Choose this when your organization already provides shared networking services.
+The workload gets its own private network, called a <strong>spoke</strong>, connected to
+that shared <strong>hub</strong>.</p>
 <p>Agree hub routing, reverse peering, DNS and permissions with their owners first.
 For a <strong>new</strong> spoke VNet with a hub firewall:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
@@ -2320,6 +2361,18 @@ uses <code>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID</code> and, when applica
 before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
 Use an approved production hub, not the <code>infra/tests/hub/</code> fixture.</p>
+<h4 id="public-service-endpoints">Public service endpoints</h4>
+<p>Use this option only for an organization-approved, short-lived evaluation or
+demonstration with synthetic or non-sensitive data, when private connectivity
+is not available. It is <strong>not the recommended production setup</strong>.</p>
+<p><strong>The commands below select public service endpoints, not private networking.</strong>
+Authentication and authorization are still required, but they do not prevent
+network access to those public endpoints or make them private.</p>
+<p>Use a separate test environment. Do not disable isolation on an existing private
+environment to fix a deployment or connectivity failure.</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_MODE<span class="w"> </span>standalone
+</code></pre></div>
 <h4 id="existing-networks-private-dns-and-parameter-files">Existing networks, private DNS and parameter files</h4>
 <table>
 <thead>
@@ -2351,10 +2404,11 @@ Use an approved production hub, not the <code>infra/tests/hub/</code> fixture.</
 </tr>
 </tbody>
 </table>
-<p>Set mapped scalar inputs with <code>azd env set</code>. Native arrays/objects such as the
-complete address plan, <code>allowedIpRanges</code>, Storage controls and <code>publicIngress</code>
-belong in the reviewed <strong>root</strong> <code>main.parameters.json</code>.
-Platform hooks regenerate <code>infra/main.parameters.json</code>;
+<p>Use <code>azd env set</code> for settings documented as environment variables that take
+one value, such as <code>NETWORK_ISOLATION</code>. Put settings containing lists or groups
+of related fields, such as the complete address plan, <code>allowedIpRanges</code>, Storage
+controls and <code>publicIngress</code>, in the reviewed <strong>root</strong> <code>main.parameters.json</code>.</p>
+<p>Platform hooks regenerate <code>infra/main.parameters.json</code>;
 do not edit that generated copy. The
 <a href="../../bicep/parameterization/">parameter reference</a> describes foundation inputs;
 <a href="../configuration/">Deployment settings</a> describes platform composition and overrides.</p>
@@ -2365,8 +2419,8 @@ now, even if images will be deployed later. For a different application:</p>
 </code></pre></div>
 <p>Otherwise use the Agent Application definition. The first provision binds the environment
 to its application ID; a different ID requires a new environment.
-Preserve the existing layout and ingestion selection during recovery.
-The default Agent layout is <code>hosted-no-panel</code>, using <code>maf_lite</code> and Foundry IQ
+Preserve the existing layout and ingestion selection during recovery.</p>
+<p>The default Agent layout is <code>hosted-no-panel</code>, using <code>maf_lite</code> and Foundry IQ
 without Agent App Ingestion. Set <code>HOSTED_AGENT_RESOURCE_SCOPE</code> to the approved
 delegated Foundry audience followed by <code>/.default</code> before provisioning, even
 when application deployment will happen later. See the linked full-stack
@@ -2507,14 +2561,14 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 azd<span class="w"> </span>env<span class="w"> </span>refresh
 </code></pre></div>
 <p>If the environment is already present, select it instead. Reapply the approved
-deployment inputs: refresh restores outputs, not your full configuration.
-For the multi-group path, restore the same approved application/network
+deployment inputs: refresh restores outputs, not your full configuration.</p>
+<p>For the multi-group path, restore the same approved application/network
 destination mapping as well; the root group alone is not sufficient.
 Securely restore <code>.azure/&lt;same-environment-name&gt;/resource-groups.json</code> from
 that environment's original host before running its hooks. Output refresh does
 not recreate this immutable destination binding; do not generate or edit a
-replacement to bypass the check.
-Do not publish or copy another stage's <code>.azure/</code> state as an input artifact.
+replacement to bypass the check.</p>
+<p>Do not publish or copy another stage's <code>.azure/</code> state as an input artifact.
 An authorized runner can use managed-identity sign-in. Verify its scoped
 configuration and build roles before running the hooks.</p>
 <p>From the connected host, clear deferral and finish configuration:</p>

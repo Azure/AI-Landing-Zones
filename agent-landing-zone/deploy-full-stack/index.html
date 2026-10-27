@@ -2309,8 +2309,8 @@ see <a href="../how-it-works/">How it works</a>.</p>
 The default <code>maf_lite</code> strategy uses a direct Foundry IQ connector, but
 does not implement the complete authenticated Foundry Toolbox path for
 per-user protected retrieval. UI on-behalf-of (OBO) sign-in authenticates
-the Foundry call; it does not close that downstream integration gap.
-Assign a developer to implement and validate the supported identity path
+the Foundry call; it does not close that downstream integration gap.</p>
+<p>Assign a developer to implement and validate the supported identity path
 before admitting protected data. No topology, strategy or permission flag
 makes this turnkey. Do not enable anonymous retrieval, use service identity
 or weaken source permissions to make a test pass.</p>
@@ -2420,8 +2420,9 @@ now. Existing environments keep their mapping.</p>
 <p><a id="step-3-choose-a-topology"></a></p>
 <h3 id="step-3-choose-the-application-and-network">Step 3: Choose the application and network</h3>
 <p>Set the deployment choices below in the selected azd environment with
-<code>azd env set</code> before provisioning. Native foundation arrays and objects go in the root
-parameter file, as described in the linked infrastructure choices.
+<code>azd env set</code> before provisioning. Settings containing lists or groups of related
+fields go in the root <code>main.parameters.json</code> file, as described in the linked
+infrastructure choices.
 <a href="../how-it-works/">How it works</a> explains input processing;
 <a href="../configuration/">Deployment settings</a> identifies input ownership.</p>
 <h4 id="orchestrator-topology">Orchestrator topology</h4>
@@ -2447,7 +2448,13 @@ deployment steps.</p>
 <a href="../build-your-own-app/">Bring your own app runbook</a> before first provision.
 One environment binds to one application ID.</p>
 <h4 id="network-and-build-mode">Network and build mode</h4>
-<p>Choose one network posture for this new environment:</p>
+<p>Use <strong>private networking for production and workloads with sensitive data</strong>.
+Choose a self-contained private network or a private connection to your
+organization's existing hub.</p>
+<p>The template defaults to <code>NETWORK_ISOLATION=false</code>, so set <code>true</code> explicitly
+before provisioning a private environment. Public endpoints are an exception for
+approved, short-lived evaluations or demonstrations without sensitive data,
+not the recommended production setup.</p>
 <table>
 <thead>
 <tr>
@@ -2456,10 +2463,6 @@ One environment binds to one application ID.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>Public service endpoints</td>
-<td><code>azd env set NETWORK_ISOLATION false</code>; authentication and authorization still apply</td>
-</tr>
 <tr>
 <td>Private, self-contained network</td>
 <td><code>azd env set NETWORK_ISOLATION true</code>; review the <a href="../../bicep/standalone/">standalone design</a></td>
@@ -2471,6 +2474,10 @@ One environment binds to one application ID.</p>
 <tr>
 <td>Existing VNet</td>
 <td>Review subnet ownership, delegations, NSGs and <a href="../../bicep/parameterization/#networking">BYO parameters</a> before enabling <code>USE_EXISTING_VNET</code></td>
+</tr>
+<tr>
+<td>Public service endpoints, evaluation only</td>
+<td>Read the <a href="../deploy-infra-only/#public-service-endpoints">public-endpoint conditions and commands</a> first. Authentication does not make an endpoint private.</td>
 </tr>
 </tbody>
 </table>
@@ -2516,12 +2523,13 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
 </code></pre></div>
 <p>Resolve validation, quota, Policy and connectivity failures rather than bypassing
 checks. The explicit <code>preup</code> check also validates binding before standalone
-provisioning, which otherwise runs its check after azd may initialize a resource group.
-For an optional <code>azd provision --preview</code>, first follow the
+provisioning, which otherwise runs its check after azd may initialize a resource group.</p>
+<p>For an optional <code>azd provision --preview</code>, first follow the
 <a href="../deploy-infra-only/#optional-preview-agent-source">Agent preview preparation warning</a>:
 preview skips preprovision hooks, so the selected environment's parameters and
 additional groups must be prepared first. Preparation/preview can create
-resource groups and do not establish private application readiness. Review
+resource groups and do not establish private application readiness.</p>
+<p>Review
 resource scopes, public access, routes and role changes before applying the
 sequence below. Normal <code>azd provision</code> runs its preprovision hook automatically;
 manual preparation is not required when proceeding without preview.</p>
@@ -2676,7 +2684,8 @@ with the owners instead. Check retention obligations first.</p>
 <p>For the multi-group path, inventory <strong>every configured destination</strong>
 and its shared dependencies before cleanup. The root group alone is not the
 complete inventory. A <code>predown</code> safety hook <strong>blocks <code>azd down</code> for split-group
-deployments</strong>, with no automatic deletion or bypass option. Arrange itemized,
+deployments</strong>, with no automatic deletion or bypass option.</p>
+<p>Arrange itemized,
 owner-approved manual removal instead; do not bypass the hook or delete shared
 groups. Additional groups created by the feature are not tagged <code>azd-env-name</code>.
 Partial provisioning is not authorization to delete a group. The single-group
@@ -2701,7 +2710,9 @@ do not delete shared hub, DNS or monitoring resources.</p>
 <p><span id="verify"></span></p>
 <h2 id="validation">Validation</h2>
 <ol>
-<li>Confirm the intended application revisions are running, not placeholders:<div class="highlight"><pre><span></span><code>git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
+<li>
+<p>Confirm the intended application revisions are running, not placeholders:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 git<span class="w"> </span>-C<span class="w"> </span>../agent-app-orchestrator<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
@@ -2711,28 +2722,32 @@ az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w
 </code></pre></div>
 <p>Compare the platform commit with your approved record and each component
   commit with its <code>manifest.json</code> entry. Inspect source worktrees for unexpected
-  edits; matching HEAD alone does not prove the built source was unchanged.
-2. Read <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code> for the registry login hostname.
- The hosted repository is <code>HOSTED_AGENT_IMAGE</code> when explicitly set, otherwise
- <code>agent-app-orchestrator</code>, as declared in <code>hosted-agent/azure.yaml</code>.
- Use that registry's resource name, repository and recorded digest below:</p>
+  edits; matching HEAD alone does not prove the built source was unchanged.</p>
+</li>
+<li>
+<p>Read <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code> for the registry login hostname.
+   The hosted repository is <code>HOSTED_AGENT_IMAGE</code> when explicitly set, otherwise
+   <code>agent-app-orchestrator</code>, as declared in <code>hosted-agent/azure.yaml</code>.
+   Use that registry's resource name, repository and recorded digest below:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>HOSTED_AGENT_IMAGE_VERSION
 az<span class="w"> </span>acr<span class="w"> </span>repository<span class="w"> </span>show<span class="w"> </span>--name<span class="w"> </span>&lt;registry-name&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--image<span class="w"> </span>&lt;hosted-repository&gt;@&lt;sha256-digest&gt;<span class="w"> </span>--query<span class="w"> </span>digest<span class="w"> </span>-o<span class="w"> </span>tsv
 </code></pre></div>
 <p>Expect the exact same <code>sha256:</code> value, not merely matching tags. In Foundry,
-  inspect the routed version's image and confirm it uses that digest.
-3. Open the frontend URL from the deployment outputs or UI ingress configuration.
- Use a connected browser for private endpoints. Complete
- <a href="../application-auth/">Entra sign-in and delegated authentication</a>.
-4. Exercise an agent task and configured tools with representative identities.
- For documents, ingest a harmless test document through the configured source.
- After resolving the protected-retrieval integration gate, test both permitted
- retrieval and denial to a user without that document's permission.
- Test uploads only when their additional capabilities are selected.
-5. Correlate the task with runtime telemetry. The deployment's greeting checks
- basic response only; test actual UI login, OBO and source authorization.</p>
+  inspect the routed version's image and confirm it uses that digest.</p>
 </li>
+<li>
+<p>Open the frontend URL from the deployment outputs or UI ingress configuration.
+   Use a connected browser for private endpoints. Complete
+   <a href="../application-auth/">Entra sign-in and delegated authentication</a>.</p>
+</li>
+<li>Exercise an agent task and configured tools with representative identities.
+   For documents, ingest a harmless test document through the configured source.
+   After resolving the protected-retrieval integration gate, test both permitted
+   retrieval and denial to a user without that document's permission.
+   Test uploads only when their additional capabilities are selected.</li>
+<li>Correlate the task with runtime telemetry. The deployment's greeting checks
+   basic response only; test actual UI login, OBO and source authorization.</li>
 </ol>
 <p>Record unmet capability gates as <strong>blocked</strong>, not passed. Without validated
 continuity, chat context lasts only for the active UI session. Default deployment

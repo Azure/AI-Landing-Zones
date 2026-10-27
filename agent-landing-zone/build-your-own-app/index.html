@@ -2281,7 +2281,8 @@ different application. Choose the branch that matches your change:</p>
 <p>For the Agent Application orchestrator hosted in Foundry, use <a href="../foundry-iq/">Foundry IQ</a> for
 knowledge base retrieval. Custom strategies and tools must implement and test
 the hosted entrypoint and authorization path before deployment to Foundry.
-The default remains <code>maf_lite</code> with Foundry IQ. A source fork or capability
+The default remains <code>maf_lite</code> with Foundry IQ.</p>
+<p>A source fork or capability
 profile does not close the protected-retrieval integration gate in the
 Deploy full stack runbook. Implement and test that identity boundary before
 using protected documents; do not substitute a strategy flag.</p>
@@ -2391,37 +2392,46 @@ this release's deployment.</p>
 <li>Replace the answer logic, preserving the protocol and health endpoints.
    Implement authentication, authorization and runtime configuration loading;
    capability profiles do not implement these behaviors.</li>
-<li>Commit source changes. Obtain the full source repository commit:<div class="highlight"><pre><span></span><code>git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
+<li>
+<p>Commit source changes. Obtain the full source repository commit:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 </code></pre></div>
 <p>Replace the definition's all-zero <code>components[0].source.commit</code> with that
   value. Run <code>git rev-parse HEAD</code> from the source repository: the shipped <code>src</code>
   belongs to the platform repository; a separate source repository needs its
-  own HEAD. Set the pin in the deployment
+  own HEAD.</p>
+<p>Set the pin in the deployment
   workspace <strong>after checkout</strong>; another commit changes HEAD again. Keep source
   files unchanged. For durable committed inputs in a single-repository layout,
-  consider the prebuilt image digest contract below.
-4. Validate and select in the <strong>new</strong> environment:</p>
+  consider the prebuilt image digest contract below.</p>
+</li>
+<li>
+<p>Validate and select in the <strong>new</strong> environment:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.appdefinition<span class="w"> </span>--validate<span class="w"> </span>samples/custom-app/hosted
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>samples/custom-app/hosted/app-definition.json
 azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>preup
 </code></pre></div>
 <p>Expect validation to pass. This checks schema, folder/service contracts and
   binding, not image availability or application behavior. Schema validation
-  accepts the all-zero editing marker; deployment requires actual source HEAD.
-5. For a custom-only deployment, set <code>DEPLOYMENT_TOPOLOGY=classic</code> in the azd
- environment <strong>before first provision</strong> to suppress the bundled hosted
- orchestrator selection. This is a custom-definition composition requirement,
- not a second Agent Application deployment path. The custom hosted component
- receives its required hosted foundation resources.
- Then provision the selected definition using
- the <a href="../deploy-infra-only/">Deploy infra only runbook</a>, and run root <code>azd deploy</code>.
- Its service uses its own source/image
- contract, not the Agent Application hosted image-preparation handoff.
-6. With the custom hosted example's answer logic, confirm the response names
- the intended project endpoint. A value of <code>unknown</code> or <code>unavailable</code> indicates
- missing project configuration or failed configuration access. Check the
- published outputs and logs, and resolve the issue before proceeding.
- With your logic, verify actual application behavior and denied-access cases.</p>
+  accepts the all-zero editing marker; deployment requires actual source HEAD.</p>
+</li>
+<li>
+<p>For a custom-only deployment, set <code>DEPLOYMENT_TOPOLOGY=classic</code> in the azd
+   environment <strong>before first provision</strong> to suppress the bundled hosted
+   orchestrator selection. This is a custom-definition composition requirement,
+   not a second Agent Application deployment path. The custom hosted component
+   receives its required hosted foundation resources.</p>
+<p>Then provision the selected definition using
+  the <a href="../deploy-infra-only/">Deploy infra only runbook</a>, and run root <code>azd deploy</code>.
+  Its service uses its own source/image
+  contract, not the Agent Application hosted image-preparation handoff.</p>
+</li>
+<li>
+<p>With the custom hosted example's answer logic, confirm the response names
+   the intended project endpoint. A value of <code>unknown</code> or <code>unavailable</code> indicates
+   missing project configuration or failed configuration access. Check the
+   published outputs and logs, and resolve the issue before proceeding.
+   With your logic, verify actual application behavior and denied-access cases.</p>
 </li>
 </ol>
 <p>The definition <code>id</code> binds the environment; <code>agent</code> names the component/service;

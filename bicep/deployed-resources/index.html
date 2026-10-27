@@ -1847,7 +1847,8 @@ Agent Landing Zone's <code>infra/</code>, not the
 Agent application footprint. Agent Landing Zone composes its own services,
 topology and component selection. Foundry backing resources are separate
 from application stores, and conditional creation/reuse applies across all
-resource families. Check the selected source's current
+resource families.</p>
+<p>Check the selected source's current
 <a href="../parameterization/">parameters</a>, deployment preview and
 <a href="../../agent-landing-zone/deploy-full-stack/#step-3-choose-the-application-and-network">Agent choices</a>.
 Cost scenarios below are dated example configurations, not current defaults
@@ -2296,6 +2297,10 @@ can also differ from native Bicep defaults.</p>
 <p>Most of the <em>fixed</em> cost comes from a small number of allocation-based resources: the two AI Search services, Application Gateway (if any), Azure Firewall (if any), Bastion, ACR Premium, App Configuration, and any pinned D4 workload-profile node. Everything else is essentially zero at idle but scales fast with use.</p>
 </div>
 <h3 id="scenario-1-basic-deployment-public-no-network-isolation">Scenario 1 — Basic deployment (public, no network isolation)</h3>
+<p>This cost example is for an approved, short-lived sandbox, demonstration or
+development/test evaluation using synthetic or non-sensitive data. It is not
+the recommended production setup: service endpoints remain public, even when
+authentication is required.</p>
 <div class="highlight"><pre><span></span><code>networkIsolation        = false
 deployAzureFirewall     = false   (auto-suppressed when NI is off)
 deployJumpbox / Bastion / NatGateway = false (defaults to NI; no VNet)
@@ -2304,7 +2309,6 @@ deployAAfAgentSvc       = true    (default — Standard Agent Setup)
 deployAcrTaskAgentPool  = false   (private pool is not created in this public scenario)
 deployGroundingWithBing = true    (explicit scenario choice; native foundation default is false)
 </code></pre></div>
-<p>Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a public endpoint.</p>
 <table>
 <thead>
 <tr>

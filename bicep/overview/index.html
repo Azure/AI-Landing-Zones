@@ -1684,6 +1684,10 @@ Run the lifecycle from the Agent Landing Zone repository root, not <code>infra/<
 <p>The network design is distinct from the Agent application's orchestrator topology.
 <code>deploymentMode</code> records intent; explicit flags and resource IDs determine the
 actual resources, routing and reuse.</p>
+<p>For production or sensitive data, set <code>NETWORK_ISOLATION=true</code> explicitly,
+whether you manage a standalone network or use an existing hub. The template
+currently defaults to <code>false</code>, leaving service endpoints public. Reserve that
+option for approved, short-lived evaluations without sensitive data.</p>
 <table>
 <thead>
 <tr>
@@ -1695,7 +1699,7 @@ actual resources, routing and reuse.</p>
 <tbody>
 <tr>
 <td>Self-contained</td>
-<td><code>standalone</code>; public service endpoints or an explicitly isolated local network</td>
+<td><code>standalone</code>; use <code>NETWORK_ISOLATION=true</code> for the recommended private network</td>
 <td><a href="../standalone/">Standalone network</a></td>
 </tr>
 <tr>

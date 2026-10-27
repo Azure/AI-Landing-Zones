@@ -2269,11 +2269,11 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 <p>With <code>false</code>, a missing additional destination fails before services are
 provisioned. With <code>true</code>, existing groups are reused without
-changing their tags or location; only missing additional groups are created.
-The additional destinations are application and network; azd manages creation
+changing their tags or location; only missing additional groups are created.</p>
+<p>The additional destinations are application and network; azd manages creation
 of the Foundry/root group through its normal lifecycle.
-New additional groups do not receive the <code>azd-env-name</code> tag.
-Run the normal root lifecycle: each <code>azd provision</code> coordinates the
+New additional groups do not receive the <code>azd-env-name</code> tag.</p>
+<p>Run the normal root lifecycle: each <code>azd provision</code> coordinates the
 resource-group-scoped root and its scoped modules. Do not replace it with
 three manual deployments. Hosted image preparation still uses its normal
 multi-step lifecycle.</p>
@@ -2305,12 +2305,12 @@ without granting broad directory rights.</p>
 with the environment; changing a provisioned environment's mapping is not a
 supported resource migration. If an existing binding uses a different native
 root, retain its original implementation or create a new environment rather
-than retargeting it through environment variables.
-After partial failure, repair the cause and
+than retargeting it through environment variables.</p>
+<p>After partial failure, repair the cause and
 retry with the same destinations. Do not delete groups as automatic rollback.
 Review every destination and shared dependency before any
-<a href="../deploy-full-stack/#remove-an-environment">environment removal</a>.
-For split-group deployments, a <code>predown</code> safety hook blocks <code>azd down</code>; cleanup
+<a href="../deploy-full-stack/#remove-an-environment">environment removal</a>.</p>
+<p>For split-group deployments, a <code>predown</code> safety hook blocks <code>azd down</code>; cleanup
 requires manual inventory, owner review and separately authorized removal.
 No automatic deletion or bypass option is provided. The single-group teardown path is unchanged.</p>
 <h3 id="values-set-by-azd-or-by-you">Values set by azd or by you</h3>
@@ -2353,7 +2353,7 @@ When unset, they use the template defaults shown below.</p>
 <tr>
 <td><code>NETWORK_ISOLATION</code></td>
 <td><code>false</code></td>
-<td>Enables private networking. Jumpbox, Bastion and firewall deployment also depend on their component flags. See <a href="../network-isolation/">Network isolation</a>.</td>
+<td>Set <code>true</code> explicitly for the recommended private production setup. <code>false</code> selects public service endpoints; use it only for approved evaluations without sensitive data. Jumpbox, Bastion and firewall also depend on their component flags. See <a href="../network-isolation/">Network isolation</a>.</td>
 </tr>
 <tr>
 <td><code>AZURE_AI_FOUNDRY_LOCATION</code></td>
@@ -2532,8 +2532,8 @@ is set.</p>
 <p>Search quota must cover the complete enabled service count: one Agent Application service
 when <code>deploySearchService</code> (<code>DEPLOY_SEARCH_SERVICE</code>) is enabled, plus one Foundry
 Search service when <code>deployAiFoundry</code> and <code>deployAAfAgentSvc</code>
-(<code>DEPLOY_AAF_AGENT_SVC</code>) are enabled and <code>aiSearchResourceId</code> is not supplied.
-When both creation paths are enabled, the check requires quota for two services.
+(<code>DEPLOY_AAF_AGENT_SVC</code>) are enabled and <code>aiSearchResourceId</code> is not supplied.</p>
+<p>When both creation paths are enabled, the check requires quota for two services.
 Reusing a Foundry Search resource does not request a new service for that path.
 Bypassing preflight does not resolve region mismatches or insufficient quota.
 See <a href="../troubleshooting/#search-preflight-region-and-quota">Search preflight region and quota</a>.</p>
@@ -2605,8 +2605,8 @@ authorization still apply.</p>
 <p>Other retrieval defaults: billing plan <code>free</code>, semantic configuration <code>default</code>, security field <code>metadata_security_id</code>, storage container <code>documents</code>, content extraction mode <code>standard</code>, ingestion permission options <code>["rbacScope"]</code>, and the filter add-on disabled.</p>
 <p>For network-isolated native Blob configuration, infrastructure publishes
 <code>SEARCH_SHARED_PRIVATE_LINKS</code> as a JSON array under label <code>agent-lz</code>. This is
-post-provision metadata, not an operator switch or a runtime retrieval setting.
-Each entry records the template-owned <code>name</code>, <code>groupId</code> and
+post-provision metadata, not an operator switch or a runtime retrieval setting.</p>
+<p>Each entry records the template-owned <code>name</code>, <code>groupId</code> and
 <code>privateLinkResourceId</code>. Configuration uses these values to verify the Search
 links and their target Storage and Foundry resources before creating a native
 knowledge source. Pending links require administrator approval.
@@ -2633,15 +2633,17 @@ native Blob ingestion: <code>ai_search</code> with any pattern, or <code>foundry
 the <code>searchIndex</code> pattern. Those empty lists remain accepted because no
 native Blob knowledge source is rendered. They are not shared-source opt-ins
 and do not change the independently populated index's authorization.</p>
-<p>Malformed JSON, scalar values, textual <code>null</code>, invalid list entries and
-unsupported permission names fail with actionable diagnostics.
+<p>Malformed JSON, a single value instead of a JSON list, the text <code>null</code>,
+invalid list entries and unsupported permission names fail with actionable
+diagnostics.
 Invalid input fails closed rather than silently removing protection.
 An actual null and the text <code>null</code> are different inputs.</p>
 <p>For active native Blob ingestion, <code>[]</code> is appropriate only when policy permits
 the source's documents to be shared without that ingestion permission metadata.
 It does not grant document access by
 itself or change other sources, application authentication, Entra ID/OBO,
-retrieval authorization, RBAC or private network restrictions. It is not a
+retrieval authorization, RBAC or private network restrictions.</p>
+<p>It is not a
 workaround for an authentication or private-link failure. Its use requires
 audience review and allow/deny tests with real user identities before activation.</p>
 <p>Restoring <code>["rbacScope"]</code> requires source reconfiguration and verification
@@ -3004,9 +3006,11 @@ custom source-build path. See
 the label <code>agent-lz</code>. That is the label for platform-owned settings.</p>
 <p>The Agent Application components do not read exclusively from <code>agent-lz</code>. Their startup
 loaders also select other component labels, and later matching selections
-can overwrite earlier values. Agent App UI and Agent App Ingestion endpoint loaders
+can overwrite earlier values.</p>
+<p>Agent App UI and Agent App Ingestion endpoint loaders
 end with <code>label_filter=None</code>, which leaves the label filter unset and can
-read other labels. The orchestrator uses the explicit null label <code>"\0"</code> for its last
+read other labels.</p>
+<p>The orchestrator uses the explicit null label <code>"\0"</code> for its last
 selection, which reads unlabelled keys rather than all labels. Unlabelled
 values can still override <code>agent-lz</code> values.</p>
 <p>Conflicting component-labelled or unlabelled values can therefore replace a

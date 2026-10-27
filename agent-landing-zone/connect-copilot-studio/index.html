@@ -2081,10 +2081,10 @@ native connected-agent setup or automatic per-user delegation.</p>
 <p>This runbook covers <strong>Foundry with Public Network Access (PNA) disabled</strong>.
 It uses a Power Automate flow because the HTTP connector supports
 <a href="https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation">virtual network integration</a>,
-allowing HTTPS requests to reach Foundry through its private endpoint.
-The <a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent">native Microsoft Foundry integration</a>
-follows a separate setup, outside this procedure.
-In the documented lab, native connector requests still arrived through
+allowing HTTPS requests to reach Foundry through its private endpoint.</p>
+<p>The <a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent">native Microsoft Foundry integration</a>
+follows a separate setup, outside this procedure.</p>
+<p>In the documented lab, native connector requests still arrived through
 public ingress after VNet association and returned HTTP 403 with PNA disabled;
 the flow used the delegated private path successfully. These results are
 specific to that lab, not proof that native integration is impossible in
@@ -2376,17 +2376,19 @@ and restrict sharing before adding real users.</p>
 <li>
 <p>Add a <strong>Condition</strong> node. In its <strong>...</strong> menu, select <strong>Change to formula</strong>,
    open the formula editor and enter
-   <code>IsBlank(Topic.FoundryReply) || IsMatch(Topic.FoundryReply, "\s*", MatchOptions.Complete)</code>.
-   In the true branch (missing or whitespace-only text), send:
-   <strong>"The Foundry agent did not return a completed text response. Please contact
-   the support team."</strong> Do not display raw JSON or retry the POST automatically.
-   In <strong>All Other Conditions</strong> (false), add <strong>Send a message</strong> and insert the
-   <strong><code>Topic.FoundryReply</code></strong> variable, without a generative rewrite.
-   Insert its value with the variable picker; do not type its name as message text.</p>
+   <code>IsBlank(Topic.FoundryReply) || IsMatch(Topic.FoundryReply, "\s*", MatchOptions.Complete)</code>.</p>
+<p>In the true branch (missing or whitespace-only text), send:
+ <strong>"The Foundry agent did not return a completed text response. Please contact
+ the support team."</strong> Do not display raw JSON or retry the POST automatically.</p>
+<p>In <strong>All Other Conditions</strong> (false), add <strong>Send a message</strong> and insert the
+ <strong><code>Topic.FoundryReply</code></strong> variable, without a generative rewrite.
+ Insert its value with the variable picker; do not type its name as message text.</p>
 </li>
-<li>End <strong>both branches</strong> with <strong>Topic management &gt; End all topics</strong>.
+<li>
+<p>End <strong>both branches</strong> with <strong>Topic management &gt; End all topics</strong>.
    Do not enable a second Foundry tool as an automatic fallback. Run the topic
-   checker, fix every error, then save.</li>
+   checker, fix every error, then save.</p>
+</li>
 </ol>
 <p><strong>Expected result:</strong> One message invokes the flow once and displays Foundry's
 actual text. Invalid JSON, an incomplete/failed response or missing text produces

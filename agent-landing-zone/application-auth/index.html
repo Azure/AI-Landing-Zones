@@ -1884,8 +1884,8 @@ Foundry consent and Foundry project/agent access all have distinct roles.
 describes downstream consent.</p>
 <p><code>user_delegated</code> rejects a missing user token without service-identity fallback.
 <code>service_identity</code> would make Foundry see the UI service rather than the user.
-Neither mode alone establishes authorization inside the hosted container.
-The supplied hosted entry point sets <code>user_context={}</code> and does not supply the
+Neither mode alone establishes authorization inside the hosted container.</p>
+<p>The supplied hosted entry point sets <code>user_context={}</code> and does not supply the
 user's bearer token to <code>maf_lite</code> retrieval. It performs no automatic retrieval
 OBO exchange. With <code>ALLOW_ANONYMOUS=false</code>, required-user retrieval fails
 preflight when that token is unavailable; it does not silently retrieve as a
@@ -1894,8 +1894,8 @@ this missing-token contract.</p>
 <p><strong>Protected hosted retrieval requires a developer integration.</strong> Foundry's
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent">authenticated hosted Toolbox contract</a>
 uses an authenticated <code>FoundryToolbox</code> client and platform-provided call context.
-The default <code>maf_lite</code> code does not consume portal Toolbox configuration.
-A compatible integration must connect the knowledge base through that contract,
+The default <code>maf_lite</code> code does not consume portal Toolbox configuration.</p>
+<p>A compatible integration must connect the knowledge base through that contract,
 retain the platform caller context, and enforce the knowledge source's
 permissions. <a href="../agent-tools/">Agent tools</a> explains the extension boundary.
 Browser bearer forwarding or fabricated identity/group headers are not a
@@ -1955,8 +1955,8 @@ also depend on propagation and refreshed source metadata.</p>
 concern UI scopes, tenant and credential lifetime. Invocation denial can instead
 indicate missing downstream consent or Foundry user/agent access.
 Tool consent is separate from UI consent, as described in
-<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication">tool authentication</a>.
-A denied user retrieving protected content is an authorization failure that
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication">tool authentication</a>.</p>
+<p>A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller
 with a service identity or disable authentication.</p>
 

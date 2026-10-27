@@ -1764,7 +1764,8 @@ and container <code>documents</code>. Azure AI Search, which powers Foundry IQ, 
 and manages the indexing pipeline for this knowledge source. It extracts
 content, splits it into smaller passages (<strong>chunks</strong>), generates <strong>embeddings</strong>
 (vectors used for similarity search) and populates an index used by the
-knowledge base. <strong>Agent App Ingestion is not required</strong> for this path.
+knowledge base.</p>
+<p><strong>Agent App Ingestion is not required</strong> for this path.
 New Agent Application environments default to
 <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>.</p>
 <p>Source documents belong in the configured Blob container and optional folder,
@@ -1832,8 +1833,8 @@ conversation identifier. A text turn establishes it in the non-continuity hosted
 path; continuity-enabled chat does not populate that upload identifier.</p>
 <p>The upload payload can carry the uploader's object ID as permission metadata.
 That is not sufficient by itself: the index must enforce those permissions and
-retrieval must preserve conversation scope and trusted user authorization.
-<strong>Conversation scope</strong> uses the hosted backend's conversation namespace,
+retrieval must preserve conversation scope and trusted user authorization.</p>
+<p><strong>Conversation scope</strong> uses the hosted backend's conversation namespace,
 not the local UI thread ID. The same identifier must reach the indexed upload
 and retrieval filter. Retrieval must match both <code>conversationId</code> and the trusted
 uploader in <code>metadata_security_user_ids</code>; the identifier alone grants no access.</p>
@@ -1856,13 +1857,14 @@ can instead populate a compatible index exposed through a Foundry IQ
 <p>The optional application's SharePoint connector uses Microsoft Graph application
 credentials and indexing/purge jobs. It copies content and permission metadata
 into Search; permission synchronization and query-time enforcement still need
-validation. Every selected item's supported ACLs are reconciled on each
+validation.</p>
+<p>Every selected item's supported ACLs are reconciled on each
 SharePoint index run, even when content is unchanged, without re-downloading or
 embedding that content. Grants and revocations replace stored permissions on
 all affected documents and chunks. See
 <a href="../sharepoint/#permission-synchronization">SharePoint permission synchronization</a>
-for scheduling, filter boundaries, inherited-permission support and recovery.
-It is separate from native SharePoint knowledge sources and the
+for scheduling, filter boundaries, inherited-permission support and recovery.</p>
+<p>It is separate from native SharePoint knowledge sources and the
 native Foundry tool. Its <code>SHAREPOINT_*</code> credentials are not the
 <code>SHAREPOINT_REMOTE_*</code> retrieval settings. Secrets belong in Key Vault.</p>
 <p>For the bundled Agent Application, <code>DEPLOY_INGESTION_CONTAINER_APP</code> selects
