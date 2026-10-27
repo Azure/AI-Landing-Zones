@@ -63,7 +63,9 @@ subnet for Power Platform delegation.
   gate in the [Deploy full stack runbook](deploy-full-stack.md) before using
   protected sources. A working relay is not evidence of source authorization.
 - **Azure network:** The platform team has already delivered the Power Platform
-  delegated subnet, regional connectivity, an enterprise policy and its
+  subnet (default `powerplatform-subnet`, `192.168.4.0/24`, delegated to
+  `Microsoft.PowerPlatform/enterprisePolicies`), regional connectivity,
+  an enterprise policy and its
   **Azure resource ID**, an approved Foundry private endpoint and private DNS.
   Every subnet referenced by the
   policy must resolve and reach Foundry over HTTPS. Foundry **public network

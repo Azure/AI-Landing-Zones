@@ -177,7 +177,7 @@ When unset, they use the template defaults shown below.
 | `ENABLE_AGENTIC_RETRIEVAL` | `false` | Enables the template's agentic retrieval resource configuration. This is separate from the Agent Application setting `RETRIEVAL_BACKEND`. |
 | `USE_EXISTING_VNET` | `false` | Deploys into a virtual network you already have when network isolation is enabled. |
 | `EXISTING_VNET_RESOURCE_ID` | Empty | Resource ID required when reusing a virtual network. |
-| `DEPLOY_SUBNETS` | `true` | Creates the required subnets in the selected virtual network. |
+| `DEPLOY_SUBNETS` | `true` | Global subnet creation switch, gated by network isolation and each [individual creation flag](#subnet-creation-and-addressing), for new and existing VNets. |
 | `SIDE_BY_SIDE` | `true` | Selects side-by-side placement for private endpoints and DNS zones rather than placing them in the existing VNet's resource group. See the private endpoint group precedence below. |
 
 ### General
@@ -369,38 +369,125 @@ before provisioning; external firewall policies remain report-only.
 
 Bastion tunneling is disabled by default.
 
-### Optional application private endpoint subnet
+### Subnet creation and addressing
 
-Agent Bicep/azd deployments can separate
-application private endpoints from Foundry/grounding private endpoints.
-This choice is independent of resource group count and does not enable network
-isolation or additional services.
+With `NETWORK_ISOLATION=true`, all [twelve default subnets](network-isolation.md#isolation-and-provisioning)
+are created in either a new or an existing VNet. `DEPLOY_SUBNETS` is the global
+creation switch. Each Boolean below defaults to `true`; effective creation is
+`networkIsolation && deploySubnets && individualFlag`.
+
+| Native root parameter | Environment input | Subnet purpose |
+| --- | --- | --- |
+| `deployAgentSubnet` | `DEPLOY_AGENT_SUBNET` | Foundry Agent Service |
+| `deployAcaEnvironmentSubnet` | `DEPLOY_ACA_ENVIRONMENT_SUBNET` | Container Apps environment |
+| `deployPeSubnet` | `DEPLOY_PE_SUBNET` | Foundry/grounding private endpoints |
+| `deployAzureBastionSubnet` | `DEPLOY_AZURE_BASTION_SUBNET` | Bastion |
+| `deployAzureFirewallSubnet` | `DEPLOY_AZURE_FIREWALL_SUBNET` | Firewall |
+| `deployGatewaySubnet` | `DEPLOY_GATEWAY_SUBNET` | VPN/ExpressRoute reservation |
+| `deployAppGatewaySubnet` | `DEPLOY_APP_GATEWAY_SUBNET` | Application Gateway |
+| `deployJumpboxSubnet` | `DEPLOY_JUMPBOX_SUBNET` | Jumpbox |
+| `deployDevopsBuildAgentsSubnet` | `DEPLOY_DEVOPS_BUILD_AGENTS_SUBNET` | Build agents |
+| `deployApplicationPeSubnet` | `DEPLOY_APPLICATION_PE_SUBNET` | Application private endpoints |
+| `deployPowerPlatformSubnet` | `DEPLOY_POWER_PLATFORM_SUBNET` | Power Platform |
+| `deployAiGatewaySubnet` | `DEPLOY_AI_GATEWAY_SUBNET` | AI Gateway |
+
+A `false` creation flag means do not create/manage that subnet; it does **not**
+disable its consumer. Every enabled consumer must have an existing, valid
+subnet in the selected VNet, or be explicitly disabled. No consumer is silently
+disabled or redirected to another subnet. With isolation off, no VNet or
+subnets are provisioned.
+
+An isolated new VNet is still created when subnet creation is disabled, but
+configuration fails if an enabled workload requires a subnet that is absent.
+For an existing VNet, only selected subnets are created/updated, through
+serialized child deployments; its entire subnet collection is not replaced.
+Managed BYO subnet writes require `deployNsgs=true`; opting out of a subnet's
+creation does not remove its existing NSG association. Creation flags are not
+deletion commands or a guarantee of preserving every previously submitted
+subnet in a deployment-owned VNet; Azure can reject removal of occupied subnets.
+
+`deployAiFoundrySubnet` controls the Foundry Agent Service subnet association,
+not subnet creation. Use `deployAgentSubnet` for creation ownership.
+
+All twelve name and prefix parameters can be overridden in root
+`main.parameters.json` or through the environment bindings below. Explicit
+operator values are preserved through composition; the allocation table lists
+defaults, not mandatory ranges. Reserved service names must retain their
+required spellings.
+
+| Native name parameter | Name environment input | Native prefix parameter | Prefix environment input |
+| --- | --- | --- | --- |
+| `agentSubnetName` | `AZURE_AGENT_SUBNET_NAME` | `agentSubnetPrefix` | `AZURE_AGENT_SUBNET_PREFIX` |
+| `acaEnvironmentSubnetName` | `AZURE_ACA_ENVIRONMENT_SUBNET_NAME` | `acaEnvironmentSubnetPrefix` | `AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX` |
+| `peSubnetName` | `AZURE_PE_SUBNET_NAME` | `peSubnetPrefix` | `AZURE_PE_SUBNET_PREFIX` |
+| `azureBastionSubnetName` | `AZURE_BASTION_SUBNET_NAME` | `azureBastionSubnetPrefix` | `AZURE_BASTION_SUBNET_PREFIX` |
+| `azureFirewallSubnetName` | `AZURE_FIREWALL_SUBNET_NAME` | `azureFirewallSubnetPrefix` | `AZURE_FIREWALL_SUBNET_PREFIX` |
+| `gatewaySubnetName` | `AZURE_GATEWAY_SUBNET_NAME` | `gatewaySubnetPrefix` | `AZURE_GATEWAY_SUBNET_PREFIX` |
+| `azureAppGatewaySubnetName` | `AZURE_APP_GATEWAY_SUBNET_NAME` | `azureAppGatewaySubnetPrefix` | `AZURE_APP_GATEWAY_SUBNET_PREFIX` |
+| `jumpboxSubnetName` | `AZURE_JUMPBOX_SUBNET_NAME` | `jumpboxSubnetPrefix` | `AZURE_JUMPBOX_SUBNET_PREFIX` |
+| `devopsBuildAgentsSubnetName` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_NAME` | `devopsBuildAgentsSubnetPrefix` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX` |
+| `applicationPeSubnetName` | `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetPrefix` | `AZURE_APPLICATION_PE_SUBNET_PREFIX` |
+| `powerPlatformSubnetName` | `AZURE_POWER_PLATFORM_SUBNET_NAME` | `powerPlatformSubnetPrefix` | `AZURE_POWER_PLATFORM_SUBNET_PREFIX` |
+| `aiGatewaySubnetName` | `AZURE_AI_GATEWAY_SUBNET_NAME` | `aiGatewaySubnetPrefix` | `AZURE_AI_GATEWAY_SUBNET_PREFIX` |
+
+Set `vnetAddressPrefixes.value` as an explicit array in root
+`main.parameters.json` (default `["192.168.0.0/21"]`); there is no
+`VNET_ADDRESS_PREFIXES` environment mapping. For example, a fragment of the
+root file's `parameters` object and a matching subnet override are:
+
+```json
+{
+  "vnetAddressPrefixes": {
+    "value": ["10.20.0.0/21"]
+  }
+}
+```
+
+```bash
+azd env set AZURE_POWER_PLATFORM_SUBNET_PREFIX 10.20.4.0/24
+```
+
+Set every other requested subnet prefix to a nonoverlapping range inside the
+approved VNet address space as well. A subnet override does not change the VNet
+address space. For a reused VNet, its actual address space is authoritative;
+these inputs do not resize it. Names must be unique and required names/prefixes
+cannot be empty. CIDRs must be aligned IPv4 ranges, contained in the VNet and
+nonoverlapping with other requested or existing subnets. The same managed
+subnet's current range is not treated as a separate overlapping subnet.
+Invalid ranges fail rather than being replaced with defaults. Reserved names
+and service-specific size, delegation and NSG requirements also apply.
+
+<span id="optional-application-private-endpoint-subnet"></span>
+
+### Application private endpoint subnet
+
+Application private endpoints use their own configured subnet, independently
+of resource group count.
 
 | Variable | Native root parameter | Default | Purpose |
 | --- | --- | --- | --- |
-| `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetName` | Empty string | Name of the optional application private endpoint subnet; supply with its prefix. |
-| `AZURE_APPLICATION_PE_SUBNET_PREFIX` | `applicationPeSubnetPrefix` | Empty string | Aligned IPv4 CIDR for that subnet; supply with its name. |
+| `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetName` | `application-pe-subnet` | Dedicated application private endpoint subnet name. |
+| `AZURE_APPLICATION_PE_SUBNET_PREFIX` | `applicationPeSubnetPrefix` | `192.168.3.128/26` | Aligned IPv4 CIDR for the application private endpoint subnet. |
 
-Leave both empty to keep the existing shared private endpoint subnet, even with
-three resource groups. When both are set, enabled application Cosmos DB, Key
-Vault, App Configuration, Container Apps, ACR and Azure Monitor Private Link
-Scope private endpoints use the application subnet. Foundry/grounding endpoints
-remain on the subnet selected by existing native `peSubnetName` and
-`peSubnetPrefix` parameters.
+Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
+ACR and Azure Monitor Private Link
+Scope private endpoints use the application subnet. Foundry/grounding private
+endpoints use `peSubnetName`/`peSubnetPrefix`, defaulting to `pe-subnet` at
+`192.168.2.0/26`.
 
-Set the pair before first provision, using your approved address plan:
+Customize the name and prefix before first provision, using your approved
+address plan:
 
 ```bash
 azd env set AZURE_APPLICATION_PE_SUBNET_NAME snet-app-pe
 azd env set AZURE_APPLICATION_PE_SUBNET_PREFIX <approved-ipv4-subnet-cidr>
 ```
 
-Bootstrap validates the pair, subnet name and IPv4 CIDR before optional group
-creation. Bicep additionally checks a network-aligned prefix length of `/29`
-or shorter, containment in the VNet, non-overlap with base subnet prefixes,
-a distinct subnet name and compatibility with BYO VNet settings. Review subnet
-ownership and existing-subnet compatibility with the network owner; these
-settings do not bypass the existing `DEPLOY_SUBNETS` contract.
+The application subnet needs a distinct name and an aligned IPv4 CIDR of `/29`
+or shorter. Empty required names/prefixes fail explicitly; there is no shared
+Foundry PE fallback. With `DEPLOY_APPLICATION_PE_SUBNET=false` or
+`DEPLOY_SUBNETS=false`, application endpoints still select this configured
+subnet. It must already exist and satisfy the enabled consumers' requirements.
 
 ### Hub integration
 

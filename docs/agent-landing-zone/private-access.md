@@ -123,10 +123,11 @@ or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/poi
 1. Identify the target VNet from the provisioned environment:
    `azd env get-value VNET_RESOURCE_ID`. This is a resource ID, not a VPN server
    address. Create a route-based VPN gateway with a supported SKU and a
-   subnet named exactly **`GatewaySubnet`**, using the sizing in the Microsoft
-   procedure. The foundation's `gateway-subnet` is **not** that subnet; do
-   not rename or repurpose it. Reserve a separate, nonoverlapping range.
-   Record ownership of the added gateway and subnet with the network team
+   subnet named exactly **`GatewaySubnet`**. The foundation reserves
+   `192.168.2.192/26` by default; verify the selected range against the sizing
+   in the Microsoft procedure. Do not attach an NSG, default-route UDR or
+   delegation to `GatewaySubnet`.
+   Record ownership of the gateway and subnet with the network team
    before subsequent foundation provisioning.
 2. In the gateway's **Settings > Point-to-site configuration**, select
    **Configure now** for a new configuration and enter the approved client

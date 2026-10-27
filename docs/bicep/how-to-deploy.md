@@ -32,7 +32,7 @@ service access.
 
 The private Container Registry build agent pool has an explicit `dependsOn` on the **conditionally deployed BYO-VNet subnet module**. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.
 
-The existing `networkIsolation`, `useExistingVNet`, `deploySubnets`, `deployNsgs`, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When `deploySubnets=false`, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.
+Build subnet creation and pool ordering respect `networkIsolation`, `useExistingVNet`, `deploySubnets`, `deployDevopsBuildAgentsSubnet`, `deployNsgs`, registry-deployment and pool-deployment gates. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When `deploySubnets=false` or `deployDevopsBuildAgentsSubnet=false`, the build subnet must already exist and be valid before provisioning the enabled pool; a creation flag does not disable the pool.
 
 For a cold-start verification, record that the target build subnet is **absent before the first attempt** in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and `countSucceeded`, counting only operations that actually reached `Succeeded`.
 
@@ -43,6 +43,9 @@ A submitted or running deployment is not proof of success. A retry after an earl
 For BYO-VNet subnet creation, the reserved `AzureBastionSubnet` is excluded
 from generic NSG attachment. When Bastion is enabled, its explicit, dedicated
 Bastion-compliant NSG takes precedence and is preserved.
+
+The reserved `GatewaySubnet` is also excluded from generic NSG attachment.
+It must have no NSG, default-route UDR or delegation.
 
 Do not automatically rename existing subnets, renumber `subnetCidr` entries,
 or move their assigned address prefixes to undo an older workaround. Plan

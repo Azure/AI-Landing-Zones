@@ -40,7 +40,7 @@ range. Replace it as a unit if it conflicts with your approved design.
 | --- | --- |
 | `vnetAddressPrefixes` | `["10.200.0.0/21"]` |
 | `agentSubnetPrefix` | `10.200.0.0/24` |
-| `acaEnvironmentSubnetPrefix` | `10.200.4.0/23` |
+| `acaEnvironmentSubnetPrefix` | `10.200.6.0/23` |
 | `peSubnetPrefix` | `10.200.2.0/26` |
 | `azureBastionSubnetPrefix` | `10.200.2.64/26` |
 | `azureFirewallSubnetPrefix` | `10.200.2.128/26` |
@@ -48,9 +48,15 @@ range. Replace it as a unit if it conflicts with your approved design.
 | `azureAppGatewaySubnetPrefix` | `10.200.3.0/27` |
 | `jumpboxSubnetPrefix` | `10.200.3.64/27` |
 | `devopsBuildAgentsSubnetPrefix` | `10.200.3.96/27` |
+| `applicationPeSubnetPrefix` | `10.200.3.128/26` |
+| `powerPlatformSubnetPrefix` | `10.200.4.0/24` |
+| `aiGatewaySubnetPrefix` | `10.200.5.0/24` |
 
-These native values belong in the selected source's reviewed root
-`main.parameters.json`; there is no `VNET_ADDRESS_PREFIXES` mapping.
+Set `vnetAddressPrefixes` as an explicit array in reviewed root
+`main.parameters.json`; there is no `VNET_ADDRESS_PREFIXES` mapping. All twelve
+subnet names and prefixes also have [environment bindings](../agent-landing-zone/configuration.md#subnet-creation-and-addressing)
+in that root file. A reused VNet's actual address space is authoritative and is
+not resized by these inputs.
 Keep the complete file with the deployment inputs and carry it to a connected
 host. Environment refresh does not restore file customizations.
 
@@ -91,8 +97,12 @@ explicitly reviewed public entry point.
 ## Existing VNet and DNS ownership
 
 With `USE_EXISTING_VNET=true`, decide who manages each subnet, NSG, route table
-and delegation. Do not update existing subnets under isolation with
-`DEPLOY_NSGS=false`; retain managed NSGs or use `DEPLOY_SUBNETS=false` and have
+and delegation. All twelve subnets are selected by default for both new and
+existing VNets; use the [individual creation flags](../agent-landing-zone/configuration.md#subnet-creation-and-addressing)
+to select ownership per subnet. A false creation flag requires an existing
+valid subnet for each enabled consumer, or that consumer must be disabled.
+Do not update selected existing subnets under isolation with
+native root `deployNsgs=false`; retain managed NSGs or use `DEPLOY_SUBNETS=false` and have
 the network owner prepare the complete subnet configuration.
 
 Choose local DNS, per-zone BYO IDs or Azure Policy-managed DNS deliberately.
@@ -103,6 +113,8 @@ and [Policy ownership](hub-and-spoke.md#private-dns-ownership).
 
 The BYO-VNet reserved `AzureBastionSubnet` is excluded from generic NSG attachment
 when Bastion is disabled; enabled Bastion uses its dedicated compliant NSG.
+The reserved `GatewaySubnet` at default `192.168.2.192/26` must have no NSG,
+default-route UDR or delegation.
 Do not rename subnets, renumber prefixes or reapply an older workaround
 automatically on existing deployments. Plan such migrations explicitly.
 
@@ -117,8 +129,9 @@ Inspect the VM Custom Script Extension result if software bootstrap is selected;
 it is not evidence that all Agent prerequisites are installed.
 
 For a new build subnet created in a BYO VNet, the ACR Tasks pool depends on the
-conditional subnet deployment. With `DEPLOY_SUBNETS=false`, subnet readiness is
-the external network owner's responsibility. A first-attempt cold-start check
+conditional subnet deployment. With `DEPLOY_SUBNETS=false` or
+`DEPLOY_DEVOPS_BUILD_AGENTS_SUBNET=false`, subnet readiness is the external
+network owner's responsibility for an enabled pool. A first-attempt cold-start check
 must start with that subnet absent, record successful operations and the pool's
 final state, and distinguish retries from the first attempt. Source availability
 and offline CI do not prove this live result.

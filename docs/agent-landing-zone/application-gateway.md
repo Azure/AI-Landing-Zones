@@ -61,7 +61,8 @@ adding this gateway. Do not change isolation as part of an ingress retry.
   [Key Vault certificate integration requirements](https://learn.microsoft.com/azure/application-gateway/key-vault-certs).
   Use your approved certificate import process; never paste a PFX, password,
   private key, or client secret into deployment parameters or shell history.
-- A dedicated Application Gateway subnet. The template defaults to `/27`;
+- A dedicated Application Gateway subnet. The template defaults to
+  `AppGatewaySubnet` at `192.168.3.0/27`;
   Microsoft [recommends `/24` for v2 capacity and maintenance headroom](https://learn.microsoft.com/azure/application-gateway/configuration-infrastructure).
   For an existing VNet, have its owner verify the subnet, network security
   group (NSG) attachment, routing and DNS before provisioning.

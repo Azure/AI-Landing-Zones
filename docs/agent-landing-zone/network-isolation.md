@@ -70,23 +70,50 @@ private endpoint; it does not require the Activity-route public exception.
 
 ## Isolation and provisioning
 
-`NETWORK_ISOLATION=true` is resolved before provisioning.
+`NETWORK_ISOLATION=true` is resolved before provisioning. All twelve subnets
+are created by default for both new and existing VNets. The default VNet
+address space is `192.168.0.0/21`.
 
-The
-[application private endpoint subnet pair](configuration.md#optional-application-private-endpoint-subnet)
-is optional regardless of whether the workload uses one, two or three resource
-groups. Empty `AZURE_APPLICATION_PE_SUBNET_NAME` and
-`AZURE_APPLICATION_PE_SUBNET_PREFIX` retain the shared subnet.
+| Purpose | Default name | Default CIDR | Delegation |
+| --- | --- | --- | --- |
+| Foundry Agent Service | `agent-subnet` | `192.168.0.0/24` | `Microsoft.App/environments` |
+| Container Apps environment | `aca-environment-subnet` | `192.168.1.0/24` | `Microsoft.App/environments` |
+| Foundry/grounding private endpoints | `pe-subnet` | `192.168.2.0/26` | None |
+| Bastion | `AzureBastionSubnet` | `192.168.2.64/26` | None |
+| Firewall | `AzureFirewallSubnet` | `192.168.2.128/26` | None |
+| VPN/ExpressRoute reservation | `GatewaySubnet` | `192.168.2.192/26` | None |
+| Application Gateway | `AppGatewaySubnet` | `192.168.3.0/27` | None |
+| Jumpbox | `jumpbox-subnet` | `192.168.3.64/27` | None |
+| Build agents | `devops-build-agents-subnet` | `192.168.3.96/27` | None |
+| Application private endpoints | `application-pe-subnet` | `192.168.3.128/26` | None |
+| Power Platform | `powerplatform-subnet` | `192.168.4.0/24` | `Microsoft.PowerPlatform/enterprisePolicies` |
+| AI Gateway | `ai-gateway-subnet` | `192.168.5.0/24` | `Microsoft.Web/serverFarms` |
 
-Supply both to
-place enabled application Cosmos DB, Key Vault, App Configuration, Container
-Apps, ACR and Azure Monitor Private Link Scope endpoints on a separate subnet;
-Foundry/grounding keeps the existing `peSubnetName`/`peSubnetPrefix` subnet.
+[Subnet creation and addressing](configuration.md#subnet-creation-and-addressing)
+lists the global `DEPLOY_SUBNETS` switch, twelve individual flags (all `true`)
+and root name/CIDR overrides. These controls have the same selection semantics
+for new and BYO VNets. A false creation flag does not disable a consumer:
+its valid subnet must already exist, or the consumer must be explicitly disabled.
+With isolation off, no VNet or subnets are provisioned.
 
-The application subnet needs a distinct name and an aligned IPv4 CIDR of `/29`
-or shorter within the VNet, without overlap with base subnet prefixes.
-Existing-VNet ownership and compatibility checks still apply; no extra subnet
-is selected merely by splitting resource groups.
+Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
+ACR and Azure Monitor Private Link Scope endpoints use the
+[application private endpoint subnet](configuration.md#optional-application-private-endpoint-subnet).
+Foundry/grounding endpoints use `pe-subnet` by default. Application endpoints
+never fall back to the Foundry subnet, including when application subnet
+creation is disabled. This separation is independent of resource group count.
+
+Keep the reserved name `GatewaySubnet`; do not attach an NSG, default-route
+UDR or delegation to it. AI Gateway uses APIM Standard v2/Premium v2 outbound
+VNet integration, with a subnet of `/27` or larger, delegated to
+`Microsoft.Web/serverFarms` and associated with an NSG. Preserve an outbound
+HTTPS path to Azure Key Vault. No reserved subnet name is required for APIM;
+do not place APIM private endpoints in its delegated integration subnet.
+
+The Power Platform `/24` is a capacity default, not a platform minimum.
+Size for environment demand: approximately 25–30 IPs per production
+environment or 6–10 per nonproduction environment, plus five subnet-reserved IPs.
+See [Power Platform subnet sizing](https://learn.microsoft.com/power-platform/admin/vnet-support-overview#estimating-subnet-size-for-power-platform-environments).
 
 Azure Resource Manager (ARM) creates and manages Azure resources through a
 public control plane, but `azd provision` also

@@ -134,7 +134,7 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 | Parameter | Default | Description |
 |---|---|---|
 | `deployAiFoundry` | `true` | AI Foundry account and project |
-| `deployAiFoundrySubnet` | `true` | Dedicated subnet for AI Foundry agents |
+| `deployAiFoundrySubnet` | `true` | Foundry Agent Service subnet association; `deployAgentSubnet` independently controls subnet creation |
 | `deployAppConfig` | `true` | Azure App Configuration store |
 | `deployAppInsights` | `true` | Application Insights instance |
 | `deployCosmosDb` | `true` | Azure Cosmos DB account and database |
@@ -308,8 +308,18 @@ The BYO IDs that drive this section (`hubIntegrationHubVnetResourceId`, `hubInte
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
 | `useExistingVNet` | `false` | `USE_EXISTING_VNET` | Use an existing VNet instead of creating a new one. Pair with `existingVnetResourceId`. |
-| `deploySubnets` | `true` | `DEPLOY_SUBNETS` | Create the workload subnets (PE, jumpbox, agent, ACA, NAT, Bastion). Set to `false` to BYO subnets in an existing VNet. |
+| `deploySubnets` | `true` | `DEPLOY_SUBNETS` | Global creation switch for all twelve subnets, in both new and existing VNets. Effective creation also requires `networkIsolation` and the individual subnet flag. |
+| `vnetAddressPrefixes` | `["192.168.0.0/21"]` | — (explicit root array) | Address space for a new VNet. A reused VNet's actual address space is authoritative and is not resized. |
 | `sideBySideDeploy` | `false` | `SIDE_BY_SIDE` | Allow a second AI LZ to be deployed side-by-side in the same existing VNet without disturbing the first one's subnets / NSGs. |
+
+See [subnet creation and addressing](../agent-landing-zone/configuration.md#subnet-creation-and-addressing)
+for all twelve creation flags (each defaults to `true`), root name/prefix
+parameters and their exact environment bindings. A false creation flag does
+not disable a consumer: its valid subnet must already exist in the selected
+VNet, or the consumer must be explicitly disabled. Application private endpoints
+use their configured subnet without falling back to the Foundry PE subnet.
+The [default allocation table](../agent-landing-zone/network-isolation.md#isolation-and-provisioning)
+lists names, CIDRs and delegations.
 
 ## Virtual Machine
 

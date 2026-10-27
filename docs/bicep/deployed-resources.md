@@ -121,8 +121,8 @@ can also differ from native Bicep defaults.
 
 | Resource | Marker | Flag / parameter | Default config |
 |---|---|---|---|
-| VNet + subnets | 🔒 🔧 | `useExistingVNet` / `deploySubnets` | Workload, PE, jumpbox, agent, ACA, NAT, Bastion subnets |
-| NSGs | 🔒 | `deployNsgs` | One per subnet, locked-down rules |
+| VNet + subnets | 🔒 🔧 | `useExistingVNet` / `deploySubnets` / individual subnet flags | [Twelve default subnets](../agent-landing-zone/network-isolation.md#isolation-and-provisioning), including separate Foundry/application PEs, Power Platform, AI Gateway and reserved `GatewaySubnet` |
+| NSGs | 🔒 | `deployNsgs` | Service-specific attachments and locked-down rules; no NSG on `GatewaySubnet`; AI Gateway integration requires an NSG |
 | Private endpoints | 🔒 | (auto, per service) | **~13–15 PEs** — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.) |
 | Private DNS zones (×15) | 🔒 🔧 | `existingPrivateDnsZone*ResourceId` (one parameter per zone) | All 15 zones BYO-capable individually |
 | Azure Firewall | 🔒 🟧 | `deployAzureFirewall` (default `true` when ZT) | **Standard SKU**; can be turned off when reusing a hub firewall |
