@@ -210,6 +210,13 @@ runbook for the identity inputs and protected-retrieval integration gate.
 
 ### Step 4: Preview and provision
 
+For Agent source, review the selected application's
+[runtime egress plan](network-isolation.md#review-before-provisioning) before
+approving provisioning:
+`python -m config.deployment.egress --plan --environment <environment-name>`.
+This command is local and read-only; it does not run the preparation hook
+or create resource groups.
+
 For Agent source, first run `azd hooks run preup` to validate the definition and
 binding before azd's resource-group initialization.
 Normal `azd provision` automatically runs the Agent preprovision hook to

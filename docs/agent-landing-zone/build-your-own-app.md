@@ -225,6 +225,40 @@ cannot set Container App `ingress` or `resources`.
 Definition settings are validated but **not published to App Configuration**.
 Arrange runtime configuration separately.
 
+#### Runtime egress declarations
+
+Each component can declare additional outbound dependencies with `egress`:
+
+```json
+"egress": [
+  {
+    "fqdn": "api.example.com",
+    "protocol": "https",
+    "port": 443,
+    "purpose": "Retrieve the application's approved reference data"
+  }
+]
+```
+
+Use exact DNS FQDNs, lowercase `http` or `https`, an integer port from 1 to
+64000 and a nonblank purpose of at most 256 characters. URLs, paths, wildcards,
+IP addresses and local hostnames are rejected. Each component supports at most
+100 entries; destinations are normalized to lowercase.
+
+An explicit `egress: []` means no additional runtime egress and removes that
+component's ownership of previously generated requirements. Omitting `egress`
+remains valid: an enabled legacy component retains its previously owned
+requirements, but a fresh legacy definition adds none. Removing a component
+removes its ownership, not another component's shared dependency.
+
+Review the exact source's fixed downloads and configured integrations when
+editing these declarations. The bundled UI declares `[]`; both orchestrator
+and ingestion declare the tiktoken asset host over HTTPS/443. A custom
+definition is additive, so its plan can also include bundled workloads.
+Follow [runtime egress review and reconciliation](network-isolation.md#component-runtime-egress)
+before provisioning. Build registries and package feeds are configured
+[separately](network-isolation.md#application-specific-package-feeds).
+
 #### What a definition cannot contain
 
 No lifecycle hooks, Azure role names or remote URLs (except `$schema`).

@@ -332,6 +332,12 @@ See also
 These parameters apply mainly when `NETWORK_ISOLATION=true`.
 [Network isolation](network-isolation.md) explains connectivity and DNS requirements.
 
+Additional runtime destinations belong in the application's
+[`components[].egress`](build-your-own-app.md#runtime-egress-declarations),
+not a blanket network exception or App Configuration key.
+[Review the component plan](network-isolation.md#component-runtime-egress)
+before provisioning; external firewall policies remain report-only.
+
 | Variable | Default | Description |
 | --- | --- | --- |
 | `DEPLOY_AZURE_FIREWALL` | `true` | Deploys Azure Firewall for egress control. |
