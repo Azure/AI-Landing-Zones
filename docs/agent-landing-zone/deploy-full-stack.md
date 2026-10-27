@@ -92,18 +92,8 @@ git clone https://github.com/Azure/agent-landing-zone.git
 cd agent-landing-zone
 ```
 
-Use the reviewed deployment commit, not an unreviewed branch tip. Replace the
-placeholder with that full Git commit to select and record the revision:
-
-```bash
-git checkout --detach <approved-platform-commit>
-git rev-parse HEAD
-git status --short
-```
-
-Keep `manifest.json`, `app-definition.json` and the root `main.parameters.json`
-with that record. The manifest pins the compatible component commits.
-Expect HEAD to match the approved commit and no unexpected local changes.
+The checkout's `manifest.json` pins the compatible runtime components;
+the deployment hooks fetch them automatically.
 
 Alternatively, `azd init -t Azure/agent-landing-zone` initializes the current
 default template in an empty directory. Reuse the environment it creates rather
