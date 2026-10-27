@@ -10,7 +10,16 @@ procedure. Apply its reviewed parameter changes through
 or [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md).
 
 !!! warning "Cost and teardown"
-    Application Gateway WAF v2 and Standard Public IP incur hourly charges while deployed. Turning `publicIngress.enabled` back to `false` does not delete resources that were already created by an incremental ARM deployment. Use `azd down` for full teardown, or manually delete the gateway, Public IP, WAF policy, NSG, and gateway identity.
+    Application Gateway WAF v2 and Standard Public IP incur hourly charges while
+    deployed. Turning `publicIngress.enabled` back to `false` does not delete
+    resources created by an incremental ARM deployment.
+
+    Follow [safe environment removal](../agent-landing-zone/deploy-full-stack.md#remove-an-environment).
+    The default Agent deployment spans three resource groups, so its safety
+    hook blocks `azd down`; inventory all destinations and obtain owner approval
+    for itemized manual removal. `azd down` applies only to an approved,
+    dedicated single-group deletion scope. Gateway-only retirement is described
+    under [Teardown](#teardown).
 
 ## What gets created
 
@@ -34,7 +43,7 @@ Public Ingress is intentionally a two-step workflow.
 | State | Configuration | Behavior |
 |---|---|---|
 | Skeleton mode | `enabled=true`, but `frontendHostName` or `sslCertSecretId` is empty | The gateway resources exist, but Internet traffic is not opened through the NSG. |
-| Live mode | `enabled=true`, `frontendHostName` and `sslCertSecretId` are set, and allowed source CIDRs are provided | HTTPS on 443 is enabled, HTTP redirects to HTTPS, and only configured CIDRs can reach the gateway. |
+| Live mode | `enabled=true`, `frontendHostName` and `sslCertSecretId` are set, and allowed source CIDRs are provided | Public HTTPS on 443 is allowed from configured CIDRs. Public HTTP on port 80 remains blocked. |
 
 This keeps the post-provision configuration in source control instead of relying on portal edits that can be overwritten later.
 
@@ -113,17 +122,22 @@ Update `main.parameters.json` with the hostname, certificate secret URI, and sou
 
 Apply the reviewed change through the canonical provisioning step again.
 The template configures the HTTPS listener, attaches the Key Vault certificate,
-redirects HTTP to HTTPS, and opens the NSG only for the configured source CIDRs.
+and opens TCP/443 only for the configured source CIDRs.
+It also configures an HTTP-to-HTTPS redirect rule, but the shipped subnet NSG
+does **not** admit Internet traffic on port 80. Public HTTP clients therefore
+time out before reaching that redirect. Distribute the `https://` URL directly;
+do not open port 80 merely to make a redirect test pass.
 
 <a id="step-5-validate"></a>
 
 ## Validation expectations
 
-From an allowed source:
+From an allowed public source, check HTTPS and confirm that public HTTP stays
+blocked. The HTTP command below is a negative test and is expected to time out:
 
 ```bash
 curl -v https://app.contoso.com/
-curl -v http://app.contoso.com/
+curl --connect-timeout 10 --max-time 15 -v http://app.contoso.com/
 ```
 
 Expected behavior:
@@ -131,7 +145,7 @@ Expected behavior:
 | Test | Expected result |
 |---|---|
 | `https://app.contoso.com/` | Returns the Container App response. |
-| `http://app.contoso.com/` | Redirects to HTTPS. |
+| `http://app.contoso.com/` | Connection times out: Internet port 80 is blocked, so no redirect is received. |
 | Source outside `allowedSourceAddressPrefixes` | Cannot reach the gateway on 443. |
 
 ## Parameter reference
@@ -177,6 +191,8 @@ publicIngress: {
 ## Teardown
 
 For full teardown use [safe environment removal](../agent-landing-zone/deploy-full-stack.md#remove-an-environment).
+The default multi-group Agent layout requires owner-approved manual cleanup;
+do not bypass its `predown` safety hook.
 If the rest of the landing zone must remain, obtain approval to retire only
 the gateway resources and dependencies: Application Gateway, Public IP, WAF
 policy, NSG and gateway identity. Confirm none are shared before deletion.

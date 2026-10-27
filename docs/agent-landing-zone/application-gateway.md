@@ -97,9 +97,35 @@ UI (`service_name: frontend`) becomes index `0`. The raw parameter file still
 lists the orchestrator first. Custom compositions can differ:
 confirm the selected backend is the UI, never ingestion or an old orchestrator.
 
-Keep the existing hosted deployment inputs. Preview with
-`azd provision --preview` and confirm only approved resources and roles change.
-Apply from the connected host:
+Keep the existing hosted deployment inputs. If you choose to preview, first
+regenerate the selected environment's composed parameters: azd 1.37.1 preview
+does **not** run preprovision hooks and can otherwise read stale
+`infra/main.parameters.json` instead of your edited root file.
+
+Select the intended azd environment and activate the prepared Python
+environment. From the platform root on the connected host, run **one**
+matching preparation command:
+
+**Windows:**
+
+```powershell
+pwsh -File .\scripts\preProvision.ps1
+```
+
+**Linux/macOS:**
+
+```bash
+sh scripts/preProvision.sh
+```
+
+Then run `azd provision --preview` and confirm only approved resources and
+roles change. Repeat preparation after changing inputs or switching
+environments. Preparation can create missing additional resource groups
+when authorized by `CREATE_RESOURCE_GROUPS=true`; it is not guaranteed
+read-only. See the [preview procedure](deploy-infra-only.md#optional-preview-agent-source)
+for group-creation and scope checks.
+
+Apply the approved change from the connected host:
 
 ```bash
 azd provision

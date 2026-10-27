@@ -121,7 +121,10 @@ integration boundary.
   labels conversation-scoped retrieval; it is not permission to load history.
   The UI accepts `response.conversation.id` and `response.conversation_id`,
   and rejects malformed or conflicting IDs.
-- A delegated caller needs Foundry project user access and agent access.
+- A delegated caller needs the endpoint interaction permission at the intended
+  project or agent scope. **Foundry Agent Consumer** supplies least-privilege
+  endpoint access; authoring roles are separate. Complete the
+  [login and caller-access setup](application-auth.md#configure-login-in-order).
   Deployment permission alone is insufficient.
 
 [Publish to Teams and M365](publish-to-teams.md) uses Bot Service authorization

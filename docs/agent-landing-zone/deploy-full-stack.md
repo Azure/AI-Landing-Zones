@@ -38,13 +38,17 @@ see [How it works](how-it-works.md).
 
 ## Prerequisites
 
+Review the [capability readiness matrix](application.md#capability-readiness)
+before choosing acceptance criteria: the supplied chat, optional capabilities
+and protected retrieval do not have the same integration requirements.
+
 - **Permissions:** Contributor for resource deployment plus
   `Microsoft.Authorization/roleAssignments/write` at the required scopes,
   for example through Role Based Access Control Administrator. Service
   configuration needs separate data-plane roles. Shared networks, DNS and
   monitoring can require additional scoped access. Subscription Owner is not
   a blanket prerequisite; see [resource group permissions](configuration.md#resource-group-permissions)
-  and [foundation permissions](../bicep/permissions.md).
+  and [default hosted permissions](../bicep/permissions.md).
 - **Subscription readiness:** accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
   selected parameters. Review [regional considerations](../bicep/regional-considerations.md)
@@ -60,8 +64,10 @@ see [How it works](how-it-works.md).
   It is not the UI's `api://<client-id>/user_impersonation` login scope.
 - **Application access:** arrange the Entra registration, HTTPS callback,
   Key Vault credential reference and user permissions in
-  [Application authentication](application-auth.md). Deployment does not
-  perform tenant consent.
+  the [ordered login setup](application-auth.md#configure-login-in-order).
+  Complete its registration/consent steps before provision, then its
+  callback/settings steps once the frontend URL is available.
+  Deployment does not perform tenant consent.
 
 !!! warning "Protected retrieval is an integration gate"
     The shipped hosted entrypoint does not receive the browser's bearer token.
@@ -468,7 +474,7 @@ Owner or remove unrelated assignments to recover. See [hosted identities](hosted
     contains shared resources or retained data, stop and arrange itemized removal
     with the owners instead. Check retention obligations first.
 
-For the multi-group path, inventory **every configured destination**
+For the default three-group layout, or any other multi-group path, inventory **every configured destination**
 and its shared dependencies before cleanup. The root group alone is not the
 complete inventory. A `predown` safety hook **blocks `azd down` for split-group
 deployments**, with no automatic deletion or bypass option.
@@ -504,26 +510,41 @@ do not delete shared hub, DNS or monitoring resources.
 
 ## Validation
 
-1. Confirm the intended application revisions are running, not placeholders:
+1. Confirm the platform revision and frontend source, then inspect the deployed
+   Container Apps rather than accepting a placeholder response:
 
     ```bash
     git rev-parse HEAD
-    git -C ../agent-app-orchestrator rev-parse HEAD
     git -C ../agent-app-ui rev-parse HEAD
+    git -C ../agent-app-ui status --porcelain
     azd env get-value AZURE_RESOURCE_GROUP
     azd env get-value AZURE_APP_RESOURCE_GROUP
     az containerapp list -g <application-resource-group> \
       --query "[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}" -o table
     ```
 
-    Compare the platform commit with your approved record and each component
-    commit with its `manifest.json` entry. Inspect source worktrees for unexpected
+    Compare the platform commit with your approved record and the UI commit
+    with its `manifest.json` entry. The UI source should have no unexpected
     edits; matching HEAD alone does not prove the built source was unchanged.
+    Apply the same check to ingestion only when that component is selected.
+
+    The automatic hosted build clones the pinned orchestrator into a temporary
+    directory; a sibling `agent-app-orchestrator` checkout is **not required**
+    and is not evidence of the image that was deployed.
 
 2. Read `AZURE_CONTAINER_REGISTRY_ENDPOINT` for the registry login hostname.
    The hosted repository is `HOSTED_AGENT_IMAGE` when explicitly set, otherwise
    `agent-app-orchestrator`, as declared in `hosted-agent/azure.yaml`.
-   Use that registry's resource name, repository and recorded digest below:
+   For an automatically generated image, read
+   `azd env get-value HOSTED_AGENT_IMAGE_SOURCE_COMMIT` and compare it with
+   the orchestrator commit in `manifest.json`. Retain the build record and
+   `HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256` as startup provenance.
+   For an operator-supplied digest without generated-source metadata, require
+   the image owner's build/provenance record instead; do not assume the manifest
+   proves its source.
+
+   Use that registry's resource name, repository and recorded digest below
+   (`<sha256-digest>` includes the `sha256:` prefix):
 
     ```bash
     azd env get-value HOSTED_AGENT_IMAGE_VERSION
@@ -532,7 +553,10 @@ do not delete shared hub, DNS or monitoring resources.
     ```
 
     Expect the exact same `sha256:` value, not merely matching tags. In Foundry,
-    inspect the routed version's image and confirm it uses that digest.
+    inspect the **actively routed** agent version and confirm its full image
+    reference uses that registry, repository and digest. Record the agent
+    name/version with the source and build evidence. Local source or registry
+    existence alone does not prove that version is serving requests.
 
 3. Open the frontend URL from the deployment outputs or UI ingress configuration.
    Use a connected browser for private endpoints. Complete
