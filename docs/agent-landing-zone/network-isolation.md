@@ -266,7 +266,7 @@ also deferred; predeploy still enforces the connectivity and plan checks.
 | Deployment | Behavior |
 | --- | --- |
 | `NETWORK_ISOLATION=false` | No component firewall reads or writes; declarations do not create a firewall |
-| Isolated with a deployment-managed firewall | Reconciles only marked application rules in `AgentLzComponentEgress`, priority 300 |
+| Isolated with a deployment-managed firewall | Reconciles only marked application rules in `AgentLzComponentEgress`, priority 400 |
 | Isolated with an external firewall | Reports required rules and legacy components; never reads or mutates the external policy |
 
 For managed policies, the runner needs management-plane subnet reads and
