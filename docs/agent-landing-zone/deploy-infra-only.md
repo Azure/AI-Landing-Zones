@@ -207,7 +207,7 @@ azd env set DEPLOYMENT_MODE standalone
 
 | Choice | Required review |
 | --- | --- |
-| Existing VNet | Set `USE_EXISTING_VNET=true` and `EXISTING_VNET_RESOURCE_ID`. Decide who owns subnets, NSGs and delegations before setting `DEPLOY_SUBNETS`; both peering directions are externally managed for BYO VNet |
+| Existing VNet | Choose [subnet ownership](network-isolation.md#choose-subnet-ownership) and apply the [matching inputs](configuration.md#network-selection-examples). Both peering directions are externally managed for BYO VNet |
 | Shared private DNS | Supply the applicable `EXISTING_PRIVATE_DNS_ZONE_*_RESOURCE_ID` inputs. Their owner supplies VNet links or resolver forwarding; peering alone does not propagate DNS |
 | Azure Policy-managed DNS | Use `POLICY_MANAGED_PRIVATE_DNS=true` instead of BYO zone overrides and agree who creates zone groups, records and links |
 | Approved public exception | Review native `allowedIpRanges` and Storage trusted-service/resource-instance exceptions to confirm the approved service-specific public access |
