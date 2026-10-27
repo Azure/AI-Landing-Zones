@@ -76,6 +76,23 @@ independent Bicep infrastructure from the Agent platform.
 Different implementations are not interchangeable owners of the same
 environment; resource reuse needs explicit state and dependency ownership.
 
+## Resource group ownership
+
+The default remains one workload resource group. The optional
+[resource group destinations](configuration.md#resource-group-destinations)
+separate application, Foundry/grounding and workload networking ownership,
+with one, two or three distinct groups in the same subscription. This is an
+**Agent Bicep/azd feature available from v4.4.0**, not a Terraform or portal parity claim.
+Network isolation and hub/BYO integration remain separate decisions.
+
+Agree names, owners, scoped deployment/RBAC/data permissions and retention
+before a new deployment. Prefer pre-created groups when the deploying identity
+must not create groups at subscription scope. Optional creation is explicit
+and off by default for additional destinations. One root provisioning workflow
+coordinates the groups; three independent manual deployments are not required.
+Existing-environment migration and automatic deletion of shared groups are
+outside this feature.
+
 <span id="select-reuse-or-omit-resources"></span>
 
 ## Resource selection and reuse

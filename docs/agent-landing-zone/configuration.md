@@ -55,6 +55,84 @@ copied between DEV, TEST and PROD.
 stability. Names resolve before the first provision; later changes can create
 new resources instead of updating existing ones.
 
+### Resource group destinations
+
+!!! note "Available from v4.4.0"
+    The optional resource group destinations below support new Agent Landing
+    Zone **Bicep/azd** deployments from
+    [v4.4.0](https://github.com/Azure/agent-landing-zone/releases/tag/v4.4.0).
+    Use a reviewed compatible source revision. Terraform, portal and the
+    independent Bicep foundation are not claimed to support this Agent
+    platform contract.
+
+Without overrides, deployment keeps the existing single-resource-group path.
+All workload destinations must be in `AZURE_SUBSCRIPTION_ID`. Equal names are
+valid: one, two or three distinct groups can express the same three logical
+destinations. These inputs do not enable services, change network isolation or
+create a platform hub; existing BYO VNet, DNS and hub settings still apply.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `AZURE_RESOURCE_GROUP` | Selected or initialized by azd | Application destination and azd root deployment group. |
+| `AZURE_FOUNDRY_RESOURCE_GROUP` | `AZURE_RESOURCE_GROUP` | Optional Foundry and grounding destination. |
+| `AZURE_NETWORK_RESOURCE_GROUP` | `AZURE_RESOURCE_GROUP` | Optional destination for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract. |
+| `CREATE_RESOURCE_GROUPS` | `false` | Strict boolean (`true` or `false`): allows creating only explicitly named, missing additional destination groups. Does not disable azd's normal root-group creation. |
+
+Set destinations **before first provision**. For three pre-created groups:
+
+```bash
+azd env set AZURE_RESOURCE_GROUP rg-app
+azd env set AZURE_FOUNDRY_RESOURCE_GROUP rg-ai
+azd env set AZURE_NETWORK_RESOURCE_GROUP rg-net
+azd env set CREATE_RESOURCE_GROUPS false
+```
+
+For two groups, set `AZURE_NETWORK_RESOURCE_GROUP` to `rg-app` instead.
+For the unchanged single-group path, omit both optional destination inputs.
+With `false`, a missing additional destination fails before services are
+provisioned. With an approved `true`, existing groups are reused without
+changing their tags or location; only missing additional groups are created.
+New additional groups do not receive the `azd-env-name` tag.
+Run the normal root lifecycle: each `azd provision` coordinates the
+resource-group-scoped root and its scoped modules. Do not replace it with
+three manual deployments. Hosted image preparation still uses its normal
+multi-step lifecycle.
+
+#### Resource group permissions
+
+- **Existing groups:** Contributor on each target covers resource management
+  and `Microsoft.Resources/deployments/*`, not RBAC grants or data access.
+  Splitting existing groups does not itself require subscription Owner or
+  subscription-scope deployment permission.
+- **Creating missing groups:** `CREATE_RESOURCE_GROUPS=true` additionally needs
+  `Microsoft.Resources/subscriptions/resourceGroups/write` at subscription
+  scope. A scoped custom role can grant that action; subscription Contributor
+  is broader, not a universal prerequisite.
+- **RBAC:** the deploying identity needs
+  `Microsoft.Authorization/roleAssignments/write` at each assignment scope,
+  for example through Role Based Access Control Administrator, subject to its
+  conditions. Creating a group does not automatically grant this access.
+- **Service configuration:** keep the required Foundry, Search, App
+  Configuration, Key Vault and other service-specific data-plane roles.
+  Management-plane Contributor does not replace them. External network/DNS
+  resources require their owners' scoped permissions.
+
+Resource-group Contributor and scoped RBAC administration do not grant Entra
+directory reads; for platform-output client-ID discovery, restricted automation
+can instead supply `AGENTLZ_COMPONENT_IDENTITIES` as a nonsecret JSON map of
+Container App component names to pre-resolved managed-identity client IDs,
+without granting broad directory rights.
+
+The workflow does not elevate its own permissions. Record the approved mapping
+with the environment; changing a provisioned environment's mapping is not a
+supported resource migration. After partial failure, repair the cause and
+retry with the same destinations. Do not delete groups as automatic rollback.
+Review every destination and shared dependency before any
+[environment removal](deploy-full-stack.md#remove-an-environment).
+For split-group deployments, a `predown` safety hook blocks `azd down`; cleanup
+requires manual inventory, owner review and separately authorized removal.
+No automatic deletion or bypass option is provided. The single-group teardown path is unchanged.
+
 ### Values set by azd or by you
 
 A **principal** is a user or service identity. Its **object ID** identifies
@@ -81,7 +159,7 @@ When unset, they use the template defaults shown below.
 | `USE_EXISTING_VNET` | `false` | Deploys into a virtual network you already have when network isolation is enabled. |
 | `EXISTING_VNET_RESOURCE_ID` | Empty | Resource ID required when reusing a virtual network. |
 | `DEPLOY_SUBNETS` | `true` | Creates the required subnets in the selected virtual network. |
-| `SIDE_BY_SIDE` | `true` | Uses the deployment resource group for private endpoints and DNS zones rather than placing them in the existing VNet's resource group. |
+| `SIDE_BY_SIDE` | `true` | Selects side-by-side placement for private endpoints and DNS zones rather than placing them in the existing VNet's resource group. See the private endpoint group precedence below. |
 
 ### General
 
@@ -97,7 +175,7 @@ When unset, they use the template defaults shown below.
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
-| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Resource group for private endpoints. Defaults to the deployment resource group, or the existing VNet's resource group when `USE_EXISTING_VNET=true` and `SIDE_BY_SIDE=false`. |
+| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`, falling back to `AZURE_RESOURCE_GROUP`). Optional multi-group placement is available from v4.4.0; the single-group default is unchanged. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
 Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.
@@ -260,6 +338,39 @@ These parameters apply mainly when `NETWORK_ISOLATION=true`.
 | `DEPLOY_STORAGE_ACCOUNT` | `true` | Deploys the document storage account. |
 
 Bastion tunneling is disabled by default.
+
+### Optional application private endpoint subnet
+
+**Available from v4.4.0:** new Agent Bicep/azd deployments can separate
+application private endpoints from Foundry/grounding private endpoints.
+This choice is independent of resource group count and does not enable network
+isolation or additional services.
+
+| Variable | Native root parameter | Default | Purpose |
+| --- | --- | --- | --- |
+| `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetName` | Empty string | Name of the optional application private endpoint subnet; supply with its prefix. |
+| `AZURE_APPLICATION_PE_SUBNET_PREFIX` | `applicationPeSubnetPrefix` | Empty string | Aligned IPv4 CIDR for that subnet; supply with its name. |
+
+Leave both empty to keep the existing shared private endpoint subnet, even with
+three resource groups. When both are set, enabled application Cosmos DB, Key
+Vault, App Configuration, Container Apps, ACR and Azure Monitor Private Link
+Scope private endpoints use the application subnet. Foundry/grounding endpoints
+remain on the subnet selected by existing native `peSubnetName` and
+`peSubnetPrefix` parameters.
+
+Set the pair before first provision, using your approved address plan:
+
+```bash
+azd env set AZURE_APPLICATION_PE_SUBNET_NAME snet-app-pe
+azd env set AZURE_APPLICATION_PE_SUBNET_PREFIX <approved-ipv4-subnet-cidr>
+```
+
+Bootstrap validates the pair, subnet name and IPv4 CIDR before optional group
+creation. Bicep additionally checks a network-aligned prefix length of `/29`
+or shorter, containment in the VNet, non-overlap with base subnet prefixes,
+a distinct subnet name and compatibility with BYO VNet settings. Review subnet
+ownership and existing-subnet compatibility with the network owner; these
+settings do not bypass the existing `DEPLOY_SUBNETS` contract.
 
 ### Hub integration
 

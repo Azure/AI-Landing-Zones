@@ -12,5 +12,6 @@ Read the concepts, then follow the runbook for the selected task:
 - [How it works](how-it-works.md): repositories, manifest, configuration and lifecycle.
 - [Customize Agent Application](build-your-own-app.md#customize-a-bundled-component): forks, component versions and application definitions.
 - [Deployment settings](configuration.md): deployment inputs and runtime settings.
+- [Resource group destinations](configuration.md#resource-group-destinations): optional per-environment ownership boundaries, scoped permissions and creation policy from v4.4.0.
 - [Deploy full stack runbook](deploy-full-stack.md): interactive deployment and lifecycle tasks.
 - [Azure DevOps runbook](azure-devops.md): optional gated DEV → TEST → PROD automation and environment boundaries.

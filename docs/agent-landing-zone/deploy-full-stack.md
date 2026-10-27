@@ -23,9 +23,13 @@ see [How it works](how-it-works.md).
 
 ## Prerequisites
 
-- **Permissions:** Owner, or Contributor plus User Access Administrator, at the
-  required deployment scopes. Shared networks, DNS and monitoring can require
-  additional permissions in their own scopes. See [Permissions](../bicep/permissions.md).
+- **Permissions:** Contributor for resource deployment plus
+  `Microsoft.Authorization/roleAssignments/write` at the required scopes,
+  for example through Role Based Access Control Administrator. Service
+  configuration needs separate data-plane roles. Shared networks, DNS and
+  monitoring can require additional scoped access. Subscription Owner is not
+  a blanket prerequisite; see [resource group permissions](configuration.md#resource-group-permissions)
+  and [foundation permissions](../bicep/permissions.md).
 - **Subscription readiness:** accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
   selected parameters. Review [regional considerations](../bicep/regional-considerations.md)
@@ -158,6 +162,12 @@ and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
 
+For a **new environment on v4.4.0 or a later reviewed compatible revision**,
+optionally set [Foundry and network resource group destinations](configuration.md#resource-group-destinations)
+now. Without those overrides, keep the single-group procedure unchanged.
+Additional groups must already exist unless their explicit creation is enabled
+and authorized. Do not change an existing environment's mapping to move resources.
+
 <a id="step-3-choose-a-topology"></a>
 
 ### Step 3: Choose the application and network
@@ -249,9 +259,14 @@ azd hooks run preup
 Resolve validation, quota, Policy and connectivity failures rather than bypassing
 checks. The explicit `preup` check also validates binding before standalone
 provisioning, which otherwise runs its check after azd may initialize a resource group.
-Run `azd provision --preview` and review resource scopes, public access, routes
-and role changes before applying the sequence below. Expect only changes
-authorized for the selected environment.
+For an optional `azd provision --preview`, first follow the
+[Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):
+preview skips preprovision hooks, so the selected environment's parameters and
+additional groups must be prepared first. Preparation/preview can create
+resource groups and do not establish private application readiness. Review
+resource scopes, public access, routes and role changes before applying the
+sequence below. Normal `azd provision` runs its preprovision hook automatically;
+manual preparation is not required when proceeding without preview.
 
 <span id="container-apps-orchestrator-classic"></span>
 <span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
@@ -317,7 +332,8 @@ service-specific procedures.
    `infra/` with that source, rather than replacing only that directory.
 2. Preserve the environment's layout, component selection, names and source
    bindings. Back up affected data and separately managed configuration.
-3. Preview infrastructure changes with `azd provision --preview`.
+3. If previewing, follow the [selected-environment preparation](deploy-infra-only.md#optional-preview-agent-source),
+   then review infrastructure changes with `azd provision --preview`.
 4. Run [Step 4](#step-4-deploy), including image preparation and the second
    provision when the source or generated image changes.
 5. Repeat [Validation](#validation) before promotion.
@@ -416,6 +432,15 @@ Owner or remove unrelated assignments to recover. See [hosted identities](hosted
     documents, indexes, configuration and conversation data. If the scope
     contains shared resources or retained data, stop and arrange itemized removal
     with the owners instead. Check retention obligations first.
+
+For the multi-group path, inventory **every configured destination**
+and its shared dependencies before cleanup. The root group alone is not the
+complete inventory. A `predown` safety hook **blocks `azd down` for split-group
+deployments**, with no automatic deletion or bypass option. Arrange itemized,
+owner-approved manual removal instead; do not bypass the hook or delete shared
+groups. Additional groups created by the feature are not tagged `azd-env-name`.
+Partial provisioning is not authorization to delete a group. The single-group
+path below is unchanged.
 
 ```bash
 azd env select <environment-name>
