@@ -60,11 +60,12 @@ Do not switch runtimes or weaken authentication to diagnose a failure.
 
 #### Resource group destination checks
 
-For **Agent Bicep/azd deployments from v4.4.0**, compare the selected environment's
-`AZURE_RESOURCE_GROUP`, optional `AZURE_FOUNDRY_RESOURCE_GROUP` and
+For **Agent Bicep/azd deployments**, compare the selected environment's
+`AZURE_RESOURCE_GROUP`, `AZURE_APP_RESOURCE_GROUP` and
 `AZURE_NETWORK_RESOURCE_GROUP` with the approved
 [destination mapping](configuration.md#resource-group-destinations).
-An omitted override uses the root group.
+New environments initialize separate application and network destinations;
+existing single-group environments retain their mapping.
 
 With `CREATE_RESOURCE_GROUPS=false`, have the owner pre-create missing additional
 groups. Enabling creation instead requires explicit authorization and
@@ -80,7 +81,7 @@ IDs and scoped permissions in every destination before continuing.
 
 #### Split-group cleanup safety check
 
-From **v4.4.0**, the `predown` hook blocks
+The `predown` hook blocks
 `azd down` when the workload destinations span distinct resource groups.
 This is an intentional safety check, not a provisioning or permission failure.
 No automatic deletion or bypass option is provided; do not bypass the hook or change the

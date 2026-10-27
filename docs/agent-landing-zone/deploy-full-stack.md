@@ -143,7 +143,6 @@ azd auth login
 az account set --subscription <subscription-id>
 azd env new <environment-name>
 azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
-azd env set AZURE_RESOURCE_GROUP <dedicated-resource-group>
 azd env set AZURE_LOCATION <region>
 ```
 
@@ -152,11 +151,15 @@ and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
 
-For a **new environment on v4.4.0 or a later reviewed compatible revision**,
-optionally set [Foundry and network resource group destinations](configuration.md#resource-group-destinations)
-now. Without those overrides, keep the single-group procedure unchanged.
-Additional groups must already exist unless their explicit creation is enabled
-and authorized. Do not change an existing environment's mapping to move resources.
+New environments use three resource groups:
+`rg-<environment-name>` for Foundry, `rg-<environment-name>-app` for the
+application and `rg-<environment-name>-network` for workload networking.
+To choose a different Foundry/root name, set `AZURE_RESOURCE_GROUP` before
+provision. The hook creates missing additional groups by default; the deploying
+identity needs permission to create them. To reuse pre-created groups or select
+one or two groups, set the
+[resource group destinations](configuration.md#resource-group-destinations)
+now. Existing environments keep their mapping.
 
 <a id="step-3-choose-a-topology"></a>
 
@@ -242,7 +245,8 @@ Confirm the target before creating or changing resources:
 
 ```bash
 azd env get-value AZURE_SUBSCRIPTION_ID
-azd env get-value AZURE_RESOURCE_GROUP
+azd env get-value AZURE_ENV_NAME
+azd env get-value AZURE_LOCATION
 azd hooks run preup
 ```
 
@@ -464,7 +468,8 @@ do not delete shared hub, DNS or monitoring resources.
     git -C ../agent-app-orchestrator rev-parse HEAD
     git -C ../agent-app-ui rev-parse HEAD
     azd env get-value AZURE_RESOURCE_GROUP
-    az containerapp list -g <resource-group> \
+    azd env get-value AZURE_APP_RESOURCE_GROUP
+    az containerapp list -g <application-resource-group> \
       --query "[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}" -o table
     ```
 
