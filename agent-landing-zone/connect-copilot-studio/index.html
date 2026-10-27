@@ -1460,6 +1460,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you'll have after this runbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-to-use" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1859,6 +1870,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you'll have after this runbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-to-use" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2056,26 +2078,26 @@
 agent</strong> without enabling Foundry public network access.</p>
 <p>You will reuse the existing Foundry agent and network, then create a relay flow
 and a dedicated pilot agent in Copilot Studio.</p>
+<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p>A Copilot Studio agent that calls your private Foundry agent through an
+authenticated Power Automate flow.</p>
+<p><img alt="Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API." src="../../media/runbooks/connect-copilot-studio.png" /></p>
+<p><a href="../../media/runbooks/connect-copilot-studio.png">Open the full-resolution diagram</a>.</p>
+<p>The figure shows one regional path, with separate subnets in your Azure VNet.</p>
+<p>Foundry receives the flow connection user's identity, not automatically the
+identity of the person chatting.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook when Copilot Studio needs to call an existing private Foundry
 agent through an authenticated flow. It is a shared-connection relay, not the
 native connected-agent setup or automatic per-user delegation.</p>
-<p>Messages follow this path:</p>
-<div class="runbook-path runbook-path--annotated">
-<ol role="list" aria-label="Message path from Copilot Studio to Foundry">
-  <li><strong>Copilot Studio</strong></li>
-  <li class="runbook-path__connection" role="presentation" aria-hidden="true"><span class="runbook-path__arrow"></span></li>
-  <li><strong>Power Automate</strong> <span class="runbook-path__detail">agent flow</span></li>
-  <li class="runbook-path__connection" role="presentation">
-    <strong class="runbook-path__protocol">HTTPS request</strong>
-    <span class="runbook-path__authentication">Microsoft Entra ID authentication</span>
-    <span class="runbook-path__arrow" aria-hidden="true"></span>
-  </li>
-  <li><strong>Foundry agent</strong> <span class="runbook-path__detail">Responses API</span></li>
-</ol>
-<p class="runbook-path__route"><strong>Private connectivity:</strong> HTTPS uses the Power Platform delegated subnet to reach the Foundry private endpoint.</p>
-</div>
-
+<p>The delegated subnet is in <strong>your Azure VNet</strong>, not inside Copilot Studio.
+It must be dedicated to Power Platform.</p>
+<p>It can use the VNet containing the Foundry private endpoint, provided that
+VNet meets Power Platform's regional requirements. Use <strong>different subnets</strong>
+for Power Platform delegation and private endpoints.</p>
+<p>Another connected VNet also works if routing, private DNS and HTTPS reach the
+Foundry private endpoint. Do not reuse the private-endpoint or Container Apps
+subnet for Power Platform delegation.</p>
 <div class="admonition note">
 <p class="admonition-title">Why use a flow in this scenario?</p>
 <p>This runbook covers <strong>Foundry with Public Network Access (PNA) disabled</strong>.
@@ -2122,6 +2144,11 @@ policy must reference the required regional networks and be associated with
 the environment. Use the
 <a href="https://learn.microsoft.com/power-platform/admin/vnet-support-setup-configure">Power Platform setup requirements</a>
 if the platform handoff is incomplete.</p>
+<p>Use the <a href="https://learn.microsoft.com/power-platform/admin/vnet-support-overview#supported-regions">required regional VNets</a>
+for the Power Platform environment. Geographies with multiple supported
+regions require two VNets in the specified Azure regions; every delegated
+subnet must reach Foundry privately. The figure illustrates one regional
+path, not the complete regional setup.</p>
 <div class="admonition warning">
 <p class="admonition-title">Foundry uses the connection user's permissions</p>
 <p>This procedure uses a <strong>specific, shared connection</strong> signed in as an

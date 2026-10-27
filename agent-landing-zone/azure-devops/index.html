@@ -1488,6 +1488,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you'll have after this runbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-to-use" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1882,6 +1893,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What you'll have after this runbook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#when-to-use" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2103,6 +2125,13 @@ protected approvals. This optional continuous integration and deployment
 (CI/CD) flow automates the
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.</p>
+<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p>One reviewed source revision promoted through DEV, TEST and PROD, with
+protected approvals and a private deployment path for each environment.</p>
+<p><img alt="Azure DevOps promotes the same reviewed source from CI through DEV, TEST and PROD with approvals. A self-hosted deployment runner deploys resources; a separate ACR Tasks pool builds images for each environment." src="../../media/runbooks/azure-devops.png" /></p>
+<p><a href="../../media/runbooks/azure-devops.png">Open the full-resolution diagram</a>.</p>
+<p>Each environment builds its own images from the reviewed source. The pipeline
+does not promote one identical image between environments.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook when your team needs repeatable source promotion with separate
 deployment identities and approval gates for each environment.</p>
