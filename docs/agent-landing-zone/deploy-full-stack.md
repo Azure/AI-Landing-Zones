@@ -27,8 +27,6 @@ orchestrator and native Foundry IQ ingestion and retrieval.
     depend on your application, network and deployment settings; existing
     resources may be reused.
 
-[Open the full-resolution diagram](../media/runbooks/deploy-full-stack.png).
-
 ## When to use
 
 Use this runbook for a new Agent Application deployment or to add it to its

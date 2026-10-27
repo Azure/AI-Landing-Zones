@@ -15,8 +15,6 @@ authenticated Power Automate flow.
 
 ![Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API.](../media/runbooks/connect-copilot-studio.png)
 
-[Open the full-resolution diagram](../media/runbooks/connect-copilot-studio.png).
-
 The figure shows one regional path, with separate subnets in your Azure VNet.
 
 Foundry receives the flow connection user's identity, not automatically the

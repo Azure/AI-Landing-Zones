@@ -15,8 +15,6 @@ or a jumpbox.
 
 ![A computer reaches workload services through a VPN Gateway and private endpoint, with a reachable DNS resolver and private DNS zones.](../media/runbooks/private-access-vpn.png)
 
-[Open the full-resolution diagram](../media/runbooks/private-access-vpn.png).
-
 The figure shows a standalone gateway. An approved hub VPN can provide the
 same access with the appropriate peering, gateway transit, client routes and DNS.
 

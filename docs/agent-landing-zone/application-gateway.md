@@ -15,8 +15,6 @@ the UI and Foundry retain their private backend paths.
 
 ![An approved user's browser reaches the public HTTPS frontend of Application Gateway. The gateway forwards to the private UI Container App, which calls Foundry through a private endpoint.](../media/runbooks/application-gateway.png)
 
-[Open the full-resolution diagram](../media/runbooks/application-gateway.png).
-
 The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
 bases. Their private connectivity, authentication, and authorization still apply.
