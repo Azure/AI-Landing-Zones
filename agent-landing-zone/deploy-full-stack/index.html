@@ -2515,15 +2515,14 @@ Docker. With isolation enabled, keep the private build pool.
 See <a href="../network-isolation/">network isolation</a> for build egress,
 DNS and private-link readiness requirements.</p>
 <h3 id="step-4-deploy">Step 4: Deploy</h3>
-<p>Confirm the target before creating or changing resources:</p>
+<p><strong>Optional (recommended):</strong> confirm the target and run the preflight check:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_SUBSCRIPTION_ID
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_ENV_NAME
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_LOCATION
 azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>preup
 </code></pre></div>
-<p>Resolve validation, quota, Policy and connectivity failures rather than bypassing
-checks. The explicit <code>preup</code> check also validates binding before standalone
-provisioning, which otherwise runs its check after azd may initialize a resource group.</p>
+<p><code>azd up</code> runs <code>preup</code> automatically. Before standalone <code>azd provision</code>, running
+it explicitly checks the application definition and environment binding earlier.</p>
 <p>For an optional <code>azd provision --preview</code>, first follow the
 <a href="../deploy-infra-only/#optional-preview-agent-source">Agent preview preparation warning</a>:
 preview skips preprovision hooks, so the selected environment's parameters and
