@@ -12,6 +12,23 @@ and Foundry IQ manages source ingestion and retrieval. The default
 `hosted-no-panel` layout omits the administrative panel and Agent Application
 Cosmos DB. Foundry can require separate backing resources.
 
+## What you'll have after this runbook
+
+Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
+orchestrator and native Foundry IQ ingestion and retrieval.
+
+![The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional.](../media/runbooks/deploy-full-stack.png)
+
+!!! note "Deployment options"
+    This diagram illustrates the default hosted application layout, not a
+    fixed list of resources for every deployment.
+
+    Optional components are included only when enabled. The actual resources
+    depend on your application, network and deployment settings; existing
+    resources may be reused.
+
+[Open the full-resolution diagram](../media/runbooks/deploy-full-stack.png).
+
 ## When to use
 
 Use this runbook for a new Agent Application deployment or to add it to its
@@ -250,17 +267,18 @@ DNS and private-link readiness requirements.
 
 ### Step 4: Deploy
 
-**Optional (recommended):** confirm the target and run the preflight check:
+!!! note "Optional preflight check (recommended)"
+    Confirm the deployment target and check the application definition and
+    environment binding before provisioning:
 
-```bash
-azd env get-value AZURE_SUBSCRIPTION_ID
-azd env get-value AZURE_ENV_NAME
-azd env get-value AZURE_LOCATION
-azd hooks run preup
-```
+    ```bash
+    azd env get-value AZURE_SUBSCRIPTION_ID
+    azd env get-value AZURE_ENV_NAME
+    azd env get-value AZURE_LOCATION
+    azd hooks run preup
+    ```
 
-`azd up` runs `preup` automatically. Before standalone `azd provision`, running
-it explicitly checks the application definition and environment binding earlier.
+    `azd up` already runs `preup` automatically.
 
 For an optional `azd provision --preview`, first follow the
 [Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):

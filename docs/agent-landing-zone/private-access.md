@@ -8,6 +8,18 @@ HTTPS access to the workload services from that computer. Once connected,
 you can run deployment hooks or development tools directly; **Bastion and a
 jumpbox are not required for this path**.
 
+## What you'll have after this runbook
+
+Your computer connected to the private VNet through a VPN, without Bastion
+or a jumpbox.
+
+![A computer reaches workload services through a VPN Gateway and private endpoint, with a reachable DNS resolver and private DNS zones.](../media/runbooks/private-access-vpn.png)
+
+[Open the full-resolution diagram](../media/runbooks/private-access-vpn.png).
+
+The figure shows a standalone gateway. An approved hub VPN can provide the
+same access with the appropriate peering, gateway transit, client routes and DNS.
+
 ## When to use
 
 Use this runbook when a workstation must reach private workload endpoints

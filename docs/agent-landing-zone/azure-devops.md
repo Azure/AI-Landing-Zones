@@ -8,6 +8,18 @@ protected approvals. This optional continuous integration and deployment
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.
 
+## What you'll have after this runbook
+
+One reviewed source revision promoted through DEV, TEST and PROD, with
+protected approvals and a private deployment path for each environment.
+
+![Azure DevOps promotes the same reviewed source from CI through DEV, TEST and PROD with approvals. A self-hosted deployment runner deploys resources; a separate ACR Tasks pool builds images for each environment.](../media/runbooks/azure-devops.png)
+
+[Open the full-resolution diagram](../media/runbooks/azure-devops.png).
+
+Each environment builds its own images from the reviewed source. The pipeline
+does not promote one identical image between environments.
+
 ## When to use
 
 Use this runbook when your team needs repeatable source promotion with separate
