@@ -72,19 +72,8 @@ and `azure.yaml` live. Its lifecycle does not configure or deploy the Agent
 Application. Do not provision this separate project into an Agent environment.
 For application deployment, start from the Agent source instead.
 
-Select the approved full Git commit in the chosen repository before continuing:
-
-```bash
-git checkout --detach <approved-source-commit>
-git rev-parse HEAD
-git status --short
-```
-
-Expect HEAD to match that commit and no unexpected changes. Record the reviewed
-nonsecret root parameters alongside the commit.
-
 For Agent source, [set up Python](deploy-full-stack.md#prepare-python) from
-the selected revision before lifecycle commands.
+the cloned repository before lifecycle commands.
 
 ### Step 2: Create and confirm the target
 
