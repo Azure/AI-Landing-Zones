@@ -2653,6 +2653,11 @@ See also
 <h2 id="network-and-security">Network and security</h2>
 <p>These parameters apply mainly when <code>NETWORK_ISOLATION=true</code>.
 <a href="../network-isolation/">Network isolation</a> explains connectivity and DNS requirements.</p>
+<p>Additional runtime destinations belong in the application's
+<a href="../build-your-own-app/#runtime-egress-declarations"><code>components[].egress</code></a>,
+not a blanket network exception or App Configuration key.
+<a href="../network-isolation/#component-runtime-egress">Review the component plan</a>
+before provisioning; external firewall policies remain report-only.</p>
 <table>
 <thead>
 <tr>

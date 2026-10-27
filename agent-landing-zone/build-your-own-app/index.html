@@ -1544,6 +1544,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#runtime-egress-declarations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime egress declarations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-a-definition-cannot-contain" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2087,6 +2098,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#runtime-egress-declarations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Runtime egress declarations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#what-a-definition-cannot-contain" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2429,6 +2451,33 @@ services, paths stay inside the application folder, and hosted components
 cannot set Container App <code>ingress</code> or <code>resources</code>.</p>
 <p>Definition settings are validated but <strong>not published to App Configuration</strong>.
 Arrange runtime configuration separately.</p>
+<h4 id="runtime-egress-declarations">Runtime egress declarations</h4>
+<p>Each component can declare additional outbound dependencies with <code>egress</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">"egress"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"fqdn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"api.example.com"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">443</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"purpose"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Retrieve the application's approved reference data"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>Use exact DNS FQDNs, lowercase <code>http</code> or <code>https</code>, an integer port from 1 to
+64000 and a nonblank purpose of at most 256 characters. URLs, paths, wildcards,
+IP addresses and local hostnames are rejected. Each component supports at most
+100 entries; destinations are normalized to lowercase.</p>
+<p>An explicit <code>egress: []</code> means no additional runtime egress and removes that
+component's ownership of previously generated requirements. Omitting <code>egress</code>
+remains valid: an enabled legacy component retains its previously owned
+requirements, but a fresh legacy definition adds none. Removing a component
+removes its ownership, not another component's shared dependency.</p>
+<p>Review the exact source's fixed downloads and configured integrations when
+editing these declarations. The bundled UI declares <code>[]</code>; both orchestrator
+and ingestion declare the tiktoken asset host over HTTPS/443. A custom
+definition is additive, so its plan can also include bundled workloads.
+Follow <a href="../network-isolation/#component-runtime-egress">runtime egress review and reconciliation</a>
+before provisioning. Build registries and package feeds are configured
+<a href="../network-isolation/#application-specific-package-feeds">separately</a>.</p>
 <h4 id="what-a-definition-cannot-contain">What a definition cannot contain</h4>
 <p>No lifecycle hooks, Azure role names or remote URLs (except <code>$schema</code>).
 Configure endpoints separately and grant permissions through capability profiles.</p>

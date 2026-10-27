@@ -2439,6 +2439,12 @@ delegated Foundry audience followed by <code>/.default</code> before provisionin
 when application deployment will happen later. See the linked full-stack
 runbook for the identity inputs and protected-retrieval integration gate.</p>
 <h3 id="step-4-preview-and-provision">Step 4: Preview and provision</h3>
+<p>For Agent source, review the selected application's
+<a href="../network-isolation/#review-before-provisioning">runtime egress plan</a> before
+approving provisioning:
+<code>python -m config.deployment.egress --plan --environment &lt;environment-name&gt;</code>.
+This command is local and read-only; it does not run the preparation hook
+or create resource groups.</p>
 <p>For Agent source, first run <code>azd hooks run preup</code> to validate the definition and
 binding before azd's resource-group initialization.
 Normal <code>azd provision</code> automatically runs the Agent preprovision hook to

@@ -2525,6 +2525,11 @@ resource groups and do not establish private application readiness. Review
 resource scopes, public access, routes and role changes before applying the
 sequence below. Normal <code>azd provision</code> runs its preprovision hook automatically;
 manual preparation is not required when proceeding without preview.</p>
+<p>Before approving provisioning, review the selected components'
+<a href="../network-isolation/#review-before-provisioning">runtime egress plan</a> with
+<code>python -m config.deployment.egress --plan --environment &lt;environment-name&gt;</code>.
+Managed rules reconcile during postprovision and predeploy; an external
+firewall receives only a report for its policy owner.</p>
 <p><span id="container-apps-orchestrator-classic"></span>
 <span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span></p>
 <h4 id="default-foundry-orchestrator-hosted-no-panel">Default Foundry orchestrator (<code>hosted-no-panel</code>)</h4>

@@ -635,6 +635,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component-runtime-egress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component runtime egress
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Component runtime egress">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-before-provisioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review before provisioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Policy ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-scope-and-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source scope and recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#private-connectivity-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1927,6 +1977,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#component-runtime-egress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Component runtime egress
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Component runtime egress">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-before-provisioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review before provisioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#policy-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Policy ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-scope-and-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source scope and recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#private-connectivity-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2202,6 +2302,90 @@ does not change client DNS.</p>
 verification, or change dependency integrity hashes to work around a failed build.</p>
 <p>See <a href="../troubleshooting/#package-installation-fails-inside-the-build-pool">Package installation fails inside the build pool</a>
 for diagnosis.</p>
+<h2 id="component-runtime-egress">Component runtime egress</h2>
+<p>Application components declare additional runtime destinations in
+<a href="../build-your-own-app/#runtime-egress-declarations"><code>components[].egress</code></a>.
+The plan follows actual enabled workloads: optional ingestion, hosted or
+preserved Container App orchestration, and additive custom applications.
+The bundled UI needs no additional fixed destination. Both orchestrator and
+ingestion initialize tiktoken, whose empty-cache startup downloads encoding
+assets from <code>openaipublic.blob.core.windows.net</code> over HTTPS/443.</p>
+<p>These are runtime rules, not build-feed rules or replacements for private
+endpoints, authentication, DNS or routing. Configured SharePoint, SQL, MCP
+and other custom destinations require their own dependency review.</p>
+<h3 id="review-before-provisioning">Review before provisioning</h3>
+<p>From the platform root with the prepared Python environment, set the intended
+topology, ingestion selection and application definition in the selected azd
+environment, then run:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.egress<span class="w"> </span>--plan<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
+</code></pre></div>
+<p>This reads the named local azd environment and validates declarations without
+Azure access. Review <code>policyMode</code>, selected components, destinations and
+purposes. The preprovision hook repeats this calculation, prints it and saves
+<code>.azure/&lt;environment-name&gt;/component-egress-plan.json</code> before foundation
+deployment. Approval of provisioning includes these declared requirements.</p>
+<p>After infrastructure exists and local provisioning outputs are current, use:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.egress<span class="w"> </span>--review<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
+</code></pre></div>
+<p>This is read-only. It resolves actual workload subnet prefixes and, for a
+deployment-managed policy, reports additions, updates and removals. A fresh
+deployment cannot resolve subnet prefixes until its infrastructure exists.
+Postprovision and predeploy print this resolved plan before managed
+reconciliation. If postprovision is explicitly deferred, reconciliation is
+also deferred; predeploy still enforces the connectivity and plan checks.</p>
+<h3 id="policy-ownership">Policy ownership</h3>
+<table>
+<thead>
+<tr>
+<th>Deployment</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NETWORK_ISOLATION=false</code></td>
+<td>No component firewall reads or writes; declarations do not create a firewall</td>
+</tr>
+<tr>
+<td>Isolated with a deployment-managed firewall</td>
+<td>Reconciles only marked application rules in <code>AgentLzComponentEgress</code>, priority 400</td>
+</tr>
+<tr>
+<td>Isolated with an external firewall</td>
+<td>Reports required rules and legacy components; never reads or mutates the external policy</td>
+</tr>
+</tbody>
+</table>
+<p>For managed policies, the runner needs management-plane subnet reads and
+<code>Microsoft.Network/firewallPolicies/ruleCollectionGroups/read</code> and <code>write</code>
+on the deployment policy. The reconciler does not write the parent policy.
+For external policies, the network owner compares the report with their own
+policy and applies approved changes. Reporting does not prove that egress is
+allowed.</p>
+<p>Shared destination/protocol/port tuples produce one rule, with sources and
+ownership combined across components. Removing one owner narrows sources where
+possible; the rule remains until its final declared owner disappears.
+Enabled legacy components with absent declarations retain their earlier owned
+requirements. Other rules and collections, including unmarked entries inside
+the component group, are preserved. Ownership collisions, malformed marked
+rules, conflicting priorities or concurrent changes fail rather than being
+silently adopted or overwritten.</p>
+<h3 id="source-scope-and-recovery">Source scope and recovery</h3>
+<p>Rules use the actual provisioned Container Apps or Foundry agent subnet
+prefixes, including existing-VNet selections, not the whole VNet or <code>*</code>.
+<strong>Subnet scope is not component isolation:</strong> every workload sharing a source
+subnet can use its union of allowed destinations. Existing platform rules can
+also allow traffic. Use dedicated subnets or environments and an approved
+network design when workloads need distinct egress boundaries.</p>
+<p>After changing declarations or selections, review the new local plan and run
+the normal provisioning sequence before deploying. A missing or stale saved
+plan stops apply before Azure access. Do not copy a plan or provisioning
+outputs from another environment.</p>
+<p>For rollback, first review explicit empty declarations for the components
+whose additional rules should be removed, then reconcile using the current
+hooks. Keep declarations for any remaining consumers. Only afterward roll
+back hooks or metadata: reverting code alone does not remove existing rules.
+Never delete shared foundation groups or externally managed policy content.</p>
 <p><span id="verify-private-connectivity"></span></p>
 <h2 id="private-connectivity-checks">Private connectivity checks</h2>
 <p>The runbooks check service hostnames from the deployment runner, including
