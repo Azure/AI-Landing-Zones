@@ -2204,8 +2204,8 @@ runs lifecycle hooks. An existing environment can need private App Configuration
 access before ARM deployment to resolve its topology. Post-provision also needs
 private connectivity, so an unconnected host cannot complete every stage.</p>
 <p>The matching deployment runbook therefore requires a connected host. The
-default Foundry hosted deployment also needs the image preparation and
-deployment metadata stages described in
+default Foundry hosted deployment automatically prepares its image and
+application handoff during <code>azd deploy</code>, as described in
 <a href="../deploy-full-stack/">Deploy full stack</a>.</p>
 <p><span id="reach-the-private-network"></span></p>
 <h2 id="private-network-access">Private network access</h2>

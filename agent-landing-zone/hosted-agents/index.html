@@ -1981,12 +1981,14 @@ operator access. Those capabilities have independent integration and validation 
 Agent App Ingestion is selected separately, as described in
 <a href="../ingestion/">Ingestion and conversation uploads</a>.</p>
 <h2 id="image-and-deployment-handoff">Image and deployment handoff</h2>
-<p>Hosted deployment separates infrastructure provisioning, image preparation and
-agent-version deployment. Preparation builds the manifest-pinned orchestrator,
-resolves an immutable digest and applies the supported startup command.
-Provisioning records the image handoff; deployment creates the agent version.
-A fresh <code>azd up</code> alone cannot perform the required intermediate preparation.
-Private builds use the VNet's ACR Tasks agent pool.</p>
+<p>Hosted deployment separates foundation provisioning from application deployment.
+<code>azd provision</code> creates the project, registry, network and access prerequisites,
+not a running agent or a placeholder. <code>azd deploy</code> automatically builds the
+manifest-pinned orchestrator with the supported hosted startup command when
+needed, records an immutable digest, binds the image to the provisioned
+foundation and creates the agent version. No separate preparation command or
+second provision is needed; <code>azd up</code> performs the full workflow.
+Private builds still use the VNet's ACR Tasks agent pool.</p>
 <h3 id="redeploy-the-same-image-or-prepare-a-new-one">Redeploy the same image or prepare a new one</h3>
 <table>
 <thead>
@@ -1997,12 +1999,12 @@ Private builds use the VNet's ACR Tasks agent pool.</p>
 </thead>
 <tbody>
 <tr>
-<td>Same digest, compatible source and provisioned handoff</td>
-<td>The image can be reused.</td>
+<td>Same generated digest, matching source and startup provenance</td>
+<td>Deployment reuses the image.</td>
 </tr>
 <tr>
-<td>Changed orchestrator source pin</td>
-<td>Preparation rebuilds when source provenance differs; its handoff needs provisioning before deployment. Deploy-only reuses the recorded image.</td>
+<td>Missing image or changed generated source/startup provenance</td>
+<td>Deployment builds the manifest-pinned image and updates the handoff without reprovisioning.</td>
 </tr>
 <tr>
 <td>Changed hosted process environment or cached runtime settings</td>
@@ -2010,14 +2012,18 @@ Private builds use the VNet's ACR Tasks agent pool.</p>
 </tr>
 <tr>
 <td>Explicit digest without generated-source provenance</td>
-<td>Compatibility and registry availability are operator-owned. Preparation does not replace it automatically.</td>
+<td>Compatibility and registry availability are operator-owned. Deployment does not replace it automatically.</td>
 </tr>
 </tbody>
 </table>
 <p>Generated images are reused only when the recorded source revision and startup
-command match. Preparation with <code>--image-version sha256:&lt;64-hex-characters&gt;</code>
-skips building and clears the generated build record. Independent builds of
-the same source need not produce the same digest.</p>
+command match. To supply an independently built image, set
+<code>HOSTED_AGENT_IMAGE_VERSION</code> to its canonical digest and clear
+<code>HOSTED_AGENT_IMAGE_SOURCE_COMMIT</code> and <code>HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256</code>.
+The image must be available in the selected registry and repository and already
+use the hosted entrypoint. Independent builds of the same source need not
+produce the same digest. The standalone preparation scripts remain optional
+compatibility commands; they are not required deployment steps.</p>
 <p>The procedure is in <a href="../deploy-full-stack/#redeploy-applications-only">application redeployment</a>.</p>
 <h2 id="validation-rules">Validation rules</h2>
 <p><a href="../configuration/">Deployment settings</a> distinguishes deployment inputs from

@@ -2900,15 +2900,18 @@ owners. Confirm retained/shared resources remain intact afterward.
 The normal single-group <code>azd down</code> path is unchanged; its
 <a href="../deploy-full-stack/#remove-an-environment">deletion review</a> still applies.</p>
 <h4 id="hosted-deployment-is-not-prepared">Hosted deployment is not prepared</h4>
-<p><strong>Symptom:</strong> Deployment reports missing hosted preparation or an incomplete
-image handoff.</p>
-<p><strong>Diagnose:</strong> The first provision creates prerequisites and records
-<code>HOSTED_AGENT_PREPARED=true</code>. Preparation records an immutable image digest.
-A subsequent provision records the <code>DEPLOY_HOSTED_AGENT=true</code> handoff.
-Deployment then creates the running agent version.</p>
-<p><strong>Correct:</strong> Follow the hosted sequence in
-the <a href="../deploy-full-stack/#step-4-deploy">Deploy full stack runbook</a> from the first
-incomplete step. For an unchanged, compatible image, use the
+<p><strong>Symptom:</strong> Deployment reports missing hosted foundation prerequisites or
+automatic image preparation fails.</p>
+<p><strong>Diagnose:</strong> Provision creates prerequisites and records
+<code>HOSTED_AGENT_PREPARED=true</code>. Deployment builds or reuses the immutable image,
+records its application handoff and creates the running agent version. A missing
+digest before deployment is normal; it does not require another provision.</p>
+<p><strong>Correct:</strong> Provision if the foundation is missing. Otherwise review the failed
+build, pinned source, registry access and private ACR Tasks pool, then retry
+<code>azd deploy</code>. A foundation project or registry binding mismatch must be resolved
+against the intended environment, not bypassed by editing output flags.
+Follow the <a href="../deploy-full-stack/#step-4-deploy">Deploy full stack runbook</a>.
+For an unchanged, compatible image, use the
 <a href="../deploy-full-stack/#redeploy-applications-only">redeployment guidance</a>.
 Let the workflow generate its output flags.</p>
 <p><strong>Verify:</strong> Deployment targets the intended digest and routed agent version.
@@ -2985,8 +2988,8 @@ image preparation and isolated custom source builds require the supported ACR
 Tasks path. See <a href="../network-isolation/#image-builds-in-isolated-deployments">isolated image builds</a>.</p>
 <p><strong>Verify:</strong> Confirm the selected environment has the provisioned pool output
 and that a build runs in it. Then resume the topology's
-<a href="../deploy-full-stack/#step-4-deploy">deployment sequence</a>; hosted preparation
-may still be incomplete.</p>
+<a href="../deploy-full-stack/#step-4-deploy">deployment sequence</a>; <code>azd deploy</code> resumes
+automatic hosted image preparation.</p>
 <h4 id="package-installation-fails-inside-the-build-pool">Package installation fails inside the build pool</h4>
 <p><strong>Symptom:</strong> An ACR run starts, but package installation fails. npm can report
 <code>Exit handler never called!</code>, followed by <code>tsc: not found</code>.</p>
@@ -3177,8 +3180,9 @@ provisioning time.</p>
 <p><strong>Symptom:</strong> Re-provision reports insufficient remaining model quota for the
 same account, deployment and configured capacity.</p>
 <p><strong>Diagnose:</strong> Compare the requested capacity with the existing successful
-deployment and remaining regional quota. A second hosted provision must use
-the same reviewed account and model inputs.</p>
+deployment and remaining regional quota. Reprovisioning must use the same
+reviewed account and model inputs. Hosted image preparation itself does not
+require reprovisioning.</p>
 <p><strong>Correct:</strong> Verify environment, account region, deployment, model/version and
 SKU. Preflight credits only verified successful matching capacity and aggregates quota
 pools. Fresh allocations and changed/unverified targets still need capacity.

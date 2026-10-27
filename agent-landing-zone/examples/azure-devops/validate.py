@@ -118,9 +118,10 @@ def main():
     check("azd config set auth.useAzCliAuth true" in body, "Missing Azure CLI auth handoff")
     check("azd env refresh" in body and "|| true" not in body, "Refresh must fail closed")
     check("azd hooks run preup" in body, "Validate binding before standalone provision")
-    check(body.index("azd provision") < body.index("prepareHostedDeployment.sh")
-          < body.rindex("azd provision") < body.index("azd deploy"),
-          "First hosted deployment needs provision/prepare/provision/deploy")
+    check(body.count("azd provision --no-prompt") == 1
+          and body.index("azd provision --no-prompt") < body.index("azd deploy --no-prompt")
+          and "prepareHostedDeployment" not in body,
+          "Hosted deployment needs one provision followed by deploy-owned preparation")
     check(python_blocks == 1, "Expected to syntax-check the settings Python block")
     cleanup = deploy_steps[-1]
     check(cleanup["condition"] == "always()", "Runtime-state cleanup must run after failure")

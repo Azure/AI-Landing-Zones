@@ -2507,19 +2507,19 @@ environment into CI.</p>
 <tbody>
 <tr>
 <td>Hosted Agent Application</td>
-<td><code>azd hooks run preup --no-prompt</code> → <code>azd provision --no-prompt</code> → <code>bash scripts/prepareHostedDeployment.sh</code> → <code>azd provision --no-prompt</code> → <code>azd deploy --no-prompt</code></td>
+<td><code>azd hooks run preup --no-prompt</code> → <code>azd provision --no-prompt</code> → <code>azd deploy --no-prompt</code></td>
 </tr>
 </tbody>
 </table>
 <p>Preup validates/checks binding before standalone provisioning. Preprovision
 resolves topology using <code>python -m config.deployment.topology</code> and composes
 <code>infra/main.parameters.json</code>; subsequent hooks use <code>--describe</code> to read its JSON.
-Post-provision configures application services and roles. The first hosted
-provision prepares prerequisites, preparation records an image digest, the second
-provision materializes that digest in the deployment handoff, and deploy creates
-the hosted version plus the other selected components.</p>
+Post-provision configures application services and roles. Provision prepares
+the hosted foundation prerequisites. Deploy automatically builds or reuses the
+immutable image, materializes its application handoff and creates the hosted
+version plus the other selected components, without another provision.</p>
 <p>This full workflow is deliberately repeatable on fresh agents. A hosted
-preparation may reuse a compatible digest when its provenance is available, but
+deployment may reuse a compatible digest when its provenance is available, but
 disposable local state and different environment registries can cause rebuilding.
 Agent Application Container App scripts build per environment.</p>
 <p><strong>This is immutable source
@@ -2622,8 +2622,8 @@ tenant consent. Perform those acceptance checks separately.</p>
 <td>Use the clean workspace and exact manifest/local source commits. Do not remove commit validation or update pins only in PROD.</td>
 </tr>
 <tr>
-<td>Hosted handoff/digest missing</td>
-<td>Complete provision → prepare → provision → deploy; see <a href="../hosted-agents/#redeploy-the-same-image-or-prepare-a-new-one">hosted redeployment</a>. Do not skip the second provision after a source change.</td>
+<td>Hosted image preparation fails</td>
+<td>Verify the provisioned foundation, manifest pin, ACR build/pull access and private build pool, then retry <code>azd deploy</code>; see <a href="../hosted-agents/#redeploy-the-same-image-or-prepare-a-new-one">hosted redeployment</a>. No separate preparation or second provision is required.</td>
 </tr>
 <tr>
 <td>Green deploy but UI login/retrieval fails</td>

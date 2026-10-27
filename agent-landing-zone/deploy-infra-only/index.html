@@ -2601,7 +2601,8 @@ Turning a deploy flag off is not deletion or permission cleanup.</p>
 <h3 id="add-an-application-later">Add an application later</h3>
 <p>Deploy the same bound application and selected components.
 Follow <a href="../deploy-full-stack/#step-4-deploy">Step 4 of the Deploy full stack runbook</a>:
-prepare the hosted image, provision its digest handoff, then deploy.
+run <code>azd deploy</code> from the configured foundation. Deployment automatically
+prepares the hosted image and its handoff; no second provision is required.
 Custom definitions follow their own component contract.</p>
 <h3 id="remove-the-foundation">Remove the foundation</h3>
 <p>Use the <a href="../deploy-full-stack/#remove-an-environment">safe environment removal procedure</a>

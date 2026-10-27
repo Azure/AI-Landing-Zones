@@ -2548,12 +2548,10 @@ Review <a href="../network-isolation/">private-runner permissions</a> and
 <a href="../hosted-agents/">hosted identities</a> for the required scopes.</p>
 <p>A fresh hosted Agent Application deployment needs this order:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
-pwsh<span class="w"> </span>scripts/prepareHostedDeployment.ps1
-azd<span class="w"> </span>provision
 azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>On Linux/macOS replace the preparation command with
-<code>./scripts/prepareHostedDeployment.sh</code>.</p>
+<p>The commands are the same on Windows, Linux and macOS. You can also run
+<code>azd up</code> to provision and deploy in one workflow.</p>
 <p><a id="what-happens-during-the-deployment"></a></p>
 <table>
 <thead>
@@ -2564,31 +2562,25 @@ azd<span class="w"> </span>deploy
 </thead>
 <tbody>
 <tr>
-<td>First provision</td>
-<td>Creates the foundation and configures its services</td>
+<td>Provision</td>
+<td>Creates the foundation and configures its services; no running hosted agent or placeholder image is created</td>
 </tr>
 <tr>
-<td>Preparation</td>
-<td>Fetches the pinned orchestrator source, builds its hosted image and records an immutable digest</td>
+<td>Deploy: image</td>
+<td>Automatically fetches the pinned orchestrator source, builds its hosted image when needed, records an immutable digest and binds it to the existing foundation</td>
 </tr>
 <tr>
-<td>Second provision</td>
-<td>Materializes the image and Foundry deployment handoff</td>
-</tr>
-<tr>
-<td>Deploy</td>
+<td>Deploy: applications</td>
 <td>Creates the hosted version, bootstraps its limited runtime grants, tests a greeting and deploys selected apps</td>
 </tr>
 </tbody>
 </table>
-<p>A fresh <code>azd up</code> does not build the missing hosted handoff. If you started with
-it, complete preparation, the second provision and deployment. If the first
-provision deferred configuration, complete that work before preparation.
-Do not skip the second provision or replace the digest with an image tag.
-If the second provision rejects quota for an unchanged deployment, inspect
-<a href="../troubleshooting/">quota diagnostics</a> rather than bypassing the gate.</p>
+<p>Image preparation is part of <code>azd deploy</code>; no separate preparation command or
+second provision is required. If provisioning deferred configuration, complete
+that work from a connected host before deployment. Do not replace the digest
+with an image tag or bypass permission, network or configuration failures.</p>
 <p>For an already configured infrastructure-only environment, reuse the same
-checkout, inputs and bound application. Continue at preparation above.
+checkout, inputs and bound application, then run <code>azd deploy</code>.
 Review hook logs even after success: some configuration sections can log
 failures and continue. Resolve those failures before validation.</p>
 <p>For an initial deployment, continue to <a href="#validation">Validation</a> now.
@@ -2609,21 +2601,22 @@ service-specific procedures.</p>
    bindings. Back up affected data and separately managed configuration.</li>
 <li>If previewing, follow the <a href="../deploy-infra-only/#optional-preview-agent-source">selected-environment preparation</a>,
    then review infrastructure changes with <code>azd provision --preview</code>.</li>
-<li>Run <a href="#step-4-deploy">Step 4</a>, including image preparation and the second
-   provision when the source or generated image changes.</li>
+<li>Run <a href="#step-4-deploy">Step 4</a>. Deployment prepares the image automatically,
+   including when its recorded generated-source provenance is stale.</li>
 <li>Repeat <a href="#validation">Validation</a> before promotion.</li>
 </ol>
 <h3 id="redeploy-applications-only">Redeploy applications only</h3>
-<p>When foundation outputs, application binding, component selection and the image
-handoff remain compatible:</p>
+<p>When foundation outputs, application binding and component selection remain
+compatible:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
 <p>Agent Application Container Apps use the manifest's verified sibling checkouts. Preserve
 local work and relocate a stale checkout so the hook can fetch the selected
 revision; it does not advance an existing checkout automatically. Child logs
 are under each component's <code>.logs</code> directory and can contain sensitive details.</p>
-<p>Hosted deployment reuses the prepared digest. A changed generated source pin or
-image requires preparation, provisioning the handoff and deployment again.
+<p>Hosted deployment reuses a generated digest only when its recorded source pin
+and startup command match. Missing or stale generated images are built during
+<code>azd deploy</code>, without another provision.
 An operator-managed digest is not rebuilt automatically: verify its provenance,
 compatibility and registry availability. When rebuilding the same source in
 each environment, compare the resulting image digests before promotion.</p>
@@ -2768,9 +2761,10 @@ part of this deployment.</p>
 <li>Preview infrastructure or configuration reversals before applying them.
    Keep the approved authentication and network posture.</li>
 <li>Follow <a href="#step-4-deploy">Step 4</a> with the previous compatible source and inputs:
-   provision, prepare the pinned image, provision its digest handoff, then deploy.
+   provision, then deploy; deployment prepares the pinned image automatically.
    If retaining an operator-managed digest, verify its availability and
-   compatibility; preparation does not rebuild it.</li>
+   compatibility; deployment does not rebuild it. If restoring older tooling,
+   follow that tooling's own required deployment sequence.</li>
 <li>Restore directly managed runtime keys separately from the source checkout,
    reload affected components and repeat <a href="#validation">Validation</a> before cutover.</li>
 </ol>
