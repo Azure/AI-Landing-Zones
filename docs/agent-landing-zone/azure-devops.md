@@ -20,10 +20,8 @@ or [Deploy full stack](deploy-full-stack.md) runbook. For component changes, see
 !!! info "Choose the right pipeline"
     The downloadable example below verifies the **same source commit in every
     job** and enforces successful prior stages. Images are built per environment.
-    The separate [foundation pipeline guide](../bicep/deploy-with-azure-devops.md)
-    explains upstream service connections and Environment setup; those assets
-    provision infrastructure only, allow independent environment selection and
-    do not automatically execute their preview template.
+    Keep the platform's incorporated `infra/` and lifecycle hooks in that same
+    revision. Do not substitute pipelines from a separate foundation checkout.
 
 ## Prerequisites
 

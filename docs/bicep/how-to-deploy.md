@@ -8,7 +8,7 @@ search:
 Deployment instructions are consolidated into two runbooks:
 
 - [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
-  covers both the independent Bicep foundation and Agent foundation.
+  provisions the incorporated foundation from the Agent Landing Zone root.
 - [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md)
   includes Agent application images and runtime deployment.
 
@@ -30,29 +30,34 @@ service access.
 
 ### Private build pool ordering
 
-!!! warning "Available in v2.7.0 - live cold-start validation not verified"
-    The ordering change for [Azure/bicep-ptn-aiml-landing-zone#159](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/159) is available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0). Release availability and successful CI do not establish that a live cold-start deployment has succeeded; collect the first-attempt evidence described below.
-
 The private Container Registry build agent pool has an explicit `dependsOn` on the **conditionally deployed BYO-VNet subnet module**. When that module creates the build subnet, the pool must wait for it to complete; constructing a subnet resource ID alone does not establish deployment ordering.
 
 The existing `networkIsolation`, `useExistingVNet`, `deploySubnets`, `deployNsgs`, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When `deploySubnets=false`, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.
 
 For a cold-start verification, record that the target build subnet is **absent before the first attempt** in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and `countSucceeded`, counting only operations that actually reached `Succeeded`. A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.
 
-### BYO VNet Bastion subnet NSG patch (v2.7.1)
+### BYO VNet Bastion subnet NSGs
 
-The [v2.7.1 patch](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.1) targets [Azure/bicep-ptn-aiml-landing-zone#168](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/168): BYO-VNet subnet creation with `useExistingVNet=true`, `deploySubnets=true`, `deployNsgs=true`, and `deployBastion=false` could fail because the reserved `AzureBastionSubnet` received a generic NSG. The patch still creates the reserved subnet but excludes it from generic NSG attachment. When Bastion is enabled, its explicit, dedicated Bastion-compliant NSG takes precedence and is preserved. Deployment gates, outputs, defaults, and resource creation are unchanged.
+For BYO-VNet subnet creation, the reserved `AzureBastionSubnet` is excluded
+from generic NSG attachment. When Bastion is enabled, its explicit, dedicated
+Bastion-compliant NSG takes precedence and is preserved.
 
-New deployments using the patch do not need the subnet-renaming workaround. For an existing workaround, do not automatically rename subnets, renumber `subnetCidr` entries, or move their assigned address prefixes. Plan migration explicitly to avoid prefix overlap and disruption to existing subnets. Confirm the source release/tag is published before selecting the patch; documentation CI does not establish live Azure validation.
+Do not automatically rename existing subnets, renumber `subnetCidr` entries,
+or move their assigned address prefixes to undo an older workaround. Plan
+migration explicitly to avoid prefix overlap and disruption to existing subnets.
 
 ## Solution Storage profile
 
-!!! warning "Available in v2.7.0 - live Azure validation not verified"
-    The inputs used in these examples are available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0) for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). They require a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.
-
 The [parameter reference](parameterization.md#solution-storage-controls) defines the three inputs and exact bypass union. They affect **solution Storage only** and retain Storage AVM `0.26.2`. They do not redesign Firewall, VPN, Network Security Perimeter (NSP), VM, or auxiliary AI Foundry Storage, or change deployment defaults.
 
-Use a reviewed, version-controlled `main.parameters.json` overlay for the pinned ALZ revision. The JSON examples below are fragments of its `parameters` object, not complete files. Preserve the rest of the compatible parameter file. These settings take native strings, arrays, and booleans; there are no new environment substitutions, environment names, or JSON-string aliases to set with `azd env set`. Follow the existing [overlay and version-pin workflow](accelerator-pattern.md), not edits to generated infrastructure.
+Use the reviewed, version-controlled root `main.parameters.json` for the
+selected platform revision. The JSON examples below are fragments of its
+`parameters` object, not complete files. Preserve the rest of the compatible
+parameter file. These settings take native strings, arrays and booleans;
+there are no environment substitutions or JSON-string aliases for them to set
+with `azd env set`. Follow the
+[platform parameter-composition workflow](accelerator-pattern.md), not edits
+to generated infrastructure.
 
 ### Omitted inputs or compatible defaults
 
@@ -110,9 +115,9 @@ The rule grants network eligibility, not data permissions. The scanner's managed
 ### Migration and rollback
 
 1. **Inventory and prepare clients.** Identify account-key clients, key-based connection strings, service SAS, account SAS, and Azure Files clients and tools. Migrate and verify required workflows before opting into `storageAccountAllowSharedKeyAccess=false`. Microsoft Entra authentication and Blob user delegation SAS are separate from key-signed SAS; they still need network connectivity and appropriate data-plane permissions. Review [Shared Key compatibility guidance](https://learn.microsoft.com/azure/storage/common/shared-key-authorization-prevent), including file-client constraints. Do not assume all SAS traffic is key-based or that every file client can migrate unchanged.
-2. **Review the pin and overlay together.** Select a normal, compatible ALZ revision with the v2.7.0 contract, then update the complete parameter-file overlay. Review the full desired resource-instance rules list, including any required approved scanner entry, and obtain approval for the intended access changes. Keep the previous pin and overlay for rollback; do not patch generated infrastructure or change AVM `0.26.2`.
+2. **Review the platform revision and parameters together.** Use a reviewed Agent Landing Zone release and update its root parameter file. Review the full desired resource-instance rules list, including any required approved scanner entry, and obtain approval for the intended access changes. Keep the previous coordinated revision and inputs for rollback; do not patch generated infrastructure or change AVM `0.26.2`.
 3. **Verify the effective configuration and consumers.** After an approved deployment, check the solution account's bypass, complete resource-instance rules list, and Shared Key setting, along with the unchanged PNA, IP, `defaultAction`, and private-endpoint behavior. Test migrated clients and, if required, the existing scanner. The change does not remove AVM's secure `listKeys` outputs, so it is not a key-free management-plane deployment guarantee. Local documentation checks do not supply this live evidence.
-4. **Rollback through the same pin/overlay workflow.** Review the intended access state before reverting. An older implementation may reject the new inputs, restore bypass `AzureServices`, or drop approved resource-instance rules; match its parameter contract and assess those effects first. Restoring wider bypass or enabling keys again requires explicit approval, not an automatic fallback. Preserve approved exceptions on a compatible revision where possible and verify effective settings and consumers after rollback.
+4. **Rollback through the same platform revision/input workflow.** Review the intended access state before reverting. An older implementation may reject the inputs, restore bypass `AzureServices`, or drop approved resource-instance rules; match its parameter contract and assess those effects first. Restoring wider bypass or enabling keys again requires explicit approval, not an automatic fallback. Preserve approved exceptions on a compatible revision where possible and verify effective settings and consumers after rollback.
 
 <a id="ai-landing-zone-integrated-deployment"></a>
 

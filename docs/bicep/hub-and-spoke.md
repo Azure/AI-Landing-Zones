@@ -32,7 +32,7 @@ An ACR Tasks pool is not a connected deployment host. Bastion is interactive VM
 access, not a VPN for a workstation.
 
 !!! warning "Test fixtures are not shared-platform deployments"
-    Upstream `tests/hub/` and `tests/scripts/` simulate a hub. Do not deploy
+    Foundation `infra/tests/hub/` and `infra/tests/scripts/` simulate a hub. Do not deploy
     them into an operational connectivity subscription or copy their empty
     route, disabled Search, skipped bootstrap or skipped preflight settings.
 
@@ -79,7 +79,7 @@ permissions and routes before choosing a shared table.
 
 Allow required spoke source CIDRs and destinations before bootstrap, image pulls
 and data-plane configuration. Review the
-[foundation egress reference](https://github.com/Azure/bicep-ptn-aiml-landing-zone#firewall-egress-allow-list-network-isolation)
+[foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep)
 and the Agent platform's [build-egress requirements](../agent-landing-zone/network-isolation.md).
 Check return paths, DNS transport, NSGs and forwarded traffic rather than
 opening unrestricted Internet access. Peering is not transitive.

@@ -6,7 +6,7 @@ private endpoints, firewall, Bastion and a jumpbox. For shared network services,
 use the [hub-and-spoke design](hub-and-spoke.md).
 
 Execute [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
-for either the independent Bicep foundation or the Agent foundation.
+from the Agent Landing Zone repository root.
 Execute [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md)
 when the Agent application is required. This page is the network reference
 for those procedures, not a third deployment path.
@@ -20,18 +20,17 @@ The network/security owners approve addresses, egress and public exceptions.
 Confirm regional capacity, resource-provider registration and scoped deployment
 permissions before provisioning.
 
-The upstream Bicep foundation creates a hello-world Container App, not the
-Agent application. Agent Landing Zone instead uses its repository-owned
-`infra/` and additional hooks. Do not deploy both sources into one environment.
-The [inventory and cost estimates](deployed-resources.md) describe the independent
-foundation; selected Agent application resources can differ.
+Agent Landing Zone owns the foundation under `infra/` and runs it through
+platform lifecycle hooks. Do not use a separate foundation checkout.
+The [inventory and cost estimates](deployed-resources.md) describe foundation
+building blocks; selected application resources can differ.
 
 ## Address planning
 
 <a id="2-plan-addresses"></a>
 
 Reserve a VNet range that does not overlap other VNets, VPN/on-premises ranges
-or future hub connections. The upstream default VNet is `192.168.0.0/21`.
+or future hub connections. The native foundation default VNet is `192.168.0.0/21`.
 Changing only that prefix does not change the individual subnet prefixes.
 
 The following is a **complete illustrative allocation**, not a universally safe
@@ -72,12 +71,13 @@ the recommendation. That minimum is not a future-scale guarantee.
 | `DEPLOY_AZURE_FIREWALL` | `true` for local inspected egress |
 | `DEPLOY_JUMPBOX`, `DEPLOY_BASTION`, `DEPLOY_NAT_GATEWAY` | Independently selected; the canonical runbook shows the self-contained choice |
 | `BASTION_SKU_NAME`, `BASTION_ENABLE_TUNNELING` | Standard/Premium with tunneling for native RDP |
-| `DEPLOY_ACR_TASK_AGENT_POOL` | Upstream defaults off; the Agent platform selects it for private remote builds |
+| `DEPLOY_ACR_TASK_AGENT_POOL` | The Agent platform selects a pool for private remote builds; review the [build-mode contract](../agent-landing-zone/network-isolation.md) before overriding |
 
 The NAT gateway supports its configured subnet; it is not a firewall or a
 substitute for reviewing effective routes. Inspect the local firewall route and
 required destinations in the
-[upstream egress reference](https://github.com/Azure/bicep-ptn-aiml-landing-zone#firewall-egress-allow-list-network-isolation).
+[network isolation reference](../agent-landing-zone/network-isolation.md)
+and [foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep).
 Agent platform build egress also includes its own dependency-specific inputs.
 An ACR Tasks pool does not make the deployment host VNet-connected.
 
@@ -150,8 +150,8 @@ authorized identity. A 401/403 can show an endpoint responds, but is not a
 successful data-access authorization test. Confirm telemetry reaches the
 intended workspace.
 
-For the independent foundation's placeholder app, an HTTPS 200 from inside the
-network is a runtime/network smoke test only. Agent acceptance also requires
+For a placeholder app, an HTTPS 200 from inside the network is a runtime/network
+smoke test only. Agent acceptance also requires
 sign-in, agent/tool execution and positive/negative document-access tests.
 An unconnected workstation must not serve a private app or read private data;
 public DNS outside the VNet alone does not establish exposure.

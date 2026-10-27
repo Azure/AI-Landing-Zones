@@ -58,8 +58,8 @@ new resources instead of updating existing ones.
 ### Resource group destinations
 
 This **Agent Bicep/azd** interface uses the compatible components pinned by the
-platform manifest. Terraform, portal and the independent Bicep foundation
-do not share this Agent platform contract.
+platform manifest. Terraform and portal do not share this Agent platform
+contract.
 
 New environments use three resource groups by default: Foundry/grounding,
 application and workload networking. Existing environments keep their mapping.

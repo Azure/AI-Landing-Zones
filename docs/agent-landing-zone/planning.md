@@ -71,8 +71,8 @@ resource scope. Deployment roles can differ from application data-access roles.
 | Terraform | [Terraform overview](terraform.md). | Infrastructure building blocks, not parity with the Agent platform lifecycle. `terraform apply` does not deploy/configure the Agent Application. Security settings and state need separate review and protection. |
 | Azure portal | [Portal overview](portal.md). | ARM-based infrastructure with its own defaults and platform-integration behavior. It can create placeholder application resources; it does not execute Agent platform hooks or the hosted image/version workflow. |
 
-The [Deploy infra only](deploy-infra-only.md) runbook distinguishes the
-independent Bicep infrastructure from the Agent platform.
+The [Deploy infra only](deploy-infra-only.md) runbook provisions the
+platform's foundation without building or deploying application images.
 Different implementations are not interchangeable owners of the same
 environment; resource reuse needs explicit state and dependency ownership.
 

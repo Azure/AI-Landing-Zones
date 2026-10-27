@@ -6,7 +6,8 @@ This page answers the two questions operators always ask before approving an AI 
 2. **What will it cost?** — an order-of-magnitude monthly estimate for three common scenarios, with the variable (token / call / data) drivers called out separately.
 
 !!! info "Foundation scope"
-    This inventory describes the **independent Bicep foundation**, not the
+    This inventory describes **native Bicep foundation building blocks** under
+    Agent Landing Zone's `infra/`, not the
     Agent application footprint. Agent Landing Zone composes its own services,
     topology and component selection. Foundry backing resources are separate
     from application stores, and conditional creation/reuse applies across all
@@ -35,7 +36,7 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 !!! tip "How to opt out of the duplicate Foundry data plane"
     - **Bring your own** — set `aiSearchResourceId`, `aiFoundryStorageAccountResourceId`, and `aiFoundryCosmosDBAccountResourceId` to existing resource IDs of a **dedicated Foundry-only trio** that belongs exclusively to this Foundry instance. Don't share the Agent Service data plane with the workload or with other Foundry instances — only use BYO to reattach a trio already provisioned out-of-band for this same Foundry.
     - **Disable the Agent Service** — set `deployAAfAgentSvc=false` (and optionally `deployAfProject=false`). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.
-    - **Foundry AI Search defaults to `1 partition × 1 replica`** (lowered from 3 replicas in v2.0.5; see [CHANGELOG](https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/CHANGELOG.md)) — scale it back up to 3 replicas in-place if you need Azure AI Search's read/write SLA.
+    - **Foundry AI Search defaults to `1 partition × 1 replica`** — scale it up to 3 replicas in-place if you need Azure AI Search's read/write SLA.
 
 ---
 
@@ -53,7 +54,7 @@ can also differ from native Bicep defaults.
 | **Workload data path** | Workload-owned AI Search, Storage, Cosmos, Key Vault | Yes by default, each individually toggleable / BYO-capable |
 | **Common platform** | App Configuration, Container Registry, Container Apps Environment, managed identity / RBAC, Log Analytics, App Insights | Yes by default, each individually toggleable |
 | **Zero Trust networking** | VNet/subnets, NSGs, private endpoints, private DNS, Azure Firewall, Jumpbox VM, VM Key Vault, Bastion, NAT Gateway | Opt-in via `networkIsolation=true` |
-| **Scenario add-ons** | Application Gateway WAF v2, Azure Speech, Bing grounding, ACR build-agent pool | Explicit opt-ins in the current upstream root parameters |
+| **Scenario add-ons** | Application Gateway WAF v2, Azure Speech, Bing grounding, ACR build-agent pool | Explicit selections in the platform's root parameters and application composition |
 
 ### Legend used below
 
@@ -162,7 +163,7 @@ deployJumpbox / Bastion / NatGateway = false (defaults to NI; no VNet)
 publicIngress.enabled   = false
 deployAAfAgentSvc       = true    (default — Standard Agent Setup)
 deployAcrTaskAgentPool  = false   (private pool is not created in this public scenario)
-deployGroundingWithBing = true    (explicit scenario choice; current upstream root defaults false)
+deployGroundingWithBing = true    (explicit scenario choice; native foundation default is false)
 ```
 
 Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a public endpoint.

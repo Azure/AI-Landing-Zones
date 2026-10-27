@@ -5,9 +5,8 @@
 ## Objective
 
 Provision the Azure foundation without building or deploying application images.
-This is the infrastructure procedure for both Agent Landing Zone and the
-standalone AI Landing Zone Bicep foundation. Choose the source first and use
-its hooks, parameter files and outputs throughout the procedure.
+Use the Agent Landing Zone repository and its incorporated `infra/` source,
+including when no Agent Application images will be deployed.
 
 ## When to use
 
@@ -20,8 +19,8 @@ the [Deploy full stack](deploy-full-stack.md) runbook.
 ## Prerequisites
 
 Complete the [permissions and tooling prerequisites](deploy-full-stack.md#prerequisites).
-The upstream foundation requires Git, Azure CLI, azd and PowerShell 7; the
-Agent platform additionally requires Python and the platform hook dependencies.
+The deployment requires Git, Azure CLI, azd, PowerShell 7, Python and the
+platform hook dependencies.
 Review the [resource inventory and cost scenarios](../bicep/deployed-resources.md)
 and [regional capacity caveats](../bicep/regional-considerations.md).
 Infrastructure-only still creates billable resources.
@@ -34,19 +33,18 @@ The effective footprint is the combination of enabled services, resource-reuse
 inputs, application definition, orchestrator topology and network settings.
 This determines which AI services, backing resources, runtimes, data stores,
 monitoring, networking and optional add-ons are deployed.
-Review the selected source's `main.parameters.json`, Bicep conditions and preview
+Review the root `main.parameters.json`, Bicep conditions and preview
 to identify the resources for your deployment.
 
 ## Procedure
 
 <a id="steps"></a>
 
-### Step 1: Choose the source
+<a id="step-1-choose-the-source"></a>
 
-#### Agent Landing Zone foundation
+### Step 1: Clone Agent Landing Zone
 
-Use this source if you will deploy the Agent Application or a compatible
-custom application later:
+Use this source for infrastructure-only and full-stack deployments:
 
 ```bash
 git clone https://github.com/Azure/agent-landing-zone.git
@@ -55,24 +53,11 @@ cd agent-landing-zone
 
 Run all lifecycle commands from this root, not from `infra/`.
 Its `infra/` is repository-owned
-source, and `manifest.json` records the coordinated component pins and
-upstream foundation provenance.
+source. `manifest.json` records the coordinated component pins;
+`infra.source` records historical incorporation provenance, not a second
+repository to clone or a separate foundation version to deploy.
 
-#### AI Landing Zone foundation without the Agent platform
-
-Use this source for independent foundation resources and their placeholder app:
-
-```bash
-git clone https://github.com/Azure/bicep-ptn-aiml-landing-zone.git
-cd bicep-ptn-aiml-landing-zone
-```
-
-Run from that repository's root, where its `main.bicep`, `main.parameters.json`
-and `azure.yaml` live. Its lifecycle does not configure or deploy the Agent
-Application. Do not provision this separate project into an Agent environment.
-For application deployment, start from the Agent source instead.
-
-For Agent source, [set up Python](deploy-full-stack.md#prepare-python) from
+[Set up Python](deploy-full-stack.md#prepare-python) from
 the cloned repository before lifecycle commands.
 
 ### Step 2: Create and confirm the target
@@ -103,8 +88,7 @@ To choose pre-created groups or a one/two-group layout, set the
 [resource group destinations](configuration.md#resource-group-destinations)
 before first provision.
 Keep the normal root `azd provision` flow, not separate manual deployments per
-group. This does not establish support in the independent Bicep source,
-Terraform or portal.
+group. Terraform and portal deployments have separate contracts.
 
 ### Step 3: Choose the foundation shape
 
@@ -170,7 +154,7 @@ uses `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID` and, when applicable,
 Apply the [hub-and-spoke DNS and peering contract](../bicep/hub-and-spoke.md)
 before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
-Use an approved production hub, not the upstream test-hub fixture.
+Use an approved production hub, not the `infra/tests/hub/` fixture.
 
 #### Existing networks, private DNS and parameter files
 
@@ -185,12 +169,12 @@ Use an approved production hub, not the upstream test-hub fixture.
 Set mapped scalar inputs with `azd env set`. Native arrays/objects such as the
 complete address plan, `allowedIpRanges`, Storage controls and `publicIngress`
 belong in the reviewed **root** `main.parameters.json`.
-In the Agent platform, hooks regenerate `infra/main.parameters.json`;
+Platform hooks regenerate `infra/main.parameters.json`;
 do not edit that generated copy. The
 [parameter reference](../bicep/parameterization.md) describes foundation inputs;
 [Deployment settings](configuration.md) describes platform composition and overrides.
 
-#### Bind the future application (Agent source only)
+#### Bind the future application
 
 Choose the [orchestrator topology and ingestion selection](deploy-full-stack.md#step-3-choose-the-application-and-network)
 now, even if images will be deployed later. For a different application:
@@ -210,20 +194,22 @@ runbook for the identity inputs and protected-retrieval integration gate.
 
 ### Step 4: Preview and provision
 
-For Agent source, review the selected application's
+Review the selected application's
 [runtime egress plan](network-isolation.md#review-before-provisioning) before
 approving provisioning:
 `python -m config.deployment.egress --plan --environment <environment-name>`.
 This command is local and read-only; it does not run the preparation hook
 or create resource groups.
 
-For Agent source, first run `azd hooks run preup` to validate the definition and
+First run `azd hooks run preup` to validate the definition and
 binding before azd's resource-group initialization.
 Normal `azd provision` automatically runs the Agent preprovision hook to
 compose parameters and bootstrap authorized additional groups. Manual
 preparation is needed only if you choose to preview first.
 
-#### Optional preview (Agent source)
+<a id="optional-preview-agent-source"></a>
+
+#### Optional preview
 
 !!! warning "Preview preparation can create resource groups"
     With azd 1.37.1, `azd provision --preview` does **not** run preprovision
@@ -231,7 +217,7 @@ preparation is needed only if you choose to preview first.
     be the checked-in seed or another environment's composition, and cannot
     bootstrap missing additional destination groups.
 
-    Before an optional Agent preview, select the intended azd environment,
+    Before an optional preview, select the intended azd environment,
     activate the prepared Python environment and run **one** matching hook
     from the platform root: `pwsh -File scripts/preProvision.ps1` on Windows,
     or `sh scripts/preProvision.sh` on Linux/macOS. These hooks load selected
@@ -244,8 +230,7 @@ preparation is needed only if you choose to preview first.
     authorize group creation before running them. A successful preview does
     not prove private connectivity, service configuration or application readiness.
 
-After this preparation for Agent source, or using the independent foundation's
-own inputs and lifecycle, the optional preview command is:
+After this preparation, the optional preview command is:
 
 ```bash
 azd provision --preview
@@ -266,13 +251,12 @@ azd provision
 Test connectivity after provisioning and application behavior after deploying
 your selected application.
 
-| Source | What provisioning completes |
-| --- | --- |
-| Agent platform | Validation and binding, foundation deployment, then service configuration, role reconciliation and App Configuration publication unless explicitly deferred |
-| Upstream Bicep foundation | Foundation preflight and resource deployment; no Agent post-provision modules or application image deployment |
+Provisioning completes validation and binding, foundation deployment, then
+service configuration, role reconciliation and App Configuration publication
+unless explicitly deferred. It does not build or deploy application images.
 
 Selected Container Apps can run placeholder images at this point.
-An upstream hello-world response checks basic network and runtime reachability.
+A placeholder response checks basic network and runtime reachability.
 Validate sign-in, tools, ingestion and document authorization after deploying
 the Agent Application.
 For initial infrastructure provisioning, inspect platform outputs below and
@@ -280,7 +264,7 @@ continue to [Validation](#validation). Use lifecycle tasks only when needed.
 
 <a id="platform-outputs"></a>
 
-### Platform outputs (Agent source only)
+### Platform outputs
 
 After configuration completes, App Configuration publishes the JSON
 `AGENTLZ_PLATFORM_OUTPUTS` and matching flat keys under label `agent-lz`.
@@ -327,7 +311,7 @@ This does not replace deferred or failed service configuration.
 
 ### Complete a deferred post-provision
 
-For Agent source, private configuration can be explicitly deferred by
+Private configuration can be explicitly deferred by
 `RUN_FROM_JUMPBOX=false`, or by `AZURE_SKIP_NETWORK_ISOLATION_WARNING=true`
 when `RUN_FROM_JUMPBOX` is not truthy. Set the approved deferral before the
 first provision when the connected host does not exist yet.
@@ -379,16 +363,14 @@ Do not approve every pending connection or bypass the gate.
 Record the deployed source revision, approved parameters, outputs and dependent
 applications. Back up required data and configuration, check compatibility and
 retain existing names, locations, layout and ingestion intent.
-If previewing Agent changes, repeat the
+If previewing changes, repeat the
 [selected-environment preparation](#optional-preview-agent-source) before
 reviewing the preview. Apply approved root parameter changes with the provisioning step above.
 
-For Agent environments, integrate the coordinated platform and its `infra/`
-tree together; do not replace only its foundation folder with upstream main.
+Integrate the coordinated platform and its `infra/` tree together; do not
+replace only its foundation folder from another repository.
 Use the [reapply procedure](deploy-full-stack.md#upgrade-to-a-new-release)
 and [rollback](deploy-full-stack.md#rollback) in the Deploy full stack runbook.
-Upstream foundation environments use their own source and complete root
-parameter contract, without Agent post-provision commands.
 
 Retry a partial deployment with the same approved revision and environment after
 repairing the specific failure. Review resource and data changes separately
@@ -398,11 +380,10 @@ Turning a deploy flag off is not deletion or permission cleanup.
 
 ### Add an application later
 
-In an Agent foundation, deploy the same bound application and selected components.
+Deploy the same bound application and selected components.
 Follow [Step 4 of the Deploy full stack runbook](deploy-full-stack.md#step-4-deploy):
 prepare the hosted image, provision its digest handoff, then deploy.
-Custom definitions follow their own component contract. An upstream-only
-foundation is not a configured Agent environment.
+Custom definitions follow their own component contract.
 
 ### Remove the foundation
 
@@ -438,7 +419,7 @@ irreversible decision, not a normal retry or rollback.
    [hub checks](../bicep/hub-and-spoke.md#verify-the-network-contract).
 4. Test required service operations with the authorized configuration identity
    and confirm telemetry reaches the intended workspace.
-5. For Agent source, inspect post-provision logs and platform outputs.
+5. Inspect post-provision logs and platform outputs.
    Record explicit deferral or any logged configuration failure as incomplete.
    A placeholder HTTP response does not prove application readiness.
 

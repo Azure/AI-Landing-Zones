@@ -1,9 +1,10 @@
 # Parameterization
 
-This reference describes the independent Bicep foundation. Its root
-`main.parameters.json` supplies native parameter values and `${VARIABLE_NAME}`
-substitutions. Use `azd env set` only for substitutions actually present in the
-selected source file; native arrays and objects need reviewed file changes.
+This reference describes native parameters of the Bicep foundation maintained
+in Agent Landing Zone's `infra/`. The platform's root `main.parameters.json`
+supplies reviewed values and `${VARIABLE_NAME}` substitutions. Use `azd env set`
+only for substitutions actually present in that file; native arrays and objects
+need reviewed file changes.
 
 Agent Landing Zone composes its own root parameter file and regenerates
 `infra/main.parameters.json`. Its definition and topology can override foundation
@@ -51,9 +52,6 @@ azd env set NETWORK_ISOLATION true
 
 ## Solution Storage controls
 
-!!! warning "Available in v2.7.0 - live Azure validation not verified"
-    These inputs are available in [Bicep implementation v2.7.0](https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0) for [Azure/bicep-ptn-aiml-landing-zone#160](https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160). Use a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.
-
 These three inputs apply **only to the solution Storage account** controlled by `deployStorageAccount`, not auxiliary AI Foundry Storage, VM storage, or other services. The Storage AVM dependency remains `br/public:avm/res/storage/storage-account:0.26.2`.
 
 | Parameter | Bicep type | Default | Description |
@@ -100,7 +98,12 @@ Omitting all three inputs from a compatible parameter file uses the defaults. Th
 }
 ```
 
-Keep customizations in your reviewed, version-controlled parameter-file overlay. With the [accelerator submodule pattern](accelerator-pattern.md), the overlay replaces the parameter file; it is not a JSON merge and must remain complete for the pinned ALZ revision. Do not patch generated infrastructure or change the pinned AVM to apply these settings. See the [deployment and migration guidance](how-to-deploy.md#solution-storage-profile).
+Keep customizations in the platform's reviewed, version-controlled root
+`main.parameters.json`. The platform hooks compose
+`infra/main.parameters.json`; do not patch that generated copy or change the
+pinned AVM to apply these settings. See
+[foundation customization](accelerator-pattern.md) and the
+[deployment and migration guidance](how-to-deploy.md#solution-storage-profile).
 
 ### Network rules are desired state, not discovered exceptions
 

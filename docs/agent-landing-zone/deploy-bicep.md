@@ -9,8 +9,8 @@ search:
 
 Follow the runbook for the required result:
 
-- [Deploy infra only](deploy-infra-only.md): choose the Agent
-  foundation or independent AI Landing Zone Bicep source, then provision it.
+- [Deploy infra only](deploy-infra-only.md): provision the foundation from
+  Agent Landing Zone without building or deploying application images.
 - [Deploy full stack](deploy-full-stack.md): provision the Agent
   foundation and deploy the Agent Application.
 

@@ -1,12 +1,12 @@
 # Bicep foundation overview
 
-The AI Landing Zone Bicep implementation provides an Azure foundation for AI
-workloads. Its source is maintained in
-[Azure/bicep-ptn-aiml-landing-zone](https://github.com/Azure/bicep-ptn-aiml-landing-zone/).
-Agent Landing Zone incorporates foundation source under its own `infra/` tree
-and adds application composition, service configuration and deployment hooks.
+The AI Landing Zone Bicep foundation is maintained in
+[Azure/agent-landing-zone under `infra/`](https://github.com/Azure/agent-landing-zone/tree/main/infra).
+It is repository-owned source, reviewed and released with Agent Landing Zone,
+alongside application composition, service configuration and deployment hooks.
+Run the lifecycle from the Agent Landing Zone repository root, not `infra/`.
 
-![Architecture Diagram](https://raw.githubusercontent.com/Azure/bicep-ptn-aiml-landing-zone/main/media/Architecture%20Diagram.png)
+![Architecture Diagram](https://raw.githubusercontent.com/Azure/agent-landing-zone/main/infra/media/Architecture%20Diagram.png)
 
 ## Deployment modes
 
@@ -30,12 +30,12 @@ container runtimes, configuration/secrets, observability, network resources and
 optional add-ons. Service-specific conditions and existing-resource inputs
 determine which are created, reused or omitted.
 
-The independent foundation's default Container App is a hello-world placeholder.
-It is not the Agent application. Foundry Agent Service backing resources are
-also distinct from workload data stores. Review the
+Infrastructure-only provisioning can leave selected Container Apps running
+placeholder images; these are not the deployed Agent Application.
+Foundry Agent Service backing resources are distinct from workload data stores. Review the
 [resource inventory and cost scenarios](deployed-resources.md) for foundation
 scope and the [parameter reference](parameterization.md) for supported inputs.
-Do not infer the Agent application footprint from the upstream defaults.
+Do not infer the selected application footprint from native Bicep defaults alone.
 
 ## Access and validation
 
@@ -52,7 +52,7 @@ Resolve findings instead of skipping the checks.
 ## Use the canonical runbooks
 
 - [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
-  — choose independent Bicep foundation or Agent foundation.
+  — provision the incorporated foundation without application image deployment.
 - [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md)
   — deploy the Agent foundation and selected application.
 
