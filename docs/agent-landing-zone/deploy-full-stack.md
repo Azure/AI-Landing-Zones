@@ -245,7 +245,8 @@ Confirm the target before creating or changing resources:
 
 ```bash
 azd env get-value AZURE_SUBSCRIPTION_ID
-azd env get-value AZURE_RESOURCE_GROUP
+azd env get-value AZURE_ENV_NAME
+azd env get-value AZURE_LOCATION
 azd hooks run preup
 ```
 

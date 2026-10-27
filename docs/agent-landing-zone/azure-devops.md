@@ -337,9 +337,15 @@ one already present), sets the intended resource group, and checks group existen
 
 The same azd name and subscription must locate the previous deployment. Review
 the refreshed target and outputs for an existing environment; do not create a
-second deployment by renaming the environment. Local `.azure` is disposable here,
-not a promoted artifact or backup. Review deployed state and application binding
-before adopting an existing environment into CI.
+second deployment by renaming the environment. For split-group deployments,
+retain `.azure/<environment-name>/resource-groups.json` after first provision
+and securely restore that same environment's file on subsequent runners.
+`azd env refresh` restores outputs, not this immutable destination binding.
+The example does not archive or restore the binding for you; integrate your
+organization's protected state handling before redeployment. Never reuse
+another stage's binding or publish `.env` files as pipeline artifacts.
+Review deployed state and application binding before adopting an existing
+environment into CI.
 
 After refresh, reviewed environment settings are applied, then the template runs:
 

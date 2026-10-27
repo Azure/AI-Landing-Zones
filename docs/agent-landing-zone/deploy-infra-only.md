@@ -343,6 +343,10 @@ If the environment is already present, select it instead. Reapply the approved
 deployment inputs: refresh restores outputs, not your full configuration.
 For the multi-group path, restore the same approved application/network
 destination mapping as well; the root group alone is not sufficient.
+Securely restore `.azure/<same-environment-name>/resource-groups.json` from
+that environment's original host before running its hooks. Output refresh does
+not recreate this immutable destination binding; do not generate or edit a
+replacement to bypass the check.
 Do not publish or copy another stage's `.azure/` state as an input artifact.
 An authorized runner can use managed-identity sign-in. Verify its scoped
 configuration and build roles before running the hooks.
