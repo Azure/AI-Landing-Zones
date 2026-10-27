@@ -23,7 +23,7 @@
     
     
       
-        <title>Building Accelerators on the AI Landing Zone (Submodule Pattern) - AI Landing Zones</title>
+        <title>Customize the incorporated foundation - AI Landing Zones</title>
       
     
     
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#building-accelerators-on-the-ai-landing-zone-submodule-pattern" class="md-skip">
+        <a href="#customize-the-incorporated-foundation" class="md-skip">
           Skip to content
         </a>
       
@@ -109,7 +109,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Building Accelerators on the AI Landing Zone (Submodule Pattern)
+              Customize the incorporated foundation
             
           </span>
         </div>
@@ -1610,10 +1610,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#when-to-use-this-pattern" class="md-nav__link">
+  <a href="#application-and-infrastructure-boundaries" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to use this pattern
+        Application and infrastructure boundaries
       
     </span>
   </a>
@@ -1621,10 +1621,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-pattern-in-one-picture" class="md-nav__link">
+  <a href="#parameters-and-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The pattern in one picture
+        Parameters and lifecycle
       
     </span>
   </a>
@@ -1632,65 +1632,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#required-files" class="md-nav__link">
+  <a href="#changes-and-upgrades" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Required files
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-happens-during-azd-provision" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What happens during azd provision
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-by-step-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step-by-step setup
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#upgrade-and-local-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Upgrade and local workflow
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code-agent-checklist" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Code agent checklist
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#references-and-next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        References and next steps
+        Changes and upgrades
       
     </span>
   </a>
@@ -1717,338 +1662,44 @@
   
 
 
-<h1 id="building-accelerators-on-the-ai-landing-zone-submodule-pattern">Building Accelerators on the AI Landing Zone (Submodule Pattern)</h1>
-<p>This page explains how an accelerator repository can reuse the <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone">AI Landing Zone Bicep implementation</a> without copying or forking it.</p>
-<p>This is an implementation pattern for <strong>other accelerators</strong>, not an Agent
-Landing Zone deployment procedure. Agent Landing Zone owns its <code>infra/</code> source
-and no longer uses this submodule pattern. To deploy, use
-<a href="../../agent-landing-zone/deploy-infra-only/">Deploy infrastructure only</a> or
-<a href="../../agent-landing-zone/deploy-full-stack/">Deploy the full stack</a>.
-Version numbers below illustrate pin mechanics, not a current-release recommendation.</p>
-<p>The pattern is simple: the accelerator owns the application code and its scenario-specific parameter file, while the shared AI Landing Zone Bicep code is brought in as a git submodule under <code>infra/</code>.</p>
-<div class="admonition tip">
-<p class="admonition-title">In one sentence</p>
-<p>Use <code>infra/</code> as a submodule that points to <code>Azure/bicep-ptn-aiml-landing-zone</code>, then run a <code>preprovision</code> script before <code>azd provision</code> so the submodule is initialized, pinned to the expected tag, and overlaid with the accelerator's own <code>main.parameters.json</code>.</p>
-</div>
-<p>Implementation references:</p>
-<ul>
-<li><a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a></li>
-<li><a href="../../agent-landing-zone/how-it-works/">Agent template contract</a> — the distinct repository-owned-source model</li>
-</ul>
-<h2 id="when-to-use-this-pattern">When to use this pattern</h2>
-<p>Use this approach when you are building a new accelerator that should deploy on top of the AI Landing Zone but should not maintain its own copy of the Bicep modules.</p>
-<p>It gives you:</p>
-<ul>
-<li><strong>Reuse:</strong> common infrastructure stays in the AI Landing Zone repository.</li>
-<li><strong>Scenario defaults:</strong> the accelerator can provide its own <code>main.parameters.json</code>.</li>
-<li><strong>Version control:</strong> the accelerator pins the AI Landing Zone to a tested tag, such as <code>v2.0.2</code>.</li>
-<li><strong><code>azd init</code> support:</strong> the setup works even when an accelerator is downloaded as a ZIP by <code>azd init -t</code>.</li>
-<li><strong>Custom checks:</strong> add accelerator-specific validation before AI Landing Zone checks.</li>
-</ul>
-<h2 id="the-pattern-in-one-picture">The pattern in one picture</h2>
-<pre class="mermaid"><code>flowchart LR
-    subgraph Accelerator["Accelerator repository"]
-        APP["Application code"]
-        AZD["azure.yaml"]
-        GM[".gitmodules"]
-        PP["scripts/preProvision.sh&lt;br/&gt;scripts/preProvision.ps1"]
-        PARAMS["main.parameters.json"]
-        MANIFEST["manifest.json&lt;br/&gt;(optional)"]
-    end
-    subgraph Infra["infra/ submodule"]
-        LZ["Azure/bicep-ptn-aiml-landing-zone&lt;br/&gt;(checked out locally)"]
-        BICEP["infra/main.bicep&lt;br/&gt;(azd entry point)"]
-        LZPARAMS["main.parameters.json&lt;br/&gt;(overwritten before provision)"]
-        CHECKS["scripts/Invoke-PreflightChecks.ps1"]
-    end
-    GM -- "declares URL + tag" --&gt; LZ
-    AZD -- "infra.path + module" --&gt; BICEP
-    PARAMS --&gt; PP
-    MANIFEST --&gt; PP
-    PP -- "copies overlay" --&gt; LZPARAMS
-    PP -- "runs" --&gt; CHECKS</code></pre>
-<p>At provision time, <code>azd</code> uses <code>infra/main.bicep</code> from the submodule, but it does <strong>not</strong> use the default parameters from the submodule. The accelerator's root-level <code>main.parameters.json</code> is copied into <code>infra/main.parameters.json</code> first.</p>
-<p>That copy is intentional. It lets each accelerator keep its scenario defaults close to the application code while still reusing the shared Bicep implementation.</p>
-<h2 id="required-files">Required files</h2>
-<p>The pattern is made of five small pieces.</p>
-<p><strong>1. <code>.gitmodules</code></strong></p>
-<p>Declares the AI Landing Zone repository as a submodule and records the version the accelerator expects.</p>
-<div class="highlight"><pre><span></span><code><span class="k">[submodule "infra"]</span>
-<span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
-<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
-<span class="w">    </span><span class="na">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">v2.0.2</span>
-<span class="w">    </span><span class="na">ignore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">dirty</span>
-</code></pre></div>
-<p>Important details:</p>
-<ul>
-<li><code>path = infra</code> must match <code>infra.path</code> in <code>azure.yaml</code>.</li>
-<li><code>branch = v2.0.2</code> is used as the version pin. In practice this value should be a tag.</li>
-<li><code>ignore = dirty</code> avoids noisy <code>git status</code> output because the preprovision script overwrites files inside <code>infra/</code>.</li>
-</ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Git submodules are normally pinned by a gitlink commit. The accelerator scripts also read the <code>branch</code> value from <code>.gitmodules</code> and force-checkout that ref inside <code>infra/</code>. This makes <code>.gitmodules</code> the easy-to-read source of truth for the AI Landing Zone version.</p>
-</div>
-<p><strong>2. <code>azure.yaml</code></strong></p>
-<p>Tells <code>azd</code> that the Bicep entry point lives in <code>infra/</code> and registers the hook that prepares that folder.</p>
-<div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
-<span class="nt">metadata</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-accelerator</span>
-<span class="nt">infra</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bicep</span>
-<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infra</span>
-<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
-<span class="nt">hooks</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">preprovision</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">posix</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sh</span>
-<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/preProvision.sh</span>
-<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">windows</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">shell</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pwsh</span>
-<span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scripts/preProvision.ps1</span>
-<span class="w">      </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
-<p>The important line is <code>infra.path: infra</code>. It must point to the submodule folder.</p>
-<p><strong>3. <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code></strong></p>
-<p>These scripts are the glue. They run before <code>azd</code> evaluates Bicep parameters.</p>
-<p>They should:</p>
-<ol>
-<li>Initialize the <code>infra/</code> submodule.</li>
-<li>Fall back to a direct clone when <code>azd init -t</code> downloaded the accelerator as a ZIP.</li>
-<li>Checkout the AI Landing Zone tag declared in <code>.gitmodules</code>.</li>
-<li>Copy the root <code>main.parameters.json</code> into <code>infra/main.parameters.json</code>.</li>
-<li>Copy <code>manifest.json</code> into <code>infra/manifest.json</code> when the accelerator has one.</li>
-<li>Run any accelerator-specific checks.</li>
-<li>Delegate to <code>infra/scripts/Invoke-PreflightChecks.ps1</code>.</li>
-</ol>
-<p>For a new accelerator, download the starter scripts instead of copying code from this page.</p>
-<div class="alz-download-grid">
-  <a class="alz-download-card alz-download-card--primary" href="../downloads/preProvision.sh" download>
-    <span class="alz-download-card__label">Linux/macOS hook</span>
-    <strong>preProvision.sh</strong>
-    <span>Shell starter for azd environments that execute the POSIX hook.</span>
-  </a>
-  <a class="alz-download-card" href="../downloads/preProvision.ps1" download>
-    <span class="alz-download-card__label">Windows/PowerShell hook</span>
-    <strong>preProvision.ps1</strong>
-    <span>PowerShell starter with the same submodule, parameter copy, and preflight flow.</span>
-  </a>
-</div>
-
-<p>They cover the generic flow: prepare <code>infra/</code>, copy accelerator parameters and
-run foundation preflight. See <a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a>
-for nested boolean rewriting. Do not copy current Agent platform hooks as
-submodule starters: their repository-owned-source contract is different.</p>
-<p><strong>4. <code>main.parameters.json</code></strong></p>
-<p>This file lives in the accelerator repository root. During <code>preprovision</code>, it replaces the submodule's <code>infra/main.parameters.json</code>.</p>
-<p>Use it to set the accelerator defaults:</p>
-<div class="highlight"><pre><span></span><code>{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "environmentName": { "value": "${AZURE_ENV_NAME}" },
-    "location": { "value": "${AZURE_LOCATION}" },
-    "principalId": { "value": "${AZURE_PRINCIPAL_ID}" },
-    "appConfigLabel": { "value": "my-accelerator" },
-    "networkIsolation": { "value": "${NETWORK_ISOLATION=false}" },
-    "deployContainerApps": { "value": "true" },
-    "deploySearchService": { "value": "true" }
-  }
-}
-</code></pre></div>
-<div class="admonition warning">
-<p class="admonition-title">This is not a JSON merge</p>
-<p>The script copies the file with overwrite semantics. Your root <code>main.parameters.json</code> must be complete for the AI Landing Zone tag you pinned. When you upgrade the tag, compare your file with the new <code>infra/main.parameters.json</code>.</p>
-</div>
-<p><strong>5. <code>manifest.json</code> (optional)</strong></p>
-<p>Use this only when you want to record release metadata, such as the accelerator tag and the AI Landing Zone tag it was tested with.</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">"tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v0.1.0"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"repo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://github.com/myorg/my-accelerator.git"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"ailz_tag"</span><span class="p">:</span><span class="w"> </span><span class="s2">"v2.0.2"</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">"components"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
-<span class="p">}</span>
-</code></pre></div>
-<h2 id="what-happens-during-azd-provision">What happens during <code>azd provision</code></h2>
-<p>The <code>preprovision</code> hook prepares <code>infra/</code> before <code>azd</code> compiles and deploys Bicep.</p>
-<pre class="mermaid"><code>sequenceDiagram
-    participant Dev as Developer or CI
-    participant AZD as azd
-    participant Hook as preprovision hook
-    participant Git as git
-    participant FS as files
-    participant Azure as Azure
-    Dev-&gt;&gt;AZD: azd provision
-    AZD-&gt;&gt;Hook: run preprovision
-    Hook-&gt;&gt;Git: initialize infra submodule
-    alt normal git clone
-        Git--&gt;&gt;FS: infra/ is populated
-    else azd init ZIP download
-        Hook-&gt;&gt;Git: clone AI Landing Zone into infra/
-    end
-    Hook-&gt;&gt;Git: ensure infra/ is on the tag from .gitmodules
-    Hook-&gt;&gt;FS: copy main.parameters.json into infra/
-    Hook-&gt;&gt;FS: copy manifest.json into infra/ if present
-    Hook-&gt;&gt;FS: run preflight checks
-    Hook--&gt;&gt;AZD: infra/ is ready
-    AZD-&gt;&gt;Azure: deploy infra/main.bicep</code></pre>
-<p>Two implementation details are worth understanding:</p>
-<p><strong>ZIP fallback:</strong> <code>azd init -t &lt;repo&gt;</code> can download a ZIP instead of doing a full git clone. ZIP files do not preserve submodule metadata, so <code>infra/</code> may be empty. The script detects this and clones the AI Landing Zone directly using the URL and tag from <code>.gitmodules</code>.</p>
-<p><strong>Version re-pin:</strong> this runs after both paths. In a normal git clone, the submodule may already be on the expected version, so this step is usually just a confirmation. In the ZIP fallback path, it is required because the script cloned <code>infra/</code> directly. In both cases, the readable tag in <code>.gitmodules</code> is treated as the version the accelerator expects.</p>
+<h1 id="customize-the-incorporated-foundation">Customize the incorporated foundation</h1>
+<p>The maintained Bicep foundation lives in
+<a href="https://github.com/Azure/agent-landing-zone/tree/main/infra">Azure/agent-landing-zone under <code>infra/</code></a>.
+It is regular repository-owned source, not a Git submodule or a separate
+checkout to initialize. Foundation changes are reviewed and released with the
+platform.</p>
+<h2 id="application-and-infrastructure-boundaries">Application and infrastructure boundaries</h2>
+<p>For a different application, use the
+<a href="../../agent-landing-zone/build-your-own-app/">application-definition contract</a>.
+Keep application images and runtime configuration outside foundation modules.
+Use <a href="../../agent-landing-zone/deploy-infra-only/">Deploy infrastructure only</a>
+when the foundation is needed before application deployment, or
+<a href="../../agent-landing-zone/deploy-full-stack/">Deploy the full stack</a> for both.</p>
+<h2 id="parameters-and-lifecycle">Parameters and lifecycle</h2>
+<p>Keep <code>azure.yaml</code>, <code>manifest.json</code>, the root <code>main.parameters.json</code>, <code>infra/</code>,
+<code>config/</code>, <code>contracts/</code> and <code>scripts/</code> together at the reviewed platform
+revision. Run <code>azd</code> from the platform root.</p>
+<p>The platform hooks validate the selected application and immutable environment
+binding, compose the root parameters into <code>infra/main.parameters.json</code>, and
+run foundation preflight. Do not edit the generated parameter copy or replace
+the hooks with submodule initialization scripts.
+See <a href="../../agent-landing-zone/how-it-works/">How it works</a> and
+<a href="../../agent-landing-zone/configuration/">Deployment settings</a>.</p>
 <p><a id="boolean-rewrite-edge-case"></a></p>
-<p><strong>Nested boolean compatibility note</strong></p>
-<p>This is about the values an accelerator passes into the AI Landing Zone Bicep module. If the accelerator parameterizes a boolean field that lives inside an AI Landing Zone <code>object</code> parameter, configure that conversion in the accelerator's <code>preProvision</code> hook with <code>nestedBooleanRewrites</code>. The hook runs after <code>main.parameters.json</code> is copied into <code>infra/</code> and before preflight checks, so the deployment receives a real JSON boolean instead of the string produced by environment-variable substitution.</p>
-<p>For example, this accelerator parameterizes the nested <code>enabled</code> field:</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">"publicIngress"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${PUBLIC_INGRESS_ENABLED=false}"</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">"frontendHostName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${PUBLIC_INGRESS_FRONTEND_HOSTNAME=}"</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div>
-<p>In that case, configure the starter <code>preProvision</code> template to normalize only <code>publicIngress.value.enabled</code>.</p>
-<p>PowerShell starter:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">$nestedBooleanRewrites</span> <span class="p">=</span> <span class="p">@(</span>
-    <span class="p">@{</span>
-        <span class="k">Parameter</span> <span class="p">=</span> <span class="s1">'publicIngress'</span>
-        <span class="n">PropertyPath</span> <span class="p">=</span> <span class="p">@(</span><span class="s1">'enabled'</span><span class="p">)</span>
-        <span class="n">EnvironmentVariable</span> <span class="p">=</span> <span class="s1">'PUBLIC_INGRESS_ENABLED'</span>
-        <span class="k">Default</span> <span class="p">=</span> <span class="nv">$false</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Shell starter:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">NESTED_BOOLEAN_REWRITES</span><span class="o">=</span><span class="s1">'[</span>
-<span class="s1">  {</span>
-<span class="s1">    "parameter": "publicIngress",</span>
-<span class="s1">    "propertyPath": ["enabled"],</span>
-<span class="s1">    "environmentVariable": "PUBLIC_INGRESS_ENABLED",</span>
-<span class="s1">    "default": false</span>
-<span class="s1">  }</span>
-<span class="s1">]'</span>
-</code></pre></div>
-<p>Leave the configuration empty when the accelerator does not parameterize this kind of nested boolean field.</p>
-<h2 id="step-by-step-setup">Step-by-step setup</h2>
-<p>Follow these steps when creating a new accelerator.</p>
-<p><strong>1. Add the submodule</strong></p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>-b<span class="w"> </span>v2.0.2<span class="w"> </span>https://github.com/Azure/bicep-ptn-aiml-landing-zone.git<span class="w"> </span>infra
-</code></pre></div>
-<p>Then edit <code>.gitmodules</code> and add <code>ignore = dirty</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="k">[submodule "infra"]</span>
-<span class="w">    </span><span class="na">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">infra</span>
-<span class="w">    </span><span class="na">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</span>
-<span class="w">    </span><span class="na">branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">v2.0.2</span>
-<span class="w">    </span><span class="na">ignore</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">dirty</span>
-</code></pre></div>
-<p><strong>2. Add <code>azure.yaml</code></strong></p>
-<p>Create an <code>azure.yaml</code> with:</p>
-<ul>
-<li><code>infra.provider: bicep</code></li>
-<li><code>infra.path: infra</code></li>
-<li><code>infra.module: main</code></li>
-<li><code>hooks.preprovision</code> pointing to both <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code></li>
-</ul>
-<p>Use the example in <a href="#required-files">Required files</a> as the starting point.</p>
-<p><strong>3. Copy the preprovision scripts</strong></p>
-<p>Create both scripts from the starter templates in <a href="#required-files">Required files</a>:</p>
-<ul>
-<li><code>scripts/preProvision.sh</code></li>
-<li><code>scripts/preProvision.ps1</code></li>
-</ul>
-<p>Keep the generic submodule, overlay, and AI Landing Zone preflight behavior. Add accelerator-specific checks only where the templates say to add them.</p>
-<p><strong>4. Create the root <code>main.parameters.json</code></strong></p>
-<p>Start from the <code>infra/main.parameters.json</code> file from the AI Landing Zone tag you pinned. Copy it to the accelerator repository root and then change only the values needed by your scenario.</p>
-<p>Typical changes include:</p>
-<ul>
-<li>enabling or disabling services;</li>
-<li>setting <code>appConfigLabel</code>;</li>
-<li>setting model, search, networking, or container defaults;</li>
-<li>adding accelerator-specific parameters.</li>
-</ul>
-<p><strong>5. Add <code>manifest.json</code> only if useful</strong></p>
-<p>If your accelerator needs release traceability, add <code>manifest.json</code>. If not, skip it.</p>
-<p><strong>6. Ignore local azd state</strong></p>
-<p>Add <code>.azure/</code> to <code>.gitignore</code>.</p>
-<div class="highlight"><pre><span></span><code>.azure
-</code></pre></div>
-<p><strong>7. Validate the integration</strong></p>
-<p>Use the accelerator's reviewed source, complete parameter overlay and a
-nonproduction environment. Exercise its lifecycle with its own supported
-runbook; there is no additional generic deployment recipe here.</p>
-<p>During provisioning, the script should print messages similar to:</p>
-<div class="highlight"><pre><span></span><code>Initializing infrastructure submodule...
-Pinning infra submodule to 'v2.0.2'...
-Applying project main.parameters.json to infra...
-Running landing-zone preflight checks...
-</code></pre></div>
-<h2 id="upgrade-and-local-workflow">Upgrade and local workflow</h2>
-<p>To upgrade the AI Landing Zone version:</p>
-<ol>
-<li>Change <code>branch = v2.0.2</code> in <code>.gitmodules</code> to the new tag.</li>
-<li>Checkout the same tag inside <code>infra/</code>.</li>
-<li>Reconcile your root <code>main.parameters.json</code> with the new tag's default file.</li>
-<li>Update <code>manifest.json</code> if you use it.</li>
-<li>Test with <code>azd provision</code> in a non-production environment.</li>
-</ol>
-<p>Example:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>infra
-git<span class="w"> </span>fetch<span class="w"> </span>--tags
-git<span class="w"> </span>checkout<span class="w"> </span>v2.1.0
-<span class="nb">cd</span><span class="w"> </span>..
-git<span class="w"> </span>add<span class="w"> </span>infra<span class="w"> </span>.gitmodules<span class="w"> </span>main.parameters.json<span class="w"> </span>manifest.json
-git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Bump AI Landing Zone to v2.1.0"</span>
-</code></pre></div>
-<p>For local development:</p>
-<ul>
-<li>Clone with <code>git clone --recurse-submodules &lt;repo-url&gt;</code>.</li>
-<li>If <code>infra/</code> is empty, run <code>git submodule update --init --recursive</code>.</li>
-<li>To see the current AI Landing Zone version, run <code>git -C infra describe --tags</code>.</li>
-<li>Do not edit <code>infra/main.parameters.json</code> directly. Edit the root <code>main.parameters.json</code>; the hook will copy it into <code>infra/</code>.</li>
-</ul>
-<h2 id="code-agent-checklist">Code agent checklist</h2>
-<p>Use this checklist when automating the pattern in a new accelerator.</p>
-<p>Required changes:</p>
-<ol>
-<li>Add the <code>infra</code> submodule pointing to <code>https://github.com/Azure/bicep-ptn-aiml-landing-zone.git</code>.</li>
-<li>Ensure <code>.gitmodules</code> has <code>path = infra</code>, <code>branch = &lt;tag&gt;</code>, and preferably <code>ignore = dirty</code>.</li>
-<li>Ensure <code>azure.yaml</code> has <code>infra.path: infra</code>, <code>infra.module: main</code>, and a <code>preprovision</code> hook for POSIX and Windows.</li>
-<li>Copy <code>scripts/preProvision.sh</code> and <code>scripts/preProvision.ps1</code> from a reference accelerator.</li>
-<li>Keep the generic script behavior: initialize submodule, handle ZIP fallback, checkout the pinned tag, copy parameters, copy manifest if present, and run AI Landing Zone preflight checks.</li>
-<li>Create a complete root <code>main.parameters.json</code> for the pinned AI Landing Zone tag.</li>
-<li>Add <code>manifest.json</code> only if the accelerator needs release metadata.</li>
-<li>Add <code>.azure/</code> to <code>.gitignore</code>.</li>
-</ol>
-<p>Validation checks:</p>
-<div class="highlight"><pre><span></span><code><span class="nb">test</span><span class="w"> </span>-f<span class="w"> </span>infra/main.bicep
-grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'bicep-ptn-aiml-landing-zone'</span><span class="w"> </span>.gitmodules
-grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'path: infra'</span><span class="w"> </span>azure.yaml
-grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">'preprovision:'</span><span class="w"> </span>azure.yaml
-jq<span class="w"> </span>.<span class="w"> </span>main.parameters.json<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
-</code></pre></div>
-<p>Invariants to preserve:</p>
-<ul>
-<li><code>azure.yaml</code> and <code>.gitmodules</code> must both point to <code>infra</code>.</li>
-<li>The <code>.gitmodules</code> <code>branch</code> value should be a released AI Landing Zone tag.</li>
-<li>The root <code>main.parameters.json</code> must match the schema expected by the pinned AI Landing Zone tag.</li>
-<li>Accelerator-specific checks should run before the AI Landing Zone preflight checks.</li>
-<li>Preserve preflight validation and fail on findings; offline checks do not
-  establish Azure deployment readiness.</li>
-</ul>
-<h2 id="references-and-next-steps">References and next steps</h2>
-<p>Reference accelerators:</p>
-<ul>
-<li><a href="https://github.com/Azure/agent-landing-zone">Azure/agent-landing-zone</a> - Agent Landing Zone accelerator; it now incorporates the landing zone directly under <code>infra/</code> instead of using a submodule. See the <a href="../../agent-landing-zone/">Agent Landing Zone docs</a>.</li>
-<li><a href="https://github.com/Azure/live-voice-practice">Azure/live-voice-practice</a> - useful when you need an example of nested boolean rewriting.</li>
-</ul>
-<p>Related documentation:</p>
-<ul>
-<li><a href="../how-to-deploy/">How to Deploy</a></li>
-<li><a href="../parameterization/">Parameterization</a></li>
-<li><a href="../hub-and-spoke/">Hub-and-Spoke Topology</a></li>
-</ul>
+<p>Structured inputs must retain their native types. Set only mapped scalar
+inputs with <code>azd env set</code>; keep arrays, objects and unmapped native parameters
+in the reviewed root parameter file. Follow the
+<a href="../parameterization/">parameter reference</a> rather than copying legacy hook
+starters.</p>
+<h2 id="changes-and-upgrades">Changes and upgrades</h2>
+<p>Review changes to the incorporated Bicep source with their compatible platform
+parameters, hooks and contracts. <code>manifest.json</code> <code>infra.source</code> records where
+the foundation was incorporated from; it does not select a separate
+infrastructure checkout at deployment time.</p>
+<p>Upgrade through a coordinated platform release and preserve the previous
+compatible revision and approved inputs for rollback. Follow the
+<a href="../../agent-landing-zone/deploy-full-stack/#upgrade-to-a-new-release">upgrade and rollback runbook</a>
+rather than fetching a foundation tag into <code>infra/</code>.</p>
 
 
 

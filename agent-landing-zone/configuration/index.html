@@ -2211,8 +2211,8 @@ stability. Names resolve before the first provision; later changes can create
 new resources instead of updating existing ones.</p>
 <h3 id="resource-group-destinations">Resource group destinations</h3>
 <p>This <strong>Agent Bicep/azd</strong> interface uses the compatible components pinned by the
-platform manifest. Terraform, portal and the independent Bicep foundation
-do not share this Agent platform contract.</p>
+platform manifest. Terraform and portal do not share this Agent platform
+contract.</p>
 <p>New environments use three resource groups by default: Foundry/grounding,
 application and workload networking. Existing environments keep their mapping.
 All workload destinations must be in <code>AZURE_SUBSCRIPTION_ID</code>. Equal names are

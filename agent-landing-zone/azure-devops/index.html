@@ -2113,10 +2113,8 @@ or <a href="../deploy-full-stack/">Deploy full stack</a> runbook. For component 
 <p class="admonition-title">Choose the right pipeline</p>
 <p>The downloadable example below verifies the <strong>same source commit in every
 job</strong> and enforces successful prior stages. Images are built per environment.
-The separate <a href="../../bicep/deploy-with-azure-devops/">foundation pipeline guide</a>
-explains upstream service connections and Environment setup; those assets
-provision infrastructure only, allow independent environment selection and
-do not automatically execute their preview template.</p>
+Keep the platform's incorporated <code>infra/</code> and lifecycle hooks in that same
+revision. Do not substitute pipelines from a separate foundation checkout.</p>
 </div>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>

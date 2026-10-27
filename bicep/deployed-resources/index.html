@@ -1842,7 +1842,8 @@
 </ol>
 <div class="admonition info">
 <p class="admonition-title">Foundation scope</p>
-<p>This inventory describes the <strong>independent Bicep foundation</strong>, not the
+<p>This inventory describes <strong>native Bicep foundation building blocks</strong> under
+Agent Landing Zone's <code>infra/</code>, not the
 Agent application footprint. Agent Landing Zone composes its own services,
 topology and component selection. Foundry backing resources are separate
 from application stores, and conditional creation/reuse applies across all
@@ -1895,7 +1896,7 @@ or full Agent deployment quotes.</p>
 <ul>
 <li><strong>Bring your own</strong> — set <code>aiSearchResourceId</code>, <code>aiFoundryStorageAccountResourceId</code>, and <code>aiFoundryCosmosDBAccountResourceId</code> to existing resource IDs of a <strong>dedicated Foundry-only trio</strong> that belongs exclusively to this Foundry instance. Don't share the Agent Service data plane with the workload or with other Foundry instances — only use BYO to reattach a trio already provisioned out-of-band for this same Foundry.</li>
 <li><strong>Disable the Agent Service</strong> — set <code>deployAAfAgentSvc=false</code> (and optionally <code>deployAfProject=false</code>). The Foundry account stays, but the second Search / Storage / Cosmos are not created. Use this when you only need model deployments and don't use Foundry agents.</li>
-<li><strong>Foundry AI Search defaults to <code>1 partition × 1 replica</code></strong> (lowered from 3 replicas in v2.0.5; see <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/blob/main/CHANGELOG.md">CHANGELOG</a>) — scale it back up to 3 replicas in-place if you need Azure AI Search's read/write SLA.</li>
+<li><strong>Foundry AI Search defaults to <code>1 partition × 1 replica</code></strong> — scale it up to 3 replicas in-place if you need Azure AI Search's read/write SLA.</li>
 </ul>
 </div>
 <hr />
@@ -1941,7 +1942,7 @@ can also differ from native Bicep defaults.</p>
 <tr>
 <td><strong>Scenario add-ons</strong></td>
 <td>Application Gateway WAF v2, Azure Speech, Bing grounding, ACR build-agent pool</td>
-<td>Explicit opt-ins in the current upstream root parameters</td>
+<td>Explicit selections in the platform's root parameters and application composition</td>
 </tr>
 </tbody>
 </table>
@@ -2301,7 +2302,7 @@ deployJumpbox / Bastion / NatGateway = false (defaults to NI; no VNet)
 publicIngress.enabled   = false
 deployAAfAgentSvc       = true    (default — Standard Agent Setup)
 deployAcrTaskAgentPool  = false   (private pool is not created in this public scenario)
-deployGroundingWithBing = true    (explicit scenario choice; current upstream root defaults false)
+deployGroundingWithBing = true    (explicit scenario choice; native foundation default is false)
 </code></pre></div>
 <p>Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a public endpoint.</p>
 <table>

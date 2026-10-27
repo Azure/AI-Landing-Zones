@@ -1945,10 +1945,11 @@
 
 
 <h1 id="parameterization">Parameterization</h1>
-<p>This reference describes the independent Bicep foundation. Its root
-<code>main.parameters.json</code> supplies native parameter values and <code>${VARIABLE_NAME}</code>
-substitutions. Use <code>azd env set</code> only for substitutions actually present in the
-selected source file; native arrays and objects need reviewed file changes.</p>
+<p>This reference describes native parameters of the Bicep foundation maintained
+in Agent Landing Zone's <code>infra/</code>. The platform's root <code>main.parameters.json</code>
+supplies reviewed values and <code>${VARIABLE_NAME}</code> substitutions. Use <code>azd env set</code>
+only for substitutions actually present in that file; native arrays and objects
+need reviewed file changes.</p>
 <p>Agent Landing Zone composes its own root parameter file and regenerates
 <code>infra/main.parameters.json</code>. Its definition and topology can override foundation
 choices. See <a href="../../agent-landing-zone/configuration/">Agent configuration</a> rather
@@ -2086,10 +2087,6 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </tbody>
 </table>
 <h2 id="solution-storage-controls">Solution Storage controls</h2>
-<div class="admonition warning">
-<p class="admonition-title">Available in v2.7.0 - live Azure validation not verified</p>
-<p>These inputs are available in <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/releases/tag/v2.7.0">Bicep implementation v2.7.0</a> for <a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/issues/160">Azure/bicep-ptn-aiml-landing-zone#160</a>. Use a compatible implementation revision. Release availability and successful CI are not evidence of a successful live Azure deployment; scanner and client behavior still require environment-specific validation.</p>
-</div>
 <p>These three inputs apply <strong>only to the solution Storage account</strong> controlled by <code>deployStorageAccount</code>, not auxiliary AI Foundry Storage, VM storage, or other services. The Storage AVM dependency remains <code>br/public:avm/res/storage/storage-account:0.26.2</code>.</p>
 <table>
 <thead>
@@ -2153,7 +2150,12 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Keep customizations in your reviewed, version-controlled parameter-file overlay. With the <a href="../accelerator-pattern/">accelerator submodule pattern</a>, the overlay replaces the parameter file; it is not a JSON merge and must remain complete for the pinned ALZ revision. Do not patch generated infrastructure or change the pinned AVM to apply these settings. See the <a href="../how-to-deploy/#solution-storage-profile">deployment and migration guidance</a>.</p>
+<p>Keep customizations in the platform's reviewed, version-controlled root
+<code>main.parameters.json</code>. The platform hooks compose
+<code>infra/main.parameters.json</code>; do not patch that generated copy or change the
+pinned AVM to apply these settings. See
+<a href="../accelerator-pattern/">foundation customization</a> and the
+<a href="../how-to-deploy/#solution-storage-profile">deployment and migration guidance</a>.</p>
 <h3 id="network-rules-are-desired-state-not-discovered-exceptions">Network rules are desired state, not discovered exceptions</h3>
 <p><code>storageAccountResourceAccessRules</code> declares the <strong>entire desired rules list</strong>. A redeployment removes resource-instance rules not included in it, including undesired or manually added exceptions. An empty array, including the omitted-input default, does not preserve rules that exist on the live account. There is no live-state merge or automatic discovery of Defender scanner exceptions.</p>
 <p>Each entry must use the exact, approved, existing Azure resource's full ARM resource ID and its tenant ID. Do not use wildcards, tenant/subscription/resource-group-wide scopes, or a synthesized scanner ID. Resource instances must belong to the <strong>same Microsoft Entra tenant</strong> as the Storage account, although their subscriptions can differ. A sealed object validates the input shape, not the resource's existence, supported type, tenant eligibility, or permissions; those remain Azure-side checks. A <a href="https://learn.microsoft.com/azure/storage/common/storage-network-security-resource-instances">resource-instance network rule</a> provides network eligibility, <strong>not data permissions</strong>. The resource's managed identity still needs the appropriate data-plane authorization, managed separately.</p>

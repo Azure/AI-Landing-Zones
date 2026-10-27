@@ -1712,7 +1712,7 @@ on a shared hub. With isolation enabled it can include local private DNS,
 private endpoints, firewall, Bastion and a jumpbox. For shared network services,
 use the <a href="../hub-and-spoke/">hub-and-spoke design</a>.</p>
 <p>Execute <a href="../../agent-landing-zone/deploy-infra-only/">Deploy infrastructure only</a>
-for either the independent Bicep foundation or the Agent foundation.
+from the Agent Landing Zone repository root.
 Execute <a href="../../agent-landing-zone/deploy-full-stack/">Deploy the full stack</a>
 when the Agent application is required. This page is the network reference
 for those procedures, not a third deployment path.</p>
@@ -1722,15 +1722,14 @@ for those procedures, not a third deployment path.</p>
 The network/security owners approve addresses, egress and public exceptions.
 Confirm regional capacity, resource-provider registration and scoped deployment
 permissions before provisioning.</p>
-<p>The upstream Bicep foundation creates a hello-world Container App, not the
-Agent application. Agent Landing Zone instead uses its repository-owned
-<code>infra/</code> and additional hooks. Do not deploy both sources into one environment.
-The <a href="../deployed-resources/">inventory and cost estimates</a> describe the independent
-foundation; selected Agent application resources can differ.</p>
+<p>Agent Landing Zone owns the foundation under <code>infra/</code> and runs it through
+platform lifecycle hooks. Do not use a separate foundation checkout.
+The <a href="../deployed-resources/">inventory and cost estimates</a> describe foundation
+building blocks; selected application resources can differ.</p>
 <h2 id="address-planning">Address planning</h2>
 <p><a id="2-plan-addresses"></a></p>
 <p>Reserve a VNet range that does not overlap other VNets, VPN/on-premises ranges
-or future hub connections. The upstream default VNet is <code>192.168.0.0/21</code>.
+or future hub connections. The native foundation default VNet is <code>192.168.0.0/21</code>.
 Changing only that prefix does not change the individual subnet prefixes.</p>
 <p>The following is a <strong>complete illustrative allocation</strong>, not a universally safe
 range. Replace it as a unit if it conflicts with your approved design.</p>
@@ -1825,14 +1824,15 @@ the recommendation. That minimum is not a future-scale guarantee.</p>
 </tr>
 <tr>
 <td><code>DEPLOY_ACR_TASK_AGENT_POOL</code></td>
-<td>Upstream defaults off; the Agent platform selects it for private remote builds</td>
+<td>The Agent platform selects a pool for private remote builds; review the <a href="../../agent-landing-zone/network-isolation/">build-mode contract</a> before overriding</td>
 </tr>
 </tbody>
 </table>
 <p>The NAT gateway supports its configured subnet; it is not a firewall or a
 substitute for reviewing effective routes. Inspect the local firewall route and
 required destinations in the
-<a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone#firewall-egress-allow-list-network-isolation">upstream egress reference</a>.
+<a href="../../agent-landing-zone/network-isolation/">network isolation reference</a>
+and <a href="https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep">foundation firewall source</a>.
 Agent platform build egress also includes its own dependency-specific inputs.
 An ACR Tasks pool does not make the deployment host VNet-connected.</p>
 <p>With empty native <code>allowedIpRanges</code>, private service endpoints are the intended
@@ -1886,8 +1886,8 @@ connections. Test HTTPS with normal certificate validation and the intended
 authorized identity. A 401/403 can show an endpoint responds, but is not a
 successful data-access authorization test. Confirm telemetry reaches the
 intended workspace.</p>
-<p>For the independent foundation's placeholder app, an HTTPS 200 from inside the
-network is a runtime/network smoke test only. Agent acceptance also requires
+<p>For a placeholder app, an HTTPS 200 from inside the network is a runtime/network
+smoke test only. Agent acceptance also requires
 sign-in, agent/tool execution and positive/negative document-access tests.
 An unconnected workstation must not serve a private app or read private data;
 public DNS outside the VNet alone does not establish exposure.</p>

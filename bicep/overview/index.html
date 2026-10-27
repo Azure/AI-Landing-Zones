@@ -1674,12 +1674,12 @@
 
 
 <h1 id="bicep-foundation-overview">Bicep foundation overview</h1>
-<p>The AI Landing Zone Bicep implementation provides an Azure foundation for AI
-workloads. Its source is maintained in
-<a href="https://github.com/Azure/bicep-ptn-aiml-landing-zone/">Azure/bicep-ptn-aiml-landing-zone</a>.
-Agent Landing Zone incorporates foundation source under its own <code>infra/</code> tree
-and adds application composition, service configuration and deployment hooks.</p>
-<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/Azure/bicep-ptn-aiml-landing-zone/main/media/Architecture%20Diagram.png" /></p>
+<p>The AI Landing Zone Bicep foundation is maintained in
+<a href="https://github.com/Azure/agent-landing-zone/tree/main/infra">Azure/agent-landing-zone under <code>infra/</code></a>.
+It is repository-owned source, reviewed and released with Agent Landing Zone,
+alongside application composition, service configuration and deployment hooks.
+Run the lifecycle from the Agent Landing Zone repository root, not <code>infra/</code>.</p>
+<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/Azure/agent-landing-zone/main/infra/media/Architecture%20Diagram.png" /></p>
 <h2 id="deployment-modes">Deployment modes</h2>
 <p>The network design is distinct from the Agent application's orchestrator topology.
 <code>deploymentMode</code> records intent; explicit flags and resource IDs determine the
@@ -1713,12 +1713,12 @@ host.</p>
 container runtimes, configuration/secrets, observability, network resources and
 optional add-ons. Service-specific conditions and existing-resource inputs
 determine which are created, reused or omitted.</p>
-<p>The independent foundation's default Container App is a hello-world placeholder.
-It is not the Agent application. Foundry Agent Service backing resources are
-also distinct from workload data stores. Review the
+<p>Infrastructure-only provisioning can leave selected Container Apps running
+placeholder images; these are not the deployed Agent Application.
+Foundry Agent Service backing resources are distinct from workload data stores. Review the
 <a href="../deployed-resources/">resource inventory and cost scenarios</a> for foundation
 scope and the <a href="../parameterization/">parameter reference</a> for supported inputs.
-Do not infer the Agent application footprint from the upstream defaults.</p>
+Do not infer the selected application footprint from native Bicep defaults alone.</p>
 <h2 id="access-and-validation">Access and validation</h2>
 <p>Managed identities and scoped role assignments provide service-to-service
 access; <a href="../permissions/">Permissions</a> describes the foundation's default
@@ -1731,7 +1731,7 @@ Resolve findings instead of skipping the checks.</p>
 <h2 id="use-the-canonical-runbooks">Use the canonical runbooks</h2>
 <ul>
 <li><a href="../../agent-landing-zone/deploy-infra-only/">Deploy infrastructure only</a>
-  — choose independent Bicep foundation or Agent foundation.</li>
+  — provision the incorporated foundation without application image deployment.</li>
 <li><a href="../../agent-landing-zone/deploy-full-stack/">Deploy the full stack</a>
   — deploy the Agent foundation and selected application.</li>
 </ul>
