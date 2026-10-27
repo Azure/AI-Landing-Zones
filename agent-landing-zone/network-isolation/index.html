@@ -548,6 +548,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Isolation and provisioning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-subnet-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose subnet ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-subnets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default subnets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1890,6 +1918,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Isolation and provisioning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-subnet-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose subnet ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#default-subnets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default subnets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2189,8 +2245,46 @@ private endpoint; it does not require the Activity-route public exception.</p>
 <p><span id="enable-isolation"></span></p>
 <h2 id="isolation-and-provisioning">Isolation and provisioning</h2>
 <p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning. All twelve subnets
-are created by default for both new and existing VNets. The default VNet
-address space is <code>192.168.0.0/21</code>.</p>
+are created by default. Choose who manages them before first provision.</p>
+<h3 id="choose-subnet-ownership">Choose subnet ownership</h3>
+<p>These choices apply with network isolation enabled. Hub connectivity and DNS
+remain separate decisions.</p>
+<table>
+<thead>
+<tr>
+<th>Network choice</th>
+<th><code>USE_EXISTING_VNET</code></th>
+<th><code>DEPLOY_SUBNETS</code></th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New VNet and subnets</td>
+<td><code>false</code></td>
+<td><code>true</code></td>
+<td>The template creates the VNet and selected subnets.</td>
+</tr>
+<tr>
+<td>Existing VNet, template-managed subnets</td>
+<td><code>true</code></td>
+<td><code>true</code></td>
+<td>Supply <code>EXISTING_VNET_RESOURCE_ID</code>; the template creates/updates selected subnets.</td>
+</tr>
+<tr>
+<td>Existing VNet, externally managed subnets</td>
+<td><code>true</code></td>
+<td><code>false</code></td>
+<td>Supply the VNet ID; its owner prepares every subnet required by enabled consumers.</td>
+</tr>
+</tbody>
+</table>
+<p>Using an existing VNet does not make deployment read-only. Individual creation
+flags can exclude subnets from template management. See the
+<a href="../configuration/#network-selection-examples">network selection examples</a>.</p>
+<h3 id="default-subnets">Default subnets</h3>
+<p>The new VNet's default address space is <code>192.168.0.0/21</code>. Names and ranges
+can be overridden using the <a href="../configuration/#subnet-creation-and-addressing">subnet inputs</a>.</p>
 <table>
 <thead>
 <tr>
@@ -2275,12 +2369,12 @@ address space is <code>192.168.0.0/21</code>.</p>
 </tr>
 </tbody>
 </table>
-<p><a href="../configuration/#subnet-creation-and-addressing">Subnet creation and addressing</a>
-lists the global <code>DEPLOY_SUBNETS</code> switch, twelve individual flags (all <code>true</code>)
-and root name/CIDR overrides. These controls have the same selection semantics
-for new and BYO VNets. A false creation flag does not disable a consumer:
-its valid subnet must already exist, or the consumer must be explicitly disabled.
+<p><strong>Creation is not service selection.</strong> A false subnet creation flag does not
+disable its consumers: any enabled consumer still needs a valid subnet.
 With isolation off, no VNet or subnets are provisioned.</p>
+<p><strong>Prepared subnets are not deployed services.</strong> These reservations do not deploy
+APIM or VPN/ExpressRoute gateways, create a Power Platform enterprise policy,
+or associate a Power Platform environment. Those integrations need separate setup.</p>
 <p>Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
 ACR and Azure Monitor Private Link Scope endpoints use the
 <a href="../configuration/#optional-application-private-endpoint-subnet">application private endpoint subnet</a>.

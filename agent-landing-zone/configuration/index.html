@@ -777,6 +777,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Subnet creation and addressing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-selection-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network selection examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#names-and-address-ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Names and address ranges
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2067,6 +2095,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Subnet creation and addressing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#network-selection-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network selection examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#names-and-address-ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Names and address ranges
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2406,11 +2462,6 @@ When unset, they use the template defaults shown below.</p>
 <td><code>EXISTING_VNET_RESOURCE_ID</code></td>
 <td>Empty</td>
 <td>Resource ID required when reusing a virtual network.</td>
-</tr>
-<tr>
-<td><code>DEPLOY_SUBNETS</code></td>
-<td><code>true</code></td>
-<td>Global subnet creation switch, gated by network isolation and each <a href="#subnet-creation-and-addressing">individual creation flag</a>, for new and existing VNets.</td>
 </tr>
 <tr>
 <td><code>SIDE_BY_SIDE</code></td>
@@ -2780,10 +2831,10 @@ before provisioning; external firewall policies remain report-only.</p>
 </table>
 <p>Bastion tunneling is disabled by default.</p>
 <h3 id="subnet-creation-and-addressing">Subnet creation and addressing</h3>
-<p>With <code>NETWORK_ISOLATION=true</code>, all <a href="../network-isolation/#isolation-and-provisioning">twelve default subnets</a>
-are created in either a new or an existing VNet. <code>DEPLOY_SUBNETS</code> is the global
-creation switch. Each Boolean below defaults to <code>true</code>; effective creation is
-<code>networkIsolation &amp;&amp; deploySubnets &amp;&amp; individualFlag</code>.</p>
+<p>Choose <a href="../network-isolation/#choose-subnet-ownership">subnet ownership</a> first.
+The global <code>DEPLOY_SUBNETS</code> switch and all twelve individual switches default
+to <code>true</code> through inline environment mappings in root <code>main.parameters.json</code>.
+Effective creation is <code>networkIsolation &amp;&amp; deploySubnets &amp;&amp; individualFlag</code>.</p>
 <table>
 <thead>
 <tr>
@@ -2793,6 +2844,11 @@ creation switch. Each Boolean below defaults to <code>true</code>; effective cre
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><code>deploySubnets</code></td>
+<td><code>DEPLOY_SUBNETS</code></td>
+<td>Global creation switch for new and existing VNets</td>
+</tr>
 <tr>
 <td><code>deployAgentSubnet</code></td>
 <td><code>DEPLOY_AGENT_SUBNET</code></td>
@@ -2858,8 +2914,12 @@ creation switch. Each Boolean below defaults to <code>true</code>; effective cre
 <p>A <code>false</code> creation flag means do not create/manage that subnet; it does <strong>not</strong>
 disable its consumer. Every enabled consumer must have an existing, valid
 subnet in the selected VNet, or be explicitly disabled. No consumer is silently
-disabled or redirected to another subnet. With isolation off, no VNet or
-subnets are provisioned.</p>
+disabled or redirected to another subnet.</p>
+<p>For a fresh deployment without Power Platform integration, omit its optional
+reservation with <code>azd env set DEPLOY_POWER_PLATFORM_SUBNET false</code>.
+In contrast, disabling application PE subnet creation still requires an
+existing <a href="#application-private-endpoint-subnet">application PE subnet</a>
+when application private endpoints are enabled.</p>
 <p>An isolated new VNet is still created when subnet creation is disabled, but
 configuration fails if an enabled workload requires a subnet that is absent.
 For an existing VNet, only selected subnets are created/updated, through
@@ -2870,6 +2930,26 @@ deletion commands or a guarantee of preserving every previously submitted
 subnet in a deployment-owned VNet; Azure can reject removal of occupied subnets.</p>
 <p><code>deployAiFoundrySubnet</code> controls the Foundry Agent Service subnet association,
 not subnet creation. Use <code>deployAgentSubnet</code> for creation ownership.</p>
+<h4 id="network-selection-examples">Network selection examples</h4>
+<p>For a new isolated environment, set <code>azd env set NETWORK_ISOLATION true</code>,
+then apply the matching selection.</p>
+<p>For a <strong>new VNet</strong>, keep the default names and address plan unless your network
+owner requires different ranges:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>USE_EXISTING_VNET<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_SUBNETS<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<p>For an <strong>existing VNet with template-managed subnets</strong>, replace the placeholder
+with its full ARM resource ID and match the subnet inputs to the approved plan:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>USE_EXISTING_VNET<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>EXISTING_VNET_RESOURCE_ID<span class="w"> </span>&lt;existing-vnet-resource-id&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_SUBNETS<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<p>For <strong>externally managed subnets</strong>, use the same existing-VNet inputs but set
+<code>azd env set DEPLOY_SUBNETS false</code>. Confirm all required subnets already exist
+with the configured names, prefixes, delegations and NSG requirements.
+Then continue with the selected deployment runbook; these inputs do not
+configure peering, DNS forwarding or runner connectivity.</p>
+<h4 id="names-and-address-ranges">Names and address ranges</h4>
 <p>All twelve name and prefix parameters can be overridden in root
 <code>main.parameters.json</code> or through the environment bindings below. Explicit
 operator values are preserved through composition; the allocation table lists
@@ -2961,25 +3041,32 @@ required spellings.</p>
 </table>
 <p>Set <code>vnetAddressPrefixes.value</code> as an explicit array in root
 <code>main.parameters.json</code> (default <code>["192.168.0.0/21"]</code>); there is no
-<code>VNET_ADDRESS_PREFIXES</code> environment mapping. For example, a fragment of the
-root file's <code>parameters</code> object and a matching subnet override are:</p>
+<code>VNET_ADDRESS_PREFIXES</code> environment mapping. For example, merge this complete
+address plan into the root file's <code>parameters</code> object before first provision,
+if <code>10.20.0.0/21</code> is approved and does not overlap connected networks:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-<span class="w">  </span><span class="nt">"vnetAddressPrefixes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"10.20.0.0/21"</span><span class="p">]</span>
-<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="nt">"vnetAddressPrefixes"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"10.20.0.0/21"</span><span class="p">]},</span>
+<span class="w">  </span><span class="nt">"agentSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.0.0/24"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"acaEnvironmentSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.1.0/24"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"peSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.0/26"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"azureBastionSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.64/26"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"azureFirewallSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.128/26"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"gatewaySubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.192/26"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"azureAppGatewaySubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.0/27"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"jumpboxSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.64/27"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"devopsBuildAgentsSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.96/27"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"applicationPeSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.128/26"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"powerPlatformSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.4.0/24"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"aiGatewaySubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.5.0/24"</span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_POWER_PLATFORM_SUBNET_PREFIX<span class="w"> </span><span class="m">10</span>.20.4.0/24
-</code></pre></div>
-<p>Set every other requested subnet prefix to a nonoverlapping range inside the
-approved VNet address space as well. A subnet override does not change the VNet
-address space. For a reused VNet, its actual address space is authoritative;
-these inputs do not resize it. Names must be unique and required names/prefixes
+<p>A subnet override does not resize the VNet; a reused VNet's actual address
+space is authoritative. Names must be unique and required names/prefixes
 cannot be empty. CIDRs must be aligned IPv4 ranges, contained in the VNet and
 nonoverlapping with other requested or existing subnets. The same managed
-subnet's current range is not treated as a separate overlapping subnet.
-Invalid ranges fail rather than being replaced with defaults. Reserved names
-and service-specific size, delegation and NSG requirements also apply.</p>
+subnet's current range is not counted twice. Invalid ranges fail rather than
+being replaced with defaults. Reserved names and service-specific size,
+delegation and NSG requirements still apply.</p>
 <p><span id="optional-application-private-endpoint-subnet"></span></p>
 <h3 id="application-private-endpoint-subnet">Application private endpoint subnet</h3>
 <p>Application private endpoints use their own configured subnet, independently
