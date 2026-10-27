@@ -177,7 +177,6 @@ When unset, they use the template defaults shown below.
 | `ENABLE_AGENTIC_RETRIEVAL` | `false` | Enables the template's agentic retrieval resource configuration. This is separate from the Agent Application setting `RETRIEVAL_BACKEND`. |
 | `USE_EXISTING_VNET` | `false` | Deploys into a virtual network you already have when network isolation is enabled. |
 | `EXISTING_VNET_RESOURCE_ID` | Empty | Resource ID required when reusing a virtual network. |
-| `DEPLOY_SUBNETS` | `true` | Global subnet creation switch, gated by network isolation and each [individual creation flag](#subnet-creation-and-addressing), for new and existing VNets. |
 | `SIDE_BY_SIDE` | `true` | Selects side-by-side placement for private endpoints and DNS zones rather than placing them in the existing VNet's resource group. See the private endpoint group precedence below. |
 
 ### General
@@ -371,13 +370,14 @@ Bastion tunneling is disabled by default.
 
 ### Subnet creation and addressing
 
-With `NETWORK_ISOLATION=true`, all [twelve default subnets](network-isolation.md#isolation-and-provisioning)
-are created in either a new or an existing VNet. `DEPLOY_SUBNETS` is the global
-creation switch. Each Boolean below defaults to `true`; effective creation is
-`networkIsolation && deploySubnets && individualFlag`.
+Choose [subnet ownership](network-isolation.md#choose-subnet-ownership) first.
+The global `DEPLOY_SUBNETS` switch and all twelve individual switches default
+to `true` through inline environment mappings in root `main.parameters.json`.
+Effective creation is `networkIsolation && deploySubnets && individualFlag`.
 
 | Native root parameter | Environment input | Subnet purpose |
 | --- | --- | --- |
+| `deploySubnets` | `DEPLOY_SUBNETS` | Global creation switch for new and existing VNets |
 | `deployAgentSubnet` | `DEPLOY_AGENT_SUBNET` | Foundry Agent Service |
 | `deployAcaEnvironmentSubnet` | `DEPLOY_ACA_ENVIRONMENT_SUBNET` | Container Apps environment |
 | `deployPeSubnet` | `DEPLOY_PE_SUBNET` | Foundry/grounding private endpoints |
@@ -394,8 +394,13 @@ creation switch. Each Boolean below defaults to `true`; effective creation is
 A `false` creation flag means do not create/manage that subnet; it does **not**
 disable its consumer. Every enabled consumer must have an existing, valid
 subnet in the selected VNet, or be explicitly disabled. No consumer is silently
-disabled or redirected to another subnet. With isolation off, no VNet or
-subnets are provisioned.
+disabled or redirected to another subnet.
+
+For a fresh deployment without Power Platform integration, omit its optional
+reservation with `azd env set DEPLOY_POWER_PLATFORM_SUBNET false`.
+In contrast, disabling application PE subnet creation still requires an
+existing [application PE subnet](#application-private-endpoint-subnet)
+when application private endpoints are enabled.
 
 An isolated new VNet is still created when subnet creation is disabled, but
 configuration fails if an enabled workload requires a subnet that is absent.
@@ -408,6 +413,36 @@ subnet in a deployment-owned VNet; Azure can reject removal of occupied subnets.
 
 `deployAiFoundrySubnet` controls the Foundry Agent Service subnet association,
 not subnet creation. Use `deployAgentSubnet` for creation ownership.
+
+#### Network selection examples
+
+For a new isolated environment, set `azd env set NETWORK_ISOLATION true`,
+then apply the matching selection.
+
+For a **new VNet**, keep the default names and address plan unless your network
+owner requires different ranges:
+
+```bash
+azd env set USE_EXISTING_VNET false
+azd env set DEPLOY_SUBNETS true
+```
+
+For an **existing VNet with template-managed subnets**, replace the placeholder
+with its full ARM resource ID and match the subnet inputs to the approved plan:
+
+```bash
+azd env set USE_EXISTING_VNET true
+azd env set EXISTING_VNET_RESOURCE_ID <existing-vnet-resource-id>
+azd env set DEPLOY_SUBNETS true
+```
+
+For **externally managed subnets**, use the same existing-VNet inputs but set
+`azd env set DEPLOY_SUBNETS false`. Confirm all required subnets already exist
+with the configured names, prefixes, delegations and NSG requirements.
+Then continue with the selected deployment runbook; these inputs do not
+configure peering, DNS forwarding or runner connectivity.
+
+#### Names and address ranges
 
 All twelve name and prefix parameters can be overridden in root
 `main.parameters.json` or through the environment bindings below. Explicit
@@ -432,30 +467,35 @@ required spellings.
 
 Set `vnetAddressPrefixes.value` as an explicit array in root
 `main.parameters.json` (default `["192.168.0.0/21"]`); there is no
-`VNET_ADDRESS_PREFIXES` environment mapping. For example, a fragment of the
-root file's `parameters` object and a matching subnet override are:
+`VNET_ADDRESS_PREFIXES` environment mapping. For example, merge this complete
+address plan into the root file's `parameters` object before first provision,
+if `10.20.0.0/21` is approved and does not overlap connected networks:
 
 ```json
 {
-  "vnetAddressPrefixes": {
-    "value": ["10.20.0.0/21"]
-  }
+  "vnetAddressPrefixes": {"value": ["10.20.0.0/21"]},
+  "agentSubnetPrefix": {"value": "10.20.0.0/24"},
+  "acaEnvironmentSubnetPrefix": {"value": "10.20.1.0/24"},
+  "peSubnetPrefix": {"value": "10.20.2.0/26"},
+  "azureBastionSubnetPrefix": {"value": "10.20.2.64/26"},
+  "azureFirewallSubnetPrefix": {"value": "10.20.2.128/26"},
+  "gatewaySubnetPrefix": {"value": "10.20.2.192/26"},
+  "azureAppGatewaySubnetPrefix": {"value": "10.20.3.0/27"},
+  "jumpboxSubnetPrefix": {"value": "10.20.3.64/27"},
+  "devopsBuildAgentsSubnetPrefix": {"value": "10.20.3.96/27"},
+  "applicationPeSubnetPrefix": {"value": "10.20.3.128/26"},
+  "powerPlatformSubnetPrefix": {"value": "10.20.4.0/24"},
+  "aiGatewaySubnetPrefix": {"value": "10.20.5.0/24"}
 }
 ```
 
-```bash
-azd env set AZURE_POWER_PLATFORM_SUBNET_PREFIX 10.20.4.0/24
-```
-
-Set every other requested subnet prefix to a nonoverlapping range inside the
-approved VNet address space as well. A subnet override does not change the VNet
-address space. For a reused VNet, its actual address space is authoritative;
-these inputs do not resize it. Names must be unique and required names/prefixes
+A subnet override does not resize the VNet; a reused VNet's actual address
+space is authoritative. Names must be unique and required names/prefixes
 cannot be empty. CIDRs must be aligned IPv4 ranges, contained in the VNet and
 nonoverlapping with other requested or existing subnets. The same managed
-subnet's current range is not treated as a separate overlapping subnet.
-Invalid ranges fail rather than being replaced with defaults. Reserved names
-and service-specific size, delegation and NSG requirements also apply.
+subnet's current range is not counted twice. Invalid ranges fail rather than
+being replaced with defaults. Reserved names and service-specific size,
+delegation and NSG requirements still apply.
 
 <span id="optional-application-private-endpoint-subnet"></span>
 

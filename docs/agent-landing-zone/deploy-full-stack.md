@@ -233,7 +233,7 @@ not the recommended production setup.
 | --- | --- |
 | Private, self-contained network | `azd env set NETWORK_ISOLATION true`; review the [standalone design](../bicep/standalone.md) |
 | Private spoke using an existing hub | `NETWORK_ISOLATION=true`, explicit hub routing, peering, DNS and shared-service inputs from the [hub-and-spoke reference](../bicep/hub-and-spoke.md) |
-| Existing VNet | Review subnet ownership, delegations, NSGs and [BYO parameters](../bicep/parameterization.md#networking) before enabling `USE_EXISTING_VNET` |
+| Existing VNet | Choose [subnet ownership](network-isolation.md#choose-subnet-ownership) and apply the [matching inputs](configuration.md#network-selection-examples); review delegations and NSGs before provision |
 | Public service endpoints, evaluation only | Read the [public-endpoint conditions and commands](deploy-infra-only.md#public-service-endpoints) first. Authentication does not make an endpoint private. |
 
 Apply the approved foundation inputs from

@@ -76,8 +76,27 @@ private endpoint; it does not require the Activity-route public exception.
 ## Isolation and provisioning
 
 `NETWORK_ISOLATION=true` is resolved before provisioning. All twelve subnets
-are created by default for both new and existing VNets. The default VNet
-address space is `192.168.0.0/21`.
+are created by default. Choose who manages them before first provision.
+
+### Choose subnet ownership
+
+These choices apply with network isolation enabled. Hub connectivity and DNS
+remain separate decisions.
+
+| Network choice | `USE_EXISTING_VNET` | `DEPLOY_SUBNETS` | Responsibility |
+| --- | --- | --- | --- |
+| New VNet and subnets | `false` | `true` | The template creates the VNet and selected subnets. |
+| Existing VNet, template-managed subnets | `true` | `true` | Supply `EXISTING_VNET_RESOURCE_ID`; the template creates/updates selected subnets. |
+| Existing VNet, externally managed subnets | `true` | `false` | Supply the VNet ID; its owner prepares every subnet required by enabled consumers. |
+
+Using an existing VNet does not make deployment read-only. Individual creation
+flags can exclude subnets from template management. See the
+[network selection examples](configuration.md#network-selection-examples).
+
+### Default subnets
+
+The new VNet's default address space is `192.168.0.0/21`. Names and ranges
+can be overridden using the [subnet inputs](configuration.md#subnet-creation-and-addressing).
 
 | Purpose | Default name | Default CIDR | Delegation |
 | --- | --- | --- | --- |
@@ -94,12 +113,13 @@ address space is `192.168.0.0/21`.
 | Power Platform | `powerplatform-subnet` | `192.168.4.0/24` | `Microsoft.PowerPlatform/enterprisePolicies` |
 | AI Gateway | `ai-gateway-subnet` | `192.168.5.0/24` | `Microsoft.Web/serverFarms` |
 
-[Subnet creation and addressing](configuration.md#subnet-creation-and-addressing)
-lists the global `DEPLOY_SUBNETS` switch, twelve individual flags (all `true`)
-and root name/CIDR overrides. These controls have the same selection semantics
-for new and BYO VNets. A false creation flag does not disable a consumer:
-its valid subnet must already exist, or the consumer must be explicitly disabled.
+**Creation is not service selection.** A false subnet creation flag does not
+disable its consumers: any enabled consumer still needs a valid subnet.
 With isolation off, no VNet or subnets are provisioned.
+
+**Prepared subnets are not deployed services.** These reservations do not deploy
+APIM or VPN/ExpressRoute gateways, create a Power Platform enterprise policy,
+or associate a Power Platform environment. Those integrations need separate setup.
 
 Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
 ACR and Azure Monitor Private Link Scope endpoints use the
