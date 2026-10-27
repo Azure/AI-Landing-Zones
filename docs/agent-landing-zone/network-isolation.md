@@ -95,8 +95,8 @@ access before ARM deployment to resolve its topology. Post-provision also needs
 private connectivity, so an unconnected host cannot complete every stage.
 
 The matching deployment runbook therefore requires a connected host. The
-default Foundry hosted deployment also needs the image preparation and
-deployment metadata stages described in
+default Foundry hosted deployment automatically prepares its image and
+application handoff during `azd deploy`, as described in
 [Deploy full stack](deploy-full-stack.md).
 
 <span id="reach-the-private-network"></span>

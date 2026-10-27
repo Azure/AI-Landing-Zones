@@ -106,11 +106,7 @@ stages:
                 azd provision --no-prompt
                 topology="$(azd env get-value DEPLOYMENT_TOPOLOGY)"
                 case "$topology" in
-                  classic) ;;
-                  hosted-no-panel|hosted-panel)
-                    bash scripts/prepareHostedDeployment.sh
-                    azd provision --no-prompt
-                    ;;
+                  classic|hosted-no-panel|hosted-panel) ;;
                   *) echo "Unsupported topology" >&2; exit 1 ;;
                 esac
                 azd deploy --no-prompt
