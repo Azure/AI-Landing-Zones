@@ -36,8 +36,10 @@ Messages follow this path:
     It uses a Power Automate flow because the HTTP connector supports
     [virtual network integration](https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation),
     allowing HTTPS requests to reach Foundry through its private endpoint.
+
     The [native Microsoft Foundry integration](https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent)
     follows a separate setup, outside this procedure.
+
     In the documented lab, native connector requests still arrived through
     public ingress after VNet association and returned HTTP 403 with PNA disabled;
     the flow used the delegated private path successfully. These results are
@@ -333,12 +335,15 @@ and restrict sharing before adding real users.
 4. Add a **Condition** node. In its **...** menu, select **Change to formula**,
    open the formula editor and enter
    `IsBlank(Topic.FoundryReply) || IsMatch(Topic.FoundryReply, "\s*", MatchOptions.Complete)`.
-   In the true branch (missing or whitespace-only text), send:
+
+    In the true branch (missing or whitespace-only text), send:
    **"The Foundry agent did not return a completed text response. Please contact
    the support team."** Do not display raw JSON or retry the POST automatically.
-   In **All Other Conditions** (false), add **Send a message** and insert the
+
+    In **All Other Conditions** (false), add **Send a message** and insert the
    **`Topic.FoundryReply`** variable, without a generative rewrite.
    Insert its value with the variable picker; do not type its name as message text.
+
 5. End **both branches** with **Topic management > End all topics**.
    Do not enable a second Foundry tool as an automatic fallback. Run the topic
    checker, fix every error, then save.

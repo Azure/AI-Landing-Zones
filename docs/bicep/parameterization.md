@@ -43,7 +43,7 @@ azd env set NETWORK_ISOLATION true
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
 | `deploymentMode` | `standalone` | `DEPLOYMENT_MODE` | Design intent: `standalone` or `ailz-integrated`; explicit network, routing, DNS and reuse inputs still determine behavior |
-| `networkIsolation` | `false` | `NETWORK_ISOLATION` | Enable Zero Trust network isolation (private endpoints, VNet) |
+| `networkIsolation` | `false` | `NETWORK_ISOLATION` | Set `true` explicitly for the recommended private production setup (private endpoints and VNet). The `false` default selects public service endpoints, for approved evaluations without sensitive data. |
 | `allowedIpRanges` | `[]` | — (native array) | Approved IPv4/CIDR public-access exceptions on supported service data planes; review separately from private endpoints |
 | `useZoneRedundancy` | `false` | — | Enable zone redundancy for supported services |
 | `useCMK` | `false` | — | Enable encryption keys that you manage |
@@ -109,7 +109,11 @@ pinned AVM to apply these settings. See
 
 `storageAccountResourceAccessRules` declares the **entire desired rules list**. A redeployment removes resource-instance rules not included in it, including undesired or manually added exceptions. An empty array, including the omitted-input default, does not preserve rules that exist on the live account. There is no live-state merge or automatic discovery of Defender scanner exceptions.
 
-Each entry must use the exact, approved, existing Azure resource's full ARM resource ID and its tenant ID. Do not use wildcards, tenant/subscription/resource-group-wide scopes, or a synthesized scanner ID. Resource instances must belong to the **same Microsoft Entra tenant** as the Storage account, although their subscriptions can differ. A sealed object validates the input shape, not the resource's existence, supported type, tenant eligibility, or permissions; those remain Azure-side checks. A [resource-instance network rule](https://learn.microsoft.com/azure/storage/common/storage-network-security-resource-instances) provides network eligibility, **not data permissions**. The resource's managed identity still needs the appropriate data-plane authorization, managed separately.
+Each entry must use the exact, approved, existing Azure resource's full ARM resource ID and its tenant ID. Do not use wildcards, tenant/subscription/resource-group-wide scopes, or a synthesized scanner ID. Resource instances must belong to the **same Microsoft Entra tenant** as the Storage account, although their subscriptions can differ.
+
+A sealed object validates the input shape, not the resource's existence, supported type, tenant eligibility, or permissions; those remain Azure-side checks.
+
+A [resource-instance network rule](https://learn.microsoft.com/azure/storage/common/storage-network-security-resource-instances) provides network eligibility, **not data permissions**. The resource's managed identity still needs the appropriate data-plane authorization, managed separately.
 
 These inputs do not change the existing `networkIsolation`, public network access (PNA), `allowedIpRanges`, `defaultAction`, or private-endpoint behavior. Bypass `None` alone does not make an account private. Conversely, PNA `Disabled` does **not** make trusted-service or resource-instance exceptions irrelevant: previously configured exceptions can remain effective. Review them explicitly using the [Storage firewall limitations](https://learn.microsoft.com/azure/storage/common/storage-network-security-limitations) and [network access rules](https://learn.microsoft.com/azure/storage/common/storage-network-security).
 
@@ -117,7 +121,9 @@ An approved existing Defender scanner can be included explicitly in the rules li
 
 ### Shared Key compatibility boundary
 
-Before opting into `storageAccountAllowSharedKeyAccess=false`, inventory and migrate all account-key clients, key-based connection strings, service SAS and account SAS consumers, and Azure Files clients and tools. Validate each required protocol and workflow before rollout. Microsoft Entra authorization and **Blob user delegation SAS** are distinct from key-signed service/account SAS; disabling Shared Key does not disable the former, but they still require suitable network access and data permissions. See [prevent Shared Key authorization](https://learn.microsoft.com/azure/storage/common/shared-key-authorization-prevent).
+Before opting into `storageAccountAllowSharedKeyAccess=false`, inventory and migrate all account-key clients, key-based connection strings, service SAS and account SAS consumers, and Azure Files clients and tools. Validate each required protocol and workflow before rollout.
+
+Microsoft Entra authorization and **Blob user delegation SAS** are distinct from key-signed service/account SAS; disabling Shared Key does not disable the former, but they still require suitable network access and data permissions. See [prevent Shared Key authorization](https://learn.microsoft.com/azure/storage/common/shared-key-authorization-prevent).
 
 This is a data-plane authorization control, not a promise of a key-free management-plane deployment. AVM `0.26.2` retains secure outputs that use `listKeys`; setting this input to `false` does not remove those outputs or their management-plane requirements.
 

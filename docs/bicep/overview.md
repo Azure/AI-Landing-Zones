@@ -14,9 +14,14 @@ The network design is distinct from the Agent application's orchestrator topolog
 `deploymentMode` records intent; explicit flags and resource IDs determine the
 actual resources, routing and reuse.
 
+For production or sensitive data, set `NETWORK_ISOLATION=true` explicitly,
+whether you manage a standalone network or use an existing hub. The template
+currently defaults to `false`, leaving service endpoints public. Reserve that
+option for approved, short-lived evaluations without sensitive data.
+
 | Foundation shape | Intent | Reference |
 | --- | --- | --- |
-| Self-contained | `standalone`; public service endpoints or an explicitly isolated local network | [Standalone network](standalone.md) |
+| Self-contained | `standalone`; use `NETWORK_ISOLATION=true` for the recommended private network | [Standalone network](standalone.md) |
 | Existing hub integration | `ailz-integrated`; explicit private networking, hub routing, peering, DNS and shared-service inputs | [Hub-and-spoke network](hub-and-spoke.md) |
 
 The hub test fixture is not a third production topology. Neither preset

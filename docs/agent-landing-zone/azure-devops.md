@@ -86,6 +86,7 @@ The CI-only pool need not reach Azure data-plane endpoints.
 Every runner needs Bash, PowerShell 7 (`pwsh`), jq, Git, curl, Azure CLI with Bicep,
 Azure Developer CLI (`azd`), and Python **3.12+ with pip and venv**. Hosted deployment
 also needs an azd version supporting the pinned `hosted-agent/azure.yaml` service.
+
 Install and pin approved tool versions in your agent image; record them in your
 release evidence. Populate the self-hosted agent's Python tool cache for
 `UsePythonVersion@0` (`3.12`) before queuing a job.
@@ -227,11 +228,13 @@ The inline `settings` maps keep deployment inputs visible for review.
 Values are reapplied after environment refresh on every job.
 `RUN_FROM_JUMPBOX=true` **requires** the connected-host check; it does not create
 connectivity. The example leaves `AZURE_SKIP_NETWORK_ISOLATION_WARNING=false`.
+
 The inspected POSIX preProvision hook's interactive warning checks the separate
 `AZURE_NETWORK_ISOLATION` variable, not the example's `NETWORK_ISOLATION` input.
 Do not inherit that alias in the runner or environment. If an existing
 workflow must retain a truthy alias, explicitly review setting the warning
 flag to `true` for unattended execution while retaining `RUN_FROM_JUMPBOX=true`.
+
 The warning flag alone can defer configuration when `RUN_FROM_JUMPBOX` is not
 truthy; never use that combination as a private deployment shortcut.
 
@@ -245,9 +248,11 @@ wherever the contract supports them.
 The platform connection authenticates **Azure**, not GitHub or Azure Repos Git.
 See [Private Git authentication](build-your-own-app.md#private-git-authentication)
 for repository access.
+
 The root deploy hook clones selected Agent Application components as **sibling checkouts**
 using manifest repository/tag pins, then verifies the expected commit. Use
 approved read-only Git credentials for those private repositories separately.
+
 The example does not install a private-Git credential: before adopting private
 component pins, add your organization's reviewed, job-scoped credential-helper or
 SSH-agent/known-host setup **inside the authenticated task**, with guaranteed
@@ -258,6 +263,7 @@ Never put tokens in manifest URLs, command-line URLs, `url.insteadOf` global
 configuration, `.azure`, or downloadable artifacts. Keep `persistCredentials:
 false`; the example uses a temporary `GIT_CONFIG_GLOBAL` because hooks can write
 safe-directory entries. Do not rely on an agent owner's persistent Git credentials.
+
 If using an Azure Repos job token, separately grant the build identity read access
 to the required repositories and review job-token scope before explicitly mapping
 it into the credential mechanism. It is not a GitHub credential.
@@ -270,7 +276,9 @@ sources or immutable image digests**, not remote Git URLs.
 Materialize local source in every job with a clean Git checkout at its declared
 `source.commit`, preserving `.git` metadata and the definition's relative layout.
 Explicitly check out pinned component repositories or pinned submodules if needed,
-using the separate Git credentials above. Do not feed these hooks a `git archive`
+using the separate Git credentials above.
+
+Do not feed these hooks a `git archive`
 tree without Git metadata: they check the component's actual `git rev-parse HEAD`.
 Source commit checks do not reject uncommitted edits; validate clean trees.
 
@@ -335,10 +343,13 @@ one already present), sets the intended resource group, and checks group existen
 
 The same azd name and subscription must locate the previous deployment. Review
 the refreshed target and outputs for an existing environment; do not create a
-second deployment by renaming the environment. For split-group deployments,
+second deployment by renaming the environment.
+
+For split-group deployments,
 retain `.azure/<environment-name>/resource-groups.json` after first provision
 and securely restore that same environment's file on subsequent runners.
 `azd env refresh` restores outputs, not this immutable destination binding.
+
 The example does not archive or restore the binding for you; integrate your
 organization's protected state handling before redeployment. Never reuse
 another stage's binding or publish `.env` files as pipeline artifacts.
@@ -362,10 +373,13 @@ the hosted version plus the other selected components.
 This full workflow is deliberately repeatable on fresh agents. A hosted
 preparation may reuse a compatible digest when its provenance is available, but
 disposable local state and different environment registries can cause rebuilding.
-Agent Application Container App scripts build per environment. **This is immutable source
+Agent Application Container App scripts build per environment.
+
+**This is immutable source
 promotion, not build-once immutable-image promotion**: mutable base images, package
 feeds, tool versions, generated configuration and credentials can affect results.
 Pin dependencies/base images and record actual image digests per environment.
+
 If identical images are mandatory, design and validate a separate digest-based
 application contract with cross-registry availability and permissions before
 adopting that promotion model.
@@ -381,9 +395,13 @@ Cleanup runs even after failure. Its fixed path list removes `.azure` and `.logs
 from the platform root, `hosted-agent/`, and the three manifest component sibling
 checkouts (`agent-app-ui`, `agent-app-orchestrator`, `agent-app-ingestion`).
 It leaves their source files intact and removes the job-specific temporary Python
-environment, azd config and Git config. Update the explicit state-directory list
+environment, azd config and Git config.
+
+Update the explicit state-directory list
 when changing component names or adding a custom definition folder; do not replace
-it with recursive deletion of source/workspace roots. AzureCLI@2 owns its isolated
+it with recursive deletion of source/workspace roots.
+
+AzureCLI@2 owns its isolated
 Azure CLI authentication context. Abrupt agent loss can prevent cleanup:
 reimage ephemeral agents or securely clean their disks before reuse.
 

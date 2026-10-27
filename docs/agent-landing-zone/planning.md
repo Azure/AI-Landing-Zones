@@ -23,9 +23,19 @@ VNets, while routes determine where traffic goes. **Egress** means outbound
 traffic. A **NAT gateway** translates private outbound addresses to a public
 address.
 
+For production and workloads with sensitive data, choose a private network,
+whether standalone or connected to an existing hub. Set
+`NETWORK_ISOLATION=true` explicitly: the template currently defaults to `false`.
+Standalone describes who manages the network; it does not mean the services
+should be public.
+
+Use public service endpoints only for approved, short-lived evaluations or
+demonstrations without sensitive data. Authentication remains required, but
+does not provide private network access.
+
 | Choice | Purpose | Configuration and dependencies |
 | --- | --- | --- |
-| Standalone (default) | The workload team owns its network, DNS and operations, without a platform hub dependency. | `DEPLOYMENT_MODE=standalone`. Public endpoints are the default; `NETWORK_ISOLATION=true` adds private networking, with egress, private DNS and a connected deployment host. |
+| Standalone (default network ownership) | The workload team owns its network, DNS and operations, without a platform hub dependency. | `DEPLOYMENT_MODE=standalone` and `NETWORK_ISOLATION=true` for private networking. Plan outbound access, private DNS and a connected deployment host. |
 | Hub integration | A platform team owns shared connectivity, firewall, DNS or monitoring. | `DEPLOYMENT_MODE=ailz-integrated` plus explicit isolation, peering, routing, DNS and reuse inputs. Spoke resources can be omitted where the hub supplies them. |
 | AI Gateway | Multiple workloads need centrally governed model access, such as routing, authentication or token policies. | The separate [AI Gateway implementation](../index.md#ai-gateway-landing-zone) has its own endpoint, authentication, supported APIs, policies and network requirements. Agent Bicep does not deploy or connect it automatically. |
 

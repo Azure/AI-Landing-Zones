@@ -3,6 +3,7 @@
 Agent App UI provides a floating **Chainlit Copilot** widget for an existing
 portal. Its script renders in an open Shadow DOM, a separate part of the
 portal page's document structure, not an iframe containing another web page.
+
 This is Agent App UI embedding, not Copilot Studio. The UI remains in Container
 Apps, with the orchestrator hosted in Foundry and grounding through Foundry IQ.
 The [pinned UI embedding reference](https://github.com/Azure/agent-app-ui/blob/v3.3.0/docs/copilot-embedding.md)
@@ -63,7 +64,9 @@ remains available if browser cookie policy blocks embedding.
 
 The portal CSP must permit scripts from the controlled UI origin and HTTPS
 and secure WebSocket (WSS) connections to it. The bundle runs with the portal
-page's JavaScript privileges; Shadow DOM does not isolate security. It also injects inline
+page's JavaScript privileges; Shadow DOM does not isolate security.
+
+It also injects inline
 styles, which can conflict with the portal's CSP. A compatible policy retains
 the portal's nonce/hash protections rather than broadly enabling `unsafe-inline`.
 Embedding does not require weakening `frame-ancestors` or `X-Frame-Options`.

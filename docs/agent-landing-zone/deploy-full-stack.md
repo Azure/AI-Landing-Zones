@@ -54,6 +54,7 @@ see [How it works](how-it-works.md).
     does not implement the complete authenticated Foundry Toolbox path for
     per-user protected retrieval. UI on-behalf-of (OBO) sign-in authenticates
     the Foundry call; it does not close that downstream integration gap.
+
     Assign a developer to implement and validate the supported identity path
     before admitting protected data. No topology, strategy or permission flag
     makes this turnkey. Do not enable anonymous retrieval, use service identity
@@ -166,8 +167,9 @@ now. Existing environments keep their mapping.
 ### Step 3: Choose the application and network
 
 Set the deployment choices below in the selected azd environment with
-`azd env set` before provisioning. Native foundation arrays and objects go in the root
-parameter file, as described in the linked infrastructure choices.
+`azd env set` before provisioning. Settings containing lists or groups of related
+fields go in the root `main.parameters.json` file, as described in the linked
+infrastructure choices.
 [How it works](how-it-works.md) explains input processing;
 [Deployment settings](configuration.md) identifies input ownership.
 
@@ -203,14 +205,21 @@ One environment binds to one application ID.
 
 #### Network and build mode
 
-Choose one network posture for this new environment:
+Use **private networking for production and workloads with sensitive data**.
+Choose a self-contained private network or a private connection to your
+organization's existing hub.
+
+The template defaults to `NETWORK_ISOLATION=false`, so set `true` explicitly
+before provisioning a private environment. Public endpoints are an exception for
+approved, short-lived evaluations or demonstrations without sensitive data,
+not the recommended production setup.
 
 | Choice | Inputs and preparation |
 | --- | --- |
-| Public service endpoints | `azd env set NETWORK_ISOLATION false`; authentication and authorization still apply |
 | Private, self-contained network | `azd env set NETWORK_ISOLATION true`; review the [standalone design](../bicep/standalone.md) |
 | Private spoke using an existing hub | `NETWORK_ISOLATION=true`, explicit hub routing, peering, DNS and shared-service inputs from the [hub-and-spoke reference](../bicep/hub-and-spoke.md) |
 | Existing VNet | Review subnet ownership, delegations, NSGs and [BYO parameters](../bicep/parameterization.md#networking) before enabling `USE_EXISTING_VNET` |
+| Public service endpoints, evaluation only | Read the [public-endpoint conditions and commands](deploy-infra-only.md#public-service-endpoints) first. Authentication does not make an endpoint private. |
 
 Apply the approved foundation inputs from
 [infrastructure choices](deploy-infra-only.md#step-3-choose-the-foundation-shape).
@@ -253,11 +262,14 @@ azd hooks run preup
 Resolve validation, quota, Policy and connectivity failures rather than bypassing
 checks. The explicit `preup` check also validates binding before standalone
 provisioning, which otherwise runs its check after azd may initialize a resource group.
+
 For an optional `azd provision --preview`, first follow the
 [Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):
 preview skips preprovision hooks, so the selected environment's parameters and
 additional groups must be prepared first. Preparation/preview can create
-resource groups and do not establish private application readiness. Review
+resource groups and do not establish private application readiness.
+
+Review
 resource scopes, public access, routes and role changes before applying the
 sequence below. Normal `azd provision` runs its preprovision hook automatically;
 manual preparation is not required when proceeding without preview.
@@ -436,7 +448,9 @@ Owner or remove unrelated assignments to recover. See [hosted identities](hosted
 For the multi-group path, inventory **every configured destination**
 and its shared dependencies before cleanup. The root group alone is not the
 complete inventory. A `predown` safety hook **blocks `azd down` for split-group
-deployments**, with no automatic deletion or bypass option. Arrange itemized,
+deployments**, with no automatic deletion or bypass option.
+
+Arrange itemized,
 owner-approved manual removal instead; do not bypass the hook or delete shared
 groups. Additional groups created by the feature are not tagged `azd-env-name`.
 Partial provisioning is not authorization to delete a group. The single-group
@@ -482,6 +496,7 @@ do not delete shared hub, DNS or monitoring resources.
     Compare the platform commit with your approved record and each component
     commit with its `manifest.json` entry. Inspect source worktrees for unexpected
     edits; matching HEAD alone does not prove the built source was unchanged.
+
 2. Read `AZURE_CONTAINER_REGISTRY_ENDPOINT` for the registry login hostname.
    The hosted repository is `HOSTED_AGENT_IMAGE` when explicitly set, otherwise
    `agent-app-orchestrator`, as declared in `hosted-agent/azure.yaml`.
@@ -495,6 +510,7 @@ do not delete shared hub, DNS or monitoring resources.
 
     Expect the exact same `sha256:` value, not merely matching tags. In Foundry,
     inspect the routed version's image and confirm it uses that digest.
+
 3. Open the frontend URL from the deployment outputs or UI ingress configuration.
    Use a connected browser for private endpoints. Complete
    [Entra sign-in and delegated authentication](application-auth.md).

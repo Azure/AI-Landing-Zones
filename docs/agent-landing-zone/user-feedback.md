@@ -92,7 +92,9 @@ When the ingestion service is selected, its separate hosted-panel API exposes
 `GET /api/panel/feedback` and counts in `GET /api/panel/overview`. It validates
 an Entra bearer with the `Admin` app role and rejects missing tenant configuration.
 Its schema uses `conversationId`, `messageId`, `rating: "up" | "down"`, `comment`
-and `tags`. The UI schema instead uses `message_ref` and numeric ratings.
+and `tags`.
+
+The UI schema instead uses `message_ref` and numeric ratings.
 There is no shipped adapter joining these schemas into an administrative view.
 
 Operator overview/curation is separately gated by

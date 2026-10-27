@@ -34,7 +34,9 @@ The private Container Registry build agent pool has an explicit `dependsOn` on t
 
 The existing `networkIsolation`, `useExistingVNet`, `deploySubnets`, `deployNsgs`, registry-deployment, and pool-deployment gates remain unchanged. The dependency must respect the subnet module's condition rather than require a module that is not deployed. When `deploySubnets=false`, subnet existence and readiness remain the external network owner's responsibility before provisioning the pool.
 
-For a cold-start verification, record that the target build subnet is **absent before the first attempt** in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and `countSucceeded`, counting only operations that actually reached `Succeeded`. A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.
+For a cold-start verification, record that the target build subnet is **absent before the first attempt** in the BYO-VNet scenario where the template creates subnets. Record the first attempt's deployment operations, the pool's final provisioning state, and `countSucceeded`, counting only operations that actually reached `Succeeded`.
+
+A submitted or running deployment is not proof of success. A retry after an earlier attempt created the subnet, or a run against an already-existing subnet, cannot prove the cold-start ordering fix. Keep retry results separate from first-attempt evidence.
 
 ### BYO VNet Bastion subnet NSGs
 
@@ -63,7 +65,9 @@ to generated infrastructure.
 
 Omit the three inputs to retain bypass `AzureServices`, an empty resource-instance rules list (`[]`), and Shared Key access enabled (`true`), or use the [explicit default fragment](parameterization.md#native-parameter-values-and-defaults). These are compatibility defaults, not a private-only profile. On redeployment, the empty desired list can remove existing manual or Defender-added resource-instance rules; omission is not a request to preserve live exceptions.
 
-With Bicep `0.42.1`, an explicit top-level `null` for any of these defaulted parameters also selects its default. Do not use `null` to request a stricter profile: set bypass to `None` and Shared Key access to `false` explicitly, and supply the complete rules array (`[]` when no exceptions are desired). This does not allow nested `null`, missing required rule fields, empty strings, wrong types, or invalid bypass values; see the [parameter contract](parameterization.md#native-parameter-values-and-defaults). No runtime fallback or product-default change is introduced.
+With Bicep `0.42.1`, an explicit top-level `null` for any of these defaulted parameters also selects its default. Do not use `null` to request a stricter profile: set bypass to `None` and Shared Key access to `false` explicitly, and supply the complete rules array (`[]` when no exceptions are desired).
+
+This does not allow nested `null`, missing required rule fields, empty strings, wrong types, or invalid bypass values; see the [parameter contract](parameterization.md#native-parameter-values-and-defaults). No runtime fallback or product-default change is introduced.
 
 ### Explicit no-bypass profile without Defender scanning
 
@@ -87,7 +91,9 @@ Complete the client inventory and migration below **before** disabling Shared Ke
 
 ### Optional approved existing scanner
 
-If Defender malware scanning is already configured and must be retained, obtain the **exact existing scanner ARM resource ID** and its tenant ID from the approved configuration. Review them with the resource owner. Replace both placeholders below; they are illustrative text, not deployable IDs. Do not construct a scanner scope from a Storage account ID, guess its resource group or name, use a wildcard, or broaden the rule to all resources in a scope.
+If Defender malware scanning is already configured and must be retained, obtain the **exact existing scanner ARM resource ID** and its tenant ID from the approved configuration. Review them with the resource owner. Replace both placeholders below; they are illustrative text, not deployable IDs.
+
+Do not construct a scanner scope from a Storage account ID, guess its resource group or name, use a wildcard, or broaden the rule to all resources in a scope.
 
 ```json
 {

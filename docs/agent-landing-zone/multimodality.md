@@ -70,7 +70,9 @@ shared-corpus retrieval can continue.
 
 The UI needs an established hosted conversation ID and an eligible signed-in
 session. It accepts at most five PDFs, 15 MiB each and 25 MiB combined.
-Anonymous embedded sessions cannot upload. Processing confirmation does not
+Anonymous embedded sessions cannot upload.
+
+Processing confirmation does not
 prove retrieval isolation: the hosted entry point supplies no authenticated
 owner context to the default connector, so the native Blob conversation-upload
 source is skipped. Working protected conversation retrieval requires a reviewed

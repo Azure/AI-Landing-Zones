@@ -24,7 +24,9 @@ An Entra **tenant** is an organization's identity directory. An API **access
 token** is a credential: its **audience** identifies the receiving API, and a
 delegated **scope** identifies a permitted operation on behalf of a user.
 It is a **bearer** token because possession lets a caller present it, so it
-must stay protected. A **delegated call** acts for the signed-in user;
+must stay protected.
+
+A **delegated call** acts for the signed-in user;
 on-behalf-of (OBO) exchanges that user's token for a downstream API token.
 
 Agent App UI supplies chat, sign-in and the delegated call to the hosted agent.

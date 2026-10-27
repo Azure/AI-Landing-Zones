@@ -230,7 +230,9 @@ Distribute the `https://` URL directly.
 The shipped WAF uses the Open Worldwide Application Security Project Core Rule
 Set (OWASP CRS) 3.2 in Prevention mode. Check its logs for
 blocked legitimate requests before widening access. Use narrowly scoped,
-reviewed rules rather than disabling the WAF. Detection mode logs without
+reviewed rules rather than disabling the WAF.
+
+Detection mode logs without
 blocking; if temporarily approved for tuning, retain the source allowlist
 and return to Prevention. See [WAF modes and policy behavior](https://learn.microsoft.com/azure/web-application-firewall/ag/ag-overview).
 Application Gateway supports WebSockets, but
@@ -271,10 +273,13 @@ Application Gateway supports WebSockets, but
 
 Setting `publicIngress.enabled` to false **does not delete** previously created
 resources in incremental deployments, and is not an access-revocation procedure.
+
 After closing access and checking remaining references with their owners,
 arrange explicit deletion of only the dedicated ingress resources
 (gateway, public IP, WAF policy, subnet NSG and gateway identity), clean up their
 role assignments, DNS record and obsolete redirect URI, and remove any subnet
-NSG reference before deleting that NSG. Coordinate with the network owner.
+NSG reference before deleting that NSG.
+
+Coordinate with the network owner.
 Do not delete the shared subnet, vault or UI, or tear down the environment to
 undo a gateway change.

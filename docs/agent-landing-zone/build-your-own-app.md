@@ -20,7 +20,9 @@ different application. Choose the branch that matches your change:
 For the Agent Application orchestrator hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
 knowledge base retrieval. Custom strategies and tools must implement and test
 the hosted entrypoint and authorization path before deployment to Foundry.
-The default remains `maf_lite` with Foundry IQ. A source fork or capability
+The default remains `maf_lite` with Foundry IQ.
+
+A source fork or capability
 profile does not close the protected-retrieval integration gate in the
 Deploy full stack runbook. Implement and test that identity boundary before
 using protected documents; do not substitute a strategy flag.
@@ -158,10 +160,13 @@ this release's deployment.
     Replace the definition's all-zero `components[0].source.commit` with that
     value. Run `git rev-parse HEAD` from the source repository: the shipped `src`
     belongs to the platform repository; a separate source repository needs its
-    own HEAD. Set the pin in the deployment
+    own HEAD.
+
+    Set the pin in the deployment
     workspace **after checkout**; another commit changes HEAD again. Keep source
     files unchanged. For durable committed inputs in a single-repository layout,
     consider the prebuilt image digest contract below.
+
 4. Validate and select in the **new** environment:
 
     ```bash
@@ -173,15 +178,18 @@ this release's deployment.
     Expect validation to pass. This checks schema, folder/service contracts and
     binding, not image availability or application behavior. Schema validation
     accepts the all-zero editing marker; deployment requires actual source HEAD.
+
 5. For a custom-only deployment, set `DEPLOYMENT_TOPOLOGY=classic` in the azd
    environment **before first provision** to suppress the bundled hosted
    orchestrator selection. This is a custom-definition composition requirement,
    not a second Agent Application deployment path. The custom hosted component
    receives its required hosted foundation resources.
-   Then provision the selected definition using
-   the [Deploy infra only runbook](deploy-infra-only.md), and run root `azd deploy`.
-   Its service uses its own source/image
-   contract, not the Agent Application hosted image-preparation handoff.
+
+    Then provision the selected definition using
+    the [Deploy infra only runbook](deploy-infra-only.md), and run root `azd deploy`.
+    Its service uses its own source/image
+    contract, not the Agent Application hosted image-preparation handoff.
+
 6. With the custom hosted example's answer logic, confirm the response names
    the intended project endpoint. A value of `unknown` or `unavailable` indicates
    missing project configuration or failed configuration access. Check the

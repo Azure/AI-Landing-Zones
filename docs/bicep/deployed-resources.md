@@ -11,7 +11,9 @@ This page answers the two questions operators always ask before approving an AI 
     Agent application footprint. Agent Landing Zone composes its own services,
     topology and component selection. Foundry backing resources are separate
     from application stores, and conditional creation/reuse applies across all
-    resource families. Check the selected source's current
+    resource families.
+
+    Check the selected source's current
     [parameters](parameterization.md), deployment preview and
     [Agent choices](../agent-landing-zone/deploy-full-stack.md#step-3-choose-the-application-and-network).
     Cost scenarios below are dated example configurations, not current defaults
@@ -156,6 +158,11 @@ The three scenarios correspond to the most common shapes operators ask about. Ea
 
 ### Scenario 1 — Basic deployment (public, no network isolation)
 
+This cost example is for an approved, short-lived sandbox, demonstration or
+development/test evaluation using synthetic or non-sensitive data. It is not
+the recommended production setup: service endpoints remain public, even when
+authentication is required.
+
 ```text
 networkIsolation        = false
 deployAzureFirewall     = false   (auto-suppressed when NI is off)
@@ -165,8 +172,6 @@ deployAAfAgentSvc       = true    (default — Standard Agent Setup)
 deployAcrTaskAgentPool  = false   (private pool is not created in this public scenario)
 deployGroundingWithBing = true    (explicit scenario choice; native foundation default is false)
 ```
-
-Best for: sandbox, demo, dev/test, evaluation of the orchestrator path over a public endpoint.
 
 | Resource | Fixed monthly | Variable driver |
 |---|---:|---|

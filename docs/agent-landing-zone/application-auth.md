@@ -75,6 +75,7 @@ describes downstream consent.
 `user_delegated` rejects a missing user token without service-identity fallback.
 `service_identity` would make Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.
+
 The supplied hosted entry point sets `user_context={}` and does not supply the
 user's bearer token to `maf_lite` retrieval. It performs no automatic retrieval
 OBO exchange. With `ALLOW_ANONYMOUS=false`, required-user retrieval fails
@@ -86,6 +87,7 @@ this missing-token contract.
 [authenticated hosted Toolbox contract](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent)
 uses an authenticated `FoundryToolbox` client and platform-provided call context.
 The default `maf_lite` code does not consume portal Toolbox configuration.
+
 A compatible integration must connect the knowledge base through that contract,
 retain the platform caller context, and enforce the knowledge source's
 permissions. [Agent tools](agent-tools.md) explains the extension boundary.
@@ -130,6 +132,7 @@ concern UI scopes, tenant and credential lifetime. Invocation denial can instead
 indicate missing downstream consent or Foundry user/agent access.
 Tool consent is separate from UI consent, as described in
 [tool authentication](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication).
+
 A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller
 with a service identity or disable authentication.

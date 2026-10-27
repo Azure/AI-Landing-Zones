@@ -30,9 +30,15 @@ See [How it works](../agent-landing-zone/how-it-works.md) and
 
 <a id="boolean-rewrite-edge-case"></a>
 
-Structured inputs must retain their native types. Set only mapped scalar
-inputs with `azd env set`; keep arrays, objects and unmapped native parameters
-in the reviewed root parameter file. Follow the
+Use `azd env set` for documented environment variables that take one value,
+such as `NETWORK_ISOLATION`. Settings containing lists (`[...]`) or groups of
+named fields (`{...}`) belong in the reviewed root `main.parameters.json` file.
+Parameters without a documented environment-variable equivalent also go in
+that file.
+
+Keep the JSON value types shown in the parameter examples: for instance, use
+`true` for a boolean, not the text `"true"`, and keep lists and objects in their
+original JSON format. Follow the
 [parameter reference](parameterization.md) rather than copying legacy hook
 starters.
 

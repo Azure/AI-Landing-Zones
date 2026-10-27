@@ -78,7 +78,9 @@ azd env set HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT false
 These flags configure the **spoke-to-hub** peering. The hub administrator must
 create/configure the reverse **hub-to-spoke** peering with gateway transit
 allowed, and confirm the hub gateway exists before applying the spoke inputs.
-The template does not configure that reverse peering. Do not set the
+The template does not configure that reverse peering.
+
+Do not set the
 spoke's `ALLOW_GATEWAY_TRANSIT` flag to true to share a hub-owned gateway.
 For an existing VNet (`USE_EXISTING_VNET=true` with
 `EXISTING_VNET_RESOURCE_ID`), have the network owner configure both peering
@@ -212,6 +214,7 @@ Repeat for the required service hosts. For the registry, assign its
 `AZURE_CONTAINER_REGISTRY_ENDPOINT` value directly to `$serviceHost` rather
 than parsing it as a URL. Keep their original hostnames for TLS;
 do not replace application endpoints with IP addresses or `privatelink` aliases.
+
 The lifecycle prerequisite check rejects public or mixed DNS answers and checks
 TCP/TLS reachability: App Configuration before post-provision and deployment,
 the Foundry project additionally before hosted deployment, and ACR before hosted

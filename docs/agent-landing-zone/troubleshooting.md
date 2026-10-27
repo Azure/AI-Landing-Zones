@@ -382,6 +382,7 @@ With ingestion disabled, attachment controls must be hidden and direct/stale
 uploads rejected. Verify text chat and retrieval separately, including the
 [protected-retrieval integration gate](#protected-retrieval-fails-after-hosted-sign-in).
 Ingestion selection is not a source of delegated user or owner context.
+
 If ingestion is selected, confirm the selection is `true` and test only
 eligible authenticated uploads. Processing success does not prove authorized
 conversation retrieval.

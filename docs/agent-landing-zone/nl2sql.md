@@ -51,7 +51,9 @@ The source supports `low` or `medium` retrieval reasoning effort, not `minimal`.
 The connector needs service authentication and a separate Search-audience
 delegated user token for remote-source authorization. The supplied hosted
 entry point provides neither a user bearer nor authenticated user context to
-default retrieval. Required-user retrieval can fail before the source is
+default retrieval.
+
+Required-user retrieval can fail before the source is
 called; the remote-source connector itself skips this source when its
 delegated token is absent. UI sign-in and Foundry invocation do not close that gap.
 [Agent Application access](application-auth.md) explains the required

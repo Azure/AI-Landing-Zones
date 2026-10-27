@@ -82,6 +82,7 @@ Foundry private endpoint. Management requests still use the private endpoint.
     its own compliance and data-residency commitments. Validate how the agent
     authenticates users and enforces data permissions in both Teams and
     Microsoft 365 Copilot before rollout.
+
     The Agent Application's default hosted runtime has a protected-retrieval
     integration gap described in the Deploy full stack runbook. Channel
     publication does not resolve it or prove per-user document authorization.

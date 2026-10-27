@@ -102,9 +102,11 @@ azd env set AZURE_NETWORK_RESOURCE_GROUP rg-workload
 With `false`, a missing additional destination fails before services are
 provisioned. With `true`, existing groups are reused without
 changing their tags or location; only missing additional groups are created.
+
 The additional destinations are application and network; azd manages creation
 of the Foundry/root group through its normal lifecycle.
 New additional groups do not receive the `azd-env-name` tag.
+
 Run the normal root lifecycle: each `azd provision` coordinates the
 resource-group-scoped root and its scoped modules. Do not replace it with
 three manual deployments. Hosted image preparation still uses its normal
@@ -140,10 +142,12 @@ with the environment; changing a provisioned environment's mapping is not a
 supported resource migration. If an existing binding uses a different native
 root, retain its original implementation or create a new environment rather
 than retargeting it through environment variables.
+
 After partial failure, repair the cause and
 retry with the same destinations. Do not delete groups as automatic rollback.
 Review every destination and shared dependency before any
 [environment removal](deploy-full-stack.md#remove-an-environment).
+
 For split-group deployments, a `predown` safety hook blocks `azd down`; cleanup
 requires manual inventory, owner review and separately authorized removal.
 No automatic deletion or bypass option is provided. The single-group teardown path is unchanged.
@@ -166,7 +170,7 @@ When unset, they use the template defaults shown below.
 
 | Variable | Template default | Description |
 | --- | --- | --- |
-| `NETWORK_ISOLATION` | `false` | Enables private networking. Jumpbox, Bastion and firewall deployment also depend on their component flags. See [Network isolation](network-isolation.md). |
+| `NETWORK_ISOLATION` | `false` | Set `true` explicitly for the recommended private production setup. `false` selects public service endpoints; use it only for approved evaluations without sensitive data. Jumpbox, Bastion and firewall also depend on their component flags. See [Network isolation](network-isolation.md). |
 | `AZURE_AI_FOUNDRY_LOCATION` | Deployment region | Region for the Microsoft Foundry account. |
 | `AZURE_COSMOS_LOCATION` | Deployment region | Region for Agent Application Cosmos DB. |
 | `USE_UAI` | `false` | Uses user-assigned managed identities instead of system-assigned identities. |
@@ -240,6 +244,7 @@ Search quota must cover the complete enabled service count: one Agent Applicatio
 when `deploySearchService` (`DEPLOY_SEARCH_SERVICE`) is enabled, plus one Foundry
 Search service when `deployAiFoundry` and `deployAAfAgentSvc`
 (`DEPLOY_AAF_AGENT_SVC`) are enabled and `aiSearchResourceId` is not supplied.
+
 When both creation paths are enabled, the check requires quota for two services.
 Reusing a Foundry Search resource does not request a new service for that path.
 Bypassing preflight does not resolve region mismatches or insufficient quota.
@@ -274,6 +279,7 @@ Other retrieval defaults: billing plan `free`, semantic configuration `default`,
 For network-isolated native Blob configuration, infrastructure publishes
 `SEARCH_SHARED_PRIVATE_LINKS` as a JSON array under label `agent-lz`. This is
 post-provision metadata, not an operator switch or a runtime retrieval setting.
+
 Each entry records the template-owned `name`, `groupId` and
 `privateLinkResourceId`. Configuration uses these values to verify the Search
 links and their target Storage and Foundry resources before creating a native
@@ -307,8 +313,9 @@ the `searchIndex` pattern. Those empty lists remain accepted because no
 native Blob knowledge source is rendered. They are not shared-source opt-ins
 and do not change the independently populated index's authorization.
 
-Malformed JSON, scalar values, textual `null`, invalid list entries and
-unsupported permission names fail with actionable diagnostics.
+Malformed JSON, a single value instead of a JSON list, the text `null`,
+invalid list entries and unsupported permission names fail with actionable
+diagnostics.
 Invalid input fails closed rather than silently removing protection.
 An actual null and the text `null` are different inputs.
 
@@ -316,7 +323,9 @@ For active native Blob ingestion, `[]` is appropriate only when policy permits
 the source's documents to be shared without that ingestion permission metadata.
 It does not grant document access by
 itself or change other sources, application authentication, Entra ID/OBO,
-retrieval authorization, RBAC or private network restrictions. It is not a
+retrieval authorization, RBAC or private network restrictions.
+
+It is not a
 workaround for an authentication or private-link failure. Its use requires
 audience review and allow/deny tests with real user identities before activation.
 
@@ -522,9 +531,13 @@ the label `agent-lz`. That is the label for platform-owned settings.
 
 The Agent Application components do not read exclusively from `agent-lz`. Their startup
 loaders also select other component labels, and later matching selections
-can overwrite earlier values. Agent App UI and Agent App Ingestion endpoint loaders
+can overwrite earlier values.
+
+Agent App UI and Agent App Ingestion endpoint loaders
 end with `label_filter=None`, which leaves the label filter unset and can
-read other labels. The orchestrator uses the explicit null label `"\0"` for its last
+read other labels.
+
+The orchestrator uses the explicit null label `"\0"` for its last
 selection, which reads unlabelled keys rather than all labels. Unlabelled
 values can still override `agent-lz` values.
 

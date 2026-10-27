@@ -19,6 +19,7 @@ Agent Application runs it in Foundry Agent Service with `maf_lite`, the
 supplied orchestration **strategy** (the code path that coordinates a turn).
 It has no administration panel and uses native Foundry IQ Blob ingestion,
 where Azure AI Search prepares Blob documents for retrieval.
+
 The sections below explain how that application and its
 infrastructure are prepared. The **Deploy infra only** and
 **Deploy full stack** runbooks provide the execution steps.
@@ -100,6 +101,7 @@ An **application definition** describes the selected application's components
 and capabilities. The environment records that definition's `id` on first
 provision and rejects a different one later. This identifies the deployed
 application; it is not a Microsoft Entra ID application registration ID.
+
 Microsoft Entra ID handles sign-in and service identities in an organization's
 directory, called a **tenant**. An application registration describes a sign-in
 application to that service. Custom application selection therefore happens

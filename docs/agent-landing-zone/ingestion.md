@@ -17,7 +17,9 @@ and container `documents`. Azure AI Search, which powers Foundry IQ, creates
 and manages the indexing pipeline for this knowledge source. It extracts
 content, splits it into smaller passages (**chunks**), generates **embeddings**
 (vectors used for similarity search) and populates an index used by the
-knowledge base. **Agent App Ingestion is not required** for this path.
+knowledge base.
+
+**Agent App Ingestion is not required** for this path.
 New Agent Application environments default to
 `DEPLOY_INGESTION_CONTAINER_APP=false`.
 
@@ -82,6 +84,7 @@ path; continuity-enabled chat does not populate that upload identifier.
 The upload payload can carry the uploader's object ID as permission metadata.
 That is not sufficient by itself: the index must enforce those permissions and
 retrieval must preserve conversation scope and trusted user authorization.
+
 **Conversation scope** uses the hosted backend's conversation namespace,
 not the local UI thread ID. The same identifier must reach the indexed upload
 and retrieval filter. Retrieval must match both `conversationId` and the trusted
@@ -110,12 +113,15 @@ can instead populate a compatible index exposed through a Foundry IQ
 The optional application's SharePoint connector uses Microsoft Graph application
 credentials and indexing/purge jobs. It copies content and permission metadata
 into Search; permission synchronization and query-time enforcement still need
-validation. Every selected item's supported ACLs are reconciled on each
+validation.
+
+Every selected item's supported ACLs are reconciled on each
 SharePoint index run, even when content is unchanged, without re-downloading or
 embedding that content. Grants and revocations replace stored permissions on
 all affected documents and chunks. See
 [SharePoint permission synchronization](sharepoint.md#permission-synchronization)
 for scheduling, filter boundaries, inherited-permission support and recovery.
+
 It is separate from native SharePoint knowledge sources and the
 native Foundry tool. Its `SHAREPOINT_*` credentials are not the
 `SHAREPOINT_REMOTE_*` retrieval settings. Secrets belong in Key Vault.

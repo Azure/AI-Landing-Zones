@@ -1,13 +1,24 @@
 # Network isolation
 
-Private networking is selected with the `NETWORK_ISOLATION` deployment input,
-which defaults to `false`. This page explains connectivity, DNS and build
-requirements rather than deployment steps. [How it works](how-it-works.md)
+Use **private networking for production and workloads with sensitive data**.
+Set `NETWORK_ISOLATION=true` explicitly before provisioning. The template's
+current default is `false`; that default is not the recommended production
+configuration.
+
+Reserve public service endpoints for organization-approved, short-lived
+evaluations or demonstrations with synthetic or non-sensitive data. Public
+endpoints still require authentication and authorization, but those checks do
+not make them private. Do not disable isolation to work around connectivity or
+deployment failures.
+
+This page explains connectivity, DNS and build requirements rather than
+deployment steps. [How it works](how-it-works.md)
 introduces the input formats and deployment lifecycle.
 
 A **private endpoint** gives a service a private IP address in a VNet.
 Private DNS directs its normal hostname to that address. A **virtual private
 network (VPN)** connects an authorized remote computer or network to the VNet.
+
 A **jumpbox** is a virtual machine (VM) used for administration; Azure Bastion
 provides remote access to it. A NAT gateway provides outbound address
 translation. None of these connections grants permission to read service data.
@@ -65,10 +76,13 @@ The
 [application private endpoint subnet pair](configuration.md#optional-application-private-endpoint-subnet)
 is optional regardless of whether the workload uses one, two or three resource
 groups. Empty `AZURE_APPLICATION_PE_SUBNET_NAME` and
-`AZURE_APPLICATION_PE_SUBNET_PREFIX` retain the shared subnet. Supply both to
+`AZURE_APPLICATION_PE_SUBNET_PREFIX` retain the shared subnet.
+
+Supply both to
 place enabled application Cosmos DB, Key Vault, App Configuration, Container
 Apps, ACR and Azure Monitor Private Link Scope endpoints on a separate subnet;
 Foundry/grounding keeps the existing `peSubnetName`/`peSubnetPrefix` subnet.
+
 The application subnet needs a distinct name and an aligned IPv4 CIDR of `/29`
 or shorter within the VNet, without overlap with base subnet prefixes.
 Existing-VNet ownership and compatibility checks still apply; no extra subnet
@@ -119,10 +133,13 @@ selection, output refresh and separate provisioning/configuration steps.
 
 The jumpbox's managed identity, an Azure-managed service identity that does
 not need a stored password, needs the selected application's configuration
-and build roles. For hosted-agent authoring,
+and build roles.
+
+For hosted-agent authoring,
 the runner needs **Foundry User** on the exact
 Foundry project, plus read access to the Foundry account. Cognitive Services
 Contributor and OpenAI User alone do not grant the agent data-plane actions.
+
 Subscription or resource-group Owner is not an appropriate fix for this denial.
 See [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry)
 for the current role catalog and scopes. New grants need time to propagate.
@@ -279,6 +296,7 @@ allowed.
 Shared destination/protocol/port tuples produce one rule, with sources and
 ownership combined across components. Removing one owner narrows sources where
 possible; the rule remains until its final declared owner disappears.
+
 Enabled legacy components with absent declarations retain their earlier owned
 requirements. Other rules and collections, including unmarked entries inside
 the component group, are preserved. Ownership collisions, malformed marked
@@ -324,7 +342,9 @@ incorrect VPN/hub forwarding path.
 On Windows, `nslookup` can differ from the operating system resolver used by
 the Python prerequisite check, especially with VPN Name Resolution Policy
 Table (NRPT) rules. That check requires private IPv4 answers and rejects mixed
-public/private, IPv6, loopback and link-local answers. It then verifies TCP 443
+public/private, IPv6, loopback and link-local answers.
+
+It then verifies TCP 443
 and TLS without sending an HTTP request or credentials. Connectivity is not
 authorization: API access and document permissions still need tests with the
 intended user identities.
@@ -337,7 +357,9 @@ intended user identities.
 `deployAzureFirewall` and `networkIsolation` gates enable firewall deployment.
 It is intended for a topology that deliberately uses the firewall as its DNS
 forwarding path. The matching deployment runbook applies the selection through
-normal provisioning. Enabling the proxy does
+normal provisioning.
+
+Enabling the proxy does
 **not** redirect VNet or VPN clients to the firewall or rewrite their DNS
 configuration. It is independent of the build-feed egress allowlist.
 
@@ -363,7 +385,9 @@ and rendered native `azureBlob` sources, excluding the `searchIndex` pattern.
 It checks the Agent Application Search link to deployment Blob storage (`blob`)
 and the links to the deployment Foundry account (`openai_account`,
 `foundry_account`, `cognitiveservices_account`). It does not configure the
-separate Foundry Search service or unrelated services. Exact names come from
+separate Foundry Search service or unrelated services.
+
+Exact names come from
 the template's `SEARCH_SHARED_PRIVATE_LINKS` manifest, including bounded
 Foundry names. The exact Search shared-link GET must return the expected
 name, target and group. If its body includes a resource ID, that must match
@@ -389,7 +413,9 @@ ARM request timeouts of at most 30 seconds (limited by the remaining budget).
 Each exact Search shared link must be `Approved` and `Succeeded`, the
 documented source-side readiness signal. Approved links whose provisioning
 is still propagating use bounded polling. Pending approval does not spend
-this budget waiting for an unprovable target match. Administrator-approved
+this budget waiting for an unprovable target match.
+
+Administrator-approved
 links are usable even when target PECs are paginated, opaque or unreadable
 by the runner. The existing Azure CLI/managed-identity credential is reused.
 The runner needs Search shared-link read permission, with no new secret,
@@ -400,11 +426,14 @@ feature-equivalent to Agent App Ingestion. Choosing it does not remove
 Entra ID authentication, on-behalf-of (OBO) token exchange, RBAC or
 document-level authorization. OBO exchanges a user's token for another API's
 token while retaining that user's delegated identity.
+
 Azure Data Lake Storage (ADLS) Gen2 uses Blob storage with a hierarchical
 directory namespace. In particular,
 `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]` is a deliberate shared-source
 metadata choice for active, supported non-ADLS native Blob ingestion, not a
-workaround for a private connection failure. Infrastructure-published `[]`
+workaround for a private connection failure.
+
+Infrastructure-published `[]`
 for `ai_search` (any pattern) or `foundry_iq` / `searchIndex` is accepted as
 unused metadata, not a shared-source opt-in: no native Blob source is rendered.
 See
