@@ -250,7 +250,7 @@ DNS and private-link readiness requirements.
 
 ### Step 4: Deploy
 
-Confirm the target before creating or changing resources:
+**Optional (recommended):** confirm the target and run the preflight check:
 
 ```bash
 azd env get-value AZURE_SUBSCRIPTION_ID
@@ -259,9 +259,8 @@ azd env get-value AZURE_LOCATION
 azd hooks run preup
 ```
 
-Resolve validation, quota, Policy and connectivity failures rather than bypassing
-checks. The explicit `preup` check also validates binding before standalone
-provisioning, which otherwise runs its check after azd may initialize a resource group.
+`azd up` runs `preup` automatically. Before standalone `azd provision`, running
+it explicitly checks the application definition and environment binding earlier.
 
 For an optional `azd provision --preview`, first follow the
 [Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):
