@@ -267,17 +267,18 @@ DNS and private-link readiness requirements.
 
 ### Step 4: Deploy
 
-**Optional (recommended):** confirm the target and run the preflight check:
+!!! note "Optional preflight check (recommended)"
+    Confirm the deployment target and check the application definition and
+    environment binding before provisioning:
 
-```bash
-azd env get-value AZURE_SUBSCRIPTION_ID
-azd env get-value AZURE_ENV_NAME
-azd env get-value AZURE_LOCATION
-azd hooks run preup
-```
+    ```bash
+    azd env get-value AZURE_SUBSCRIPTION_ID
+    azd env get-value AZURE_ENV_NAME
+    azd env get-value AZURE_LOCATION
+    azd hooks run preup
+    ```
 
-`azd up` runs `preup` automatically. Before standalone `azd provision`, running
-it explicitly checks the application definition and environment binding earlier.
+    `azd up` already runs `preup` automatically.
 
 For an optional `azd provision --preview`, first follow the
 [Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):
