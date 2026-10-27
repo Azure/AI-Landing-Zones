@@ -18,9 +18,17 @@ template does not perform them.
 Your existing Foundry agent available in Teams and Microsoft 365 Copilot,
 with authenticated messages delivered through Azure Bot Service.
 
-![Teams and Microsoft 365 Copilot reach the hosted agent through Bot Service and restricted public Activity ingress. A separate setup path connects an admin workstation through a private endpoint to the Foundry project API.](../media/runbooks/publish-to-teams.png)
+!!! warning "This channel path is not private end to end"
+    Teams and Microsoft 365 Copilot deliver messages to a **public HTTPS
+    Activity endpoint**, restricted to Microsoft channel source IPs and
+    requiring authentication. They do **not** use the Foundry private endpoint.
 
-[Open the full-resolution diagram](../media/runbooks/publish-to-teams.png).
+    If your organization requires no public agent ingress, do not use this
+    publication path.
+
+![Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path.](../media/runbooks/publish-to-teams.png?v=public-activity)
+
+[Open the full-resolution diagram](../media/runbooks/publish-to-teams.png?v=public-activity).
 
 The dashed path is for publication setup and later changes, not for Teams
 conversations.
@@ -31,13 +39,23 @@ Use this runbook after the hosted agent works and you need Teams or Microsoft
 365 Copilot distribution while Foundry public network access remains disabled. For a Copilot
 Studio private relay instead, use [Connect Copilot Studio](connect-copilot-studio.md).
 
-Foundry and Bot Service keep **public network access (PNA) disabled**. Following
-the [Foundry REST publishing flow](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network),
-you enable a restricted public HTTPS exception for the Activity route.
+Microsoft calls this a **source IP-filtered Activity Protocol public
+endpoint**: a public endpoint for the messaging route, restricted by the
+source IP addresses of Microsoft's channel services. See the
+[Foundry REST publishing flow](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network).
 
-Foundry allows only service-managed Microsoft channel source ranges and still
-requires authentication and authorization. Channel delivery uses this
-exception, not the Foundry private endpoint.
+Step 3 sets `activity.enable_m365_public_endpoint=true` to enable that
+**specific exception**. Foundry and Bot Service keep **public network access
+(PNA) disabled**; management APIs and other agent protocols remain private.
+
+| Path | Network access |
+| --- | --- |
+| Bot Service to the Activity endpoint | Public HTTPS, with Microsoft-managed source IP filtering and authentication. Not Private Link. |
+| Connected workstation to the Foundry project API | Private endpoint, for publication setup and later changes. |
+
+Microsoft manages the allowed source ranges. You do not open public ingress
+on your VNet. An allowed source IP still needs valid authentication and
+authorization; **public does not mean anonymous**.
 
 During setup, your connected workstation calls the **Foundry project API**
 through the private endpoint to read the agent configuration, enable Activity
@@ -291,9 +309,9 @@ URL, and its network setting is `"pna": "Disabled"`. The bot uses the agent's
 identity; you do not need a client secret, public VNet ingress or a custom
 connector.
 
-### Step 3: Enable the restricted Activity route
+### Step 3: Enable the source-IP-filtered public Activity route
 
-Run the block below to enable the restricted Activity route, apply the Bot
+Run the block below to enable the **public HTTPS Activity exception**, apply the Bot
 Service authorization scheme for your chosen audience and send traffic to the
 tested agent version. The block reads the current configuration so it can
 preserve the existing protocols and non-Bot authorization schemes. It also
