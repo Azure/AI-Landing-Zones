@@ -267,9 +267,45 @@ DNS and private-link readiness requirements.
 
 ### Step 4: Deploy
 
-!!! note "Optional preflight check (recommended)"
-    Confirm the deployment target and check the application definition and
-    environment binding before provisioning:
+Deployment has two stages: **provision** creates and configures the Azure
+resources; **deploy** builds and publishes the application. Run both from the
+platform root with the same azd environment selected.
+
+#### Before you deploy
+
+Confirm the runner has Foundry agent authoring access on the exact project
+(Foundry User or an appropriate equivalent),
+account read access and the required scoped role-assignment authority.
+Review [private-runner permissions](network-isolation.md) and
+[hosted identities](hosted-agents.md) for the required scopes.
+
+Review the resource scopes, public access, routes and role changes before
+approving provisioning. Also review the application's
+[outbound network requirements](network-isolation.md#review-before-provisioning)
+with `python -m config.deployment.egress --plan --environment <environment-name>`.
+Deployment applies managed firewall rules automatically. If you use an external
+firewall, give the generated report to its owner to arrange the required access.
+
+<span id="container-apps-orchestrator-classic"></span>
+<span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
+
+#### Default Foundry orchestrator (`hosted-no-panel`)
+
+For a new environment, run these commands in order:
+
+```bash
+azd provision
+azd deploy
+```
+
+Alternatively, run `azd up` to perform both stages in one command.
+These commands work on Windows, Linux and macOS. The normal deployment runs
+its configuration checks automatically; no manual preparation command is needed.
+
+!!! note "Optional: check configuration before provisioning"
+    For an early check before `azd provision`, the following commands show the
+    selected subscription, environment and region, then validate the application
+    definition and check that it matches the environment:
 
     ```bash
     azd env get-value AZURE_SUBSCRIPTION_ID
@@ -278,45 +314,8 @@ DNS and private-link readiness requirements.
     azd hooks run preup
     ```
 
-    `azd up` already runs `preup` automatically.
-
-For an optional `azd provision --preview`, first follow the
-[Agent preview preparation warning](deploy-infra-only.md#optional-preview-agent-source):
-preview skips preprovision hooks, so the selected environment's parameters and
-additional groups must be prepared first. Preparation/preview can create
-resource groups and do not establish private application readiness.
-
-Review
-resource scopes, public access, routes and role changes before applying the
-sequence below. Normal `azd provision` runs its preprovision hook automatically;
-manual preparation is not required when proceeding without preview.
-
-Before approving provisioning, review the selected components'
-[runtime egress plan](network-isolation.md#review-before-provisioning) with
-`python -m config.deployment.egress --plan --environment <environment-name>`.
-Managed rules reconcile during postprovision and predeploy; an external
-firewall receives only a report for its policy owner.
-
-<span id="container-apps-orchestrator-classic"></span>
-<span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
-
-#### Default Foundry orchestrator (`hosted-no-panel`)
-
-Confirm the runner has Foundry agent authoring access on the exact project
-(Foundry User or an appropriate equivalent),
-account read access and the required scoped role-assignment authority.
-Review [private-runner permissions](network-isolation.md) and
-[hosted identities](hosted-agents.md) for the required scopes.
-
-A fresh hosted Agent Application deployment needs this order:
-
-```bash
-azd provision
-azd deploy
-```
-
-The commands are the same on Windows, Linux and macOS. You can also run
-`azd up` to provision and deploy in one workflow.
+    Running this check manually is recommended but optional. `azd provision`
+    also validates the configuration; `azd up` runs `preup` automatically.
 
 <a id="what-happens-during-the-deployment"></a>
 
@@ -335,6 +334,19 @@ For an already configured infrastructure-only environment, reuse the same
 checkout, inputs and bound application, then run `azd deploy`.
 Review hook logs even after success: some configuration sections can log
 failures and continue. Resolve those failures before validation.
+
+<details markdown="1">
+<summary>Optional: preview infrastructure changes before deployment</summary>
+
+You do not need a preview for the normal deployment above. If you want to run
+`azd provision --preview`, first follow the
+[preview preparation instructions](deploy-infra-only.md#optional-preview-agent-source).
+Unlike normal provisioning, preview skips the preparation hook, so you must
+prepare the selected environment's parameters and any additional resource groups
+first. This preparation can create resource groups. Neither preparation nor
+preview confirms that private application connections work.
+
+</details>
 
 For an initial deployment, continue to [Validation](#validation) now.
 Use the maintenance procedures below only for a later operational change.
