@@ -244,6 +244,43 @@ Keep exceptions limited to build-subnet HTTPS traffic.
 compilation both complete. Once dependencies are installed, diagnose the first
 remaining compilation error.
 
+#### Tokenizer initialization fails with an empty cache
+
+**Symptom:** Orchestrator or ingestion startup fails while downloading a
+tiktoken encoding from `openaipublic.blob.core.windows.net`.
+
+**Diagnose:** Check the failing HTTPS/443 destination and the actual workload
+subnet against firewall logs. A warm tokenizer cache can conceal this
+dependency; successful image builds do not verify runtime egress.
+
+**Correct:** Review the selected components' [runtime egress declarations](network-isolation.md#component-runtime-egress).
+Both bundled tokenizer consumers declare this exact host. For a managed
+firewall, follow the normal provisioning sequence to save the declaration
+plan and reconcile its owned rules. For an external firewall, send the
+read-only resolved report to its policy owner. Keep the exception on the
+required workload subnet; do not allow all Blob Storage or Internet traffic.
+
+**Verify:** From the actual workload network, initialize the configured
+tokenizer with a newly empty cache and confirm its asset download and startup
+complete. A local cold-cache test establishes the dependency, not traversal
+through the deployed firewall.
+
+#### Component egress reconciliation stops
+
+**Symptom:** A hook reports a missing or stale egress plan, ownership collision,
+invalid source subnet or concurrent policy change.
+
+**Correct:** Keep the same application binding. Review
+`python -m config.deployment.egress --plan --environment <environment-name>`
+and rerun the normal provisioning sequence after approved input changes.
+For collisions or changed policies, have the network owner inspect the
+reported group and current rules before retrying; do not delete unrelated
+entries, broaden sources or bypass the ownership checks.
+
+**Verify:** The read-only `--review` report has the intended destinations and
+actual workload prefixes. Managed reconciliation completes without changing
+unrelated rules; external policies remain report-only.
+
 #### Stale component checkout
 
 **Symptom:** `Remove or relocate the stale sibling checkout`.

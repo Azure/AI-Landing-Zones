@@ -262,6 +262,12 @@ resource scopes, public access, routes and role changes before applying the
 sequence below. Normal `azd provision` runs its preprovision hook automatically;
 manual preparation is not required when proceeding without preview.
 
+Before approving provisioning, review the selected components'
+[runtime egress plan](network-isolation.md#review-before-provisioning) with
+`python -m config.deployment.egress --plan --environment <environment-name>`.
+Managed rules reconcile during postprovision and predeploy; an external
+firewall receives only a report for its policy owner.
+
 <span id="container-apps-orchestrator-classic"></span>
 <span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
 

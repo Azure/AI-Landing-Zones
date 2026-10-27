@@ -218,6 +218,93 @@ verification, or change dependency integrity hashes to work around a failed buil
 See [Package installation fails inside the build pool](troubleshooting.md#package-installation-fails-inside-the-build-pool)
 for diagnosis.
 
+## Component runtime egress
+
+Application components declare additional runtime destinations in
+[`components[].egress`](build-your-own-app.md#runtime-egress-declarations).
+The plan follows actual enabled workloads: optional ingestion, hosted or
+preserved Container App orchestration, and additive custom applications.
+The bundled UI needs no additional fixed destination. Both orchestrator and
+ingestion initialize tiktoken, whose empty-cache startup downloads encoding
+assets from `openaipublic.blob.core.windows.net` over HTTPS/443.
+
+These are runtime rules, not build-feed rules or replacements for private
+endpoints, authentication, DNS or routing. Configured SharePoint, SQL, MCP
+and other custom destinations require their own dependency review.
+
+### Review before provisioning
+
+From the platform root with the prepared Python environment, set the intended
+topology, ingestion selection and application definition in the selected azd
+environment, then run:
+
+```bash
+python -m config.deployment.egress --plan --environment <environment-name>
+```
+
+This reads the named local azd environment and validates declarations without
+Azure access. Review `policyMode`, selected components, destinations and
+purposes. The preprovision hook repeats this calculation, prints it and saves
+`.azure/<environment-name>/component-egress-plan.json` before foundation
+deployment. Approval of provisioning includes these declared requirements.
+
+After infrastructure exists and local provisioning outputs are current, use:
+
+```bash
+python -m config.deployment.egress --review --environment <environment-name>
+```
+
+This is read-only. It resolves actual workload subnet prefixes and, for a
+deployment-managed policy, reports additions, updates and removals. A fresh
+deployment cannot resolve subnet prefixes until its infrastructure exists.
+Postprovision and predeploy print this resolved plan before managed
+reconciliation. If postprovision is explicitly deferred, reconciliation is
+also deferred; predeploy still enforces the connectivity and plan checks.
+
+### Policy ownership
+
+| Deployment | Behavior |
+| --- | --- |
+| `NETWORK_ISOLATION=false` | No component firewall reads or writes; declarations do not create a firewall |
+| Isolated with a deployment-managed firewall | Reconciles only marked application rules in `AgentLzComponentEgress`, priority 400 |
+| Isolated with an external firewall | Reports required rules and legacy components; never reads or mutates the external policy |
+
+For managed policies, the runner needs management-plane subnet reads and
+`Microsoft.Network/firewallPolicies/ruleCollectionGroups/read` and `write`
+on the deployment policy. The reconciler does not write the parent policy.
+For external policies, the network owner compares the report with their own
+policy and applies approved changes. Reporting does not prove that egress is
+allowed.
+
+Shared destination/protocol/port tuples produce one rule, with sources and
+ownership combined across components. Removing one owner narrows sources where
+possible; the rule remains until its final declared owner disappears.
+Enabled legacy components with absent declarations retain their earlier owned
+requirements. Other rules and collections, including unmarked entries inside
+the component group, are preserved. Ownership collisions, malformed marked
+rules, conflicting priorities or concurrent changes fail rather than being
+silently adopted or overwritten.
+
+### Source scope and recovery
+
+Rules use the actual provisioned Container Apps or Foundry agent subnet
+prefixes, including existing-VNet selections, not the whole VNet or `*`.
+**Subnet scope is not component isolation:** every workload sharing a source
+subnet can use its union of allowed destinations. Existing platform rules can
+also allow traffic. Use dedicated subnets or environments and an approved
+network design when workloads need distinct egress boundaries.
+
+After changing declarations or selections, review the new local plan and run
+the normal provisioning sequence before deploying. A missing or stale saved
+plan stops apply before Azure access. Do not copy a plan or provisioning
+outputs from another environment.
+
+For rollback, first review explicit empty declarations for the components
+whose additional rules should be removed, then reconcile using the current
+hooks. Keep declarations for any remaining consumers. Only afterward roll
+back hooks or metadata: reverting code alone does not remove existing rules.
+Never delete shared foundation groups or externally managed policy content.
+
 <span id="verify-private-connectivity"></span>
 
 ## Private connectivity checks
