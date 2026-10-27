@@ -26,12 +26,18 @@ with authenticated messages delivered through Azure Bot Service.
     If your organization requires no public agent ingress, do not use this
     publication path.
 
-![Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path.](../media/runbooks/publish-to-teams.png?v=public-activity)
+![Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path.](../media/runbooks/publish-to-teams.png?v=channel-service)
 
-[Open the full-resolution diagram](../media/runbooks/publish-to-teams.png?v=public-activity).
+[Open the full-resolution diagram](../media/runbooks/publish-to-teams.png?v=channel-service).
 
 The dashed path is for publication setup and later changes, not for Teams
 conversations.
+
+The Bot Service box represents **Microsoft's managed channel service**, not
+a bot hosted inside your VNet. Its resource uses `publicNetworkAccess: Disabled`,
+as [Microsoft's Foundry publishing procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network#step-2-create-the-azure-bot-service-resource)
+prescribes. That resource setting **does not make Teams/M365 delivery private**:
+the channel service calls the public Foundry Activity route shown above.
 
 ## When to use
 
