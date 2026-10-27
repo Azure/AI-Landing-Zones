@@ -2402,18 +2402,21 @@ azd<span class="w"> </span>auth<span class="w"> </span>login
 az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>&lt;subscription-id&gt;
 azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_RESOURCE_GROUP<span class="w"> </span>&lt;dedicated-resource-group&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 </code></pre></div>
 <p>For an existing environment, use <code>azd env select &lt;environment-name&gt;</code> instead
 and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.</p>
-<p>For a <strong>new environment on v4.4.0 or a later reviewed compatible revision</strong>,
-optionally set <a href="../configuration/#resource-group-destinations">Foundry and network resource group destinations</a>
-now. Without those overrides, keep the single-group procedure unchanged.
-Additional groups must already exist unless their explicit creation is enabled
-and authorized. Do not change an existing environment's mapping to move resources.</p>
+<p>New environments use three resource groups:
+<code>rg-&lt;environment-name&gt;</code> for Foundry, <code>rg-&lt;environment-name&gt;-app</code> for the
+application and <code>rg-&lt;environment-name&gt;-network</code> for workload networking.
+To choose a different Foundry/root name, set <code>AZURE_RESOURCE_GROUP</code> before
+provision. The hook creates missing additional groups by default; the deploying
+identity needs permission to create them. To reuse pre-created groups or select
+one or two groups, set the
+<a href="../configuration/#resource-group-destinations">resource group destinations</a>
+now. Existing environments keep their mapping.</p>
 <p><a id="step-3-choose-a-topology"></a></p>
 <h3 id="step-3-choose-the-application-and-network">Step 3: Choose the application and network</h3>
 <p>Set the deployment choices below in the selected azd environment with
@@ -2507,7 +2510,8 @@ DNS and private-link readiness requirements.</p>
 <h3 id="step-4-deploy">Step 4: Deploy</h3>
 <p>Confirm the target before creating or changing resources:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_SUBSCRIPTION_ID
-azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
+azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_ENV_NAME
+azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_LOCATION
 azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>preup
 </code></pre></div>
 <p>Resolve validation, quota, Policy and connectivity failures rather than bypassing
@@ -2696,7 +2700,8 @@ do not delete shared hub, DNS or monitoring resources.</p>
 git<span class="w"> </span>-C<span class="w"> </span>../agent-app-orchestrator<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
-az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
+azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_APP_RESOURCE_GROUP
+az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;application-resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
 </code></pre></div>
 <p>Compare the platform commit with your approved record and each component

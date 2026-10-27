@@ -2826,11 +2826,12 @@ signed URLs, tokens, cookies and credentials.</p>
 </ol>
 <h3 id="deploy-stage">Deploy stage</h3>
 <h4 id="resource-group-destination-checks">Resource group destination checks</h4>
-<p>For <strong>Agent Bicep/azd deployments from v4.4.0</strong>, compare the selected environment's
-<code>AZURE_RESOURCE_GROUP</code>, optional <code>AZURE_FOUNDRY_RESOURCE_GROUP</code> and
+<p>For <strong>Agent Bicep/azd deployments</strong>, compare the selected environment's
+<code>AZURE_RESOURCE_GROUP</code>, <code>AZURE_APP_RESOURCE_GROUP</code> and
 <code>AZURE_NETWORK_RESOURCE_GROUP</code> with the approved
 <a href="../configuration/#resource-group-destinations">destination mapping</a>.
-An omitted override uses the root group.</p>
+New environments initialize separate application and network destinations;
+existing single-group environments retain their mapping.</p>
 <p>With <code>CREATE_RESOURCE_GROUPS=false</code>, have the owner pre-create missing additional
 groups. Enabling creation instead requires explicit authorization and
 subscription-level <code>Microsoft.Resources/subscriptions/resourceGroups/write</code>.
@@ -2842,7 +2843,7 @@ Do not delete created/shared groups as rollback, change destinations to evade
 a binding check, or move existing resources through these inputs. Verify resource
 IDs and scoped permissions in every destination before continuing.</p>
 <h4 id="split-group-cleanup-safety-check">Split-group cleanup safety check</h4>
-<p>From <strong>v4.4.0</strong>, the <code>predown</code> hook blocks
+<p>The <code>predown</code> hook blocks
 <code>azd down</code> when the workload destinations span distinct resource groups.
 This is an intentional safety check, not a provisioning or permission failure.
 No automatic deletion or bypass option is provided; do not bypass the hook or change the

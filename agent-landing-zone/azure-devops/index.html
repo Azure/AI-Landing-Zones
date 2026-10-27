@@ -2309,10 +2309,14 @@ separate resource groups, azd environments, connection identities, configuration
 stores, secrets and data. Apply the
 <a href="../configuration/#environment-boundaries">environment boundaries</a> for
 runtime identities, sign-in, network isolation and test data.</p>
-<p>The example keeps the single-resource-group default. Adopting the
-<a href="../configuration/#resource-group-destinations">optional destinations available from v4.4.0</a>
-requires a reviewed platform revision, explicit stage-specific settings and
-permission/inventory checks for every target, not just the root group's refresh.</p>
+<p>New Agent environments use three groups. The example's
+<code>AZURE_RESOURCE_GROUP</code> selects Foundry/root; application and network names
+default to that name plus <code>-app</code> and <code>-network</code>. Grant the deployment identity
+the required permissions for every target, including group creation when enabled,
+not just the root group's refresh. See
+<a href="../configuration/#resource-group-destinations">resource group destinations</a>
+for pre-created groups or an explicit one/two-group layout.
+Existing environments keep their mapping.</p>
 <p>Never copy DEV's <code>.azure</code> state into TEST or PROD. Initialize or securely restore
 the intended environment on each runner, refresh its outputs when needed and
 reapply approved inputs. Keep <code>.azure</code> and sibling child state private.</p>
@@ -2483,9 +2487,15 @@ one already present), sets the intended resource group, and checks group existen
 </ul>
 <p>The same azd name and subscription must locate the previous deployment. Review
 the refreshed target and outputs for an existing environment; do not create a
-second deployment by renaming the environment. Local <code>.azure</code> is disposable here,
-not a promoted artifact or backup. Review deployed state and application binding
-before adopting an existing environment into CI.</p>
+second deployment by renaming the environment. For split-group deployments,
+retain <code>.azure/&lt;environment-name&gt;/resource-groups.json</code> after first provision
+and securely restore that same environment's file on subsequent runners.
+<code>azd env refresh</code> restores outputs, not this immutable destination binding.
+The example does not archive or restore the binding for you; integrate your
+organization's protected state handling before redeployment. Never reuse
+another stage's binding or publish <code>.env</code> files as pipeline artifacts.
+Review deployed state and application binding before adopting an existing
+environment into CI.</p>
 <p>After refresh, reviewed environment settings are applied, then the template runs:</p>
 <table>
 <thead>
@@ -2541,7 +2551,10 @@ TEST. Match the recorded <code>Build.SourceVersion</code> and reviewed manifest 
 the run being approved.</p>
 <p>Before promotion, record release evidence for the preceding environment:</p>
 <ol>
-<li><code>azd env get-value AZURE_RESOURCE_GROUP</code> identifies the intended target.
+<li><code>azd env get-value AZURE_RESOURCE_GROUP</code> identifies the Foundry/root target.
+   <code>AZURE_APP_RESOURCE_GROUP</code> identifies the application target and
+   <code>AZURE_NETWORK_RESOURCE_GROUP</code> the local network target; omitted overrides
+   use the Foundry/root group.
    App Configuration has the expected platform outputs and effective settings
    under label <code>agent-lz</code>; the selected apps have real, healthy image revisions,
    not just provisioned placeholders. Record image digests and hosted routed version.</li>
