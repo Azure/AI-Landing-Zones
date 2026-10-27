@@ -60,11 +60,12 @@ Do not switch runtimes or weaken authentication to diagnose a failure.
 
 #### Resource group destination checks
 
-For **Agent Bicep/azd deployments from v4.4.0**, compare the selected environment's
-`AZURE_RESOURCE_GROUP`, optional `AZURE_FOUNDRY_RESOURCE_GROUP` and
+For **Foundry-root Agent Bicep/azd deployments**, compare the selected environment's
+`AZURE_RESOURCE_GROUP`, `AZURE_APP_RESOURCE_GROUP` and
 `AZURE_NETWORK_RESOURCE_GROUP` with the approved
 [destination mapping](configuration.md#resource-group-destinations).
-An omitted override uses the root group.
+New environments initialize separate application and network destinations;
+existing single-group environments retain their mapping.
 
 With `CREATE_RESOURCE_GROUPS=false`, have the owner pre-create missing additional
 groups. Enabling creation instead requires explicit authorization and

@@ -72,19 +72,8 @@ and `azure.yaml` live. Its lifecycle does not configure or deploy the Agent
 Application. Do not provision this separate project into an Agent environment.
 For application deployment, start from the Agent source instead.
 
-Select the approved full Git commit in the chosen repository before continuing:
-
-```bash
-git checkout --detach <approved-source-commit>
-git rev-parse HEAD
-git status --short
-```
-
-Expect HEAD to match that commit and no unexpected changes. Record the reviewed
-nonsecret root parameters alongside the commit.
-
 For Agent source, [set up Python](deploy-full-stack.md#prepare-python) from
-the selected revision before lifecycle commands.
+the cloned repository before lifecycle commands.
 
 ### Step 2: Create and confirm the target
 
@@ -105,10 +94,14 @@ its approved inputs. Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local `.azure/` state.
 Fork or mirror the source only when maintaining your own inputs or automation.
 
-**Agent source only, from v4.4.0:** a reviewed revision can optionally select
-[Foundry and network resource group destinations](configuration.md#resource-group-destinations)
-before first provision. The default remains one group; additional targets
-share its subscription and must exist unless optional creation is authorized.
+**Foundry-root Agent source only:** new environments use three resource groups
+by default. The `AZURE_RESOURCE_GROUP` above is Foundry/root; application and
+network groups default to that name plus `-app` and `-network`.
+The hook creates missing additional groups unless `CREATE_RESOURCE_GROUPS=false`;
+the deploying identity needs permission to create them.
+To choose pre-created groups or a one/two-group layout, set the
+[resource group destinations](configuration.md#resource-group-destinations)
+before first provision.
 Keep the normal root `azd provision` flow, not separate manual deployments per
 group. This does not establish support in the independent Bicep source,
 Terraform or portal.
@@ -239,7 +232,7 @@ preparation is needed only if you choose to preview first.
     when `CREATE_RESOURCE_GROUPS=true`. Otherwise those groups must already
     exist, or a composed split-group preview can fail with `NotFound`.
 
-    Native preview can also create the empty application/root resource group.
+    Native preview can also create the empty Foundry/root resource group.
     Neither fresh-environment preparation nor preview is guaranteed write-free;
     authorize group creation before running them. A successful preview does
     not prove private connectivity, service configuration or application readiness.
@@ -348,7 +341,7 @@ azd env refresh
 
 If the environment is already present, select it instead. Reapply the approved
 deployment inputs: refresh restores outputs, not your full configuration.
-For the multi-group path, restore the same approved Foundry/network
+For the multi-group path, restore the same approved application/network
 destination mapping as well; the root group alone is not sufficient.
 Do not publish or copy another stage's `.azure/` state as an input artifact.
 An authorized runner can use managed-identity sign-in. Verify its scoped

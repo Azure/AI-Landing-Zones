@@ -92,18 +92,8 @@ git clone https://github.com/Azure/agent-landing-zone.git
 cd agent-landing-zone
 ```
 
-Use the reviewed deployment commit, not an unreviewed branch tip. Replace the
-placeholder with that full Git commit to select and record the revision:
-
-```bash
-git checkout --detach <approved-platform-commit>
-git rev-parse HEAD
-git status --short
-```
-
-Keep `manifest.json`, `app-definition.json` and the root `main.parameters.json`
-with that record. The manifest pins the compatible component commits.
-Expect HEAD to match the approved commit and no unexpected local changes.
+The checkout's `manifest.json` pins the compatible runtime components;
+the deployment hooks fetch them automatically.
 
 Alternatively, `azd init -t Azure/agent-landing-zone` initializes the current
 default template in an empty directory. Reuse the environment it creates rather
@@ -153,7 +143,6 @@ azd auth login
 az account set --subscription <subscription-id>
 azd env new <environment-name>
 azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
-azd env set AZURE_RESOURCE_GROUP <dedicated-resource-group>
 azd env set AZURE_LOCATION <region>
 ```
 
@@ -162,11 +151,15 @@ and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
 
-For a **new environment on v4.4.0 or a later reviewed compatible revision**,
-optionally set [Foundry and network resource group destinations](configuration.md#resource-group-destinations)
-now. Without those overrides, keep the single-group procedure unchanged.
-Additional groups must already exist unless their explicit creation is enabled
-and authorized. Do not change an existing environment's mapping to move resources.
+New **Foundry-root Agent environments** use three resource groups:
+`rg-<environment-name>` for Foundry, `rg-<environment-name>-app` for the
+application and `rg-<environment-name>-network` for workload networking.
+To choose a different Foundry/root name, set `AZURE_RESOURCE_GROUP` before
+provision. The hook creates missing additional groups by default; the deploying
+identity needs permission to create them. To reuse pre-created groups or select
+one or two groups, set the
+[resource group destinations](configuration.md#resource-group-destinations)
+now. Existing environments keep their mapping.
 
 <a id="step-3-choose-a-topology"></a>
 
@@ -474,7 +467,8 @@ do not delete shared hub, DNS or monitoring resources.
     git -C ../agent-app-orchestrator rev-parse HEAD
     git -C ../agent-app-ui rev-parse HEAD
     azd env get-value AZURE_RESOURCE_GROUP
-    az containerapp list -g <resource-group> \
+    azd env get-value AZURE_APP_RESOURCE_GROUP
+    az containerapp list -g <application-resource-group> \
       --query "[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}" -o table
     ```
 

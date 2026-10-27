@@ -57,15 +57,17 @@ new resources instead of updating existing ones.
 
 ### Resource group destinations
 
-!!! note "Available from v4.4.0"
-    The optional resource group destinations below support new Agent Landing
-    Zone **Bicep/azd** deployments from
-    [v4.4.0](https://github.com/Azure/agent-landing-zone/releases/tag/v4.4.0).
-    Use a reviewed compatible source revision. Terraform, portal and the
+!!! note "Foundry-root configuration"
+    This **Bicep/azd** interface applies to Foundry-root Agent source and its
+    compatible pinned components.
+    v4.4.0 used an application root and `AZURE_FOUNDRY_RESOURCE_GROUP` instead;
+    keep existing split deployments on their original source revision.
+    Terraform, portal and the
     independent Bicep foundation are not claimed to support this Agent
     platform contract.
 
-Without overrides, deployment keeps the existing single-resource-group path.
+New environments use three resource groups by default: Foundry/grounding,
+application and workload networking. Existing environments keep their mapping.
 All workload destinations must be in `AZURE_SUBSCRIPTION_ID`. Equal names are
 valid: one, two or three distinct groups can express the same three logical
 destinations. These inputs do not enable services, change network isolation or
@@ -73,25 +75,40 @@ create a platform hub; existing BYO VNet, DNS and hub settings still apply.
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `AZURE_RESOURCE_GROUP` | Selected or initialized by azd | Application destination and azd root deployment group. |
-| `AZURE_FOUNDRY_RESOURCE_GROUP` | `AZURE_RESOURCE_GROUP` | Optional Foundry and grounding destination. |
-| `AZURE_NETWORK_RESOURCE_GROUP` | `AZURE_RESOURCE_GROUP` | Optional destination for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract. |
-| `CREATE_RESOURCE_GROUPS` | `false` | Strict boolean (`true` or `false`): allows creating only explicitly named, missing additional destination groups. Does not disable azd's normal root-group creation. |
+| `AZURE_RESOURCE_GROUP` | `rg-<environment-name>` | Foundry and grounding destination, and the native azd root deployment group. An explicitly supplied name is preserved. |
+| `AZURE_APP_RESOURCE_GROUP` | `<AZURE_RESOURCE_GROUP>-app` | Application destination: Container Apps, registry, App Configuration, Key Vault, application Cosmos DB and monitoring. |
+| `AZURE_NETWORK_RESOURCE_GROUP` | `<AZURE_RESOURCE_GROUP>-network` | Destination for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract. |
+| `CREATE_RESOURCE_GROUPS` | `true` for new environments | Strict boolean (`true` or `false`): allows creating missing additional destination groups. Set `false` to require pre-created additional groups. Does not disable azd's normal root-group creation. |
+
+The hook saves these defaults in the selected azd environment before provision.
+For long custom root names, generated names include a stable hash and suffix
+within Azure's 90-character limit. These are first-run defaults, not automatic
+changes to existing environments.
 
 Set destinations **before first provision**. For three pre-created groups:
 
 ```bash
-azd env set AZURE_RESOURCE_GROUP rg-app
-azd env set AZURE_FOUNDRY_RESOURCE_GROUP rg-ai
+azd env set AZURE_RESOURCE_GROUP rg-ai
+azd env set AZURE_APP_RESOURCE_GROUP rg-app
 azd env set AZURE_NETWORK_RESOURCE_GROUP rg-net
 azd env set CREATE_RESOURCE_GROUPS false
 ```
 
-For two groups, set `AZURE_NETWORK_RESOURCE_GROUP` to `rg-app` instead.
-For the unchanged single-group path, omit both optional destination inputs.
+For two groups, set `AZURE_NETWORK_RESOURCE_GROUP` to `rg-ai` to keep networking
+with Foundry, or `rg-app` to keep it with the application.
+For one group, explicitly select the same name for all destinations:
+
+```bash
+azd env set AZURE_RESOURCE_GROUP rg-workload
+azd env set AZURE_APP_RESOURCE_GROUP rg-workload
+azd env set AZURE_NETWORK_RESOURCE_GROUP rg-workload
+```
+
 With `false`, a missing additional destination fails before services are
-provisioned. With an approved `true`, existing groups are reused without
+provisioned. With `true`, existing groups are reused without
 changing their tags or location; only missing additional groups are created.
+The additional destinations are application and network; azd manages creation
+of the Foundry/root group through its normal lifecycle.
 New additional groups do not receive the `azd-env-name` tag.
 Run the normal root lifecycle: each `azd provision` coordinates the
 resource-group-scoped root and its scoped modules. Do not replace it with
@@ -123,7 +140,7 @@ can instead supply `AGENTLZ_COMPONENT_IDENTITIES` as a nonsecret JSON map of
 Container App component names to pre-resolved managed-identity client IDs,
 without granting broad directory rights.
 
-The workflow does not elevate its own permissions. Record the approved mapping
+The workflow does not elevate its own permissions. It records the mapping
 with the environment; changing a provisioned environment's mapping is not a
 supported resource migration. After partial failure, repair the cause and
 retry with the same destinations. Do not delete groups as automatic rollback.
@@ -141,7 +158,7 @@ that identity in the Entra directory; it is not an application's client ID.
 | Variable | Description |
 | --- | --- |
 | `AZURE_ENV_NAME` | Environment name. Set by `azd env new`. Used to derive resource names. |
-| `AZURE_LOCATION` | Primary Azure region. `azd` asks for it on the first `azd up`. |
+| `AZURE_LOCATION` | Primary Azure region. Set it before provision so the first-run hook can create the additional resource groups. |
 | `AZURE_PRINCIPAL_ID` | Object ID of the deployment identity that receives roles for service setup and access. Set by `azd` from your signed-in account. |
 
 ### Inputs that use Bicep defaults
@@ -175,7 +192,7 @@ When unset, they use the template defaults shown below.
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
 | `AZURE_PE_LOCATION` | Empty | Region for private endpoints. Leave empty to use the deployment region. |
-| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`, falling back to `AZURE_RESOURCE_GROUP`). Optional multi-group placement is available from v4.4.0; the single-group default is unchanged. |
+| `AZURE_PE_RESOURCE_GROUP_NAME` | Empty | Explicit private endpoint group override takes precedence. When empty, `USE_EXISTING_VNET=true` with `SIDE_BY_SIDE=false` uses the existing VNet's group; otherwise uses the resolved network group (`AZURE_NETWORK_RESOURCE_GROUP`). New Foundry-root environments initialize a separate network group; existing single-group environments retain their mapping. |
 | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | None | Sends telemetry to an Application Insights resource you already have. |
 
 Supported `EXISTING_*` inputs select reuse, subject to each resource's conditions.

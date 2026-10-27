@@ -194,10 +194,14 @@ stores, secrets and data. Apply the
 [environment boundaries](configuration.md#environment-boundaries) for
 runtime identities, sign-in, network isolation and test data.
 
-The example keeps the single-resource-group default. Adopting the
-[optional destinations available from v4.4.0](configuration.md#resource-group-destinations)
-requires a reviewed platform revision, explicit stage-specific settings and
-permission/inventory checks for every target, not just the root group's refresh.
+On Foundry-root Agent source, new environments use three groups. The example's
+`AZURE_RESOURCE_GROUP` selects Foundry/root; application and network names
+default to that name plus `-app` and `-network`. Grant the deployment identity
+the required permissions for every target, including group creation when enabled,
+not just the root group's refresh. See
+[resource group destinations](configuration.md#resource-group-destinations)
+for pre-created groups or an explicit one/two-group layout.
+Existing environments keep their mapping.
 
 Never copy DEV's `.azure` state into TEST or PROD. Initialize or securely restore
 the intended environment on each runner, refresh its outputs when needed and
@@ -390,7 +394,10 @@ the run being approved.
 
 Before promotion, record release evidence for the preceding environment:
 
-1. `azd env get-value AZURE_RESOURCE_GROUP` identifies the intended target.
+1. `azd env get-value AZURE_RESOURCE_GROUP` identifies the Foundry/root target.
+   `AZURE_APP_RESOURCE_GROUP` identifies the application target and
+   `AZURE_NETWORK_RESOURCE_GROUP` the local network target; omitted overrides
+   use the Foundry/root group.
    App Configuration has the expected platform outputs and effective settings
    under label `agent-lz`; the selected apps have real, healthy image revisions,
    not just provisioned placeholders. Record image digests and hosted routed version.
