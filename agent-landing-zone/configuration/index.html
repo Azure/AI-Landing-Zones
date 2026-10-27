@@ -647,6 +647,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#resource-group-destinations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group destinations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource group destinations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resource-group-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#values-set-by-azd-or-by-you" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -739,6 +767,17 @@
   
     <nav class="md-nav" aria-label="Network and security">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-application-private-endpoint-subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional application private endpoint subnet
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#hub-integration" class="md-nav__link">
@@ -1887,6 +1926,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#resource-group-destinations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group destinations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Resource group destinations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resource-group-permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group permissions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#values-set-by-azd-or-by-you" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1979,6 +2046,17 @@
   
     <nav class="md-nav" aria-label="Network and security">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-application-private-endpoint-subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional application private endpoint subnet
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#hub-integration" class="md-nav__link">
@@ -2131,6 +2209,101 @@ copied between DEV, TEST and PROD.</p>
 <p><a href="../resource-naming/">Resource naming</a> explains defaults, overrides and name
 stability. Names resolve before the first provision; later changes can create
 new resources instead of updating existing ones.</p>
+<h3 id="resource-group-destinations">Resource group destinations</h3>
+<div class="admonition note">
+<p class="admonition-title">Available from v4.4.0</p>
+<p>The optional resource group destinations below support new Agent Landing
+Zone <strong>Bicep/azd</strong> deployments from
+<a href="https://github.com/Azure/agent-landing-zone/releases/tag/v4.4.0">v4.4.0</a>.
+Use a reviewed compatible source revision. Terraform, portal and the
+independent Bicep foundation are not claimed to support this Agent
+platform contract.</p>
+</div>
+<p>Without overrides, deployment keeps the existing single-resource-group path.
+All workload destinations must be in <code>AZURE_SUBSCRIPTION_ID</code>. Equal names are
+valid: one, two or three distinct groups can express the same three logical
+destinations. These inputs do not enable services, change network isolation or
+create a platform hub; existing BYO VNet, DNS and hub settings still apply.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AZURE_RESOURCE_GROUP</code></td>
+<td>Selected or initialized by azd</td>
+<td>Application destination and azd root deployment group.</td>
+</tr>
+<tr>
+<td><code>AZURE_FOUNDRY_RESOURCE_GROUP</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code></td>
+<td>Optional Foundry and grounding destination.</td>
+</tr>
+<tr>
+<td><code>AZURE_NETWORK_RESOURCE_GROUP</code></td>
+<td><code>AZURE_RESOURCE_GROUP</code></td>
+<td>Optional destination for workload-owned network resources. Existing network/private-endpoint overrides retain their own contract.</td>
+</tr>
+<tr>
+<td><code>CREATE_RESOURCE_GROUPS</code></td>
+<td><code>false</code></td>
+<td>Strict boolean (<code>true</code> or <code>false</code>): allows creating only explicitly named, missing additional destination groups. Does not disable azd's normal root-group creation.</td>
+</tr>
+</tbody>
+</table>
+<p>Set destinations <strong>before first provision</strong>. For three pre-created groups:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_RESOURCE_GROUP<span class="w"> </span>rg-app
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_FOUNDRY_RESOURCE_GROUP<span class="w"> </span>rg-ai
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_NETWORK_RESOURCE_GROUP<span class="w"> </span>rg-net
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>CREATE_RESOURCE_GROUPS<span class="w"> </span><span class="nb">false</span>
+</code></pre></div>
+<p>For two groups, set <code>AZURE_NETWORK_RESOURCE_GROUP</code> to <code>rg-app</code> instead.
+For the unchanged single-group path, omit both optional destination inputs.
+With <code>false</code>, a missing additional destination fails before services are
+provisioned. With an approved <code>true</code>, existing groups are reused without
+changing their tags or location; only missing additional groups are created.
+New additional groups do not receive the <code>azd-env-name</code> tag.
+Run the normal root lifecycle: each <code>azd provision</code> coordinates the
+resource-group-scoped root and its scoped modules. Do not replace it with
+three manual deployments. Hosted image preparation still uses its normal
+multi-step lifecycle.</p>
+<h4 id="resource-group-permissions">Resource group permissions</h4>
+<ul>
+<li><strong>Existing groups:</strong> Contributor on each target covers resource management
+  and <code>Microsoft.Resources/deployments/*</code>, not RBAC grants or data access.
+  Splitting existing groups does not itself require subscription Owner or
+  subscription-scope deployment permission.</li>
+<li><strong>Creating missing groups:</strong> <code>CREATE_RESOURCE_GROUPS=true</code> additionally needs
+  <code>Microsoft.Resources/subscriptions/resourceGroups/write</code> at subscription
+  scope. A scoped custom role can grant that action; subscription Contributor
+  is broader, not a universal prerequisite.</li>
+<li><strong>RBAC:</strong> the deploying identity needs
+  <code>Microsoft.Authorization/roleAssignments/write</code> at each assignment scope,
+  for example through Role Based Access Control Administrator, subject to its
+  conditions. Creating a group does not automatically grant this access.</li>
+<li><strong>Service configuration:</strong> keep the required Foundry, Search, App
+  Configuration, Key Vault and other service-specific data-plane roles.
+  Management-plane Contributor does not replace them. External network/DNS
+  resources require their owners' scoped permissions.</li>
+</ul>
+<p>Resource-group Contributor and scoped RBAC administration do not grant Entra
+directory reads; for platform-output client-ID discovery, restricted automation
+can instead supply <code>AGENTLZ_COMPONENT_IDENTITIES</code> as a nonsecret JSON map of
+Container App component names to pre-resolved managed-identity client IDs,
+without granting broad directory rights.</p>
+<p>The workflow does not elevate its own permissions. Record the approved mapping
+with the environment; changing a provisioned environment's mapping is not a
+supported resource migration. After partial failure, repair the cause and
+retry with the same destinations. Do not delete groups as automatic rollback.
+Review every destination and shared dependency before any
+<a href="../deploy-full-stack/#remove-an-environment">environment removal</a>.
+For split-group deployments, a <code>predown</code> safety hook blocks <code>azd down</code>; cleanup
+requires manual inventory, owner review and separately authorized removal.
+No automatic deletion or bypass option is provided. The single-group teardown path is unchanged.</p>
 <h3 id="values-set-by-azd-or-by-you">Values set by azd or by you</h3>
 <p>A <strong>principal</strong> is a user or service identity. Its <strong>object ID</strong> identifies
 that identity in the Entra directory; it is not an application's client ID.</p>
@@ -2211,7 +2384,7 @@ When unset, they use the template defaults shown below.</p>
 <tr>
 <td><code>SIDE_BY_SIDE</code></td>
 <td><code>true</code></td>
-<td>Uses the deployment resource group for private endpoints and DNS zones rather than placing them in the existing VNet's resource group.</td>
+<td>Selects side-by-side placement for private endpoints and DNS zones rather than placing them in the existing VNet's resource group. See the private endpoint group precedence below.</td>
 </tr>
 </tbody>
 </table>
@@ -2278,7 +2451,7 @@ When unset, they use the template defaults shown below.</p>
 <tr>
 <td><code>AZURE_PE_RESOURCE_GROUP_NAME</code></td>
 <td>Empty</td>
-<td>Resource group for private endpoints. Defaults to the deployment resource group, or the existing VNet's resource group when <code>USE_EXISTING_VNET=true</code> and <code>SIDE_BY_SIDE=false</code>.</td>
+<td>Explicit private endpoint group override takes precedence. When empty, <code>USE_EXISTING_VNET=true</code> with <code>SIDE_BY_SIDE=false</code> uses the existing VNet's group; otherwise uses the resolved network group (<code>AZURE_NETWORK_RESOURCE_GROUP</code>, falling back to <code>AZURE_RESOURCE_GROUP</code>). Optional multi-group placement is available from v4.4.0; the single-group default is unchanged.</td>
 </tr>
 <tr>
 <td><code>EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING</code></td>
@@ -2568,6 +2741,51 @@ See also
 </tbody>
 </table>
 <p>Bastion tunneling is disabled by default.</p>
+<h3 id="optional-application-private-endpoint-subnet">Optional application private endpoint subnet</h3>
+<p><strong>Available from v4.4.0:</strong> new Agent Bicep/azd deployments can separate
+application private endpoints from Foundry/grounding private endpoints.
+This choice is independent of resource group count and does not enable network
+isolation or additional services.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Native root parameter</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AZURE_APPLICATION_PE_SUBNET_NAME</code></td>
+<td><code>applicationPeSubnetName</code></td>
+<td>Empty string</td>
+<td>Name of the optional application private endpoint subnet; supply with its prefix.</td>
+</tr>
+<tr>
+<td><code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code></td>
+<td><code>applicationPeSubnetPrefix</code></td>
+<td>Empty string</td>
+<td>Aligned IPv4 CIDR for that subnet; supply with its name.</td>
+</tr>
+</tbody>
+</table>
+<p>Leave both empty to keep the existing shared private endpoint subnet, even with
+three resource groups. When both are set, enabled application Cosmos DB, Key
+Vault, App Configuration, Container Apps, ACR and Azure Monitor Private Link
+Scope private endpoints use the application subnet. Foundry/grounding endpoints
+remain on the subnet selected by existing native <code>peSubnetName</code> and
+<code>peSubnetPrefix</code> parameters.</p>
+<p>Set the pair before first provision, using your approved address plan:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_APPLICATION_PE_SUBNET_NAME<span class="w"> </span>snet-app-pe
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_APPLICATION_PE_SUBNET_PREFIX<span class="w"> </span>&lt;approved-ipv4-subnet-cidr&gt;
+</code></pre></div>
+<p>Bootstrap validates the pair, subnet name and IPv4 CIDR before optional group
+creation. Bicep additionally checks a network-aligned prefix length of <code>/29</code>
+or shorter, containment in the VNet, non-overlap with base subnet prefixes,
+a distinct subnet name and compatibility with BYO VNet settings. Review subnet
+ownership and existing-subnet compatibility with the network owner; these
+settings do not bypass the existing <code>DEPLOY_SUBNETS</code> contract.</p>
 <h3 id="hub-integration">Hub integration</h3>
 <p>These parameters describe spoke integration with an existing hub.
 <a href="../network-isolation/#integrate-with-an-existing-hub">Hub integration</a> explains the network design.</p>

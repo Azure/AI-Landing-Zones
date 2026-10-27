@@ -2309,6 +2309,10 @@ separate resource groups, azd environments, connection identities, configuration
 stores, secrets and data. Apply the
 <a href="../configuration/#environment-boundaries">environment boundaries</a> for
 runtime identities, sign-in, network isolation and test data.</p>
+<p>The example keeps the single-resource-group default. Adopting the
+<a href="../configuration/#resource-group-destinations">optional destinations available from v4.4.0</a>
+requires a reviewed platform revision, explicit stage-specific settings and
+permission/inventory checks for every target, not just the root group's refresh.</p>
 <p>Never copy DEV's <code>.azure</code> state into TEST or PROD. Initialize or securely restore
 the intended environment on each runner, refresh its outputs when needed and
 reapply approved inputs. Keep <code>.azure</code> and sibling child state private.</p>

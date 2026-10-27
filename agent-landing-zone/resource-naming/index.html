@@ -1760,6 +1760,9 @@ resource or move its data.</p>
 <a href="../deploy-full-stack/">Deploy full stack</a> runbooks provide the input and
 preview steps. <a href="../configuration/">Deployment settings</a> describes other inputs;
 <a href="../planning/#select-reuse-or-omit-resources">resource reuse</a> is separate from naming.</p>
+<p>The <a href="../configuration/#resource-group-destinations">resource group destination inputs</a>,
+available from v4.4.0, select where resources belong, not a naming mode. Select them before first
+provision; changing a group's input is not an existing-resource move or migration.</p>
 <h2 id="defaults">Defaults</h2>
 <p>Cloud Adoption Framework (CAF) naming is the default
 (<code>RESOURCE_NAMING_MODE=caf</code>). Generated names have the general shape

@@ -1624,6 +1624,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#resource-group-destination-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group destination checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#split-group-cleanup-safety-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split-group cleanup safety check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hosted-deployment-is-not-prepared" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2229,6 +2251,28 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#resource-group-destination-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group destination checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#split-group-cleanup-safety-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split-group cleanup safety check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hosted-deployment-is-not-prepared" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2718,6 +2762,14 @@ failure. Diagnose the failing stage before retrying or changing inputs.</p>
 </thead>
 <tbody>
 <tr>
+<td>Multi-group setup reports a missing target or denied access</td>
+<td><a href="#resource-group-destination-checks">Resource group destination checks</a></td>
+</tr>
+<tr>
+<td><code>azd down</code> is blocked for split resource group destinations</td>
+<td><a href="#split-group-cleanup-safety-check">Split-group cleanup safety check</a></td>
+</tr>
+<tr>
 <td>Hosted deployment asks for preparation</td>
 <td><a href="#hosted-deployment-is-not-prepared">Hosted handoff</a></td>
 </tr>
@@ -2773,6 +2825,35 @@ signed URLs, tokens, cookies and credentials.</p>
 <li>Complete <a href="#validation">Validation</a> before reopening access or promotion.</li>
 </ol>
 <h3 id="deploy-stage">Deploy stage</h3>
+<h4 id="resource-group-destination-checks">Resource group destination checks</h4>
+<p>For <strong>Agent Bicep/azd deployments from v4.4.0</strong>, compare the selected environment's
+<code>AZURE_RESOURCE_GROUP</code>, optional <code>AZURE_FOUNDRY_RESOURCE_GROUP</code> and
+<code>AZURE_NETWORK_RESOURCE_GROUP</code> with the approved
+<a href="../configuration/#resource-group-destinations">destination mapping</a>.
+An omitted override uses the root group.</p>
+<p>With <code>CREATE_RESOURCE_GROUPS=false</code>, have the owner pre-create missing additional
+groups. Enabling creation instead requires explicit authorization and
+subscription-level <code>Microsoft.Resources/subscriptions/resourceGroups/write</code>.
+An authorization failure is not evidence that the group is absent. Check the
+actual identity and denied action; do not grant subscription Owner or bypass
+the failure.</p>
+<p>After partial creation, keep the same destinations, repair the cause and retry.
+Do not delete created/shared groups as rollback, change destinations to evade
+a binding check, or move existing resources through these inputs. Verify resource
+IDs and scoped permissions in every destination before continuing.</p>
+<h4 id="split-group-cleanup-safety-check">Split-group cleanup safety check</h4>
+<p>From <strong>v4.4.0</strong>, the <code>predown</code> hook blocks
+<code>azd down</code> when the workload destinations span distinct resource groups.
+This is an intentional safety check, not a provisioning or permission failure.
+No automatic deletion or bypass option is provided; do not bypass the hook or change the
+destination mapping to make teardown proceed.</p>
+<p>Inventory resources in every destination and identify shared dependencies,
+retained data, locks and ownership. Additional groups created by the feature
+do not receive the <code>azd-env-name</code> tag, so tag-based discovery is not a complete
+inventory. Arrange separately authorized, itemized manual removal with the
+owners. Confirm retained/shared resources remain intact afterward.
+The normal single-group <code>azd down</code> path is unchanged; its
+<a href="../deploy-full-stack/#remove-an-environment">deletion review</a> still applies.</p>
 <h4 id="hosted-deployment-is-not-prepared">Hosted deployment is not prepared</h4>
 <p><strong>Symptom:</strong> Deployment reports missing hosted preparation or an incomplete
 image handoff.</p>

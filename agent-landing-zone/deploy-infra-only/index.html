@@ -1456,6 +1456,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 4: Preview and provision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-preview-agent-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional preview (Agent source)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2100,6 +2128,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 4: Preview and provision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-preview-agent-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional preview (Agent source)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2277,6 +2333,13 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 its approved inputs. Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local <code>.azure/</code> state.
 Fork or mirror the source only when maintaining your own inputs or automation.</p>
+<p><strong>Agent source only, from v4.4.0:</strong> a reviewed revision can optionally select
+<a href="../configuration/#resource-group-destinations">Foundry and network resource group destinations</a>
+before first provision. The default remains one group; additional targets
+share its subscription and must exist unless optional creation is authorized.
+Keep the normal root <code>azd provision</code> flow, not separate manual deployments per
+group. This does not establish support in the independent Bicep source,
+Terraform or portal.</p>
 <h3 id="step-3-choose-the-foundation-shape">Step 3: Choose the foundation shape</h3>
 <p>Choose the network design before provisioning. Set the scalar deployment inputs
 below in the selected azd environment with <code>azd env set</code>; arrays and objects
@@ -2380,12 +2443,38 @@ when application deployment will happen later. See the linked full-stack
 runbook for the identity inputs and protected-retrieval integration gate.</p>
 <h3 id="step-4-preview-and-provision">Step 4: Preview and provision</h3>
 <p>For Agent source, first run <code>azd hooks run preup</code> to validate the definition and
-binding before azd's resource-group initialization. Then, in either source:</p>
+binding before azd's resource-group initialization.
+Normal <code>azd provision</code> automatically runs the Agent preprovision hook to
+compose parameters and bootstrap authorized additional groups. Manual
+preparation is needed only if you choose to preview first.</p>
+<h4 id="optional-preview-agent-source">Optional preview (Agent source)</h4>
+<div class="admonition warning">
+<p class="admonition-title">Preview preparation can create resource groups</p>
+<p>With azd 1.37.1, <code>azd provision --preview</code> does <strong>not</strong> run preprovision
+hooks. It reads the existing <code>infra/main.parameters.json</code>, which may still
+be the checked-in seed or another environment's composition, and cannot
+bootstrap missing additional destination groups.</p>
+<p>Before an optional Agent preview, select the intended azd environment,
+activate the prepared Python environment and run <strong>one</strong> matching hook
+from the platform root: <code>pwsh -File scripts/preProvision.ps1</code> on Windows,
+or <code>sh scripts/preProvision.sh</code> on Linux/macOS. These hooks load selected
+azd values, compose parameters and can create missing additional groups
+when <code>CREATE_RESOURCE_GROUPS=true</code>. Otherwise those groups must already
+exist, or a composed split-group preview can fail with <code>NotFound</code>.</p>
+<p>Native preview can also create the empty application/root resource group.
+Neither fresh-environment preparation nor preview is guaranteed write-free;
+authorize group creation before running them. A successful preview does
+not prove private connectivity, service configuration or application readiness.</p>
+</div>
+<p>After this preparation for Agent source, or using the independent foundation's
+own inputs and lifecycle, the optional preview command is:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision<span class="w"> </span>--preview
 </code></pre></div>
-<p>Review the preview's scopes, names, routes, resource changes, public access and
-role assignments. Resolve quota, Policy, subnet and capacity findings rather
-than skipping preflight. Approve the planned resource changes before applying:</p>
+<p>If previewing, review its scopes, names, routes, resource changes, public access
+and role assignments. Resolve quota, Policy, subnet and capacity findings rather
+than skipping preflight.</p>
+<h4 id="provision">Provision</h4>
+<p>With the resource changes approved, provision normally:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
 </code></pre></div>
 <p>Test connectivity after provisioning and application behavior after deploying
@@ -2498,6 +2587,8 @@ azd<span class="w"> </span>env<span class="w"> </span>refresh
 </code></pre></div>
 <p>If the environment is already present, select it instead. Reapply the approved
 deployment inputs: refresh restores outputs, not your full configuration.
+For the multi-group path, restore the same approved Foundry/network
+destination mapping as well; the root group alone is not sufficient.
 Do not publish or copy another stage's <code>.azure/</code> state as an input artifact.
 An authorized runner can use managed-identity sign-in. Verify its scoped
 configuration and build roles before running the hooks.</p>
@@ -2516,8 +2607,9 @@ Do not approve every pending connection or bypass the gate.</p>
 <p>Record the deployed source revision, approved parameters, outputs and dependent
 applications. Back up required data and configuration, check compatibility and
 retain existing names, locations, layout and ingestion intent.
-Review preview before applying approved root parameter changes with the
-provisioning step above.</p>
+If previewing Agent changes, repeat the
+<a href="#optional-preview-agent-source">selected-environment preparation</a> before
+reviewing the preview. Apply approved root parameter changes with the provisioning step above.</p>
 <p>For Agent environments, integrate the coordinated platform and its <code>infra/</code>
 tree together; do not replace only its foundation folder with upstream main.
 Use the <a href="../deploy-full-stack/#upgrade-to-a-new-release">reapply procedure</a>
@@ -2552,6 +2644,9 @@ az<span class="w"> </span>resource<span class="w"> </span>list<span class="w"> <
 az<span class="w"> </span>network<span class="w"> </span>private-endpoint<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:provisioningState,connections:privateLinkServiceConnections[].privateLinkServiceConnectionState.status}"</span><span class="w"> </span>-o<span class="w"> </span>json
 </code></pre></div>
+<p>For the multi-group path, repeat resource inventory for every
+  distinct destination, and inspect private endpoints in their actual group.
+  Do not infer a Foundry or network resource's group from the application group.</p>
 </li>
 <li>
 <p>Compare the inventory with enabled features and reuse inputs. Account for
@@ -2572,7 +2667,8 @@ az<span class="w"> </span>network<span class="w"> </span>private-endpoint<span c
 <li>Stop retries and record which resources and configuration changed. If only
    local inputs changed, restore reviewed inputs before provisioning.</li>
 <li>Compare previous inputs with deployed state. Preview the previous compatible
-   source and parameters with <code>azd provision --preview</code> from the selected root.</li>
+   source and parameters with <code>azd provision --preview</code> from the selected root,
+   following the <a href="#optional-preview-agent-source">Agent preview preparation</a> when applicable.</li>
 <li>Apply with <code>azd provision</code> only if reviewed changes preserve data, shared
    resources and the approved network posture.</li>
 <li>Repeat <a href="#validation">Validation</a>. If inputs cannot safely reverse a change,

@@ -2018,6 +2018,11 @@ The <a href="../azure-devops/">Azure DevOps runbook</a> covers optional pipeline
 <a href="../planning/">Deployment choices</a> explains standalone and hub integration.
 An AI Gateway governs model requests, not workload networking or user access.
 Private endpoints, DNS, routes, firewall rules and authorization remain necessary.</p>
+<p>With the <a href="../configuration/#resource-group-destinations">resource group destinations available from v4.4.0</a>,
+locally owned private endpoints default to the resolved network group, which
+can differ from their services' groups. The explicit
+<code>AZURE_PE_RESOURCE_GROUP_NAME</code> override and existing-VNet/<code>SIDE_BY_SIDE</code>
+precedence in <a href="../configuration/#general">Deployment settings</a> still apply.</p>
 <div class="admonition note">
 <p class="admonition-title">Teams and Microsoft 365 Copilot publication</p>
 <p><a href="../publish-to-teams/">Publish to Teams and M365</a> adds a manual, source-IP-filtered
@@ -2072,6 +2077,18 @@ private endpoint; it does not require the Activity-route public exception.</p>
 <p><span id="enable-isolation"></span></p>
 <h2 id="isolation-and-provisioning">Isolation and provisioning</h2>
 <p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning.</p>
+<p>The <strong>v4.4.0</strong>
+<a href="../configuration/#optional-application-private-endpoint-subnet">application private endpoint subnet pair</a>
+is optional regardless of whether the workload uses one, two or three resource
+groups. Empty <code>AZURE_APPLICATION_PE_SUBNET_NAME</code> and
+<code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code> retain the shared subnet. Supply both to
+place enabled application Cosmos DB, Key Vault, App Configuration, Container
+Apps, ACR and Azure Monitor Private Link Scope endpoints on a separate subnet;
+Foundry/grounding keeps the existing <code>peSubnetName</code>/<code>peSubnetPrefix</code> subnet.
+The application subnet needs a distinct name and an aligned IPv4 CIDR of <code>/29</code>
+or shorter within the VNet, without overlap with base subnet prefixes.
+Existing-VNet ownership and compatibility checks still apply; no extra subnet
+is selected merely by splitting resource groups.</p>
 <p>Azure Resource Manager (ARM) creates and manages Azure resources through a
 public control plane, but <code>azd provision</code> also
 runs lifecycle hooks. An existing environment can need private App Configuration

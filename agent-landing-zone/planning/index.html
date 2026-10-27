@@ -523,6 +523,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#resource-group-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#resource-selection-and-reuse" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1731,6 +1742,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#resource-group-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource group ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#resource-selection-and-reuse" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1878,6 +1900,20 @@ resource scope. Deployment roles can differ from application data-access roles.<
 independent Bicep infrastructure from the Agent platform.
 Different implementations are not interchangeable owners of the same
 environment; resource reuse needs explicit state and dependency ownership.</p>
+<h2 id="resource-group-ownership">Resource group ownership</h2>
+<p>The default remains one workload resource group. The optional
+<a href="../configuration/#resource-group-destinations">resource group destinations</a>
+separate application, Foundry/grounding and workload networking ownership,
+with one, two or three distinct groups in the same subscription. This is an
+<strong>Agent Bicep/azd feature available from v4.4.0</strong>, not a Terraform or portal parity claim.
+Network isolation and hub/BYO integration remain separate decisions.</p>
+<p>Agree names, owners, scoped deployment/RBAC/data permissions and retention
+before a new deployment. Prefer pre-created groups when the deploying identity
+must not create groups at subscription scope. Optional creation is explicit
+and off by default for additional destinations. One root provisioning workflow
+coordinates the groups; three independent manual deployments are not required.
+Existing-environment migration and automatic deletion of shared groups are
+outside this feature.</p>
 <p><span id="select-reuse-or-omit-resources"></span></p>
 <h2 id="resource-selection-and-reuse">Resource selection and reuse</h2>
 <p>The selected application's definition and generated <code>infra/main.parameters.json</code>

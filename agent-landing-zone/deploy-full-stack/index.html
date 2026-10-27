@@ -2278,9 +2278,13 @@ For the relationship between the template, its manifest and lifecycle hooks,
 see <a href="../how-it-works/">How it works</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
-<li><strong>Permissions:</strong> Owner, or Contributor plus User Access Administrator, at the
-  required deployment scopes. Shared networks, DNS and monitoring can require
-  additional permissions in their own scopes. See <a href="../../bicep/permissions/">Permissions</a>.</li>
+<li><strong>Permissions:</strong> Contributor for resource deployment plus
+  <code>Microsoft.Authorization/roleAssignments/write</code> at the required scopes,
+  for example through Role Based Access Control Administrator. Service
+  configuration needs separate data-plane roles. Shared networks, DNS and
+  monitoring can require additional scoped access. Subscription Owner is not
+  a blanket prerequisite; see <a href="../configuration/#resource-group-permissions">resource group permissions</a>
+  and <a href="../../bicep/permissions/">foundation permissions</a>.</li>
 <li><strong>Subscription readiness:</strong> accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
   selected parameters. Review <a href="../../bicep/regional-considerations/">regional considerations</a>
@@ -2412,6 +2416,11 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.</p>
+<p>For a <strong>new environment on v4.4.0 or a later reviewed compatible revision</strong>,
+optionally set <a href="../configuration/#resource-group-destinations">Foundry and network resource group destinations</a>
+now. Without those overrides, keep the single-group procedure unchanged.
+Additional groups must already exist unless their explicit creation is enabled
+and authorized. Do not change an existing environment's mapping to move resources.</p>
 <p><a id="step-3-choose-a-topology"></a></p>
 <h3 id="step-3-choose-the-application-and-network">Step 3: Choose the application and network</h3>
 <p>Set the deployment choices below in the selected azd environment with
@@ -2511,9 +2520,14 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
 <p>Resolve validation, quota, Policy and connectivity failures rather than bypassing
 checks. The explicit <code>preup</code> check also validates binding before standalone
 provisioning, which otherwise runs its check after azd may initialize a resource group.
-Run <code>azd provision --preview</code> and review resource scopes, public access, routes
-and role changes before applying the sequence below. Expect only changes
-authorized for the selected environment.</p>
+For an optional <code>azd provision --preview</code>, first follow the
+<a href="../deploy-infra-only/#optional-preview-agent-source">Agent preview preparation warning</a>:
+preview skips preprovision hooks, so the selected environment's parameters and
+additional groups must be prepared first. Preparation/preview can create
+resource groups and do not establish private application readiness. Review
+resource scopes, public access, routes and role changes before applying the
+sequence below. Normal <code>azd provision</code> runs its preprovision hook automatically;
+manual preparation is not required when proceeding without preview.</p>
 <p><span id="container-apps-orchestrator-classic"></span>
 <span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span></p>
 <h4 id="default-foundry-orchestrator-hosted-no-panel">Default Foundry orchestrator (<code>hosted-no-panel</code>)</h4>
@@ -2583,7 +2597,8 @@ service-specific procedures.</p>
    <code>infra/</code> with that source, rather than replacing only that directory.</li>
 <li>Preserve the environment's layout, component selection, names and source
    bindings. Back up affected data and separately managed configuration.</li>
-<li>Preview infrastructure changes with <code>azd provision --preview</code>.</li>
+<li>If previewing, follow the <a href="../deploy-infra-only/#optional-preview-agent-source">selected-environment preparation</a>,
+   then review infrastructure changes with <code>azd provision --preview</code>.</li>
 <li>Run <a href="#step-4-deploy">Step 4</a>, including image preparation and the second
    provision when the source or generated image changes.</li>
 <li>Repeat <a href="#validation">Validation</a> before promotion.</li>
@@ -2656,6 +2671,14 @@ documents, indexes, configuration and conversation data. If the scope
 contains shared resources or retained data, stop and arrange itemized removal
 with the owners instead. Check retention obligations first.</p>
 </div>
+<p>For the multi-group path, inventory <strong>every configured destination</strong>
+and its shared dependencies before cleanup. The root group alone is not the
+complete inventory. A <code>predown</code> safety hook <strong>blocks <code>azd down</code> for split-group
+deployments</strong>, with no automatic deletion or bypass option. Arrange itemized,
+owner-approved manual removal instead; do not bypass the hook or delete shared
+groups. Additional groups created by the feature are not tagged <code>azd-env-name</code>.
+Partial provisioning is not authorization to delete a group. The single-group
+path below is unchanged.</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="k">select</span><span class="w"> </span>&lt;environment-name&gt;
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_SUBSCRIPTION_ID
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
