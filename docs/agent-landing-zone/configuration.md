@@ -410,24 +410,25 @@ subnet in a deployment-owned VNet; Azure can reject removal of occupied subnets.
 not subnet creation. Use `deployAgentSubnet` for creation ownership.
 
 All twelve name and prefix parameters can be overridden in root
-`main.parameters.json`. The prefix substitutions below preserve explicit
-operator values through composition; the allocation table lists defaults,
-not mandatory ranges.
+`main.parameters.json` or through the environment bindings below. Explicit
+operator values are preserved through composition; the allocation table lists
+defaults, not mandatory ranges. Reserved service names must retain their
+required spellings.
 
-| Native name parameter | Native prefix parameter | Prefix environment input |
-| --- | --- | --- |
-| `agentSubnetName` | `agentSubnetPrefix` | `AZURE_AGENT_SUBNET_PREFIX` |
-| `acaEnvironmentSubnetName` | `acaEnvironmentSubnetPrefix` | `AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX` |
-| `peSubnetName` | `peSubnetPrefix` | `AZURE_PE_SUBNET_PREFIX` |
-| `azureBastionSubnetName` | `azureBastionSubnetPrefix` | `AZURE_BASTION_SUBNET_PREFIX` |
-| `azureFirewallSubnetName` | `azureFirewallSubnetPrefix` | `AZURE_FIREWALL_SUBNET_PREFIX` |
-| `gatewaySubnetName` | `gatewaySubnetPrefix` | `AZURE_GATEWAY_SUBNET_PREFIX` |
-| `azureAppGatewaySubnetName` | `azureAppGatewaySubnetPrefix` | `AZURE_APP_GATEWAY_SUBNET_PREFIX` |
-| `jumpboxSubnetName` | `jumpboxSubnetPrefix` | `AZURE_JUMPBOX_SUBNET_PREFIX` |
-| `devopsBuildAgentsSubnetName` | `devopsBuildAgentsSubnetPrefix` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX` |
-| `applicationPeSubnetName` | `applicationPeSubnetPrefix` | `AZURE_APPLICATION_PE_SUBNET_PREFIX` |
-| `powerPlatformSubnetName` | `powerPlatformSubnetPrefix` | `AZURE_POWER_PLATFORM_SUBNET_PREFIX` |
-| `aiGatewaySubnetName` | `aiGatewaySubnetPrefix` | `AZURE_AI_GATEWAY_SUBNET_PREFIX` |
+| Native name parameter | Name environment input | Native prefix parameter | Prefix environment input |
+| --- | --- | --- | --- |
+| `agentSubnetName` | `AZURE_AGENT_SUBNET_NAME` | `agentSubnetPrefix` | `AZURE_AGENT_SUBNET_PREFIX` |
+| `acaEnvironmentSubnetName` | `AZURE_ACA_ENVIRONMENT_SUBNET_NAME` | `acaEnvironmentSubnetPrefix` | `AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX` |
+| `peSubnetName` | `AZURE_PE_SUBNET_NAME` | `peSubnetPrefix` | `AZURE_PE_SUBNET_PREFIX` |
+| `azureBastionSubnetName` | `AZURE_BASTION_SUBNET_NAME` | `azureBastionSubnetPrefix` | `AZURE_BASTION_SUBNET_PREFIX` |
+| `azureFirewallSubnetName` | `AZURE_FIREWALL_SUBNET_NAME` | `azureFirewallSubnetPrefix` | `AZURE_FIREWALL_SUBNET_PREFIX` |
+| `gatewaySubnetName` | `AZURE_GATEWAY_SUBNET_NAME` | `gatewaySubnetPrefix` | `AZURE_GATEWAY_SUBNET_PREFIX` |
+| `azureAppGatewaySubnetName` | `AZURE_APP_GATEWAY_SUBNET_NAME` | `azureAppGatewaySubnetPrefix` | `AZURE_APP_GATEWAY_SUBNET_PREFIX` |
+| `jumpboxSubnetName` | `AZURE_JUMPBOX_SUBNET_NAME` | `jumpboxSubnetPrefix` | `AZURE_JUMPBOX_SUBNET_PREFIX` |
+| `devopsBuildAgentsSubnetName` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_NAME` | `devopsBuildAgentsSubnetPrefix` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX` |
+| `applicationPeSubnetName` | `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetPrefix` | `AZURE_APPLICATION_PE_SUBNET_PREFIX` |
+| `powerPlatformSubnetName` | `AZURE_POWER_PLATFORM_SUBNET_NAME` | `powerPlatformSubnetPrefix` | `AZURE_POWER_PLATFORM_SUBNET_PREFIX` |
+| `aiGatewaySubnetName` | `AZURE_AI_GATEWAY_SUBNET_NAME` | `aiGatewaySubnetPrefix` | `AZURE_AI_GATEWAY_SUBNET_PREFIX` |
 
 Set `vnetAddressPrefixes.value` as an explicit array in root
 `main.parameters.json` (default `["192.168.0.0/21"]`); there is no

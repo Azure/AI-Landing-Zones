@@ -48,7 +48,7 @@ source's root parameter file.
 For an existing VNet, preserve externally owned subnets, NSGs and delegations.
 With `USE_EXISTING_VNET=true`, the template does not create forward peering;
 the network team owns both directions. Do not update isolated existing subnets
-with `DEPLOY_NSGS=false`: retain managed NSGs or set `DEPLOY_SUBNETS=false` and
+with native root `deployNsgs=false`: retain managed NSGs or set `DEPLOY_SUBNETS=false` and
 have the network owner prepare the complete configuration.
 
 ## Hub integration inputs
