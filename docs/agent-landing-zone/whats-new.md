@@ -1,8 +1,25 @@
 # Agent Landing Zone What's new
 
-This page summarizes ingestion and private-connectivity capabilities for the
+This page summarizes deployment, ingestion and private-connectivity capabilities for the
 supplied Agent Application. The [Deploy full stack](deploy-full-stack.md)
 runbook contains the default deployment procedure.
+
+## Simpler hosted deployment
+
+- **Provision, then deploy:** Run `azd provision` followed by `azd deploy`,
+  or use `azd up`. The deployment hook prepares the hosted image and its
+  application handoff automatically; no standalone preparation command,
+  placeholder agent or second provision is required.
+- **Immutable images:** Deployment builds the manifest-pinned orchestrator,
+  records its image digest and reuses a generated image when its source and
+  startup provenance match. Stale generated provenance triggers a rebuild.
+  Explicit immutable image overrides remain operator-managed.
+- **The same deployment safeguards:** Private builds still use the
+  provisioned ACR Tasks pool. Runtime access bootstrap, greeting checks and
+  cutover gates remain in place.
+
+See [hosted image deployment](hosted-agents.md#image-and-deployment-handoff)
+and [application redeployment](deploy-full-stack.md#redeploy-applications-only).
 
 <span id="14th-october-2026"></span>
 
