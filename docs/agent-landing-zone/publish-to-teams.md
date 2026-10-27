@@ -13,28 +13,36 @@ You will create a Bot Service resource, enable channel access and publish the
 agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.
 
+## What you'll have after this runbook
+
+Your existing Foundry agent available in Teams and Microsoft 365 Copilot,
+with authenticated messages delivered through Azure Bot Service.
+
+![Teams and Microsoft 365 Copilot reach the hosted agent through Bot Service and restricted public Activity ingress. A separate setup path connects an admin workstation through a private endpoint to the Foundry project API.](../media/runbooks/publish-to-teams.png)
+
+[Open the full-resolution diagram](../media/runbooks/publish-to-teams.png).
+
+The dashed path is for publication setup and later changes, not for Teams
+conversations.
+
 ## When to use
 
 Use this runbook after the hosted agent works and you need Teams or Microsoft
 365 Copilot distribution while Foundry public network access remains disabled. For a Copilot
 Studio private relay instead, use [Connect Copilot Studio](connect-copilot-studio.md).
 
-Messages from either client follow the same path:
-
-<div class="runbook-path">
-<ol role="list" aria-label="Message path from Teams and Microsoft 365 Copilot to Foundry">
-  <li><strong>Teams / Microsoft 365 Copilot</strong></li>
-  <li><strong>Azure Bot Service</strong></li>
-  <li><strong>Foundry</strong> <span class="runbook-path__detail">Activity endpoint</span></li>
-</ol>
-</div>
-
 Foundry and Bot Service keep **public network access (PNA) disabled**. Following
 the [Foundry REST publishing flow](https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network),
-you enable a restricted public HTTPS exception for the Activity route. Foundry
-allows only service-managed Microsoft channel source ranges and still requires
-authentication and authorization. Channel delivery uses this exception, not the
-Foundry private endpoint. Management requests still use the private endpoint.
+you enable a restricted public HTTPS exception for the Activity route.
+
+Foundry allows only service-managed Microsoft channel source ranges and still
+requires authentication and authorization. Channel delivery uses this
+exception, not the Foundry private endpoint.
+
+During setup, your connected workstation calls the **Foundry project API**
+through the private endpoint to read the agent configuration, enable Activity
+and select the tested version. The private endpoint carries those requests;
+it is not the resource you are configuring.
 
 ## Prerequisites
 

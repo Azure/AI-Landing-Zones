@@ -12,6 +12,23 @@ and Foundry IQ manages source ingestion and retrieval. The default
 `hosted-no-panel` layout omits the administrative panel and Agent Application
 Cosmos DB. Foundry can require separate backing resources.
 
+## What you'll have after this runbook
+
+Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
+orchestrator and native Foundry IQ ingestion and retrieval.
+
+![The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional.](../media/runbooks/deploy-full-stack.png)
+
+!!! note "Deployment options"
+    This diagram illustrates the default hosted application layout, not a
+    fixed list of resources for every deployment.
+
+    Optional components are included only when enabled. The actual resources
+    depend on your application, network and deployment settings; existing
+    resources may be reused.
+
+[Open the full-resolution diagram](../media/runbooks/deploy-full-stack.png).
+
 ## When to use
 
 Use this runbook for a new Agent Application deployment or to add it to its

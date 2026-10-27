@@ -8,28 +8,36 @@ agent** without enabling Foundry public network access.
 You will reuse the existing Foundry agent and network, then create a relay flow
 and a dedicated pilot agent in Copilot Studio.
 
+## What you'll have after this runbook
+
+A Copilot Studio agent that calls your private Foundry agent through an
+authenticated Power Automate flow.
+
+![Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API.](../media/runbooks/connect-copilot-studio.png)
+
+[Open the full-resolution diagram](../media/runbooks/connect-copilot-studio.png).
+
+The figure shows one regional path, with separate subnets in your Azure VNet.
+
+Foundry receives the flow connection user's identity, not automatically the
+identity of the person chatting.
+
 ## When to use
 
 Use this runbook when Copilot Studio needs to call an existing private Foundry
 agent through an authenticated flow. It is a shared-connection relay, not the
 native connected-agent setup or automatic per-user delegation.
 
-Messages follow this path:
+The delegated subnet is in **your Azure VNet**, not inside Copilot Studio.
+It must be dedicated to Power Platform.
 
-<div class="runbook-path runbook-path--annotated">
-<ol role="list" aria-label="Message path from Copilot Studio to Foundry">
-  <li><strong>Copilot Studio</strong></li>
-  <li class="runbook-path__connection" role="presentation" aria-hidden="true"><span class="runbook-path__arrow"></span></li>
-  <li><strong>Power Automate</strong> <span class="runbook-path__detail">agent flow</span></li>
-  <li class="runbook-path__connection" role="presentation">
-    <strong class="runbook-path__protocol">HTTPS request</strong>
-    <span class="runbook-path__authentication">Microsoft Entra ID authentication</span>
-    <span class="runbook-path__arrow" aria-hidden="true"></span>
-  </li>
-  <li><strong>Foundry agent</strong> <span class="runbook-path__detail">Responses API</span></li>
-</ol>
-<p class="runbook-path__route"><strong>Private connectivity:</strong> HTTPS uses the Power Platform delegated subnet to reach the Foundry private endpoint.</p>
-</div>
+It can use the VNet containing the Foundry private endpoint, provided that
+VNet meets Power Platform's regional requirements. Use **different subnets**
+for Power Platform delegation and private endpoints.
+
+Another connected VNet also works if routing, private DNS and HTTPS reach the
+Foundry private endpoint. Do not reuse the private-endpoint or Container Apps
+subnet for Power Platform delegation.
 
 !!! note "Why use a flow in this scenario?"
     This runbook covers **Foundry with Public Network Access (PNA) disabled**.
@@ -78,6 +86,12 @@ policy must reference the required regional networks and be associated with
 the environment. Use the
 [Power Platform setup requirements](https://learn.microsoft.com/power-platform/admin/vnet-support-setup-configure)
 if the platform handoff is incomplete.
+
+Use the [required regional VNets](https://learn.microsoft.com/power-platform/admin/vnet-support-overview#supported-regions)
+for the Power Platform environment. Geographies with multiple supported
+regions require two VNets in the specified Azure regions; every delegated
+subnet must reach Foundry privately. The figure illustrates one regional
+path, not the complete regional setup.
 
 !!! warning "Foundry uses the connection user's permissions"
     This procedure uses a **specific, shared connection** signed in as an
