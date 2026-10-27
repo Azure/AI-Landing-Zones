@@ -134,7 +134,7 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 | Parameter | Default | Description |
 |---|---|---|
 | `deployAiFoundry` | `true` | AI Foundry account and project |
-| `deployAiFoundrySubnet` | `true` | Foundry Agent Service subnet association; `deployAgentSubnet` independently controls subnet creation |
+| `deployAiFoundrySubnet` | `true` | Dedicated subnet for AI Foundry agents |
 | `deployAppConfig` | `true` | Azure App Configuration store |
 | `deployAppInsights` | `true` | Application Insights instance |
 | `deployCosmosDb` | `true` | Azure Cosmos DB account and database |
@@ -308,23 +308,8 @@ The BYO IDs that drive this section (`hubIntegrationHubVnetResourceId`, `hubInte
 | Parameter | Default | Env variable | Description |
 |---|---|---|---|
 | `useExistingVNet` | `false` | `USE_EXISTING_VNET` | Use an existing VNet instead of creating a new one. Pair with `existingVnetResourceId`. |
-| `deploySubnets` | `true` | `DEPLOY_SUBNETS` | Global creation switch for all twelve subnets, in both new and existing VNets. Effective creation also requires `networkIsolation` and the individual subnet flag. |
-| `vnetAddressPrefixes` | `["192.168.0.0/21"]` | — (explicit root array) | Address space for a new VNet. A reused VNet's actual address space is authoritative and is not resized. |
+| `deploySubnets` | `true` | `DEPLOY_SUBNETS` | Create the workload subnets (PE, jumpbox, agent, ACA, NAT, Bastion). Set to `false` to BYO subnets in an existing VNet. |
 | `sideBySideDeploy` | `false` | `SIDE_BY_SIDE` | Allow a second AI LZ to be deployed side-by-side in the same existing VNet without disturbing the first one's subnets / NSGs. |
-
-The [subnet creation and addressing reference](../agent-landing-zone/configuration.md#subnet-creation-and-addressing)
-lists all twelve Boolean creation parameters and matching `DEPLOY_*_SUBNET`
-bindings (each defaults to `true`), and all twelve root name/prefix parameters
-with their `AZURE_*_SUBNET_PREFIX` bindings. The
-[default allocation table](../agent-landing-zone/network-isolation.md#isolation-and-provisioning)
-includes the separate Foundry and application PE subnets, reserved
-`GatewaySubnet`, and delegated Power Platform and AI Gateway subnets.
-
-Setting a creation flag to `false` does not disable its consumer. An enabled
-consumer requires an existing valid subnet in the selected VNet, or must be
-explicitly disabled. There is no shared-PE fallback for application endpoints.
-Only selected BYO subnets are written, through serialized child deployments;
-managed BYO writes require `deployNsgs=true`.
 
 ## Virtual Machine
 
