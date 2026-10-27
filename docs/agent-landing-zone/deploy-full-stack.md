@@ -151,7 +151,7 @@ and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
 
-New **Foundry-root Agent environments** use three resource groups:
+New environments use three resource groups:
 `rg-<environment-name>` for Foundry, `rg-<environment-name>-app` for the
 application and `rg-<environment-name>-network` for workload networking.
 To choose a different Foundry/root name, set `AZURE_RESOURCE_GROUP` before

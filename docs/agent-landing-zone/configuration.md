@@ -57,14 +57,9 @@ new resources instead of updating existing ones.
 
 ### Resource group destinations
 
-!!! note "Foundry-root configuration"
-    This **Bicep/azd** interface applies to Foundry-root Agent source and its
-    compatible pinned components.
-    v4.4.0 used an application root and `AZURE_FOUNDRY_RESOURCE_GROUP` instead;
-    keep existing split deployments on their original source revision.
-    Terraform, portal and the
-    independent Bicep foundation are not claimed to support this Agent
-    platform contract.
+This **Agent Bicep/azd** interface uses the compatible components pinned by the
+platform manifest. Terraform, portal and the independent Bicep foundation
+do not share this Agent platform contract.
 
 New environments use three resource groups by default: Foundry/grounding,
 application and workload networking. Existing environments keep their mapping.
@@ -142,7 +137,10 @@ without granting broad directory rights.
 
 The workflow does not elevate its own permissions. It records the mapping
 with the environment; changing a provisioned environment's mapping is not a
-supported resource migration. After partial failure, repair the cause and
+supported resource migration. If an existing binding uses a different native
+root, retain its original implementation or create a new environment rather
+than retargeting it through environment variables.
+After partial failure, repair the cause and
 retry with the same destinations. Do not delete groups as automatic rollback.
 Review every destination and shared dependency before any
 [environment removal](deploy-full-stack.md#remove-an-environment).
@@ -358,7 +356,7 @@ Bastion tunneling is disabled by default.
 
 ### Optional application private endpoint subnet
 
-**Available from v4.4.0:** new Agent Bicep/azd deployments can separate
+Agent Bicep/azd deployments can separate
 application private endpoints from Foundry/grounding private endpoints.
 This choice is independent of resource group count and does not enable network
 isolation or additional services.

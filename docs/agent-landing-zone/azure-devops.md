@@ -194,7 +194,7 @@ stores, secrets and data. Apply the
 [environment boundaries](configuration.md#environment-boundaries) for
 runtime identities, sign-in, network isolation and test data.
 
-On Foundry-root Agent source, new environments use three groups. The example's
+New Agent environments use three groups. The example's
 `AZURE_RESOURCE_GROUP` selects Foundry/root; application and network names
 default to that name plus `-app` and `-network`. Grant the deployment identity
 the required permissions for every target, including group creation when enabled,

@@ -94,7 +94,7 @@ its approved inputs. Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local `.azure/` state.
 Fork or mirror the source only when maintaining your own inputs or automation.
 
-**Foundry-root Agent source only:** new environments use three resource groups
+**Agent Bicep/azd deployments:** new environments use three resource groups
 by default. The `AZURE_RESOURCE_GROUP` above is Foundry/root; application and
 network groups default to that name plus `-app` and `-network`.
 The hook creates missing additional groups unless `CREATE_RESOURCE_GROUPS=false`;

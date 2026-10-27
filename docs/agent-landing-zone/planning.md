@@ -78,14 +78,13 @@ environment; resource reuse needs explicit state and dependency ownership.
 
 ## Resource group ownership
 
-New Foundry-root Agent environments default to three workload resource groups.
+New Agent environments default to three workload resource groups.
 The
 [resource group destinations](configuration.md#resource-group-destinations)
 separate application, Foundry/grounding and workload networking ownership,
 with one, two or three distinct groups in the same subscription. This is an
 **Agent Bicep/azd contract**, not a Terraform or portal parity claim.
-v4.4.0 introduced optional destinations with an application root and one-group
-default; the Foundry-root interface changes the default only for new environments.
+Existing environments retain their destination mapping.
 Network isolation and hub/BYO integration remain separate decisions.
 
 Agree names, owners, scoped deployment/RBAC/data permissions and retention
