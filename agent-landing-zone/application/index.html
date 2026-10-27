@@ -752,6 +752,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#capability-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capability readiness
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#application-components" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1759,6 +1770,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#capability-readiness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capability readiness
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#application-components" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1884,6 +1906,99 @@ Foundry Agent Service. Its default strategy is <code>maf_lite</code>.</p>
 The <a href="../deploy-full-stack/">Deploy full stack runbook</a> contains the deployment
 procedure. <a href="../build-your-own-app/">Bring your own app</a> covers customer-owned
 applications.</p>
+<h2 id="capability-readiness">Capability readiness</h2>
+<p>Use this matrix to distinguish supplied behavior from work your team must do.
+It describes the default <strong>hosted Agent Application</strong>, not every feature
+offered by the underlying Foundry service.</p>
+<p><strong>Default</strong> means supplied in the selected topology after normal deployment,
+network, sign-in and permission setup. <strong>Configuration</strong> needs operator changes
+but no new application code for that capability. <strong>Development</strong> means settings
+alone are insufficient. Preview status is stated separately; a service preview
+does not make an application integration ready.</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Readiness</th>
+<th>What is supplied or still needed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic chat and active-session context</td>
+<td>Default, without retrieval</td>
+<td>The frontend calls the hosted <code>maf_lite</code> runtime and configured model for non-retrieval turns. Questions that trigger retrieval have the separate gate below. Context is not durable across browser reloads. <a href="../hosted-agents/#protocol-and-caller-access">Hosting</a>.</td>
+</tr>
+<tr>
+<td>Entra login and delegated Foundry invocation</td>
+<td>Configuration</td>
+<td>Registration, two API consent boundaries, Key Vault references, callback and caller grants. Follow the <a href="../application-auth/#configure-login-in-order">login sequence</a>.</td>
+</tr>
+<tr>
+<td>Native Blob source ingestion</td>
+<td>Default</td>
+<td>Foundry IQ manages the configured source pipeline without Agent App Ingestion. Source/service permissions and successful indexing are still required. <a href="../ingestion/#1-standard-ingestion-with-foundry-iq">Ingestion</a>.</td>
+</tr>
+<tr>
+<td>Protected knowledge-base retrieval</td>
+<td>Development</td>
+<td>The hosted entry point does not supply trusted user context or a retrieval bearer. Implement authenticated retrieval and prove document allow/deny behavior; UI OBO alone does not do this. <a href="../application-auth/#3-verify-the-retrieval-identity-boundary">Identity boundary</a>.</td>
+</tr>
+<tr>
+<td>Foundry tools, Toolbox and MCP operations</td>
+<td>Development</td>
+<td>Portal registration is not consumed automatically by <code>maf_lite</code>; add an authenticated invocation integration. MCP knowledge sources are not automatically model-callable tools. <a href="../agent-tools/">Tools</a>.</td>
+</tr>
+<tr>
+<td>Work IQ, Fabric IQ and native SharePoint integrations</td>
+<td>Development; service previews apply</td>
+<td>Source-specific templates, consent, trusted delegation and, where applicable, response handling still need integration. See <a href="../work-iq/">Work IQ</a>, <a href="../fabric-iq/">Fabric IQ</a> and <a href="../sharepoint/">SharePoint</a>.</td>
+</tr>
+<tr>
+<td>Custom ingestion and SharePoint indexing</td>
+<td>Configuration</td>
+<td>Select Agent App Ingestion and configure its source, Graph permissions and schedule where needed. Processing/ACL synchronization does not close the hosted retrieval identity gap. <a href="../ingestion/#3-custom-ingestion-only-when-needed">Custom ingestion</a>.</td>
+</tr>
+<tr>
+<td>Conversation PDF attachments</td>
+<td>Development</td>
+<td>Optional ingestion enables processing, but hosted retrieval also needs source binding, owner identity and delegated authorization. Uploads are off by default. <a href="../ingestion/#2-conversation-file-uploads">Conversation uploads</a>.</td>
+</tr>
+<tr>
+<td>Text descriptions of document images</td>
+<td>Configuration</td>
+<td>Native extraction needs a supported model/region and source binding; the default chat model does not establish image verbalization. Protected retrieval still needs the integration above. <a href="../multimodality/#document-image-grounding">Document images</a>.</td>
+</tr>
+<tr>
+<td>Direct screenshot, image or voice input</td>
+<td>Not supplied</td>
+<td>Requires an application extension; document image extraction is not direct multimodal input. <a href="../multimodality/#direct-image-and-voice-extensions">Extensions</a>.</td>
+</tr>
+<tr>
+<td>Durable conversation continuity and history</td>
+<td>Configuration and authorization validation</td>
+<td>Off by default. Requires reviewed delegated permissions, owner isolation and evidence gates; panel history also needs the optional panel. Enabling one flag is insufficient. <a href="../hosted-agents/#continuity-history-and-the-administrative-panel">Continuity</a>.</td>
+</tr>
+<tr>
+<td>Hosted ratings/comments and feedback administration</td>
+<td>Development</td>
+<td>The default layout has no feedback collection. Optional panel APIs still need a custom chat control/adapter and validated ownership. <a href="../user-feedback/">Feedback</a>.</td>
+</tr>
+<tr>
+<td>Embedding chat in an existing portal</td>
+<td>Development</td>
+<td>The UI adapter is supplied; the host portal must implement trusted token acquisition, origin/CSP and lifecycle integration. <a href="../embed-chat/">Embed chat</a>.</td>
+</tr>
+<tr>
+<td>Teams/M365 or Copilot Studio publication</td>
+<td>Manual configuration and validation</td>
+<td>Separate post-deployment runbooks, not automatic publication. Channels have different network and caller-identity contracts. <a href="../publish-to-teams/">Teams/M365</a> and <a href="../connect-copilot-studio/">Copilot Studio</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>In particular, successful provisioning, source ingestion or a greeting response
+does not establish protected retrieval. Use the linked capability's
+prerequisites and acceptance checks before presenting it to users.</p>
 <p><span id="choose-a-task"></span></p>
 <h2 id="application-components">Application components</h2>
 <h3 id="frontend">Frontend</h3>

@@ -2101,9 +2101,26 @@ hosted deployment, composition removes the orchestrator Container App and the
 UI (<code>service_name: frontend</code>) becomes index <code>0</code>. The raw parameter file still
 lists the orchestrator first. Custom compositions can differ:
 confirm the selected backend is the UI, never ingestion or an old orchestrator.</p>
-<p>Keep the existing hosted deployment inputs. Preview with
-<code>azd provision --preview</code> and confirm only approved resources and roles change.
-Apply from the connected host:</p>
+<p>Keep the existing hosted deployment inputs. If you choose to preview, first
+regenerate the selected environment's composed parameters: azd 1.37.1 preview
+does <strong>not</strong> run preprovision hooks and can otherwise read stale
+<code>infra/main.parameters.json</code> instead of your edited root file.</p>
+<p>Select the intended azd environment and activate the prepared Python
+environment. From the platform root on the connected host, run <strong>one</strong>
+matching preparation command:</p>
+<p><strong>Windows:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">pwsh</span> <span class="o">-File</span> <span class="p">.\</span><span class="n">scripts</span><span class="p">\</span><span class="n">preProvision</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p><strong>Linux/macOS:</strong></p>
+<div class="highlight"><pre><span></span><code>sh<span class="w"> </span>scripts/preProvision.sh
+</code></pre></div>
+<p>Then run <code>azd provision --preview</code> and confirm only approved resources and
+roles change. Repeat preparation after changing inputs or switching
+environments. Preparation can create missing additional resource groups
+when authorized by <code>CREATE_RESOURCE_GROUPS=true</code>; it is not guaranteed
+read-only. See the <a href="../deploy-infra-only/#optional-preview-agent-source">preview procedure</a>
+for group-creation and scope checks.</p>
+<p>Apply the approved change from the connected host:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
 </code></pre></div>
 <p>This applies foundation changes and runs provisioning hooks; it is not a

@@ -1725,9 +1725,10 @@ scope and the <a href="../parameterization/">parameter reference</a> for support
 Do not infer the selected application footprint from native Bicep defaults alone.</p>
 <h2 id="access-and-validation">Access and validation</h2>
 <p>Managed identities and scoped role assignments provide service-to-service
-access; <a href="../permissions/">Permissions</a> describes the foundation's default
-assignments. Effective application grants depend on the selected definition,
-capabilities and topology.</p>
+access; <a href="../permissions/">Permissions</a> describes the default Agent layout's
+Foundry-hosted runtime, Container Apps frontend and separate deployment/caller
+grants. Other application definitions and infrastructure-only selections can
+produce different assignments.</p>
 <p>The preprovision hook checks inputs, BYO resource references, network constraints
 and regional readiness. A passing check is not proof of regional capacity,
 private DNS resolution, data-plane authorization or application readiness.

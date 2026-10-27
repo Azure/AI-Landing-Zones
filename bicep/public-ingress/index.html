@@ -1748,7 +1748,15 @@ procedure. Apply its reviewed parameter changes through
 or <a href="../../agent-landing-zone/deploy-full-stack/">Deploy the full stack</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Cost and teardown</p>
-<p>Application Gateway WAF v2 and Standard Public IP incur hourly charges while deployed. Turning <code>publicIngress.enabled</code> back to <code>false</code> does not delete resources that were already created by an incremental ARM deployment. Use <code>azd down</code> for full teardown, or manually delete the gateway, Public IP, WAF policy, NSG, and gateway identity.</p>
+<p>Application Gateway WAF v2 and Standard Public IP incur hourly charges while
+deployed. Turning <code>publicIngress.enabled</code> back to <code>false</code> does not delete
+resources created by an incremental ARM deployment.</p>
+<p>Follow <a href="../../agent-landing-zone/deploy-full-stack/#remove-an-environment">safe environment removal</a>.
+The default Agent deployment spans three resource groups, so its safety
+hook blocks <code>azd down</code>; inventory all destinations and obtain owner approval
+for itemized manual removal. <code>azd down</code> applies only to an approved,
+dedicated single-group deletion scope. Gateway-only retirement is described
+under <a href="#teardown">Teardown</a>.</p>
 </div>
 <h2 id="what-gets-created">What gets created</h2>
 <p>When <code>publicIngress.enabled=true</code>, and the deployment also has <code>networkIsolation=true</code>, <code>deployContainerEnv=true</code>, <code>deployContainerApps=true</code>, and at least one app in <code>containerAppsList</code>, the template creates:</p>
@@ -1806,7 +1814,7 @@ or <a href="../../agent-landing-zone/deploy-full-stack/">Deploy the full stack</
 <tr>
 <td>Live mode</td>
 <td><code>enabled=true</code>, <code>frontendHostName</code> and <code>sslCertSecretId</code> are set, and allowed source CIDRs are provided</td>
-<td>HTTPS on 443 is enabled, HTTP redirects to HTTPS, and only configured CIDRs can reach the gateway.</td>
+<td>Public HTTPS on 443 is allowed from configured CIDRs. Public HTTP on port 80 remains blocked.</td>
 </tr>
 </tbody>
 </table>
@@ -1868,12 +1876,17 @@ outputs in the Azure portal.</p>
 </code></pre></div>
 <p>Apply the reviewed change through the canonical provisioning step again.
 The template configures the HTTPS listener, attaches the Key Vault certificate,
-redirects HTTP to HTTPS, and opens the NSG only for the configured source CIDRs.</p>
+and opens TCP/443 only for the configured source CIDRs.
+It also configures an HTTP-to-HTTPS redirect rule, but the shipped subnet NSG
+does <strong>not</strong> admit Internet traffic on port 80. Public HTTP clients therefore
+time out before reaching that redirect. Distribute the <code>https://</code> URL directly;
+do not open port 80 merely to make a redirect test pass.</p>
 <p><a id="step-5-validate"></a></p>
 <h2 id="validation-expectations">Validation expectations</h2>
-<p>From an allowed source:</p>
+<p>From an allowed public source, check HTTPS and confirm that public HTTP stays
+blocked. The HTTP command below is a negative test and is expected to time out:</p>
 <div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-v<span class="w"> </span>https://app.contoso.com/
-curl<span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
+curl<span class="w"> </span>--connect-timeout<span class="w"> </span><span class="m">10</span><span class="w"> </span>--max-time<span class="w"> </span><span class="m">15</span><span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
 </code></pre></div>
 <p>Expected behavior:</p>
 <table>
@@ -1890,7 +1903,7 @@ curl<span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
 </tr>
 <tr>
 <td><code>http://app.contoso.com/</code></td>
-<td>Redirects to HTTPS.</td>
+<td>Connection times out: Internet port 80 is blocked, so no redirect is received.</td>
 </tr>
 <tr>
 <td>Source outside <code>allowedSourceAddressPrefixes</code></td>
@@ -2008,6 +2021,8 @@ curl<span class="w"> </span>-v<span class="w"> </span>http://app.contoso.com/
 </table>
 <h2 id="teardown">Teardown</h2>
 <p>For full teardown use <a href="../../agent-landing-zone/deploy-full-stack/#remove-an-environment">safe environment removal</a>.
+The default multi-group Agent layout requires owner-approved manual cleanup;
+do not bypass its <code>predown</code> safety hook.
 If the rest of the landing zone must remain, obtain approval to retire only
 the gateway resources and dependencies: Application Gateway, Public IP, WAF
 policy, NSG and gateway identity. Confirm none are shared before deletion.</p>

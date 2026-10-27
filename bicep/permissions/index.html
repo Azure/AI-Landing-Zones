@@ -1610,10 +1610,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#microsoft-foundry-and-ai-search-assignments" class="md-nav__link">
+  <a href="#keep-the-identities-separate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Microsoft Foundry and AI Search Assignments
+        Keep the identities separate
       
     </span>
   </a>
@@ -1621,10 +1621,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#container-app-role-assignments" class="md-nav__link">
+  <a href="#frontend-container-app" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Container App Role Assignments
+        Frontend Container App
       
     </span>
   </a>
@@ -1632,10 +1632,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#executor-role-assignments" class="md-nav__link">
+  <a href="#hosted-agent-runtime" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Executor Role Assignments
+        Hosted agent runtime
       
     </span>
   </a>
@@ -1643,10 +1643,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#jumpbox-vm-role-assignments" class="md-nav__link">
+  <a href="#foundry-project-search-and-image-pull" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Jumpbox VM Role Assignments
+        Foundry project, Search and image pull
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-operator-and-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment operator and pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#application-users-and-optional-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application users and optional integrations
       
     </span>
   </a>
@@ -1674,304 +1696,233 @@
 
 
 <h1 id="permissions">Permissions</h1>
-<p>The following role assignments are provisioned by the template based on the <strong>default configuration</strong> in <code>main.parameters.json</code>. This includes the default set of container apps, their associated roles, and the services they interact with.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you customize the parameters before provisioning — such as adding or removing container apps or changing role mappings — the actual assignments will vary accordingly.</p>
-</div>
-<h2 id="microsoft-foundry-and-ai-search-assignments">Microsoft Foundry and AI Search Assignments</h2>
+<p>This reference describes the <strong>default Agent Application layout</strong>:
+<code>hosted-no-panel</code>, with the agent runtime in <strong>Foundry Agent Service</strong> and the
+<code>frontend</code> in <strong>Azure Container Apps</strong>. There is no orchestrator Container App,
+application panel or application Cosmos DB in this layout. Native Foundry IQ
+ingestion is selected by default; Agent App Ingestion is optional.
+Foundry's own backing resources are separate from application data stores.</p>
+<p>The <a href="../../agent-landing-zone/deploy-full-stack/">full-stack runbook</a> provisions
+the composed layout, not the raw root parameters alone. Custom definitions,
+optional services and reused resources can change the assignments below.
+Inspect the selected environment's effective principals and scopes before
+granting access.</p>
+<h2 id="keep-the-identities-separate">Keep the identities separate</h2>
 <table>
 <thead>
 <tr>
-<th>Resource</th>
-<th>Role</th>
-<th>Assignee</th>
-<th>Description</th>
+<th>Principal</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Microsoft Foundry Account</td>
-<td>Cognitive Services User</td>
-<td>Search Service</td>
-<td>Allow Search Service to access vectorizers</td>
+<td>Deployment operator or pipeline</td>
+<td>Creates resources, publishes configuration, builds images and deploys agent versions.</td>
 </tr>
 <tr>
-<td>GenAI App Search Service</td>
-<td>Search Index Data Reader</td>
-<td>Microsoft Foundry Project</td>
-<td>Read index data</td>
+<td>Frontend managed identity</td>
+<td>Reads UI settings/secrets, pulls its image and accesses Blob references. It is not the signed-in user.</td>
 </tr>
 <tr>
-<td>GenAI App Search Service</td>
-<td>Search Service Contributor</td>
-<td>Microsoft Foundry Project</td>
-<td>Create AI Search connection</td>
+<td>Foundry project managed identity</td>
+<td>Pulls the hosted image and uses configured project connections. It is not the running agent's identity.</td>
 </tr>
 <tr>
-<td>GenAI App Storage Account</td>
-<td>Storage Blob Data Reader</td>
-<td>Microsoft Foundry Project</td>
-<td>Read blob data</td>
+<td>Hosted agent runtime principal</td>
+<td>The actual principal discovered for the deployed agent; receives the runtime grants below.</td>
 </tr>
 <tr>
-<td>GenAI App Storage Account</td>
-<td>Storage Blob Data Reader</td>
-<td>Search Service</td>
-<td>Read blob data for indexing</td>
+<td>Signed-in application user</td>
+<td>Invokes Foundry through UI OBO and separately needs source/document authorization.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="container-app-role-assignments">Container App Role Assignments</h2>
-<p>Current default configuration provisions a single Hello World container app (<code>orchestrator</code>), so only the assignments below are expected by default.</p>
+<p><span id="container-app-role-assignments"></span></p>
+<h2 id="frontend-container-app">Frontend Container App</h2>
+<p>Bicep assigns the following roles to the <strong>frontend's managed identity</strong> at
+the listed resource scopes when those services are selected. Use its actual
+principal ID, whether system-assigned or an approved user-assigned identity.</p>
 <table>
 <thead>
 <tr>
-<th>Resource</th>
 <th>Role</th>
-<th>Assignee</th>
-<th>Description</th>
+<th>Scope</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>GenAI App Configuration Store</td>
 <td>App Configuration Data Reader</td>
-<td>ContainerApp: orchestrator</td>
-<td>Read configuration data</td>
+<td>Application configuration store</td>
+<td>Read runtime keys and Key Vault references.</td>
 </tr>
 <tr>
-<td>GenAI App Container Registry</td>
 <td>AcrPull</td>
-<td>ContainerApp: orchestrator</td>
-<td>Pull container images</td>
+<td>Application container registry</td>
+<td>Pull the UI image.</td>
 </tr>
 <tr>
-<td>GenAI App Key Vault</td>
 <td>Key Vault Secrets User</td>
-<td>ContainerApp: orchestrator</td>
-<td>Read secrets</td>
+<td>Application Key Vault</td>
+<td>Resolve UI credentials and other configured secret references.</td>
 </tr>
 <tr>
-<td>GenAI App Search Service</td>
-<td>Search Index Data Reader</td>
-<td>ContainerApp: orchestrator</td>
-<td>Read index data</td>
-</tr>
-<tr>
-<td>GenAI App Storage Account</td>
 <td>Storage Blob Data Reader</td>
-<td>ContainerApp: orchestrator</td>
-<td>Read blob data</td>
+<td>Application Blob storage account</td>
+<td>Read referenced document blobs.</td>
 </tr>
 <tr>
-<td>GenAI App Cosmos DB</td>
-<td>Cosmos DB Built-in Data Contributor</td>
-<td>ContainerApp: orchestrator</td>
-<td>Read/write Cosmos DB data</td>
-</tr>
-<tr>
-<td>Microsoft Foundry Account</td>
-<td>Cognitive Services User</td>
-<td>ContainerApp: orchestrator</td>
-<td>Access Cognitive Services</td>
-</tr>
-<tr>
-<td>Microsoft Foundry Account</td>
-<td>Cognitive Services OpenAI User</td>
-<td>ContainerApp: orchestrator</td>
-<td>Use OpenAI APIs</td>
+<td>Storage Blob Delegator</td>
+<td>Application Blob storage account</td>
+<td>Obtain delegation keys for supported Blob links.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="executor-role-assignments">Executor Role Assignments</h2>
+<p>The default frontend role list does <strong>not</strong> include Search index access, model
+inference or application Cosmos DB access. Its delegated Foundry calls use
+the signed-in user's token; granting these services to the UI identity does
+not fix a denied user call.</p>
+<h2 id="hosted-agent-runtime">Hosted agent runtime</h2>
+<p>After agent deployment, the hosted access reconciliation discovers the
+<strong>actual runtime principal</strong>, then applies this closed grant set:</p>
 <table>
 <thead>
 <tr>
-<th>Resource</th>
 <th>Role</th>
-<th>Assignee</th>
-<th>Description</th>
+<th>Scope</th>
+<th>Condition</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>GenAI App Configuration Store</td>
-<td>App Configuration Data Owner</td>
-<td>Executor</td>
-<td>Full control over configuration settings</td>
+<td>App Configuration Data Reader</td>
+<td>Selected application configuration store</td>
+<td>Runtime configuration.</td>
 </tr>
 <tr>
-<td>GenAI App Container Registry</td>
-<td>AcrPush</td>
-<td>Executor</td>
-<td>Push container images</td>
+<td>Cognitive Services OpenAI User</td>
+<td>Selected Foundry account</td>
+<td>Direct model calls from the supplied runtime.</td>
 </tr>
 <tr>
-<td>GenAI App Container Registry</td>
+<td>Key Vault Secrets User</td>
+<td>Exact secret referenced by <code>AUDIT_HMAC_KEY</code></td>
+<td>Only when the audit key is configured as a Key Vault reference.</td>
+</tr>
+</tbody>
+</table>
+<p>These are not a blanket grant to every secret, source or tool. Reconciliation
+does not automatically grant arbitrary source access or authorize application
+users. Review the intended assignments without writing them:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.hosted_access<span class="w"> </span>--azd-env<span class="w"> </span>--plan
+</code></pre></div>
+<p>Run this from the platform root with the prepared Python environment and
+intended azd environment selected. Use the
+<a href="../../agent-landing-zone/hosted-agents/#bootstrap-the-agents-runtime-access">hosted access bootstrap/recovery procedure</a>
+for approved reconciliation. Do not substitute the UI or project identity
+when the runtime principal cannot be discovered.</p>
+<p><span id="microsoft-foundry-and-ai-search-assignments"></span></p>
+<h2 id="foundry-project-search-and-image-pull">Foundry project, Search and image pull</h2>
+<p>Bicep creates these cross-service assignments when the associated services
+are enabled:</p>
+<table>
+<thead>
+<tr>
+<th>Assignee</th>
+<th>Role</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundry project managed identity</td>
 <td>AcrPull</td>
-<td>Executor</td>
-<td>Pull container images</td>
+<td>Hosted image registry using standard RBAC. For an external ABAC-mode registry, Container Registry Repository Reader is used instead.</td>
 </tr>
 <tr>
-<td>GenAI App Key Vault</td>
-<td>Key Vault Contributor</td>
-<td>Executor</td>
-<td>Manage Key Vault settings</td>
-</tr>
-<tr>
-<td>GenAI App Key Vault</td>
-<td>Key Vault Secrets Officer</td>
-<td>Executor</td>
-<td>Create Key Vault secrets</td>
-</tr>
-<tr>
-<td>GenAI App Search Service</td>
-<td>Search Service Contributor</td>
-<td>Executor</td>
-<td>Create/update search service elements</td>
-</tr>
-<tr>
-<td>GenAI App Search Service</td>
-<td>Search Index Data Contributor</td>
-<td>Executor</td>
-<td>Read/write search index data</td>
-</tr>
-<tr>
-<td>GenAI App Search Service</td>
+<td>Foundry project managed identity</td>
 <td>Search Index Data Reader</td>
-<td>Executor</td>
-<td>Read index data</td>
+<td>Selected Azure AI Search service.</td>
 </tr>
 <tr>
-<td>GenAI App Storage Account</td>
-<td>Storage Blob Data Contributor</td>
-<td>Executor</td>
-<td>Read/write blob data</td>
+<td>Foundry project managed identity</td>
+<td>Storage Blob Data Reader</td>
+<td>Selected grounding Blob storage account.</td>
 </tr>
 <tr>
-<td>GenAI App Cosmos DB</td>
-<td>Cosmos DB Built-in Data Contributor</td>
-<td>Executor</td>
-<td>Read/write Cosmos DB data</td>
+<td>Search managed identity</td>
+<td>Storage Blob Data Reader</td>
+<td>Selected grounding Blob storage account.</td>
 </tr>
 <tr>
-<td>Microsoft Foundry Account</td>
-<td>Cognitive Services OpenAI User</td>
-<td>Executor</td>
-<td>Use OpenAI APIs</td>
-</tr>
-<tr>
-<td>Microsoft Foundry Account</td>
+<td>Search managed identity</td>
 <td>Cognitive Services User</td>
-<td>Executor</td>
-<td>Access Cognitive Services</td>
+<td>Selected Foundry account for configured AI services/vectorizers.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="jumpbox-vm-role-assignments">Jumpbox VM Role Assignments</h2>
+<p>The registry grant allows Foundry to pull the hosted image; it does not
+authorize the running agent to read application data. Likewise, ingestion
+or project connection access does not prove per-user retrieval filtering.
+<a href="../../agent-landing-zone/application-auth/">Sign-in and document access</a>
+describes the missing hosted retrieval identity integration.</p>
+<p><span id="executor-role-assignments"></span></p>
+<h2 id="deployment-operator-and-pipeline">Deployment operator and pipeline</h2>
+<p>An administrator must authorize resource deployment and role assignment
+<strong>before</strong> provisioning. Runtime roles do not supply these permissions.</p>
 <table>
 <thead>
 <tr>
-<th>Resource</th>
-<th>Role</th>
-<th>Assignee</th>
-<th>Description</th>
+<th>Operation</th>
+<th>Access to arrange</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>GenAI App Container Apps</td>
-<td>Container Apps Contributor</td>
-<td>Jumpbox VM</td>
-<td>Full control over Container Apps</td>
+<td>Deploy resources</td>
+<td>Contributor-equivalent deployment actions on each approved destination and any required parent/shared scope. Creating missing groups also requires subscription-level resource-group creation permission.</td>
 </tr>
 <tr>
-<td>Azure Managed Identity</td>
-<td>Managed Identity Operator</td>
-<td>Jumpbox VM</td>
-<td>Assign and manage user-assigned identities</td>
+<td>Create role assignments</td>
+<td>Scoped role-assignment authority wherever Bicep or hosted hooks create grants. Contributor alone cannot create role assignments.</td>
 </tr>
 <tr>
-<td>GenAI App Container Registry</td>
-<td>Container Registry Repository Writer</td>
-<td>Jumpbox VM</td>
-<td>Write to ACR repositories</td>
+<td>Configure and build</td>
+<td>App Configuration Data Owner; the selected Key Vault secret-management, Search configuration/index, model and registry/build permissions. Bicep grants selected service roles to the configured executor, but the operator must already be able to deploy those assignments.</td>
 </tr>
 <tr>
-<td>GenAI App Container Registry</td>
-<td>Container Registry Tasks Contributor</td>
-<td>Jumpbox VM</td>
-<td>Manage ACR tasks</td>
-</tr>
-<tr>
-<td>GenAI App Container Registry</td>
-<td>Container Registry Data Access Configuration Administrator</td>
-<td>Jumpbox VM</td>
-<td>Manage ACR data access configuration</td>
-</tr>
-<tr>
-<td>GenAI App Container Registry</td>
-<td>AcrPush</td>
-<td>Jumpbox VM</td>
-<td>Push container images</td>
-</tr>
-<tr>
-<td>GenAI App Configuration Store</td>
-<td>App Configuration Data Owner</td>
-<td>Jumpbox VM</td>
-<td>Full control over configuration settings</td>
-</tr>
-<tr>
-<td>GenAI App Key Vault</td>
-<td>Key Vault Contributor</td>
-<td>Jumpbox VM</td>
-<td>Manage Key Vault settings</td>
-</tr>
-<tr>
-<td>GenAI App Key Vault</td>
-<td>Key Vault Secrets Officer</td>
-<td>Jumpbox VM</td>
-<td>Create Key Vault secrets</td>
-</tr>
-<tr>
-<td>GenAI App Search Service</td>
-<td>Search Service Contributor</td>
-<td>Jumpbox VM</td>
-<td>Create/update search service elements</td>
-</tr>
-<tr>
-<td>GenAI App Search Service</td>
-<td>Search Index Data Contributor</td>
-<td>Jumpbox VM</td>
-<td>Read/write search index data</td>
-</tr>
-<tr>
-<td>GenAI App Storage Account</td>
-<td>Storage Blob Data Contributor</td>
-<td>Jumpbox VM</td>
-<td>Read/write blob data</td>
-</tr>
-<tr>
-<td>GenAI App Cosmos DB</td>
-<td>Cosmos DB Built-in Data Contributor</td>
-<td>Jumpbox VM</td>
-<td>Read/write Cosmos DB data</td>
-</tr>
-<tr>
-<td>Microsoft Foundry Account</td>
-<td>Cognitive Services Contributor</td>
-<td>Jumpbox VM</td>
-<td>Manage Cognitive Services resources</td>
-</tr>
-<tr>
-<td>Microsoft Foundry Account</td>
-<td>Cognitive Services OpenAI User</td>
-<td>Jumpbox VM</td>
-<td>Use OpenAI APIs</td>
+<td>Author hosted agents</td>
+<td>Foundry User-equivalent authoring on the exact project, plus account read access. The default Bicep configuration grants Foundry Project Manager when hosted prerequisites and <code>grantHostedAgentProjectManager</code> are enabled; disabling that grant requires separately arranged authoring access.</td>
 </tr>
 </tbody>
 </table>
+<p>Foundry roles might still display their former <strong>Azure AI</strong> names during the
+service rename. Cognitive Services User/OpenAI User alone do not authorize
+hosted-agent authoring. A subscription Owner assignment is not the default
+solution to a missing data-plane permission.</p>
+<p>Default Agent environments use separate Foundry/root, application and network
+resource groups. Review the <a href="../../agent-landing-zone/configuration/#resource-group-destinations">destination scopes</a>
+and, for pipelines, the <a href="../../agent-landing-zone/azure-devops/">service-connection permissions</a>.
+Reused resources can require additional owner-approved grants outside those
+groups.</p>
+<p><span id="jumpbox-vm-role-assignments"></span></p>
+<p>An optional <strong>jumpbox managed identity</strong> is a deployment/configuration runner,
+not the frontend or chat user. Its grants depend on the enabled services and
+registry authorization mode. Review its effective assignments for the actual
+deployment rather than copying all operator roles to every runtime identity.</p>
+<h2 id="application-users-and-optional-integrations">Application users and optional integrations</h2>
+<p>Entra registration/consent, UI admission, Foundry caller access and document
+access are separate checks. They are <strong>not automatically granted to every
+application user by provisioning</strong>. Complete the
+<a href="../../agent-landing-zone/application-auth/#configure-login-in-order">ordered login setup</a>.
+Foundry Agent Consumer is the least-privilege built-in role for endpoint-only
+callers; use the intended agent or project scope.</p>
+<p>Optional ingestion, administrative panel, custom tools and protected sources
+need their own reviewed grants and integration. Do not add Cosmos or tool
+permissions to the default UI merely because another topology uses them.
+See the <a href="../../agent-landing-zone/application/#capability-readiness">capability readiness matrix</a>
+and <a href="../../agent-landing-zone/build-your-own-app/#capability-profiles">capability profiles</a>.</p>
 
 
 

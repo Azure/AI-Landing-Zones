@@ -2295,30 +2295,13 @@ work around an unattended failure. Allow RBAC propagation before retrying.</p>
 <h4 id="complete-the-application-sign-in-setup-separately">Complete the application sign-in setup separately</h4>
 <p>The pipeline service connection authenticates deployment jobs. The UI uses a
 separate Entra application registration and tenant consent, which must be
-configured outside the deployment scripts. Arrange this with an Entra
-administrator for each isolated application environment:</p>
-<ol>
-<li>Create the confidential application registration; expose its
-   <code>api://&lt;client-id&gt;/user_impersonation</code> scope and request version-2 access tokens.</li>
-<li>Register the final HTTPS UI URL with <code>/auth/oauth/azure-ad/callback</code>.
-   Set <code>CHAINLIT_URL</code> to that canonical HTTPS origin without a trailing slash.
-   For a first deployment, discover the assigned frontend URL, finish this setup,
-   and restart the UI before accepting DEV.</li>
-<li>Create/rotate its client credential under tenant policy. Store it in Key Vault,
-   publish a <strong>Key Vault reference</strong> as <code>OAUTH_AZURE_AD_CLIENT_SECRET</code>, and publish
-   <code>OAUTH_AZURE_AD_CLIENT_ID</code>, <code>OAUTH_AZURE_AD_TENANT_ID</code> and
-   <code>OAUTH_AZURE_AD_SCOPES</code> under App Configuration label <code>agent-lz</code>.
-   Protect <code>CHAINLIT_AUTH_SECRET</code> and keep it stable.</li>
-<li>Configure and consent the downstream delegated permissions for the deployed
-   audience, including Foundry OBO for hosted mode. Graph scopes are not a
-   replacement for the UI's single-token API scope. Grant intended caller access.</li>
-<li>Review conflicting unlabelled/service settings and restart affected components.
-   Then test actual user sign-in and document allow/deny behavior.</li>
-</ol>
-<p>Follow <a href="../application-auth/">delegated authentication</a>
-for the exact keys and consent boundaries, and
-<a href="../configuration/#runtime-settings">runtime settings</a> for publishing/restart behavior.
-Complete tenant consent and sign-in configuration through a separately reviewed
+configured outside the deployment scripts. For each isolated application
+environment, follow the single canonical
+<a href="../application-auth/#configure-login-in-order">login setup sequence</a>:
+registration and consent before first provision, final HTTPS callback and
+settings after the frontend URL is known, then caller/admission grants and
+user validation. For an already deployed UI, reload it after settings change.</p>
+<p>Complete tenant consent and sign-in configuration through a separately reviewed
 administrative procedure or automation before accepting the deployment.
 Keep these tasks separate from the deployment connection's Azure permissions;
 do not grant it broad Microsoft Graph permissions for onboarding.</p>

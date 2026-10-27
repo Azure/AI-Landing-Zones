@@ -2333,6 +2333,9 @@ Only need infrastructure? Use the <a href="../deploy-infra-only/">Deploy infra o
 For the relationship between the template, its manifest and lifecycle hooks,
 see <a href="../how-it-works/">How it works</a>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
+<p>Review the <a href="../application/#capability-readiness">capability readiness matrix</a>
+before choosing acceptance criteria: the supplied chat, optional capabilities
+and protected retrieval do not have the same integration requirements.</p>
 <ul>
 <li><strong>Permissions:</strong> Contributor for resource deployment plus
   <code>Microsoft.Authorization/roleAssignments/write</code> at the required scopes,
@@ -2340,7 +2343,7 @@ see <a href="../how-it-works/">How it works</a>.</p>
   configuration needs separate data-plane roles. Shared networks, DNS and
   monitoring can require additional scoped access. Subscription Owner is not
   a blanket prerequisite; see <a href="../configuration/#resource-group-permissions">resource group permissions</a>
-  and <a href="../../bicep/permissions/">foundation permissions</a>.</li>
+  and <a href="../../bicep/permissions/">default hosted permissions</a>.</li>
 <li><strong>Subscription readiness:</strong> accepted Responsible AI terms, registered resource
   providers, supported service/model regions and sufficient quota for the
   selected parameters. Review <a href="../../bicep/regional-considerations/">regional considerations</a>
@@ -2356,8 +2359,10 @@ see <a href="../how-it-works/">How it works</a>.</p>
   It is not the UI's <code>api://&lt;client-id&gt;/user_impersonation</code> login scope.</li>
 <li><strong>Application access:</strong> arrange the Entra registration, HTTPS callback,
   Key Vault credential reference and user permissions in
-  <a href="../application-auth/">Application authentication</a>. Deployment does not
-  perform tenant consent.</li>
+  the <a href="../application-auth/#configure-login-in-order">ordered login setup</a>.
+  Complete its registration/consent steps before provision, then its
+  callback/settings steps once the frontend URL is available.
+  Deployment does not perform tenant consent.</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Protected retrieval is an integration gate</p>
@@ -2741,7 +2746,7 @@ documents, indexes, configuration and conversation data. If the scope
 contains shared resources or retained data, stop and arrange itemized removal
 with the owners instead. Check retention obligations first.</p>
 </div>
-<p>For the multi-group path, inventory <strong>every configured destination</strong>
+<p>For the default three-group layout, or any other multi-group path, inventory <strong>every configured destination</strong>
 and its shared dependencies before cleanup. The root group alone is not the
 complete inventory. A <code>predown</code> safety hook <strong>blocks <code>azd down</code> for split-group
 deployments</strong>, with no automatic deletion or bypass option.</p>
@@ -2771,30 +2776,46 @@ do not delete shared hub, DNS or monitoring resources.</p>
 <h2 id="validation">Validation</h2>
 <ol>
 <li>
-<p>Confirm the intended application revisions are running, not placeholders:</p>
+<p>Confirm the platform revision and frontend source, then inspect the deployed
+   Container Apps rather than accepting a placeholder response:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
-git<span class="w"> </span>-C<span class="w"> </span>../agent-app-orchestrator<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
+git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>status<span class="w"> </span>--porcelain
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_APP_RESOURCE_GROUP
 az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;application-resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
 </code></pre></div>
-<p>Compare the platform commit with your approved record and each component
-  commit with its <code>manifest.json</code> entry. Inspect source worktrees for unexpected
-  edits; matching HEAD alone does not prove the built source was unchanged.</p>
+<p>Compare the platform commit with your approved record and the UI commit
+  with its <code>manifest.json</code> entry. The UI source should have no unexpected
+  edits; matching HEAD alone does not prove the built source was unchanged.
+  Apply the same check to ingestion only when that component is selected.</p>
+<p>The automatic hosted build clones the pinned orchestrator into a temporary
+  directory; a sibling <code>agent-app-orchestrator</code> checkout is <strong>not required</strong>
+  and is not evidence of the image that was deployed.</p>
 </li>
 <li>
 <p>Read <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code> for the registry login hostname.
    The hosted repository is <code>HOSTED_AGENT_IMAGE</code> when explicitly set, otherwise
    <code>agent-app-orchestrator</code>, as declared in <code>hosted-agent/azure.yaml</code>.
-   Use that registry's resource name, repository and recorded digest below:</p>
+   For an automatically generated image, read
+   <code>azd env get-value HOSTED_AGENT_IMAGE_SOURCE_COMMIT</code> and compare it with
+   the orchestrator commit in <code>manifest.json</code>. Retain the build record and
+   <code>HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256</code> as startup provenance.
+   For an operator-supplied digest without generated-source metadata, require
+   the image owner's build/provenance record instead; do not assume the manifest
+   proves its source.</p>
+<p>Use that registry's resource name, repository and recorded digest below
+ (<code>&lt;sha256-digest&gt;</code> includes the <code>sha256:</code> prefix):</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>HOSTED_AGENT_IMAGE_VERSION
 az<span class="w"> </span>acr<span class="w"> </span>repository<span class="w"> </span>show<span class="w"> </span>--name<span class="w"> </span>&lt;registry-name&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--image<span class="w"> </span>&lt;hosted-repository&gt;@&lt;sha256-digest&gt;<span class="w"> </span>--query<span class="w"> </span>digest<span class="w"> </span>-o<span class="w"> </span>tsv
 </code></pre></div>
 <p>Expect the exact same <code>sha256:</code> value, not merely matching tags. In Foundry,
-  inspect the routed version's image and confirm it uses that digest.</p>
+  inspect the <strong>actively routed</strong> agent version and confirm its full image
+  reference uses that registry, repository and digest. Record the agent
+  name/version with the source and build evidence. Local source or registry
+  existence alone does not prove that version is serving requests.</p>
 </li>
 <li>
 <p>Open the frontend URL from the deployment outputs or UI ingress configuration.
