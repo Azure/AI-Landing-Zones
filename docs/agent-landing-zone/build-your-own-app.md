@@ -379,8 +379,8 @@ profile assignment. Do not use binding commands to replace an environment's appl
    separately, or verify the previous immutable image remains available to the
    runtime identity. Do not replace a digest with a mutable tag.
 3. Preview foundation changes before applying them. Redeploy through the same
-   procedure used above: hosted Agent Application preparation and provisioned
-   digest handoff, or the custom service's own definition contract.
+   procedure used above: automatic hosted Agent Application image preparation
+   during deploy, or the custom service's own definition contract.
 4. Restore separately managed settings using recorded values and repeat
    [Validation](#validation). Redeployment does not reverse data/schema changes;
    use an owner-approved recovery plan if the previous application is incompatible.

@@ -97,17 +97,20 @@ The normal single-group `azd down` path is unchanged; its
 
 #### Hosted deployment is not prepared
 
-**Symptom:** Deployment reports missing hosted preparation or an incomplete
-image handoff.
+**Symptom:** Deployment reports missing hosted foundation prerequisites or
+automatic image preparation fails.
 
-**Diagnose:** The first provision creates prerequisites and records
-`HOSTED_AGENT_PREPARED=true`. Preparation records an immutable image digest.
-A subsequent provision records the `DEPLOY_HOSTED_AGENT=true` handoff.
-Deployment then creates the running agent version.
+**Diagnose:** Provision creates prerequisites and records
+`HOSTED_AGENT_PREPARED=true`. Deployment builds or reuses the immutable image,
+records its application handoff and creates the running agent version. A missing
+digest before deployment is normal; it does not require another provision.
 
-**Correct:** Follow the hosted sequence in
-the [Deploy full stack runbook](deploy-full-stack.md#step-4-deploy) from the first
-incomplete step. For an unchanged, compatible image, use the
+**Correct:** Provision if the foundation is missing. Otherwise review the failed
+build, pinned source, registry access and private ACR Tasks pool, then retry
+`azd deploy`. A foundation project or registry binding mismatch must be resolved
+against the intended environment, not bypassed by editing output flags.
+Follow the [Deploy full stack runbook](deploy-full-stack.md#step-4-deploy).
+For an unchanged, compatible image, use the
 [redeployment guidance](deploy-full-stack.md#redeploy-applications-only).
 Let the workflow generate its output flags.
 
@@ -219,8 +222,8 @@ Tasks path. See [isolated image builds](network-isolation.md#image-builds-in-iso
 
 **Verify:** Confirm the selected environment has the provisioned pool output
 and that a build runs in it. Then resume the topology's
-[deployment sequence](deploy-full-stack.md#step-4-deploy); hosted preparation
-may still be incomplete.
+[deployment sequence](deploy-full-stack.md#step-4-deploy); `azd deploy` resumes
+automatic hosted image preparation.
 
 #### Package installation fails inside the build pool
 
@@ -475,8 +478,9 @@ provisioning time.
 same account, deployment and configured capacity.
 
 **Diagnose:** Compare the requested capacity with the existing successful
-deployment and remaining regional quota. A second hosted provision must use
-the same reviewed account and model inputs.
+deployment and remaining regional quota. Reprovisioning must use the same
+reviewed account and model inputs. Hosted image preparation itself does not
+require reprovisioning.
 
 **Correct:** Verify environment, account region, deployment, model/version and
 SKU. Preflight credits only verified successful matching capacity and aggregates quota

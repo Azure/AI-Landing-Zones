@@ -20,26 +20,32 @@ Agent App Ingestion is selected separately, as described in
 
 ## Image and deployment handoff
 
-Hosted deployment separates infrastructure provisioning, image preparation and
-agent-version deployment. Preparation builds the manifest-pinned orchestrator,
-resolves an immutable digest and applies the supported startup command.
-Provisioning records the image handoff; deployment creates the agent version.
-A fresh `azd up` alone cannot perform the required intermediate preparation.
-Private builds use the VNet's ACR Tasks agent pool.
+Hosted deployment separates foundation provisioning from application deployment.
+`azd provision` creates the project, registry, network and access prerequisites,
+not a running agent or a placeholder. `azd deploy` automatically builds the
+manifest-pinned orchestrator with the supported hosted startup command when
+needed, records an immutable digest, binds the image to the provisioned
+foundation and creates the agent version. No separate preparation command or
+second provision is needed; `azd up` performs the full workflow.
+Private builds still use the VNet's ACR Tasks agent pool.
 
 ### Redeploy the same image or prepare a new one
 
 | Change | Deployment contract |
 | --- | --- |
-| Same digest, compatible source and provisioned handoff | The image can be reused. |
-| Changed orchestrator source pin | Preparation rebuilds when source provenance differs; its handoff needs provisioning before deployment. Deploy-only reuses the recorded image. |
+| Same generated digest, matching source and startup provenance | Deployment reuses the image. |
+| Missing image or changed generated source/startup provenance | Deployment builds the manifest-pinned image and updates the handoff without reprovisioning. |
 | Changed hosted process environment or cached runtime settings | A new agent version is required, potentially with the same compatible digest. |
-| Explicit digest without generated-source provenance | Compatibility and registry availability are operator-owned. Preparation does not replace it automatically. |
+| Explicit digest without generated-source provenance | Compatibility and registry availability are operator-owned. Deployment does not replace it automatically. |
 
 Generated images are reused only when the recorded source revision and startup
-command match. Preparation with `--image-version sha256:<64-hex-characters>`
-skips building and clears the generated build record. Independent builds of
-the same source need not produce the same digest.
+command match. To supply an independently built image, set
+`HOSTED_AGENT_IMAGE_VERSION` to its canonical digest and clear
+`HOSTED_AGENT_IMAGE_SOURCE_COMMIT` and `HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256`.
+The image must be available in the selected registry and repository and already
+use the hosted entrypoint. Independent builds of the same source need not
+produce the same digest. The standalone preparation scripts remain optional
+compatibility commands; they are not required deployment steps.
 
 The procedure is in [application redeployment](deploy-full-stack.md#redeploy-applications-only).
 

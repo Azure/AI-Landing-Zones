@@ -295,32 +295,27 @@ A fresh hosted Agent Application deployment needs this order:
 
 ```bash
 azd provision
-pwsh scripts/prepareHostedDeployment.ps1
-azd provision
 azd deploy
 ```
 
-On Linux/macOS replace the preparation command with
-`./scripts/prepareHostedDeployment.sh`.
+The commands are the same on Windows, Linux and macOS. You can also run
+`azd up` to provision and deploy in one workflow.
 
 <a id="what-happens-during-the-deployment"></a>
 
 | Stage | Result |
 | --- | --- |
-| First provision | Creates the foundation and configures its services |
-| Preparation | Fetches the pinned orchestrator source, builds its hosted image and records an immutable digest |
-| Second provision | Materializes the image and Foundry deployment handoff |
-| Deploy | Creates the hosted version, bootstraps its limited runtime grants, tests a greeting and deploys selected apps |
+| Provision | Creates the foundation and configures its services; no running hosted agent or placeholder image is created |
+| Deploy: image | Automatically fetches the pinned orchestrator source, builds its hosted image when needed, records an immutable digest and binds it to the existing foundation |
+| Deploy: applications | Creates the hosted version, bootstraps its limited runtime grants, tests a greeting and deploys selected apps |
 
-A fresh `azd up` does not build the missing hosted handoff. If you started with
-it, complete preparation, the second provision and deployment. If the first
-provision deferred configuration, complete that work before preparation.
-Do not skip the second provision or replace the digest with an image tag.
-If the second provision rejects quota for an unchanged deployment, inspect
-[quota diagnostics](troubleshooting.md) rather than bypassing the gate.
+Image preparation is part of `azd deploy`; no separate preparation command or
+second provision is required. If provisioning deferred configuration, complete
+that work from a connected host before deployment. Do not replace the digest
+with an image tag or bypass permission, network or configuration failures.
 
 For an already configured infrastructure-only environment, reuse the same
-checkout, inputs and bound application. Continue at preparation above.
+checkout, inputs and bound application, then run `azd deploy`.
 Review hook logs even after success: some configuration sections can log
 failures and continue. Resolve those failures before validation.
 
@@ -346,14 +341,14 @@ service-specific procedures.
    bindings. Back up affected data and separately managed configuration.
 3. If previewing, follow the [selected-environment preparation](deploy-infra-only.md#optional-preview-agent-source),
    then review infrastructure changes with `azd provision --preview`.
-4. Run [Step 4](#step-4-deploy), including image preparation and the second
-   provision when the source or generated image changes.
+4. Run [Step 4](#step-4-deploy). Deployment prepares the image automatically,
+   including when its recorded generated-source provenance is stale.
 5. Repeat [Validation](#validation) before promotion.
 
 ### Redeploy applications only
 
-When foundation outputs, application binding, component selection and the image
-handoff remain compatible:
+When foundation outputs, application binding and component selection remain
+compatible:
 
 ```bash
 azd deploy
@@ -364,8 +359,9 @@ local work and relocate a stale checkout so the hook can fetch the selected
 revision; it does not advance an existing checkout automatically. Child logs
 are under each component's `.logs` directory and can contain sensitive details.
 
-Hosted deployment reuses the prepared digest. A changed generated source pin or
-image requires preparation, provisioning the handoff and deployment again.
+Hosted deployment reuses a generated digest only when its recorded source pin
+and startup command match. Missing or stale generated images are built during
+`azd deploy`, without another provision.
 An operator-managed digest is not rebuilt automatically: verify its provenance,
 compatibility and registry availability. When rebuilding the same source in
 each environment, compare the resulting image digests before promotion.
@@ -544,9 +540,10 @@ part of this deployment.
 3. Preview infrastructure or configuration reversals before applying them.
    Keep the approved authentication and network posture.
 4. Follow [Step 4](#step-4-deploy) with the previous compatible source and inputs:
-   provision, prepare the pinned image, provision its digest handoff, then deploy.
+   provision, then deploy; deployment prepares the pinned image automatically.
    If retaining an operator-managed digest, verify its availability and
-   compatibility; preparation does not rebuild it.
+   compatibility; deployment does not rebuild it. If restoring older tooling,
+   follow that tooling's own required deployment sequence.
 5. Restore directly managed runtime keys separately from the source checkout,
    reload affected components and repeat [Validation](#validation) before cutover.
 

@@ -169,16 +169,19 @@ It is not a source commit or a mutable image tag.
 
 1. **Infrastructure prerequisites.** Initial provisioning creates and configures
    the required Azure services and access rules.
-2. **Image preparation.** The script builds the pinned orchestrator and its
-   hosted entrypoint image, recording the digest and build details.
-3. **Deployment metadata.** A further provision records the prepared digest and
-   configuration for the deployment hook.
-4. **Application deployment.** Deployment creates the hosted agent version and
+2. **Automatic image preparation during deploy.** The deployment hook builds
+   the pinned orchestrator and its hosted entrypoint image when needed,
+   recording the digest and build details.
+3. **Application handoff during deploy.** The hook binds the image to the
+   provisioned project, registry and network metadata without another provision.
+4. **Application publication.** Deployment creates the hosted agent version and
    deploys the other selected application components.
 
 Image preparation does not start the agent, and provisioning does not create
-the running data-plane agent version. Deploy-only reuses a compatible prepared
-image rather than rebuilding changed orchestrator source.
+the running data-plane agent version. Deploy-only reuses a compatible generated
+image, or rebuilds when generated source/startup provenance changes.
+Operators use `azd provision` followed by `azd deploy`, or `azd up`;
+there is no required standalone preparation command.
 
 The same source pins do not guarantee the same image digest when images are
 built independently. If a promotion process requires the identical image,

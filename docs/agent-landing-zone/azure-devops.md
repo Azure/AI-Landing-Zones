@@ -360,18 +360,18 @@ After refresh, reviewed environment settings are applied, then the template runs
 
 | Topology | Ordered commands from the platform root |
 | --- | --- |
-| Hosted Agent Application | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `bash scripts/prepareHostedDeployment.sh` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
+| Hosted Agent Application | `azd hooks run preup --no-prompt` → `azd provision --no-prompt` → `azd deploy --no-prompt` |
 
 Preup validates/checks binding before standalone provisioning. Preprovision
 resolves topology using `python -m config.deployment.topology` and composes
 `infra/main.parameters.json`; subsequent hooks use `--describe` to read its JSON.
-Post-provision configures application services and roles. The first hosted
-provision prepares prerequisites, preparation records an image digest, the second
-provision materializes that digest in the deployment handoff, and deploy creates
-the hosted version plus the other selected components.
+Post-provision configures application services and roles. Provision prepares
+the hosted foundation prerequisites. Deploy automatically builds or reuses the
+immutable image, materializes its application handoff and creates the hosted
+version plus the other selected components, without another provision.
 
 This full workflow is deliberately repeatable on fresh agents. A hosted
-preparation may reuse a compatible digest when its provenance is available, but
+deployment may reuse a compatible digest when its provenance is available, but
 disposable local state and different environment registries can cause rebuilding.
 Agent Application Container App scripts build per environment.
 
@@ -469,7 +469,7 @@ tenant consent. Perform those acceptance checks separately.
 | Private DNS/connectivity check fails | Verify the Azure Pipelines runner's network/DNS/firewall path. An ACR Tasks pool does not connect the pipeline agent. Keep post-provision nondeferred. |
 | Refresh fails | Check the azd environment name, subscription, prior deployment and read permission. Stop; do not swallow the error or silently provision another group. |
 | Stale sibling checkout / source mismatch | Use the clean workspace and exact manifest/local source commits. Do not remove commit validation or update pins only in PROD. |
-| Hosted handoff/digest missing | Complete provision → prepare → provision → deploy; see [hosted redeployment](hosted-agents.md#redeploy-the-same-image-or-prepare-a-new-one). Do not skip the second provision after a source change. |
+| Hosted image preparation fails | Verify the provisioned foundation, manifest pin, ACR build/pull access and private build pool, then retry `azd deploy`; see [hosted redeployment](hosted-agents.md#redeploy-the-same-image-or-prepare-a-new-one). No separate preparation or second provision is required. |
 | Green deploy but UI login/retrieval fails | Complete registration/consent/runtime settings, inspect sanitized hook/service logs and run the real-user positive/negative checks. See [Troubleshooting](troubleshooting.md). |
 | TEST or PROD starts without the expected approval | Stop the run and fix Environment checks/permissions outside YAML before restarting. |
 
