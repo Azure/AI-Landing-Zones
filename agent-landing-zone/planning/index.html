@@ -1322,6 +1322,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1330,7 +1377,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1351,8 +1398,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1366,7 +1460,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1890,12 +2056,12 @@ resource scope. Deployment roles can differ from application data-access roles.<
 <tr>
 <td>Bicep with <code>azd</code> (default)</td>
 <td><a href="../deploy-infra-only/">Deploy infra only</a> or <a href="../deploy-full-stack/">Deploy full stack</a>.</td>
-<td>The Agent Application workflow includes parameter composition, service configuration, RBAC and hosted image preparation. Deployment uses the platform's own <code>infra/</code>, not a separate upstream checkout.</td>
+<td>Product infrastructure at <code>infra/</code>, with shared hooks for parameter composition, service configuration, RBAC and application deployment.</td>
 </tr>
 <tr>
-<td>Terraform</td>
-<td><a href="../terraform/">Terraform overview</a>.</td>
-<td>Infrastructure building blocks, not parity with the Agent platform lifecycle. <code>terraform apply</code> does not deploy/configure the Agent Application. Security settings and state need separate review and protection.</td>
+<td>Terraform with <code>azd</code></td>
+<td><a href="../deploy-terraform-infra-only/">Deploy infra only</a> or <a href="../deploy-terraform-full-stack/">Deploy full stack</a>; <a href="../terraform/">Terraform overview</a>.</td>
+<td>Native provider at <code>infra/terraform/</code> in the same product repository. Shared hooks configure services and deploy manifest-pinned applications. Prepare remote state outside workload teardown before first provision. Direct <code>terraform apply</code> is not a substitute for this azd lifecycle.</td>
 </tr>
 <tr>
 <td>Azure portal</td>
@@ -1906,15 +2072,22 @@ resource scope. Deployment roles can differ from application data-access roles.<
 </table>
 <p>The <a href="../deploy-infra-only/">Deploy infra only</a> runbook provisions the
 platform's foundation without building or deploying application images.
-Different implementations are not interchangeable owners of the same
-environment; resource reuse needs explicit state and dependency ownership.</p>
+Select Bicep or Terraform in the checkout's root <code>azure.yaml</code> before first
+provision. Bicep is the default. Use the selected provider for provisioning,
+updates and removal. Resource reuse needs explicit state and dependency
+ownership. For direct use of the shared AVM pattern, see the
+<a href="../../terraform/">Terraform foundation reference</a>.</p>
+<p>Native azd disables Terraform state locking. Shared and production deployments
+require a <a href="../deploy-terraform-infra-only/#state-protection">single authorized writer</a>
+and queued, non-canceling execution per actual backend state identity.
+Azure validation is pending.</p>
 <h2 id="resource-group-ownership">Resource group ownership</h2>
 <p>New Agent environments default to three workload resource groups.
 The
 <a href="../configuration/#resource-group-destinations">resource group destinations</a>
 separate application, Foundry/grounding and workload networking ownership,
 with one, two or three distinct groups in the same subscription. This is an
-<strong>Agent Bicep/azd contract</strong>, not a Terraform or portal parity claim.
+<strong>Agent azd contract</strong> for the Bicep and integrated Terraform paths.
 Existing environments retain their destination mapping.
 Network isolation and hub/BYO integration remain separate decisions.</p>
 <p>Agree names, owners, scoped deployment/RBAC/data permissions and retention
@@ -1923,12 +2096,12 @@ must not create groups at subscription scope, and set <code>CREATE_RESOURCE_GROU
 New environments otherwise create missing additional groups by default.
 One root provisioning workflow
 coordinates the groups; three independent manual deployments are not required.
-Existing-environment migration and automatic deletion of shared groups are
-outside this feature.</p>
+Shared groups require owner-reviewed, itemized cleanup.</p>
 <p><span id="select-reuse-or-omit-resources"></span></p>
 <h2 id="resource-selection-and-reuse">Resource selection and reuse</h2>
-<p>The selected application's definition and generated <code>infra/main.parameters.json</code>
-describe the resolved resources. The default is <strong><code>hosted-no-panel</code></strong>, with
+<p>The selected application's definition and resolved provider inputs describe
+the resources (<code>infra/main.parameters.json</code> for Bicep; the native Terraform
+adapter and tfvars for Terraform). The default is <strong><code>hosted-no-panel</code></strong>, with
 <code>maf_lite</code> orchestration and native Foundry IQ Blob ingestion.</p>
 <table>
 <thead>
@@ -1964,8 +2137,9 @@ describe the resolved resources. The default is <strong><code>hosted-no-panel</c
 </tr>
 </tbody>
 </table>
-<p>The Foundry backing IDs above are <strong>native root <code>main.parameters.json</code>
-parameters</strong>, not automatically mapped <code>azd</code> environment variables. See
+<p>Set the Foundry backing IDs above in <strong>root <code>main.parameters.json</code></strong>, not as
+unmapped <code>azd</code> environment variables. Preprovision generates typed Terraform
+inputs from that same source. See
 <a href="../configuration/">Deployment settings</a> for mapped inputs and
 <a href="../../bicep/deployed-resources/">the shared inventory</a> for broader resource detail.
 <code>DEPLOY_AAF_AGENT_SVC</code> is required by the default Foundry hosting path, not an

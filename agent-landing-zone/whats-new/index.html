@@ -1287,6 +1287,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1295,7 +1342,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1316,8 +1363,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1331,7 +1425,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1739,6 +1905,10 @@ for all changes and fixes.</p>
 </thead>
 <tbody>
 <tr>
+<td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v5.4.0">v5.4.0</a></td>
+<td>Integrated Terraform with the native azd lifecycle for <a href="../deploy-terraform-infra-only/">infrastructure-only</a> and <a href="../deploy-terraform-full-stack/">full-stack</a> deployment, using Azure Storage remote state. Bicep remains the default.</td>
+</tr>
+<tr>
 <td><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v5.3.0">v5.3.0</a></td>
 <td>Added 12 default subnets for isolated deployments, including Power Platform and AI Gateway.</td>
 </tr>
@@ -1760,7 +1930,7 @@ for all changes and fixes.</p>
 </tr>
 <tr>
 <td><span id="3rd-october-2026"></span><a href="https://github.com/Azure/agent-landing-zone/releases/tag/v4.0.0">v4.0.0</a></td>
-<td>Introduced <strong>Agent Landing Zone</strong>, formerly GPT-RAG, with separate infrastructure and application deployment workflows.</td>
+<td>Separate infrastructure and application deployment workflows.</td>
 </tr>
 </tbody>
 </table>

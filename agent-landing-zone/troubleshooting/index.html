@@ -1218,6 +1218,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1226,7 +1273,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1247,8 +1294,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1262,7 +1356,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2887,7 +3053,7 @@ Do not delete created/shared groups as rollback, change destinations to evade
 a binding check, or move existing resources through these inputs. Verify resource
 IDs and scoped permissions in every destination before continuing.</p>
 <h4 id="split-group-cleanup-safety-check">Split-group cleanup safety check</h4>
-<p>The <code>predown</code> hook blocks
+<p>For <strong>Bicep</strong>, the <code>predown</code> hook blocks
 <code>azd down</code> when the workload destinations span distinct resource groups.
 This is an intentional safety check, not a provisioning or permission failure.
 No automatic deletion or bypass option is provided; do not bypass the hook or change the
@@ -2899,6 +3065,11 @@ inventory. Arrange separately authorized, itemized manual removal with the
 owners. Confirm retained/shared resources remain intact afterward.
 The normal single-group <code>azd down</code> path is unchanged; its
 <a href="../deploy-full-stack/#remove-an-environment">deletion review</a> still applies.</p>
+<p>For <strong>Terraform</strong>, split groups use recorded state-scoped ownership. Missing
+original group/backend records or changed destinations block teardown;
+restore the original environment metadata instead of recreating bindings.
+Follow <a href="../deploy-terraform-infra-only/#remove-the-foundation">Terraform removal</a>
+for the required records, preview and explicit destruction approval.</p>
 <h4 id="hosted-deployment-is-not-prepared">Hosted deployment is not prepared</h4>
 <p><strong>Symptom:</strong> Deployment reports missing hosted foundation prerequisites or
 automatic image preparation fails.</p>

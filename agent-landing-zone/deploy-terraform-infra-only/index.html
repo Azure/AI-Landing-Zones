@@ -1,0 +1,2558 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../deploy-infra-only/">
+      
+      
+        <link rel="next" href="../deploy-full-stack/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>With Terraform - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=7702616a2bfd">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deploy-infra-only-with-terraform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              With Terraform
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan your deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan your deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment choices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sizing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing and capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cost-planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cost planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resource-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Application
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Application
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent hosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sign-in & access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../embed-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embed chat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-feedback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User feedback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multimodality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multimodality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grounding
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grounding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../foundry-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../work-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Work IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fabric-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fabric IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sharepoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SharePoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nl2sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL2SQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procedure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procedure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-get-the-product-source-and-select-terraform-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Get the product source and select Terraform once
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-authenticate-and-select-the-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Authenticate and select the target
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-prepare-remote-state-outside-the-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Prepare remote state outside the workload
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Prepare remote state outside the workload">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-deployment-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private deployment records
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-choose-the-application-and-foundation-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Choose the application and foundation inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-review-and-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Review and provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-deferred-private-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete deferred private configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reconfigure-or-recover-the-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconfigure or recover the foundation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-the-application-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add the application later
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remove-the-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove the foundation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../application-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../private-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Private access (VPN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own app
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publish-to-teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teams & M365
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../connect-copilot-studio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Copilot Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy via portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procedure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Procedure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-get-the-product-source-and-select-terraform-once" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Get the product source and select Terraform once
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-authenticate-and-select-the-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Authenticate and select the target
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-prepare-remote-state-outside-the-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Prepare remote state outside the workload
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Prepare remote state outside the workload">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#state-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#private-deployment-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Private deployment records
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-choose-the-application-and-foundation-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Choose the application and foundation inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-review-and-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Review and provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-deferred-private-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete deferred private configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reconfigure-or-recover-the-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconfigure or recover the foundation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#add-the-application-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add the application later
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remove-the-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove the foundation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="deploy-infra-only-with-terraform">Deploy infra only with Terraform</h1>
+<h2 id="objective">Objective</h2>
+<p>Create and configure the Agent Landing Zone Azure foundation using the native
+azd Terraform provider, without building or publishing application images.
+Use the product's <code>infra/terraform/</code> composition.</p>
+<p>To deploy application code as well, use
+<a href="../deploy-terraform-full-stack/">Deploy full stack with Terraform</a>.
+For the default Bicep path, use
+<a href="../deploy-infra-only/">Deploy infra only with Bicep</a>.
+<a href="../terraform/">Terraform templates</a> explains the architecture and
+<a href="../terraform/#validation-scope">validation scope</a>.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Complete the shared <a href="../deploy-full-stack/#prerequisites">permissions, tooling and identity prerequisites</a>,
+including Python and the platform hook dependencies. Also install
+<a href="https://developer.hashicorp.com/terraform/install">Terraform</a> at a version
+supported by the checked-in Terraform configuration and AVM dependencies.
+Microsoft documents the native
+<a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/use-terraform-for-azd">azd Terraform provider</a>
+as beta. Use Terraform <strong>1.13.0</strong> and azd <strong>1.37.1</strong>, the versions used for
+verification.</p>
+<p>Arrange remote-state storage and access <strong>before the first provision</strong>, as
+described below. Foundation creation, RBAC and service configuration need
+separate permissions from backend access. Contributor alone does not grant
+role-assignment or service data-plane access.</p>
+<p>Private deployments need a connected runner with private DNS resolution,
+routes and data-plane permissions. It must also reach the state backend and
+approved provider/module registries. An ACR Tasks pool is not the deployment
+host. Review <a href="../network-isolation/">network isolation</a>, service/model quota
+and <a href="../cost-planning/">cost planning</a>; infrastructure-only is still billable.</p>
+<p>Commands marked <code>bash</code> use Bash syntax. Replace every <code>&lt;placeholder&gt;</code> with an
+approved value. In PowerShell, remove any Bash continuation backslashes and
+run the command on one line.</p>
+<h2 id="procedure">Procedure</h2>
+<h3 id="step-1-get-the-product-source-and-select-terraform-once">Step 1: Get the product source and select Terraform once</h3>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<span class="nb">cd</span><span class="w"> </span>agent-landing-zone
+</code></pre></div>
+<p><a href="../deploy-full-stack/#prepare-python">Prepare Python</a> in this checkout and
+keep its environment active.</p>
+<p>In the <strong>root</strong> <code>azure.yaml</code>, set these fields while preserving services,
+hooks and other settings:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">infra</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">terraform</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infra/terraform</span>
+<span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+</code></pre></div>
+<p>Run all lifecycle commands from the product root. Provider selection applies to
+the checkout; use its Terraform configuration for provisioning, updates and
+removal. Bicep is the default choice in an unconfigured checkout.</p>
+<h3 id="step-2-authenticate-and-select-the-target">Step 2: Authenticate and select the target</h3>
+<p>For a <strong>new</strong>, dedicated environment:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
+azd<span class="w"> </span>auth<span class="w"> </span>login
+az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>&lt;subscription-id&gt;
+azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_RESOURCE_GROUP<span class="w"> </span>&lt;dedicated-resource-group&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
+</code></pre></div>
+<p>For an existing Terraform environment, select it with
+<code>azd env select &lt;environment-name&gt;</code> and retain its approved inputs and backend.
+Confirm the cloud, tenant and subscription for both CLIs and Terraform.
+Interactive use needs Azure CLI and azd sessions. Automation can supply
+process-scoped <code>ARM_*</code> credentials for its selected authentication method.
+The hooks do not change global authentication settings.</p>
+<p>The supported clouds are <code>public</code>, <code>usgovernment</code> and <code>china</code>.
+For CLI authentication, preprovision verifies the selected subscription and
+active cloud metadata. For process credentials, select the cloud explicitly:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ARM_ENVIRONMENT<span class="w"> </span>&lt;public-or-usgovernment-or-china&gt;
+</code></pre></div>
+<p>If <code>ARM_ENVIRONMENT</code> is also present in the process, both values must agree.
+Preprovision persists the canonical cloud for the backend and generates the
+matching <code>azureCloud</code> provider/storage context. Do not edit that generated
+context.</p>
+<p>Preprovision detects a missing caller object ID for ordinary Azure CLI,
+service-principal and managed-identity authentication. For certificate, OIDC
+or custom managed-identity configurations, supply the caller explicitly:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_PRINCIPAL_ID<span class="w"> </span>&lt;caller-object-id&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_PRINCIPAL_TYPE<span class="w"> </span>&lt;User-or-ServicePrincipal&gt;
+</code></pre></div>
+<p>Use the identity's <strong>object ID</strong>, not its client ID. Detection failures report
+the required inputs. Explicit identity inputs do not authenticate the process;
+keep credentials out of checked-in files.</p>
+<p>Separate environment, resource-group, identity, data and configuration
+boundaries by stage. Set the
+<a href="../configuration/#resource-group-destinations">resource group destinations</a>
+before first provision. Preserve existing mappings on retries.</p>
+<h3 id="step-3-prepare-remote-state-outside-the-workload">Step 3: Prepare remote state outside the workload</h3>
+<p>An <strong>existing Azure Storage account and blob container</strong> are required. The
+workload does not create or bootstrap them. Keep the backend outside <strong>every</strong>
+workload resource group and outside the workload's Terraform-managed resources.
+It must remain available after <code>azd down</code>.</p>
+<p>The authorized executor needs <strong>Reader</strong> on the storage account for metadata
+lookup and <strong>Storage Blob Data Contributor</strong> on the state container.
+The backend uses Microsoft Entra ID (AzureAD) Blob authentication. Arrange
+network access from each deployment runner, restricted access, retention or
+backups, and an owner-reviewed recovery process.</p>
+<p>Configure the selected azd environment:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>TF_STATE_RESOURCE_GROUP<span class="w"> </span>&lt;state-resource-group&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>TF_STATE_STORAGE_ACCOUNT<span class="w"> </span>&lt;state-storage-account&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>TF_STATE_CONTAINER<span class="w"> </span>&lt;state-container&gt;
+</code></pre></div>
+<p><code>TF_STATE_SUBSCRIPTION_ID</code> defaults to <code>AZURE_SUBSCRIPTION_ID</code>. For a backend in
+a different subscription, also set:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>TF_STATE_SUBSCRIPTION_ID<span class="w"> </span>&lt;state-subscription-id&gt;
+</code></pre></div>
+<p>The state key is <code>agent-landing-zone/${AZURE_ENV_NAME}.tfstate</code>, giving each
+environment its own blob. azd renders <code>infra/terraform/provider.conf.json</code>
+from these settings, including the canonical <code>ARM_ENVIRONMENT</code>.
+Confirm the cloud, account, container and environment name
+before provisioning; keep <code>.azure/</code> metadata private. See the official
+<a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/use-terraform-for-azd#local-vs-remote-state">remote-state guidance</a>
+and <a href="https://developer.hashicorp.com/terraform/language/backend/azurerm">Azure Storage backend reference</a>.</p>
+<h4 id="state-protection">State protection</h4>
+<p>azd 1.37.1 passes <code>-lock=false</code> to Terraform plan and apply, so these operations
+do not acquire the Azure Blob lease used for native state protection.
+Use the execution and access controls below; they do not enable backend locking.</p>
+<ul>
+<li><strong>Individual environments:</strong> local azd may operate the configured remote
+  backend. Do not overlap writers to the same state.</li>
+<li><strong>Shared and production environments:</strong> allow <strong>one authorized
+  writer/executor</strong>, normally a pipeline. Restrict state write access to that
+  executor and queue all operations without canceling an active run.</li>
+<li><strong>Serialize by actual state identity:</strong> cloud, backend subscription, storage
+  account, container and resolved state key. Branch-scoped concurrency and
+  <code>cancel-in-progress</code> are insufficient. No other branch, checkout, terminal
+  or pipeline may write the same state concurrently.</li>
+<li><strong>Keep workspaces separate:</strong> each active environment operation needs its own
+  checkout/workspace so generated inputs are not overwritten.</li>
+</ul>
+<h4 id="private-deployment-records">Private deployment records</h4>
+<p>Before persisting backend settings, the adapter creates
+<code>.azure/&lt;environment-name&gt;/terraform-backend.json</code> on first use and verifies it
+on subsequent runs. This immutable, nonsecret record binds the backend
+subscription, resource group, account, container, resolved key and cloud.
+Keep it private with the environment metadata.</p>
+<p>Retain the original <code>resource-groups.json</code>, <code>terraform-resource-groups.json</code>
+and application/environment bindings from that same directory. They record
+destinations and Terraform group ownership. Restore these original records on
+a clean runner before refresh, provisioning or teardown. Output refresh does
+not reconstruct them; missing or changed bindings block the operation.</p>
+<h3 id="step-4-choose-the-application-and-foundation-inputs">Step 4: Choose the application and foundation inputs</h3>
+<p>Even an infrastructure-only deployment binds to an application definition.
+Choose the application, topology and ingestion intent before first provision;
+one environment binds to one application ID. For a custom definition, follow
+<a href="../build-your-own-app/">Bring your own app</a> and set:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>&lt;path-to-app-definition.json&gt;
+</code></pre></div>
+<p>For the supplied Agent Application, the default is <code>hosted-no-panel</code>, with
+<code>maf_lite</code>, Foundry IQ and no Agent App Ingestion. It still needs the approved
+<code>HOSTED_AGENT_RESOURCE_SCOPE</code> before service configuration. Review the
+<a href="../deploy-full-stack/#step-3-choose-the-application-and-network">application and identity choices</a>
+and the protected-retrieval integration gate in the shared prerequisites.</p>
+<p>Use private networking for production or sensitive data:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>NETWORK_ISOLATION<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<p>Plan standalone or hub integration, existing VNet/DNS ownership, permitted
+egress, models, optional resources and regions using
+<a href="../planning/">Deployment choices</a> and <a href="../configuration/">Deployment settings</a>.
+Public endpoints are only for approved, short-lived evaluations without
+sensitive data. Do not weaken isolation to recover a failure.</p>
+<p>Use documented <code>azd env set</code> inputs and the <strong>root <code>main.parameters.json</code></strong> for
+structured values. Keep JSON booleans, numbers, arrays and objects in their
+native types. For example, an empty public IP allowlist is the existing
+<code>parameters.allowedIpRanges.value</code> entry set to <code>[]</code>.</p>
+<p>Preprovision validates the provider/application binding, resolves the shared
+topology and runs a typed adapter to generate
+<code>infra/terraform/main.tfvars.json</code>. This file is ignored by Git and regenerated;
+do not edit it.
+For Terraform, <code>infra/main.parameters.json</code> is a shared preflight diagnostic
+artifact, not the Terraform deployment input. Also leave generated <code>.azure/</code>
+files to azd.</p>
+<p>When a managed jumpbox is enabled and no password is supplied, Terraform owns
+the persistent generated password. Treat state and generated inputs as
+sensitive; the hooks do not generate a fresh password on each run.</p>
+<h3 id="step-5-review-and-provision">Step 5: Review and provision</h3>
+<p>Confirm the selected environment, source revision, provider/path, backend key,
+destination groups, approved inputs, quota and permissions before applying.
+Review the resolved resources, network exposure, routes and role changes.
+The read-only application egress report is:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.egress<span class="w"> </span>--plan<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
+</code></pre></div>
+<p>This report covers application egress only; it is not a Terraform infrastructure
+preview. Obtain approval for the infrastructure changes before provisioning.</p>
+<p>After the backend, inputs and infrastructure changes are approved:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
+</code></pre></div>
+<p>azd invokes Terraform and the shared pre/post-provision hooks. Provisioning
+creates the foundation, reconciles access and configures services; it does
+not build or publish application images or create a running hosted agent
+version. Selected Container Apps may initially have placeholder images.
+Reprovisioning must not restore placeholders over deployed application images.</p>
+<p>All flat Terraform outputs flow natively into azd and are consumed by the
+shared postprovision and predeploy hooks. No manual output copying is needed.
+Terraform publishes foundation-owned App Configuration connections, model
+metadata and declared additional settings. Shared postprovision seeds only
+missing defaults; the runtime publisher updates its explicitly owned keys.
+See <a href="../configuration/#configuration-ownership-and-declarations">configuration ownership</a>.
+The shared <a href="../deploy-infra-only/#platform-outputs">platform output reference</a>
+explains <code>AGENTLZ_PLATFORM_OUTPUTS</code> and flat keys published in App Configuration
+under label <code>agent-lz</code>. The platform document is not the full azd output set.</p>
+<h2 id="validation">Validation</h2>
+<ol>
+<li>Confirm Terraform and <strong>every required configuration step</strong> succeeded.
+   Record failures as incomplete even if an outer command returned success.</li>
+<li>Inventory every destination group and compare new and reused resources with
+   the approved inputs. Verify private endpoints in their actual groups.</li>
+<li>Check backend access and state-key isolation without printing state or
+   secrets. Confirm that resources and state refer to this environment.</li>
+<li>
+<p>Read the expected platform output from the actual configuration store:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span>show<span class="w"> </span>--endpoint<span class="w"> </span>&lt;app-configuration-endpoint&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--key<span class="w"> </span>AGENTLZ_PLATFORM_OUTPUTS<span class="w"> </span>--label<span class="w"> </span>agent-lz<span class="w"> </span>--auth-mode<span class="w"> </span>login
+</code></pre></div>
+</li>
+<li>
+<p>From the intended runner, verify private DNS, TLS reachability, approved
+   private-link connections and service data-plane roles. Do not expose public
+   endpoints to bypass a failed check.</p>
+</li>
+<li>Confirm no application image build or publication occurred. A placeholder
+   response is not evidence that application sign-in or retrieval works.</li>
+</ol>
+<p>Keep the source revision, manifest, provider lock file, nonsecret inputs and
+validation results. Protect state, plans, generated inputs, logs and <code>.azure/</code>.</p>
+<h2 id="complete-deferred-private-configuration">Complete deferred private configuration</h2>
+<p>If provisioning explicitly deferred service configuration while a connected
+host was prepared, keep the same source, provider/path, application binding,
+destination mapping, inputs and remote backend on that host.
+Securely restore the <a href="#private-deployment-records">original deployment records</a>,
+selected environment/application bindings and the exact reviewed parameter
+declaration, including any required private declaration. Keep the same backend
+and cloud. <code>azd env refresh</code> does not restore those records or declared intent.
+Missing required declarations fail rather than being reconstructed from
+defaults, outputs or state.
+After restoring the environment, complete configuration:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RUN_FROM_JUMPBOX<span class="w"> </span><span class="nb">true</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SKIP_NETWORK_ISOLATION_WARNING<span class="w"> </span><span class="nb">false</span>
+azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </span>postprovision
+</code></pre></div>
+<p>Verify platform outputs and data-plane readiness before deploying applications.
+Do not bypass private-link approval or protected-retrieval gates.</p>
+<h2 id="reconfigure-or-recover-the-foundation">Reconfigure or recover the foundation</h2>
+<p>Keep the same provider and remote state. Back up required data and
+configuration, preserve names, regions, application layout and group mappings,
+and review proposed changes before re-running <code>azd provision</code>.
+Use the coordinated product source, committed provider lock and reviewed
+module versions for each update.</p>
+<p>After a failure or interrupted run, pause the queue and confirm the executor
+and its Terraform operation have stopped before starting any replacement.
+Inspect actual resources and remote state, then recover or retry through the
+same authorized executor. Do not use a parallel manual session for recovery.
+If executor authority must move, revoke the former writer's access and confirm
+it has stopped before authorizing its replacement.</p>
+<p>Restore state only under an owner-reviewed recovery plan consistent with
+actual resources, with other writes stopped. Reverting code does not restore
+data or guarantee rollback.
+Preserve state, resource names and security settings during recovery.</p>
+<p>Every direct and transitive provider version is pinned exactly, with
+Windows/Linux checksums in <code>infra/terraform/.terraform.lock.hcl</code>. Native azd
+initialization uses <code>-upgrade</code>; the exact pins constrain provider selection.
+Read-only lock-file validation runs separately in CI, not as an inline azd
+option. Review provider and module updates deliberately.</p>
+<h2 id="add-the-application-later">Add the application later</h2>
+<p>With the same configured foundation and bound application, continue at
+<a href="../deploy-terraform-full-stack/#deploy-the-application">Deploy the application</a>.
+<code>azd deploy</code> consumes the manifest pins and outputs; another provision is not
+required merely to prepare the hosted image.</p>
+<h2 id="remove-the-foundation">Remove the foundation</h2>
+<p>Removal is destructive and needs separate authorization. Inventory every
+destination and dependent application, back up retained data, and review
+Terraform ownership and the deletion scope, including reused resources and
+hub/DNS attachments. Do not infer safety from a resource-group name or tag.</p>
+<p>Use the same product root, Terraform configuration and selected environment.
+The guard verifies the original common group binding,
+<code>terraform-resource-groups.json</code> and <code>terraform-backend.json</code>. Missing records
+or changes to the provider, groups or backend address block teardown.</p>
+<p>Native azd delegates to <strong>Terraform state-scoped destroy</strong>, including owned
+and bring-your-own split-group layouts. The hook does not issue imperative
+resource-group deletion. Review the plan and all Terraform-owned groups:
+owning a group can put its contents within the destruction boundary.
+Bring-your-own groups retain their recorded lookup-only ownership.</p>
+<p>At the verified azd <strong>1.37.1</strong>, review without deletion:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>down<span class="w"> </span>--no-prompt
+</code></pre></div>
+<p>Without <code>--force</code>, that Terraform command previews and skips deletion.
+After separate deletion approval, interactive <code>azd down</code> requests confirmation.
+Automation can use <code>azd down --force</code> only to explicitly authorize destruction,
+through the same single-writer queue. Do not use force or purge as a repair
+shortcut or bypass a failed binding check.</p>
+<p>The backend storage, container, permissions and recovery data must remain
+outside workload teardown and available throughout recovery. Retiring that
+backend is a separate owner-approved operation after workload retirement and
+retention review. Preserve shared hub, DNS, monitoring and other reused
+resources.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

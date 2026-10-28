@@ -1212,6 +1212,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../agent-landing-zone/deploy-infra-only/" class="md-nav__link">
         
@@ -1220,7 +1267,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1241,8 +1288,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../agent-landing-zone/deploy-full-stack/" class="md-nav__link">
+      <a href="../agent-landing-zone/deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1256,7 +1350,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-landing-zone/deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-landing-zone/deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1707,21 +1873,24 @@
 
 
 <h1 id="terraform-foundation-reference">Terraform foundation reference</h1>
-<div class="admonition note">
-<p class="admonition-title">Strategy under review</p>
-<p>The Terraform deployment strategy is currently under review.</p>
-</div>
+<p>This reference covers the shared AI Landing Zone AVM pattern module and its
+foundation examples.</p>
 <p>The <a href="https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone">Terraform AI Landing Zone module</a>
 provides infrastructure building blocks and examples. Use its source and input
 reference for Terraform-managed foundations.</p>
-<p>For the Agent Landing Zone application, follow <a href="../agent-landing-zone/deploy-infra-only/">Deploy infrastructure only</a>
-or <a href="../agent-landing-zone/deploy-full-stack/">Deploy the full stack</a>. Those
-runbooks describe the Bicep/<code>azd</code> workflow, including application configuration,
-identity and image preparation. A Terraform apply is not an application
-deployment.</p>
+<p>For Agent Landing Zone, choose the product's runbooks by outcome and provider:</p>
+<ul>
+<li><strong>Deploy infra only:</strong> <a href="../agent-landing-zone/deploy-infra-only/">With Bicep</a>
+  or <a href="../agent-landing-zone/deploy-terraform-infra-only/">With Terraform</a>.</li>
+<li><strong>Deploy full stack:</strong> <a href="../agent-landing-zone/deploy-full-stack/">With Bicep</a>
+  or <a href="../agent-landing-zone/deploy-terraform-full-stack/">With Terraform</a>.</li>
+</ul>
+<p>Those use the product's azd hooks for service configuration, identity and
+application deployment. The examples below provision infrastructure only.</p>
 <h2 id="choose-an-example">Choose an example</h2>
-<p>The implementation lives in its own repository, not in a <code>terraform</code> directory
-of the documentation or Agent Landing Zone repository.</p>
+<p>Choose a foundation example for direct module use. For the product's
+<code>infra/terraform/</code> composition and application lifecycle, see
+<a href="../agent-landing-zone/terraform/">Agent Landing Zone Terraform templates</a>.</p>
 <table>
 <thead>
 <tr>
@@ -1801,9 +1970,8 @@ encrypted, access-controlled, backed up and separate for each environment.</p>
 <p>For team use, configure an approved
 <a href="https://developer.hashicorp.com/terraform/language/backend/azurerm">Azure Storage backend</a>
 before the first <code>terraform init</code>, using identity-based authentication and state
-locking. Grant only the required backend data access. If resources already
-exist, plan state migration explicitly; do not initialize a new empty backend
-and apply against the same resources.</p>
+locking. Grant only the required backend data access. Confirm the correct state
+key and backend before applying against existing resources.</p>
 <h2 id="validate-plan-and-apply">Validate, plan and apply</h2>
 <p>Run these commands from the selected example or your reviewed root module:</p>
 <div class="highlight"><pre><span></span><code><span class="n">terraform</span> <span class="n">init</span>
@@ -1889,8 +2057,7 @@ has changed since planning, create and review a new plan.</p>
 </table>
 <h2 id="changes-and-retirement">Changes and retirement</h2>
 <p>Treat configuration changes as reviewed plans. Changing a region or a resource
-name may replace resources and lose data; it is not an in-place migration
-procedure.</p>
+name may replace resources and lose data. Review the plan before applying.</p>
 <p>Before retiring a foundation, confirm ownership, backups, retention obligations
 and dependent applications. Inspect the example's purge settings and keep the
 state backend available for recovery.</p>

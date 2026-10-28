@@ -16,7 +16,7 @@
         <link rel="prev" href="../agent-tools/">
       
       
-        <link rel="next" href="../deploy-full-stack/">
+        <link rel="next" href="../deploy-terraform-infra-only/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Deploy infra only - AI Landing Zones</title>
+        <title>With Bicep - AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deploy-infra-only" class="md-skip">
+        <a href="#deploy-infra-only-with-bicep" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Deploy infra only
+              With Bicep
             
           </span>
         </div>
@@ -1222,6 +1222,55 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
@@ -1237,7 +1286,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1255,7 +1304,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1556,8 +1605,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1571,7 +1667,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2205,11 +2373,14 @@
 
 
 <p><span id="deploy-infrastructure-only"></span></p>
-<h1 id="deploy-infra-only">Deploy infra only</h1>
+<p><span id="deploy-infra-only"></span></p>
+<h1 id="deploy-infra-only-with-bicep">Deploy infra only with Bicep</h1>
 <h2 id="objective">Objective</h2>
 <p>Provision the Azure foundation without building or deploying application images.
-Use the Agent Landing Zone repository and its incorporated <code>infra/</code> source,
-including when no Agent Application images will be deployed.</p>
+Use the Agent Landing Zone repository and its <code>infra/</code> source,
+including when no Agent Application images will be deployed.
+Bicep is the default infrastructure provider. For Terraform,
+use <a href="../deploy-terraform-infra-only/">Deploy infra only with Terraform</a>.</p>
 <h2 id="when-to-use">When to use</h2>
 <p>Use this runbook when you need foundation resources first, or will supply your
 own application. To deploy the Agent Application now, use
@@ -2240,10 +2411,8 @@ to identify the resources for your deployment.</p>
 <span class="nb">cd</span><span class="w"> </span>agent-landing-zone
 </code></pre></div>
 <p>Run all lifecycle commands from this root, not from <code>infra/</code>.
-Its <code>infra/</code> is repository-owned
-source. <code>manifest.json</code> records the coordinated component pins;
-<code>infra.source</code> records historical incorporation provenance, not a second
-repository to clone or a separate foundation version to deploy.</p>
+Its <code>infra/</code> contains the foundation source. <code>manifest.json</code> records the
+coordinated application component pins.</p>
 <p><a href="../deploy-full-stack/#prepare-python">Set up Python</a> from
 the cloned repository before lifecycle commands.</p>
 <h3 id="step-2-create-and-confirm-the-target">Step 2: Create and confirm the target</h3>
@@ -2299,7 +2468,10 @@ them. If an administrator creates those groups in advance, set
 before first provision.</p>
 <p>Run one <code>azd provision</code> command from the repository root to deploy across all
 three groups. Do not run a separate deployment for each group. These instructions
-apply to Bicep with <code>azd</code>; Terraform and portal deployments have their own settings.</p>
+apply to this Bicep procedure. The integrated
+<a href="../deploy-terraform-infra-only/">Terraform runbook</a> uses the same product
+lifecycle and root parameter source, with separate backend settings.
+The portal has its own deployment procedure.</p>
 <p><span id="step-3-choose-the-foundation-shape"></span></p>
 <h3 id="step-3-choose-the-network-setup">Step 3: Choose the network setup</h3>
 <p>For production and workloads with sensitive data, use <strong>private service
@@ -2589,8 +2761,7 @@ retain existing names, locations, layout and ingestion intent.
 If previewing changes, repeat the
 <a href="#optional-preview-agent-source">selected-environment preparation</a> before
 reviewing the preview. Apply approved root parameter changes with the provisioning step above.</p>
-<p>Integrate the coordinated platform and its <code>infra/</code> tree together; do not
-replace only its foundation folder from another repository.
+<p>Update the coordinated platform and its <code>infra/</code> tree together.
 Use the <a href="../deploy-full-stack/#upgrade-to-a-new-release">reapply procedure</a>
 and <a href="../deploy-full-stack/#rollback">rollback</a> in the Deploy full stack runbook.</p>
 <p>Retry a partial deployment with the same approved revision and environment after

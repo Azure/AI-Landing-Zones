@@ -1501,6 +1501,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1509,7 +1556,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1530,8 +1577,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1545,7 +1639,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2165,6 +2331,9 @@ deployment failures.</p>
 <p>This page explains connectivity, DNS and build requirements rather than
 deployment steps. <a href="../how-it-works/">How it works</a>
 introduces the input formats and deployment lifecycle.</p>
+<p>Both providers use the root <code>main.parameters.json</code> examples on this page.
+For Terraform, preprovision generates typed inputs automatically; see the
+<a href="../deploy-terraform-infra-only/#step-4-choose-the-application-and-foundation-inputs">Terraform input procedure</a>.</p>
 <p>A <strong>private endpoint</strong> gives a service a private IP address in a VNet.
 Private DNS directs its normal hostname to that address. A <strong>virtual private
 network (VPN)</strong> connects an authorized remote computer or network to the VNet.</p>
@@ -2555,7 +2724,7 @@ also deferred; predeploy still enforces the connectivity and plan checks.</p>
 </tr>
 <tr>
 <td>Isolated with an external firewall</td>
-<td>Reports required rules and legacy components; never reads or mutates the external policy</td>
+<td>Reports required rules and components without egress declarations; never reads or mutates the external policy</td>
 </tr>
 </tbody>
 </table>
@@ -2568,8 +2737,8 @@ allowed.</p>
 <p>Shared destination/protocol/port tuples produce one rule, with sources and
 ownership combined across components. Removing one owner narrows sources where
 possible; the rule remains until its final declared owner disappears.</p>
-<p>Enabled legacy components with absent declarations retain their earlier owned
-requirements. Other rules and collections, including unmarked entries inside
+<p>Enabled components without declarations retain their owned requirements.
+Other rules and collections, including unmarked entries inside
 the component group, are preserved. Ownership collisions, malformed marked
 rules, conflicting priorities or concurrent changes fail rather than being
 silently adopted or overwritten.</p>

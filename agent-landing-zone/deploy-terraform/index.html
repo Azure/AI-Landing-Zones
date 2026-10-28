@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#terraform-deployment-scope" class="md-skip">
+        <a href="#terraform-runbooks" class="md-skip">
           Skip to content
         </a>
       
@@ -1212,6 +1212,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1220,7 +1267,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1241,8 +1288,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1256,7 +1350,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1622,12 +1788,16 @@
 
 
 <p><span id="deployment-guidance-has-moved"></span></p>
-<h1 id="terraform-deployment-scope">Terraform deployment scope</h1>
-<p>Use the <a href="../deploy-infra-only/">Deploy infra only</a> or
-<a href="../deploy-full-stack/">Deploy full stack</a> runbook for Agent Landing Zone.
-Read <a href="../terraform/">Terraform templates</a> for the infrastructure-only scope and
-its separate reference. Terraform does not run the Agent Application lifecycle
-or hosted image preparation.</p>
+<h1 id="terraform-runbooks">Terraform runbooks</h1>
+<p>Choose the Agent Landing Zone runbook by outcome:</p>
+<ul>
+<li><a href="../deploy-terraform-infra-only/">Deploy infra only with Terraform</a></li>
+<li><a href="../deploy-terraform-full-stack/">Deploy full stack with Terraform</a></li>
+</ul>
+<p><a href="../terraform/">Terraform templates</a> explains the integrated composition and
+shared azd lifecycle. The separate
+<a href="../../terraform/">AI Landing Zone Terraform foundation reference</a>
+covers direct foundation composition with the shared AVM pattern.</p>
 
 
 

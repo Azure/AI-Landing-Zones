@@ -13,10 +13,10 @@
       
       
       
-        <link rel="prev" href="../deploy-infra-only/">
+        <link rel="prev" href="../deploy-terraform-infra-only/">
       
       
-        <link rel="next" href="../application-gateway/">
+        <link rel="next" href="../deploy-terraform-full-stack/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Deploy full stack - AI Landing Zones</title>
+        <title>With Bicep - AI Landing Zones</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#deploy-full-stack" class="md-skip">
+        <a href="#deploy-full-stack-with-bicep" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Deploy full stack
+              With Bicep
             
           </span>
         </div>
@@ -1220,9 +1220,20 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../deploy-infra-only/" class="md-nav__link">
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1236,11 +1247,132 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
     </li>
   
 
               
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -1265,7 +1397,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy full stack
+    With Bicep
   
 
     
@@ -1283,7 +1415,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy full stack
+    With Bicep
   
 
     
@@ -1621,6 +1753,42 @@
     </ul>
   
 </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -2306,13 +2474,17 @@
 
 <p><span id="full-stack-deploy"></span></p>
 <p><span id="deploy-the-full-stack"></span></p>
-<h1 id="deploy-full-stack">Deploy full stack</h1>
+<p><span id="deploy-full-stack"></span></p>
+<h1 id="deploy-full-stack-with-bicep">Deploy full stack with Bicep</h1>
 <h2 id="objective">Objective</h2>
 <p>Deploy the Azure infrastructure and the Agent Application with its default
 layout: Foundry hosts the orchestrator, Agent App UI runs in Container Apps,
 and Foundry IQ manages source ingestion and retrieval. The default
 <code>hosted-no-panel</code> layout omits the administrative panel and Agent Application
-Cosmos DB. Foundry can require separate backing resources.</p>
+Cosmos DB. Foundry can require separate backing resources.
+This procedure uses the default Bicep provider. For Terraform, use
+<a href="../deploy-terraform-full-stack/">Deploy full stack with Terraform</a>; application
+configuration and deployment are shared.</p>
 <h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
 <p>Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
 orchestrator and native Foundry IQ ingestion and retrieval.</p>
@@ -2851,8 +3023,7 @@ part of this deployment.</p>
 <li>Follow <a href="#step-4-deploy">Step 4</a> with the previous compatible source and inputs:
    provision, then deploy; deployment prepares the pinned image automatically.
    If retaining an operator-managed digest, verify its availability and
-   compatibility; deployment does not rebuild it. If restoring older tooling,
-   follow that tooling's own required deployment sequence.</li>
+   compatibility; deployment does not rebuild it.</li>
 <li>Restore directly managed runtime keys separately from the source checkout,
    reload affected components and repeat <a href="#validation">Validation</a> before cutover.</li>
 </ol>

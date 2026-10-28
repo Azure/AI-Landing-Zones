@@ -1212,6 +1212,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1220,7 +1267,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1241,8 +1288,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1256,7 +1350,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1625,6 +1791,11 @@
 <h1 id="operations">Operations</h1>
 <p>Use the task-specific runbook for operational changes and recovery:</p>
 <ul>
+<li>For integrated Terraform, use <a href="../deploy-terraform-infra-only/#reconfigure-or-recover-the-foundation">foundation reconfiguration and recovery</a>,
+  <a href="../deploy-terraform-full-stack/#update-and-recover">application updates</a> and
+  <a href="../deploy-terraform-infra-only/#remove-the-foundation">removal</a>. Retain the
+  provider and backend and follow the
+  <a href="../deploy-terraform-infra-only/#state-protection">single-writer execution policy</a>.</li>
 <li><a href="../deploy-full-stack/#upgrade-to-a-new-release">Reapply a reviewed deployment</a>, <a href="../deploy-full-stack/#redeploy-applications-only">redeploy applications</a>, <a href="../deploy-full-stack/#change-a-runtime-setting">change runtime settings</a> and <a href="../deploy-full-stack/#rotate-a-secret">rotate secrets</a> in the Deploy full stack runbook.</li>
 <li><a href="../deploy-full-stack/#roll-back-to-a-previous-release">Rollback</a> and <a href="../deploy-full-stack/#remove-an-environment">safe environment removal</a>.</li>
 <li><a href="../deploy-infra-only/#reconfigure-or-upgrade-the-foundation">Reconfigure the foundation</a> and <a href="../deploy-infra-only/#complete-a-deferred-post-provision">complete deferred configuration</a>.</li>
@@ -1636,12 +1807,15 @@ Environment removal is a separate destructive task, not a rollback procedure.</p
 <p>For <a href="../configuration/#resource-group-destinations">multi-resource-group deployments</a>,
 preserve the approved destination mapping on retries and inventory every target
 before cleanup. A <code>predown</code> safety hook blocks <code>azd down</code> when the destinations
-span distinct groups; no automatic deletion or bypass option is provided.</p>
-<p>Use separately
-authorized, itemized manual cleanup after owner review, preserving shared
-resources and required data. Created additional groups do not have an
-<code>azd-env-name</code> tag. Single-group teardown remains unchanged. No automatic
-resource migration, permission elevation or destructive group rollback is provided.</p>
+span distinct groups <strong>for Bicep</strong>.</p>
+<p>For Terraform, preserve the original common group/application bindings,
+<code>terraform-resource-groups.json</code> and <code>terraform-backend.json</code> on every runner.
+The guard verifies those records before native state-scoped destroy across
+recorded owned/BYO groups; it does not perform imperative group deletion.
+Follow <a href="../deploy-terraform-infra-only/#remove-the-foundation">Terraform removal</a>
+for preview and explicit destruction.</p>
+<p>Where automatic removal is blocked, use separately authorized, itemized
+cleanup after owner review, preserving shared resources and required data.</p>
 <p><span id="upgrade-ingestion-selection-to-v430"></span>
 <span id="change-ingestion-selection-safely"></span>
 For ingestion selection and safe retirement, see <a href="../ingestion/">Ingestion</a>.

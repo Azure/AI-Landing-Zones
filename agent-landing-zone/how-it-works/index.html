@@ -1355,6 +1355,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1363,7 +1410,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1384,8 +1431,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1399,7 +1493,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1864,11 +2030,12 @@
 <h1 id="how-it-works">How it works</h1>
 <p>Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (<code>azd</code>). This page introduces
-those concepts for the <strong>Bicep/azd implementation</strong>, so you can understand what
-the deployment does without memorizing commands or parameters.</p>
-<p>A <strong>command-line interface (CLI)</strong> runs commands in a terminal. Bicep describes
-Azure resources as code; <code>azd</code> coordinates their creation and application
-deployment. <strong>Azure Blob Storage</strong> stores files, and <strong>Azure AI Search</strong> indexes
+those concepts for the <strong>Bicep and integrated Terraform implementations</strong>, so
+you can understand what the deployment does without memorizing commands or
+parameters.</p>
+<p>A <strong>command-line interface (CLI)</strong> runs commands in a terminal. Bicep or
+Terraform describes Azure resources as code; <code>azd</code> coordinates their creation
+and application deployment. <strong>Azure Blob Storage</strong> stores files, and <strong>Azure AI Search</strong> indexes
 content so the application can retrieve relevant passages.
 An <strong>application programming interface (API)</strong> lets code send requests to a
 service.</p>
@@ -1884,8 +2051,7 @@ infrastructure are prepared. The <strong>Deploy infra only</strong> and
 <p>A <strong>deployment parameter</strong> tells the template what to create or reuse, such
 as a private network or an existing hub. An <strong><code>azd</code> environment</strong> groups the
 settings and deployment state for one deployment, such as development or
-production. With Bicep and <code>azd</code>, the runbooks use two ways to supply parameter
-values:</p>
+production. Both infrastructure providers use the same operator inputs:</p>
 <table>
 <thead>
 <tr>
@@ -1896,20 +2062,22 @@ values:</p>
 <tbody>
 <tr>
 <td>Uppercase input, such as <code>NETWORK_ISOLATION</code></td>
-<td>The selected <code>azd</code> environment. The platform maps it to a template parameter or reads it in a deployment hook.</td>
+<td>The selected <code>azd</code> environment. The hooks resolve documented mappings before provisioning.</td>
 </tr>
 <tr>
-<td>Native parameter, such as <code>modelDeploymentList</code></td>
-<td>The root <code>main.parameters.json</code>, inside <code>parameters.&lt;name&gt;.value</code>, for parameters without an environment-variable mapping.</td>
+<td>Structured value, such as <code>modelDeploymentList</code></td>
+<td>The root <code>main.parameters.json</code>, inside <code>parameters.&lt;name&gt;.value</code>. Keep arrays, objects, booleans and numbers in their native JSON types.</td>
 </tr>
 </tbody>
 </table>
 <p>For example, <code>NETWORK_ISOLATION=true</code> selects private networking. Deployment
-inputs are resolved before provisioning. The platform combines them with
-the root parameter file to generate <code>infra/main.parameters.json</code>.
+inputs and the root parameter file are resolved before provisioning.
+For Terraform, a typed adapter generates the ignored
+<code>infra/terraform/main.tfvars.json</code>. The generated <code>infra/main.parameters.json</code>
+supports shared preflight diagnostics; Bicep uses that file for its deployment.
 The <a href="../configuration/">Deployment settings</a> reference lists inputs and defaults;
-the <a href="../deploy-infra-only/">Deploy infra only</a> and
-<a href="../deploy-full-stack/">Deploy full stack</a> runbooks provide their application order.</p>
+choose the provider-specific <strong>Deploy infra only</strong> or <strong>Deploy full stack</strong>
+runbook for their application order.</p>
 <div class="admonition note">
 <p class="admonition-title">Application-specific runtime settings</p>
 <p>Runtime settings control an application's behavior and vary by application.
@@ -1928,8 +2096,12 @@ The Agent Application's runtime code lives in separate component repositories.</
 </thead>
 <tbody>
 <tr>
-<td>Infrastructure: platform <code>infra/</code></td>
-<td>Repository-owned Bicep source for Azure resources, identities and access. <code>manifest.json</code> → <code>infra.source</code> records the upstream AI Landing Zone source it incorporates.</td>
+<td>Bicep infrastructure: platform <code>infra/</code></td>
+<td>Bicep source for Azure resources, identities and access.</td>
+</tr>
+<tr>
+<td>Terraform infrastructure: platform <code>infra/terraform/</code></td>
+<td>AVM composition, complementary resources, generated typed inputs, native outputs and committed provider lock file.</td>
 </tr>
 <tr>
 <td>Platform integration: root files, <code>scripts/</code> and <code>config/</code></td>
@@ -1941,9 +2113,7 @@ The Agent Application's runtime code lives in separate component repositories.</
 </tr>
 </tbody>
 </table>
-<p>The <code>infra.source</code> entry records the upstream version incorporated into this
-repository. Deployment uses the platform's own <code>infra/</code> tree, which includes
-Agent Landing Zone changes.</p>
+<p>Deployment uses the product's infrastructure source for the selected provider.</p>
 <h2 id="the-manifest-records-a-validated-combination">The manifest records a validated combination</h2>
 <p><a href="https://github.com/Azure/agent-landing-zone/blob/main/manifest.json"><code>manifest.json</code></a>
 records the platform release and each Agent Application component's repository,
@@ -1963,12 +2133,23 @@ repository customization and pinning rules.</p>
 maps deployment inputs to infrastructure parameters. Values can be literals or
 references to the selected azd environment's variables. Inline defaults apply
 where declared; other unset inputs can use Bicep defaults.</p>
-<p>Before provisioning, the hooks resolve the application and hosting topology,
-apply environment inputs and generate <code>infra/main.parameters.json</code> for Bicep.</p>
+<p>Before provisioning, the hooks validate the provider/application binding,
+resolve the shared hosting topology and apply environment inputs.
+Bicep consumes the generated <code>infra/main.parameters.json</code>.
+Terraform consumes generated <code>infra/terraform/main.tfvars.json</code>, with backend
+settings rendered from <code>infra/terraform/provider.conf.json</code>.
+For Terraform, <code>infra/main.parameters.json</code> is only a shared preflight artifact.
+The adapter also qualifies <code>public</code>, <code>usgovernment</code> or <code>china</code> and generates
+the matching <code>azureCloud</code> context and backend environment. See
+<a href="../configuration/#azure-cloud">Azure cloud settings</a>.
+An immutable private backend record is created on first use before settings
+are persisted and verified thereafter. Clean runners need the original
+backend, group and application/environment bindings, not reconstructed files.</p>
 <div class="admonition note">
 <p class="admonition-title">Edit the source, not the generated output</p>
-<p>Use documented deployment inputs and the root parameter file. Do not edit
-<code>infra/main.parameters.json</code>; the next composition can overwrite it.
+<p>Use documented environment inputs and root <code>main.parameters.json</code>.
+Do not edit generated <code>infra/main.parameters.json</code>,
+<code>infra/terraform/main.tfvars.json</code> or <code>.azure/</code> inputs.
 See <a href="../configuration/">Deployment settings</a> for inputs and defaults.</p>
 </div>
 <p>An <strong>application definition</strong> describes the selected application's components
@@ -1988,8 +2169,14 @@ supported by this host.</p>
 <h2 id="azureyaml-connects-azd-to-the-lifecycle"><code>azure.yaml</code> connects azd to the lifecycle</h2>
 <p>The root
 <a href="https://github.com/Azure/agent-landing-zone/blob/main/azure.yaml"><code>azure.yaml</code></a>
-points azd at <code>infra/</code> and registers PowerShell and shell lifecycle hooks.
-The hooks configure Azure services and coordinate application deployment.</p>
+selects the infrastructure provider/path and registers PowerShell and shell
+lifecycle hooks. Bicep at <code>infra/</code> remains the default. To use Terraform,
+configure <code>infra.provider: terraform</code>, <code>infra.path: infra/terraform</code> and
+<code>infra.module: main</code> once before a new environment's first provision.
+This selection applies to the
+checkout, not independently to each environment in it.
+Use the selected provider for provisioning, updates and removal.</p>
+<p>The shared hooks configure Azure services and coordinate application deployment.</p>
 <table>
 <thead>
 <tr>
@@ -2004,7 +2191,7 @@ The hooks configure Azure services and coordinate application deployment.</p>
 </tr>
 <tr>
 <td>Before provisioning (<code>preprovision</code>)</td>
-<td>Resolves application selection and topology, composes infrastructure parameters and runs preflight checks.</td>
+<td>Validates provider/application binding, resolves shared topology, generates provider-specific typed inputs and runs preflight checks.</td>
 </tr>
 <tr>
 <td>After provisioning (<code>postprovision</code>)</td>
@@ -2018,7 +2205,15 @@ The hooks configure Azure services and coordinate application deployment.</p>
 </table>
 <p><code>azd provision</code> includes service configuration through its post-provision hook.
 Some Container Apps initially contain placeholder images; <code>azd deploy</code> replaces
-them with the selected application code.</p>
+them with the selected application code. <code>azd up</code> runs both stages.
+Provisioning does not build or publish application images; reapplying
+infrastructure must preserve application-managed images and revisions.
+All flat Terraform outputs feed azd and those shared hooks automatically;
+operators do not copy outputs into application projects.</p>
+<p>The Terraform backend uses existing Azure Storage outside workload teardown.
+Native azd disables state locking. Shared and production state uses one
+authorized executor with queued, non-canceling operations per backend state
+identity; see the <a href="../deploy-terraform-infra-only/#state-protection">single-writer policy</a>.</p>
 <p>Container App deployment builds verified component code through each
 component's <code>azure.yaml</code>. Hosted orchestration uses the prepared image
 described below. Custom applications supply their own definitions and projects
@@ -2029,6 +2224,11 @@ applications use the resulting services.</p>
 <p>Provisioning and configuration publish settings to Azure App Configuration
 under the <strong><code>agent-lz</code> label</strong>. The Agent Application loaders also select other
 labels, which can affect <a href="../configuration/#runtime-settings">which setting takes precedence</a>.
+Terraform owns foundation connections and model metadata. Shared defaults
+seed only missing keys, while the runtime publisher updates its owned settings
+from the declared parameter document and selected environment.
+Labels, content types and Key Vault-reference metadata follow the
+<a href="../configuration/#configuration-ownership-and-declarations">configuration ownership contract</a>.
 Bootstrap values such as the store endpoint must be
 available before remote configuration can load. Secrets belong in Key Vault
 and are referenced rather than copied into checked-in settings.</p>
@@ -2036,7 +2236,9 @@ and are referenced rather than copied into checked-in settings.</p>
 configuration, identities and data, as described in
 <a href="../configuration/#environment-boundaries">Environment boundaries</a>. Local
 <code>.azure/</code> state is private deployment state, not a source-controlled input file.
-Child workspaces receive copies and need the same protection.</p>
+Child workspaces receive copies and need the same protection.
+Terraform's backend and group records are also required for state-scoped
+teardown; output refresh does not replace them.</p>
 <p>See <a href="../configuration/">Deployment settings</a> for setting names, sources and reload
 requirements.</p>
 <h2 id="why-hosted-agents-need-image-preparation">Why hosted agents need image preparation</h2>
@@ -2064,14 +2266,20 @@ there is no required standalone preparation command.</p>
 <p>The same source pins do not guarantee the same image digest when images are
 built independently. If a promotion process requires the identical image,
 its digest and registry availability need separate preservation and verification.</p>
-<p>The <a href="../deploy-full-stack/">Deploy full stack</a> runbook provides execution steps. For
+<p>The full-stack runbooks for <a href="../deploy-full-stack/">Bicep</a> and
+<a href="../deploy-terraform-full-stack/">Terraform</a> provide execution steps. For
 strategy eligibility and image behavior, see <a href="../hosted-agents/">Agent hosting</a>.</p>
 <h2 id="from-understanding-to-deployment">From understanding to deployment</h2>
 <p>The planning references explain <a href="../planning/">deployment design</a>,
 <a href="../sizing/">sizing</a> and <a href="../cost-planning/">cost</a>.
-For execution, the named runbooks are
-<a href="../deploy-infra-only/">Deploy infra only</a> or
-<a href="../deploy-full-stack/">Deploy full stack</a>. Those runbooks contain the
+For execution, choose the outcome and then the provider:</p>
+<ul>
+<li><strong>Deploy infra only:</strong> <a href="../deploy-infra-only/">With Bicep</a> or
+  <a href="../deploy-terraform-infra-only/">With Terraform</a>.</li>
+<li><strong>Deploy full stack:</strong> <a href="../deploy-full-stack/">With Bicep</a> or
+  <a href="../deploy-terraform-full-stack/">With Terraform</a>.</li>
+</ul>
+<p>Those runbooks contain the
 prerequisites, topology-specific sequence and validation steps.</p>
 
 

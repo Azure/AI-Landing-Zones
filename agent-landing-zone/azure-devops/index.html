@@ -1220,6 +1220,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../deploy-infra-only/" class="md-nav__link">
         
@@ -1228,7 +1275,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1249,8 +1296,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../deploy-full-stack/" class="md-nav__link">
+      <a href="../deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1264,7 +1358,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2125,6 +2291,11 @@ protected approvals. This optional continuous integration and deployment
 (CI/CD) flow automates the
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.</p>
+<p>The downloadable pipeline and validation examples in this runbook use Bicep.
+They are not a validated Terraform pipeline. For the integrated
+Terraform lifecycle and its separate backend/runner prerequisites, use
+<a href="../deploy-terraform-full-stack/">Deploy full stack with Terraform</a> before
+designing corresponding automation.</p>
 <h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
 <p>One reviewed source revision promoted through DEV, TEST and PROD, with
 protected approvals and a private deployment path for each environment.</p>
@@ -2141,8 +2312,7 @@ or <a href="../deploy-full-stack/">Deploy full stack</a> runbook. For component 
 <p class="admonition-title">Choose the right pipeline</p>
 <p>The downloadable example below verifies the <strong>same source commit in every
 job</strong> and enforces successful prior stages. Images are built per environment.
-Keep the platform's incorporated <code>infra/</code> and lifecycle hooks in that same
-revision. Do not substitute pipelines from a separate foundation checkout.</p>
+Keep the platform's <code>infra/</code> and lifecycle hooks in that same revision.</p>
 </div>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
@@ -2161,8 +2331,7 @@ a deployment until they and the protected checks in Step 4 are complete.</p>
 <p>Use your reviewed platform revision. Keep
 <code>manifest.json</code>, <code>app-definition.json</code>, <code>main.parameters.json</code>,
 <code>azure.yaml</code>, <code>infra/</code>, <code>config/</code>, <code>contracts/</code> and <code>scripts/</code> together at its root.
-Infrastructure is incorporated under <code>infra/</code>; do not deploy it from a second
-foundation checkout. Commit your configuration and compatible component pins
+Infrastructure is under <code>infra/</code>. Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.</p>
 <p>The downloadable example initially deploys the <strong>Agent Application</strong> with
 <code>hosted-no-panel</code>, native Blob ingestion and private endpoints. Set the same

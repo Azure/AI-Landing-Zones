@@ -1287,6 +1287,53 @@
   
   
   
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="deploy-infra-only/" class="md-nav__link">
         
@@ -1295,7 +1342,7 @@
   <span class="md-ellipsis">
     
   
-    Deploy infra only
+    With Bicep
   
 
     
@@ -1316,8 +1363,55 @@
   
   
     <li class="md-nav__item">
-      <a href="deploy-full-stack/" class="md-nav__link">
+      <a href="deploy-terraform-infra-only/" class="md-nav__link">
         
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
   
   
   <span class="md-ellipsis">
@@ -1331,7 +1425,79 @@
   
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1738,22 +1904,27 @@ from connected knowledge sources.</p>
 <p><span id="foundation-and-application"></span></p>
 <h2 id="infrastructure-and-application">Infrastructure and application</h2>
 <p>The deployment template creates Azure resources separately from the application
-code that runs on them. This supports two deployment runbooks:</p>
+code that runs on them. Choose the outcome first, then the infrastructure
+provider. Bicep is the default; integrated Terraform uses the same azd
+application lifecycle.</p>
 <table>
 <thead>
 <tr>
-<th>Runbook</th>
-<th>Result</th>
+<th>Outcome</th>
+<th>With Bicep</th>
+<th>With Terraform</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a href="deploy-infra-only/">Deploy infra only</a></td>
-<td>Creates and configures the selected Azure resources without deploying application code.</td>
+<td><strong>Deploy infra only:</strong> create and configure Azure resources without application code</td>
+<td><a href="deploy-infra-only/">Runbook</a></td>
+<td><a href="deploy-terraform-infra-only/">Runbook</a></td>
 </tr>
 <tr>
-<td><a href="deploy-full-stack/">Deploy full stack</a></td>
-<td>Creates the infrastructure and deploys the Agent Application, including a Foundry hosted agent.</td>
+<td><strong>Deploy full stack:</strong> create infrastructure and deploy the Agent Application, including a Foundry hosted agent</td>
+<td><a href="deploy-full-stack/">Runbook</a></td>
+<td><a href="deploy-terraform-full-stack/">Runbook</a></td>
 </tr>
 </tbody>
 </table>
@@ -1778,10 +1949,10 @@ commands, validation and rollback.</p>
   and security review.</li>
 <li><strong>How much capacity and budget are needed?</strong> <a href="sizing/">Sizing and capacity</a>
   and <a href="cost-planning/">Cost planning</a> describe the starting points.</li>
-<li><strong>Do I only need Azure resources?</strong> <a href="deploy-infra-only/">Deploy infra only</a>
-  provisions the infrastructure without deploying an application.</li>
-<li><strong>Do I want the supplied application running?</strong> <a href="deploy-full-stack/">Deploy full stack</a>
-  provisions the infrastructure and deploys the Agent Application.</li>
+<li><strong>Do I only need Azure resources?</strong> Deploy infra only
+  <a href="deploy-infra-only/">with Bicep</a> or <a href="deploy-terraform-infra-only/">with Terraform</a>.</li>
+<li><strong>Do I want the supplied application running?</strong> Deploy full stack
+  <a href="deploy-full-stack/">with Bicep</a> or <a href="deploy-terraform-full-stack/">with Terraform</a>.</li>
 </ul>
 
 
