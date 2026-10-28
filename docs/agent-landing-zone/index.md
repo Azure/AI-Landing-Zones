@@ -11,6 +11,10 @@ from connected knowledge sources.
 
 Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-zone)
 
+## Architecture overview
+
+[![Standalone Agent Landing Zone reference architecture](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)](../architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
+
 <span id="foundation-and-application"></span>
 
 ## Infrastructure and application
