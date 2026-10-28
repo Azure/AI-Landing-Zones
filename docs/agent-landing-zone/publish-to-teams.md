@@ -26,9 +26,34 @@ with authenticated messages delivered through Azure Bot Service.
     If your organization requires no public agent ingress, do not use this
     publication path.
 
-![Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path.](../media/runbooks/publish-to-teams.png?v=channel-service)
+<div class="runbook-diagram" markdown="1">
 
-The dashed path is for publication setup and later changes, not for Teams
+<div class="runbook-diagram__summary" markdown="1">
+
+**Conversation path**
+
+1. **Teams or Microsoft 365 Copilot** uses Microsoft's managed Azure Bot Service.
+2. **Bot Service** calls the public HTTPS Activity endpoint, with authentication
+   and Microsoft channel source IP filtering. This is not Private Link.
+3. **The hosted agent** receives the authenticated messages. Foundry and
+   Bot Service retain public network access disabled; the Activity route is
+   the scoped exception.
+
+**Publication setup and later changes**
+
+1. **The admin workstation** connects through VPN or the private network.
+2. **The Foundry project API** is reached through its private endpoint to
+   configure publication. This is separate from conversation traffic.
+
+</div>
+
+[![Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path.](../media/runbooks/publish-to-teams.png?v=channel-service)](../media/runbooks/publish-to-teams.png?v=channel-service){: .runbook-diagram__image aria-label="Open full-size Teams and Microsoft 365 Copilot diagram"}
+
+[Open full-size diagram](../media/runbooks/publish-to-teams.png?v=channel-service){: .runbook-diagram__open}
+
+</div>
+
+The diagram's dashed path is for publication setup and later changes, not for Teams
 conversations.
 
 The Bot Service box represents **Microsoft's managed channel service**, not

@@ -22,7 +22,28 @@ configuration and deployment are shared.
 Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
 orchestrator and native Foundry IQ ingestion and retrieval.
 
-![The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional.](../media/runbooks/deploy-full-stack.png)
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Default hosted application**
+
+1. **Application resource group:** Agent App UI runs in Container Apps,
+   alongside Container Registry, App Configuration and Key Vault.
+2. **Foundry resource group:** the UI calls the hosted orchestrator over HTTPS.
+   The orchestrator uses the Foundry IQ knowledge base, with native ingestion
+   from the Blob source.
+3. **Network resource group:** the illustrated private layout uses the workload
+   VNet, private DNS and private endpoints. Bastion or jumpbox operator access
+   is optional.
+
+</div>
+
+[![The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional.](../media/runbooks/deploy-full-stack.png)](../media/runbooks/deploy-full-stack.png){: .runbook-diagram__image aria-label="Open full-size hosted application diagram"}
+
+[Open full-size diagram](../media/runbooks/deploy-full-stack.png){: .runbook-diagram__open}
+
+</div>
 
 !!! note "Deployment options"
     This diagram illustrates the default hosted application layout, not a

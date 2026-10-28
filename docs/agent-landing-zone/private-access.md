@@ -114,22 +114,30 @@ incomplete and does not bypass earlier private-access checks.
 ### 2. Configure the gateway and authentication
 
 For an existing hub VPN, ask its administrator for an approved client profile
-and continue to step 3. For a new gateway, follow Microsoft's
+and continue to [Connect DNS and routes](#3-connect-dns-and-routes). A shared
+hub gateway needs no local reservation. For a new gateway, follow Microsoft's
 [P2S certificate setup](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal)
 or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/point-to-site-entra-gateway):
 
-1. Identify the target VNet from the provisioned environment:
-   `azd env get-value VNET_RESOURCE_ID`. This is a resource ID, not a VPN server
-   address. Create a route-based VPN gateway with a supported SKU and a
-   subnet named exactly **`GatewaySubnet`**. To have the foundation reserve
-   it, set `azd env set DEPLOY_GATEWAY_SUBNET true` before provisioning;
-   the reservation is opt-in, with default range `192.168.2.192/26`.
+1. **Identify the target VNet.** Read it from the provisioned environment:
+
+    ```bash
+    azd env get-value VNET_RESOURCE_ID
+    ```
+
+    The result is a resource ID, not a VPN server address.
+
+2. **Check the gateway subnet.** It must be named exactly **`GatewaySubnet`**.
+   To have the foundation reserve it, set
+   `azd env set DEPLOY_GATEWAY_SUBNET true` **before provisioning**.
+   The reservation is opt-in, with default range `192.168.2.192/26`.
    Verify the selected range against the sizing in the Microsoft procedure.
-   A shared hub gateway needs no local reservation. Do not attach an NSG, default-route UDR or
-   delegation to `GatewaySubnet`.
-   Record ownership of the gateway and subnet with the network team
-   before subsequent foundation provisioning.
-2. In the gateway's **Settings > Point-to-site configuration**, select
+3. **Create the VPN gateway.** Use a route-based gateway with a supported SKU
+   and the selected `GatewaySubnet`.
+4. **Record ownership.** Agree ownership of the gateway and subnet with the
+   network team before subsequent foundation provisioning.
+5. **Configure Point-to-site access.** In the gateway's
+   **Settings > Point-to-site configuration**, select
    **Configure now** for a new configuration and enter the approved client
    address pool. Choose the tunnel/authentication combination for your clients:
    - **Certificate:** upload the public root certificate data; generate and
@@ -144,9 +152,13 @@ or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/poi
      and follow its registration and consent requirements.
      Use a currently supported Windows or macOS client. For Linux, select a
      supported certificate/client combination from the Microsoft procedure.
-3. Save the configuration, then select **Download VPN client**. This generates
+6. **Download the client profile.** Save the configuration, then select
+   **Download VPN client**. This generates
    a configuration package, not the client application. Install the supported
    client and import the profile using the matching Microsoft instructions.
+
+!!! warning "GatewaySubnet restrictions"
+    Do not attach an NSG, default-route UDR or delegation to `GatewaySubnet`.
 
 The gateway administrator controls admission to the VPN. Confirm the approved
 certificate or Entra access policy before distributing client profiles.

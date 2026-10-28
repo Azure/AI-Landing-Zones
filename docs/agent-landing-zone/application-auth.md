@@ -119,16 +119,34 @@ regenerate an existing session-signing secret during a routine update.
 
 Publish the following values in the same store:
 
-| UI runtime key | Contract |
-| --- | --- |
-| `OAUTH_AZURE_AD_CLIENT_ID` | Application (client) ID from step 1. |
-| `OAUTH_AZURE_AD_TENANT_ID` | Directory (tenant) ID from step 1. |
-| `OAUTH_AZURE_AD_ENABLE_SINGLE_TENANT` | `true`. |
-| `OAUTH_AZURE_AD_SCOPES` | `api://<client-id>/user_impersonation,openid,profile,offline_access`, replacing `<client-id>`. Do not add Graph scopes such as `User.Read` or the Foundry scope here. |
-| `CHAINLIT_URL` | Canonical UI HTTPS URL from step 3. |
-| `ALLOW_ANONYMOUS` | `false`. |
-| `HOSTED_AGENT_AUTH_MODE` | `user_delegated`. |
-| `RETRIEVAL_AUTH_MODE` | `native_search`, the integrated native permission path; not an anonymous-access switch. |
+<dl>
+<dt><code>OAUTH_AZURE_AD_CLIENT_ID</code></dt>
+<dd>Application (client) ID from step 1.</dd>
+
+<dt><code>OAUTH_AZURE_AD_TENANT_ID</code></dt>
+<dd>Directory (tenant) ID from step 1.</dd>
+
+<dt><code>OAUTH_AZURE_AD_ENABLE_SINGLE_TENANT</code></dt>
+<dd><code>true</code>.</dd>
+
+<dt><code>OAUTH_AZURE_AD_SCOPES</code></dt>
+<dd><code>api://&lt;client-id&gt;/user_impersonation,openid,profile,offline_access</code>,
+replacing <code>&lt;client-id&gt;</code>. Do not add Graph scopes such as
+<code>User.Read</code> or the Foundry scope here.</dd>
+
+<dt><code>CHAINLIT_URL</code></dt>
+<dd>Canonical UI HTTPS URL from step 3.</dd>
+
+<dt><code>ALLOW_ANONYMOUS</code></dt>
+<dd><code>false</code>.</dd>
+
+<dt><code>HOSTED_AGENT_AUTH_MODE</code></dt>
+<dd><code>user_delegated</code>.</dd>
+
+<dt><code>RETRIEVAL_AUTH_MODE</code></dt>
+<dd><code>native_search</code>, the integrated native permission path;
+not an anonymous-access switch.</dd>
+</dl>
 
 Use label `agent-lz`. The frontend managed identity needs App Configuration
 Data Reader and Key Vault Secrets User at the relevant scopes; see
@@ -289,19 +307,33 @@ claims challenge from the configured Search response. Provider response bodies,
 authorization URLs and arbitrary resource hints are not recovery instructions.
 
 The UI offers explicit interactive authentication rather than retrying the
-failed turn. Standalone chat uses the configured tenant, UI scopes and OAuth
-callback. Its encrypted recovery context expires after 180 seconds and is bound
-to the current principal and session. The existing `CHAINLIT_AUTH_SECRET` must
-contain at least 32 UTF-8 bytes; no additional secret or redirect registration
-is needed. Existing standalone sessions may need a fresh ordinary login.
-Gateways must preserve `/api/auth/recovery` and the normal OAuth routes.
-Embedded Entra sessions use the portal's MSAL and
-authenticated bootstrap path, not a standalone sign-in redirect.
+failed turn.
 
-After verification, submit a new turn. Failed or partially streamed turns are
-never replayed automatically. A source `403` without a usable claims challenge
-remains an authorization denial; signing in cannot grant missing document
-permissions. Keep claims out of URLs, logs, conversation history and checkpoints.
+### Standalone chat
+
+- **Sign-in:** use the configured tenant, UI scopes and OAuth callback.
+  Existing standalone sessions may need a fresh ordinary login.
+- **Recovery window: 180 seconds.** The encrypted recovery context is bound
+  to the current principal and session.
+- **Session secret:** the existing `CHAINLIT_AUTH_SECRET` must contain at
+  least 32 UTF-8 bytes. No additional secret or redirect registration is needed.
+
+### Embedded Entra sessions
+
+Use the portal's MSAL and authenticated bootstrap path, not a standalone
+sign-in redirect.
+
+### Gateway and recovery checks
+
+- **Preserve the routes:** gateways must preserve `/api/auth/recovery` and
+  the normal OAuth routes.
+- **Submit a new turn after verification:** failed or partially streamed
+  turns are never replayed automatically.
+- **Distinguish source denial:** a source `403` without a usable claims
+  challenge remains an authorization denial. Signing in cannot grant missing
+  document permissions.
+- **Protect claims:** keep them out of URLs, logs, conversation history and
+  checkpoints.
 
 A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller

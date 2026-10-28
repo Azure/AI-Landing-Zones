@@ -181,22 +181,35 @@ for deployment.
 Deployment inputs describe what to create. **Runtime settings** describe how
 applications use the resulting services.
 
+### Who publishes settings
+
 Provisioning and configuration publish settings to Azure App Configuration
-under the **`agent-lz` label**. The Agent Application loaders also select other
-labels, which can affect [which setting takes precedence](configuration.md#runtime-settings).
+under the **`agent-lz` label**.
+
 Terraform owns foundation connections and model metadata. Shared defaults
 seed only missing keys, while the runtime publisher updates its owned settings
 from the declared parameter document and selected environment.
+
 Labels, content types and Key Vault-reference metadata follow the
 [configuration ownership contract](configuration.md#configuration-ownership-and-declarations).
+
+### How applications load settings
+
+The Agent Application loaders also select other labels, which can affect
+[which setting takes precedence](configuration.md#runtime-settings).
 Bootstrap values such as the store endpoint must be
-available before remote configuration can load. Secrets belong in Key Vault
-and are referenced rather than copied into checked-in settings.
+available before remote configuration can load.
+
+### Secrets and environment boundaries
+
+Secrets belong in Key Vault and are referenced rather than copied into
+checked-in settings.
 
 The same label is used across environments, so separation depends on distinct
 configuration, identities and data, as described in
-[Environment boundaries](configuration.md#environment-boundaries). Local
-`.azure/` state is private deployment state, not a source-controlled input file.
+[Environment boundaries](configuration.md#environment-boundaries).
+
+Local `.azure/` state is private deployment state, not a source-controlled input file.
 Child workspaces receive copies and need the same protection.
 Terraform's backend and group records are also required for state-scoped
 teardown; output refresh does not replace them.

@@ -53,6 +53,105 @@
   white-space: nowrap;
 }
 
+.md-typeset .subnet-address-plan,
+.md-typeset .runbook-diagram {
+  container-type: inline-size;
+}
+
+.md-typeset .subnet-address-plan tbody th {
+  border-top: 0.05rem solid var(--md-typeset-table-color);
+  font-weight: 400;
+}
+
+.md-typeset .runbook-diagram__summary {
+  display: none;
+}
+
+.md-typeset .runbook-diagram__image {
+  display: block;
+}
+
+.md-typeset .runbook-diagram__open {
+  align-items: center;
+  display: inline-flex;
+  min-height: 44px;
+  text-decoration: underline;
+}
+
+.md-typeset .runbook-diagram a:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 3px;
+}
+
+@container (max-width: 32rem) {
+  .md-typeset .subnet-address-plan .md-typeset__table {
+    display: block;
+    padding: 0;
+  }
+
+  .md-typeset .subnet-address-plan .md-typeset__scrollwrap {
+    margin: 0;
+  }
+
+  .md-typeset .subnet-address-plan table:not([class]) {
+    border: 0;
+    display: block;
+    font-size: inherit;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .md-typeset .subnet-address-plan thead {
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .md-typeset .subnet-address-plan tbody,
+  .md-typeset .subnet-address-plan tr {
+    display: block;
+  }
+
+  .md-typeset .subnet-address-plan tbody tr {
+    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+    padding: 0.6rem 0;
+  }
+
+  .md-typeset .subnet-address-plan table:not([class]) :is(th, td) {
+    border: 0;
+    display: block;
+    min-width: 0;
+    padding: 0.15rem 0;
+  }
+
+  .md-typeset .subnet-address-plan tbody th {
+    font-weight: 600;
+  }
+
+  .md-typeset .subnet-address-plan td::before {
+    content: attr(data-label) ": ";
+  }
+
+  .md-typeset .subnet-address-plan table:not([class]) td code {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: normal;
+  }
+}
+
+@container (max-width: 28rem) {
+  .md-typeset .runbook-diagram__summary {
+    display: block;
+  }
+
+  .md-typeset .runbook-diagram__image {
+    display: none;
+  }
+}
+
 .md-typeset .landing-zone-overview {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

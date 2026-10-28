@@ -103,21 +103,92 @@ flags can exclude subnets from template management. See the
 The new VNet's default address space is `192.168.0.0/21`. Names and ranges
 can be overridden using the [subnet inputs](configuration.md#subnet-creation-and-addressing).
 
-| Purpose | Default name | Default CIDR | Delegation |
-| --- | --- | --- | --- |
-| Foundry Agent Service | `agent-subnet` | `192.168.0.0/24` | `Microsoft.App/environments` |
-| Container Apps environment | `aca-environment-subnet` | `192.168.1.0/24` | `Microsoft.App/environments` |
-| Foundry/grounding private endpoints | `pe-subnet` | `192.168.2.0/26` | None |
-| Bastion | `AzureBastionSubnet` | `192.168.2.64/26` | None |
-| Firewall | `AzureFirewallSubnet` | `192.168.2.128/26` | None |
-| VPN/ExpressRoute reservation | `GatewaySubnet` | `192.168.2.192/26` | None |
-| Application Gateway | `AppGatewaySubnet` | `192.168.3.0/27` | None |
-| Jumpbox | `jumpbox-subnet` | `192.168.3.64/27` | None |
-| Build agents | `devops-build-agents-subnet` | `192.168.3.96/27` | None |
-| Application private endpoints | `application-pe-subnet` | `192.168.3.128/26` | None |
-| Basic firewall management | `AzureFirewallManagementSubnet` | `192.168.3.192/26` | None |
-| Power Platform | `powerplatform-subnet` | `192.168.4.0/24` | `Microsoft.PowerPlatform/enterprisePolicies` |
-| AI Gateway | `ai-gateway-subnet` | `192.168.5.0/24` | `Microsoft.Web/serverFarms` |
+<div class="subnet-address-plan">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th scope="col" role="columnheader">Purpose</th>
+<th scope="col" role="columnheader">Default name</th>
+<th scope="col" role="columnheader">Default CIDR</th>
+</tr>
+</thead>
+<tbody role="rowgroup">
+<tr role="row">
+<th scope="row" role="rowheader">Foundry Agent Service</th>
+<td role="cell" data-label="Default name"><code>agent-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.0.0/24</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Container Apps environment</th>
+<td role="cell" data-label="Default name"><code>aca-environment-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.1.0/24</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Foundry/grounding private endpoints</th>
+<td role="cell" data-label="Default name"><code>pe-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.2.0/26</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Bastion</th>
+<td role="cell" data-label="Default name"><code>AzureBastionSubnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.2.64/26</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Firewall</th>
+<td role="cell" data-label="Default name"><code>AzureFirewallSubnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.2.128/26</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">VPN/ExpressRoute reservation</th>
+<td role="cell" data-label="Default name"><code>GatewaySubnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.2.192/26</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Application Gateway</th>
+<td role="cell" data-label="Default name"><code>AppGatewaySubnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.3.0/27</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Jumpbox</th>
+<td role="cell" data-label="Default name"><code>jumpbox-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.3.64/27</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Build agents</th>
+<td role="cell" data-label="Default name"><code>devops-build-agents-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.3.96/27</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Application private endpoints</th>
+<td role="cell" data-label="Default name"><code>application-pe-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.3.128/26</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Basic firewall management</th>
+<td role="cell" data-label="Default name"><code>AzureFirewallManagementSubnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.3.192/26</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">Power Platform</th>
+<td role="cell" data-label="Default name"><code>powerplatform-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.4.0/24</code></td>
+</tr>
+<tr role="row">
+<th scope="row" role="rowheader">AI Gateway</th>
+<td role="cell" data-label="Default name"><code>ai-gateway-subnet</code></td>
+<td role="cell" data-label="Default CIDR"><code>192.168.5.0/24</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+#### Subnet delegations
+
+- **Foundry Agent Service and Container Apps environment:**
+  `Microsoft.App/environments`.
+- **Power Platform:** `Microsoft.PowerPlatform/enterprisePolicies`.
+- **AI Gateway:** `Microsoft.Web/serverFarms`.
+- **All other subnets in this plan:** no delegation.
 
 Firewall data subnet creation defaults to the local firewall requirement.
 The management subnet is used only by a standalone Basic firewall.
