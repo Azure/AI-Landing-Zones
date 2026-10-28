@@ -786,10 +786,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#additional-native-source-identities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional native source identities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#explicit-shared-source-permission-options" class="md-nav__link">
     <span class="md-ellipsis">
       
         Explicit shared-source permission options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protected-download-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected download configuration
       
     </span>
   </a>
@@ -2343,10 +2365,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#additional-native-source-identities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional native source identities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#explicit-shared-source-permission-options" class="md-nav__link">
     <span class="md-ellipsis">
       
         Explicit shared-source permission options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protected-download-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected download configuration
       
     </span>
   </a>
@@ -3057,6 +3101,11 @@ authorization still apply.</p>
 <td>Retrieval implementation used by the Agent Application orchestrator.</td>
 </tr>
 <tr>
+<td><code>RETRIEVAL_AUTH_MODE</code></td>
+<td><code>native_search</code></td>
+<td>Automatically published runtime authorization contract for the integrated native Search path. The UI obtains the delegated Search token; the hosted connector forwards it separately from workload transport authentication.</td>
+</tr>
+<tr>
 <td><code>FOUNDRY_IQ_PATTERN</code></td>
 <td><code>azureBlob</code></td>
 <td>Native Blob source processing and knowledge-base setup.</td>
@@ -3099,6 +3148,53 @@ authorization still apply.</p>
 </tbody>
 </table>
 <p>Other retrieval defaults: billing plan <code>free</code>, semantic configuration <code>default</code>, security field <code>metadata_security_id</code>, storage container <code>documents</code>, content extraction mode <code>standard</code>, ingestion permission options <code>["rbacScope"]</code>, and the filter add-on disabled.</p>
+<p>Native authorization uses the index's <code>userIds</code>, <code>groupIds</code> and <code>rbacScope</code>
+annotations, not the legacy security-field/add-on setting. Provisioning enables
+native permission filtering on new and compatible existing application indexes
+without deleting their documents or custom schema. Incompatible field
+annotations stop the update; do not disable permission checks to force it through.</p>
+<h3 id="additional-native-source-identities">Additional native source identities</h3>
+<p>Work IQ, Fabric and indexed SharePoint require the implemented
+<code>2026-08-01-preview</code> source contract. Configure the matching source flag,
+knowledge-source name and bindings; incomplete enabled sources fail before
+resource changes instead of disappearing from a mixed knowledge base.
+Fabric sources also select the configured planning model and <code>low</code> reasoning.</p>
+<p>These optional identity inputs are nonsecret UUIDs. Explicit deployment
+environment values are published under <code>agent-lz</code>; omission invents no identity
+and an explicit empty value clears that setting.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WORK_IQ_APPLICATION_ID</code></td>
+<td>Work IQ app's application/client ID.</td>
+</tr>
+<tr>
+<td><code>WORK_IQ_FEDERATED_CREDENTIAL_ID</code></td>
+<td>Object ID of the credential that trusts the Search principal, not the principal ID.</td>
+</tr>
+<tr>
+<td><code>WORK_IQ_TENANT_ID</code></td>
+<td>App tenant ID for cross-tenant Work IQ configuration.</td>
+</tr>
+<tr>
+<td><code>SHAREPOINT_INDEXED_APPLICATION_ID</code></td>
+<td>SharePoint ingestion app's application/client ID.</td>
+</tr>
+<tr>
+<td><code>SHAREPOINT_INDEXED_FEDERATED_CREDENTIAL_APPLICATION_ID</code></td>
+<td>Application/client ID of the federated Search managed identity, not a credential object ID.</td>
+</tr>
+</tbody>
+</table>
+<p>These settings do not register Entra apps, grant tenant consent or remove source
+licensing/billing requirements. See <a href="../work-iq/">Work IQ</a> and
+<a href="../sharepoint/">SharePoint</a> for administrator setup.</p>
 <p>For network-isolated native Blob configuration, infrastructure publishes
 <code>SEARCH_SHARED_PRIVATE_LINKS</code> as a JSON array under label <code>agent-lz</code>. This is
 post-provision metadata, not an operator switch or a runtime retrieval setting.</p>
@@ -3148,6 +3244,16 @@ Allowed and denied users both need validation before access resumes. The
 <a href="../deploy-full-stack/">Deploy full stack</a> runbook covers reconfiguration.
 See also
 <a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
+<h3 id="protected-download-configuration">Protected download configuration</h3>
+<p>Native hosted downloads reuse the configured storage account/containers and
+<code>SEARCH_SERVICE_QUERY_ENDPOINT</code>, <code>SEARCH_RAG_INDEX_NAME</code> and
+<code>SEARCH_API_VERSION</code>; there is no separate permission-bypass switch.
+The bundled UI includes <code>retrieval-reader</code> for native Search transport during
+upload authorization. Its workload role does not grant the caller access.</p>
+<p>Shared document downloads additionally require delegated Azure Storage
+<code>user_impersonation</code> consent on the UI app and the user's source RBAC/ACLs.
+See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>.
+Do not change Blob ingestion permission options to fix a download denial.</p>
 <h2 id="network-and-security">Network and security</h2>
 <p>These parameters apply mainly when <code>NETWORK_ISOLATION=true</code>.
 <a href="../network-isolation/">Network isolation</a> explains connectivity and DNS requirements.</p>

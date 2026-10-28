@@ -1141,10 +1141,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#integration-work-still-required" class="md-nav__link">
+  <a href="#integrated-hosted-retrieval" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integration work still required
+        Integrated hosted retrieval
       
     </span>
   </a>
@@ -1921,10 +1921,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#integration-work-still-required" class="md-nav__link">
+  <a href="#integrated-hosted-retrieval" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integration work still required
+        Integrated hosted retrieval
       
     </span>
   </a>
@@ -1968,7 +1968,8 @@
 a landing-zone index. A Fabric data agent answers analytical questions over
 its configured data, including Power BI semantic models. A Fabric IQ ontology
 binds business entities and relationships to data.</p>
-<p>This page explains the native knowledge-source options and integration gaps.
+<p>This page explains the integrated native knowledge-source options and their
+authorization requirements.
 Deployment procedures are in the
 <a href="../deploy-full-stack/">Deploy full stack runbook</a>.</p>
 <p><span id="choose-the-connection"></span></p>
@@ -2019,51 +2020,53 @@ data-agent source registration. The separate ontology inputs are
 <code>FABRIC_IQ_ENABLED</code>, <code>FABRIC_IQ_KNOWLEDGE_SOURCE_NAME</code>,
 <code>FABRIC_IQ_WORKSPACE_ID</code> and <code>FABRIC_IQ_ONTOLOGY_ID</code>.</p>
 <p>The <a href="../configuration/">Deployment settings</a> register sources and knowledge-base
-references in Search. They do not create Fabric items, grant model access or
-deliver user tokens. Runtime selects sources by enabled flag and name.
-Provisioning can overwrite manual edits to platform-owned objects.</p>
-<p><span id="3-plan-the-hosted-extension"></span></p>
-<h2 id="integration-work-still-required">Integration work still required</h2>
-<p><strong>Hosted Agent Application does not have a configuration-only Fabric path.</strong>
-For a native data-agent source, the following boundaries need coordinated work:</p>
+references in Search. They do not create Fabric items or grant model access.
+The integrated UI obtains the user's delegated Search token; the hosted runtime
+forwards it to Search for source authorization. Enabling a source requires its
+configured knowledge-base binding; a missing binding fails provisioning instead
+of silently omitting that source. Provisioning can overwrite manual edits to
+platform-owned objects.</p>
+<p><span id="3-plan-the-hosted-extension"></span>
+<span id="integration-work-still-required"></span></p>
+<h2 id="integrated-hosted-retrieval">Integrated hosted retrieval</h2>
+<p>The built-in hosted <code>maf_lite</code> path supports native Fabric sources without
+customer-written identity or response-parsing code. Configure the source and
+its administrator prerequisites, including <code>FOUNDRY_IQ_API_VERSION=2026-08-01-preview</code>:</p>
 <table>
 <thead>
 <tr>
 <th>Boundary</th>
-<th>Product contract and accelerator gap</th>
+<th>Integrated behavior</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Delegated identity</td>
-<td>Fabric uses a Search-audience user token in <code>x-ms-query-source-authorization</code>, separately from Search service authentication. The hosted entrypoint supplies empty user context and cannot forward that token through the retrieval strategy.</td>
+<td>The UI obtains a separate Search-audience token from the authenticated user's assertion. The hosted connector forwards the raw token in <code>x-ms-query-source-authorization</code>; its workload token authenticates only Search transport. Fabric user permissions and consent still apply.</td>
 </tr>
 <tr>
 <td>Retrieval reasoning</td>
-<td>Fabric data-agent sources require <code>low</code> or <code>medium</code>. The accelerator's native-source knowledge-base template emits <code>minimal</code> and no planning model. There is no native-branch environment override that fixes this.</td>
+<td>Fabric sources require <code>low</code> or <code>medium</code>. Enabling a bound Fabric source configures <code>low</code> reasoning and the configured planning model; Blob-only retrieval retains <code>minimal</code>.</td>
 </tr>
 <tr>
 <td>Response parsing</td>
-<td>The documented data-agent response uses <code>sourceData.fabricAnswer</code> and <code>fabricEmbeddedResources</code>. The connector's data-agent parser expects <code>dataAgentAnswer</code> and <code>dataAgentRawData</code>. Its ontology fallback can read <code>fabricAnswer</code>, but misclassifies the source and does not handle the embedded resources.</td>
+<td>The connector reads <code>sourceData.fabricAnswer</code> and textual <code>fabricEmbeddedResources</code>, preserving the Fabric source identity in grounding and citations.</td>
 </tr>
 <tr>
 <td>API compatibility</td>
-<td>Source setup and the connector default to <code>2026-05-01-preview</code>. Current Microsoft examples use <code>2026-08-01-preview</code>; registration, retrieve requests and response parsing need validation together.</td>
+<td>Fabric source setup and retrieval require the explicit <code>2026-08-01-preview</code> contract. The default Blob API is not silently changed.</td>
 </tr>
 </tbody>
 </table>
 <p>The <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent#query-a-knowledge-base">official data-agent source contract</a>
-defines the token audience and response fields. Source registration alone
-cannot resolve these gaps. A reviewed template change needs supported reasoning
-and model configuration, and a reviewed application integration needs trusted
-user delegation and compatible parsing.</p>
+defines the token audience and response fields. Missing delegation, incompatible
+API settings or source failures stop required retrieval; the connector does
+not retry without the user credential or substitute application-only access.</p>
 <p>An ontology remains a separate source contract, not a substitute data-agent
-identifier or parser. It also requires <code>low</code> or <code>medium</code> reasoning and validated
-user delegation through the hosted boundary.
+identifier. It uses the same explicit API, reasoning and delegated Search route.
 <a href="../foundry-iq/">Foundry IQ</a> explains how knowledge bases relate
-to Foundry Agent Service tools; the
-<a href="../build-your-own-app/">custom application runbook</a> covers delivery of reviewed
-application changes.</p>
+to Foundry Agent Service tools; <a href="../application-auth/">Application access</a>
+describes sign-in, consent and authentication recovery.</p>
 <p>Tokens remain server-side, outside prompts and user-supplied tool arguments.
 Authorization comes from validated caller context, not model-provided user IDs
 or group lists.</p>

@@ -2536,17 +2536,18 @@ and protected retrieval do not have the same integration requirements.</p>
   callback/settings steps once the frontend URL is available.
   Deployment does not perform tenant consent.</li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Protected retrieval is an integration gate</p>
-<p>The shipped hosted entrypoint does not receive the browser's bearer token.
-The default <code>maf_lite</code> strategy uses a direct Foundry IQ connector, but
-does not implement the complete authenticated Foundry Toolbox path for
-per-user protected retrieval. UI on-behalf-of (OBO) sign-in authenticates
-the Foundry call; it does not close that downstream integration gap.</p>
-<p>Assign a developer to implement and validate the supported identity path
-before admitting protected data. No topology, strategy or permission flag
-makes this turnkey. Do not enable anonymous retrieval, use service identity
-or weaken source permissions to make a test pass.</p>
+<div class="admonition important">
+<p class="admonition-title">Protected retrieval keeps the signed-in user's permissions</p>
+<p>The UI and hosted <code>maf_lite</code> strategy integrate delegated Search
+authorization with <code>RETRIEVAL_AUTH_MODE=native_search</code>. The UI performs
+the downstream OBO exchange; the hosted connector supplies that credential
+to Search separately from its workload transport identity. A custom
+Toolbox integration is not required for this built-in path.</p>
+<p>Arrange downstream consent and source permissions, retain permission
+ingestion, and verify an allowed and a denied user before admitting
+sensitive content. Missing credentials fail closed. Do not enable
+anonymous retrieval, substitute service identity or weaken source
+permissions to recover from an authorization failure.</p>
 </div>
 <table>
 <thead>
@@ -2903,8 +2904,9 @@ wrapper:</p>
 <code>hosted-agent</code> / <code>orchestrator-agent</code> by default; custom services use their own
 project/service context. Allow role propagation, then retry root <code>azd deploy</code>
 so the greeting and remaining deployment gates run before cutover.</p>
-<p>The closed bootstrap set grants App Configuration Data Reader, model access
-and, when configured, access to the exact audit secret. It is not a grant to
+<p>The closed bootstrap set grants App Configuration Data Reader, model access,
+native retrieval's scoped Search transport access and, when configured, access
+to the exact audit secret. It is not a grant to
 delegated users or a replacement for all capability profiles. Do not grant
 Owner or remove unrelated assignments to recover. See <a href="../hosted-agents/">hosted identities</a>.</p>
 <p><a id="clean-up"></a></p>
@@ -2996,8 +2998,8 @@ az<span class="w"> </span>acr<span class="w"> </span>repository<span class="w"> 
 </li>
 <li>Exercise an agent task and configured tools with representative identities.
    For documents, ingest a harmless test document through the configured source.
-   After resolving the protected-retrieval integration gate, test both permitted
-   retrieval and denial to a user without that document's permission.
+   With the integrated delegated retrieval path and downstream consent, test
+   both permitted retrieval and denial to a user without that document's permission.
    Test uploads only when their additional capabilities are selected.</li>
 <li>Correlate the task with runtime telemetry. The deployment's greeting checks
    basic response only; test actual UI login, OBO and source authorization.</li>

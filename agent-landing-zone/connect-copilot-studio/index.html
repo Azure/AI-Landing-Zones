@@ -2282,9 +2282,10 @@ every environment. Evaluate the native integration separately.</p>
 <li><strong>Foundry:</strong> A running, tested hosted agent. Ask its owner for the stable
   <strong>Responses URL</strong> and <strong>active agent version</strong>. Use the agent endpoint shown in
   Step 3, not a Container Apps <code>/invocations</code> URL or an Activity endpoint.
-  If using the Agent Application, resolve its protected-retrieval integration
-  gate in the <a href="../deploy-full-stack/">Deploy full stack runbook</a> before using
-  protected sources. A working relay is not evidence of source authorization.</li>
+  The Agent Application UI integrates a separate delegated Search credential;
+  this relay does not automatically reproduce that exchange. Before using
+  protected sources, prove the relay's supported per-user downstream credential
+  path and source authorization. A working relay is not that evidence.</li>
 <li><strong>Azure network:</strong> The platform team has already delivered the Power Platform
   subnet (default <code>powerplatform-subnet</code>, <code>192.168.4.0/24</code>, delegated to
   <code>Microsoft.PowerPlatform/enterprisePolicies</code>), regional connectivity,

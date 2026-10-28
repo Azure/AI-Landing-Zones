@@ -2074,6 +2074,7 @@ Embedding does not require weakening <code>frame-ancestors</code> or <code>X-Fra
 <p>The gateway contract preserves the external UI origin, cookies, browser
 <code>Origin</code>, and WebSocket upgrades. Required paths include <code>/copilot/index.js</code>,
 <code>/copilot/auth/bootstrap</code>, <code>/copilot/auth/logout</code>, <code>/project/settings</code>,
+<code>/copilot/auth/recovery</code>, <code>/public/protected-auth-recovery.js</code>,
 <code>/ws/socket.io</code> polling/upgrades and <code>/api/download/{grant_token}</code>.
 <a href="https://learn.microsoft.com/azure/container-apps/ingress-overview">Container Apps ingress</a>
 supports WebSockets. Browsers still need authorized network access to private
@@ -2093,7 +2094,46 @@ and does not belong in a URL, local storage or portal source.</p>
 client's OBO exchange. <code>HOSTED_AGENT_AUTH_MODE=user_delegated</code> preserves that
 caller boundary. Protected document access still requires the
 <a href="../application-auth/#3-verify-the-retrieval-identity-boundary">hosted retrieval integration</a>;
-embedding does not supply it.</p>
+the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
+alone does not establish downstream consent or source permissions.</p>
+<p>Use the bundled recovery helper rather than implementing a claims handshake.
+After authenticated bootstrap, load it with credentials and install it against
+the portal's existing MSAL account and UI API scopes:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">helper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">"script"</span><span class="p">);</span>
+<span class="nx">helper</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">chainlitServer</span><span class="si">}</span><span class="sb">/public/protected-auth-recovery.js`</span><span class="p">;</span>
+<span class="nx">helper</span><span class="p">.</span><span class="nx">crossOrigin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"use-credentials"</span><span class="p">;</span>
+<span class="k">await</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span><span class="w"> </span><span class="nx">reject</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">helper</span><span class="p">.</span><span class="nx">onload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">resolve</span><span class="p">;</span>
+<span class="w">  </span><span class="nx">helper</span><span class="p">.</span><span class="nx">onerror</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">reject</span><span class="p">;</span>
+<span class="w">  </span><span class="nb">document</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">helper</span><span class="p">);</span>
+<span class="p">});</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">stopRecovery</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">window</span><span class="p">.</span><span class="nx">installProtectedAuthRecovery</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">msalInstance</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">account</span><span class="o">:</span><span class="w"> </span><span class="nx">signedInAccount</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">tenantId</span><span class="o">:</span><span class="w"> </span><span class="nx">configuredTenantId</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">scopes</span><span class="o">:</span><span class="w"> </span><span class="nx">configuredUiApiScopes</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">chainlitServer</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">statusElement</span><span class="o">:</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"agent-lz-status"</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">widgetConfig</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">theme</span><span class="o">:</span><span class="w"> </span><span class="s2">"light"</span><span class="w"> </span><span class="p">},</span>
+<span class="p">});</span>
+</code></pre></div>
+<p>Provide the <code>agent-lz-status</code> status element. MSAL must use <code>memoryStorage</code> for
+both its regular and temporary caches, <code>storeAuthStateInCookie: false</code>, and no
+PII logging. The selected account must remain active. Tenant and scopes come
+from portal configuration, never the challenge or widget.</p>
+<p>The helper handles the named recovery notification, fetches validated claims
+through authenticated <code>POST /copilot/auth/recovery</code>, and displays an explicit
+portal sign-in button. After MSAL verification, it completes recovery with the
+fresh UI token and remounts the widget without sending a message. Recovery
+tickets expire after 180 seconds. Ordinary source denials do not start this
+interaction. Do not send embedded users through standalone OAuth or replay
+failed turns. Call <code>stopRecovery()</code> before the logout/account-switch sequence
+below. Keep tokens and claims out of URLs, local storage and portal logs.</p>
+<p>Native citation downloads use authenticated principal/session-bound selectors
+and recheck source access on each click. Shared Blob/ADLS downloads also need
+Storage delegated consent and user source permissions.
+See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>.
+Anonymous sessions cannot redeem these selectors.</p>
 <p>Session lifetime ends at the earlier of token expiry and
 <code>CHAINLIT_COPILOT_SESSION_TTL_SECONDS</code> (default 3600 seconds). It has no silent
 standalone OAuth refresh. Logout/account switching requires widget unmount,

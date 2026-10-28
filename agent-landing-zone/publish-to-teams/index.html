@@ -2273,9 +2273,10 @@ channel. Microsoft 365 processes publishing metadata and conversations under
 its own compliance and data-residency commitments. Validate how the agent
 authenticates users and enforces data permissions in both Teams and
 Microsoft 365 Copilot before rollout.</p>
-<p>The Agent Application's default hosted runtime has a protected-retrieval
-integration gap described in the Deploy full stack runbook. Channel
-publication does not resolve it or prove per-user document authorization.</p>
+<p>The Agent Application UI performs a separate delegated Search exchange.
+Channel publication does not automatically reproduce that credential path
+or prove per-user document authorization. Validate the channel's supported
+delegation before admitting protected data.</p>
 </div>
 <h2 id="procedure">Procedure</h2>
 <p>Complete Steps 1-4 in order, then run all client and configuration checks under
@@ -2659,7 +2660,7 @@ agent uses in each client and review the
 before rollout.</p>
 <p>Channel support does not add upload or image-generation handlers to the
 supplied Agent Application. Its <a href="../multimodality/">images and voice</a>
-contract and protected-retrieval integration gate still apply.</p>
+contract and protected-retrieval authorization requirements still apply.</p>
 </div>
 <h3 id="update-or-stop-publication">Update or stop publication</h3>
 <p>Use the following actions to maintain the published agent. If your PowerShell

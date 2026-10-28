@@ -1953,15 +1953,15 @@ the <a href="../deploy-full-stack/">Deploy full stack runbook</a>.</p>
 in preview. The source can participate in a Foundry IQ knowledge base called by
 Foundry Agent Service. Preview status does not require a custom ingestion
 pipeline.</p>
-<p><strong>The accelerator does not provide a configuration-only hosted integration.</strong>
-Its template emits a <code>workIQ</code> source without the app-authentication properties
-required by the current service contract. Its connector uses the generic
-source-authorization header, and its hosted entrypoint supplies no delegated
-user context. Source registration, token delivery and connector authentication
-need coordinated implementation before this path can work.</p>
-<p><code>WORK_IQ_ENABLED</code> and <code>WORK_IQ_KNOWLEDGE_SOURCE_NAME</code> select the source in the
-shipped connector; they do not supply the missing integration.
-<a href="../foundry-iq/">Foundry IQ</a> explains the hosted identity integration gap.</p>
+<p>The supplied source template includes the app-authentication contract and the
+UI/hosted path keeps Work IQ's app-audience assertion separate from the Search
+token. No custom retrieval connector is required. Administrator registration,
+consent, federation and billing remain prerequisites.</p>
+<p>Enable the named source with <code>WORK_IQ_ENABLED</code> and
+<code>WORK_IQ_KNOWLEDGE_SOURCE_NAME</code>, configure the identity values below, and select
+<code>FOUNDRY_IQ_API_VERSION=2026-08-01-preview</code>. Missing required settings or
+unverified consent stop provisioning instead of silently removing the source.
+<a href="../foundry-iq/">Foundry IQ</a> explains the integrated identity boundary.</p>
 <p><span id="prepare-the-tenant"></span></p>
 <h2 id="tenant-and-governance-requirements">Tenant and governance requirements</h2>
 <p>The <a href="https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/enable-work-iq">Work IQ tenant guide</a>
@@ -1988,6 +1988,31 @@ Preview functionality has no SLA and is not recommended for production.</p>
 <code>workIQParameters.entraAppAuthentication</code>, including the app's client ID and
 federated credential object ID. The tenant ID is required for a cross-tenant
 app registration. These are distinct Entra objects, not source names.</p>
+<table>
+<thead>
+<tr>
+<th>Runtime setting</th>
+<th>Required value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WORK_IQ_APPLICATION_ID</code></td>
+<td>Work IQ app's application/client ID; the bundled UI requires the same value as <code>OAUTH_AZURE_AD_CLIENT_ID</code>.</td>
+</tr>
+<tr>
+<td><code>WORK_IQ_FEDERATED_CREDENTIAL_ID</code></td>
+<td>Object ID returned when creating the app's federated credential, not the Search principal ID or credential name.</td>
+</tr>
+<tr>
+<td><code>WORK_IQ_TENANT_ID</code></td>
+<td>App tenant ID when different from Search's tenant; otherwise optional. It must match the bundled UI's OAuth tenant.</td>
+</tr>
+</tbody>
+</table>
+<p>These are nonsecret UUIDs, published with label <code>agent-lz</code> when explicitly
+supplied as deployment environment inputs. They do not create the Entra objects
+or grant tenant consent.</p>
 <p>The customer-owned app exposes <code>access_as_user</code> and has the delegated
 <code>WorkIQAgent.Ask</code> permission with administrator consent. A federated credential
 allows the Search managed identity to authenticate as that app without storing
@@ -2004,10 +2029,13 @@ signed-in user's assertion:</p>
   user token or the agent's managed-identity token is not a substitute.</li>
 </ul>
 <p>The <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq#set-up-microsoft-entra-authentication">official authentication procedure</a>
-defines registration, federation and client consent. The shipped template and
-connector do not implement that complete contract. A reviewed
-<a href="../build-your-own-app/">custom application</a> needs trusted per-user assertion
-delivery and matching registration/request changes, not runtime flags alone.
+defines registration, federation and client consent. For the bundled UI, use
+its OAuth app as the Work IQ application: expose <code>access_as_user</code>, grant
+<code>WorkIQAgent.Ask</code> and configure Search federation on that registration.
+The built-in path validates and forwards the original app-audience assertion
+through <code>x-client-work-iq-assertion</code>; it never substitutes the Search token or
+invokes Work IQ as the workload. It does not exchange an assertion for a
+separate Work IQ app; mismatched application or UI-tenant settings fail closed.
 Bearer tokens must stay out of prompts, history and logs.</p>
 <p><span id="verify-before-connecting-users"></span>
 <span id="diagnose-or-back-out"></span></p>
@@ -2023,8 +2051,8 @@ deleting shared tenant objects. Revocation of pilot-only grants is a separate,
 authorized action.</p>
 <p><span id="direct-work-iq-mcp-is-different"></span></p>
 <p>The separate <a href="https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/mcp/overview">Work IQ MCP product</a>
-exposes callable tools. It is not the <code>workIQ</code> knowledge source or a remedy for
-the hosted identity gap.</p>
+exposes callable tools. It is separate from the <code>workIQ</code> knowledge source and
+does not replace this source's consent or delegated assertion requirements.</p>
 
 
 

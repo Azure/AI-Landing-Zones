@@ -1982,7 +1982,7 @@ This page explains capability boundaries; the
 </tr>
 <tr>
 <td>Conversation PDF</td>
-<td>Optional Agent App Ingestion processes uploads; hosted retrieval also needs the owner/identity integration described below.</td>
+<td>Optional Agent App Ingestion processes uploads; native Search permissions and a conversation filter authorize hosted retrieval.</td>
 </tr>
 <tr>
 <td>Screenshot or standalone image</td>
@@ -2020,9 +2020,9 @@ The rendered source's model binding and extracted diagram content are the
 evidence of successful processing, not the model name alone.</p>
 <p>The ingestion identity's source/model access is independent of the user's
 retrieval permissions. Private connectivity follows
-<a href="../network-isolation/">Network isolation</a>. Protected hosted retrieval still
-requires the <a href="../application-auth/#3-verify-the-retrieval-identity-boundary">identity integration</a>
-and allow/deny evidence; image extraction does not provide it.</p>
+<a href="../network-isolation/">Network isolation</a>. Protected hosted retrieval uses the
+<a href="../application-auth/#3-verify-the-retrieval-identity-boundary">integrated delegated identity path</a>
+and still needs allow/deny validation; image extraction does not authorize users.</p>
 <p><span id="attach-a-pdf-to-a-conversation"></span></p>
 <h2 id="conversation-pdfs">Conversation PDFs</h2>
 <p><code>DEPLOY_INGESTION_CONTAINER_APP</code> defaults to <code>false</code>, so fresh deployments hide
@@ -2031,18 +2031,21 @@ attachments, as described in <a href="../ingestion/">Ingestion and conversation 
 <p>With a native Blob primary source, conversation retrieval requires
 <code>FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true</code> and provisioned
 <code>FOUNDRY_IQ_CONVERSATION_KNOWLEDGE_SOURCE_NAME</code>. The name identifies a Search
-knowledge source, not a URL or conversation ID. Its upload filter requires the
-pinned <code>2026-05-01-preview</code> API. Missing or failed upload sources can be skipped;
-shared-corpus retrieval can continue.</p>
+knowledge source, not a URL or conversation ID. Keep the source and retrieval
+API settings compatible with the configured knowledge base. A missing or failed
+configured upload source stops required retrieval rather than silently returning
+only shared-corpus results.</p>
 <p>The UI needs an established hosted conversation ID and an eligible signed-in
 session. It accepts at most five PDFs, 15 MiB each and 25 MiB combined.
 Anonymous embedded sessions cannot upload.</p>
-<p>Processing confirmation does not
-prove retrieval isolation: the hosted entry point supplies no authenticated
-owner context to the default connector, so the native Blob conversation-upload
-source is skipped. Working protected conversation retrieval requires a reviewed
-owner-identity integration, delegated retrieval authorization and cross-user
-validation.</p>
+<p>The UI validates the authenticated uploader's object ID before ingestion.
+Every uploaded chunk receives that user's ACL and the hosted conversation ID;
+group and RBAC grants remain empty. Native Search evaluates that ACL using the
+delegated Search token, while an additional conversation filter prevents results
+from other conversations. The runtime does not treat an opaque hosted partition
+key as an uploader identity or decode the forwarded token to invent one.
+Processing confirmation alone is not retrieval-isolation evidence: test both
+the uploader and a different user, including citations and download attempts.</p>
 <p>Agent App Ingestion's separate <code>MULTIMODAL</code> setting controls figure extraction
 and captioning in its custom pipeline. It does not enable direct screenshot
 input. Scanned or diagram-only PDFs depend on the extracted content.</p>

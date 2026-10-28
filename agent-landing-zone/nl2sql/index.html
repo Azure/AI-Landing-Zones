@@ -2000,9 +2000,9 @@
 <p><strong>Structured Query Language (SQL)</strong> queries and changes database tables.
 This integration permits only read-only queries.</p>
 <p>Structured-data grounding can connect a Fabric data agent to a Foundry IQ
-knowledge base. Agent Application supplies connector code, not a complete
-hosted SQL integration. Delegated identity and response compatibility require
-additional validation before protected data can be exposed.
+knowledge base. Agent Application integrates that route with delegated
+Search authorization, compatible source configuration and response parsing.
+Fabric still owns query execution and the user's access to its data.
 This is a concept page; deployment follows the
 <a href="../deploy-full-stack/">Deploy full stack runbook</a>.</p>
 <p><span id="choose-the-supported-route"></span></p>
@@ -2034,23 +2034,21 @@ The source supports <code>low</code> or <code>medium</code> retrieval reasoning 
 <a href="../fabric-iq/">Fabric integration</a> describes the bindings and
 <a href="../configuration/">Deployment settings</a> identifies setting ownership.</p>
 <h3 id="identity-and-api-boundaries">Identity and API boundaries</h3>
-<p>The connector needs service authentication and a separate Search-audience
-delegated user token for remote-source authorization. The supplied hosted
-entry point provides neither a user bearer nor authenticated user context to
-default retrieval.</p>
-<p>Required-user retrieval can fail before the source is
-called; the remote-source connector itself skips this source when its
-delegated token is absent. UI sign-in and Foundry invocation do not close that gap.
+<p>The connector uses workload authentication for Search transport and a separate
+Search-audience delegated token for the user's source authorization. The UI
+obtains that token from the authenticated user's current assertion; Foundry
+forwards it to the hosted runtime, which sends the raw token in
+<code>x-ms-query-source-authorization</code>. It is not exchanged again in the container.</p>
+<p>Missing delegation or a failed required source stops retrieval; the source is
+not skipped and the connector does not retry as an application identity.
 <a href="../application-auth/">Agent Application access</a> explains the required
-authenticated integration.</p>
-<p>The supplied parser expects <code>dataAgentAnswer</code> and <code>dataAgentRawData</code>.
-The platform and orchestrator pin <code>2026-05-01-preview</code>. The service contract
-also documents <code>fabricAnswer</code> and <code>fabricEmbeddedResources</code> with
-<code>2026-08-01-preview</code>. The parser's separate ontology branch can read
-<code>fabricAnswer</code>, but does not handle <code>fabricEmbeddedResources</code> and classifies
-that answer as ontology content. Compatibility requires a validated API,
-parser and response combination, including table/chart handling. Changing
-the API setting alone does not implement that compatibility.</p>
+sign-in and consent.</p>
+<p>Fabric requires the explicit <code>FOUNDRY_IQ_API_VERSION=2026-08-01-preview</code> contract.
+Provisioning binds the configured planning model and selects <code>low</code> retrieval
+reasoning for a bound Fabric source. The connector parses <code>fabricAnswer</code> and
+textual <code>fabricEmbeddedResources</code> as data-agent results, retaining the source
+identity in citations. This provides textual grounding, not an interactive
+table/chart viewer or direct SQL execution in the hosted container.</p>
 <p><span id="run-a-read-only-pilot"></span></p>
 <h2 id="validation-boundary">Validation boundary</h2>
 <p>A meaningful pilot compares a fixed, known aggregate from an approved table
@@ -2061,13 +2059,13 @@ all affect the result.
 is a separate service procedure, not evidence that hosted integration works.</p>
 <p>Required evidence includes activity from the intended knowledge source,
 correctly parsed results and denial for a user without source access.
-That validation depends on resolving the identity and API boundaries first.
+Use the integrated identity and API settings for that validation.
 Read-only execution prevents writes; it does not itself authorize a caller
 or guarantee a correct answer.</p>
 <p><span id="diagnose-or-undo"></span></p>
 <h2 id="failure-boundaries">Failure boundaries</h2>
-<p>A Fabric answer missing from chat can indicate skipped delegated retrieval,
-an incorrect binding or incompatible response fields. An incorrect aggregate
+<p>A Fabric answer missing from chat can indicate denied consent or source access,
+an incorrect binding or incompatible API settings. An incorrect aggregate
 can instead reflect source schema or business definitions.
 Knowledge-base source references and provisioning inputs share a lifecycle;
 removing a pilot binding does not require deleting tables or other knowledge sources.</p>

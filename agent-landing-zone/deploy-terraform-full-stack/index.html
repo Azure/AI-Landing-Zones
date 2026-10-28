@@ -2106,11 +2106,11 @@ Keep the Python environment active. Hosted deployment needs the Foundry agents
 azd extension and the required authoring/runtime permissions.
 Arrange application sign-in, tenant consent and access to component source
 repositories separately from Azure resource deployment.</p>
-<p>The shared protected-retrieval integration gate still applies: the default
-hosted entrypoint and UI OBO sign-in alone do not provide the complete
-per-user protected Foundry Toolbox retrieval path. Implement and validate that
-path before admitting protected data. Do not replace it with anonymous
-retrieval, service identity or weaker source permissions.</p>
+<p>The bundled hosted path combines user-delegated Foundry invocation with native
+Search permission evaluation. Configure <a href="../application-auth/">UI sign-in, delegated Search consent
+and document authorization</a> before onboarding users.
+Bicep and Terraform use the same application configuration and per-user access
+checks; anonymous or workload identity is not a fallback for source permissions.</p>
 <p>Private deployments need a connected deployment host and, for the remote
 private-registry build path, the approved ACR Tasks VNet pool. The pool does
 not provide private connectivity to the deployment host.

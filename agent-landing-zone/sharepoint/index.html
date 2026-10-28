@@ -1155,6 +1155,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="What is wired into Agent Application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indexed-source-identity-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indexed source identity inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1913,6 +1930,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="What is wired into Agent Application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#indexed-source-identity-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Indexed source identity inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2028,10 +2062,11 @@ principal.</p>
 <h2 id="what-is-wired-into-agent-application">What is wired into Agent Application</h2>
 <p>Native product support does not imply an end-to-end accelerator integration:</p>
 <ul>
-<li><strong>Indexed source:</strong> the template emits <code>indexName</code>, <code>siteUrl</code> and <code>tenantId</code>.
-  The current documented source contract instead uses <code>connectionString</code>,
-  <code>containerName</code>, <code>query</code> and <code>ingestionParameters</code>. Registration needs a
-  reviewed template/API update plus source permissions and consent.</li>
+<li><strong>Indexed source:</strong> the template registers a native source with a secretless
+  federated <code>connectionString</code>, <code>defaultSiteLibrary</code>, an embedding model and
+  native <code>userIds</code>/<code>groupIds</code> permission ingestion. The UI/hosted path carries
+  the delegated Search token. Configure the Entra objects and source permissions
+  below; no custom connector or Agent App Ingestion is required.</li>
 <li><strong>Remote source:</strong> the connector recognizes
   <code>SHAREPOINT_REMOTE_ENABLED</code> and <code>SHAREPOINT_REMOTE_KNOWLEDGE_SOURCE_NAME</code>.
   The source must already exist and belong to the knowledge base. These keys
@@ -2040,19 +2075,34 @@ principal.</p>
   need an explicit application integration. The remote-source settings do not
   attach this tool.</li>
 </ul>
-<p>The accelerator defaults to Search API <code>2026-05-01-preview</code>. Current Microsoft
-source recipes use <code>2026-08-01-preview</code>; a source extension needs compatible
-registration, retrieve requests and response handling, not a version edit alone.
+<p>The default Blob path uses Search API <code>2026-05-01-preview</code>. Indexed SharePoint
+requires <code>FOUNDRY_IQ_API_VERSION=2026-08-01-preview</code> for the integrated source
+contract.
 Platform provisioning can replace manual source references in its managed
 knowledge base.</p>
-<div class="admonition warning">
-<p class="admonition-title">Hosted delegated-user boundary</p>
-<p>The shipped hosted entrypoint supplies empty user context to retrieval.
-The connector cannot forward the delegated user token required for protected
-SharePoint retrieval through that path. UI sign-in and a service managed
-identity do not fill this gap. The native service capability needs a
-reviewed trusted-user integration before hosted Agent Application can use it.</p>
+<div class="admonition important">
+<p class="admonition-title">Source configuration remains a separate requirement</p>
+<p>The built-in UI/hosted path can forward the delegated Search credential.
+That does not create missing permission metadata or grant access to a site.
+Indexed and remote SharePoint still need their documented registration,
+consent and source-specific configuration.
+App-only indexing access is not proof of per-user trimming.</p>
 </div>
+<h3 id="indexed-source-identity-inputs">Indexed source identity inputs</h3>
+<p>Set <code>SHAREPOINT_INDEXED_ENABLED=true</code>, the knowledge-source name, site URL and
+tenant ID. Supply <code>SHAREPOINT_INDEXED_APPLICATION_ID</code> for the ingestion Entra
+app and <code>SHAREPOINT_INDEXED_FEDERATED_CREDENTIAL_APPLICATION_ID</code> for Search's
+managed identity application/client ID. This last value is <strong>not</strong> a federated
+credential object ID. The app must trust the Search identity through federation
+and have the documented SharePoint/Graph permissions and site access.</p>
+<p>The source creates its own index and indexing assets; an operator-supplied
+<code>SHAREPOINT_INDEXED_INDEX_NAME</code> does not name those generated resources.
+Keep native permission ingestion enabled. Verify ACL propagation and both
+Entra-group and SharePoint site-group behavior for your corpus before rollout.</p>
+<p>Network-isolated mode selects private model-endpoint access, which requires a
+supported Search tier and approved model private links. SharePoint Online itself
+is not a Search shared-private-link destination; this does not make the
+Microsoft 365 connection private.</p>
 <p>Remote knowledge-source retrieval uses <code>x-ms-query-source-authorization</code> for the
 Search-audience delegated user token, separately from service authentication.
 It preserves SharePoint permissions and supported Purview controls.

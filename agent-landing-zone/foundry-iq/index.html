@@ -1074,6 +1074,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#delegated-native-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delegated native retrieval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ownership-and-connectivity" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1899,6 +1910,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#delegated-native-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delegated native retrieval
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ownership-and-connectivity" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1997,6 +2019,10 @@ The connector reads runtime values from App Configuration with label <code>agent
 <td><code>foundry_iq</code> selects knowledge-base retrieval in this connector; it does not attach a native agent tool.</td>
 </tr>
 <tr>
+<td><code>RETRIEVAL_AUTH_MODE</code></td>
+<td><code>native_search</code> carries the separately delegated Search credential into native permission enforcement.</td>
+</tr>
+<tr>
 <td><code>KNOWLEDGE_BASE_ENDPOINT</code></td>
 <td>Search service root, such as <code>https://&lt;service&gt;.search.windows.net</code>, not a Foundry project or retrieve URL.</td>
 </tr>
@@ -2025,21 +2051,28 @@ The connector reads runtime values from App Configuration with label <code>agent
 <p>Current Microsoft source examples use contracts beyond the accelerator's
 default API. Adopting a source requires compatibility across registration,
 retrieve requests and response parsing, not an API-version edit alone.</p>
-<div class="admonition warning">
-<p class="admonition-title">Hosted user authorization is not wired end to end</p>
-<p>The shipped hosted entrypoint supplies empty user context to the retrieval
-strategy. It does not forward the delegated user token required by the
-connector's OBO path. Authenticated retrieval fails closed without that
-token. Native service support and UI sign-in do not resolve this boundary.
-Protected retrieval requires a reviewed integration that carries validated
-per-user context from invocation to the selected retrieval tool.</p>
-</div>
-<p>That integration must retain Foundry's trusted call context, service
-authentication and each source's permission enforcement. Tokens do not belong
-in prompts, chat history or user-supplied tool arguments.
-<a href="../application-auth/">Application authentication</a> and the
-<a href="../build-your-own-app/">custom application runbook</a> cover the surrounding
-application work.</p>
+<h2 id="delegated-native-retrieval">Delegated native retrieval</h2>
+<p>The supplied UI and hosted strategy integrate the user authorization path.
+The UI obtains a delegated Search token through OBO and forwards it with
+<code>x-client-search-token</code>; the hosted connector passes the raw token in
+<code>x-ms-query-source-authorization</code>. The connector's workload credential
+authenticates transport to Search, not the user's entitlement to documents.
+This path needs no customer-written Toolbox integration.</p>
+<p>Native permission filtering is enabled for the application index's user,
+group and RBAC scope fields. Indexing must populate the appropriate metadata;
+turning on filtering cannot reconstruct missing ACLs. Conversation uploads
+also require their conversation/uploader restrictions.</p>
+<p>Source contracts differ. Work IQ uses a distinct app-audience assertion and
+<code>x-ms-query-work-iq-source-authorization</code>, not the Search token. Indexed
+SharePoint requires compatible permission-ingestion configuration; Fabric
+sources require compatible preview APIs and user permissions. A source
+registration or runtime connector alone does not establish that the complete
+deployment combination is supported.</p>
+<p>Tokens do not belong in prompts, chat history, recovery checkpoints or
+user-supplied tool arguments. Required retrieval fails closed if credentials or
+source authorization are unavailable.
+<a href="../application-auth/">Application authentication</a> describes consent and
+allowed/denied-user acceptance.</p>
 <p><span id="apply-a-runtime-change-safely"></span></p>
 <h2 id="ownership-and-connectivity">Ownership and connectivity</h2>
 <p>Platform Search setup reconciles named sources and knowledge bases from
@@ -2062,7 +2095,8 @@ before sensitive ingestion. See <a href="../network-isolation/">Network isolatio
 <p>Acceptance includes successful source indexing where applicable, a known-answer
 query with the expected document reference, and separate allowed/denied-user
 tests. A denied result must exclude the restricted document and its citation.
-A missing-token failure calls for identity integration work, not anonymous
+A missing-token failure calls for checking the compatible UI/runtime
+configuration, downstream consent and supported header path, not anonymous
 retrieval or broader managed-identity grants.</p>
 <p>Configuration is cached in the running application. Approved changes require
 the <a href="../deploy-full-stack/#redeploy-applications-only">Deploy full stack runbook</a>

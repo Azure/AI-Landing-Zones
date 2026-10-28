@@ -951,6 +951,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#protected-citation-downloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected citation downloads
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authorization-evidence" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2043,6 +2054,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#protected-citation-downloads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Protected citation downloads
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#authorization-evidence" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2147,6 +2169,11 @@ setting belong to the intended environment.</p>
 on two different APIs, even though their scope names are the same.
 Have the Entra administrator grant the consent required by tenant policy
 before onboarding users.</p>
+<p>Protected native retrieval also needs delegated Search consent for
+<code>https://search.azure.com/.default</code>. Shared Blob/ADLS citation downloads need
+delegated Azure Storage <code>user_impersonation</code> consent for
+<code>https://storage.azure.com/.default</code>. These permissions do not grant the user
+access to source documents; retain the source's RBAC and ACL checks.</p>
 <p>For the standard Foundry-resource authorization scheme (<code>AzureRbac</code>, also
 known as <code>Entra</code>), the downstream scope is <code>https://ai.azure.com/.default</code>.
 Confirm the deployed endpoint's audience with its owner; do not substitute
@@ -2184,7 +2211,8 @@ and rotation owner. Do not copy the value into source, shell commands or logs.</
 reference</strong> named <code>OAUTH_AZURE_AD_CLIENT_SECRET</code>, label <code>agent-lz</code>, pointing
 to that stored secret. Select the Key Vault reference type, not an ordinary
 string containing a secret or URI. Keep a stable, securely generated
-<code>CHAINLIT_AUTH_SECRET</code> in Key Vault and publish it as a reference too; do not
+<code>CHAINLIT_AUTH_SECRET</code> of at least 32 UTF-8 bytes in Key Vault and publish it
+as a reference too; do not
 regenerate an existing session-signing secret during a routine update.</p>
 <p>Publish the following values in the same store:</p>
 <table>
@@ -2222,6 +2250,10 @@ regenerate an existing session-signing secret during a routine update.</p>
 <tr>
 <td><code>HOSTED_AGENT_AUTH_MODE</code></td>
 <td><code>user_delegated</code>.</td>
+</tr>
+<tr>
+<td><code>RETRIEVAL_AUTH_MODE</code></td>
+<td><code>native_search</code>, the integrated native permission path; not an anonymous-access switch.</td>
 </tr>
 </tbody>
 </table>
@@ -2280,21 +2312,22 @@ describes downstream consent.</p>
 <p><code>user_delegated</code> rejects a missing user token without service-identity fallback.
 <code>service_identity</code> would make Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.</p>
-<p>The supplied hosted entry point sets <code>user_context={}</code> and does not supply the
-user's bearer token to <code>maf_lite</code> retrieval. It performs no automatic retrieval
-OBO exchange. With <code>ALLOW_ANONYMOUS=false</code>, required-user retrieval fails
-preflight when that token is unavailable; it does not silently retrieve as a
-service identity. Removing source permission metadata alone does not repair
-this missing-token contract.</p>
-<p><strong>Protected hosted retrieval requires a developer integration.</strong> Foundry's
-<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent">authenticated hosted Toolbox contract</a>
-uses an authenticated <code>FoundryToolbox</code> client and platform-provided call context.
-The default <code>maf_lite</code> code does not consume portal Toolbox configuration.</p>
-<p>A compatible integration must connect the knowledge base through that contract,
-retain the platform caller context, and enforce the knowledge source's
-permissions. <a href="../agent-tools/">Agent tools</a> explains the extension boundary.
-Browser bearer forwarding or fabricated identity/group headers are not a
-substitute.</p>
+<p>With <code>RETRIEVAL_AUTH_MODE=native_search</code>, the supplied UI performs a separate
+OBO exchange for <code>https://search.azure.com/.default</code> from the same authenticated
+UI assertion used for the Foundry exchange. Foundry forwards the resulting
+<code>x-client-search-token</code> to both hosted adapters. The connector supplies that
+raw token in <code>x-ms-query-source-authorization</code>, separately from its workload
+authentication to Search. It does not exchange the Search token again.</p>
+<p>This built-in path does not require customer-written Toolbox integration or
+forward the browser's Authorization header unchanged. Native Search evaluates
+document permissions; caller-provided identity/group IDs are not entitlement
+evidence. The transport identity's Search role alone does not grant the user
+access to protected sources.</p>
+<p>Required retrieval rejects a missing credential before execution. Tokens stay
+request-local, outside prompts, conversation history and recovery checkpoints.
+Consent, Conditional Access and source denial must be resolved at their own
+boundary, not by stripping the credential or retrying as a service.
+<a href="../agent-tools/">Agent tools</a> explains the separate Toolbox extension boundary.</p>
 <p>The protected native Blob ingestion default is
 <code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=["rbacScope"]</code>. Explicit <code>[]</code> removes
 permission metadata for the supported intentionally shared Blob corpus.
@@ -2302,6 +2335,24 @@ That provides shared-source access, not per-user filtering.
 <a href="../foundry-iq/">Foundry IQ</a> and
 <a href="https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-retrieve">knowledge-base retrieval permissions</a>
 describe source-specific requirements.</p>
+<h2 id="protected-citation-downloads">Protected citation downloads</h2>
+<p>Native hosted citations use <code>/api/download/{grant_token}</code> on the authenticated
+UI rather than public Blob links or Blob SAS. The signed selector is bound to
+the principal and UI session; it is not a document permission. Every download
+checks the current identity and source authorization again.</p>
+<p>Shared Blob/ADLS documents use the current user's Storage OBO token. The user
+needs actual Blob RBAC or ADLS ACL access, even if retrieval returned a citation.
+Missing Storage consent or source access never falls back to the UI identity.</p>
+<p>Conversation uploads instead require a fresh native Search check for the exact
+document URL, conversation and authenticated uploader before the UI workload
+reads the Blob. Deployment assigns the bundled UI Search Index Data Reader
+through its <code>retrieval-reader</code> capability profile for this transport check.
+Its existing Blob transport grants do not authorize a user by themselves.
+Missing ownership, scope or an exact authorized result denies the download.</p>
+<p>The route accepts only configured storage locations and enforces bounded
+streaming. Embedded sessions retain their own principal/session boundary.
+External source links, such as SharePoint citations, remain subject to the
+source's authentication rather than being proxied as arbitrary Blob downloads.</p>
 <p><span id="4-run-an-allowdeny-test"></span></p>
 <h2 id="authorization-evidence">Authorization evidence</h2>
 <p>Protected retrieval is only established by tests through the deployed
@@ -2336,6 +2387,14 @@ An answer without a citation is not sufficient evidence of denial.</p>
 <td>Only its authorized user retrieves it; denied retrieval contains no document ID, excerpt or citation, including exact-title questions.</td>
 </tr>
 <tr>
+<td>Citation download</td>
+<td>A permitted user downloads the cited document; another user, an expired session or a revoked source permission cannot redeem its grant.</td>
+</tr>
+<tr>
+<td>Uploaded document</td>
+<td>Only the authenticated uploader can retrieve or download it in its conversation; knowing a document URL or conversation ID is insufficient.</td>
+</tr>
+<tr>
 <td>Conversation ownership</td>
 <td>A different user cannot open the owner's history.</td>
 </tr>
@@ -2351,6 +2410,23 @@ concern UI scopes, tenant and credential lifetime. Invocation denial can instead
 indicate missing downstream consent or Foundry user/agent access.
 Tool consent is separate from UI consent, as described in
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication">tool authentication</a>.</p>
+<p>Initial UI token acquisition and downstream Search failures retain distinct
+authentication outcomes. Both hosted adapters preserve a bounded, validated
+claims challenge from the configured Search response. Provider response bodies,
+authorization URLs and arbitrary resource hints are not recovery instructions.</p>
+<p>The UI offers explicit interactive authentication rather than retrying the
+failed turn. Standalone chat uses the configured tenant, UI scopes and OAuth
+callback. Its encrypted recovery context expires after 180 seconds and is bound
+to the current principal and session. The existing <code>CHAINLIT_AUTH_SECRET</code> must
+contain at least 32 UTF-8 bytes; no additional secret or redirect registration
+is needed. Existing standalone sessions may need a fresh ordinary login.
+Gateways must preserve <code>/api/auth/recovery</code> and the normal OAuth routes.
+Embedded Entra sessions use the portal's MSAL and
+authenticated bootstrap path, not a standalone sign-in redirect.</p>
+<p>After verification, submit a new turn. Failed or partially streamed turns are
+never replayed automatically. A source <code>403</code> without a usable claims challenge
+remains an authorization denial; signing in cannot grant missing document
+permissions. Keep claims out of URLs, logs, conversation history and checkpoints.</p>
 <p>A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller
 with a service identity or disable authentication.</p>

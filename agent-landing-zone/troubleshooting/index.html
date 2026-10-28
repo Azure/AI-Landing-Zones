@@ -2143,6 +2143,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#a-protected-citation-download-is-denied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A protected citation download is denied
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#the-orchestrator-returns-http-422" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2792,6 +2803,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#a-protected-citation-download-is-denied" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A protected citation download is denied
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#the-orchestrator-returns-http-422" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3281,7 +3303,7 @@ An externally populated index must be named explicitly where required.</p>
 <p><strong>Verify:</strong> Confirm the effective <code>agent-lz</code> key and intended UI revision.
 With ingestion disabled, attachment controls must be hidden and direct/stale
 uploads rejected. Verify text chat and retrieval separately, including the
-<a href="#protected-retrieval-fails-after-hosted-sign-in">protected-retrieval integration gate</a>.
+<a href="#protected-retrieval-fails-after-hosted-sign-in">delegated retrieval checks</a>.
 Ingestion selection is not a source of delegated user or owner context.</p>
 <p>If ingestion is selected, confirm the selection is <code>true</code> and test only
 eligible authenticated uploads. Processing success does not prove authorized
@@ -3443,17 +3465,45 @@ Then deploy the application and run its authenticated task and access checks.</p
 <p><strong>Symptom:</strong> UI login and a greeting work, but protected Foundry IQ retrieval
 lacks delegated user context, is denied or omits documents.</p>
 <p><strong>Diagnose:</strong> Distinguish UI-to-Foundry OBO from downstream source authorization.
-The hosted gateway does not forward the caller's <code>Authorization</code> header.
-The shipped <code>maf_lite</code> direct connector does not complete the authenticated
-Toolbox integration needed for protected per-user retrieval.</p>
-<p><strong>Correct:</strong> Stop protected-data rollout and have a developer implement and
-validate the supported hosted identity integration. Follow the capability gate
-in the <a href="../deploy-full-stack/#prerequisites">Deploy full stack runbook</a>.
-Do not select another strategy as a workaround, invent identity headers, enable
-anonymous retrieval or replace the user with a service identity.</p>
+The hosted gateway does not forward the caller's <code>Authorization</code> header
+unchanged. The built-in native path instead uses a separately exchanged Search
+token in <code>x-client-search-token</code>, followed by
+<code>x-ms-query-source-authorization</code> at Search.</p>
+<p><strong>Correct:</strong> Check that UI and hosted runtime are the matching implementation
+with <code>RETRIEVAL_AUTH_MODE=native_search</code>. Check delegated Search consent,
+the authenticated UI assertion/refresh, supported custom-header forwarding,
+source permission metadata and private connectivity. A transport-role denial
+and a user's source denial are different failures. Resolve consent or
+Conditional Access through the UI's explicit authentication recovery action.
+Standalone sessions complete the configured OAuth callback; embedded sessions
+use portal MSAL and authenticated bootstrap. Then submit a new turn: the failed
+turn is not automatically replayed. A source <code>403</code> without usable claims
+requires source-access diagnosis, not repeated sign-in. Do not log tokens or
+claims challenges.
+Do not invent identity headers, enable anonymous retrieval or replace the
+user with a service identity. Stop sensitive-data rollout until denial works.</p>
 <p><strong>Verify:</strong> Use two users with different source permissions and confirm
-permitted retrieval and denial through the actual UI or channel. If that
-integration is absent, mark the capability <strong>blocked</strong>.</p>
+permitted retrieval and denial through the actual UI or channel, including
+references and downloads. A unit test or successful greeting is not
+authorization evidence for a deployed source.</p>
+<h4 id="a-protected-citation-download-is-denied">A protected citation download is denied</h4>
+<p><strong>Diagnose:</strong> Distinguish shared-source Storage authorization from upload
+authorization. Shared Blob/ADLS reads require the current user's Storage OBO,
+delegated <code>user_impersonation</code> consent and source RBAC/ACLs. Uploads require a
+fresh Search-authorized match for the exact document, conversation and uploader,
+plus the UI's Search transport role. Knowing the URL or possessing an old
+signed selector is not sufficient.</p>
+<p><strong>Correct:</strong> Sign in again after session expiry and resolve consent or source
+permissions at their own boundary. Confirm the configured storage locations,
+Search index and bundled UI <code>retrieval-reader</code> profile. The native route
+limits a download to 100 MiB and 120 seconds; upload authorization examines
+at most 1,000 Search rows within 4 MiB and 30 seconds. An unverified target
+beyond those bounds is denied, not read with elevated access.
+Do not re-enable the legacy reader, mint SAS or replace user Storage access
+with workload access to make the download succeed.</p>
+<p><strong>Verify:</strong> Repeat allowed/denied-user, expiry and permission-revocation checks
+through the authenticated UI route, including an uploaded document.
+See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>.</p>
 <h4 id="the-orchestrator-returns-http-422">The orchestrator returns HTTP 422</h4>
 <p><strong>Symptom:</strong> The agent rejects a request with validation details.</p>
 <p><strong>Diagnose:</strong> The stateless <strong>Responses 2.0.0</strong> adapter rejects non-null
@@ -3596,8 +3646,8 @@ diagnose with request references and dependency status.</p>
 <li>Confirm the intended source commit, immutable image and routed hosted version
    or Container App revision. A placeholder response is not application health.</li>
 <li>Test user sign-in, the required tool or retrieval operation, and allowed and
-   denied access to protected data. Keep unresolved runtime integration gates
-   explicitly blocked.</li>
+   denied access to protected data. Treat an unexpected allow as a failure;
+   preserve source permissions while correcting it.</li>
 <li>Record sanitized timestamps, request IDs, statuses and the scoped correction.
    Do not claim success from a green hook exit alone.</li>
 </ol>

@@ -2376,10 +2376,10 @@ procedure for changing runtime layouts.</p>
 <div class="admonition warning">
 <p class="admonition-title">Automation does not close runtime capability gaps</p>
 <p>Keep <code>maf_lite</code> and Foundry IQ as the default runtime choices. The
-protected-retrieval gate in the Deploy full stack runbook applies to CI/CD.
-Do not promote until the developer-owned identity integration and real-user
-allow/deny tests pass. Pipeline settings, weaker source permissions and
-successful greetings are not substitutes.</p>
+source-permission acceptance in the Deploy full stack runbook applies to
+CI/CD. The integrated native path still needs downstream consent and
+real-user allow/deny evidence before promotion. Pipeline settings, weaker
+source permissions and successful greetings are not substitutes.</p>
 </div>
 <h4 id="runner-requirements">Runner requirements</h4>
 <p>Create authorized <strong>Linux self-hosted Azure Pipelines agent pools</strong>, with a runner

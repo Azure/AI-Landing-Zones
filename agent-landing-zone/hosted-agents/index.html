@@ -2256,9 +2256,11 @@ instead becomes <code>AGENTLZ_IMAGE_DIGEST</code>; it is not interchangeable wit
 <p>The post-deploy hook discovers the runtime principal and grants App Configuration
 Data Reader on the store and Cognitive Services OpenAI User on the Foundry
 account. If <code>AUDIT_HMAC_KEY</code> is a Key Vault reference, the bootstrap plan also
-includes Key Vault Secrets User on that individual secret.</p>
-<p>Source access,
-other secrets and caller permissions are outside this closed bootstrap set.
+includes Key Vault Secrets User on that individual secret. Native retrieval
+also uses Search Index Data Reader scoped to the configured Search resource
+for transport; native user/source authorization remains separate.</p>
+<p>End-user source permissions, other secrets and caller permissions are outside
+this closed bootstrap set.
 Role reconciliation needs scoped role-assignment authority or an authorized
 administrator applying the reviewed plan.
 <a href="../deploy-full-stack/#recover-hosted-runtime-access">Hosted access recovery</a>
@@ -2274,11 +2276,27 @@ user's UI API token for the Foundry audience through OAuth on-behalf-of (OBO),
 without fallback to the UI managed identity.
 <a href="../application-auth/">Agent Application access</a> explains sign-in and consent.
 Successful invocation is not evidence of document-level authorization.</p>
-<p>The hosted container does not automatically receive the user's bearer token
-or authenticated principal. Its code controls model calls, retrieval and tools.
-Portal instructions or tool attachments do not automatically reconfigure
-<code>maf_lite</code>; <a href="../agent-tools/">Agent tools</a> describes the native Toolbox
-integration boundary.</p>
+<p>Foundry does not forward the invocation Authorization header unchanged.
+For native protected retrieval, the UI separately acquires a delegated Search
+token and forwards it in <code>x-client-search-token</code>. Both hosted adapters keep it
+request-local and the connector passes it to native Search permission
+enforcement. Missing required credentials fail before retrieval; they never
+trigger a service-identity retry.</p>
+<p>Downstream Search authentication challenges terminate the current turn with a
+safe typed failure. The UI can request explicit interactive verification using
+the bounded claims; it does not replay the failed or partially streamed turn.
+A source denial without usable claims remains denied.
+See <a href="../application-auth/#recover-safely">authentication recovery</a>.</p>
+<p>Native citation downloads stay on the authenticated UI and recheck source
+authorization at redemption. Shared Blob/ADLS reads use Storage OBO;
+conversation uploads require a fresh native Search ownership check before
+workload Blob transport. The bundled UI's <code>retrieval-reader</code> profile supplies
+the Search transport role, not the user's entitlement.
+See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>
+for consent and source-access requirements.</p>
+<p>The container's code still controls model calls, retrieval and tools. Portal
+instructions or tool attachments do not automatically reconfigure <code>maf_lite</code>;
+<a href="../agent-tools/">Agent tools</a> describes the separate Toolbox extension boundary.</p>
 <h3 id="protocol-and-caller-access">Protocol and caller access</h3>
 <ul>
 <li><strong>Responses 2.0.0 is stateless.</strong> Non-null <code>previous_response_id</code> returns

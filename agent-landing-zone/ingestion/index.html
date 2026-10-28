@@ -1941,10 +1941,10 @@ metadata is <code>["rbacScope"]</code>; ingestion permissions and the querying u
 authorization remain separate requirements.
 Microsoft's <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-blob">Blob knowledge-source guide</a>
 describes the managed pipeline and service requirements.</p>
-<p>Successful ingestion does not establish protected retrieval in the hosted
-application. The shipped hosted entrypoint supplies empty user context to the
-retrieval strategy, so the connector cannot forward an on-behalf-of (OBO) token.
-This limitation affects protected Blob retrieval as well as the sources below.</p>
+<p>Successful ingestion alone does not establish protected retrieval. The built-in
+UI/hosted native path forwards a separately delegated Search token; ingestion
+must still record correct permissions and acceptance must prove allow/deny
+behavior. <a href="../application-auth/">Application access</a> describes the OBO contract.</p>
 <p><span id="sharepoint-is-a-separate-integration"></span></p>
 <p>Foundry also supports native SharePoint options, including previews:</p>
 <table>
@@ -1969,17 +1969,21 @@ This limitation affects protected Blob retrieval as well as the sources below.</
 </tr>
 </tbody>
 </table>
-<p>These product options are not all wired into Agent Application. The indexed
-SharePoint template needs a source-contract update; remote retrieval and native
-tools need their own connection, consent and trusted delegated-user integration.
+<p>These product options are not all wired into Agent Application. The native
+indexed SharePoint path includes source registration, permission ingestion
+and delegated Search authorization. Remote retrieval and native tools need
+their own connection, consent and trusted delegated-user integration.
 Native tool calls require the user's identity, not application-only access.
-<a href="../sharepoint/">SharePoint</a> explains the options and current integration gaps.
+<a href="../sharepoint/">SharePoint</a> explains the supported bindings and administrator
+prerequisites.
 Preview status is a governance consideration, not a reason to assume custom
 ingestion is required.</p>
 <p>The accelerator's ingestion-free validation accepts native Blob or an explicitly
-bound, independently populated Search index. A SharePoint-only replacement needs
-source-specific integration and authorization validation; a product-supported
-source is not automatically a supported deployment selection.</p>
+bound, independently populated Search index as its primary selection. Native
+indexed SharePoint is an additional configured knowledge source; enabling it
+does not require Agent App Ingestion or replace the primary pattern setting.
+Other Microsoft product options are not automatically supported deployment
+selections in the accelerator.</p>
 <p><span id="conversation-uploads-are-not-native-source-ingestion"></span></p>
 <h2 id="2-conversation-file-uploads">2. Conversation file uploads</h2>
 <p>A chat attachment is processed for one conversation, not added to the shared
@@ -1991,25 +1995,30 @@ The flag is invalid without the ingestion app.</p>
 <p>With <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>, Agent App UI hides attachment
 controls and rejects server uploads and client preflight before resolving an
 ingestion endpoint or Dapr fallback. Setting it to <code>true</code> permits the upload
-path, but does not make authenticated retrieval work automatically.</p>
+path. Retrieval uses the built-in delegated Search route and native index
+permissions; enabling processing does not grant access to uploaded content.</p>
 <p>The UI's attachment controls require authenticated access. Anonymous Copilot
 sessions cannot upload. The chat handler accepts PDFs, up to five files,
 15 MiB per file and 25 MiB total. Hosted uploads require the UI's existing hosted
 conversation identifier. A text turn establishes it in the non-continuity hosted
 path; continuity-enabled chat does not populate that upload identifier.</p>
-<p>The upload payload can carry the uploader's object ID as permission metadata.
-That is not sufficient by itself: the index must enforce those permissions and
-retrieval must preserve conversation scope and trusted user authorization.</p>
+<p>The UI requires a valid object ID from its authenticated uploader context before
+calling ingestion. Ingestion stamps every chunk with that uploader in
+<code>metadata_security_user_ids</code>, an empty <code>metadata_security_group_ids</code> array,
+an empty <code>metadata_security_rbac_scope</code> and the conversation ID. The platform
+enables native permission filtering over these fields.</p>
 <p><strong>Conversation scope</strong> uses the hosted backend's conversation namespace,
 not the local UI thread ID. The same identifier must reach the indexed upload
-and retrieval filter. Retrieval must match both <code>conversationId</code> and the trusted
-uploader in <code>metadata_security_user_ids</code>; the identifier alone grants no access.</p>
-<p>The default hosted entrypoint supplies no authenticated owner, so the native
-Blob conversation-upload source is skipped. The delegated-token gap described
-above also affects protected conversation retrieval. Enabling ingestion does not resolve it.
+and retrieval filter. Native Search authorizes the uploader from the delegated
+Search token and the ingested user ACL; the additional filter restricts results
+to the current <code>conversationId</code>. Neither a conversation ID nor an opaque hosted
+user/partition identifier grants document access.</p>
+<p>Missing required delegation or conversation scope stops retrieval. A configured
+upload source cannot be silently skipped to return only shared-corpus results,
+and a failed source cannot be retried without the user's credential.
 The <a href="../multimodality/#attach-a-pdf-to-a-conversation">conversation PDF reference</a>
-describes source bindings. Hosted use still needs the reviewed
-<a href="../foundry-iq/">Foundry IQ identity integration</a>.</p>
+describes source bindings. <a href="../application-auth/">Application access</a>
+describes the integrated identity path and consent requirements.</p>
 <p><span id="select-the-optional-application"></span>
 <span id="select-agent-app-ingestion"></span>
 <span id="upgrade-and-retirement-safety"></span></p>
@@ -2042,6 +2051,11 @@ Omitting the application does not delete deployed resources, indexed documents
 or identity grants; retirement needs separate authorization.</p>
 <p><span id="authorization-remains-a-design-requirement"></span>
 <span id="related-references"></span></p>
+<p>Native upload downloads repeat authorization through Search for the exact
+document, conversation and authenticated uploader before workload Blob access.
+A signed citation selector or known conversation ID is insufficient.
+Shared-source Blob/ADLS downloads instead use user-delegated Storage access.
+See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>.</p>
 <p>For every path, acceptance includes a document that an allowed user can
 retrieve with its citation and that a denied user cannot retrieve. Source
 permissions, query-time enforcement and private-network connectivity require
