@@ -77,7 +77,7 @@ backing Cosmos DB is retained.
 The workload uses its own virtual network and networking services, without a
 shared platform hub.
 
-[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=c0098084b441)](architecture/media/AI-Landing-Zone-without-platform.png?v=c0098084b441)
+[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
 
 #### With Platform Hub
 
