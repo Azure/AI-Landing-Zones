@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=dbbfae135b86">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2239,22 +2239,30 @@ post-provision procedure, then return here. Deferral leaves application setup
 incomplete and does not bypass earlier private-access checks.</p>
 <h3 id="2-configure-the-gateway-and-authentication">2. Configure the gateway and authentication</h3>
 <p>For an existing hub VPN, ask its administrator for an approved client profile
-and continue to step 3. For a new gateway, follow Microsoft's
+and continue to <a href="#3-connect-dns-and-routes">Connect DNS and routes</a>. A shared
+hub gateway needs no local reservation. For a new gateway, follow Microsoft's
 <a href="https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-point-to-site-resource-manager-portal">P2S certificate setup</a>
 or <a href="https://learn.microsoft.com/azure/vpn-gateway/point-to-site-entra-gateway">P2S Microsoft Entra setup</a>:</p>
 <ol>
-<li>Identify the target VNet from the provisioned environment:
-   <code>azd env get-value VNET_RESOURCE_ID</code>. This is a resource ID, not a VPN server
-   address. Create a route-based VPN gateway with a supported SKU and a
-   subnet named exactly <strong><code>GatewaySubnet</code></strong>. To have the foundation reserve
-   it, set <code>azd env set DEPLOY_GATEWAY_SUBNET true</code> before provisioning;
-   the reservation is opt-in, with default range <code>192.168.2.192/26</code>.
-   Verify the selected range against the sizing in the Microsoft procedure.
-   A shared hub gateway needs no local reservation. Do not attach an NSG, default-route UDR or
-   delegation to <code>GatewaySubnet</code>.
-   Record ownership of the gateway and subnet with the network team
-   before subsequent foundation provisioning.</li>
-<li>In the gateway's <strong>Settings &gt; Point-to-site configuration</strong>, select
+<li>
+<p><strong>Identify the target VNet.</strong> Read it from the provisioned environment:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>VNET_RESOURCE_ID
+</code></pre></div>
+<p>The result is a resource ID, not a VPN server address.</p>
+</li>
+<li>
+<p><strong>Check the gateway subnet.</strong> It must be named exactly <strong><code>GatewaySubnet</code></strong>.
+   To have the foundation reserve it, set
+   <code>azd env set DEPLOY_GATEWAY_SUBNET true</code> <strong>before provisioning</strong>.
+   The reservation is opt-in, with default range <code>192.168.2.192/26</code>.
+   Verify the selected range against the sizing in the Microsoft procedure.</p>
+</li>
+<li><strong>Create the VPN gateway.</strong> Use a route-based gateway with a supported SKU
+   and the selected <code>GatewaySubnet</code>.</li>
+<li><strong>Record ownership.</strong> Agree ownership of the gateway and subnet with the
+   network team before subsequent foundation provisioning.</li>
+<li><strong>Configure Point-to-site access.</strong> In the gateway's
+   <strong>Settings &gt; Point-to-site configuration</strong>, select
    <strong>Configure now</strong> for a new configuration and enter the approved client
    address pool. Choose the tunnel/authentication combination for your clients:<ul>
 <li><strong>Certificate:</strong> upload the public root certificate data; generate and
@@ -2271,10 +2279,15 @@ or <a href="https://learn.microsoft.com/azure/vpn-gateway/point-to-site-entra-ga
    supported certificate/client combination from the Microsoft procedure.</li>
 </ul>
 </li>
-<li>Save the configuration, then select <strong>Download VPN client</strong>. This generates
+<li><strong>Download the client profile.</strong> Save the configuration, then select
+   <strong>Download VPN client</strong>. This generates
    a configuration package, not the client application. Install the supported
    client and import the profile using the matching Microsoft instructions.</li>
 </ol>
+<div class="admonition warning">
+<p class="admonition-title">GatewaySubnet restrictions</p>
+<p>Do not attach an NSG, default-route UDR or delegation to <code>GatewaySubnet</code>.</p>
+</div>
 <p>The gateway administrator controls admission to the VPN. Confirm the approved
 certificate or Entra access policy before distributing client profiles.</p>
 <h3 id="3-connect-dns-and-routes">3. Connect DNS and routes</h3>

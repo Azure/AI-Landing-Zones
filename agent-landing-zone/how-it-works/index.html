@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=dbbfae135b86">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -535,6 +535,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="App Configuration carries runtime settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#who-publishes-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who publishes settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-applications-load-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How applications load settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secrets-and-environment-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets and environment boundaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1982,6 +2021,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="App Configuration carries runtime settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#who-publishes-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Who publishes settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-applications-load-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How applications load settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secrets-and-environment-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets and environment boundaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2243,21 +2321,26 @@ for deployment.</p>
 <h2 id="app-configuration-carries-runtime-settings">App Configuration carries runtime settings</h2>
 <p>Deployment inputs describe what to create. <strong>Runtime settings</strong> describe how
 applications use the resulting services.</p>
+<h3 id="who-publishes-settings">Who publishes settings</h3>
 <p>Provisioning and configuration publish settings to Azure App Configuration
-under the <strong><code>agent-lz</code> label</strong>. The Agent Application loaders also select other
-labels, which can affect <a href="../configuration/#runtime-settings">which setting takes precedence</a>.
-Terraform owns foundation connections and model metadata. Shared defaults
+under the <strong><code>agent-lz</code> label</strong>.</p>
+<p>Terraform owns foundation connections and model metadata. Shared defaults
 seed only missing keys, while the runtime publisher updates its owned settings
-from the declared parameter document and selected environment.
-Labels, content types and Key Vault-reference metadata follow the
-<a href="../configuration/#configuration-ownership-and-declarations">configuration ownership contract</a>.
+from the declared parameter document and selected environment.</p>
+<p>Labels, content types and Key Vault-reference metadata follow the
+<a href="../configuration/#configuration-ownership-and-declarations">configuration ownership contract</a>.</p>
+<h3 id="how-applications-load-settings">How applications load settings</h3>
+<p>The Agent Application loaders also select other labels, which can affect
+<a href="../configuration/#runtime-settings">which setting takes precedence</a>.
 Bootstrap values such as the store endpoint must be
-available before remote configuration can load. Secrets belong in Key Vault
-and are referenced rather than copied into checked-in settings.</p>
+available before remote configuration can load.</p>
+<h3 id="secrets-and-environment-boundaries">Secrets and environment boundaries</h3>
+<p>Secrets belong in Key Vault and are referenced rather than copied into
+checked-in settings.</p>
 <p>The same label is used across environments, so separation depends on distinct
 configuration, identities and data, as described in
-<a href="../configuration/#environment-boundaries">Environment boundaries</a>. Local
-<code>.azure/</code> state is private deployment state, not a source-controlled input file.
+<a href="../configuration/#environment-boundaries">Environment boundaries</a>.</p>
+<p>Local <code>.azure/</code> state is private deployment state, not a source-controlled input file.
 Child workspaces receive copies and need the same protection.
 Terraform's backend and group records are also required for state-scoped
 teardown; output refresh does not replace them.</p>

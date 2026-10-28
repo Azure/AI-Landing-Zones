@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=dbbfae135b86">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2488,7 +2488,23 @@ configuration and deployment are shared.</p>
 <h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
 <p>Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
 orchestrator and native Foundry IQ ingestion and retrieval.</p>
-<p><img alt="The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional." src="../../media/runbooks/deploy-full-stack.png" /></p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Default hosted application</strong></p>
+<ol>
+<li><strong>Application resource group:</strong> Agent App UI runs in Container Apps,
+   alongside Container Registry, App Configuration and Key Vault.</li>
+<li><strong>Foundry resource group:</strong> the UI calls the hosted orchestrator over HTTPS.
+   The orchestrator uses the Foundry IQ knowledge base, with native ingestion
+   from the Blob source.</li>
+<li><strong>Network resource group:</strong> the illustrated private layout uses the workload
+   VNet, private DNS and private endpoints. Bastion or jumpbox operator access
+   is optional.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size hosted application diagram" class="runbook-diagram__image" href="../../media/runbooks/deploy-full-stack.png"><img alt="The default hosted application spans application, Foundry and network resource groups. The diagram illustrates private networking and marks Bastion or jumpbox access as optional." src="../../media/runbooks/deploy-full-stack.png" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/deploy-full-stack.png">Open full-size diagram</a></p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Deployment options</p>
 <p>This diagram illustrates the default hosted application layout, not a

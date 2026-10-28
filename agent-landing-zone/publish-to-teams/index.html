@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=dbbfae135b86">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2181,8 +2181,28 @@ requiring authentication. They do <strong>not</strong> use the Foundry private e
 <p>If your organization requires no public agent ingress, do not use this
 publication path.</p>
 </div>
-<p><img alt="Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path." src="../../media/runbooks/publish-to-teams.png?v=channel-service" /></p>
-<p>The dashed path is for publication setup and later changes, not for Teams
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Conversation path</strong></p>
+<ol>
+<li><strong>Teams or Microsoft 365 Copilot</strong> uses Microsoft's managed Azure Bot Service.</li>
+<li><strong>Bot Service</strong> calls the public HTTPS Activity endpoint, with authentication
+   and Microsoft channel source IP filtering. This is not Private Link.</li>
+<li><strong>The hosted agent</strong> receives the authenticated messages. Foundry and
+   Bot Service retain public network access disabled; the Activity route is
+   the scoped exception.</li>
+</ol>
+<p><strong>Publication setup and later changes</strong></p>
+<ol>
+<li><strong>The admin workstation</strong> connects through VPN or the private network.</li>
+<li><strong>The Foundry project API</strong> is reached through its private endpoint to
+   configure publication. This is separate from conversation traffic.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size Teams and Microsoft 365 Copilot diagram" class="runbook-diagram__image" href="../../media/runbooks/publish-to-teams.png?v=channel-service"><img alt="Teams and Microsoft 365 Copilot use Bot Service and a public HTTPS Activity route with source IP filtering and authentication. This is a scoped exception to disabled public network access, not Private Link. Publication setup uses a separate private endpoint path." src="../../media/runbooks/publish-to-teams.png?v=channel-service" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/publish-to-teams.png?v=channel-service">Open full-size diagram</a></p>
+</div>
+<p>The diagram's dashed path is for publication setup and later changes, not for Teams
 conversations.</p>
 <p>The Bot Service box represents <strong>Microsoft's managed channel service</strong>, not
 a bot hosted inside your VNet. Its resource uses <code>publicNetworkAccess: Disabled</code>,

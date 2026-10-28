@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=dbbfae135b86">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -980,6 +980,45 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Failure boundaries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standalone-chat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standalone chat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-entra-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embedded Entra sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gateway-and-recovery-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gateway and recovery checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2084,6 +2123,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Failure boundaries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standalone-chat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standalone chat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedded-entra-sessions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embedded Entra sessions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gateway-and-recovery-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gateway and recovery checks
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -2215,48 +2293,35 @@ string containing a secret or URI. Keep a stable, securely generated
 as a reference too; do not
 regenerate an existing session-signing secret during a routine update.</p>
 <p>Publish the following values in the same store:</p>
-<table>
-<thead>
-<tr>
-<th>UI runtime key</th>
-<th>Contract</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>OAUTH_AZURE_AD_CLIENT_ID</code></td>
-<td>Application (client) ID from step 1.</td>
-</tr>
-<tr>
-<td><code>OAUTH_AZURE_AD_TENANT_ID</code></td>
-<td>Directory (tenant) ID from step 1.</td>
-</tr>
-<tr>
-<td><code>OAUTH_AZURE_AD_ENABLE_SINGLE_TENANT</code></td>
-<td><code>true</code>.</td>
-</tr>
-<tr>
-<td><code>OAUTH_AZURE_AD_SCOPES</code></td>
-<td><code>api://&lt;client-id&gt;/user_impersonation,openid,profile,offline_access</code>, replacing <code>&lt;client-id&gt;</code>. Do not add Graph scopes such as <code>User.Read</code> or the Foundry scope here.</td>
-</tr>
-<tr>
-<td><code>CHAINLIT_URL</code></td>
-<td>Canonical UI HTTPS URL from step 3.</td>
-</tr>
-<tr>
-<td><code>ALLOW_ANONYMOUS</code></td>
-<td><code>false</code>.</td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_AUTH_MODE</code></td>
-<td><code>user_delegated</code>.</td>
-</tr>
-<tr>
-<td><code>RETRIEVAL_AUTH_MODE</code></td>
-<td><code>native_search</code>, the integrated native permission path; not an anonymous-access switch.</td>
-</tr>
-</tbody>
-</table>
+<dl>
+<dt><code>OAUTH_AZURE_AD_CLIENT_ID</code></dt>
+<dd>Application (client) ID from step 1.</dd>
+
+<dt><code>OAUTH_AZURE_AD_TENANT_ID</code></dt>
+<dd>Directory (tenant) ID from step 1.</dd>
+
+<dt><code>OAUTH_AZURE_AD_ENABLE_SINGLE_TENANT</code></dt>
+<dd><code>true</code>.</dd>
+
+<dt><code>OAUTH_AZURE_AD_SCOPES</code></dt>
+<dd><code>api://&lt;client-id&gt;/user_impersonation,openid,profile,offline_access</code>,
+replacing <code>&lt;client-id&gt;</code>. Do not add Graph scopes such as
+<code>User.Read</code> or the Foundry scope here.</dd>
+
+<dt><code>CHAINLIT_URL</code></dt>
+<dd>Canonical UI HTTPS URL from step 3.</dd>
+
+<dt><code>ALLOW_ANONYMOUS</code></dt>
+<dd><code>false</code>.</dd>
+
+<dt><code>HOSTED_AGENT_AUTH_MODE</code></dt>
+<dd><code>user_delegated</code>.</dd>
+
+<dt><code>RETRIEVAL_AUTH_MODE</code></dt>
+<dd><code>native_search</code>, the integrated native permission path;
+not an anonymous-access switch.</dd>
+</dl>
+
 <p>Use label <code>agent-lz</code>. The frontend managed identity needs App Configuration
 Data Reader and Key Vault Secrets User at the relevant scopes; see
 <a href="../../bicep/permissions/#frontend-container-app">default hosted permissions</a>.
@@ -2415,18 +2480,31 @@ authentication outcomes. Both hosted adapters preserve a bounded, validated
 claims challenge from the configured Search response. Provider response bodies,
 authorization URLs and arbitrary resource hints are not recovery instructions.</p>
 <p>The UI offers explicit interactive authentication rather than retrying the
-failed turn. Standalone chat uses the configured tenant, UI scopes and OAuth
-callback. Its encrypted recovery context expires after 180 seconds and is bound
-to the current principal and session. The existing <code>CHAINLIT_AUTH_SECRET</code> must
-contain at least 32 UTF-8 bytes; no additional secret or redirect registration
-is needed. Existing standalone sessions may need a fresh ordinary login.
-Gateways must preserve <code>/api/auth/recovery</code> and the normal OAuth routes.
-Embedded Entra sessions use the portal's MSAL and
-authenticated bootstrap path, not a standalone sign-in redirect.</p>
-<p>After verification, submit a new turn. Failed or partially streamed turns are
-never replayed automatically. A source <code>403</code> without a usable claims challenge
-remains an authorization denial; signing in cannot grant missing document
-permissions. Keep claims out of URLs, logs, conversation history and checkpoints.</p>
+failed turn.</p>
+<h3 id="standalone-chat">Standalone chat</h3>
+<ul>
+<li><strong>Sign-in:</strong> use the configured tenant, UI scopes and OAuth callback.
+  Existing standalone sessions may need a fresh ordinary login.</li>
+<li><strong>Recovery window: 180 seconds.</strong> The encrypted recovery context is bound
+  to the current principal and session.</li>
+<li><strong>Session secret:</strong> the existing <code>CHAINLIT_AUTH_SECRET</code> must contain at
+  least 32 UTF-8 bytes. No additional secret or redirect registration is needed.</li>
+</ul>
+<h3 id="embedded-entra-sessions">Embedded Entra sessions</h3>
+<p>Use the portal's MSAL and authenticated bootstrap path, not a standalone
+sign-in redirect.</p>
+<h3 id="gateway-and-recovery-checks">Gateway and recovery checks</h3>
+<ul>
+<li><strong>Preserve the routes:</strong> gateways must preserve <code>/api/auth/recovery</code> and
+  the normal OAuth routes.</li>
+<li><strong>Submit a new turn after verification:</strong> failed or partially streamed
+  turns are never replayed automatically.</li>
+<li><strong>Distinguish source denial:</strong> a source <code>403</code> without a usable claims
+  challenge remains an authorization denial. Signing in cannot grant missing
+  document permissions.</li>
+<li><strong>Protect claims:</strong> keep them out of URLs, logs, conversation history and
+  checkpoints.</li>
+</ul>
 <p>A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller
 with a service identity or disable authentication.</p>
