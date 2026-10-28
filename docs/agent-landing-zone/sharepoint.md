@@ -98,18 +98,426 @@ Query Language (KQL) filters can be ignored by the Retrieval API.
 
 ## Custom SharePoint ingestion
 
-Agent App Ingestion provides a separate Graph-based connector with indexing and
-purge jobs. It copies content and permission metadata to Search. Permission
-changes need synchronization and allow/deny validation.
-It uses `SHAREPOINT_*` application credentials, not native remote-source
-settings; secrets belong in Key Vault.
+Use this path when you need custom processing or the Graph-based connector's
+list and document-library ingestion. **Agent App Ingestion** runs indexing and
+purge jobs inside its Container App, reads SharePoint through Microsoft Graph,
+and writes content, embeddings and supported permission metadata to an
+**Azure AI Search index**. That index can then be attached to Foundry IQ as a
+`searchIndex` knowledge source. It is not the managed `indexedSharePoint`
+source described above.
 
-This path is appropriate for required custom processing or connector behavior.
-Native indexed SharePoint also copies content, but its pipeline is managed by
-Search and does not need Agent App Ingestion. Neither approach removes the need
-to maintain permissions and enforce them during retrieval.
-[Ingestion](ingestion.md#3-custom-ingestion-only-when-needed) explains optional
-application selection.
+The walkthrough below adapts the
+[original SharePoint connector tutorial](https://azure.github.io/agent-landing-zone/howto_sharepoint_connector/)
+to the current runtime: discover the source, register and authorize an
+application, configure the selected lists, schedule jobs, and validate both
+content and permissions.
+
+### 1. Prepare the ingestion application
+
+Select `DEPLOY_INGESTION_CONTAINER_APP=true` through the
+[Deploy full stack runbook](deploy-full-stack.md). This is a deployment choice,
+not a switch to enable in an otherwise undeployed application. Use the
+compatible ingestion component from your platform release.
+
+Before enabling jobs, confirm the ingestion application's identity can read
+App Configuration and Cosmos DB, retrieve secrets from Key Vault, write to the
+target Search index and job-log storage, and call the configured embedding and
+document-analysis services. Confirm network access from the Container App to
+those resources, Entra ID and Microsoft Graph. Azure resource access uses the
+workload identity; SharePoint access uses the separate application credentials
+created in step 3.
+
+### 2. Explore SharePoint with Microsoft Graph
+
+Open [Microsoft Graph Explorer](https://developer.microsoft.com/graph/graph-explorer)
+and sign in with an account authorized to read the pilot site. Graph Explorer
+uses your delegated permissions; a successful Explorer query does not prove
+the ingestion application's app-only access.
+
+For `https://contoso.sharepoint.com/sites/SalesAndMarketing`, the
+`siteDomain` is `contoso.sharepoint.com` and the `siteName` is
+`SalesAndMarketing`.
+
+**Discover the site.**
+
+```http
+GET https://graph.microsoft.com/v1.0/sites/contoso.sharepoint.com:/sites/SalesAndMarketing
+```
+
+An illustrative response is:
+
+```json
+{
+  "id": "contoso.sharepoint.com,9f1d115d-9c87-4f37-ba8e-e73ad39c3405,7a3700a7-3a8a-4942-9089-ad84ce9f5837",
+  "name": "SalesAndMarketing",
+  "displayName": "Sales and Marketing",
+  "webUrl": "https://contoso.sharepoint.com/sites/SalesAndMarketing"
+}
+```
+
+Save the full composite `id` as `{siteId}` for subsequent Graph requests and
+the site grant. The current connector resolves this ID at runtime from
+`siteDomain` and `siteName`; storing `siteId` alone does not configure a source.
+Its lookup uses `/sites/{siteName}`, so use the corresponding `/sites/` URL
+path rather than a site's display title.
+
+**Discover lists and document libraries.**
+
+```http
+GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists
+```
+
+```json
+{
+  "value": [
+    {
+      "id": "7691f86f-8bdc-40eb-bcf5-7a23d0e9006c",
+      "name": "Product List",
+      "displayName": "Product List",
+      "list": { "template": "genericList" }
+    },
+    {
+      "id": "1be0da74-2b71-45e0-a9d3-1ffafa7d0ba7",
+      "name": "Shared Documents",
+      "displayName": "Shared Documents",
+      "list": { "template": "documentLibrary" }
+    }
+  ]
+}
+```
+
+Save each selected list's `id`, `name` and `list.template`. A document library
+is also a list; no separate `drives` source configuration is needed.
+Follow `@odata.nextLink` when a response is paged.
+
+**Discover column names before choosing fields.**
+
+```http
+GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists/{listId}/columns
+```
+
+```json
+{
+  "value": [
+    { "name": "Title", "displayName": "Title" },
+    { "name": "Code_x0020_Name", "displayName": "Code Name" },
+    { "name": "Product_x0020_Line", "displayName": "Product Line" },
+    { "name": "Modified", "displayName": "Modified" }
+  ]
+}
+```
+
+Use the internal **`name`**, not `displayName`, in `includeFields` and filters.
+For example, the internal name for a column created with a space can contain
+`_x0020_`.
+
+**Inspect items and test field selection.**
+
+```http
+GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists/{listId}/items?$expand=fields
+GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists/{listId}/items?$expand=fields($select=Title,Code_x0020_Name,Product_x0020_Line,Modified)
+```
+
+```json
+{
+  "value": [
+    {
+      "id": "1",
+      "lastModifiedDateTime": "2026-10-01T10:30:00Z",
+      "fields": {
+        "Title": "Product A",
+        "Code_x0020_Name": "PROD-A",
+        "Product_x0020_Line": "Electronics",
+        "Modified": "2026-10-01T10:30:00Z"
+      }
+    }
+  ]
+}
+```
+
+If you plan to use a collection filter, test it here first, for example
+`$filter=fields/Status eq 'Published'` after confirming the internal column
+name and Graph's indexed-column requirements. URL-encode query values in your
+HTTP client. Keep permission-only changes in scope; do not use a
+modification-time-only filter for the scheduled ACL refresh.
+
+For a document-library file, inspect its associated drive item and content:
+
+```http
+GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists/{listId}/items/{itemId}/driveItem
+GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists/{listId}/items/{itemId}/driveItem/content
+GET https://graph.microsoft.com/v1.0/drives/{driveId}/items/{driveItemId}/permissions
+```
+
+The `driveItem` response supplies the file name, MIME type and
+`parentReference.driveId`. The connector resolves this relationship to download
+and chunk the file. A generic list instead contributes structured field text
+and, when selected and available, its attachments.
+
+For generic-list permissions, the connector uses the Graph **beta** endpoint:
+
+```http
+GET https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/items/{itemId}/permissions
+```
+
+Inspect the returned user/group identities, not only display names or emails.
+The [permission synchronization](#permission-synchronization) section describes
+the supported ACL representation and its limits.
+
+### 3. Register an application and grant selected-site access
+
+**Register the application and consent to `Sites.Selected`.**
+
+In the Azure portal, open **Microsoft Entra ID > App registrations > New
+registration**. Give the app a name such as `SharePointDataIngestionApp`, select
+**Accounts in this organizational directory only**, leave the redirect URI
+empty, and register it. Record the **Application (client) ID** and
+**Directory (tenant) ID**.
+
+Under **API permissions > Add a permission > Microsoft Graph > Application
+permissions**, add **`Sites.Selected`**. Have an administrator authorized to
+consent to Microsoft Graph application permissions grant tenant admin consent
+(for example, a Privileged Role Administrator or Global Administrator).
+App-registration ownership alone is not sufficient for that consent.
+
+**Grant access to each selected site.**
+
+`Sites.Selected` grants no site access on its own. Use a separate administrative
+session to create a site permission:
+
+```http
+POST https://graph.microsoft.com/v1.0/sites/{siteId}/permissions
+Content-Type: application/json
+```
+
+```json
+{
+  "roles": ["read"],
+  "grantedToIdentities": [
+    {
+      "application": {
+        "id": "<ingestion-application-client-id>",
+        "displayName": "SharePointDataIngestionApp"
+      }
+    }
+  ]
+}
+```
+
+Expect `201 Created`, record the returned permission ID, and repeat for each
+site. The grant targets the application's **client ID**, not a service
+principal object ID.
+
+The [site-permission API](https://learn.microsoft.com/graph/api/site-post-permissions?view=graph-rest-1.0)
+requires `Sites.FullControl.All` on the **granting session**. In a delegated
+Graph Explorer workflow, the signed-in user also needs SharePoint
+Administrator or higher and membership in the target site. A `403` here is a
+reason to check that administrator's role, membership and Explorer consent,
+not to give the ingestion app tenant-wide access. Keep the ingestion app at
+`Sites.Selected` with the reviewed site grant.
+
+Validate that the app-only identity can read the selected items **and their
+required permission endpoints**. A readable file with unavailable ACLs is not
+a successful protected-ingestion setup; do not bypass ACL failures or increase
+the ingestion app's permissions without a separate review.
+
+**Create and store the client secret.**
+
+Under **Certificates & secrets > Client secrets > New client secret**, create
+a credential with an appropriate expiry and rotation owner. Copy its **Value**
+(not its Secret ID) directly into the ingestion application's Key Vault as
+`sharepointClientSecret`, or a reviewed custom secret name. Do not put the value
+in Cosmos DB, plaintext App Configuration, source files or command logs.
+The current Graph client uses this client-secret flow; native indexed
+SharePoint's federated credentials are a different configuration.
+
+### 4. Configure runtime settings
+
+In **App Configuration > Configuration explorer**, set the following under
+the shared **`agent-lz`** label. Preserve the environment's provisioned
+resource endpoints and identities.
+
+| Key | Value or purpose |
+| --- | --- |
+| `SHAREPOINT_TENANT_ID` | Directory/tenant ID of the SharePoint application. |
+| `SHAREPOINT_CLIENT_ID` | Application/client ID registered above. |
+| `SHAREPOINT_CLIENT_SECRET_NAME` | Key Vault secret **name**; default `sharepointClientSecret`. |
+| `SHAREPOINT_FILES_FORMAT` | Comma-separated extensions, for example `pdf,docx,pptx`; this is also the current default when omitted or empty. |
+| `KEY_VAULT_URI` | Ingestion Key Vault URI containing that secret. |
+| `SEARCH_SERVICE_QUERY_ENDPOINT` | Target Search service root, such as `https://<service>.search.windows.net`. |
+| `SEARCH_RAG_INDEX_NAME` | Existing compatible target index for custom ingestion. |
+| `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` | Cosmos DB account name and database containing the source definitions. |
+| `COSMOS_DATASOURCES_CONTAINER` | Source-definition container; default `datasources`. |
+| `STORAGE_ACCOUNT_NAME`, `JOBS_LOG_CONTAINER` | Job-log storage account and container; container default `jobs`. |
+
+`APP_CONFIG_ENDPOINT` must already be in the Container App's process
+environment so the application can load its settings. The current loader also
+reads other labels, including an all-labels selection; remove conflicting
+same-key values and verify the **effective** settings rather than assuming
+`agent-lz` wins. See [effective settings](configuration.md#effective-settings).
+
+Do not copy the old tutorial's `SHAREPOINT_CONNECTOR_ENABLED` switch,
+`gpt-rag-ingestion`-only label, Function App instructions, or six-field timer
+expressions. The current jobs are scheduled in the ingestion Container App;
+there is no connector-enable check for that old switch.
+
+### 5. Add the source metadata in Cosmos DB
+
+Open the configured Cosmos DB account's **Data Explorer**, select
+`DATABASE_NAME` and the `datasources` container (or
+`COSMOS_DATASOURCES_CONTAINER` override), and create one item per site with
+`type: "sharepoint_site"`. Use actual Graph-discovered values in this example
+and satisfy the existing container's partition-key definition.
+
+```json
+{
+  "id": "contoso-marketing-site",
+  "type": "sharepoint_site",
+  "description": "Contoso Marketing pilot",
+  "siteDomain": "contoso.sharepoint.com",
+  "siteName": "SalesAndMarketing",
+  "category": "Marketing",
+  "lists": [
+    {
+      "listId": "1be0da74-2b71-45e0-a9d3-1ffafa7d0ba7",
+      "listName": "Shared Documents",
+      "listType": "documentLibrary",
+      "category": "Contoso Documents",
+      "filter": ""
+    },
+    {
+      "listId": "7691f86f-8bdc-40eb-bcf5-7a23d0e9006c",
+      "listName": "Product List",
+      "listType": "genericList",
+      "category": "Contoso Products",
+      "filter": "",
+      "includeFields": [
+        "Title",
+        "Code_x0020_Name",
+        "Product_x0020_Line",
+        "Modified",
+        "Attachments"
+      ],
+      "excludeFields": []
+    }
+  ]
+}
+```
+
+Only declared lists are indexed; an absent or empty `lists` array does not
+mean "index the whole site."
+
+| Field | How to choose it |
+| --- | --- |
+| `siteDomain`, `siteName` | Required by the connector's site-ID lookup; use the URL values discovered above. |
+| `listId` | Prefer the Graph GUID. Name-only lookup is a legacy fallback; retain `listName` for readable logs. |
+| `listType` | Use `genericList` or `documentLibrary` from `list.template`. Set it explicitly for libraries; the default is `genericList`. |
+| `includeFields` | Internal column names for generic-list text. Omitted or empty means all returned fields. Keep `Title` and `Modified`; include `Attachments` when classic-list attachments are needed. Modification detection uses the item's `lastModifiedDateTime`, with `fields.Modified` as fallback. |
+| `excludeFields` | Optional fields to omit from the generated field text; it is not an authorization control. |
+| `category` | List-level value overrides the site's default. |
+| `filter` | Optional Graph OData item filter. Empty selects all returned items in the configured list. Test the filter before scheduling. |
+
+For document libraries, leave `includeFields` unset as shown; the connector
+downloads the underlying file through `driveItem` and applies
+`SHAREPOINT_FILES_FORMAT`. Selecting a field does not add unsupported file
+formats or grant access to another site or lookup list.
+
+### 6. Schedule indexing and purge
+
+Add these App Configuration values under `agent-lz` after validating the pilot
+source and credentials:
+
+```text
+CRON_RUN_SHAREPOINT_INDEX=0 * * * *
+CRON_RUN_SHAREPOINT_PURGE=30 */6 * * *
+RUN_JOBS_ON_STARTUP=false
+```
+
+The runtime uses APScheduler's **five-field crontab** format:
+`minute hour day-of-month month day-of-week`. These examples index hourly at
+minute 0 and purge every six hours at minute 30. They are not six-field Azure
+Functions timers. The scheduler uses the process `SCHEDULER_TIMEZONE` when set
+to a valid time-zone name, otherwise the machine's local time zone; confirm
+the effective zone and next scheduled run.
+
+An unset or blank SharePoint cron value means no automatic schedule.
+`RUN_JOBS_ON_STARTUP` defaults to `true`, which also immediately runs jobs that
+have schedules; `false` avoids those immediate runs but does not disable cron.
+It is a shared setting affecting the other scheduled ingestion/purge jobs too.
+Invalid cron expressions fail schedule setup.
+
+Restart the ingestion Container App after changing credentials or initial
+configuration. Where the authenticated administrative surface is mounted,
+its configuration apply operation can reload settings and reschedule jobs.
+It also supports manual execution:
+
+```http
+POST https://<ingestion-app-host>/api/jobs/sharepoint_index/run
+POST https://<ingestion-app-host>/api/jobs/sharepoint_purge/run
+```
+
+Use the deployment's configured administrative authentication; do not expose
+an unconfigured development endpoint. These routes require Admin when Entra
+authentication is configured and are not mounted in every hosted/panel mode.
+`202 Accepted` means queued, not indexed; `409` means that job is already
+running. See the ingestion service's
+[runtime guide](https://github.com/Azure/agent-app-ingestion/blob/main/docs/runtime.md)
+for route availability and authentication.
+
+Indexing handles new/modified content and refreshes the selected items' ACLs.
+The purge job compares indexed SharePoint item IDs with Graph and removes
+copies for missing items. **Do not treat purge as full retirement or filter
+reconciliation:** the current purger scans indexed collections, does not apply
+the source's item filter, and skips deletion when a collection enumeration is
+empty or unavailable. Removing a source definition, changing a filter,
+deleting the last item, or revoking site access is not proof that indexed
+copies were deleted. Verify deletion explicitly and use a separately
+authorized, scoped Search cleanup when needed.
+
+### 7. Validate ingestion and connect the index to Foundry IQ
+
+1. Add a distinctive pilot list item and a supported file to the selected
+   collections. Run indexing manually or wait for the next scheduled run.
+   Inspect the **Container App** logs and job summaries, not Function App logs.
+   With writable job storage, the default summaries are under
+   `jobs/sharepoint-indexer/runs/` and `jobs/sharepoint-purger/runs/`, with
+   per-item indexing logs under the indexer's prefix. Check item failures,
+   blocked files and confirmed indexed/deleted counts, not only HTTP status
+   or health probes.
+2. In Search Explorer, inspect the target index for the pilot's text and
+   citation URL. Connector documents use `source: "sharepoint-list"`, including
+   document-library chunks. Check `content`, `contentVector`, `url`,
+   `parent_id`, `metadata_storage_last_modified`,
+   `metadata_security_user_ids` and `metadata_security_group_ids`.
+   Change the content and rerun to confirm incremental updates.
+3. If using Foundry IQ, register a **`searchIndex`** knowledge source pointing
+   to this populated index and reference it in the knowledge base. The index
+   and knowledge base must be on the **same Search service**. Keep the
+   ingestion target `SEARCH_RAG_INDEX_NAME` and
+   `FOUNDRY_IQ_SEARCH_INDEX_NAME` aligned when selecting this index as the
+   accelerator's primary source; select matching
+   `FOUNDRY_IQ_PATTERN=searchIndex` and
+   `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=searchIndex`. An additional source instead
+   needs an explicit knowledge-base binding. Do not point at the separate
+   index generated for a native Blob or `indexedSharePoint` source.
+4. Verify the [Search index source requirements](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-search-index):
+   a compatible text/vector schema, semantic configuration, and retrievable
+   content/citation fields. Vector dimensions must match the embedding
+   deployment. For protected retrieval, retain native permission filtering
+   with the user/group ACL field annotations and pass the delegated Search
+   user token as described in [Foundry IQ](foundry-iq.md#delegated-native-retrieval).
+   Source registration does not ingest content or turn ACL arrays into
+   enforced authorization by itself.
+5. Run the allowed/denied-user checks below, including a permission-only
+   revocation and an unchanged-content rerun. Delete a pilot item while
+   another remains in its collection, run purge, and verify that **all**
+   indexed copies of the deleted item disappear. Separately test the
+   empty-collection cleanup case described above.
+
+The runtime details here were checked against
+[Agent App Ingestion source at `d7f34eb`](https://github.com/Azure/agent-app-ingestion/tree/d7f34eb040cc308ce18d0d95ee9c9cb0f07028b1/jobs),
+including its configuration, Graph client, indexer and purger. Check your
+deployed release before applying settings to an older image.
 
 ### Permission synchronization
 
