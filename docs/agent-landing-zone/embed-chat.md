@@ -101,6 +101,13 @@ caller boundary. Protected document access still requires the
 the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
 alone does not establish downstream consent or source permissions.
 
+When retrieval requires additional authentication, the portal must handle the
+explicit recovery request through its MSAL integration, obtain a fresh UI API
+token with the validated claims, and complete authenticated bootstrap for the
+same user. Do not send an embedded user through standalone OAuth or replay the
+failed turn. A changed account requires the logout/unmount sequence below.
+Keep tokens and recovery claims out of URLs, local storage and portal logs.
+
 Native citation downloads use authenticated principal/session-bound selectors
 and recheck source access on each click. Shared Blob/ADLS downloads also need
 Storage delegated consent and user source permissions.

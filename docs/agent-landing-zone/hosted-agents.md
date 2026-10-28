@@ -115,6 +115,12 @@ request-local and the connector passes it to native Search permission
 enforcement. Missing required credentials fail before retrieval; they never
 trigger a service-identity retry.
 
+Downstream Search authentication challenges terminate the current turn with a
+safe typed failure. The UI can request explicit interactive verification using
+the bounded claims; it does not replay the failed or partially streamed turn.
+A source denial without usable claims remains denied.
+See [authentication recovery](application-auth.md#recover-safely).
+
 Native citation downloads stay on the authenticated UI and recheck source
 authorization at redemption. Shared Blob/ADLS reads use Storage OBO;
 conversation uploads require a fresh native Search ownership check before

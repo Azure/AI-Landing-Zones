@@ -164,12 +164,21 @@ indicate missing downstream consent or Foundry user/agent access.
 Tool consent is separate from UI consent, as described in
 [tool authentication](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication).
 
-Initial UI token acquisition classifies consent and authentication failures.
-Downstream Search challenges currently terminate retrieval with a safe error;
-the hosted adapters do not relay `WWW-Authenticate` or complete a downstream
-claims round trip. Reauthentication and administrator diagnosis may be needed.
-Do not treat an initial MSAL acquisition test as proof of downstream
-Conditional Access recovery.
+Initial UI token acquisition and downstream Search failures retain distinct
+authentication outcomes. Both hosted adapters preserve a bounded, validated
+claims challenge from the configured Search response. Provider response bodies,
+authorization URLs and arbitrary resource hints are not recovery instructions.
+
+The UI offers explicit interactive authentication rather than retrying the
+failed turn. Standalone chat uses the configured tenant, UI scopes and OAuth
+callback. Its short-lived encrypted recovery context is bound to the current
+principal and session. Embedded Entra sessions use the portal's MSAL and
+authenticated bootstrap path, not a standalone sign-in redirect.
+
+After verification, submit a new turn. Failed or partially streamed turns are
+never replayed automatically. A source `403` without a usable claims challenge
+remains an authorization denial; signing in cannot grant missing document
+permissions. Keep claims out of URLs, logs, conversation history and checkpoints.
 
 A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller

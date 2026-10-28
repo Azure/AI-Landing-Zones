@@ -627,7 +627,12 @@ with `RETRIEVAL_AUTH_MODE=native_search`. Check delegated Search consent,
 the authenticated UI assertion/refresh, supported custom-header forwarding,
 source permission metadata and private connectivity. A transport-role denial
 and a user's source denial are different failures. Resolve consent or
-Conditional Access through sign-in; do not log token values.
+Conditional Access through the UI's explicit authentication recovery action.
+Standalone sessions complete the configured OAuth callback; embedded sessions
+use portal MSAL and authenticated bootstrap. Then submit a new turn: the failed
+turn is not automatically replayed. A source `403` without usable claims
+requires source-access diagnosis, not repeated sign-in. Do not log tokens or
+claims challenges.
 Do not invent identity headers, enable anonymous retrieval or replace the
 user with a service identity. Stop sensitive-data rollout until denial works.
 
