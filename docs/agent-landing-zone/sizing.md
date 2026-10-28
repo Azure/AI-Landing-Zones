@@ -1,5 +1,9 @@
 # Sizing and capacity
 
+!!! note
+    An update to align this guidance with the current architecture is planned.
+    Confirm sizing and cost assumptions against your deployment configuration.
+
 Capacity depends on the workload, not only the number of people who can sign
 in. Concurrent agent requests, model calls, tool latency and
 document processing place different demands on the deployment.

@@ -1,5 +1,9 @@
 # Cost planning
 
+!!! note
+    An update to align this guidance with the current architecture is planned.
+    Confirm sizing and cost assumptions against your deployment configuration.
+
 Cost depends on the **Agent Landing Zone configuration that runs**:
 [topology and resource reuse](planning.md), [capacity](sizing.md) and usage.
 The default has a Foundry hosted orchestrator, frontend, no panel and native
