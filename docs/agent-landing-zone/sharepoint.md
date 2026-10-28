@@ -106,12 +106,6 @@ and writes content, embeddings and supported permission metadata to an
 `searchIndex` knowledge source. It is not the managed `indexedSharePoint`
 source described above.
 
-The walkthrough below adapts the
-[original SharePoint connector tutorial](https://azure.github.io/agent-landing-zone/howto_sharepoint_connector/)
-to the current runtime: discover the source, register and authorize an
-application, configure the selected lists, schedule jobs, and validate both
-content and permissions.
-
 ### 1. Prepare the ingestion application
 
 Select `DEPLOY_INGESTION_CONTAINER_APP=true` through the
