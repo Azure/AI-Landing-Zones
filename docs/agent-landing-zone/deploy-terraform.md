@@ -7,8 +7,6 @@ search:
 
 # Terraform runbooks
 
-<!-- Draft: publish only with the verified integrated Terraform lifecycle. -->
-
 Choose the Agent Landing Zone runbook by outcome:
 
 - [Deploy infra only with Terraform](deploy-terraform-infra-only.md)

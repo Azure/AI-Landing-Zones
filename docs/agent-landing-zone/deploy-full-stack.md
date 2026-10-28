@@ -6,8 +6,6 @@
 
 # Deploy full stack with Bicep
 
-<!-- Draft coordination: publish with the verified integrated Terraform option. -->
-
 ## Objective
 
 Deploy the Azure infrastructure and the Agent Application with its default

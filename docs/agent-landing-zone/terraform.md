@@ -1,19 +1,10 @@
 # Terraform templates
 
-<!-- Unpublished draft. tf-documentation remains gated; no deployment verified. -->
-
 Agent Landing Zone offers Bicep and Terraform infrastructure definitions in the
 [same product repository](https://github.com/Azure/agent-landing-zone).
 The **Azure Developer CLI (`azd`)** coordinates provisioning, service
 configuration and application deployment for either choice. Bicep is the
 default. Select Terraform once in the checkout's root `azure.yaml`.
-
-!!! warning "Unpublished feature draft"
-    Availability depends on feature merge and release. The scoped Azure smoke
-    check is plan-only, not evidence of resource or application deployment.
-    Native azd disables Terraform state locking. Shared and production state
-    requires a [single authorized writer](deploy-terraform-infra-only.md#state-protection)
-    with queued, non-canceling execution. This does not restore backend locking.
 
 ## Choose the outcome
 
@@ -115,15 +106,26 @@ follow the [declared ownership contract](configuration.md#configuration-ownershi
 - Immutable private backend/group records bind the state address and ownership.
   Terraform teardown uses that recorded state across owned or bring-your-own
   group layouts; it does not use a bulk group-deletion hook.
-- Individual environments can use local azd. Shared and production operations
+- With azd 1.37.1, plan and apply run without native backend state locking.
+  Individual environments can use local azd. Shared and production operations
   use one authorized executor and a non-canceling queue per actual backend
-  state identity, not per branch.
+  state identity, not per branch. Follow the
+  [single-writer policy](deploy-terraform-infra-only.md#state-protection).
 - State, saved plans, generated inputs and local `.azure/` data can expose
   sensitive values. Do not commit them. Review dependency updates deliberately,
   rather than upgrading providers to repair an unrelated deployment failure.
 
 See the [Terraform infrastructure runbook](deploy-terraform-infra-only.md)
 for backend readiness, updates and removal boundaries.
+
+## Validation scope
+
+Verification includes offline tests and an Azure-authenticated plan of the
+public foundation, using in-memory test state without applying resources.
+Native backend operations, full-stack and private deployments, runtime RBAC
+and recovery were not exercised in Azure. Validate your deployment with the
+[foundation](deploy-terraform-infra-only.md#validation) and
+[application](deploy-terraform-full-stack.md#validation) runbook checks.
 
 ## Related reference
 

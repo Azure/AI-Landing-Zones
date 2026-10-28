@@ -7,12 +7,13 @@ for all changes and fixes.
 
 | Release | Highlights |
 | --- | --- |
+| [v5.4.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.4.0) | Integrated Terraform with the native azd lifecycle for [infrastructure-only](deploy-terraform-infra-only.md) and [full-stack](deploy-terraform-full-stack.md) deployment, using Azure Storage remote state. Bicep remains the default. |
 | [v5.3.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.3.0) | Added 12 default subnets for isolated deployments, including Power Platform and AI Gateway. |
 | <span id="simpler-hosted-deployment"></span>[v5.2.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.2.0) | Simplified hosted deployment: `azd up` now prepares the agent image automatically, with no separate preparation step. |
 | [v5.1.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.1.0) | Added reviewable outbound firewall rules based on each application's declared network requirements. |
 | [v5.0.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.0.0) | Separated Foundry, application and networking resources into three resource groups by default for new deployments. |
 | <span id="14th-october-2026"></span><span id="ingestion-and-private-connectivity"></span>[v4.3.0](https://github.com/Azure/agent-landing-zone/releases/tag/v4.3.0) | Made native Foundry IQ ingestion the default, with standalone ingestion as an option. |
-| <span id="3rd-october-2026"></span>[v4.0.0](https://github.com/Azure/agent-landing-zone/releases/tag/v4.0.0) | Introduced **Agent Landing Zone**, formerly GPT-RAG, with separate infrastructure and application deployment workflows. |
+| <span id="3rd-october-2026"></span>[v4.0.0](https://github.com/Azure/agent-landing-zone/releases/tag/v4.0.0) | Separate infrastructure and application deployment workflows. |
 
 ## September 2026
 

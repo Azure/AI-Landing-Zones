@@ -1,7 +1,5 @@
 # Deploy full stack with Terraform
 
-<!-- Unpublished draft. tf-documentation remains gated; no deployment verified. -->
-
 ## Objective
 
 Provision the Azure foundation with Terraform and deploy the Agent Application
@@ -17,13 +15,8 @@ Only need Azure resources? Use
 [Deploy infra only with Terraform](deploy-terraform-infra-only.md).
 For the default Bicep provider, use
 [Deploy full stack with Bicep](deploy-full-stack.md).
-[Terraform templates](terraform.md) explains composition and ownership.
-
-!!! warning "Unpublished feature draft"
-    Availability depends on feature merge and release. The scoped Azure smoke
-    check is plan-only; it does not verify full-stack or private deployment.
-    Native azd disables Terraform state locking. Follow the
-    [single-writer execution policy](deploy-terraform-infra-only.md#state-protection).
+[Terraform templates](terraform.md) explains composition, ownership and
+[validation scope](terraform.md#validation-scope).
 
 ## Prerequisites
 
@@ -95,8 +88,8 @@ Foundation outputs pass automatically to the component projects.
 ### Step 3: Provision the foundation
 
 Complete the [Terraform infrastructure review](deploy-terraform-infra-only.md#step-5-review-and-provision)
-and resolve its draft gates before the first apply. From the **product root**,
-with the intended azd environment selected:
+before the first apply. From the **product root**, with the intended azd
+environment selected:
 
 ```bash
 azd provision

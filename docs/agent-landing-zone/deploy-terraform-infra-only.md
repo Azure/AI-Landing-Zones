@@ -1,8 +1,5 @@
 # Deploy infra only with Terraform
 
-<!-- Unpublished draft. tf-documentation remains gated; the Azure plan-only
-smoke is not deployment verification. -->
-
 ## Objective
 
 Create and configure the Agent Landing Zone Azure foundation using the native
@@ -13,13 +10,8 @@ To deploy application code as well, use
 [Deploy full stack with Terraform](deploy-terraform-full-stack.md).
 For the default Bicep path, use
 [Deploy infra only with Bicep](deploy-infra-only.md).
-[Terraform templates](terraform.md) explains the architecture.
-
-!!! warning "Unpublished feature draft"
-    Availability depends on feature merge and release. The scoped Azure smoke
-    check is plan-only; it does not verify resource or application deployment.
-    Native azd disables Terraform state locking. Follow the
-    [single-writer execution policy](#state-protection).
+[Terraform templates](terraform.md) explains the architecture and
+[validation scope](terraform.md#validation-scope).
 
 ## Prerequisites
 
@@ -29,8 +21,8 @@ including Python and the platform hook dependencies. Also install
 supported by the checked-in Terraform configuration and AVM dependencies.
 Microsoft documents the native
 [azd Terraform provider](https://learn.microsoft.com/azure/developer/azure-developer-cli/use-terraform-for-azd)
-as beta. Verification uses Terraform **1.13.0** and azd **1.37.1**; these are
-not established minimum supported versions.
+as beta. Use Terraform **1.13.0** and azd **1.37.1**, the versions used for
+verification.
 
 Arrange remote-state storage and access **before the first provision**, as
 described below. Foundation creation, RBAC and service configuration need
@@ -163,11 +155,9 @@ and [Azure Storage backend reference](https://developer.hashicorp.com/terraform/
 
 #### State protection
 
-!!! warning "Native state locking is disabled"
-    azd 1.37.1 unconditionally passes `-lock=false` to Terraform plan and apply.
-    These operations therefore do **not** acquire the Azure Blob lease used
-    for native Terraform state protection. The execution policy below is an
-    operational and access control, not restored backend locking.
+azd 1.37.1 passes `-lock=false` to Terraform plan and apply, so these operations
+do not acquire the Azure Blob lease used for native state protection.
+Use the execution and access controls below; they do not enable backend locking.
 
 - **Individual environments:** local azd may operate the configured remote
   backend. Do not overlap writers to the same state.
@@ -391,7 +381,3 @@ outside workload teardown and available throughout recovery. Retiring that
 backend is a separate owner-approved operation after workload retirement and
 retention review. Preserve shared hub, DNS, monitoring and other reused
 resources.
-
-<!-- Evidence limit: the authorized Azure smoke is a full-graph plan with real
-providers and in-memory test state, not apply, backend bootstrap, full-stack or
-private parity. Actual destroy boundaries, backups and purge are not verified. -->

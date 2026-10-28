@@ -65,7 +65,6 @@ nav:
               - "SharePoint": agent-landing-zone/sharepoint.md
               - "NL2SQL": agent-landing-zone/nl2sql.md
           - "Tools & MCP": agent-landing-zone/agent-tools.md
-      # Draft: hold coordinated Terraform pages until implementation is verified.
       - Runbooks:
           - Deploy infra only:
               - "With Bicep": agent-landing-zone/deploy-infra-only.md

@@ -1,7 +1,5 @@
 # Deployment choices
 
-<!-- Draft coordination: publish only with verified integrated Terraform support. -->
-
 Deployment design covers **network ownership, deployment tooling and resource
 selection**. It is separate from whether a runbook stops at infrastructure or
 also deploys application code.

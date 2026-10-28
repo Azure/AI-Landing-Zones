@@ -4,8 +4,6 @@
 
 # Deploy infra only with Bicep
 
-<!-- Draft coordination: publish with the verified integrated Terraform option. -->
-
 ## Objective
 
 Provision the Azure foundation without building or deploying application images.

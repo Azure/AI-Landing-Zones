@@ -2,8 +2,6 @@
 
 # Deployment settings
 
-<!-- Draft coordination: execution policy approved; hold for Azure evidence. -->
-
 Agent Landing Zone separates:
 
 - **Deployment inputs**, supplied through the `azd` environment and root `main.parameters.json`. They select resources and the application, and control image builds.

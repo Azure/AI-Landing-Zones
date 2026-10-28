@@ -2,8 +2,6 @@
 
 # How it works
 
-<!-- Draft coordination: hold until integrated Terraform behavior is verified. -->
-
 Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (`azd`). This page introduces
 those concepts for the **Bicep and integrated Terraform implementations**, so
@@ -161,7 +159,6 @@ The Terraform backend uses existing Azure Storage outside workload teardown.
 Native azd disables state locking. Shared and production state uses one
 authorized executor with queued, non-canceling operations per backend state
 identity; see the [single-writer policy](deploy-terraform-infra-only.md#state-protection).
-Azure evidence remains required before publication.
 
 Container App deployment builds verified component code through each
 component's `azure.yaml`. Hosted orchestration uses the prepared image
