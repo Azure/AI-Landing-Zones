@@ -72,6 +72,13 @@ The Agent Landing Zone portions show the default hosted application without
 application Cosmos DB or its private endpoint. Foundry Agent Service's separate
 backing Cosmos DB is retained.
 
+#### Standalone
+
+The workload uses its own virtual network and networking services, without a
+shared platform hub.
+
+[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=c0098084b441)](architecture/media/AI-Landing-Zone-without-platform.png?v=c0098084b441)
+
 #### With Platform Hub
 
 The workload connects to a platform hub that provides shared connectivity, DNS
