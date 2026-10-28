@@ -2013,6 +2013,13 @@ does not provide private network access.</p>
 </tr>
 </tbody>
 </table>
+<p>For isolated standalone deployments, Basic is the local firewall default;
+select Standard explicitly when required. Basic also needs a management subnet
+and public IP. External hub egress, with or without a hub gateway, creates no
+local firewall management resources and no firewall data subnet by default.
+GatewaySubnet is opt-in in every topology. Review the
+<a href="../network-isolation/#firewall-sku-and-management-networking">network resource matrix</a>
+before choosing address ranges.</p>
 <p>AI Gateway governs model access and can accompany either network topology.
 Workload connectivity and user/document authorization remain separate requirements.
 <a href="../application-gateway/">Application Gateway</a> serves a different purpose:

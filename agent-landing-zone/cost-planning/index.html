@@ -604,6 +604,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Agent-specific cost drivers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standalone-firewall-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standalone firewall selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1883,6 +1900,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Agent-specific cost drivers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standalone-firewall-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standalone firewall selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2013,6 +2047,17 @@ Actual spend after deployment provides the comparison baseline.</p>
 <p>Model deployment <code>sku.capacity</code> allocates quota. To estimate model charges,
 use the deployment type, region, expected tokens and any provisioned-capacity
 commitment with the current service prices.</p>
+<h3 id="standalone-firewall-selection">Standalone firewall selection</h3>
+<p>Isolated standalone deployments default to Basic. Include its fixed allocation,
+data-processing rate, additional management public IP, logs and network
+transfer in the estimate; a lower hourly price alone is not the full cost.
+Compare current regional rates and measured volume with Standard. Select
+Standard explicitly when its DNS or capacity capabilities are required.</p>
+<p>Basic needs separate data and management subnets; the management subnet must be
+/26 or larger. External hub egress uses the hub's firewall and does not create
+a local firewall or management IP. GatewaySubnet is reserved only on request
+and does not provision a paid gateway. See the
+<a href="../network-isolation/#firewall-sku-and-management-networking">networking resource matrix</a>.</p>
 <p><span id="control-spend-without-weakening-the-design"></span></p>
 <h2 id="spend-controls-and-security">Spend controls and security</h2>
 <p><a href="https://learn.microsoft.com/azure/cost-management-billing/costs/overview-cost-management">Azure Cost Management</a>

@@ -3277,9 +3277,14 @@ before provisioning; external firewall policies remain report-only.</p>
 <td>Deploys Azure Firewall for egress control.</td>
 </tr>
 <tr>
+<td><code>AZURE_FIREWALL_SKU</code></td>
+<td><code>Basic</code></td>
+<td>Selects matching firewall and policy SKU. Basic is supported for isolated standalone deployments; select <code>Standard</code> explicitly when its capabilities are required. External hub firewalls retain their own SKU and ownership.</td>
+</tr>
+<tr>
 <td><code>ENABLE_FIREWALL_DNS_PROXY</code></td>
 <td><code>false</code></td>
-<td>Enables the deployed firewall's DNS proxy only when both Azure Firewall deployment and network isolation are enabled. Does not modify VNet or VPN DNS settings.</td>
+<td>Requires an isolated local <code>Standard</code> firewall. Basic with proxy enabled is rejected. Does not modify VNet or VPN DNS settings.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_ACR_TASK_AGENT_POOL</code></td>
@@ -3361,9 +3366,14 @@ before provisioning; external firewall policies remain report-only.</p>
 <p>Bastion tunneling is disabled by default.</p>
 <h3 id="subnet-creation-and-addressing">Subnet creation and addressing</h3>
 <p>Choose <a href="../network-isolation/#choose-subnet-ownership">subnet ownership</a> first.
-The global <code>DEPLOY_SUBNETS</code> switch and all twelve individual switches default
-to <code>true</code> through inline environment mappings in root <code>main.parameters.json</code>.
-Effective creation is <code>networkIsolation &amp;&amp; deploySubnets &amp;&amp; individualFlag</code>.</p>
+The global <code>DEPLOY_SUBNETS</code> switch defaults to <code>true</code>. Firewall data and
+management switches default to <code>null</code> (auto): data follows the local isolated
+firewall requirement, while management is used only by standalone Basic.
+<code>DEPLOY_GATEWAY_SUBNET</code> defaults to <code>false</code>; explicitly enable it to reserve a
+subnet for a separately configured local gateway. Other individual subnet
+switches default to <code>true</code>. Creation also requires network isolation and the
+global switch; management additionally requires an active standalone Basic
+firewall, even when its creation switch is explicitly true.</p>
 <table>
 <thead>
 <tr>
@@ -3402,6 +3412,11 @@ Effective creation is <code>networkIsolation &amp;&amp; deploySubnets &amp;&amp;
 <td><code>deployAzureFirewallSubnet</code></td>
 <td><code>DEPLOY_AZURE_FIREWALL_SUBNET</code></td>
 <td>Firewall</td>
+</tr>
+<tr>
+<td><code>deployAzureFirewallManagementSubnet</code></td>
+<td><code>DEPLOY_AZURE_FIREWALL_MANAGEMENT_SUBNET</code></td>
+<td>Basic firewall management</td>
 </tr>
 <tr>
 <td><code>deployGatewaySubnet</code></td>
@@ -3479,7 +3494,7 @@ with the configured names, prefixes, delegations and NSG requirements.
 Then continue with the selected deployment runbook; these inputs do not
 configure peering, DNS forwarding or runner connectivity.</p>
 <h4 id="names-and-address-ranges">Names and address ranges</h4>
-<p>All twelve name and prefix parameters can be overridden in root
+<p>Subnet name and prefix parameters can be overridden in root
 <code>main.parameters.json</code> or through the environment bindings below. Explicit
 operator values are preserved through composition; the allocation table lists
 defaults, not mandatory ranges. Reserved service names must retain their
@@ -3523,6 +3538,12 @@ required spellings.</p>
 <td><code>AZURE_FIREWALL_SUBNET_NAME</code></td>
 <td><code>azureFirewallSubnetPrefix</code></td>
 <td><code>AZURE_FIREWALL_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>azureFirewallManagementSubnetName</code></td>
+<td><code>AZURE_FIREWALL_MANAGEMENT_SUBNET_NAME</code></td>
+<td><code>azureFirewallManagementSubnetPrefix</code></td>
+<td><code>AZURE_FIREWALL_MANAGEMENT_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>gatewaySubnetName</code></td>
@@ -3580,6 +3601,7 @@ if <code>10.20.0.0/21</code> is approved and does not overlap connected networks
 <span class="w">  </span><span class="nt">"peSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.0/26"</span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"azureBastionSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.64/26"</span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"azureFirewallSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.128/26"</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"azureFirewallManagementSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.192/26"</span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"gatewaySubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.2.192/26"</span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"azureAppGatewaySubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.0/27"</span><span class="p">},</span>
 <span class="w">  </span><span class="nt">"jumpboxSubnetPrefix"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"10.20.3.64/27"</span><span class="p">},</span>

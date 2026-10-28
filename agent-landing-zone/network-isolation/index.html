@@ -725,6 +725,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#firewall-sku-and-management-networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall SKU and management networking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#opt-in-firewall-dns-proxy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2261,6 +2272,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#firewall-sku-and-management-networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Firewall SKU and management networking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#opt-in-firewall-dns-proxy" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2413,8 +2435,9 @@ private endpoint; it does not require the Activity-route public exception.</p>
 </div>
 <p><span id="enable-isolation"></span></p>
 <h2 id="isolation-and-provisioning">Isolation and provisioning</h2>
-<p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning. All twelve subnets
-are created by default. Choose who manages them before first provision.</p>
+<p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning. The selected topology,
+subnet creation flags and resource ownership determine which subnets are
+created. Choose who manages them before first provision.</p>
 <h3 id="choose-subnet-ownership">Choose subnet ownership</h3>
 <p>These choices apply with network isolation enabled. Hub connectivity and DNS
 remain separate decisions.</p>
@@ -2525,6 +2548,12 @@ can be overridden using the <a href="../configuration/#subnet-creation-and-addre
 <td>None</td>
 </tr>
 <tr>
+<td>Basic firewall management</td>
+<td><code>AzureFirewallManagementSubnet</code></td>
+<td><code>192.168.3.192/26</code></td>
+<td>None</td>
+</tr>
+<tr>
 <td>Power Platform</td>
 <td><code>powerplatform-subnet</code></td>
 <td><code>192.168.4.0/24</code></td>
@@ -2538,6 +2567,11 @@ can be overridden using the <a href="../configuration/#subnet-creation-and-addre
 </tr>
 </tbody>
 </table>
+<p>Firewall data subnet creation defaults to the local firewall requirement.
+The management subnet is used only by a standalone Basic firewall.
+GatewaySubnet is opt-in. The table is an address plan, not an unconditional
+resource inventory; shared-hub services do not require these reservations
+in the spoke.</p>
 <p><strong>Creation is not service selection.</strong> A false subnet creation flag does not
 disable its consumers: any enabled consumer still needs a valid subnet.
 With isolation off, no VNet or subnets are provisioned.</p>
@@ -2798,10 +2832,62 @@ public/private, IPv6, loopback and link-local answers.</p>
 and TLS without sending an HTTP request or credentials. Connectivity is not
 authorization: API access and document permissions still need tests with the
 intended user identities.</p>
+<h3 id="firewall-sku-and-management-networking">Firewall SKU and management networking</h3>
+<p>New isolated standalone deployments select <code>AZURE_FIREWALL_SKU=Basic</code>.
+Select <code>Standard</code> explicitly when DNS proxy, network-rule FQDN filtering or
+greater capacity is required. Basic supports application HTTP(S) FQDN rules
+and IP/service-tag network rules; assess its approximately 250 Mbps capacity
+class against build, image-download and ingestion peaks.</p>
+<table>
+<thead>
+<tr>
+<th>Topology</th>
+<th>Local firewall data subnet/IP</th>
+<th>Local management subnet/IP</th>
+<th>GatewaySubnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standalone Basic</td>
+<td>Required</td>
+<td>Required</td>
+<td>Explicit reservation only</td>
+</tr>
+<tr>
+<td>Standalone Standard</td>
+<td>Required</td>
+<td>None</td>
+<td>Explicit reservation only</td>
+</tr>
+<tr>
+<td>External hub, with or without gateway</td>
+<td>No IP; data subnet only if explicitly reserved</td>
+<td>None</td>
+<td>Explicit local reservation only</td>
+</tr>
+<tr>
+<td>Public/non-isolated</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+<p>Both local SKUs use <code>AzureFirewallSubnet</code>. Basic additionally needs the
+exact name <code>AzureFirewallManagementSubnet</code>, a /26-or-larger range and a
+separate Standard/static public IP and management NIC configuration.
+Keep management networking free of generic NSGs, workload default routes,
+NAT, delegations and service endpoints. Validate externally managed subnet
+routing with the network owner. Workload routes use the data-plane private IP.</p>
+<p>For external hub egress, explicitly disable local firewall deployment and
+configure the approved external next hop or route table. A deployment-mode
+label alone does not configure egress or change hub resources.</p>
 <h3 id="opt-in-firewall-dns-proxy">Opt-in firewall DNS proxy</h3>
 <p><code>ENABLE_FIREWALL_DNS_PROXY</code> defaults to <code>false</code> and maps to the Bicep boolean
 <code>enableFirewallDnsProxy</code> (also default <code>false</code>), which sets
-<code>dnsSettings.enableProxy</code>. It applies only when the existing
+<code>dnsSettings.enableProxy</code> on a <code>Standard</code> firewall. Basic with proxy enabled
+is rejected; its policy omits DNS settings. It applies only when the
 <code>deployAzureFirewall</code> and <code>networkIsolation</code> gates enable firewall deployment.
 It is intended for a topology that deliberately uses the firewall as its DNS
 forwarding path. The matching deployment runbook applies the selection through
