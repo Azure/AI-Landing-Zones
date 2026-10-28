@@ -225,9 +225,9 @@ Distribute the `https://` URL directly.
 5. Repeat the connection test from an unapproved **public** network: TCP/443
    should be blocked. With test accounts and known restricted documents,
    verify permitted retrieval and denial for an unauthorized user through
-   Foundry IQ **after the protected-retrieval integration gate in the
-   Deploy full stack runbook is resolved**. The gateway does not implement
-   that missing runtime identity integration.
+   Foundry IQ using the delegated native path described in the
+   [Deploy full stack runbook](deploy-full-stack.md). The gateway's network
+   admission does not grant source permissions.
 
 The shipped WAF uses the Open Worldwide Application Security Project Core Rule
 Set (OWASP CRS) 3.2 in Prevention mode. Check its logs for

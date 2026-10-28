@@ -79,10 +79,10 @@ procedure for changing runtime layouts.
 
 !!! warning "Automation does not close runtime capability gaps"
     Keep `maf_lite` and Foundry IQ as the default runtime choices. The
-    protected-retrieval gate in the Deploy full stack runbook applies to CI/CD.
-    Do not promote until the developer-owned identity integration and real-user
-    allow/deny tests pass. Pipeline settings, weaker source permissions and
-    successful greetings are not substitutes.
+    source-permission acceptance in the Deploy full stack runbook applies to
+    CI/CD. The integrated native path still needs downstream consent and
+    real-user allow/deny evidence before promotion. Pipeline settings, weaker
+    source permissions and successful greetings are not substitutes.
 
 #### Runner requirements
 

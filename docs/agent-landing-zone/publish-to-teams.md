@@ -113,9 +113,10 @@ it is not the resource you are configuring.
     authenticates users and enforces data permissions in both Teams and
     Microsoft 365 Copilot before rollout.
 
-    The Agent Application's default hosted runtime has a protected-retrieval
-    integration gap described in the Deploy full stack runbook. Channel
-    publication does not resolve it or prove per-user document authorization.
+    The Agent Application UI performs a separate delegated Search exchange.
+    Channel publication does not automatically reproduce that credential path
+    or prove per-user document authorization. Validate the channel's supported
+    delegation before admitting protected data.
 
 ## Procedure
 
@@ -535,7 +536,7 @@ matches your publication scope. **Both PNA values must remain `Disabled`.**
 
     Channel support does not add upload or image-generation handlers to the
     supplied Agent Application. Its [images and voice](multimodality.md)
-    contract and protected-retrieval integration gate still apply.
+    contract and protected-retrieval authorization requirements still apply.
 
 ### Update or stop publication
 

@@ -383,7 +383,7 @@ An externally populated index must be named explicitly where required.
 **Verify:** Confirm the effective `agent-lz` key and intended UI revision.
 With ingestion disabled, attachment controls must be hidden and direct/stale
 uploads rejected. Verify text chat and retrieval separately, including the
-[protected-retrieval integration gate](#protected-retrieval-fails-after-hosted-sign-in).
+[delegated retrieval checks](#protected-retrieval-fails-after-hosted-sign-in).
 Ingestion selection is not a source of delegated user or owner context.
 
 If ingestion is selected, confirm the selection is `true` and test only
@@ -617,19 +617,46 @@ Then deploy the application and run its authenticated task and access checks.
 lacks delegated user context, is denied or omits documents.
 
 **Diagnose:** Distinguish UI-to-Foundry OBO from downstream source authorization.
-The hosted gateway does not forward the caller's `Authorization` header.
-The shipped `maf_lite` direct connector does not complete the authenticated
-Toolbox integration needed for protected per-user retrieval.
+The hosted gateway does not forward the caller's `Authorization` header
+unchanged. The built-in native path instead uses a separately exchanged Search
+token in `x-client-search-token`, followed by
+`x-ms-query-source-authorization` at Search.
 
-**Correct:** Stop protected-data rollout and have a developer implement and
-validate the supported hosted identity integration. Follow the capability gate
-in the [Deploy full stack runbook](deploy-full-stack.md#prerequisites).
-Do not select another strategy as a workaround, invent identity headers, enable
-anonymous retrieval or replace the user with a service identity.
+**Correct:** Check that UI and hosted runtime are the matching implementation
+with `RETRIEVAL_AUTH_MODE=native_search`. Check delegated Search consent,
+the authenticated UI assertion/refresh, supported custom-header forwarding,
+source permission metadata and private connectivity. A transport-role denial
+and a user's source denial are different failures. Resolve consent or
+Conditional Access through sign-in; do not log token values.
+Do not invent identity headers, enable anonymous retrieval or replace the
+user with a service identity. Stop sensitive-data rollout until denial works.
 
 **Verify:** Use two users with different source permissions and confirm
-permitted retrieval and denial through the actual UI or channel. If that
-integration is absent, mark the capability **blocked**.
+permitted retrieval and denial through the actual UI or channel, including
+references and downloads. A unit test or successful greeting is not
+authorization evidence for a deployed source.
+
+#### A protected citation download is denied
+
+**Diagnose:** Distinguish shared-source Storage authorization from upload
+authorization. Shared Blob/ADLS reads require the current user's Storage OBO,
+delegated `user_impersonation` consent and source RBAC/ACLs. Uploads require a
+fresh Search-authorized match for the exact document, conversation and uploader,
+plus the UI's Search transport role. Knowing the URL or possessing an old
+signed selector is not sufficient.
+
+**Correct:** Sign in again after session expiry and resolve consent or source
+permissions at their own boundary. Confirm the configured storage locations,
+Search index and bundled UI `retrieval-reader` profile. The native route
+limits a download to 100 MiB and 120 seconds; upload authorization examines
+at most 1,000 Search rows within 4 MiB and 30 seconds. An unverified target
+beyond those bounds is denied, not read with elevated access.
+Do not re-enable the legacy reader, mint SAS or replace user Storage access
+with workload access to make the download succeed.
+
+**Verify:** Repeat allowed/denied-user, expiry and permission-revocation checks
+through the authenticated UI route, including an uploaded document.
+See [protected citation downloads](application-auth.md#protected-citation-downloads).
 
 #### The orchestrator returns HTTP 422
 

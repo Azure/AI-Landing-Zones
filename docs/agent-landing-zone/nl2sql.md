@@ -4,9 +4,9 @@
 This integration permits only read-only queries.
 
 Structured-data grounding can connect a Fabric data agent to a Foundry IQ
-knowledge base. Agent Application supplies connector code, not a complete
-hosted SQL integration. Delegated identity and response compatibility require
-additional validation before protected data can be exposed.
+knowledge base. Agent Application integrates that route with delegated
+Search authorization, compatible source configuration and response parsing.
+Fabric still owns query execution and the user's access to its data.
 This is a concept page; deployment follows the
 [Deploy full stack runbook](deploy-full-stack.md).
 
@@ -48,25 +48,23 @@ The source supports `low` or `medium` retrieval reasoning effort, not `minimal`.
 
 ### Identity and API boundaries
 
-The connector needs service authentication and a separate Search-audience
-delegated user token for remote-source authorization. The supplied hosted
-entry point provides neither a user bearer nor authenticated user context to
-default retrieval.
+The connector uses workload authentication for Search transport and a separate
+Search-audience delegated token for the user's source authorization. The UI
+obtains that token from the authenticated user's current assertion; Foundry
+forwards it to the hosted runtime, which sends the raw token in
+`x-ms-query-source-authorization`. It is not exchanged again in the container.
 
-Required-user retrieval can fail before the source is
-called; the remote-source connector itself skips this source when its
-delegated token is absent. UI sign-in and Foundry invocation do not close that gap.
+Missing delegation or a failed required source stops retrieval; the source is
+not skipped and the connector does not retry as an application identity.
 [Agent Application access](application-auth.md) explains the required
-authenticated integration.
+sign-in and consent.
 
-The supplied parser expects `dataAgentAnswer` and `dataAgentRawData`.
-The platform and orchestrator pin `2026-05-01-preview`. The service contract
-also documents `fabricAnswer` and `fabricEmbeddedResources` with
-`2026-08-01-preview`. The parser's separate ontology branch can read
-`fabricAnswer`, but does not handle `fabricEmbeddedResources` and classifies
-that answer as ontology content. Compatibility requires a validated API,
-parser and response combination, including table/chart handling. Changing
-the API setting alone does not implement that compatibility.
+Fabric requires the explicit `FOUNDRY_IQ_API_VERSION=2026-08-01-preview` contract.
+Provisioning binds the configured planning model and selects `low` retrieval
+reasoning for a bound Fabric source. The connector parses `fabricAnswer` and
+textual `fabricEmbeddedResources` as data-agent results, retaining the source
+identity in citations. This provides textual grounding, not an interactive
+table/chart viewer or direct SQL execution in the hosted container.
 
 <span id="run-a-read-only-pilot"></span>
 
@@ -81,7 +79,7 @@ is a separate service procedure, not evidence that hosted integration works.
 
 Required evidence includes activity from the intended knowledge source,
 correctly parsed results and denial for a user without source access.
-That validation depends on resolving the identity and API boundaries first.
+Use the integrated identity and API settings for that validation.
 Read-only execution prevents writes; it does not itself authorize a caller
 or guarantee a correct answer.
 
@@ -89,8 +87,8 @@ or guarantee a correct answer.
 
 ## Failure boundaries
 
-A Fabric answer missing from chat can indicate skipped delegated retrieval,
-an incorrect binding or incompatible response fields. An incorrect aggregate
+A Fabric answer missing from chat can indicate denied consent or source access,
+an incorrect binding or incompatible API settings. An incorrect aggregate
 can instead reflect source schema or business definitions.
 Knowledge-base source references and provisioning inputs share a lifecycle;
 removing a pilot binding does not require deleting tables or other knowledge sources.

@@ -61,6 +61,7 @@ The connector reads runtime values from App Configuration with label `agent-lz`.
 | Setting | Meaning in the shipped connector |
 | --- | --- |
 | `RETRIEVAL_BACKEND` | `foundry_iq` selects knowledge-base retrieval in this connector; it does not attach a native agent tool. |
+| `RETRIEVAL_AUTH_MODE` | `native_search` carries the separately delegated Search credential into native permission enforcement. |
 | `KNOWLEDGE_BASE_ENDPOINT` | Search service root, such as `https://<service>.search.windows.net`, not a Foundry project or retrieve URL. |
 | `KNOWLEDGE_BASE_NAME` | Knowledge-base object name, not an index name. |
 | `FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME` | Primary registered source name. |
@@ -72,20 +73,32 @@ Current Microsoft source examples use contracts beyond the accelerator's
 default API. Adopting a source requires compatibility across registration,
 retrieve requests and response parsing, not an API-version edit alone.
 
-!!! warning "Hosted user authorization is not wired end to end"
-    The shipped hosted entrypoint supplies empty user context to the retrieval
-    strategy. It does not forward the delegated user token required by the
-    connector's OBO path. Authenticated retrieval fails closed without that
-    token. Native service support and UI sign-in do not resolve this boundary.
-    Protected retrieval requires a reviewed integration that carries validated
-    per-user context from invocation to the selected retrieval tool.
+## Delegated native retrieval
 
-That integration must retain Foundry's trusted call context, service
-authentication and each source's permission enforcement. Tokens do not belong
-in prompts, chat history or user-supplied tool arguments.
-[Application authentication](application-auth.md) and the
-[custom application runbook](build-your-own-app.md) cover the surrounding
-application work.
+The supplied UI and hosted strategy integrate the user authorization path.
+The UI obtains a delegated Search token through OBO and forwards it with
+`x-client-search-token`; the hosted connector passes the raw token in
+`x-ms-query-source-authorization`. The connector's workload credential
+authenticates transport to Search, not the user's entitlement to documents.
+This path needs no customer-written Toolbox integration.
+
+Native permission filtering is enabled for the application index's user,
+group and RBAC scope fields. Indexing must populate the appropriate metadata;
+turning on filtering cannot reconstruct missing ACLs. Conversation uploads
+also require their conversation/uploader restrictions.
+
+Source contracts differ. Work IQ uses a distinct app-audience assertion and
+`x-ms-query-work-iq-source-authorization`, not the Search token. Indexed
+SharePoint requires compatible permission-ingestion configuration; Fabric
+sources require compatible preview APIs and user permissions. A source
+registration or runtime connector alone does not establish that the complete
+deployment combination is supported.
+
+Tokens do not belong in prompts, chat history, recovery checkpoints or
+user-supplied tool arguments. Required retrieval fails closed if credentials or
+source authorization are unavailable.
+[Application authentication](application-auth.md) describes consent and
+allowed/denied-user acceptance.
 
 <span id="apply-a-runtime-change-safely"></span>
 
@@ -116,7 +129,8 @@ before sensitive ingestion. See [Network isolation](network-isolation.md).
 Acceptance includes successful source indexing where applicable, a known-answer
 query with the expected document reference, and separate allowed/denied-user
 tests. A denied result must exclude the restricted document and its citation.
-A missing-token failure calls for identity integration work, not anonymous
+A missing-token failure calls for checking the compatible UI/runtime
+configuration, downstream consent and supported header path, not anonymous
 retrieval or broader managed-identity grants.
 
 Configuration is cached in the running application. Approved changes require

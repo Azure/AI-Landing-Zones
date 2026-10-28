@@ -264,6 +264,7 @@ authorization still apply.
 | Variable | Default | Description |
 | --- | --- | --- |
 | `RETRIEVAL_BACKEND` | `foundry_iq` | Retrieval implementation used by the Agent Application orchestrator. |
+| `RETRIEVAL_AUTH_MODE` | `native_search` | Automatically published runtime authorization contract for the integrated native Search path. The UI obtains the delegated Search token; the hosted connector forwards it separately from workload transport authentication. |
 | `FOUNDRY_IQ_PATTERN` | `azureBlob` | Native Blob source processing and knowledge-base setup. |
 | `FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND` | `azureBlob` | Blob connector for the knowledge source. |
 | `FOUNDRY_IQ_API_VERSION` | `2026-05-01-preview` | Azure AI Search API version used for Foundry IQ objects. |
@@ -274,6 +275,36 @@ authorization still apply.
 | `FOUNDRY_IQ_SEARCH_INDEX_NAME` | `agent-lz-index` | Search index name. |
 
 Other retrieval defaults: billing plan `free`, semantic configuration `default`, security field `metadata_security_id`, storage container `documents`, content extraction mode `standard`, ingestion permission options `["rbacScope"]`, and the filter add-on disabled.
+
+Native authorization uses the index's `userIds`, `groupIds` and `rbacScope`
+annotations, not the legacy security-field/add-on setting. Provisioning enables
+native permission filtering on new and compatible existing application indexes
+without deleting their documents or custom schema. Incompatible field
+annotations stop the update; do not disable permission checks to force it through.
+
+### Additional native source identities
+
+Work IQ, Fabric and indexed SharePoint require the implemented
+`2026-08-01-preview` source contract. Configure the matching source flag,
+knowledge-source name and bindings; incomplete enabled sources fail before
+resource changes instead of disappearing from a mixed knowledge base.
+Fabric sources also select the configured planning model and `low` reasoning.
+
+These optional identity inputs are nonsecret UUIDs. Explicit deployment
+environment values are published under `agent-lz`; omission invents no identity
+and an explicit empty value clears that setting.
+
+| Setting | Meaning |
+| --- | --- |
+| `WORK_IQ_APPLICATION_ID` | Work IQ app's application/client ID. |
+| `WORK_IQ_FEDERATED_CREDENTIAL_ID` | Object ID of the credential that trusts the Search principal, not the principal ID. |
+| `WORK_IQ_TENANT_ID` | App tenant ID for cross-tenant Work IQ configuration. |
+| `SHAREPOINT_INDEXED_APPLICATION_ID` | SharePoint ingestion app's application/client ID. |
+| `SHAREPOINT_INDEXED_FEDERATED_CREDENTIAL_APPLICATION_ID` | Application/client ID of the federated Search managed identity, not a credential object ID. |
+
+These settings do not register Entra apps, grant tenant consent or remove source
+licensing/billing requirements. See [Work IQ](work-iq.md) and
+[SharePoint](sharepoint.md) for administrator setup.
 
 For network-isolated native Blob configuration, infrastructure publishes
 `SEARCH_SHARED_PRIVATE_LINKS` as a JSON array under label `agent-lz`. This is
@@ -334,6 +365,19 @@ Allowed and denied users both need validation before access resumes. The
 [Deploy full stack](deploy-full-stack.md) runbook covers reconfiguration.
 See also
 [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
+
+### Protected download configuration
+
+Native hosted downloads reuse the configured storage account/containers and
+`SEARCH_SERVICE_QUERY_ENDPOINT`, `SEARCH_RAG_INDEX_NAME` and
+`SEARCH_API_VERSION`; there is no separate permission-bypass switch.
+The bundled UI includes `retrieval-reader` for native Search transport during
+upload authorization. Its workload role does not grant the caller access.
+
+Shared document downloads additionally require delegated Azure Storage
+`user_impersonation` consent on the UI app and the user's source RBAC/ACLs.
+See [protected citation downloads](application-auth.md#protected-citation-downloads).
+Do not change Blob ingestion permission options to fix a download denial.
 
 ## Network and security
 

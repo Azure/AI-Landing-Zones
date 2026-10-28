@@ -57,9 +57,10 @@ subnet for Power Platform delegation.
 - **Foundry:** A running, tested hosted agent. Ask its owner for the stable
   **Responses URL** and **active agent version**. Use the agent endpoint shown in
   Step 3, not a Container Apps `/invocations` URL or an Activity endpoint.
-  If using the Agent Application, resolve its protected-retrieval integration
-  gate in the [Deploy full stack runbook](deploy-full-stack.md) before using
-  protected sources. A working relay is not evidence of source authorization.
+  The Agent Application UI integrates a separate delegated Search credential;
+  this relay does not automatically reproduce that exchange. Before using
+  protected sources, prove the relay's supported per-user downstream credential
+  path and source authorization. A working relay is not that evidence.
 - **Azure network:** The platform team has already delivered the Power Platform
   subnet (default `powerplatform-subnet`, `192.168.4.0/24`, delegated to
   `Microsoft.PowerPlatform/enterprisePolicies`), regional connectivity,

@@ -22,10 +22,11 @@ knowledge base retrieval. Custom strategies and tools must implement and test
 the hosted entrypoint and authorization path before deployment to Foundry.
 The default remains `maf_lite` with Foundry IQ.
 
-A source fork or capability
-profile does not close the protected-retrieval integration gate in the
-Deploy full stack runbook. Implement and test that identity boundary before
-using protected documents; do not substitute a strategy flag.
+The supplied UI/hosted native path integrates delegated Search authorization.
+A source fork or capability profile does not automatically preserve it.
+Custom applications must implement and test the same identity and source
+permission boundaries before using protected documents; do not substitute a
+strategy flag.
 
 <span id="before-you-start"></span>
 

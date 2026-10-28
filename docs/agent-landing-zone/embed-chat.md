@@ -98,7 +98,14 @@ The embedded session retains the delegated token server-side for the hosted
 client's OBO exchange. `HOSTED_AGENT_AUTH_MODE=user_delegated` preserves that
 caller boundary. Protected document access still requires the
 [hosted retrieval integration](application-auth.md#3-verify-the-retrieval-identity-boundary);
-embedding does not supply it.
+the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
+alone does not establish downstream consent or source permissions.
+
+Native citation downloads use authenticated principal/session-bound selectors
+and recheck source access on each click. Shared Blob/ADLS downloads also need
+Storage delegated consent and user source permissions.
+See [protected citation downloads](application-auth.md#protected-citation-downloads).
+Anonymous sessions cannot redeem these selectors.
 
 Session lifetime ends at the earlier of token expiry and
 `CHAINLIT_COPILOT_SESSION_TTL_SECONDS` (default 3600 seconds). It has no silent

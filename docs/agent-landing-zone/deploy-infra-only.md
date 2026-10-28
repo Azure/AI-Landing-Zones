@@ -240,7 +240,7 @@ The default Agent layout is `hosted-no-panel`, using `maf_lite` and Foundry IQ
 without Agent App Ingestion. Set `HOSTED_AGENT_RESOURCE_SCOPE` to the approved
 delegated Foundry audience followed by `/.default` before provisioning, even
 when application deployment will happen later. See the linked full-stack
-runbook for the identity inputs and protected-retrieval integration gate.
+runbook for identity inputs, downstream consent and protected-retrieval acceptance.
 
 ### Step 4: Preview and provision
 

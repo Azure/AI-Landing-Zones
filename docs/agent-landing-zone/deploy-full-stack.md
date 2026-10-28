@@ -63,17 +63,18 @@ see [How it works](how-it-works.md).
   [Application authentication](application-auth.md). Deployment does not
   perform tenant consent.
 
-!!! warning "Protected retrieval is an integration gate"
-    The shipped hosted entrypoint does not receive the browser's bearer token.
-    The default `maf_lite` strategy uses a direct Foundry IQ connector, but
-    does not implement the complete authenticated Foundry Toolbox path for
-    per-user protected retrieval. UI on-behalf-of (OBO) sign-in authenticates
-    the Foundry call; it does not close that downstream integration gap.
+!!! important "Protected retrieval keeps the signed-in user's permissions"
+    The UI and hosted `maf_lite` strategy integrate delegated Search
+    authorization with `RETRIEVAL_AUTH_MODE=native_search`. The UI performs
+    the downstream OBO exchange; the hosted connector supplies that credential
+    to Search separately from its workload transport identity. A custom
+    Toolbox integration is not required for this built-in path.
 
-    Assign a developer to implement and validate the supported identity path
-    before admitting protected data. No topology, strategy or permission flag
-    makes this turnkey. Do not enable anonymous retrieval, use service identity
-    or weaken source permissions to make a test pass.
+    Arrange downstream consent and source permissions, retain permission
+    ingestion, and verify an allowed and a denied user before admitting
+    sensitive content. Missing credentials fail closed. Do not enable
+    anonymous retrieval, substitute service identity or weaken source
+    permissions to recover from an authorization failure.
 
 | Tool | Required for |
 | --- | --- |
@@ -451,8 +452,9 @@ On Linux/macOS use `./scripts/bootstrapHostedAccess.sh`. The wrapper selects
 project/service context. Allow role propagation, then retry root `azd deploy`
 so the greeting and remaining deployment gates run before cutover.
 
-The closed bootstrap set grants App Configuration Data Reader, model access
-and, when configured, access to the exact audit secret. It is not a grant to
+The closed bootstrap set grants App Configuration Data Reader, model access,
+native retrieval's scoped Search transport access and, when configured, access
+to the exact audit secret. It is not a grant to
 delegated users or a replacement for all capability profiles. Do not grant
 Owner or remove unrelated assignments to recover. See [hosted identities](hosted-agents.md).
 
@@ -539,8 +541,8 @@ do not delete shared hub, DNS or monitoring resources.
    [Entra sign-in and delegated authentication](application-auth.md).
 4. Exercise an agent task and configured tools with representative identities.
    For documents, ingest a harmless test document through the configured source.
-   After resolving the protected-retrieval integration gate, test both permitted
-   retrieval and denial to a user without that document's permission.
+   With the integrated delegated retrieval path and downstream consent, test
+   both permitted retrieval and denial to a user without that document's permission.
    Test uploads only when their additional capabilities are selected.
 5. Correlate the task with runtime telemetry. The deployment's greeting checks
    basic response only; test actual UI login, OBO and source authorization.

@@ -81,10 +81,12 @@ instead becomes `AGENTLZ_IMAGE_DIGEST`; it is not interchangeable with
 The post-deploy hook discovers the runtime principal and grants App Configuration
 Data Reader on the store and Cognitive Services OpenAI User on the Foundry
 account. If `AUDIT_HMAC_KEY` is a Key Vault reference, the bootstrap plan also
-includes Key Vault Secrets User on that individual secret.
+includes Key Vault Secrets User on that individual secret. Native retrieval
+also uses Search Index Data Reader scoped to the configured Search resource
+for transport; native user/source authorization remains separate.
 
-Source access,
-other secrets and caller permissions are outside this closed bootstrap set.
+End-user source permissions, other secrets and caller permissions are outside
+this closed bootstrap set.
 Role reconciliation needs scoped role-assignment authority or an authorized
 administrator applying the reviewed plan.
 [Hosted access recovery](deploy-full-stack.md#recover-hosted-runtime-access)
@@ -106,11 +108,24 @@ without fallback to the UI managed identity.
 [Agent Application access](application-auth.md) explains sign-in and consent.
 Successful invocation is not evidence of document-level authorization.
 
-The hosted container does not automatically receive the user's bearer token
-or authenticated principal. Its code controls model calls, retrieval and tools.
-Portal instructions or tool attachments do not automatically reconfigure
-`maf_lite`; [Agent tools](agent-tools.md) describes the native Toolbox
-integration boundary.
+Foundry does not forward the invocation Authorization header unchanged.
+For native protected retrieval, the UI separately acquires a delegated Search
+token and forwards it in `x-client-search-token`. Both hosted adapters keep it
+request-local and the connector passes it to native Search permission
+enforcement. Missing required credentials fail before retrieval; they never
+trigger a service-identity retry.
+
+Native citation downloads stay on the authenticated UI and recheck source
+authorization at redemption. Shared Blob/ADLS reads use Storage OBO;
+conversation uploads require a fresh native Search ownership check before
+workload Blob transport. The bundled UI's `retrieval-reader` profile supplies
+the Search transport role, not the user's entitlement.
+See [protected citation downloads](application-auth.md#protected-citation-downloads)
+for consent and source-access requirements.
+
+The container's code still controls model calls, retrieval and tools. Portal
+instructions or tool attachments do not automatically reconfigure `maf_lite`;
+[Agent tools](agent-tools.md) describes the separate Toolbox extension boundary.
 
 ### Protocol and caller access
 

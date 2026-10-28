@@ -28,6 +28,10 @@ The [single-tenant registration](https://learn.microsoft.com/entra/identity-plat
 and [exposed API scope](https://learn.microsoft.com/entra/identity-platform/quickstart-configure-app-expose-web-apis)
 are separate from Azure subscription permissions. Downstream Foundry delegated
 permissions and consent are also separate from consent to the UI API.
+Protected native retrieval additionally needs delegated Search consent for
+`https://search.azure.com/.default`. Shared Blob/ADLS citation downloads need
+delegated Azure Storage `user_impersonation` consent for
+`https://storage.azure.com/.default`; this does not grant source access.
 
 | UI runtime key | Contract |
 | --- | --- |
@@ -38,6 +42,7 @@ permissions and consent are also separate from consent to the UI API.
 | `CHAINLIT_AUTH_SECRET` | Persistent, protected session-signing secret. |
 | `ALLOW_ANONYMOUS` | `false` for authenticated access. |
 | `HOSTED_AGENT_AUTH_MODE` | `user_delegated`, the default hosted mode. |
+| `RETRIEVAL_AUTH_MODE` | `native_search` for the integrated native permission path. Published under `agent-lz`; not an anonymous-access switch. |
 
 Runtime keys normally use App Configuration label `agent-lz`. The UI identity
 needs permission to resolve its Key Vault references. Credentials are not
@@ -76,23 +81,24 @@ describes downstream consent.
 `service_identity` would make Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.
 
-The supplied hosted entry point sets `user_context={}` and does not supply the
-user's bearer token to `maf_lite` retrieval. It performs no automatic retrieval
-OBO exchange. With `ALLOW_ANONYMOUS=false`, required-user retrieval fails
-preflight when that token is unavailable; it does not silently retrieve as a
-service identity. Removing source permission metadata alone does not repair
-this missing-token contract.
+With `RETRIEVAL_AUTH_MODE=native_search`, the supplied UI performs a separate
+OBO exchange for `https://search.azure.com/.default` from the same authenticated
+UI assertion used for the Foundry exchange. Foundry forwards the resulting
+`x-client-search-token` to both hosted adapters. The connector supplies that
+raw token in `x-ms-query-source-authorization`, separately from its workload
+authentication to Search. It does not exchange the Search token again.
 
-**Protected hosted retrieval requires a developer integration.** Foundry's
-[authenticated hosted Toolbox contract](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent)
-uses an authenticated `FoundryToolbox` client and platform-provided call context.
-The default `maf_lite` code does not consume portal Toolbox configuration.
+This built-in path does not require customer-written Toolbox integration or
+forward the browser's Authorization header unchanged. Native Search evaluates
+document permissions; caller-provided identity/group IDs are not entitlement
+evidence. The transport identity's Search role alone does not grant the user
+access to protected sources.
 
-A compatible integration must connect the knowledge base through that contract,
-retain the platform caller context, and enforce the knowledge source's
-permissions. [Agent tools](agent-tools.md) explains the extension boundary.
-Browser bearer forwarding or fabricated identity/group headers are not a
-substitute.
+Required retrieval rejects a missing credential before execution. Tokens stay
+request-local, outside prompts, conversation history and recovery checkpoints.
+Consent, Conditional Access and source denial must be resolved at their own
+boundary, not by stripping the credential or retrying as a service.
+[Agent tools](agent-tools.md) explains the separate Toolbox extension boundary.
 
 The protected native Blob ingestion default is
 `FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=["rbacScope"]`. Explicit `[]` removes
@@ -101,6 +107,29 @@ That provides shared-source access, not per-user filtering.
 [Foundry IQ](foundry-iq.md) and
 [knowledge-base retrieval permissions](https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-retrieve)
 describe source-specific requirements.
+
+## Protected citation downloads
+
+Native hosted citations use `/api/download/{grant_token}` on the authenticated
+UI rather than public Blob links or Blob SAS. The signed selector is bound to
+the principal and UI session; it is not a document permission. Every download
+checks the current identity and source authorization again.
+
+Shared Blob/ADLS documents use the current user's Storage OBO token. The user
+needs actual Blob RBAC or ADLS ACL access, even if retrieval returned a citation.
+Missing Storage consent or source access never falls back to the UI identity.
+
+Conversation uploads instead require a fresh native Search check for the exact
+document URL, conversation and authenticated uploader before the UI workload
+reads the Blob. Deployment assigns the bundled UI Search Index Data Reader
+through its `retrieval-reader` capability profile for this transport check.
+Its existing Blob transport grants do not authorize a user by themselves.
+Missing ownership, scope or an exact authorized result denies the download.
+
+The route accepts only configured storage locations and enforces bounded
+streaming. Embedded sessions retain their own principal/session boundary.
+External source links, such as SharePoint citations, remain subject to the
+source's authentication rather than being proxied as arbitrary Blob downloads.
 
 <span id="4-run-an-allowdeny-test"></span>
 
@@ -117,6 +146,8 @@ An answer without a citation is not sufficient evidence of denial.
 | Foundry invocation | An admitted, authorized user can invoke the deployed agent through OBO. |
 | Shared document | Both authorized users retrieve its content and reference. |
 | Restricted document | Only its authorized user retrieves it; denied retrieval contains no document ID, excerpt or citation, including exact-title questions. |
+| Citation download | A permitted user downloads the cited document; another user, an expired session or a revoked source permission cannot redeem its grant. |
+| Uploaded document | Only the authenticated uploader can retrieve or download it in its conversation; knowing a document URL or conversation ID is insufficient. |
 | Conversation ownership | A different user cannot open the owner's history. |
 
 Correlation IDs, effective configuration and agent version provide diagnostic
@@ -132,6 +163,13 @@ concern UI scopes, tenant and credential lifetime. Invocation denial can instead
 indicate missing downstream consent or Foundry user/agent access.
 Tool consent is separate from UI consent, as described in
 [tool authentication](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication).
+
+Initial UI token acquisition classifies consent and authentication failures.
+Downstream Search challenges currently terminate retrieval with a safe error;
+the hosted adapters do not relay `WWW-Authenticate` or complete a downstream
+claims round trip. Reauthentication and administrator diagnosis may be needed.
+Do not treat an initial MSAL acquisition test as proof of downstream
+Conditional Access recovery.
 
 A denied user retrieving protected content is an authorization failure that
 blocks exposure of that corpus. Recovery does not replace the delegated caller

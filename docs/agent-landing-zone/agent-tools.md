@@ -54,13 +54,17 @@ the appropriate connection, tool authorization and source permissions.
 An endpoint string or a forwarded call ID without client authentication is
 not a complete integration.
 
-The supplied hosted entry point initializes `user_context={}` and does not
-pass the caller's bearer token into default retrieval. UI OBO to Foundry is
-not an automatic OBO exchange inside the container. Protected knowledge-base
-or tool access therefore needs a reviewed authenticated integration, as
-described in [Agent Application access](application-auth.md#3-verify-the-retrieval-identity-boundary).
-Caller-supplied group IDs, fabricated platform call IDs and browser bearer
-forwarding do not satisfy that contract.
+The supplied `maf_lite` knowledge-base path uses integrated UI OBO and native
+Search permission enforcement instead of this Toolbox client. It forwards a
+Search-audience delegated token through Foundry's supported custom-header
+contract; no customer-written Toolbox integration is needed for that path.
+[Agent Application access](application-auth.md#3-verify-the-retrieval-identity-boundary)
+describes the separate invocation and retrieval credentials.
+
+Arbitrary tools still require their own authenticated integration. A Search
+token cannot be reused as a generic MCP user assertion. Caller-supplied group
+IDs, fabricated platform call IDs and a prompt instruction do not authorize a
+tool or its source data.
 
 Knowledge-base MCP source configuration is separate from callable agent tools.
 `FOUNDRY_IQ_MCP_SOURCES_JSON` describes sources consumed by the knowledge-base
@@ -79,8 +83,10 @@ authorization or approval control.
 
 The runtime principal needs narrowly scoped dependency grants. Secrets remain
 in Key Vault, not tool definitions or ordinary App Configuration values.
-The standard bootstrap covers only its declared configuration/model/audit
-access; extra tool or source access needs separate grants.
+The standard bootstrap covers its declared configuration/model/audit access
+and scoped Search transport access for native retrieval. That transport role
+does not replace end-user source authorization; extra tool access needs its
+own narrowly scoped grants.
 [Agent hosting](hosted-agents.md) explains the identities.
 Private tools also depend on DNS, TLS and authorized egress from the actual
 hosted network path. Tool destinations receive application data and require

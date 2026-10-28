@@ -73,10 +73,12 @@ flowchart LR
 ```
 
 The flow shows request dependencies, not proof of document authorization.
-The hosted entry point supplies neither authenticated user context nor a
-user bearer to default retrieval. Required-user retrieval fails without that
-token. Protected retrieval needs the integration and allow/deny validation
-described in [Agent Application access](application-auth.md).
+The built-in native retrieval path separately exchanges and forwards a
+delegated Search token; native permissions remain enforced independently of
+Foundry invocation. Required retrieval fails without that credential.
+This path does not require adding a Toolbox in the portal or customer-written
+identity integration. Consent, source permissions and allow/deny validation
+remain necessary; see [Agent Application access](application-auth.md).
 
 ### Ingestion
 
