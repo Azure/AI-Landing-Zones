@@ -628,19 +628,30 @@ unchanged. The built-in native path instead uses a separately exchanged Search
 token in `x-client-search-token`, followed by
 `x-ms-query-source-authorization` at Search.
 
-**Correct:** Check that UI and hosted runtime are the matching implementation
-with `RETRIEVAL_AUTH_MODE=native_search`. Check delegated Search consent,
-the authenticated UI assertion/refresh, supported custom-header forwarding,
-source permission metadata and private connectivity. A transport-role denial
-and a user's source denial are different failures. Resolve consent or
-Conditional Access through the UI's explicit authentication recovery action.
-Standalone sessions complete the configured OAuth callback; embedded sessions
-use portal MSAL and authenticated bootstrap. Then submit a new turn: the failed
-turn is not automatically replayed. A source `403` without usable claims
-requires source-access diagnosis, not repeated sign-in. Do not log tokens or
-claims challenges.
-Do not invent identity headers, enable anonymous retrieval or replace the
-user with a service identity. Stop sensitive-data rollout until denial works.
+**Correct:**
+
+1. **Check the implementation.** Confirm the UI and hosted runtime are the
+   matching implementation with `RETRIEVAL_AUTH_MODE=native_search`.
+2. **Check the delegated retrieval path.** Review delegated Search consent,
+   the authenticated UI assertion/refresh, supported custom-header forwarding,
+   source permission metadata and private connectivity.
+3. **Match recovery to the failure.** A transport-role denial and a user's
+   source denial are different failures:
+
+    **Consent or Conditional Access:** Use the UI's explicit authentication
+    recovery action. Standalone sessions complete the configured OAuth
+    callback; embedded sessions use portal MSAL and authenticated bootstrap.
+
+    **Source `403` without usable claims:** Diagnose source access rather
+    than repeating sign-in.
+
+4. **Submit a new turn after authentication recovery.** The failed turn is
+   not automatically replayed.
+
+!!! warning "Do not bypass user authorization"
+    Do not log tokens or claims challenges. Do not invent identity headers,
+    enable anonymous retrieval or replace the user with a service identity.
+    Stop sensitive-data rollout until denial works.
 
 **Verify:** Use two users with different source permissions and confirm
 permitted retrieval and denial through the actual UI or channel, including

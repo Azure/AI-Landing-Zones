@@ -586,21 +586,41 @@ operator values are preserved through composition; the allocation table lists
 defaults, not mandatory ranges. Reserved service names must retain their
 required spellings.
 
-| Native name parameter | Name environment input | Native prefix parameter | Prefix environment input |
-| --- | --- | --- | --- |
-| `agentSubnetName` | `AZURE_AGENT_SUBNET_NAME` | `agentSubnetPrefix` | `AZURE_AGENT_SUBNET_PREFIX` |
-| `acaEnvironmentSubnetName` | `AZURE_ACA_ENVIRONMENT_SUBNET_NAME` | `acaEnvironmentSubnetPrefix` | `AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX` |
-| `peSubnetName` | `AZURE_PE_SUBNET_NAME` | `peSubnetPrefix` | `AZURE_PE_SUBNET_PREFIX` |
-| `azureBastionSubnetName` | `AZURE_BASTION_SUBNET_NAME` | `azureBastionSubnetPrefix` | `AZURE_BASTION_SUBNET_PREFIX` |
-| `azureFirewallSubnetName` | `AZURE_FIREWALL_SUBNET_NAME` | `azureFirewallSubnetPrefix` | `AZURE_FIREWALL_SUBNET_PREFIX` |
-| `azureFirewallManagementSubnetName` | `AZURE_FIREWALL_MANAGEMENT_SUBNET_NAME` | `azureFirewallManagementSubnetPrefix` | `AZURE_FIREWALL_MANAGEMENT_SUBNET_PREFIX` |
-| `gatewaySubnetName` | `AZURE_GATEWAY_SUBNET_NAME` | `gatewaySubnetPrefix` | `AZURE_GATEWAY_SUBNET_PREFIX` |
-| `azureAppGatewaySubnetName` | `AZURE_APP_GATEWAY_SUBNET_NAME` | `azureAppGatewaySubnetPrefix` | `AZURE_APP_GATEWAY_SUBNET_PREFIX` |
-| `jumpboxSubnetName` | `AZURE_JUMPBOX_SUBNET_NAME` | `jumpboxSubnetPrefix` | `AZURE_JUMPBOX_SUBNET_PREFIX` |
-| `devopsBuildAgentsSubnetName` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_NAME` | `devopsBuildAgentsSubnetPrefix` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX` |
-| `applicationPeSubnetName` | `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetPrefix` | `AZURE_APPLICATION_PE_SUBNET_PREFIX` |
-| `powerPlatformSubnetName` | `AZURE_POWER_PLATFORM_SUBNET_NAME` | `powerPlatformSubnetPrefix` | `AZURE_POWER_PLATFORM_SUBNET_PREFIX` |
-| `aiGatewaySubnetName` | `AZURE_AI_GATEWAY_SUBNET_NAME` | `aiGatewaySubnetPrefix` | `AZURE_AI_GATEWAY_SUBNET_PREFIX` |
+##### Subnet names
+
+| Native name parameter | Name environment input |
+| --- | --- |
+| `agentSubnetName` | `AZURE_AGENT_SUBNET_NAME` |
+| `acaEnvironmentSubnetName` | `AZURE_ACA_ENVIRONMENT_SUBNET_NAME` |
+| `peSubnetName` | `AZURE_PE_SUBNET_NAME` |
+| `azureBastionSubnetName` | `AZURE_BASTION_SUBNET_NAME` |
+| `azureFirewallSubnetName` | `AZURE_FIREWALL_SUBNET_NAME` |
+| `azureFirewallManagementSubnetName` | `AZURE_FIREWALL_MANAGEMENT_SUBNET_NAME` |
+| `gatewaySubnetName` | `AZURE_GATEWAY_SUBNET_NAME` |
+| `azureAppGatewaySubnetName` | `AZURE_APP_GATEWAY_SUBNET_NAME` |
+| `jumpboxSubnetName` | `AZURE_JUMPBOX_SUBNET_NAME` |
+| `devopsBuildAgentsSubnetName` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_NAME` |
+| `applicationPeSubnetName` | `AZURE_APPLICATION_PE_SUBNET_NAME` |
+| `powerPlatformSubnetName` | `AZURE_POWER_PLATFORM_SUBNET_NAME` |
+| `aiGatewaySubnetName` | `AZURE_AI_GATEWAY_SUBNET_NAME` |
+
+##### Subnet address prefixes
+
+| Native prefix parameter | Prefix environment input |
+| --- | --- |
+| `agentSubnetPrefix` | `AZURE_AGENT_SUBNET_PREFIX` |
+| `acaEnvironmentSubnetPrefix` | `AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX` |
+| `peSubnetPrefix` | `AZURE_PE_SUBNET_PREFIX` |
+| `azureBastionSubnetPrefix` | `AZURE_BASTION_SUBNET_PREFIX` |
+| `azureFirewallSubnetPrefix` | `AZURE_FIREWALL_SUBNET_PREFIX` |
+| `azureFirewallManagementSubnetPrefix` | `AZURE_FIREWALL_MANAGEMENT_SUBNET_PREFIX` |
+| `gatewaySubnetPrefix` | `AZURE_GATEWAY_SUBNET_PREFIX` |
+| `azureAppGatewaySubnetPrefix` | `AZURE_APP_GATEWAY_SUBNET_PREFIX` |
+| `jumpboxSubnetPrefix` | `AZURE_JUMPBOX_SUBNET_PREFIX` |
+| `devopsBuildAgentsSubnetPrefix` | `AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX` |
+| `applicationPeSubnetPrefix` | `AZURE_APPLICATION_PE_SUBNET_PREFIX` |
+| `powerPlatformSubnetPrefix` | `AZURE_POWER_PLATFORM_SUBNET_PREFIX` |
+| `aiGatewaySubnetPrefix` | `AZURE_AI_GATEWAY_SUBNET_PREFIX` |
 
 Set `vnetAddressPrefixes.value` as an explicit array in root
 `main.parameters.json` (default `["192.168.0.0/21"]`); there is no

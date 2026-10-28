@@ -230,11 +230,36 @@ and connectivity; a resource ID alone does not supply them.
 
 ### Observability
 
-| Parameter | Env variable | Description |
-|---|---|---|
-| `existingLogAnalyticsWorkspaceResourceId` | `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID` | Reuse a central Log Analytics workspace. All diagnostic settings, AMPLS linkage, and the App Configuration entries point at this workspace. |
-| `existingApplicationInsightsResourceId` | `EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID` | Reuse an existing Application Insights component. Pair with `existingApplicationInsightsConnectionString` so downstream consumers (Container Apps Environment, App Configuration) receive a working connection string without needing access to the AppInsights resource. |
-| `existingApplicationInsightsConnectionString` | `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING` | Connection string for the reused AppInsights component (`az monitor app-insights component show -g <rg> -a <name> --query connectionString -o tsv`). Marked `@secure()`. |
+#### Log Analytics workspace
+
+- **Parameter:** `existingLogAnalyticsWorkspaceResourceId`
+- **Environment variable:** `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID`
+
+Reuse a central Log Analytics workspace. All diagnostic settings, AMPLS
+linkage, and the App Configuration entries point at this workspace.
+
+#### Application Insights component
+
+- **Parameter:** `existingApplicationInsightsResourceId`
+- **Environment variable:** `EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID`
+
+Reuse an existing Application Insights component. Pair with
+`existingApplicationInsightsConnectionString` so downstream consumers
+(Container Apps Environment, App Configuration) receive a working connection
+string without needing access to the AppInsights resource.
+
+#### Application Insights connection string
+
+- **Parameter:** `existingApplicationInsightsConnectionString`
+- **Environment variable:** `EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING`
+
+Connection string for the reused AppInsights component. Retrieve it with:
+
+```bash
+az monitor app-insights component show -g <rg> -a <name> --query connectionString -o tsv
+```
+
+This parameter is marked `@secure()`.
 
 ### Networking
 

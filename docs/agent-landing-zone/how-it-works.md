@@ -92,16 +92,25 @@ where declared; other unset inputs can use Bicep defaults.
 
 Before provisioning, the hooks validate the provider/application binding,
 resolve the shared hosting topology and apply environment inputs.
-Bicep consumes the generated `infra/main.parameters.json`.
-Terraform consumes generated `infra/terraform/main.tfvars.json`, with backend
-settings rendered from `infra/terraform/provider.conf.json`.
-For Terraform, `infra/main.parameters.json` is only a shared preflight artifact.
-The adapter also qualifies `public`, `usgovernment` or `china` and generates
-the matching `azureCloud` context and backend environment. See
-[Azure cloud settings](configuration.md#azure-cloud).
-An immutable private backend record is created on first use before settings
-are persisted and verified thereafter. Clean runners need the original
-backend, group and application/environment bindings, not reconstructed files.
+
+| Provider | Generated deployment input |
+| --- | --- |
+| Bicep | `infra/main.parameters.json` |
+| Terraform | `infra/terraform/main.tfvars.json` |
+
+Terraform renders backend settings from `infra/terraform/provider.conf.json`.
+Its generated `infra/main.parameters.json` is only a shared preflight artifact,
+not the Terraform deployment input.
+
+!!! note "Terraform cloud and backend records"
+    The adapter qualifies `public`, `usgovernment` or `china` and generates
+    the matching `azureCloud` context and backend environment. See
+    [Azure cloud settings](configuration.md#azure-cloud).
+
+    An immutable private backend record is created on first use before
+    settings are persisted and verified thereafter. Clean runners need the
+    original backend, group and application/environment bindings, not
+    reconstructed files.
 
 !!! note "Edit the source, not the generated output"
     Use documented environment inputs and root `main.parameters.json`.

@@ -458,15 +458,26 @@ running. See the ingestion service's
 [runtime guide](https://github.com/Azure/agent-app-ingestion/blob/main/docs/runtime.md)
 for route availability and authentication.
 
-Indexing handles new/modified content and refreshes the selected items' ACLs.
-The purge job compares indexed SharePoint item IDs with Graph and removes
-copies for missing items. **Do not treat purge as full retirement or filter
-reconciliation:** the current purger scans indexed collections, does not apply
-the source's item filter, and skips deletion when a collection enumeration is
-empty or unavailable. Removing a source definition, changing a filter,
-deleting the last item, or revoking site access is not proof that indexed
-copies were deleted. Verify deletion explicitly and use a separately
-authorized, scoped Search cleanup when needed.
+- **Indexing:** handles new/modified content and refreshes the selected
+  items' ACLs.
+- **Purge:** compares indexed SharePoint item IDs with Graph and removes
+  copies for missing items.
+
+!!! warning "Purge is not complete source retirement"
+    The current purger scans indexed collections. It does not apply the
+    source's item filter and skips deletion when a collection enumeration is
+    empty or unavailable.
+
+    None of these actions proves that indexed copies were deleted:
+
+    - Removing a source definition.
+    - Changing a filter.
+    - Deleting the last item.
+    - Revoking site access.
+
+    Do not treat purge as full retirement or filter reconciliation.
+    Verify deletion explicitly and use a separately authorized, scoped
+    Search cleanup when needed.
 
 ### 7. Validate ingestion and connect the index to Foundry IQ
 
