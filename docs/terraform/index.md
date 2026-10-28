@@ -1,22 +1,29 @@
 # Terraform foundation reference
 
-!!! note "Strategy under review"
-    The Terraform deployment strategy is currently under review.
+This reference covers the shared AI Landing Zone AVM pattern module and its
+foundation examples.
 
 The [Terraform AI Landing Zone module](https://github.com/Azure/terraform-azurerm-avm-ptn-aiml-landing-zone)
 provides infrastructure building blocks and examples. Use its source and input
 reference for Terraform-managed foundations.
 
-For the Agent Landing Zone application, follow [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
-or [Deploy the full stack](../agent-landing-zone/deploy-full-stack.md). Those
-runbooks describe the Bicep/`azd` workflow, including application configuration,
-identity and image preparation. A Terraform apply is not an application
-deployment.
+<!-- Draft coordination: publish these product links with verified integration. -->
+
+For Agent Landing Zone, choose the product's runbooks by outcome and provider:
+
+- **Deploy infra only:** [With Bicep](../agent-landing-zone/deploy-infra-only.md)
+  or [With Terraform](../agent-landing-zone/deploy-terraform-infra-only.md).
+- **Deploy full stack:** [With Bicep](../agent-landing-zone/deploy-full-stack.md)
+  or [With Terraform](../agent-landing-zone/deploy-terraform-full-stack.md).
+
+Those use the product's azd hooks for service configuration, identity and
+application deployment. The examples below provision infrastructure only.
 
 ## Choose an example
 
-The implementation lives in its own repository, not in a `terraform` directory
-of the documentation or Agent Landing Zone repository.
+Choose a foundation example for direct module use. For the product's
+`infra/terraform/` composition and application lifecycle, see
+[Agent Landing Zone Terraform templates](../agent-landing-zone/terraform.md).
 
 | Example | Purpose |
 | --- | --- |
@@ -88,9 +95,8 @@ encrypted, access-controlled, backed up and separate for each environment.
 For team use, configure an approved
 [Azure Storage backend](https://developer.hashicorp.com/terraform/language/backend/azurerm)
 before the first `terraform init`, using identity-based authentication and state
-locking. Grant only the required backend data access. If resources already
-exist, plan state migration explicitly; do not initialize a new empty backend
-and apply against the same resources.
+locking. Grant only the required backend data access. Confirm the correct state
+key and backend before applying against existing resources.
 
 ## Validate, plan and apply
 
@@ -151,8 +157,7 @@ has changed since planning, create and review a new plan.
 ## Changes and retirement
 
 Treat configuration changes as reviewed plans. Changing a region or a resource
-name may replace resources and lose data; it is not an in-place migration
-procedure.
+name may replace resources and lose data. Review the plan before applying.
 
 Before retiring a foundation, confirm ownership, backups, retention obligations
 and dependent applications. Inspect the example's purge settings and keep the

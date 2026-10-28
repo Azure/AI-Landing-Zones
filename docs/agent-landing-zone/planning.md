@@ -1,5 +1,7 @@
 # Deployment choices
 
+<!-- Draft coordination: publish only with verified integrated Terraform support. -->
+
 Deployment design covers **network ownership, deployment tooling and resource
 selection**. It is separate from whether a runbook stops at infrastructure or
 also deploys application code.
@@ -77,14 +79,22 @@ resource scope. Deployment roles can differ from application data-access roles.
 
 | Tool | Available path | Boundary to understand |
 | --- | --- | --- |
-| Bicep with `azd` (default) | [Deploy infra only](deploy-infra-only.md) or [Deploy full stack](deploy-full-stack.md). | The Agent Application workflow includes parameter composition, service configuration, RBAC and hosted image preparation. Deployment uses the platform's own `infra/`, not a separate upstream checkout. |
-| Terraform | [Terraform overview](terraform.md). | Infrastructure building blocks, not parity with the Agent platform lifecycle. `terraform apply` does not deploy/configure the Agent Application. Security settings and state need separate review and protection. |
+| Bicep with `azd` (default) | [Deploy infra only](deploy-infra-only.md) or [Deploy full stack](deploy-full-stack.md). | Product infrastructure at `infra/`, with shared hooks for parameter composition, service configuration, RBAC and application deployment. |
+| Terraform with `azd` | [Deploy infra only](deploy-terraform-infra-only.md) or [Deploy full stack](deploy-terraform-full-stack.md); [Terraform overview](terraform.md). | Native provider at `infra/terraform/` in the same product repository. Shared hooks configure services and deploy manifest-pinned applications. Prepare remote state outside workload teardown before first provision. Direct `terraform apply` is not a substitute for this azd lifecycle. |
 | Azure portal | [Portal overview](portal.md). | ARM-based infrastructure with its own defaults and platform-integration behavior. It can create placeholder application resources; it does not execute Agent platform hooks or the hosted image/version workflow. |
 
 The [Deploy infra only](deploy-infra-only.md) runbook provisions the
 platform's foundation without building or deploying application images.
-Different implementations are not interchangeable owners of the same
-environment; resource reuse needs explicit state and dependency ownership.
+Select Bicep or Terraform in the checkout's root `azure.yaml` before first
+provision. Bicep is the default. Use the selected provider for provisioning,
+updates and removal. Resource reuse needs explicit state and dependency
+ownership. For direct use of the shared AVM pattern, see the
+[Terraform foundation reference](../terraform/index.md).
+
+Native azd disables Terraform state locking. Shared and production deployments
+require a [single authorized writer](deploy-terraform-infra-only.md#state-protection)
+and queued, non-canceling execution per actual backend state identity.
+Azure validation is pending.
 
 ## Resource group ownership
 
@@ -93,7 +103,7 @@ The
 [resource group destinations](configuration.md#resource-group-destinations)
 separate application, Foundry/grounding and workload networking ownership,
 with one, two or three distinct groups in the same subscription. This is an
-**Agent Bicep/azd contract**, not a Terraform or portal parity claim.
+**Agent azd contract** for the Bicep and integrated Terraform paths.
 Existing environments retain their destination mapping.
 Network isolation and hub/BYO integration remain separate decisions.
 
@@ -103,15 +113,15 @@ must not create groups at subscription scope, and set `CREATE_RESOURCE_GROUPS=fa
 New environments otherwise create missing additional groups by default.
 One root provisioning workflow
 coordinates the groups; three independent manual deployments are not required.
-Existing-environment migration and automatic deletion of shared groups are
-outside this feature.
+Shared groups require owner-reviewed, itemized cleanup.
 
 <span id="select-reuse-or-omit-resources"></span>
 
 ## Resource selection and reuse
 
-The selected application's definition and generated `infra/main.parameters.json`
-describe the resolved resources. The default is **`hosted-no-panel`**, with
+The selected application's definition and resolved provider inputs describe
+the resources (`infra/main.parameters.json` for Bicep; the native Terraform
+adapter and tfvars for Terraform). The default is **`hosted-no-panel`**, with
 `maf_lite` orchestration and native Foundry IQ Blob ingestion.
 
 | Resource family | Selection or reuse decision |
@@ -123,8 +133,9 @@ describe the resolved resources. The default is **`hosted-no-panel`**, with
 | Monitoring | Supported existing Log Analytics/Application Insights inputs require workspace compatibility, owner agreement and the intended private monitoring path. Mixing sources is not a substitute for those requirements. |
 | Optional add-ons | Speech, Bing grounding and public ingress require explicit selection. Disabling a service is not a reuse mechanism and can break its consumers. |
 
-The Foundry backing IDs above are **native root `main.parameters.json`
-parameters**, not automatically mapped `azd` environment variables. See
+Set the Foundry backing IDs above in **root `main.parameters.json`**, not as
+unmapped `azd` environment variables. Preprovision generates typed Terraform
+inputs from that same source. See
 [Deployment settings](configuration.md) for mapped inputs and
 [the shared inventory](../bicep/deployed-resources.md) for broader resource detail.
 `DEPLOY_AAF_AGENT_SVC` is required by the default Foundry hosting path, not an

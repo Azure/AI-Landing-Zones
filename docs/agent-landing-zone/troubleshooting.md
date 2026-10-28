@@ -81,7 +81,7 @@ IDs and scoped permissions in every destination before continuing.
 
 #### Split-group cleanup safety check
 
-The `predown` hook blocks
+For **Bicep**, the `predown` hook blocks
 `azd down` when the workload destinations span distinct resource groups.
 This is an intentional safety check, not a provisioning or permission failure.
 No automatic deletion or bypass option is provided; do not bypass the hook or change the
@@ -94,6 +94,12 @@ inventory. Arrange separately authorized, itemized manual removal with the
 owners. Confirm retained/shared resources remain intact afterward.
 The normal single-group `azd down` path is unchanged; its
 [deletion review](deploy-full-stack.md#remove-an-environment) still applies.
+
+For **Terraform**, split groups use recorded state-scoped ownership. Missing
+original group/backend records or changed destinations block teardown;
+restore the original environment metadata instead of recreating bindings.
+Follow [Terraform removal](deploy-terraform-infra-only.md#remove-the-foundation)
+for the required records, preview and explicit destruction approval.
 
 #### Hosted deployment is not prepared
 

@@ -15,6 +15,11 @@ covers resource selection; [Cost planning](cost-planning.md) covers spending.
 Execution steps belong to the [Deploy infra only](deploy-infra-only.md)
 and [Deploy full stack](deploy-full-stack.md) runbooks.
 
+Both providers use the root `main.parameters.json` values below.
+For Terraform, preprovision generates typed inputs; verify the resolved
+capacity through its
+[review procedure](deploy-terraform-infra-only.md#step-4-choose-the-application-and-foundation-inputs).
+
 !!! note "Validate defaults against your workload"
     Defaults are starting points, not benchmarked capacity profiles or throughput
     guarantees. Composed parameters and the deployed configuration determine the

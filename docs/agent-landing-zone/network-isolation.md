@@ -15,6 +15,10 @@ This page explains connectivity, DNS and build requirements rather than
 deployment steps. [How it works](how-it-works.md)
 introduces the input formats and deployment lifecycle.
 
+Both providers use the root `main.parameters.json` examples on this page.
+For Terraform, preprovision generates typed inputs automatically; see the
+[Terraform input procedure](deploy-terraform-infra-only.md#step-4-choose-the-application-and-foundation-inputs).
+
 A **private endpoint** gives a service a private IP address in a VNet.
 Private DNS directs its normal hostname to that address. A **virtual private
 network (VPN)** connects an authorized remote computer or network to the VNet.
@@ -336,7 +340,7 @@ also deferred; predeploy still enforces the connectivity and plan checks.
 | --- | --- |
 | `NETWORK_ISOLATION=false` | No component firewall reads or writes; declarations do not create a firewall |
 | Isolated with a deployment-managed firewall | Reconciles only marked application rules in `AgentLzComponentEgress`, priority 400 |
-| Isolated with an external firewall | Reports required rules and legacy components; never reads or mutates the external policy |
+| Isolated with an external firewall | Reports required rules and components without egress declarations; never reads or mutates the external policy |
 
 For managed policies, the runner needs management-plane subnet reads and
 `Microsoft.Network/firewallPolicies/ruleCollectionGroups/read` and `write`
@@ -349,8 +353,8 @@ Shared destination/protocol/port tuples produce one rule, with sources and
 ownership combined across components. Removing one owner narrows sources where
 possible; the rule remains until its final declared owner disappears.
 
-Enabled legacy components with absent declarations retain their earlier owned
-requirements. Other rules and collections, including unmarked entries inside
+Enabled components without declarations retain their owned requirements.
+Other rules and collections, including unmarked entries inside
 the component group, are preserved. Ownership collisions, malformed marked
 rules, conflicting priorities or concurrent changes fail rather than being
 silently adopted or overwritten.

@@ -2,9 +2,11 @@
 
 # Deployment settings
 
+<!-- Draft coordination: execution policy approved; hold for Azure evidence. -->
+
 Agent Landing Zone separates:
 
-- **Deployment inputs**, supplied through the `azd` environment or root `main.parameters.json`. They select resources and the application, and control image builds.
+- **Deployment inputs**, supplied through the `azd` environment and root `main.parameters.json`. They select resources and the application, and control image builds.
 - **Runtime settings**, read by applications from Azure App Configuration at startup. Bootstrap values, such as the store endpoint, must be available before remote reads begin.
 
 The default Agent Application uses Foundry hosted orchestration with
@@ -14,9 +16,11 @@ This page explains settings and defaults, not an execution sequence.
 [deployment design](planning.md), [capacity](sizing.md) and
 [cost planning](cost-planning.md) explain the planning decisions.
 
-The [Deploy infra only](deploy-infra-only.md) and
-[Deploy full stack](deploy-full-stack.md) runbooks describe input commands,
-provisioning and validation. Read individual keys instead of dumping
+The infrastructure-only runbooks for [Bicep](deploy-infra-only.md) and
+[Terraform](deploy-terraform-infra-only.md), and the full-stack runbooks for
+[Bicep](deploy-full-stack.md) and [Terraform](deploy-terraform-full-stack.md),
+describe input commands, provisioning and validation.
+Read individual keys instead of dumping
 environments that may contain secrets.
 
 !!! note "Application-specific runtime settings"
@@ -24,8 +28,57 @@ environments that may contain secrets.
     **Agent Application**, the supplied reference app; a custom app can have
     different requirements.
 
-!!! note
-    `main.parameters.json` is the checked-in input to composition. The `preprovision` hook generates `infra/main.parameters.json` from it and the selected environment. Do not edit the generated file. In a Git checkout, the hook attempts to hide local regeneration from `git status` with `skip-worktree`.
+!!! note "Edit the root inputs"
+    Both providers use documented environment inputs and root
+    `main.parameters.json`. Structured values use `parameters.<name>.value`.
+    Preprovision resolves the shared topology and generates typed inputs.
+
+    Bicep consumes `infra/main.parameters.json`. Terraform consumes the ignored
+    `infra/terraform/main.tfvars.json`; its `infra/main.parameters.json` is a
+    shared preflight diagnostic artifact. Do not edit either generated file or
+    generated `.azure/` inputs.
+
+## Terraform backend settings
+
+Use an existing Azure Storage account and container outside every workload
+resource group. Backend settings are separate from workload parameters:
+
+| Variable | Required value or default |
+| --- | --- |
+| `TF_STATE_RESOURCE_GROUP` | Backend storage account's resource group |
+| `TF_STATE_STORAGE_ACCOUNT` | Existing storage account name |
+| `TF_STATE_CONTAINER` | Existing state container name |
+| `TF_STATE_SUBSCRIPTION_ID` | Defaults to `AZURE_SUBSCRIPTION_ID` |
+| `ARM_ENVIRONMENT` | Canonical `public`, `usgovernment` or `china`; qualified from CLI metadata or explicitly selected for process credentials |
+
+The state key is `agent-landing-zone/${AZURE_ENV_NAME}.tfstate`.
+AzureAD Blob authentication requires account **Reader** for metadata and
+container **Storage Blob Data Contributor**. The workload does not bootstrap
+the backend or include it in `azd down`.
+
+Native azd disables state locking. Shared and production environments require
+one authorized writer with queued, non-canceling execution per actual state
+identity. This is an access/execution control, not backend locking. See the
+[single-writer policy](deploy-terraform-infra-only.md#state-protection).
+Follow [backend preparation](deploy-terraform-infra-only.md#step-3-prepare-remote-state-outside-the-workload)
+for setup commands.
+
+### Azure cloud
+
+The adapter generates the `azureCloud` context and passes the canonical
+`ARM_ENVIRONMENT` into the backend:
+
+| Cloud | Storage DNS suffix |
+| --- | --- |
+| `public` | `core.windows.net` |
+| `usgovernment` | `core.usgovcloudapi.net` |
+| `china` | `core.chinacloudapi.cn` |
+
+CLI authentication must match the selected subscription and active CLI cloud.
+Process credentials require an explicit cloud; any azd-store and process
+values must agree. Preprovision persists the qualified cloud before native
+backend initialization. The hooks do not change global cloud or authentication
+settings.
 
 ## Environment boundaries
 
@@ -57,9 +110,10 @@ new resources instead of updating existing ones.
 
 ### Resource group destinations
 
-This **Agent Bicep/azd** interface uses the compatible components pinned by the
-platform manifest. Terraform and portal do not share this Agent platform
-contract.
+This **Agent azd** interface is shared by the product's Bicep and integrated
+Terraform paths using the compatible components pinned by the platform
+manifest. For direct shared-module use or portal deployment, follow those
+implementations' input references.
 
 New environments use three resource groups by default: Foundry/grounding,
 application and workload networking. Existing environments keep their mapping.
@@ -107,10 +161,11 @@ The additional destinations are application and network; azd manages creation
 of the Foundry/root group through its normal lifecycle.
 New additional groups do not receive the `azd-env-name` tag.
 
-Run the normal root lifecycle: each `azd provision` coordinates the
-resource-group-scoped root and its scoped modules. Do not replace it with
-three manual deployments. Hosted image preparation still uses its normal
-multi-step lifecycle.
+Run the normal product-root lifecycle: each `azd provision` coordinates the
+selected provider across the configured destinations. Bicep uses its
+resource-group-scoped root and scoped modules; Terraform uses its repository-owned
+composition. Do not replace the lifecycle with three manual deployments.
+Hosted image preparation remains part of application deployment.
 
 #### Resource group permissions
 
@@ -137,20 +192,22 @@ can instead supply `AGENTLZ_COMPONENT_IDENTITIES` as a nonsecret JSON map of
 Container App component names to pre-resolved managed-identity client IDs,
 without granting broad directory rights.
 
-The workflow does not elevate its own permissions. It records the mapping
-with the environment; changing a provisioned environment's mapping is not a
-supported resource migration. If an existing binding uses a different native
-root, retain its original implementation or create a new environment rather
-than retargeting it through environment variables.
+The workflow records the mapping with the environment and uses the deploying
+identity's permissions. Preserve that mapping for provisioning, deployment
+and recovery.
 
 After partial failure, repair the cause and
 retry with the same destinations. Do not delete groups as automatic rollback.
 Review every destination and shared dependency before any
 [environment removal](deploy-full-stack.md#remove-an-environment).
 
-For split-group deployments, a `predown` safety hook blocks `azd down`; cleanup
-requires manual inventory, owner review and separately authorized removal.
-No automatic deletion or bypass option is provided. The single-group teardown path is unchanged.
+For **Bicep**, the `predown` guard blocks split-group `azd down`; arrange
+owner-reviewed, separately authorized cleanup.
+For **Terraform**, the guard verifies the original common group binding,
+`terraform-resource-groups.json` and `terraform-backend.json`, then permits
+native state-scoped destroy across recorded owned/BYO groups. It rejects
+missing records or retargeted groups/backend settings. See
+[Terraform removal](deploy-terraform-infra-only.md#remove-the-foundation).
 
 ### Values set by azd or by you
 
@@ -161,7 +218,12 @@ that identity in the Entra directory; it is not an application's client ID.
 | --- | --- |
 | `AZURE_ENV_NAME` | Environment name. Set by `azd env new`. Used to derive resource names. |
 | `AZURE_LOCATION` | Primary Azure region. Set it before provision so the first-run hook can create the additional resource groups. |
-| `AZURE_PRINCIPAL_ID` | Object ID of the deployment identity that receives roles for service setup and access. Set by `azd` from your signed-in account. |
+| `AZURE_PRINCIPAL_ID` | Deployment identity's object ID for service setup and access. azd resolves it for Bicep; Terraform preprovision detects a missing value for ordinary CLI, service-principal and managed-identity authentication. |
+
+For certificate, OIDC or custom managed-identity authentication, explicitly
+set `AZURE_PRINCIPAL_ID` and `AZURE_PRINCIPAL_TYPE` to identify the caller.
+These inputs are not credentials; use the caller's object ID, not its client
+ID. See [Terraform authentication](deploy-terraform-infra-only.md#step-2-authenticate-and-select-the-target).
 
 ### Inputs that use Bicep defaults
 
@@ -183,7 +245,7 @@ When unset, they use the template defaults shown below.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `AZURE_PRINCIPAL_TYPE` | `User` | Type of `AZURE_PRINCIPAL_ID`. Use `ServicePrincipal` in pipelines. |
+| `AZURE_PRINCIPAL_TYPE` | `User`; inferred during Terraform caller detection | Type of `AZURE_PRINCIPAL_ID`: `User` or `ServicePrincipal`. Explicit service identities use `ServicePrincipal`. |
 | `DEPLOYMENT_MODE` | `standalone` | Declares deployment intent for tags and preflight. `ailz-integrated` does not automatically attach a hub or override component flags. Supply the hub, routing, resource reuse and DNS inputs explicitly. |
 | `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
 | `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
@@ -656,6 +718,31 @@ custom source-build path. See
 Post-provision publishes runtime settings to Azure App Configuration with
 the label `agent-lz`. That is the label for platform-owned settings.
 
+### Configuration ownership and declarations
+
+Terraform manages foundation connections, model metadata and input-driven
+settings. Shared postprovision queries existing key names, not values, and
+seeds **only missing defaults**, preserving existing values, content types
+and Key Vault-reference metadata.
+
+`config.deployment.appconfig` updates runtime-owned keys according to the
+product's single ownership inventory. Its intent comes from the declared
+parameter document and selected azd environment. Declare additional entries
+through root `parameters.additionalAppConfigurationSettings.value`, using
+`name` and string `value`, plus optional `label` and `contentType`.
+Declared labels, content types and literal values are preserved.
+
+Keep the exact reviewed declaration, including required private inputs, on
+every runner. A missing required declaration fails; outputs and Terraform state
+are not substitutes. The publisher's optional `--input <path>` selects that
+exact parameter document. Do not create per-key azd variables to transport it.
+
+Routing, identity and other authority-controlled conflicts are rejected.
+Unsupported runtime Key Vault-reference overrides fail explicitly; use the
+existing governance or continuity owner for those references.
+
+### Effective settings
+
 The Agent Application components do not read exclusively from `agent-lz`. Their startup
 loaders also select other component labels, and later matching selections
 can overwrite earlier values.
@@ -687,8 +774,9 @@ Settings are loaded at startup. A changed key requires the affected Container
 App to restart, or a new hosted version to be deployed, before the new startup
 configuration is loaded. Running hosted versions are immutable.
 
-Provisioning or post-provision can overwrite deployment-owned keys, so
-persistent changes need matching deployment inputs. Custom application
+Change foundation-owned settings in their declared inputs and runtime-owned
+settings through their publisher; a missing-only default seed does not make
+every key operator-owned. Custom application
 definitions validate settings but do not publish them; the application
 must publish its own runtime settings.
 

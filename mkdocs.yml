@@ -65,9 +65,14 @@ nav:
               - "SharePoint": agent-landing-zone/sharepoint.md
               - "NL2SQL": agent-landing-zone/nl2sql.md
           - "Tools & MCP": agent-landing-zone/agent-tools.md
+      # Draft: hold coordinated Terraform pages until implementation is verified.
       - Runbooks:
-          - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
-          - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
+          - Deploy infra only:
+              - "With Bicep": agent-landing-zone/deploy-infra-only.md
+              - "With Terraform": agent-landing-zone/deploy-terraform-infra-only.md
+          - Deploy full stack:
+              - "With Bicep": agent-landing-zone/deploy-full-stack.md
+              - "With Terraform": agent-landing-zone/deploy-terraform-full-stack.md
           - "Application Gateway": agent-landing-zone/application-gateway.md
           - "Private access (VPN)": agent-landing-zone/private-access.md
           - "Bring your own app": agent-landing-zone/build-your-own-app.md

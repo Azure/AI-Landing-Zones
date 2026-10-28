@@ -108,9 +108,12 @@ implementation below.
 
 | Implementation | Bicep | Terraform | Portal |
 | --- | --- | --- | --- |
-| **Agent Landing Zone** | [View implementation](https://aka.ms/agenlz) | [View implementation](https://aka.ms/ailz/terraform) | [![Deploy to Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
+| **Agent Landing Zone** | [View implementation](https://aka.ms/agenlz) | [View implementation](agent-landing-zone/terraform.md) | [![Deploy to Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
 | **AI Gateway Landing Zone** | [View implementation](https://aka.ms/ailz/apim) | [View implementation](https://aka.ms/ailz/aigateway/terraform) | &mdash; |
 | **Foundry AVM Modules** | [View module](https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry) | [View module](https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest) | &mdash; |
+
+The [shared AI Landing Zone Terraform foundation reference](terraform/index.md)
+is separate from Agent Landing Zone's integrated application lifecycle.
 
 <span id="whats-new"></span>
 <span id="frequently-asked-questions"></span>

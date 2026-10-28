@@ -2,7 +2,11 @@
 
 <span id="deploy-the-full-stack"></span>
 
-# Deploy full stack
+<span id="deploy-full-stack"></span>
+
+# Deploy full stack with Bicep
+
+<!-- Draft coordination: publish with the verified integrated Terraform option. -->
 
 ## Objective
 
@@ -11,6 +15,9 @@ layout: Foundry hosts the orchestrator, Agent App UI runs in Container Apps,
 and Foundry IQ manages source ingestion and retrieval. The default
 `hosted-no-panel` layout omits the administrative panel and Agent Application
 Cosmos DB. Foundry can require separate backing resources.
+This procedure uses the default Bicep provider. For Terraform, use
+[Deploy full stack with Terraform](deploy-terraform-full-stack.md); application
+configuration and deployment are shared.
 
 ## What you'll have after this runbook
 
@@ -593,8 +600,7 @@ part of this deployment.
 4. Follow [Step 4](#step-4-deploy) with the previous compatible source and inputs:
    provision, then deploy; deployment prepares the pinned image automatically.
    If retaining an operator-managed digest, verify its availability and
-   compatibility; deployment does not rebuild it. If restoring older tooling,
-   follow that tooling's own required deployment sequence.
+   compatibility; deployment does not rebuild it.
 5. Restore directly managed runtime keys separately from the source checkout,
    reload affected components and repeat [Validation](#validation) before cutover.
 

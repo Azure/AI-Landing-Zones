@@ -2,14 +2,17 @@
 
 # How it works
 
+<!-- Draft coordination: hold until integrated Terraform behavior is verified. -->
+
 Agent Landing Zone connects deployment inputs, Azure infrastructure and
 application code through the Azure Developer CLI (`azd`). This page introduces
-those concepts for the **Bicep/azd implementation**, so you can understand what
-the deployment does without memorizing commands or parameters.
+those concepts for the **Bicep and integrated Terraform implementations**, so
+you can understand what the deployment does without memorizing commands or
+parameters.
 
-A **command-line interface (CLI)** runs commands in a terminal. Bicep describes
-Azure resources as code; `azd` coordinates their creation and application
-deployment. **Azure Blob Storage** stores files, and **Azure AI Search** indexes
+A **command-line interface (CLI)** runs commands in a terminal. Bicep or
+Terraform describes Azure resources as code; `azd` coordinates their creation
+and application deployment. **Azure Blob Storage** stores files, and **Azure AI Search** indexes
 content so the application can retrieve relevant passages.
 An **application programming interface (API)** lets code send requests to a
 service.
@@ -29,20 +32,21 @@ infrastructure are prepared. The **Deploy infra only** and
 A **deployment parameter** tells the template what to create or reuse, such
 as a private network or an existing hub. An **`azd` environment** groups the
 settings and deployment state for one deployment, such as development or
-production. With Bicep and `azd`, the runbooks use two ways to supply parameter
-values:
+production. Both infrastructure providers use the same operator inputs:
 
 | Input form | Source |
 | --- | --- |
-| Uppercase input, such as `NETWORK_ISOLATION` | The selected `azd` environment. The platform maps it to a template parameter or reads it in a deployment hook. |
-| Native parameter, such as `modelDeploymentList` | The root `main.parameters.json`, inside `parameters.<name>.value`, for parameters without an environment-variable mapping. |
+| Uppercase input, such as `NETWORK_ISOLATION` | The selected `azd` environment. The hooks resolve documented mappings before provisioning. |
+| Structured value, such as `modelDeploymentList` | The root `main.parameters.json`, inside `parameters.<name>.value`. Keep arrays, objects, booleans and numbers in their native JSON types. |
 
 For example, `NETWORK_ISOLATION=true` selects private networking. Deployment
-inputs are resolved before provisioning. The platform combines them with
-the root parameter file to generate `infra/main.parameters.json`.
+inputs and the root parameter file are resolved before provisioning.
+For Terraform, a typed adapter generates the ignored
+`infra/terraform/main.tfvars.json`. The generated `infra/main.parameters.json`
+supports shared preflight diagnostics; Bicep uses that file for its deployment.
 The [Deployment settings](configuration.md) reference lists inputs and defaults;
-the [Deploy infra only](deploy-infra-only.md) and
-[Deploy full stack](deploy-full-stack.md) runbooks provide their application order.
+choose the provider-specific **Deploy infra only** or **Deploy full stack**
+runbook for their application order.
 
 !!! note "Application-specific runtime settings"
     Runtime settings control an application's behavior and vary by application.
@@ -56,13 +60,12 @@ The Agent Application's runtime code lives in separate component repositories.
 
 | Area | Responsibility |
 | --- | --- |
-| Infrastructure: platform `infra/` | Repository-owned Bicep source for Azure resources, identities and access. `manifest.json` → `infra.source` records the upstream AI Landing Zone source it incorporates. |
+| Bicep infrastructure: platform `infra/` | Bicep source for Azure resources, identities and access. |
+| Terraform infrastructure: platform `infra/terraform/` | AVM composition, complementary resources, generated typed inputs, native outputs and committed provider lock file. |
 | Platform integration: root files, `scripts/` and `config/` | Selects the application, composes deployment parameters, configures provisioned services and coordinates deployment. |
 | Runtime component repositories | Own Agent App UI, Agent App Orchestrator (strategies and tools), and optional Agent App Ingestion. The manifest identifies their repositories and source pins. |
 
-The `infra.source` entry records the upstream version incorporated into this
-repository. Deployment uses the platform's own `infra/` tree, which includes
-Agent Landing Zone changes.
+Deployment uses the product's infrastructure source for the selected provider.
 
 ## The manifest records a validated combination
 
@@ -89,12 +92,23 @@ maps deployment inputs to infrastructure parameters. Values can be literals or
 references to the selected azd environment's variables. Inline defaults apply
 where declared; other unset inputs can use Bicep defaults.
 
-Before provisioning, the hooks resolve the application and hosting topology,
-apply environment inputs and generate `infra/main.parameters.json` for Bicep.
+Before provisioning, the hooks validate the provider/application binding,
+resolve the shared hosting topology and apply environment inputs.
+Bicep consumes the generated `infra/main.parameters.json`.
+Terraform consumes generated `infra/terraform/main.tfvars.json`, with backend
+settings rendered from `infra/terraform/provider.conf.json`.
+For Terraform, `infra/main.parameters.json` is only a shared preflight artifact.
+The adapter also qualifies `public`, `usgovernment` or `china` and generates
+the matching `azureCloud` context and backend environment. See
+[Azure cloud settings](configuration.md#azure-cloud).
+An immutable private backend record is created on first use before settings
+are persisted and verified thereafter. Clean runners need the original
+backend, group and application/environment bindings, not reconstructed files.
 
 !!! note "Edit the source, not the generated output"
-    Use documented deployment inputs and the root parameter file. Do not edit
-    `infra/main.parameters.json`; the next composition can overwrite it.
+    Use documented environment inputs and root `main.parameters.json`.
+    Do not edit generated `infra/main.parameters.json`,
+    `infra/terraform/main.tfvars.json` or `.azure/` inputs.
     See [Deployment settings](configuration.md) for inputs and defaults.
 
 An **application definition** describes the selected application's components
@@ -118,19 +132,36 @@ supported by this host.
 
 The root
 [`azure.yaml`](https://github.com/Azure/agent-landing-zone/blob/main/azure.yaml)
-points azd at `infra/` and registers PowerShell and shell lifecycle hooks.
-The hooks configure Azure services and coordinate application deployment.
+selects the infrastructure provider/path and registers PowerShell and shell
+lifecycle hooks. Bicep at `infra/` remains the default. To use Terraform,
+configure `infra.provider: terraform`, `infra.path: infra/terraform` and
+`infra.module: main` once before a new environment's first provision.
+This selection applies to the
+checkout, not independently to each environment in it.
+Use the selected provider for provisioning, updates and removal.
+
+The shared hooks configure Azure services and coordinate application deployment.
 
 | Stage | What the platform does |
 | --- | --- |
 | Before `azd up` (`preup`) | Validates the application definition and checks that it matches the environment's recorded application. |
-| Before provisioning (`preprovision`) | Resolves application selection and topology, composes infrastructure parameters and runs preflight checks. |
+| Before provisioning (`preprovision`) | Validates provider/application binding, resolves shared topology, generates provider-specific typed inputs and runs preflight checks. |
 | After provisioning (`postprovision`) | Configures Azure services, reconciles application access and publishes runtime settings and outputs. |
 | Before deployment (`predeploy`) | Checks infrastructure readiness and the recorded application, validates topology and required connectivity, then coordinates the selected application deployments. |
 
 `azd provision` includes service configuration through its post-provision hook.
 Some Container Apps initially contain placeholder images; `azd deploy` replaces
-them with the selected application code.
+them with the selected application code. `azd up` runs both stages.
+Provisioning does not build or publish application images; reapplying
+infrastructure must preserve application-managed images and revisions.
+All flat Terraform outputs feed azd and those shared hooks automatically;
+operators do not copy outputs into application projects.
+
+The Terraform backend uses existing Azure Storage outside workload teardown.
+Native azd disables state locking. Shared and production state uses one
+authorized executor with queued, non-canceling operations per backend state
+identity; see the [single-writer policy](deploy-terraform-infra-only.md#state-protection).
+Azure evidence remains required before publication.
 
 Container App deployment builds verified component code through each
 component's `azure.yaml`. Hosted orchestration uses the prepared image
@@ -145,6 +176,11 @@ applications use the resulting services.
 Provisioning and configuration publish settings to Azure App Configuration
 under the **`agent-lz` label**. The Agent Application loaders also select other
 labels, which can affect [which setting takes precedence](configuration.md#runtime-settings).
+Terraform owns foundation connections and model metadata. Shared defaults
+seed only missing keys, while the runtime publisher updates its owned settings
+from the declared parameter document and selected environment.
+Labels, content types and Key Vault-reference metadata follow the
+[configuration ownership contract](configuration.md#configuration-ownership-and-declarations).
 Bootstrap values such as the store endpoint must be
 available before remote configuration can load. Secrets belong in Key Vault
 and are referenced rather than copied into checked-in settings.
@@ -154,6 +190,8 @@ configuration, identities and data, as described in
 [Environment boundaries](configuration.md#environment-boundaries). Local
 `.azure/` state is private deployment state, not a source-controlled input file.
 Child workspaces receive copies and need the same protection.
+Terraform's backend and group records are also required for state-scoped
+teardown; output refresh does not replace them.
 
 See [Deployment settings](configuration.md) for setting names, sources and reload
 requirements.
@@ -187,14 +225,20 @@ The same source pins do not guarantee the same image digest when images are
 built independently. If a promotion process requires the identical image,
 its digest and registry availability need separate preservation and verification.
 
-The [Deploy full stack](deploy-full-stack.md) runbook provides execution steps. For
+The full-stack runbooks for [Bicep](deploy-full-stack.md) and
+[Terraform](deploy-terraform-full-stack.md) provide execution steps. For
 strategy eligibility and image behavior, see [Agent hosting](hosted-agents.md).
 
 ## From understanding to deployment
 
 The planning references explain [deployment design](planning.md),
 [sizing](sizing.md) and [cost](cost-planning.md).
-For execution, the named runbooks are
-[Deploy infra only](deploy-infra-only.md) or
-[Deploy full stack](deploy-full-stack.md). Those runbooks contain the
+For execution, choose the outcome and then the provider:
+
+- **Deploy infra only:** [With Bicep](deploy-infra-only.md) or
+  [With Terraform](deploy-terraform-infra-only.md).
+- **Deploy full stack:** [With Bicep](deploy-full-stack.md) or
+  [With Terraform](deploy-terraform-full-stack.md).
+
+Those runbooks contain the
 prerequisites, topology-specific sequence and validation steps.

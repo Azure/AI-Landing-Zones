@@ -8,6 +8,12 @@ protected approvals. This optional continuous integration and deployment
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.
 
+The downloadable pipeline and validation examples in this runbook use Bicep.
+They are not a validated Terraform pipeline. For the integrated
+Terraform lifecycle and its separate backend/runner prerequisites, use
+[Deploy full stack with Terraform](deploy-terraform-full-stack.md) before
+designing corresponding automation.
+
 ## What you'll have after this runbook
 
 One reviewed source revision promoted through DEV, TEST and PROD, with
@@ -30,8 +36,7 @@ or [Deploy full stack](deploy-full-stack.md) runbook. For component changes, see
 !!! info "Choose the right pipeline"
     The downloadable example below verifies the **same source commit in every
     job** and enforces successful prior stages. Images are built per environment.
-    Keep the platform's incorporated `infra/` and lifecycle hooks in that same
-    revision. Do not substitute pipelines from a separate foundation checkout.
+    Keep the platform's `infra/` and lifecycle hooks in that same revision.
 
 ## Prerequisites
 
@@ -53,8 +58,7 @@ a deployment until they and the protected checks in Step 4 are complete.
 Use your reviewed platform revision. Keep
 `manifest.json`, `app-definition.json`, `main.parameters.json`,
 `azure.yaml`, `infra/`, `config/`, `contracts/` and `scripts/` together at its root.
-Infrastructure is incorporated under `infra/`; do not deploy it from a second
-foundation checkout. Commit your configuration and compatible component pins
+Infrastructure is under `infra/`. Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
 The downloadable example initially deploys the **Agent Application** with
