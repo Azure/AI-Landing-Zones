@@ -74,6 +74,7 @@ Embedding does not require weakening `frame-ancestors` or `X-Frame-Options`.
 The gateway contract preserves the external UI origin, cookies, browser
 `Origin`, and WebSocket upgrades. Required paths include `/copilot/index.js`,
 `/copilot/auth/bootstrap`, `/copilot/auth/logout`, `/project/settings`,
+`/copilot/auth/recovery`, `/public/protected-auth-recovery.js`,
 `/ws/socket.io` polling/upgrades and `/api/download/{grant_token}`.
 [Container Apps ingress](https://learn.microsoft.com/azure/container-apps/ingress-overview)
 supports WebSockets. Browsers still need authorized network access to private
@@ -101,12 +102,43 @@ caller boundary. Protected document access still requires the
 the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
 alone does not establish downstream consent or source permissions.
 
-When retrieval requires additional authentication, the portal must handle the
-explicit recovery request through its MSAL integration, obtain a fresh UI API
-token with the validated claims, and complete authenticated bootstrap for the
-same user. Do not send an embedded user through standalone OAuth or replay the
-failed turn. A changed account requires the logout/unmount sequence below.
-Keep tokens and recovery claims out of URLs, local storage and portal logs.
+Use the bundled recovery helper rather than implementing a claims handshake.
+After authenticated bootstrap, load it with credentials and install it against
+the portal's existing MSAL account and UI API scopes:
+
+```javascript
+const helper = document.createElement("script");
+helper.src = `${chainlitServer}/public/protected-auth-recovery.js`;
+helper.crossOrigin = "use-credentials";
+await new Promise((resolve, reject) => {
+  helper.onload = resolve;
+  helper.onerror = reject;
+  document.head.appendChild(helper);
+});
+const stopRecovery = window.installProtectedAuthRecovery({
+  msalInstance,
+  account: signedInAccount,
+  tenantId: configuredTenantId,
+  scopes: configuredUiApiScopes,
+  chainlitServer,
+  statusElement: document.getElementById("agent-lz-status"),
+  widgetConfig: { theme: "light" },
+});
+```
+
+Provide the `agent-lz-status` status element. MSAL must use `memoryStorage` for
+both its regular and temporary caches, `storeAuthStateInCookie: false`, and no
+PII logging. The selected account must remain active. Tenant and scopes come
+from portal configuration, never the challenge or widget.
+
+The helper handles the named recovery notification, fetches validated claims
+through authenticated `POST /copilot/auth/recovery`, and displays an explicit
+portal sign-in button. After MSAL verification, it completes recovery with the
+fresh UI token and remounts the widget without sending a message. Recovery
+tickets expire after 180 seconds. Ordinary source denials do not start this
+interaction. Do not send embedded users through standalone OAuth or replay
+failed turns. Call `stopRecovery()` before the logout/account-switch sequence
+below. Keep tokens and claims out of URLs, local storage and portal logs.
 
 Native citation downloads use authenticated principal/session-bound selectors
 and recheck source access on each click. Shared Blob/ADLS downloads also need

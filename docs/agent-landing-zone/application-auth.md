@@ -171,8 +171,12 @@ authorization URLs and arbitrary resource hints are not recovery instructions.
 
 The UI offers explicit interactive authentication rather than retrying the
 failed turn. Standalone chat uses the configured tenant, UI scopes and OAuth
-callback. Its short-lived encrypted recovery context is bound to the current
-principal and session. Embedded Entra sessions use the portal's MSAL and
+callback. Its encrypted recovery context expires after 180 seconds and is bound
+to the current principal and session. The existing `CHAINLIT_AUTH_SECRET` must
+contain at least 32 UTF-8 bytes; no additional secret or redirect registration
+is needed. Existing standalone sessions may need a fresh ordinary login.
+Gateways must preserve `/api/auth/recovery` and the normal OAuth routes.
+Embedded Entra sessions use the portal's MSAL and
 authenticated bootstrap path, not a standalone sign-in redirect.
 
 After verification, submit a new turn. Failed or partially streamed turns are
