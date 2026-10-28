@@ -126,7 +126,9 @@ The hosted runtime rejects unsupported strategies rather than silently
 switching strategy or host. The `multimodal` and `nl2sql` strategies are not
 supported by this host.
 
-## `azure.yaml` connects azd to the lifecycle
+<span id="azureyaml-connects-azd-to-the-lifecycle"></span>
+
+## Deployment lifecycle
 
 The root
 [`azure.yaml`](https://github.com/Azure/agent-landing-zone/blob/main/azure.yaml)

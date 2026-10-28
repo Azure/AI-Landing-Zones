@@ -101,4 +101,4 @@ extra:
 
 extra_css:
   # Update the content version when styles change to invalidate browser caches.
-  - stylesheets/extra.css?v=c6a37926d9b0
+  - stylesheets/extra.css?v=dbbfae135b86
