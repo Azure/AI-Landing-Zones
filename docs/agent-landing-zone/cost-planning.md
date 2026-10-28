@@ -55,6 +55,20 @@ Model deployment `sku.capacity` allocates quota. To estimate model charges,
 use the deployment type, region, expected tokens and any provisioned-capacity
 commitment with the current service prices.
 
+### Standalone firewall selection
+
+Isolated standalone deployments default to Basic. Include its fixed allocation,
+data-processing rate, additional management public IP, logs and network
+transfer in the estimate; a lower hourly price alone is not the full cost.
+Compare current regional rates and measured volume with Standard. Select
+Standard explicitly when its DNS or capacity capabilities are required.
+
+Basic needs separate data and management subnets; the management subnet must be
+/26 or larger. External hub egress uses the hub's firewall and does not create
+a local firewall or management IP. GatewaySubnet is reserved only on request
+and does not provision a paid gateway. See the
+[networking resource matrix](network-isolation.md#firewall-sku-and-management-networking).
+
 <span id="control-spend-without-weakening-the-design"></span>
 
 ## Spend controls and security

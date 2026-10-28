@@ -121,9 +121,11 @@ or [P2S Microsoft Entra setup](https://learn.microsoft.com/azure/vpn-gateway/poi
 1. Identify the target VNet from the provisioned environment:
    `azd env get-value VNET_RESOURCE_ID`. This is a resource ID, not a VPN server
    address. Create a route-based VPN gateway with a supported SKU and a
-   subnet named exactly **`GatewaySubnet`**. The foundation reserves
-   `192.168.2.192/26` by default; verify the selected range against the sizing
-   in the Microsoft procedure. Do not attach an NSG, default-route UDR or
+   subnet named exactly **`GatewaySubnet`**. To have the foundation reserve
+   it, set `azd env set DEPLOY_GATEWAY_SUBNET true` before provisioning;
+   the reservation is opt-in, with default range `192.168.2.192/26`.
+   Verify the selected range against the sizing in the Microsoft procedure.
+   A shared hub gateway needs no local reservation. Do not attach an NSG, default-route UDR or
    delegation to `GatewaySubnet`.
    Record ownership of the gateway and subnet with the network team
    before subsequent foundation provisioning.
@@ -180,8 +182,10 @@ The VPN client needs routes to the workload's private endpoint addresses
    the VPN DNS servers. After peering, route or DNS changes, regenerate and
    reimport the client profile as required and reconnect.
 
-`ENABLE_FIREWALL_DNS_PROXY=true` only enables the proxy on a deployed isolated
-spoke firewall. It does not configure VPN client DNS, link missing zones or
+`ENABLE_FIREWALL_DNS_PROXY=true` requires `AZURE_FIREWALL_SKU=Standard` and only
+enables the proxy on a deployed isolated spoke firewall. Basic does not support
+the proxy. The forwarder/Private Resolver DNS path above works independently
+of that option. The switch does not configure VPN client DNS, link missing zones or
 create a resolver. Leave it unchanged unless the approved DNS design uses it.
 
 <span id="4-verify-from-the-actual-host"></span>

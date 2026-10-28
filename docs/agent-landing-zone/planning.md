@@ -39,6 +39,14 @@ does not provide private network access.
 | Hub integration | A platform team owns shared connectivity, firewall, DNS or monitoring. | `DEPLOYMENT_MODE=ailz-integrated` plus explicit isolation, peering, routing, DNS and reuse inputs. Spoke resources can be omitted where the hub supplies them. |
 | AI Gateway | Multiple workloads need centrally governed model access, such as routing, authentication or token policies. | The separate [AI Gateway implementation](../index.md#ai-gateway-landing-zone) has its own endpoint, authentication, supported APIs, policies and network requirements. Agent Bicep does not deploy or connect it automatically. |
 
+For isolated standalone deployments, Basic is the local firewall default;
+select Standard explicitly when required. Basic also needs a management subnet
+and public IP. External hub egress, with or without a hub gateway, creates no
+local firewall management resources and no firewall data subnet by default.
+GatewaySubnet is opt-in in every topology. Review the
+[network resource matrix](network-isolation.md#firewall-sku-and-management-networking)
+before choosing address ranges.
+
 AI Gateway governs model access and can accompany either network topology.
 Workload connectivity and user/document authorization remain separate requirements.
 [Application Gateway](application-gateway.md) serves a different purpose:

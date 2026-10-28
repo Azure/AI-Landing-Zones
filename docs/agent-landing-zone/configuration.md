@@ -478,7 +478,8 @@ before provisioning; external firewall policies remain report-only.
 | Variable | Default | Description |
 | --- | --- | --- |
 | `DEPLOY_AZURE_FIREWALL` | `true` | Deploys Azure Firewall for egress control. |
-| `ENABLE_FIREWALL_DNS_PROXY` | `false` | Enables the deployed firewall's DNS proxy only when both Azure Firewall deployment and network isolation are enabled. Does not modify VNet or VPN DNS settings. |
+| `AZURE_FIREWALL_SKU` | `Basic` | Selects matching firewall and policy SKU. Basic is supported for isolated standalone deployments; select `Standard` explicitly when its capabilities are required. External hub firewalls retain their own SKU and ownership. |
+| `ENABLE_FIREWALL_DNS_PROXY` | `false` | Requires an isolated local `Standard` firewall. Basic with proxy enabled is rejected. Does not modify VNet or VPN DNS settings. |
 | `DEPLOY_ACR_TASK_AGENT_POOL` | `true` | Deploys an Azure Container Registry agent pool inside the virtual network so images can be built without a local Docker host. The pool is created only when `NETWORK_ISOLATION=true`. |
 | `DEPLOY_JUMPBOX` | Same as `NETWORK_ISOLATION` | Deploys a Windows jumpbox virtual machine. |
 | `DEPLOY_BASTION` | Enabled with network isolation and jumpbox deployment | Deploys Azure Bastion unless an existing Bastion is selected. |
@@ -500,9 +501,14 @@ Bastion tunneling is disabled by default.
 ### Subnet creation and addressing
 
 Choose [subnet ownership](network-isolation.md#choose-subnet-ownership) first.
-The global `DEPLOY_SUBNETS` switch and all twelve individual switches default
-to `true` through inline environment mappings in root `main.parameters.json`.
-Effective creation is `networkIsolation && deploySubnets && individualFlag`.
+The global `DEPLOY_SUBNETS` switch defaults to `true`. Firewall data and
+management switches default to `null` (auto): data follows the local isolated
+firewall requirement, while management is used only by standalone Basic.
+`DEPLOY_GATEWAY_SUBNET` defaults to `false`; explicitly enable it to reserve a
+subnet for a separately configured local gateway. Other individual subnet
+switches default to `true`. Creation also requires network isolation and the
+global switch; management additionally requires an active standalone Basic
+firewall, even when its creation switch is explicitly true.
 
 | Native root parameter | Environment input | Subnet purpose |
 | --- | --- | --- |
@@ -512,6 +518,7 @@ Effective creation is `networkIsolation && deploySubnets && individualFlag`.
 | `deployPeSubnet` | `DEPLOY_PE_SUBNET` | Foundry/grounding private endpoints |
 | `deployAzureBastionSubnet` | `DEPLOY_AZURE_BASTION_SUBNET` | Bastion |
 | `deployAzureFirewallSubnet` | `DEPLOY_AZURE_FIREWALL_SUBNET` | Firewall |
+| `deployAzureFirewallManagementSubnet` | `DEPLOY_AZURE_FIREWALL_MANAGEMENT_SUBNET` | Basic firewall management |
 | `deployGatewaySubnet` | `DEPLOY_GATEWAY_SUBNET` | VPN/ExpressRoute reservation |
 | `deployAppGatewaySubnet` | `DEPLOY_APP_GATEWAY_SUBNET` | Application Gateway |
 | `deployJumpboxSubnet` | `DEPLOY_JUMPBOX_SUBNET` | Jumpbox |
@@ -573,7 +580,7 @@ configure peering, DNS forwarding or runner connectivity.
 
 #### Names and address ranges
 
-All twelve name and prefix parameters can be overridden in root
+Subnet name and prefix parameters can be overridden in root
 `main.parameters.json` or through the environment bindings below. Explicit
 operator values are preserved through composition; the allocation table lists
 defaults, not mandatory ranges. Reserved service names must retain their
@@ -586,6 +593,7 @@ required spellings.
 | `peSubnetName` | `AZURE_PE_SUBNET_NAME` | `peSubnetPrefix` | `AZURE_PE_SUBNET_PREFIX` |
 | `azureBastionSubnetName` | `AZURE_BASTION_SUBNET_NAME` | `azureBastionSubnetPrefix` | `AZURE_BASTION_SUBNET_PREFIX` |
 | `azureFirewallSubnetName` | `AZURE_FIREWALL_SUBNET_NAME` | `azureFirewallSubnetPrefix` | `AZURE_FIREWALL_SUBNET_PREFIX` |
+| `azureFirewallManagementSubnetName` | `AZURE_FIREWALL_MANAGEMENT_SUBNET_NAME` | `azureFirewallManagementSubnetPrefix` | `AZURE_FIREWALL_MANAGEMENT_SUBNET_PREFIX` |
 | `gatewaySubnetName` | `AZURE_GATEWAY_SUBNET_NAME` | `gatewaySubnetPrefix` | `AZURE_GATEWAY_SUBNET_PREFIX` |
 | `azureAppGatewaySubnetName` | `AZURE_APP_GATEWAY_SUBNET_NAME` | `azureAppGatewaySubnetPrefix` | `AZURE_APP_GATEWAY_SUBNET_PREFIX` |
 | `jumpboxSubnetName` | `AZURE_JUMPBOX_SUBNET_NAME` | `jumpboxSubnetPrefix` | `AZURE_JUMPBOX_SUBNET_PREFIX` |
@@ -608,6 +616,7 @@ if `10.20.0.0/21` is approved and does not overlap connected networks:
   "peSubnetPrefix": {"value": "10.20.2.0/26"},
   "azureBastionSubnetPrefix": {"value": "10.20.2.64/26"},
   "azureFirewallSubnetPrefix": {"value": "10.20.2.128/26"},
+  "azureFirewallManagementSubnetPrefix": {"value": "10.20.3.192/26"},
   "gatewaySubnetPrefix": {"value": "10.20.2.192/26"},
   "azureAppGatewaySubnetPrefix": {"value": "10.20.3.0/27"},
   "jumpboxSubnetPrefix": {"value": "10.20.3.64/27"},

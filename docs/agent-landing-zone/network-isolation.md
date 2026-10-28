@@ -79,8 +79,9 @@ private endpoint; it does not require the Activity-route public exception.
 
 ## Isolation and provisioning
 
-`NETWORK_ISOLATION=true` is resolved before provisioning. All twelve subnets
-are created by default. Choose who manages them before first provision.
+`NETWORK_ISOLATION=true` is resolved before provisioning. The selected topology,
+subnet creation flags and resource ownership determine which subnets are
+created. Choose who manages them before first provision.
 
 ### Choose subnet ownership
 
@@ -114,8 +115,15 @@ can be overridden using the [subnet inputs](configuration.md#subnet-creation-and
 | Jumpbox | `jumpbox-subnet` | `192.168.3.64/27` | None |
 | Build agents | `devops-build-agents-subnet` | `192.168.3.96/27` | None |
 | Application private endpoints | `application-pe-subnet` | `192.168.3.128/26` | None |
+| Basic firewall management | `AzureFirewallManagementSubnet` | `192.168.3.192/26` | None |
 | Power Platform | `powerplatform-subnet` | `192.168.4.0/24` | `Microsoft.PowerPlatform/enterprisePolicies` |
 | AI Gateway | `ai-gateway-subnet` | `192.168.5.0/24` | `Microsoft.Web/serverFarms` |
+
+Firewall data subnet creation defaults to the local firewall requirement.
+The management subnet is used only by a standalone Basic firewall.
+GatewaySubnet is opt-in. The table is an address plan, not an unconditional
+resource inventory; shared-hub services do not require these reservations
+in the spoke.
 
 **Creation is not service selection.** A false subnet creation flag does not
 disable its consumers: any enabled consumer still needs a valid subnet.
@@ -405,11 +413,38 @@ and TLS without sending an HTTP request or credentials. Connectivity is not
 authorization: API access and document permissions still need tests with the
 intended user identities.
 
+### Firewall SKU and management networking
+
+New isolated standalone deployments select `AZURE_FIREWALL_SKU=Basic`.
+Select `Standard` explicitly when DNS proxy, network-rule FQDN filtering or
+greater capacity is required. Basic supports application HTTP(S) FQDN rules
+and IP/service-tag network rules; assess its approximately 250 Mbps capacity
+class against build, image-download and ingestion peaks.
+
+| Topology | Local firewall data subnet/IP | Local management subnet/IP | GatewaySubnet |
+| --- | --- | --- | --- |
+| Standalone Basic | Required | Required | Explicit reservation only |
+| Standalone Standard | Required | None | Explicit reservation only |
+| External hub, with or without gateway | No IP; data subnet only if explicitly reserved | None | Explicit local reservation only |
+| Public/non-isolated | None | None | None |
+
+Both local SKUs use `AzureFirewallSubnet`. Basic additionally needs the
+exact name `AzureFirewallManagementSubnet`, a /26-or-larger range and a
+separate Standard/static public IP and management NIC configuration.
+Keep management networking free of generic NSGs, workload default routes,
+NAT, delegations and service endpoints. Validate externally managed subnet
+routing with the network owner. Workload routes use the data-plane private IP.
+
+For external hub egress, explicitly disable local firewall deployment and
+configure the approved external next hop or route table. A deployment-mode
+label alone does not configure egress or change hub resources.
+
 ### Opt-in firewall DNS proxy
 
 `ENABLE_FIREWALL_DNS_PROXY` defaults to `false` and maps to the Bicep boolean
 `enableFirewallDnsProxy` (also default `false`), which sets
-`dnsSettings.enableProxy`. It applies only when the existing
+`dnsSettings.enableProxy` on a `Standard` firewall. Basic with proxy enabled
+is rejected; its policy omits DNS settings. It applies only when the
 `deployAzureFirewall` and `networkIsolation` gates enable firewall deployment.
 It is intended for a topology that deliberately uses the firewall as its DNS
 forwarding path. The matching deployment runbook applies the selection through
