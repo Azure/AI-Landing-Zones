@@ -249,6 +249,7 @@ When unset, they use the template defaults shown below.
 | `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
 | `USE_CAPP_API_KEY` | `false` | Hosted composition keeps this API-key mechanism disabled. It does not configure Entra ID sign-in. |
 | `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | The Agent Application reads runtime settings from App Configuration. |
+| `DEPLOY_COSMOS_DB` | `false` for `hosted-no-panel`; enabled when required by selected consumers | Controls Agent Application Cosmos DB only, not Foundry Agent Service backing storage. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
@@ -262,6 +263,30 @@ Foundry backing-service reuse uses native parameter names instead; see
 [Resource selection and reuse](planning.md#select-reuse-or-omit-resources).
 A supported resource ID selects reuse; naming and deployment flags control
 resource creation.
+
+#### Application Cosmos DB
+
+The default hosted application without an administrative panel does not create
+an application Cosmos DB account, database, containers or dedicated identity.
+Foundry Agent Service backing storage is configured independently.
+
+Both Bicep and Terraform application composition enable application Cosmos DB
+for classic orchestration, administrative-panel metadata, a preserved classic
+runtime, or a custom component declaring the `conversation-store` capability.
+Setting `DEPLOY_COSMOS_DB=false` explicitly conflicts with those consumers and
+stops provisioning with an explanation. Otherwise, leave the input unset to
+follow the selected application's requirements.
+
+For an additional application storage requirement, opt in before provisioning:
+
+```bash
+azd env set DEPLOY_COSMOS_DB true
+```
+
+Direct foundation-template deployments also default `deployCosmosDb` to `false`;
+set it to `true` when application storage is needed. For an existing deployment,
+review the provision preview and retain the account until its consumers and
+data-retention requirements have been reviewed.
 
 <span id="ingestion-application-selection"></span>
 
