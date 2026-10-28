@@ -23,7 +23,13 @@ native Foundry IQ Blob ingestion instead, which does not provide chat
 attachment uploads. See the [Agent Landing Zone guide](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/)
 for deployment options and configuration.
 
-![image](/media/AI-Landing-Zone-Foundry.png)
+#### Standalone
+
+![Standalone Agent Landing Zone reference architecture](docs/architecture/media/AI-Landing-Zone-without-platform.png?v=23ad082c751c)
+
+#### With Platform Hub
+
+![Agent Landing Zone with Platform Hub reference architecture](docs/architecture/media/AI-Landing-Zone-with-platform.png?v=3bc5ea7251a1)
 
 ### AI Gateway Landing Zone
 

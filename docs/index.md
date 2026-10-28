@@ -68,19 +68,22 @@ the application, or both using the [Agent Landing Zone guide](agent-landing-zone
 
 These reference architectures show private-network deployment options. Resource
 selection and reuse depend on the implementation and deployment settings.
+The Agent Landing Zone portions show the default hosted application without
+application Cosmos DB or its private endpoint. Foundry Agent Service's separate
+backing Cosmos DB is retained.
 
 #### Standalone
 
 The workload owns its networking and supporting services without a shared platform hub.
 
-[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png)](architecture/media/AI-Landing-Zone-without-platform.png)
+[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=23ad082c751c)](architecture/media/AI-Landing-Zone-without-platform.png?v=23ad082c751c)
 
 #### With Platform Hub
 
 The workload connects to a platform hub that provides shared connectivity, DNS
 and egress services.
 
-[![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png)](architecture/media/AI-Landing-Zone-with-platform.png)
+[![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=3bc5ea7251a1)](architecture/media/AI-Landing-Zone-with-platform.png?v=3bc5ea7251a1)
 
 ### AI Gateway Landing Zone
 
@@ -92,7 +95,7 @@ The integrated scenario below combines an Agent Landing Zone, a Platform Hub and
 a separate AI Gateway Landing Zone. The gateway has its own deployment and
 connectivity requirements; it is not provisioned automatically by Agent Landing Zone.
 
-[![AI Gateway and Platform Hub integrated reference architecture](architecture/media/AI-Landing-Zones-APIM.png)](architecture/media/AI-Landing-Zones-APIM.png)
+[![AI Gateway and Platform Hub integrated reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=95111fb4caec)](architecture/media/AI-Landing-Zones-APIM.png?v=95111fb4caec)
 
 <span id="foundry-modules"></span>
 <span id="agent-landing-zone_1"></span>
