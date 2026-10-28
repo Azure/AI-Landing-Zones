@@ -25,7 +25,7 @@ for deployment options and configuration.
 
 #### Standalone
 
-![Standalone Agent Landing Zone reference architecture](docs/architecture/media/AI-Landing-Zone-without-platform.png?v=c0098084b441)
+![Standalone Agent Landing Zone reference architecture](docs/architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880)
 
 #### With Platform Hub
 
