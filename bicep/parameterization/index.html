@@ -1923,6 +1923,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Observability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#log-analytics-workspace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log Analytics workspace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-insights-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Insights component
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-insights-connection-string" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Insights connection string
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2667,32 +2706,31 @@ and connectivity; a resource ID alone does not supply them.</p>
 </tbody>
 </table>
 <h3 id="observability">Observability</h3>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Env variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>existingLogAnalyticsWorkspaceResourceId</code></td>
-<td><code>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID</code></td>
-<td>Reuse a central Log Analytics workspace. All diagnostic settings, AMPLS linkage, and the App Configuration entries point at this workspace.</td>
-</tr>
-<tr>
-<td><code>existingApplicationInsightsResourceId</code></td>
-<td><code>EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID</code></td>
-<td>Reuse an existing Application Insights component. Pair with <code>existingApplicationInsightsConnectionString</code> so downstream consumers (Container Apps Environment, App Configuration) receive a working connection string without needing access to the AppInsights resource.</td>
-</tr>
-<tr>
-<td><code>existingApplicationInsightsConnectionString</code></td>
-<td><code>EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING</code></td>
-<td>Connection string for the reused AppInsights component (<code>az monitor app-insights component show -g &lt;rg&gt; -a &lt;name&gt; --query connectionString -o tsv</code>). Marked <code>@secure()</code>.</td>
-</tr>
-</tbody>
-</table>
+<h4 id="log-analytics-workspace">Log Analytics workspace</h4>
+<ul>
+<li><strong>Parameter:</strong> <code>existingLogAnalyticsWorkspaceResourceId</code></li>
+<li><strong>Environment variable:</strong> <code>EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID</code></li>
+</ul>
+<p>Reuse a central Log Analytics workspace. All diagnostic settings, AMPLS
+linkage, and the App Configuration entries point at this workspace.</p>
+<h4 id="application-insights-component">Application Insights component</h4>
+<ul>
+<li><strong>Parameter:</strong> <code>existingApplicationInsightsResourceId</code></li>
+<li><strong>Environment variable:</strong> <code>EXISTING_APPLICATION_INSIGHTS_RESOURCE_ID</code></li>
+</ul>
+<p>Reuse an existing Application Insights component. Pair with
+<code>existingApplicationInsightsConnectionString</code> so downstream consumers
+(Container Apps Environment, App Configuration) receive a working connection
+string without needing access to the AppInsights resource.</p>
+<h4 id="application-insights-connection-string">Application Insights connection string</h4>
+<ul>
+<li><strong>Parameter:</strong> <code>existingApplicationInsightsConnectionString</code></li>
+<li><strong>Environment variable:</strong> <code>EXISTING_APPLICATION_INSIGHTS_CONNECTION_STRING</code></li>
+</ul>
+<p>Connection string for the reused AppInsights component. Retrieve it with:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>monitor<span class="w"> </span>app-insights<span class="w"> </span>component<span class="w"> </span>show<span class="w"> </span>-g<span class="w"> </span>&lt;rg&gt;<span class="w"> </span>-a<span class="w"> </span>&lt;name&gt;<span class="w"> </span>--query<span class="w"> </span>connectionString<span class="w"> </span>-o<span class="w"> </span>tsv
+</code></pre></div>
+<p>This parameter is marked <code>@secure()</code>.</p>
 <h3 id="networking">Networking</h3>
 <table>
 <thead>

@@ -2615,15 +2615,28 @@ authentication is configured and are not mounted in every hosted/panel mode.
 running. See the ingestion service's
 <a href="https://github.com/Azure/agent-app-ingestion/blob/main/docs/runtime.md">runtime guide</a>
 for route availability and authentication.</p>
-<p>Indexing handles new/modified content and refreshes the selected items' ACLs.
-The purge job compares indexed SharePoint item IDs with Graph and removes
-copies for missing items. <strong>Do not treat purge as full retirement or filter
-reconciliation:</strong> the current purger scans indexed collections, does not apply
-the source's item filter, and skips deletion when a collection enumeration is
-empty or unavailable. Removing a source definition, changing a filter,
-deleting the last item, or revoking site access is not proof that indexed
-copies were deleted. Verify deletion explicitly and use a separately
-authorized, scoped Search cleanup when needed.</p>
+<ul>
+<li><strong>Indexing:</strong> handles new/modified content and refreshes the selected
+  items' ACLs.</li>
+<li><strong>Purge:</strong> compares indexed SharePoint item IDs with Graph and removes
+  copies for missing items.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Purge is not complete source retirement</p>
+<p>The current purger scans indexed collections. It does not apply the
+source's item filter and skips deletion when a collection enumeration is
+empty or unavailable.</p>
+<p>None of these actions proves that indexed copies were deleted:</p>
+<ul>
+<li>Removing a source definition.</li>
+<li>Changing a filter.</li>
+<li>Deleting the last item.</li>
+<li>Revoking site access.</li>
+</ul>
+<p>Do not treat purge as full retirement or filter reconciliation.
+Verify deletion explicitly and use a separately authorized, scoped
+Search cleanup when needed.</p>
+</div>
 <h3 id="7-validate-ingestion-and-connect-the-index-to-foundry-iq">7. Validate ingestion and connect the index to Foundry IQ</h3>
 <ol>
 <li>Add a distinctive pilot list item and a supported file to the selected

@@ -3469,19 +3469,33 @@ The hosted gateway does not forward the caller's <code>Authorization</code> head
 unchanged. The built-in native path instead uses a separately exchanged Search
 token in <code>x-client-search-token</code>, followed by
 <code>x-ms-query-source-authorization</code> at Search.</p>
-<p><strong>Correct:</strong> Check that UI and hosted runtime are the matching implementation
-with <code>RETRIEVAL_AUTH_MODE=native_search</code>. Check delegated Search consent,
-the authenticated UI assertion/refresh, supported custom-header forwarding,
-source permission metadata and private connectivity. A transport-role denial
-and a user's source denial are different failures. Resolve consent or
-Conditional Access through the UI's explicit authentication recovery action.
-Standalone sessions complete the configured OAuth callback; embedded sessions
-use portal MSAL and authenticated bootstrap. Then submit a new turn: the failed
-turn is not automatically replayed. A source <code>403</code> without usable claims
-requires source-access diagnosis, not repeated sign-in. Do not log tokens or
-claims challenges.
-Do not invent identity headers, enable anonymous retrieval or replace the
-user with a service identity. Stop sensitive-data rollout until denial works.</p>
+<p><strong>Correct:</strong></p>
+<ol>
+<li><strong>Check the implementation.</strong> Confirm the UI and hosted runtime are the
+   matching implementation with <code>RETRIEVAL_AUTH_MODE=native_search</code>.</li>
+<li><strong>Check the delegated retrieval path.</strong> Review delegated Search consent,
+   the authenticated UI assertion/refresh, supported custom-header forwarding,
+   source permission metadata and private connectivity.</li>
+<li>
+<p><strong>Match recovery to the failure.</strong> A transport-role denial and a user's
+   source denial are different failures:</p>
+<p><strong>Consent or Conditional Access:</strong> Use the UI's explicit authentication
+  recovery action. Standalone sessions complete the configured OAuth
+  callback; embedded sessions use portal MSAL and authenticated bootstrap.</p>
+<p><strong>Source <code>403</code> without usable claims:</strong> Diagnose source access rather
+  than repeating sign-in.</p>
+</li>
+<li>
+<p><strong>Submit a new turn after authentication recovery.</strong> The failed turn is
+   not automatically replayed.</p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Do not bypass user authorization</p>
+<p>Do not log tokens or claims challenges. Do not invent identity headers,
+enable anonymous retrieval or replace the user with a service identity.
+Stop sensitive-data rollout until denial works.</p>
+</div>
 <p><strong>Verify:</strong> Use two users with different source permissions and confirm
 permitted retrieval and denial through the actual UI or channel, including
 references and downloads. A unit test or successful greeting is not

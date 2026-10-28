@@ -2134,17 +2134,38 @@ maps deployment inputs to infrastructure parameters. Values can be literals or
 references to the selected azd environment's variables. Inline defaults apply
 where declared; other unset inputs can use Bicep defaults.</p>
 <p>Before provisioning, the hooks validate the provider/application binding,
-resolve the shared hosting topology and apply environment inputs.
-Bicep consumes the generated <code>infra/main.parameters.json</code>.
-Terraform consumes generated <code>infra/terraform/main.tfvars.json</code>, with backend
-settings rendered from <code>infra/terraform/provider.conf.json</code>.
-For Terraform, <code>infra/main.parameters.json</code> is only a shared preflight artifact.
-The adapter also qualifies <code>public</code>, <code>usgovernment</code> or <code>china</code> and generates
+resolve the shared hosting topology and apply environment inputs.</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Generated deployment input</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bicep</td>
+<td><code>infra/main.parameters.json</code></td>
+</tr>
+<tr>
+<td>Terraform</td>
+<td><code>infra/terraform/main.tfvars.json</code></td>
+</tr>
+</tbody>
+</table>
+<p>Terraform renders backend settings from <code>infra/terraform/provider.conf.json</code>.
+Its generated <code>infra/main.parameters.json</code> is only a shared preflight artifact,
+not the Terraform deployment input.</p>
+<div class="admonition note">
+<p class="admonition-title">Terraform cloud and backend records</p>
+<p>The adapter qualifies <code>public</code>, <code>usgovernment</code> or <code>china</code> and generates
 the matching <code>azureCloud</code> context and backend environment. See
-<a href="../configuration/#azure-cloud">Azure cloud settings</a>.
-An immutable private backend record is created on first use before settings
-are persisted and verified thereafter. Clean runners need the original
-backend, group and application/environment bindings, not reconstructed files.</p>
+<a href="../configuration/#azure-cloud">Azure cloud settings</a>.</p>
+<p>An immutable private backend record is created on first use before
+settings are persisted and verified thereafter. Clean runners need the
+original backend, group and application/environment bindings, not
+reconstructed files.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Edit the source, not the generated output</p>
 <p>Use documented environment inputs and root <code>main.parameters.json</code>.

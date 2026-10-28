@@ -867,6 +867,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Names and address ranges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subnet-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnet names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet-address-prefixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnet address prefixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -2446,6 +2474,34 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Names and address ranges">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#subnet-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnet names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#subnet-address-prefixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subnet address prefixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -3499,91 +3555,127 @@ configure peering, DNS forwarding or runner connectivity.</p>
 operator values are preserved through composition; the allocation table lists
 defaults, not mandatory ranges. Reserved service names must retain their
 required spellings.</p>
+<h5 id="subnet-names">Subnet names</h5>
 <table>
 <thead>
 <tr>
 <th>Native name parameter</th>
 <th>Name environment input</th>
-<th>Native prefix parameter</th>
-<th>Prefix environment input</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>agentSubnetName</code></td>
 <td><code>AZURE_AGENT_SUBNET_NAME</code></td>
-<td><code>agentSubnetPrefix</code></td>
-<td><code>AZURE_AGENT_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>acaEnvironmentSubnetName</code></td>
 <td><code>AZURE_ACA_ENVIRONMENT_SUBNET_NAME</code></td>
-<td><code>acaEnvironmentSubnetPrefix</code></td>
-<td><code>AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>peSubnetName</code></td>
 <td><code>AZURE_PE_SUBNET_NAME</code></td>
-<td><code>peSubnetPrefix</code></td>
-<td><code>AZURE_PE_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>azureBastionSubnetName</code></td>
 <td><code>AZURE_BASTION_SUBNET_NAME</code></td>
-<td><code>azureBastionSubnetPrefix</code></td>
-<td><code>AZURE_BASTION_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>azureFirewallSubnetName</code></td>
 <td><code>AZURE_FIREWALL_SUBNET_NAME</code></td>
-<td><code>azureFirewallSubnetPrefix</code></td>
-<td><code>AZURE_FIREWALL_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>azureFirewallManagementSubnetName</code></td>
 <td><code>AZURE_FIREWALL_MANAGEMENT_SUBNET_NAME</code></td>
-<td><code>azureFirewallManagementSubnetPrefix</code></td>
-<td><code>AZURE_FIREWALL_MANAGEMENT_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>gatewaySubnetName</code></td>
 <td><code>AZURE_GATEWAY_SUBNET_NAME</code></td>
-<td><code>gatewaySubnetPrefix</code></td>
-<td><code>AZURE_GATEWAY_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>azureAppGatewaySubnetName</code></td>
 <td><code>AZURE_APP_GATEWAY_SUBNET_NAME</code></td>
-<td><code>azureAppGatewaySubnetPrefix</code></td>
-<td><code>AZURE_APP_GATEWAY_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>jumpboxSubnetName</code></td>
 <td><code>AZURE_JUMPBOX_SUBNET_NAME</code></td>
-<td><code>jumpboxSubnetPrefix</code></td>
-<td><code>AZURE_JUMPBOX_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>devopsBuildAgentsSubnetName</code></td>
 <td><code>AZURE_DEVOPS_BUILD_AGENTS_SUBNET_NAME</code></td>
-<td><code>devopsBuildAgentsSubnetPrefix</code></td>
-<td><code>AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>applicationPeSubnetName</code></td>
 <td><code>AZURE_APPLICATION_PE_SUBNET_NAME</code></td>
-<td><code>applicationPeSubnetPrefix</code></td>
-<td><code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>powerPlatformSubnetName</code></td>
 <td><code>AZURE_POWER_PLATFORM_SUBNET_NAME</code></td>
-<td><code>powerPlatformSubnetPrefix</code></td>
-<td><code>AZURE_POWER_PLATFORM_SUBNET_PREFIX</code></td>
 </tr>
 <tr>
 <td><code>aiGatewaySubnetName</code></td>
 <td><code>AZURE_AI_GATEWAY_SUBNET_NAME</code></td>
+</tr>
+</tbody>
+</table>
+<h5 id="subnet-address-prefixes">Subnet address prefixes</h5>
+<table>
+<thead>
+<tr>
+<th>Native prefix parameter</th>
+<th>Prefix environment input</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agentSubnetPrefix</code></td>
+<td><code>AZURE_AGENT_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>acaEnvironmentSubnetPrefix</code></td>
+<td><code>AZURE_ACA_ENVIRONMENT_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>peSubnetPrefix</code></td>
+<td><code>AZURE_PE_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>azureBastionSubnetPrefix</code></td>
+<td><code>AZURE_BASTION_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>azureFirewallSubnetPrefix</code></td>
+<td><code>AZURE_FIREWALL_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>azureFirewallManagementSubnetPrefix</code></td>
+<td><code>AZURE_FIREWALL_MANAGEMENT_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>gatewaySubnetPrefix</code></td>
+<td><code>AZURE_GATEWAY_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>azureAppGatewaySubnetPrefix</code></td>
+<td><code>AZURE_APP_GATEWAY_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>jumpboxSubnetPrefix</code></td>
+<td><code>AZURE_JUMPBOX_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>devopsBuildAgentsSubnetPrefix</code></td>
+<td><code>AZURE_DEVOPS_BUILD_AGENTS_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>applicationPeSubnetPrefix</code></td>
+<td><code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
+<td><code>powerPlatformSubnetPrefix</code></td>
+<td><code>AZURE_POWER_PLATFORM_SUBNET_PREFIX</code></td>
+</tr>
+<tr>
 <td><code>aiGatewaySubnetPrefix</code></td>
 <td><code>AZURE_AI_GATEWAY_SUBNET_PREFIX</code></td>
 </tr>
