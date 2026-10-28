@@ -733,6 +733,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="General">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#application-cosmos-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Cosmos DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2273,6 +2290,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="General">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#application-cosmos-db" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Cosmos DB
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -2878,6 +2912,11 @@ When unset, they use the template defaults shown below.</p>
 <td>The Agent Application reads runtime settings from App Configuration.</td>
 </tr>
 <tr>
+<td><code>DEPLOY_COSMOS_DB</code></td>
+<td><code>false</code> for <code>hosted-no-panel</code>; enabled when required by selected consumers</td>
+<td>Controls Agent Application Cosmos DB only, not Foundry Agent Service backing storage.</td>
+</tr>
+<tr>
 <td><code>ENABLE_COSMOS_ANALYTICAL_STORAGE</code></td>
 <td><code>false</code></td>
 <td>Enables the Agent Application Cosmos DB analytical store.</td>
@@ -2915,6 +2954,23 @@ Foundry backing-service reuse uses native parameter names instead; see
 <a href="../planning/#select-reuse-or-omit-resources">Resource selection and reuse</a>.
 A supported resource ID selects reuse; naming and deployment flags control
 resource creation.</p>
+<h4 id="application-cosmos-db">Application Cosmos DB</h4>
+<p>The default hosted application without an administrative panel does not create
+an application Cosmos DB account, database, containers or dedicated identity.
+Foundry Agent Service backing storage is configured independently.</p>
+<p>Both Bicep and Terraform application composition enable application Cosmos DB
+for classic orchestration, administrative-panel metadata, a preserved classic
+runtime, or a custom component declaring the <code>conversation-store</code> capability.
+Setting <code>DEPLOY_COSMOS_DB=false</code> explicitly conflicts with those consumers and
+stops provisioning with an explanation. Otherwise, leave the input unset to
+follow the selected application's requirements.</p>
+<p>For an additional application storage requirement, opt in before provisioning:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_COSMOS_DB<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<p>Direct foundation-template deployments also default <code>deployCosmosDb</code> to <code>false</code>;
+set it to <code>true</code> when application storage is needed. For an existing deployment,
+review the provision preview and retain the account until its consumers and
+data-retention requirements have been reviewed.</p>
 <p><span id="ingestion-application-selection"></span></p>
 <h3 id="agent-app-ingestion-selection">Agent App Ingestion selection</h3>
 <table>
