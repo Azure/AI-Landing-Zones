@@ -1,5 +1,9 @@
 # Sizing and capacity
 
+!!! note
+    An update to align this guidance with the current architecture is planned.
+    Confirm sizing and cost assumptions against your deployment configuration.
+
 Capacity depends on the workload, not only the number of people who can sign
 in. Concurrent agent requests, model calls, tool latency and
 document processing place different demands on the deployment.
@@ -10,6 +14,11 @@ constraints and optional components. [Deployment choices](planning.md)
 covers resource selection; [Cost planning](cost-planning.md) covers spending.
 Execution steps belong to the [Deploy infra only](deploy-infra-only.md)
 and [Deploy full stack](deploy-full-stack.md) runbooks.
+
+Both providers use the root `main.parameters.json` values below.
+For Terraform, preprovision generates typed inputs; verify the resolved
+capacity through its
+[review procedure](deploy-terraform-infra-only.md#step-4-choose-the-application-and-foundation-inputs).
 
 !!! note "Validate defaults against your workload"
     Defaults are starting points, not benchmarked capacity profiles or throughput

@@ -45,9 +45,10 @@ Do not infer the selected application footprint from native Bicep defaults alone
 ## Access and validation
 
 Managed identities and scoped role assignments provide service-to-service
-access; [Permissions](permissions.md) describes the foundation's default
-assignments. Effective application grants depend on the selected definition,
-capabilities and topology.
+access; [Permissions](permissions.md) describes the default Agent layout's
+Foundry-hosted runtime, Container Apps frontend and separate deployment/caller
+grants. Other application definitions and infrastructure-only selections can
+produce different assignments.
 
 The preprovision hook checks inputs, BYO resource references, network constraints
 and regional readiness. A passing check is not proof of regional capacity,

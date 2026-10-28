@@ -11,9 +11,15 @@ This page explains the naming model. The
 preview steps. [Deployment settings](configuration.md) describes other inputs;
 [resource reuse](planning.md#select-reuse-or-omit-resources) is separate from naming.
 
+Both providers read naming overrides from root `main.parameters.json`.
+The `uniqueString` expression below describes Bicep's generated default.
+For Terraform, follow the
+[Terraform input procedure](deploy-terraform-infra-only.md#step-4-choose-the-application-and-foundation-inputs)
+and review the resolved names before provisioning.
+
 The [resource group destination inputs](configuration.md#resource-group-destinations)
 select where resources belong, not a naming mode. Select them before first
-provision; changing a group's input is not an existing-resource move or migration.
+provision and preserve them for updates and recovery.
 
 ## Defaults
 

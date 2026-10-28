@@ -496,4 +496,6 @@ The `containerAppsList` parameter defines the container apps to deploy and their
 | `dapr.enableApiLogging` | `false` | Enables Dapr API logging when Dapr is enabled |
 | `roles` | Required | List of RBAC roles assigned to the container app's managed identity |
 
-See [Permissions](permissions.md) for the resulting role assignments with the default configuration.
+See [Permissions](permissions.md) for the default Agent layout's frontend and
+hosted-runtime grants. Custom Container App role lists and other deployment
+selections produce different assignments.

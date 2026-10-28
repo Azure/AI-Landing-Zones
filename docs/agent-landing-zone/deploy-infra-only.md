@@ -1,12 +1,16 @@
 <span id="deploy-infrastructure-only"></span>
 
-# Deploy infra only
+<span id="deploy-infra-only"></span>
+
+# Deploy infra only with Bicep
 
 ## Objective
 
 Provision the Azure foundation without building or deploying application images.
-Use the Agent Landing Zone repository and its incorporated `infra/` source,
+Use the Agent Landing Zone repository and its `infra/` source,
 including when no Agent Application images will be deployed.
+Bicep is the default infrastructure provider. For Terraform,
+use [Deploy infra only with Terraform](deploy-terraform-infra-only.md).
 
 ## When to use
 
@@ -52,10 +56,8 @@ cd agent-landing-zone
 ```
 
 Run all lifecycle commands from this root, not from `infra/`.
-Its `infra/` is repository-owned
-source. `manifest.json` records the coordinated component pins;
-`infra.source` records historical incorporation provenance, not a second
-repository to clone or a separate foundation version to deploy.
+Its `infra/` contains the foundation source. `manifest.json` records the
+coordinated application component pins.
 
 [Set up Python](deploy-full-stack.md#prepare-python) from
 the cloned repository before lifecycle commands.
@@ -103,7 +105,10 @@ before first provision.
 
 Run one `azd provision` command from the repository root to deploy across all
 three groups. Do not run a separate deployment for each group. These instructions
-apply to Bicep with `azd`; Terraform and portal deployments have their own settings.
+apply to this Bicep procedure. The integrated
+[Terraform runbook](deploy-terraform-infra-only.md) uses the same product
+lifecycle and root parameter source, with separate backend settings.
+The portal has its own deployment procedure.
 
 <span id="step-3-choose-the-foundation-shape"></span>
 
@@ -419,8 +424,7 @@ If previewing changes, repeat the
 [selected-environment preparation](#optional-preview-agent-source) before
 reviewing the preview. Apply approved root parameter changes with the provisioning step above.
 
-Integrate the coordinated platform and its `infra/` tree together; do not
-replace only its foundation folder from another repository.
+Update the coordinated platform and its `infra/` tree together.
 Use the [reapply procedure](deploy-full-stack.md#upgrade-to-a-new-release)
 and [rollback](deploy-full-stack.md#rollback) in the Deploy full stack runbook.
 

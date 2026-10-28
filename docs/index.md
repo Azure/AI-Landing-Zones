@@ -68,19 +68,22 @@ the application, or both using the [Agent Landing Zone guide](agent-landing-zone
 
 These reference architectures show private-network deployment options. Resource
 selection and reuse depend on the implementation and deployment settings.
+The Agent Landing Zone portions show the default hosted application without
+application Cosmos DB or its private endpoint. Foundry Agent Service's separate
+backing Cosmos DB is retained.
 
 #### Standalone
 
 The workload owns its networking and supporting services without a shared platform hub.
 
-[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png)](architecture/media/AI-Landing-Zone-without-platform.png)
+[![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=23ad082c751c)](architecture/media/AI-Landing-Zone-without-platform.png?v=23ad082c751c)
 
 #### With Platform Hub
 
 The workload connects to a platform hub that provides shared connectivity, DNS
 and egress services.
 
-[![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png)](architecture/media/AI-Landing-Zone-with-platform.png)
+[![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=3bc5ea7251a1)](architecture/media/AI-Landing-Zone-with-platform.png?v=3bc5ea7251a1)
 
 ### AI Gateway Landing Zone
 
@@ -92,7 +95,7 @@ The integrated scenario below combines an Agent Landing Zone, a Platform Hub and
 a separate AI Gateway Landing Zone. The gateway has its own deployment and
 connectivity requirements; it is not provisioned automatically by Agent Landing Zone.
 
-[![AI Gateway and Platform Hub integrated reference architecture](architecture/media/AI-Landing-Zones-APIM.png)](architecture/media/AI-Landing-Zones-APIM.png)
+[![AI Gateway and Platform Hub integrated reference architecture](architecture/media/AI-Landing-Zones-APIM.png?v=95111fb4caec)](architecture/media/AI-Landing-Zones-APIM.png?v=95111fb4caec)
 
 <span id="foundry-modules"></span>
 <span id="agent-landing-zone_1"></span>
@@ -105,9 +108,12 @@ implementation below.
 
 | Implementation | Bicep | Terraform | Portal |
 | --- | --- | --- | --- |
-| **Agent Landing Zone** | [View implementation](https://aka.ms/agenlz) | [View implementation](https://aka.ms/ailz/terraform) | [![Deploy to Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
+| **Agent Landing Zone** | [View implementation](https://aka.ms/agenlz) | [View implementation](agent-landing-zone/terraform.md) | [![Deploy to Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
 | **AI Gateway Landing Zone** | [View implementation](https://aka.ms/ailz/apim) | [View implementation](https://aka.ms/ailz/aigateway/terraform) | &mdash; |
 | **Foundry AVM Modules** | [View module](https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry) | [View module](https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest) | &mdash; |
+
+The [shared AI Landing Zone Terraform foundation reference](terraform/index.md)
+is separate from Agent Landing Zone's integrated application lifecycle.
 
 <span id="whats-new"></span>
 <span id="frequently-asked-questions"></span>

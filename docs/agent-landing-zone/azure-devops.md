@@ -8,6 +8,12 @@ protected approvals. This optional continuous integration and deployment
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.
 
+The downloadable pipeline and validation examples in this runbook use Bicep.
+They are not a validated Terraform pipeline. For the integrated
+Terraform lifecycle and its separate backend/runner prerequisites, use
+[Deploy full stack with Terraform](deploy-terraform-full-stack.md) before
+designing corresponding automation.
+
 ## What you'll have after this runbook
 
 One reviewed source revision promoted through DEV, TEST and PROD, with
@@ -30,8 +36,7 @@ or [Deploy full stack](deploy-full-stack.md) runbook. For component changes, see
 !!! info "Choose the right pipeline"
     The downloadable example below verifies the **same source commit in every
     job** and enforces successful prior stages. Images are built per environment.
-    Keep the platform's incorporated `infra/` and lifecycle hooks in that same
-    revision. Do not substitute pipelines from a separate foundation checkout.
+    Keep the platform's `infra/` and lifecycle hooks in that same revision.
 
 ## Prerequisites
 
@@ -53,8 +58,7 @@ a deployment until they and the protected checks in Step 4 are complete.
 Use your reviewed platform revision. Keep
 `manifest.json`, `app-definition.json`, `main.parameters.json`,
 `azure.yaml`, `infra/`, `config/`, `contracts/` and `scripts/` together at its root.
-Infrastructure is incorporated under `infra/`; do not deploy it from a second
-foundation checkout. Commit your configuration and compatible component pins
+Infrastructure is under `infra/`. Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
 The downloadable example initially deploys the **Agent Application** with
@@ -160,29 +164,13 @@ work around an unattended failure. Allow RBAC propagation before retrying.
 
 The pipeline service connection authenticates deployment jobs. The UI uses a
 separate Entra application registration and tenant consent, which must be
-configured outside the deployment scripts. Arrange this with an Entra
-administrator for each isolated application environment:
+configured outside the deployment scripts. For each isolated application
+environment, follow the single canonical
+[login setup sequence](application-auth.md#configure-login-in-order):
+registration and consent before first provision, final HTTPS callback and
+settings after the frontend URL is known, then caller/admission grants and
+user validation. For an already deployed UI, reload it after settings change.
 
-1. Create the confidential application registration; expose its
-   `api://<client-id>/user_impersonation` scope and request version-2 access tokens.
-2. Register the final HTTPS UI URL with `/auth/oauth/azure-ad/callback`.
-   Set `CHAINLIT_URL` to that canonical HTTPS origin without a trailing slash.
-   For a first deployment, discover the assigned frontend URL, finish this setup,
-   and restart the UI before accepting DEV.
-3. Create/rotate its client credential under tenant policy. Store it in Key Vault,
-   publish a **Key Vault reference** as `OAUTH_AZURE_AD_CLIENT_SECRET`, and publish
-   `OAUTH_AZURE_AD_CLIENT_ID`, `OAUTH_AZURE_AD_TENANT_ID` and
-   `OAUTH_AZURE_AD_SCOPES` under App Configuration label `agent-lz`.
-   Protect `CHAINLIT_AUTH_SECRET` and keep it stable.
-4. Configure and consent the downstream delegated permissions for the deployed
-   audience, including Foundry OBO for hosted mode. Graph scopes are not a
-   replacement for the UI's single-token API scope. Grant intended caller access.
-5. Review conflicting unlabelled/service settings and restart affected components.
-   Then test actual user sign-in and document allow/deny behavior.
-
-Follow [delegated authentication](application-auth.md)
-for the exact keys and consent boundaries, and
-[runtime settings](configuration.md#runtime-settings) for publishing/restart behavior.
 Complete tenant consent and sign-in configuration through a separately reviewed
 administrative procedure or automation before accepting the deployment.
 Keep these tasks separate from the deployment connection's Azure permissions;

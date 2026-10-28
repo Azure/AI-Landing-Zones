@@ -444,6 +444,7 @@ This identity is assigned to the Container Apps and can be used by your applicat
 - [AI Landing Zone Design Checklist](https://azure.github.io/AI-Landing-Zones/architecture/design-checklist/)
 - [FAQ](https://azure.github.io/AI-Landing-Zones/architecture/faq/)
 - [Bicep Implementation](https://aka.ms/ailz/bicep)
-- [Terraform Implementation](https://aka.ms/ailz/terraform)
+- [Agent Landing Zone integrated Terraform](../agent-landing-zone/terraform.md)
+- [Shared Terraform foundation reference](../terraform/index.md) (direct AVM pattern use)
 - [Cloud Adoption Framework - AI Scenario](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/ai/)
 - [Well-Architected Framework - AI Workloads](https://learn.microsoft.com/en-us/azure/well-architected/ai/)

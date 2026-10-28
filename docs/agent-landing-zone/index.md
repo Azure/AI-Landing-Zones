@@ -16,12 +16,14 @@ Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-z
 ## Infrastructure and application
 
 The deployment template creates Azure resources separately from the application
-code that runs on them. This supports two deployment runbooks:
+code that runs on them. Choose the outcome first, then the infrastructure
+provider. Bicep is the default; integrated Terraform uses the same azd
+application lifecycle.
 
-| Runbook | Result |
-| --- | --- |
-| [Deploy infra only](deploy-infra-only.md) | Creates and configures the selected Azure resources without deploying application code. |
-| [Deploy full stack](deploy-full-stack.md) | Creates the infrastructure and deploys the Agent Application, including a Foundry hosted agent. |
+| Outcome | With Bicep | With Terraform |
+| --- | --- | --- |
+| **Deploy infra only:** create and configure Azure resources without application code | [Runbook](deploy-infra-only.md) | [Runbook](deploy-terraform-infra-only.md) |
+| **Deploy full stack:** create infrastructure and deploy the Agent Application, including a Foundry hosted agent | [Runbook](deploy-full-stack.md) | [Runbook](deploy-terraform-full-stack.md) |
 
 The default full-stack deployment runs the agent in **Foundry Agent Service**,
 the Microsoft Foundry service that hosts and operates agents. A web chat
@@ -47,7 +49,7 @@ commands, validation and rollback.
   and security review.
 - **How much capacity and budget are needed?** [Sizing and capacity](sizing.md)
   and [Cost planning](cost-planning.md) describe the starting points.
-- **Do I only need Azure resources?** [Deploy infra only](deploy-infra-only.md)
-  provisions the infrastructure without deploying an application.
-- **Do I want the supplied application running?** [Deploy full stack](deploy-full-stack.md)
-  provisions the infrastructure and deploys the Agent Application.
+- **Do I only need Azure resources?** Deploy infra only
+  [with Bicep](deploy-infra-only.md) or [with Terraform](deploy-terraform-infra-only.md).
+- **Do I want the supplied application running?** Deploy full stack
+  [with Bicep](deploy-full-stack.md) or [with Terraform](deploy-terraform-full-stack.md).
