@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2218,12 +2218,22 @@ These are the service integration path for additional operations. The supplied
 <code>maf_lite</code> code does <strong>not</strong> automatically consume a Toolbox added in the portal.
 An authenticated Toolbox integration requires application development.
 <a href="../agent-tools/">Agent tools</a> describes that contract.</p>
-<pre class="mermaid"><code>flowchart LR
-    User &lt;--&gt; UI["Agent App UI"]
-    UI &lt;--&gt;|Delegated Foundry invocation| Agent["Hosted orchestrator"]
-    Agent &lt;--&gt; Model["Model deployment"]
-    Agent &lt;--&gt; KB["Foundry IQ knowledge base"]
-    Agent -.-&gt;|Custom authenticated integration| Tools["Foundry tools / Toolbox"]</code></pre>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<ol>
+<li><strong>User and Agent App UI</strong> exchange messages.</li>
+<li><strong>Agent App UI and hosted orchestrator</strong> communicate through delegated
+   Foundry invocation.</li>
+<li><strong>The hosted orchestrator</strong> exchanges requests and responses with the
+   model deployment and the Foundry IQ knowledge base as separate dependencies.</li>
+<li><strong>Foundry tools / Toolbox</strong> require a custom authenticated integration
+   from the hosted orchestrator; the supplied application does not consume
+   portal-added tools automatically.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size application request diagram" class="runbook-diagram__image" href="../../media/application-flow.svg"><img alt="Application request dependencies: User, Agent App UI, hosted orchestrator, model deployment, Foundry IQ knowledge base and custom tool integration." src="../../media/application-flow.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/application-flow.svg">Open full-size diagram</a></p>
+</div>
 <p>The flow shows request dependencies, not proof of document authorization.
 The built-in native retrieval path separately exchanges and forwards a
 delegated Search token; native permissions remain enforced independently of

@@ -53,12 +53,12 @@
   white-space: nowrap;
 }
 
-.md-typeset .subnet-address-plan,
+.md-typeset .responsive-reference,
 .md-typeset .runbook-diagram {
   container-type: inline-size;
 }
 
-.md-typeset .subnet-address-plan tbody th {
+.md-typeset .responsive-reference tbody th {
   border-top: 0.05rem solid var(--md-typeset-table-color);
   font-weight: 400;
 }
@@ -84,16 +84,16 @@
 }
 
 @container (max-width: 32rem) {
-  .md-typeset .subnet-address-plan .md-typeset__table {
+  .md-typeset .responsive-reference .md-typeset__table {
     display: block;
     padding: 0;
   }
 
-  .md-typeset .subnet-address-plan .md-typeset__scrollwrap {
+  .md-typeset .responsive-reference .md-typeset__scrollwrap {
     margin: 0;
   }
 
-  .md-typeset .subnet-address-plan table:not([class]) {
+  .md-typeset .responsive-reference table:not([class]) {
     border: 0;
     display: block;
     font-size: inherit;
@@ -101,7 +101,7 @@
     width: 100%;
   }
 
-  .md-typeset .subnet-address-plan thead {
+  .md-typeset .responsive-reference thead {
     clip-path: inset(50%);
     height: 1px;
     overflow: hidden;
@@ -110,35 +110,61 @@
     width: 1px;
   }
 
-  .md-typeset .subnet-address-plan tbody,
-  .md-typeset .subnet-address-plan tr {
+  .md-typeset .responsive-reference tbody,
+  .md-typeset .responsive-reference tr {
     display: block;
   }
 
-  .md-typeset .subnet-address-plan tbody tr {
+  .md-typeset .responsive-reference tbody tr {
     border-bottom: 1px solid var(--md-default-fg-color--lightest);
     padding: 0.6rem 0;
   }
 
-  .md-typeset .subnet-address-plan table:not([class]) :is(th, td) {
+  .md-typeset .responsive-reference table:not([class]) :is(th, td) {
     border: 0;
     display: block;
     min-width: 0;
     padding: 0.15rem 0;
   }
 
-  .md-typeset .subnet-address-plan tbody th {
+  .md-typeset .responsive-reference tbody th {
     font-weight: 600;
   }
 
-  .md-typeset .subnet-address-plan td::before {
+  .md-typeset .responsive-reference td::before {
     content: attr(data-label) ": ";
   }
 
-  .md-typeset .subnet-address-plan table:not([class]) td code {
+  .md-typeset .responsive-reference table:not([class]) td code {
     overflow-wrap: anywhere;
     white-space: normal;
     word-break: normal;
+  }
+
+  .md-typeset .design-checklist tbody tr {
+    column-gap: 0.6rem;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    row-gap: 0.3rem;
+  }
+
+  .md-typeset .design-checklist td:nth-child(2) {
+    font-weight: 600;
+  }
+
+  .md-typeset .design-checklist td:nth-child(2)::before {
+    content: none;
+  }
+
+  .md-typeset .design-checklist td:nth-child(n + 3) {
+    grid-column: 1 / -1;
+  }
+
+  .md-typeset .design-checklist td:nth-child(n + 3)::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
   }
 }
 

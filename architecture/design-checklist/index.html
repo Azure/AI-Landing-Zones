@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=5c4825a53a70">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2031,373 +2031,389 @@ record your decision, owner and how you will verify it. Use the deployment
 documentation to identify which controls the selected template configures and
 which your team needs to implement.</p>
 <h2 id="compute-and-cost">Compute and cost</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>C-R1</td>
-<td>Where will models, agents and application components run?</td>
-<td>Evaluate scaling, network and operational needs separately for models and application components, then choose compute for each. Standardize where their requirements align.</td>
-<td><a href="https://learn.microsoft.com/azure/architecture/guide/technology-choices/compute-decision-tree">Compute decision guide</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">C-R1</th>
+<td data-label="Design consideration" role="cell">Where will models, agents and application components run?</td>
+<td data-label="Recommendation" role="cell">Evaluate scaling, network and operational needs separately for models and application components, then choose compute for each. Standardize where their requirements align.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/architecture/guide/technology-choices/compute-decision-tree">Compute decision guide</a></td>
 </tr>
-<tr>
-<td>CO-R1</td>
-<td>What is the workload's monthly cost and usage model?</td>
-<td>Estimate the selected resources, model tokens, indexing and observability before deployment. Include optional services and separate shared-platform costs.</td>
-<td><a href="../cost-guide/">Cost guide</a>, <a href="https://learn.microsoft.com/azure/ai-foundry/concepts/manage-costs">Foundry cost planning</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">CO-R1</th>
+<td data-label="Design consideration" role="cell">What is the workload's monthly cost and usage model?</td>
+<td data-label="Recommendation" role="cell">Estimate the selected resources, model tokens, indexing and observability before deployment. Include optional services and separate shared-platform costs.</td>
+<td data-label="References" role="cell"><a href="../cost-guide/">Cost guide</a>, <a href="https://learn.microsoft.com/azure/ai-foundry/concepts/manage-costs">Foundry cost planning</a></td>
 </tr>
-<tr>
-<td>CO-R2</td>
-<td>Is model traffic predictable enough for provisioned throughput?</td>
-<td>Compare measured utilization and commitment costs with pay-as-you-go to choose the lower-cost option for the workload. If using spillover, design gateway routing and test quota exhaustion.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/provisioned-throughput">Provisioned throughput</a>, <a href="https://learn.microsoft.com/azure/architecture/ai-ml/guide/azure-openai-gateway-multi-backend">Multi-backend gateway</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">CO-R2</th>
+<td data-label="Design consideration" role="cell">Is model traffic predictable enough for provisioned throughput?</td>
+<td data-label="Recommendation" role="cell">Compare measured utilization and commitment costs with pay-as-you-go to choose the lower-cost option for the workload. If using spillover, design gateway routing and test quota exhaustion.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/provisioned-throughput">Provisioned throughput</a>, <a href="https://learn.microsoft.com/azure/architecture/ai-ml/guide/azure-openai-gateway-multi-backend">Multi-backend gateway</a></td>
 </tr>
-<tr>
-<td>CO-R3</td>
-<td>Which model deployment type meets residency, latency and cost requirements?</td>
-<td>Compare regional, data-zone and global options for the chosen model. Verify processing-location requirements before choosing a lower advertised token price.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types">Deployment types</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">CO-R3</th>
+<td data-label="Design consideration" role="cell">Which model deployment type meets residency, latency and cost requirements?</td>
+<td data-label="Recommendation" role="cell">Compare regional, data-zone and global options for the chosen model. Verify processing-location requirements before choosing a lower advertised token price.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types">Deployment types</a></td>
 </tr>
-<tr>
-<td>CO-R4</td>
-<td>Which nonproduction resources can stop outside working hours?</td>
-<td>Schedule shutdown only for supported resources that can tolerate downtime. Check disks, networking and other charges that continue while compute is stopped.</td>
-<td><a href="https://learn.microsoft.com/azure/virtual-machines/auto-shutdown-vm">VM auto-shutdown</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">CO-R4</th>
+<td data-label="Design consideration" role="cell">Which nonproduction resources can stop outside working hours?</td>
+<td data-label="Recommendation" role="cell">Schedule shutdown only for supported resources that can tolerate downtime. Check disks, networking and other charges that continue while compute is stopped.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/virtual-machines/auto-shutdown-vm">VM auto-shutdown</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="data">Data</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>D-R1</td>
-<td>Where are agent state, uploaded files and application data stored?</td>
-<td>Identify the selected Agent Service setup and its backing resources. Record retention, access, backup and deletion requirements separately for each data store.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/standard-agent-setup">Standard agent setup</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">D-R1</th>
+<td data-label="Design consideration" role="cell">Where are agent state, uploaded files and application data stored?</td>
+<td data-label="Recommendation" role="cell">Identify the selected Agent Service setup and its backing resources. Record retention, access, backup and deletion requirements separately for each data store.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/standard-agent-setup">Standard agent setup</a></td>
 </tr>
-<tr>
-<td>D-R2</td>
-<td>Which resources may be shared across projects?</td>
-<td>Review supported resource-sharing constraints and choose explicit isolation boundaries. Separate application storage from Agent Service backing storage where required.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/capability-hosts">Capability hosts and backing resources</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">D-R2</th>
+<td data-label="Design consideration" role="cell">Which resources may be shared across projects?</td>
+<td data-label="Recommendation" role="cell">Review supported resource-sharing constraints and choose explicit isolation boundaries. Separate application storage from Agent Service backing storage where required.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/capability-hosts">Capability hosts and backing resources</a></td>
 </tr>
-<tr>
-<td>D-R3</td>
-<td>Does the workload need data from Microsoft Fabric?</td>
-<td>Evaluate the Fabric data agent's supported access model, permissions and regional availability before selecting it as an agent tool.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/fabric">Fabric data agent tool</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">D-R3</th>
+<td data-label="Design consideration" role="cell">Does the workload need data from Microsoft Fabric?</td>
+<td data-label="Recommendation" role="cell">Evaluate the Fabric data agent's supported access model, permissions and regional availability before selecting it as an agent tool.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/fabric">Fabric data agent tool</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="governance">Governance</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>G-R1</td>
-<td>Which policies apply to the deployed services?</td>
-<td>Assign relevant built-in or custom policies at the appropriate scope. Review audit results and exemptions before enforcing deny effects.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/policy-reference">AI services policies</a>, <a href="https://learn.microsoft.com/azure/search/policy-reference">Search policies</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">G-R1</th>
+<td data-label="Design consideration" role="cell">Which policies apply to the deployed services?</td>
+<td data-label="Recommendation" role="cell">Assign relevant built-in or custom policies at the appropriate scope. Review audit results and exemptions before enforcing deny effects.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/policy-reference">AI services policies</a>, <a href="https://learn.microsoft.com/azure/search/policy-reference">Search policies</a></td>
 </tr>
-<tr>
-<td>G-R2</td>
-<td>Which regulatory and organizational obligations apply?</td>
-<td>Map each obligation to required controls and verification results. Use policy initiatives to assess supported Azure controls and document any additional reviews needed to demonstrate compliance.</td>
-<td><a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf">NIST AI RMF</a>, <a href="https://learn.microsoft.com/azure/governance/policy/samples/#regulatory-compliance">Regulatory compliance initiatives</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">G-R2</th>
+<td data-label="Design consideration" role="cell">Which regulatory and organizational obligations apply?</td>
+<td data-label="Recommendation" role="cell">Map each obligation to required controls and verification results. Use policy initiatives to assess supported Azure controls and document any additional reviews needed to demonstrate compliance.</td>
+<td data-label="References" role="cell"><a href="https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf">NIST AI RMF</a>, <a href="https://learn.microsoft.com/azure/governance/policy/samples/#regulatory-compliance">Regulatory compliance initiatives</a></td>
 </tr>
-<tr>
-<td>G-R3</td>
-<td>How will responsible AI risks be evaluated?</td>
-<td>Define evaluation datasets, human review, acceptance thresholds and escalation for the actual agent tasks. Select evaluation tools that support the models, inputs and outputs in use.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-approach-gen-ai">Generative AI evaluation</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">G-R3</th>
+<td data-label="Design consideration" role="cell">How will responsible AI risks be evaluated?</td>
+<td data-label="Recommendation" role="cell">Define evaluation datasets, human review, acceptance thresholds and escalation for the actual agent tasks. Select evaluation tools that support the models, inputs and outputs in use.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-approach-gen-ai">Generative AI evaluation</a></td>
 </tr>
-<tr>
-<td>G-R4</td>
-<td>What content safety controls are needed?</td>
-<td>Select supported filters and Content Safety APIs for the model and modalities in use. Test prompts, outputs and failure handling. Configure access to tools and documents separately through authorization controls.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/content-safety/overview">Content Safety overview</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">G-R4</th>
+<td data-label="Design consideration" role="cell">What content safety controls are needed?</td>
+<td data-label="Recommendation" role="cell">Select supported filters and Content Safety APIs for the model and modalities in use. Test prompts, outputs and failure handling. Configure access to tools and documents separately through authorization controls.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/content-safety/overview">Content Safety overview</a></td>
 </tr>
-<tr>
-<td>G-R5</td>
-<td>Which models may teams deploy?</td>
-<td>Review the applicable model-deployment policies. Start in audit mode, assess impact, then enforce approved restrictions and remediate existing noncompliant deployments separately.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/built-in-policy-model-deployment">Model deployment policies</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">G-R5</th>
+<td data-label="Design consideration" role="cell">Which models may teams deploy?</td>
+<td data-label="Recommendation" role="cell">Review the applicable model-deployment policies. Start in audit mode, assess impact, then enforce approved restrictions and remediate existing noncompliant deployments separately.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/built-in-policy-model-deployment">Model deployment policies</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="identity-and-access">Identity and access</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>I-R1</td>
-<td>How do services authenticate to one another?</td>
-<td>Prefer managed identity where supported, with narrowly scoped roles for each runtime principal. Keep deployment, project and runtime identities distinct.</td>
-<td><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview">Managed identities</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">I-R1</th>
+<td data-label="Design consideration" role="cell">How do services authenticate to one another?</td>
+<td data-label="Recommendation" role="cell">Prefer managed identity where supported, with narrowly scoped roles for each runtime principal. Keep deployment, project and runtime identities distinct.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview">Managed identities</a></td>
 </tr>
-<tr>
-<td>I-R2</td>
-<td>How is privileged human access controlled?</td>
-<td>Require MFA and use just-in-time privileged access where available. Use a private administrative path when resources are isolated.</td>
-<td><a href="https://learn.microsoft.com/entra/identity/authentication/concept-mfa-howitworks">MFA</a>, <a href="https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-configure">Privileged Identity Management</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">I-R2</th>
+<td data-label="Design consideration" role="cell">How is privileged human access controlled?</td>
+<td data-label="Recommendation" role="cell">Require MFA and use just-in-time privileged access where available. Use a private administrative path when resources are isolated.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/entra/identity/authentication/concept-mfa-howitworks">MFA</a>, <a href="https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-configure">Privileged Identity Management</a></td>
 </tr>
-<tr>
-<td>I-R3</td>
-<td>Can clients use Microsoft Entra ID rather than static keys?</td>
-<td>Use identity-based authentication where supported. Where a key is necessary, store it securely, limit distribution and define rotation and recovery.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/authentication">AI services authentication</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">I-R3</th>
+<td data-label="Design consideration" role="cell">Can clients use Microsoft Entra ID rather than static keys?</td>
+<td data-label="Recommendation" role="cell">Use identity-based authentication where supported. Where a key is necessary, store it securely, limit distribution and define rotation and recovery.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/authentication">AI services authentication</a></td>
 </tr>
-<tr>
-<td>I-R4</td>
-<td>Which sign-in conditions should be enforced?</td>
-<td>Evaluate risk, device and location policies for human access. Configure service authorization for workload identities and test those identities separately from interactive sign-in.</td>
-<td><a href="https://learn.microsoft.com/entra/identity/conditional-access/overview">Conditional Access</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">I-R4</th>
+<td data-label="Design consideration" role="cell">Which sign-in conditions should be enforced?</td>
+<td data-label="Recommendation" role="cell">Evaluate risk, device and location policies for human access. Configure service authorization for workload identities and test those identities separately from interactive sign-in.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/entra/identity/conditional-access/overview">Conditional Access</a></td>
 </tr>
-<tr>
-<td>I-R5</td>
-<td>What can each user and service read or modify?</td>
-<td>Grant minimal control-plane and data-plane permissions at the smallest supported scope. Test retrieval with allowed and denied users to verify document access.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-azure-ai-foundry">Foundry RBAC</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">I-R5</th>
+<td data-label="Design consideration" role="cell">What can each user and service read or modify?</td>
+<td data-label="Recommendation" role="cell">Grant minimal control-plane and data-plane permissions at the smallest supported scope. Test retrieval with allowed and denied users to verify document access.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-azure-ai-foundry">Foundry RBAC</a></td>
 </tr>
-<tr>
-<td>I-R6</td>
-<td>Can local key authentication be disabled?</td>
-<td>Inventory dependent clients, migrate them to Entra ID and verify their workflows before disabling local authentication where supported.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/managed-identity">Azure OpenAI managed identity authentication</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">I-R6</th>
+<td data-label="Design consideration" role="cell">Can local key authentication be disabled?</td>
+<td data-label="Recommendation" role="cell">Inventory dependent clients, migrate them to Entra ID and verify their workflows before disabling local authentication where supported.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/managed-identity">Azure OpenAI managed identity authentication</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="monitoring">Monitoring</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>M-R1</td>
-<td>What signals establish workload health?</td>
-<td>Define service-level objectives for availability, latency, task outcomes and data freshness. Monitor models, resources and data against those objectives.</td>
-<td><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/platform/management">AI workload management</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">M-R1</th>
+<td data-label="Design consideration" role="cell">What signals establish workload health?</td>
+<td data-label="Recommendation" role="cell">Define service-level objectives for availability, latency, task outcomes and data freshness. Monitor models, resources and data against those objectives.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/ai/platform/management">AI workload management</a></td>
 </tr>
-<tr>
-<td>M-R2</td>
-<td>Which failures require an alert?</td>
-<td>Enable applicable baseline alerts, assign a response owner and document the response procedure. Tune thresholds and test alert delivery.</td>
-<td><a href="https://azure.github.io/azure-monitor-baseline-alerts/patterns/artificial-intelligence/">Azure Monitor Baseline Alerts</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">M-R2</th>
+<td data-label="Design consideration" role="cell">Which failures require an alert?</td>
+<td data-label="Recommendation" role="cell">Enable applicable baseline alerts, assign a response owner and document the response procedure. Tune thresholds and test alert delivery.</td>
+<td data-label="References" role="cell"><a href="https://azure.github.io/azure-monitor-baseline-alerts/patterns/artificial-intelligence/">Azure Monitor Baseline Alerts</a></td>
 </tr>
-<tr>
-<td>M-R3</td>
-<td>Can one failed request be traced across dependencies?</td>
-<td>Correlate application, model and retrieval calls. Protect prompts, documents and user data; content capture must be a deliberate privacy decision.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-local-sdk">Foundry tracing</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">M-R3</th>
+<td data-label="Design consideration" role="cell">Can one failed request be traced across dependencies?</td>
+<td data-label="Recommendation" role="cell">Correlate application, model and retrieval calls. Protect prompts, documents and user data; content capture must be a deliberate privacy decision.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-local-sdk">Foundry tracing</a></td>
 </tr>
-<tr>
-<td>M-R4</td>
-<td>Which resource logs must be retained?</td>
-<td>Configure supported diagnostic categories and retention for key services. Confirm that logs reach the intended destination and restrict access to them.</td>
-<td><a href="https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings">Diagnostic settings</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">M-R4</th>
+<td data-label="Design consideration" role="cell">Which resource logs must be retained?</td>
+<td data-label="Recommendation" role="cell">Configure supported diagnostic categories and retention for key services. Confirm that logs reach the intended destination and restrict access to them.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/azure-monitor/essentials/diagnostic-settings">Diagnostic settings</a></td>
 </tr>
-<tr>
-<td>M-R5</td>
-<td>How will quality changes be detected?</td>
-<td>Re-evaluate representative tasks after model, prompt, tool and data changes. Investigate regressions before deciding whether to change data, prompts or models.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-metrics-built-in">Evaluation metrics</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">M-R5</th>
+<td data-label="Design consideration" role="cell">How will quality changes be detected?</td>
+<td data-label="Recommendation" role="cell">Re-evaluate representative tasks after model, prompt, tool and data changes. Investigate regressions before deciding whether to change data, prompts or models.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/evaluation-metrics-built-in">Evaluation metrics</a></td>
 </tr>
-<tr>
-<td>M-R6</td>
-<td>Can private connectivity failures be diagnosed?</td>
-<td>Test DNS, routes, TLS and service authorization separately from the affected network. Use network diagnostics supported by the resource.</td>
-<td><a href="https://learn.microsoft.com/azure/network-watcher/network-watcher-overview">Network Watcher</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">M-R6</th>
+<td data-label="Design consideration" role="cell">Can private connectivity failures be diagnosed?</td>
+<td data-label="Recommendation" role="cell">Test DNS, routes, TLS and service authorization separately from the affected network. Use network diagnostics supported by the resource.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/network-watcher/network-watcher-overview">Network Watcher</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="reliability-and-resource-organization">Reliability and resource organization</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>R-R1</td>
-<td>What are the recovery time and recovery point objectives?</td>
-<td>Plan backup, restore and regional recovery for each stateful dependency. For a secondary region, prepare the required services, data recovery and application routing, then test failover against the recovery objectives.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/business-continuity-disaster-recovery">Azure OpenAI continuity</a>, <a href="https://learn.microsoft.com/azure/storage/common/storage-disaster-recovery-guidance">Storage disaster recovery</a>, <a href="https://learn.microsoft.com/azure/cosmos-db/online-backup-and-restore">Cosmos DB backup</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">R-R1</th>
+<td data-label="Design consideration" role="cell">What are the recovery time and recovery point objectives?</td>
+<td data-label="Recommendation" role="cell">Plan backup, restore and regional recovery for each stateful dependency. For a secondary region, prepare the required services, data recovery and application routing, then test failover against the recovery objectives.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/openai/how-to/business-continuity-disaster-recovery">Azure OpenAI continuity</a>, <a href="https://learn.microsoft.com/azure/storage/common/storage-disaster-recovery-guidance">Storage disaster recovery</a>, <a href="https://learn.microsoft.com/azure/cosmos-db/online-backup-and-restore">Cosmos DB backup</a></td>
 </tr>
-<tr>
-<td>RO-R1</td>
-<td>Are the required services and models available in the selected regions?</td>
-<td>Check the current service, model, deployment-type and feature availability references when choosing regions and again before deployment.</td>
-<td><a href="https://azure.microsoft.com/explore/global-infrastructure/products-by-region/">Products by region</a>, <a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/models">Model availability</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">RO-R1</th>
+<td data-label="Design consideration" role="cell">Are the required services and models available in the selected regions?</td>
+<td data-label="Recommendation" role="cell">Check the current service, model, deployment-type and feature availability references when choosing regions and again before deployment.</td>
+<td data-label="References" role="cell"><a href="https://azure.microsoft.com/explore/global-infrastructure/products-by-region/">Products by region</a>, <a href="https://learn.microsoft.com/azure/ai-services/openai/concepts/models">Model availability</a></td>
 </tr>
-<tr>
-<td>RO-R2</td>
-<td>Is there enough quota for every resource to be created?</td>
-<td>Count all selected service instances, including separate Agent Service backing resources. Validate regional model capacity and request increases before deployment.</td>
-<td><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits">Azure limits and quotas</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">RO-R2</th>
+<td data-label="Design consideration" role="cell">Is there enough quota for every resource to be created?</td>
+<td data-label="Recommendation" role="cell">Count all selected service instances, including separate Agent Service backing resources. Validate regional model capacity and request increases before deployment.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits">Azure limits and quotas</a></td>
 </tr>
-<tr>
-<td>RO-R3</td>
-<td>How will growth affect subscription and regional limits?</td>
-<td>Record capacity headroom, ownership and the process for requesting quota. Run preflight checks and confirm current service capacity when scheduling the deployment.</td>
-<td><a href="https://learn.microsoft.com/azure/quotas/quotas-overview">Quota overview</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">RO-R3</th>
+<td data-label="Design consideration" role="cell">How will growth affect subscription and regional limits?</td>
+<td data-label="Recommendation" role="cell">Record capacity headroom, ownership and the process for requesting quota. Run preflight checks and confirm current service capacity when scheduling the deployment.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/quotas/quotas-overview">Quota overview</a></td>
 </tr>
-<tr>
-<td>RO-R4</td>
-<td>What are the account, project and billing boundaries?</td>
-<td>Align Foundry accounts and projects with access, network and operational requirements. Identify which isolation controls apply at account level and which apply at project level.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/architecture">Foundry architecture</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">RO-R4</th>
+<td data-label="Design consideration" role="cell">What are the account, project and billing boundaries?</td>
+<td data-label="Recommendation" role="cell">Align Foundry accounts and projects with access, network and operational requirements. Identify which isolation controls apply at account level and which apply at project level.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/concepts/architecture">Foundry architecture</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="security">Security</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>S-R1</td>
-<td>Which deployed AI risks can be monitored?</td>
-<td>Evaluate Defender for Cloud's supported AI posture and threat-protection features, coverage, prerequisites and cost for this workload.</td>
-<td><a href="https://learn.microsoft.com/azure/defender-for-cloud/ai-security-posture">AI security posture</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">S-R1</th>
+<td data-label="Design consideration" role="cell">Which deployed AI risks can be monitored?</td>
+<td data-label="Recommendation" role="cell">Evaluate Defender for Cloud's supported AI posture and threat-protection features, coverage, prerequisites and cost for this workload.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/defender-for-cloud/ai-security-posture">AI security posture</a></td>
 </tr>
-<tr>
-<td>S-R2</td>
-<td>Which service security controls are required?</td>
-<td>Map applicable Azure security baselines and Well-Architected guidance to the services actually deployed.</td>
-<td><a href="https://learn.microsoft.com/security/benchmark/azure/security-baselines-overview">Security baselines</a>, <a href="https://learn.microsoft.com/azure/well-architected/service-guides/">Service guides</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">S-R2</th>
+<td data-label="Design consideration" role="cell">Which service security controls are required?</td>
+<td data-label="Recommendation" role="cell">Map applicable Azure security baselines and Well-Architected guidance to the services actually deployed.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/security/benchmark/azure/security-baselines-overview">Security baselines</a>, <a href="https://learn.microsoft.com/azure/well-architected/service-guides/">Service guides</a></td>
 </tr>
-<tr>
-<td>S-R3</td>
-<td>How is sensitive data discovered and protected?</td>
-<td>Assess data classification, oversharing and insider-risk requirements. Evaluate Purview coverage and licensing, and configure retrieval permissions in the source and application authorization paths.</td>
-<td><a href="https://learn.microsoft.com/purview/insider-risk-management">Purview Insider Risk Management</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">S-R3</th>
+<td data-label="Design consideration" role="cell">How is sensitive data discovered and protected?</td>
+<td data-label="Recommendation" role="cell">Assess data classification, oversharing and insider-risk requirements. Evaluate Purview coverage and licensing, and configure retrieval permissions in the source and application authorization paths.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/purview/insider-risk-management">Purview Insider Risk Management</a></td>
 </tr>
-<tr>
-<td>S-R4</td>
-<td>Which AI-specific attack paths need testing?</td>
-<td>Threat-model tools, model calls, retrieved content and data access. Use established AI risk frameworks to define tests and mitigations.</td>
-<td><a href="https://atlas.mitre.org/">MITRE ATLAS</a>, <a href="https://genai.owasp.org/">OWASP generative AI risks</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">S-R4</th>
+<td data-label="Design consideration" role="cell">Which AI-specific attack paths need testing?</td>
+<td data-label="Recommendation" role="cell">Threat-model tools, model calls, retrieved content and data access. Use established AI risk frameworks to define tests and mitigations.</td>
+<td data-label="References" role="cell"><a href="https://atlas.mitre.org/">MITRE ATLAS</a>, <a href="https://genai.owasp.org/">OWASP generative AI risks</a></td>
 </tr>
-<tr>
-<td>S-R5</td>
-<td>How will prompt injection be handled?</td>
-<td>Evaluate Prompt Shields for supported inputs and test failures. Keep tool permissions and document authorization enforced independently of model output.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/content-safety/concepts/jailbreak-detection">Prompt Shields</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">S-R5</th>
+<td data-label="Design consideration" role="cell">How will prompt injection be handled?</td>
+<td data-label="Recommendation" role="cell">Evaluate Prompt Shields for supported inputs and test failures. Keep tool permissions and document authorization enforced independently of model output.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/content-safety/concepts/jailbreak-detection">Prompt Shields</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 <h2 id="networking">Networking</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Design consideration</th>
-<th>Recommended decision or check</th>
-<th>References</th>
+<div class="design-checklist responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">ID</th>
+<th role="columnheader" scope="col">Design consideration</th>
+<th role="columnheader" scope="col">Recommended decision or check</th>
+<th role="columnheader" scope="col">References</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>N-R1</td>
-<td>Does public ingress need DDoS protection?</td>
-<td>Identify public endpoints and check the supported protection for each resource type. Reuse platform DDoS protection for eligible public IP resources.</td>
-<td><a href="https://learn.microsoft.com/azure/ddos-protection/ddos-protection-overview">DDoS Protection overview</a></td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">N-R1</th>
+<td data-label="Design consideration" role="cell">Does public ingress need DDoS protection?</td>
+<td data-label="Recommendation" role="cell">Identify public endpoints and check the supported protection for each resource type. Reuse platform DDoS protection for eligible public IP resources.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ddos-protection/ddos-protection-overview">DDoS Protection overview</a></td>
 </tr>
-<tr>
-<td>N-R2</td>
-<td>How will operators reach private resources?</td>
-<td>Use an approved VPN, connected runner or jumpbox. Reuse central Bastion and administrative access where available, keeping VM administration on an approved private path.</td>
-<td><a href="https://learn.microsoft.com/azure/bastion/bastion-overview">Azure Bastion</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R2</th>
+<td data-label="Design consideration" role="cell">How will operators reach private resources?</td>
+<td data-label="Recommendation" role="cell">Use an approved VPN, connected runner or jumpbox. Reuse central Bastion and administrative access where available, keeping VM administration on an approved private path.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/bastion/bastion-overview">Azure Bastion</a></td>
 </tr>
-<tr>
-<td>N-R3</td>
-<td>Which services require private endpoints?</td>
-<td>Design private ingress and service-managed outbound links separately. Select networking controls for the Foundry resource type in use: account/project or hub-based. Verify DNS and the intended private path before disabling public access.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/configure-private-link">Foundry private networking</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R3</th>
+<td data-label="Design consideration" role="cell">Which services require private endpoints?</td>
+<td data-label="Recommendation" role="cell">Design private ingress and service-managed outbound links separately. Select networking controls for the Foundry resource type in use: account/project or hub-based. Verify DNS and the intended private path before disabling public access.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-foundry/how-to/configure-private-link">Foundry private networking</a></td>
 </tr>
-<tr>
-<td>N-R4</td>
-<td>Where should NSGs enforce traffic policy?</td>
-<td>Apply supported NSG rules to subnets or network interfaces. Preserve service-specific subnet and platform connectivity requirements.</td>
-<td><a href="https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview">Network security groups</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R4</th>
+<td data-label="Design consideration" role="cell">Where should NSGs enforce traffic policy?</td>
+<td data-label="Recommendation" role="cell">Apply supported NSG rules to subnets or network interfaces. Preserve service-specific subnet and platform connectivity requirements.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview">Network security groups</a></td>
 </tr>
-<tr>
-<td>N-R5</td>
-<td>Is a regional or global web application firewall needed?</td>
-<td>Select Application Gateway or Front Door according to ingress requirements. Verify routing, authentication and backend access as well as WAF rules.</td>
-<td><a href="https://learn.microsoft.com/azure/web-application-firewall/overview">Azure WAF</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R5</th>
+<td data-label="Design consideration" role="cell">Is a regional or global web application firewall needed?</td>
+<td data-label="Recommendation" role="cell">Select Application Gateway or Front Door according to ingress requirements. Verify routing, authentication and backend access as well as WAF rules.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/web-application-firewall/overview">Azure WAF</a></td>
 </tr>
-<tr>
-<td>N-R6</td>
-<td>Does the workload need an AI gateway?</td>
-<td>Evaluate API Management for routing, token controls and authentication. Confirm tier support and configure policies explicitly. Avoid logging raw prompts or responses by default.</td>
-<td><a href="https://learn.microsoft.com/azure/api-management/genai-gateway-capabilities">AI gateway capabilities</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R6</th>
+<td data-label="Design consideration" role="cell">Does the workload need an AI gateway?</td>
+<td data-label="Recommendation" role="cell">Evaluate API Management for routing, token controls and authentication. Confirm tier support and configure policies explicitly. Avoid logging raw prompts or responses by default.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/api-management/genai-gateway-capabilities">AI gateway capabilities</a></td>
 </tr>
-<tr>
-<td>N-R7</td>
-<td>Which outbound traffic must traverse a firewall?</td>
-<td>Reuse a platform firewall where appropriate. Verify routes, supported service paths and required destinations before enforcing egress restrictions.</td>
-<td><a href="https://learn.microsoft.com/azure/firewall/overview">Azure Firewall</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R7</th>
+<td data-label="Design consideration" role="cell">Which outbound traffic must traverse a firewall?</td>
+<td data-label="Recommendation" role="cell">Reuse a platform firewall where appropriate. Verify routes, supported service paths and required destinations before enforcing egress restrictions.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/firewall/overview">Azure Firewall</a></td>
 </tr>
-<tr>
-<td>N-R8</td>
-<td>How will private service names resolve from every client network?</td>
-<td>Plan zone links, conditional forwarding and connected-network resolution. Configure routes and service permissions alongside DNS so clients can reach and use the resolved endpoints.</td>
-<td><a href="https://learn.microsoft.com/azure/private-link/private-endpoint-dns-integration">Private endpoint DNS integration</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R8</th>
+<td data-label="Design consideration" role="cell">How will private service names resolve from every client network?</td>
+<td data-label="Recommendation" role="cell">Plan zone links, conditional forwarding and connected-network resolution. Configure routes and service permissions alongside DNS so clients can reach and use the resolved endpoints.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/private-link/private-endpoint-dns-integration">Private endpoint DNS integration</a></td>
 </tr>
-<tr>
-<td>N-R9</td>
-<td>What outbound destinations are allowed?</td>
-<td>Restrict egress to verified service and build dependencies where supported. Review exceptions and test recovery without opening unrestricted internet access as a troubleshooting shortcut.</td>
-<td><a href="https://learn.microsoft.com/azure/ai-services/cognitive-services-data-loss-prevention">AI services data-loss prevention</a></td>
+<tr role="row">
+<th role="rowheader" scope="row">N-R9</th>
+<td data-label="Design consideration" role="cell">What outbound destinations are allowed?</td>
+<td data-label="Recommendation" role="cell">Restrict egress to verified service and build dependencies where supported. Review exceptions and test recovery without opening unrestricted internet access as a troubleshooting shortcut.</td>
+<td data-label="References" role="cell"><a href="https://learn.microsoft.com/azure/ai-services/cognitive-services-data-loss-prevention">AI services data-loss prevention</a></td>
 </tr>
 </tbody>
 </table>
+</div>
 
 
 
