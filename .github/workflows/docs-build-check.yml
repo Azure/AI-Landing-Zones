@@ -16,6 +16,7 @@ on:
       - requirements-planner-tests.txt
       - scripts/planner/**
       - tests/planner/**
+      - tests/home/**
       - main.py
       - .github/workflows/docs-build-check.yml
 
@@ -50,3 +51,4 @@ jobs:
           python -m unittest discover -s tests/planner -p "test_*.py"
           mkdocs build --strict
           python tests/planner/browser_checks.py
+          python tests/home/browser_checks.py

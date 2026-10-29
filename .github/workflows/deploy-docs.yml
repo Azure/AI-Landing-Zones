@@ -39,6 +39,7 @@ jobs:
           python -m unittest discover -s tests/planner -p "test_*.py"
           mkdocs build --strict
           python tests/planner/browser_checks.py
+          python tests/home/browser_checks.py
 
       - name: Deploy to GitHub Pages
         run: mkdocs gh-deploy --force --clean --remote-branch gh-pages

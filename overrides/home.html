@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ 'stylesheets/home.css?v=927fcfc5b99a' | url }}">
+{% endblock %}
+
+{% block content %}
+  <div class="alz-home">
+    <details class="home-mobile-contents">
+      <summary>On this page <span aria-hidden="true">+</span></summary>
+      <nav aria-label="Page contents">
+        {% for item in page.toc %}
+          {% for section in item.children %}
+            <a href="{{ section.url }}">{{ section.title }}</a>
+          {% endfor %}
+        {% endfor %}
+      </nav>
+    </details>
+    {{ page.content }}
+  </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ 'javascripts/home.js?v=8c6e187ad68d' | url }}" defer></script>
+{% endblock %}
