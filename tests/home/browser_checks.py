@@ -94,6 +94,16 @@ def run(base, screenshots):
                 assert not page.locator(f"#architecture-{name} details").count()
                 assert page.locator(f"#architecture-{name} img").is_visible()
                 panel = page.locator(f"#architecture-{name}").bounding_box()
+                description = page.locator(f"#architecture-{name} > p")
+                assert abs(description.bounding_box()["width"] - panel["width"]) < 2, (width, name)
+                assert description.evaluate("element => element.scrollWidth <= element.clientWidth"), (width, name)
+                if width >= 1440 and name in ("standalone", "hub"):
+                    lines = description.evaluate("""element => {
+                        const range = document.createRange();
+                        range.selectNodeContents(element);
+                        return range.getClientRects().length;
+                    }""")
+                    assert lines == 1, (width, name, lines)
                 diagram = page.locator(f"#architecture-{name} img").bounding_box()
                 assert abs(diagram["width"] - panel["width"]) < 2, (width, name, diagram, panel)
             if width <= 560:

@@ -73,7 +73,7 @@ body:has(.alz-home) .md-nav--secondary .md-nav { display: none; }
 .alz-home .home-tabs button[aria-selected="true"] { color: var(--home-indigo); border-bottom-color: var(--home-indigo); font-weight: 650; }
 .alz-home [data-home-enhanced] .home-panel-title { display: none; }
 .alz-home .architecture-panel { padding-top: 20px; }
-.alz-home .architecture-panel > p { min-height: 52px; }
+.alz-home .architecture-panel > p { max-width: none; }
 .alz-home .architecture-figure { width: 100%; margin: 20px 0 12px; }
 .alz-home .architecture-figure > p { max-width: none; }
 .alz-home .home-diagram-trigger { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in; }
