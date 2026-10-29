@@ -281,8 +281,7 @@
         '<span class="setting-hint">Runbook default: disabled. Autoscale: min 0 / max 2 instances.</span>',
       sizing: "<strong>Size for throughput, connections and WAF processing.</strong> Watch consumed capacity units and latency. Autoscale instance bounds are not billable capacity units.",
       signal: "A provisioned gateway has a fixed hourly charge, even with no traffic.",
-      quantity: input("appGateway", "Gateways (0 = not included)", 0, 1) +
-        input("gatewayCU", "Average billed CUs / gateway", 0, 10000, 0.1),
+      quantity: input("gatewayCU", "Average billed CUs / gateway", 0, 10000, 0.1),
       detail: "The public-ingress runbook uses WAF_v2, Prevention, OWASP CRS 3.2 and autoscale minCapacity 0 / maxCapacity 2. This fresh-deployment reference starts with publicIngress.enabled=false, so gateway and associated public IP quantities start at 0. When included, cost = hours x (fixed gateway rate + average billed capacity units x CU rate). The initial 1 CU is a hypothetical usage input, not a deployed setting or a conversion from autoscale instances. The Standard Regional static IPv4 public IP is priced separately below. WAF policy is part of this WAF_v2 design, not another gateway allocation. Dedicated subnet default: /27, with /24 recommended for growth. Live HTTPS needs a hostname, Key Vault certificate and explicit client CIDRs. Certificate operations, diagnostics, transfer and optional CAPTCHA are excluded. Setting quantity back to 0 only removes this simulated allocation. Setting publicIngress.enabled=false in an incremental deployment does not delete existing ingress resources.",
       parameter: "main.parameters.json: publicIngress.enabled; infra/modules/networking/public-ingress.bicep",
       sourceURL: "https://azure.github.io/AI-Landing-Zones/agent-landing-zone/application-gateway/",
