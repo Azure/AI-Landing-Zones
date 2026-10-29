@@ -16,7 +16,7 @@
         <link rel="prev" href="../sizing/">
       
       
-        <link rel="next" href="../configuration/">
+        <link rel="next" href="../sizing-cost-planner/">
       
       
         
@@ -54,6 +54,8 @@
     
     
       <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
+    
+      <link rel="stylesheet" href="../../stylesheets/planner.css?v=1">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -608,6 +610,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#planner-price-and-budget-assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planner price and budget assumptions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#standalone-firewall-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -638,6 +651,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sizing-cost-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1904,6 +1945,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#planner-price-and-budget-assumptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planner price and budget assumptions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#standalone-firewall-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1963,9 +2015,17 @@ Foundry IQ Blob ingestion, without Agent App Ingestion.</p>
 <p>This page explains cost drivers, not deployment steps. The
 <a href="../deploy-infra-only/">Deploy infra only</a> and
 <a href="../deploy-full-stack/">Deploy full stack</a> runbooks cover execution.</p>
+<p>Use the <a href="../sizing-cost-planner/">Sizing &amp; cost planner</a> to compare editable
+workload and price assumptions with an isolated standalone <code>hosted-no-panel</code>
+reference. It is a planning estimate, not an Azure quote; workload examples are
+not deployment defaults or measured capacity. Review the dated price sources,
+included billing units and any sourced amounts for contract-priced options.
+Its catalog combines Azure Retail Prices API records with exact official
+pricing-page rows. Automated daily refresh retains the last validated catalog
+if collection, parsing or validation fails; check the displayed snapshot date.</p>
 <div class="admonition note">
 <p class="admonition-title">Pricing sources and dates</p>
-<p>This page does not quote or reprice Azure services. The shared
+<p>The shared
 <a href="../../bicep/deployed-resources/">resource inventory and estimates</a> uses
 <strong>May 29, 2026, East US 2, US dollars, pay-as-you-go</strong> example prices. Its scenarios are not
 Agent Application defaults or a full-stack quote. The
@@ -2047,12 +2107,52 @@ Actual spend after deployment provides the comparison baseline.</p>
 <p>Model deployment <code>sku.capacity</code> allocates quota. To estimate model charges,
 use the deployment type, region, expected tokens and any provisioned-capacity
 commitment with the current service prices.</p>
+<h3 id="planner-price-and-budget-assumptions">Planner price and budget assumptions</h3>
+<p>These calculations explain the planner's initial reference using captured
+public rates. Consult its dated catalog for refreshed prices. Budget hypotheses
+are not deployed service settings.</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Initial price or budget calculation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gpt-5-nano</code>, Global</td>
+<td>$0.05 input / $0.40 output per million tokens, captured from the exact official model-pricing row. This is a published-page price, not a Retail API meter.</td>
+</tr>
+<tr>
+<td>Dedicated ACR Tasks S1 pool</td>
+<td>$0.0001/vCPU-second produces $525.60 at 730 allocated hours. Allocated capacity is billed even without active builds. The rate comes from the official published pricing row.</td>
+</tr>
+<tr>
+<td>Foundry backing Cosmos DB</td>
+<td>A fresh provisioned account is budgeted as five manual 1,000-RU/s offers (5,000 RU/s total), 10 GB of transactional data plus indexes, a separate 10 GB of <code>Continuous30Days</code> backup and one non-zone-redundant region: $296.50/month at the captured rates. The Foundry runtime owns the actual offers; these quantities are explicit budget hypotheses.</td>
+</tr>
+</tbody>
+</table>
+<p>Published-page prices carry their source and capture date rather than
+Retail meter IDs. Operator-entered rates remain separately identified.</p>
+<p>The planner's Cosmos backup choice is a billing hypothesis, not a claim that
+the providers deploy the same policy: pinned Bicep AVM inherits
+<code>Continuous30Days</code>, while Terraform omits the backup policy and receives the
+API's periodic default. Verify the deployed policy and runtime-owned offers
+before approving a budget; changing the planner does not change either.</p>
 <h3 id="standalone-firewall-selection">Standalone firewall selection</h3>
 <p>Isolated standalone deployments default to Basic. Include its fixed allocation,
 data-processing rate, additional management public IP, logs and network
 transfer in the estimate; a lower hourly price alone is not the full cost.
 Compare current regional rates and measured volume with Standard. Select
 Standard explicitly when its DNS or capacity capabilities are required.</p>
+<p>The planner retains Basic as its initial East US 2 reference. No VNet Basic
+rate was found for Sweden Central in the Retail API or official Basic pricing
+row, so the planner offers Standard/Premium there and uses Standard as that
+region's reference. A secured-vHub rate is not a substitute for standalone VNet
+pricing. Deploying the Sweden Central reference needs a reviewed IaC change;
+the planner does not change the shipped Basic default or prove regional
+service availability.</p>
 <p>Basic needs separate data and management subnets; the management subnet must be
 /26 or larger. External hub egress uses the hub's firewall and does not create
 a local firewall or management IP. GatewaySubnet is reserved only on request

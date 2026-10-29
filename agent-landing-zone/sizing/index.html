@@ -55,6 +55,8 @@
     
       <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
+      <link rel="stylesheet" href="../../stylesheets/planner.css?v=1">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -657,6 +659,34 @@
     
   
     Cost planning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sizing-cost-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
   
 
     
@@ -2019,6 +2049,11 @@ constraints and optional components. <a href="../planning/">Deployment choices</
 covers resource selection; <a href="../cost-planning/">Cost planning</a> covers spending.
 Execution steps belong to the <a href="../deploy-infra-only/">Deploy infra only</a>
 and <a href="../deploy-full-stack/">Deploy full stack</a> runbooks.</p>
+<p>The <a href="../sizing-cost-planner/">Sizing &amp; cost planner</a> brings workload assumptions,
+documented constraints and cost comparisons together for an isolated standalone
+<code>hosted-no-panel</code> reference. Its examples are hypothetical, not benchmarked
+capacity profiles. Enter assigned quota and matching measured evidence where
+available; editing demand does not resize or deploy resources.</p>
 <p>Both providers use the root <code>main.parameters.json</code> values below.
 For Terraform, preprovision generates typed inputs; verify the resolved
 capacity through its
@@ -2158,7 +2193,11 @@ Conversation continuity limits are not compute-sizing controls.</p>
 <tbody>
 <tr>
 <td>Agent Application Cosmos DB</td>
-<td><code>hosted-no-panel</code> does not deploy this account. Foundry Agent Service's backing Cosmos DB is separate and still needs its own capacity and retention review.</td>
+<td><code>hosted-no-panel</code> does not deploy this account. Foundry Agent Service's backing Cosmos DB is separate.</td>
+</tr>
+<tr>
+<td>Foundry Agent Service backing Cosmos DB</td>
+<td>A fresh account uses provisioned throughput. The Foundry runtime owns actual throughput offers; the planner's five manual 1,000-RU/s offers are a budget hypothesis, not deployed settings. Verify data/index size, retention and the deployed backup policy; the providers currently differ as explained in <a href="../cost-planning/#planner-price-and-budget-assumptions">Cost planning</a>.</td>
 </tr>
 <tr>
 <td>Blob storage</td>
@@ -2166,7 +2205,7 @@ Conversation continuity limits are not compute-sizing controls.</p>
 </tr>
 <tr>
 <td>Registry and private build pool</td>
-<td>Image sizes, build duration and parallel build demand affect capacity. Isolated hosted preparation requires the private ACR Tasks pool and permitted package feeds; more runtime compute does not speed it up or connect the runner. Pool capacity depends on SKU and region.</td>
+<td>Image sizes, build duration and parallel build demand affect capacity. Isolated hosted preparation requires the private ACR Tasks pool and permitted package feeds; more runtime compute does not speed it up or connect the runner. Size parallel work separately from allocated pool hours: dedicated S1 allocation is billed even without active builds.</td>
 </tr>
 <tr>
 <td>App Configuration and Key Vault</td>
