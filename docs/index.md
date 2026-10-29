@@ -12,7 +12,7 @@ description: Azure reference architectures and deployable foundations for AI app
 Reference architectures and deployable Azure foundations for your AI applications and agents.
 
 <div class="actions">
-<a class="home-button home-button--primary" href="#implementations">Deploy Agent Landing Zone <svg aria-hidden="true"><use href="#home-arrow"/></svg></a>
+<a class="home-button home-button--primary" href="#implementations">Deploy AI Landing Zone <svg aria-hidden="true"><use href="#home-arrow"/></svg></a>
 <a class="home-button" href="#reference-architectures">Explore the architectures <svg aria-hidden="true"><use href="#home-arrow"/></svg></a>
 </div>
 

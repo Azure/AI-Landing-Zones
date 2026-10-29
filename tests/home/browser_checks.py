@@ -45,6 +45,7 @@ def run(base, screenshots):
             page.set_viewport_size({"width": 1440, "height": 1000})
             page.goto(base)
         expect(page.locator(".hero h1")).to_have_text("Build AI.On solid ground.")
+        expect(page.locator(".home-button--primary")).to_have_text("Deploy AI Landing Zone")
         assert "not a blank page" not in page.locator(".hero").inner_text()
         assert not page.locator(".alz-home a[href$='.md']").count()
         assert page.locator(".alz-home img").count() == 7
