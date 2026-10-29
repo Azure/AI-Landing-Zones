@@ -1,7 +1,8 @@
 "use strict";
 
 window.scenarios = (() => {
-  const version = 1;
+  const version = 2;
+  // Keep the storage key so saved version 1 scenarios remain recoverable.
   const storageKey = "agent-lz-planner-scenario-v1";
   const defaults = {
     turnSeconds: 30, searchQueries: 1, availability: "evaluation",
@@ -18,6 +19,7 @@ window.scenarios = (() => {
   const hostedKey = s => [s.region, s.model, s.inputTokens, s.outputTokens, s.calls].join("|");
 
   function assess(s) {
+    const included = window.architecture.included(s);
     const turnsPerMinute = s.concurrency / s.turnSeconds * 60;
     const rpm = turnsPerMinute * s.calls;
     const tpm = rpm * (s.inputTokens + s.outputTokens);
@@ -25,7 +27,8 @@ window.scenarios = (() => {
     const findings = [];
     const add = (id, status, title, detail, source) => findings.push({ id, status, title, detail, source });
     const fmt = n => new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(n);
-    const quotaStatus = (s.modelTPM && tpm > s.modelTPM) || (s.modelRPM && rpm > s.modelRPM) ? "action" :
+    const quotaStatus = !included.model ? "unknown" :
+      (s.modelTPM && tpm > s.modelTPM) || (s.modelRPM && rpm > s.modelRPM) ? "action" :
       s.modelTPM && s.modelRPM ? "checked" : "unknown";
     add("model", quotaStatus, "Model quota",
       `${fmt(rpm)} calls/min and ${fmt(tpm)} planning tokens/min. ` +
@@ -43,6 +46,11 @@ window.scenarios = (() => {
       ["search", "Application Search", s.searchReplicas, s.searchPartitions, tier],
       ["backing-search", "Backing Search", s.backingReplicas, s.backingPartitions, modern["Standard S1"]]
     ]) {
+      if (!included[id]) {
+        add(`${id}-scope`, "unknown", `${label}: outside this budget`,
+          "No new Search service is included. The selected retrieval path needs a compatible service or configuration. Any existing service needs separate capacity checks and budgeting.", searchURL);
+        continue;
+      }
       const valid = r <= limits.replicas && p <= limits.partitions && r * p <= limits.units;
       add(`${id}-topology`, valid ? "checked" : "action", `${label}: topology`,
         `${r} replicas x ${p} partitions = ${r * p} search units. ` +
@@ -53,32 +61,34 @@ window.scenarios = (() => {
     }
     const storage = tier.storage * s.searchPartitions;
     const vectors = tier.vectors * s.searchPartitions;
-    add("search-storage", s.indexGB > storage || s.vectorGB > vectors || s.vectorGB > s.indexGB ? "action" : "checked",
+    if (included.search) add("search-storage", s.indexGB > storage || s.vectorGB > vectors || s.vectorGB > s.indexGB ? "action" : "checked",
       "Application Search: index footprint",
       `${fmt(s.indexGB)} GB index / ${fmt(storage)} GB disk; ${fmt(s.vectorGB)} GB vector index / ${fmt(vectors)} GB vector quota. ` +
       "Entered footprints are hypotheses, not derived from corpus bytes. Limits assume a new service in the selected region. Verify actual quotas and single-index limits.", searchURL);
     const searchEvidence = s.testedSearchQPS > 0 && s.searchBenchmarkKey === searchKey(s);
-    add("search-throughput", !searchEvidence ? "unknown" : qps > s.testedSearchQPS ? "action" : "evidence",
+    if (included.search) add("search-throughput", !searchEvidence ? "unknown" : qps > s.testedSearchQPS ? "action" : "evidence",
       "Application Search: peak queries",
       `${fmt(qps)} estimated QPS. ` + (searchEvidence ?
         `Compare with ${fmt(s.testedSearchQPS)} QPS reported for this exact region/tier/replica/partition configuration. ` :
         "Enter measured QPS for this exact configuration; there is no universal QPS per replica. ") +
       "Re-test with your index, retrieval path, indexing load and latency target.", searchURL);
     const hostedEvidence = s.testedHostedConcurrency > 0 && s.hostedBenchmarkKey === hostedKey(s);
-    add("hosted", !hostedEvidence ? "unknown" : s.concurrency > s.testedHostedConcurrency ? "action" : "evidence",
+    if (included.hosted) add("hosted", !hostedEvidence ? "unknown" : s.concurrency > s.testedHostedConcurrency ? "action" : "evidence",
       "Hosted runtime: concurrent turns",
       `${fmt(s.concurrency)} peak turns on the shipped 2 vCPU / 4 GiB runtime. ` + (hostedEvidence ?
         `Operator-reported tested concurrency: ${fmt(s.testedHostedConcurrency)}. ` :
         "No compatible load-test result supplied. ") +
       "Model/tool waits, CPU, memory, sessions and latency must be measured. No vCPU-per-user formula is assumed.", hostedURL);
-    const cpu = .5 * (1 + s.extraFrontendApps + s.orchestratorApps) + s.ingestionApps;
-    const memory = 1 + s.extraFrontendApps + s.orchestratorApps + 3 * s.ingestionApps;
+    const apps = included["frontend-app"];
+    const cpu = apps ? .5 * (1 + s.extraFrontendApps + s.orchestratorApps) + s.ingestionApps : 0;
+    const memory = apps ? 1 + s.extraFrontendApps + s.orchestratorApps + 3 * s.ingestionApps : 0;
     const cpus = s.profile === "D4" ? 4 : 8;
-    add("compute", cpu >= cpus * s.nodes || memory >= cpus * 4 * s.nodes ? "action" : "checked",
+    if (included.compute) add("compute", apps && (cpu >= cpus * s.nodes || memory >= cpus * 4 * s.nodes) ? "action" : "checked",
       "Container Apps: placement",
       `${fmt(cpu)} vCPU / ${fmt(memory)} GiB requested on ${s.nodes} ${s.profile} node(s). ` +
       "Nominal placement only, before runtime reserves. It does not establish frontend throughput. " +
-      (s.nodes > 1 ? "Raise the shipped max of one node in IaC." : s.nodes === 0 ? "Zero nodes cannot host the included frontend." : "Keep CPU and memory headroom."),
+      (!apps ? "No application deployment is included in this budget." :
+        s.nodes > 1 ? "Raise the shipped max of one node in IaC." : s.nodes === 0 ? "Zero nodes cannot host the included frontend." : "Keep CPU and memory headroom."),
       "https://learn.microsoft.com/azure/container-apps/workload-profiles-overview");
     const actions = findings.filter(f => f.status === "action").length;
     const unknown = findings.filter(f => f.status === "unknown").length;
@@ -102,20 +112,23 @@ window.scenarios = (() => {
       logAllowance: [0, 5, .1], logsGB: [0, 1000000, .1], reads: [0, 1000000, .1], writes: [0, 1000000, .1],
       cosmosMRU: [0, 1000000, .1], embeddingMillions: [0, 1000000, .1], dnsQueries: [0, 1000000, .1],
       vaultOperations: [0, 1000000, .1], backingCosmosRU: [400, 1000000, 100], backingStorageGB: [0, 50000, 1],
-      buildHours: [0, 744, 1], hostedHours: [0, 1000000, .1], turnSeconds: [1, 3600, 1], searchQueries: [0, 100, .1],
+      buildHours: [0, 744, .01], buildDeploymentsPerDay: [0, 100, 1], buildDays: [0, 31, 1],
+      buildMinutes: [1, 1440, 1],
+      hostedHours: [0, 1000000, .1], turnSeconds: [1, 3600, 1], searchQueries: [0, 100, .1],
       indexGB: [0, 1000000, .1], vectorGB: [0, 1000000, .1], modelTPM: [0, 1000000000, 1],
       modelRPM: [0, 10000000, 1], testedSearchQPS: [0, 1000000, .1], testedHostedConcurrency: [0, 1000000, 1],
       modelInputRate: [0, 100000, .000001], modelOutputRate: [0, 100000, .000001],
       hostedMonthly: [0, 10000000, .01], buildMonthly: [0, 10000000, .01]
     });
+    for (const { field } of window.architecture.deploymentOptions) limits[field] = [0, 1, 1];
     for (const field of Object.keys(allDefaults).filter(key => key.endsWith("MonthlyRate"))) limits[field] = [0, 10000000, .01];
     return limits;
   }
 
   function validate(payload, allDefaults, regions) {
-    if (!payload || payload.version !== version || !payload.state || Array.isArray(payload.state) ||
+    if (!payload || ![1, version].includes(payload.version) || !payload.state || Array.isArray(payload.state) ||
         typeof payload.state !== "object" || Object.keys(payload).some(k => !["version", "state"].includes(k))) {
-      throw new Error("Unsupported scenario format. Use a version 1 planner link or saved scenario.");
+      throw new Error("Unsupported scenario format. Use a version 1 or 2 planner link or saved scenario.");
     }
     const enums = {
       region: Object.keys(regions), model: ["gpt-5-nano", "gpt-4.1-nano"],
@@ -123,10 +136,10 @@ window.scenarios = (() => {
       profile: ["D4", "D8"], appconfig: ["Standard", "Premium"], firewall: ["Basic", "Standard", "Premium"],
       apimSku: ["Standard v2", "Premium v2"], backingCosmosMode: ["manual", "autoscale"],
       backingBackupMode: ["continuous30", "periodic", "continuous7"],
-      availability: ["evaluation", "queries", "query-index"]
+      availability: ["evaluation", "queries", "query-index"], buildMode: ["daily", "allocated"]
     };
     const rules = bounds(allDefaults);
-    const next = { ...allDefaults };
+    const next = { ...allDefaults, ...(payload.version === 1 ? { buildMode: "allocated" } : {}) };
     for (const [key, value] of Object.entries(payload.state)) {
       if (!Object.hasOwn(allDefaults, key)) throw new Error(`Unknown scenario field: ${key}. No scenario was loaded.`);
       if (typeof value !== typeof allDefaults[key]) throw new Error(`Invalid type for ${key}. No scenario was loaded.`);
@@ -140,6 +153,9 @@ window.scenarios = (() => {
         throw new Error(`Invalid value for ${key}. No scenario was loaded.`);
       }
       next[key] = value;
+    }
+    if (next.buildMode === "daily" && next.buildDeploymentsPerDay * next.buildMinutes > 1440) {
+      throw new Error("A single build agent cannot be allocated for more than 24 hours per deployment day. Reduce deployments or allocated minutes.");
     }
     return next;
   }
@@ -178,7 +194,13 @@ window.scenarios = (() => {
   };
 
   function handoff(s, reference) {
-    return changes(s, reference).filter(c => surfaces[c.field]).map(c => ({ ...c, guidance: surfaces[c.field] }));
+    return changes(s, reference).filter(c => surfaces[c.field] ||
+      window.architecture.deploymentOptions.some(option => option.field === c.field)).map(c => {
+      const option = window.architecture.deploymentOptions.find(option => option.field === c.field);
+      return { ...c, guidance: option ?
+        `Review ${option.parameter} for ${option.label}. Zero omits new allocation from this estimate, not existing charges or resources. Validate dependent features, explicit flags and any reused service budget. Keep private connectivity and authorization intact.` :
+        surfaces[c.field] };
+    });
   }
 
   return { version, storageKey, defaults, assess, bounds, validate, pack, changes, handoff, searchKey, hostedKey };

@@ -255,6 +255,10 @@
 #agent-lz-planner .resource-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 2rem; margin-bottom: 0.8rem; }
 #agent-lz-planner .resource-inputs label { margin-bottom: 0.6rem; }
 #agent-lz-planner .resource-body h4 { margin: 0 0 0.5rem; font-size: 0.65rem; font-weight: 600; }
+#agent-lz-planner .resource-body fieldset { margin: 0.5rem 0 0; padding: 0; border: 0; min-width: 0; }
+#agent-lz-planner .resource-body legend { font-size: 0.6rem; color: var(--muted); }
+#agent-lz-planner #sizing-guidance { margin-bottom: 0.8rem; }
+#agent-lz-planner #sizing-guidance :is(p, h3) { font-size: 0.7rem; }
 #agent-lz-planner .option-preview { margin: 0 0 0.6rem; font-size: 0.65rem; line-height: 1.7; }
 #agent-lz-planner .row-tag { display: inline-block; margin-top: 0.35rem; padding: 0.05rem 0.25rem; border-radius: 0.15rem; color: var(--muted); background: var(--soft); font-size: 0.6rem; }
 #agent-lz-planner .row-tag.optional { background: var(--blue-soft); color: var(--accent); }

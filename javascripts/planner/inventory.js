@@ -3,9 +3,79 @@
 const quoteFields = ["additionalAgents", "buildVMs", "vpnGateways", "expressRouteGateways", "botServices",
   "workIQ", "fabricIQ", "webGrounding", "speech", "agent365", "defender", "entraLicenses", "purview", "networkWatcherGB"];
 
+const deploymentOptions = [
+  ["foundry-project", "foundryAccounts", "Foundry accounts", "deployAiFoundry"],
+  ["foundry-project", "agentServices", "Agent Service setups", "deployAAfAgentSvc"],
+  ["model", "chatDeployments", "Chat model deployments", "modelDeploymentList"],
+  ["embeddings", "embeddingDeployments", "Embedding deployments", "modelDeploymentList"],
+  ["search", "searchServices", "Application Search services", "deploySearchService"],
+  ["backing-search", "backingSearchServices", "New backing Search services", "aiSearchResourceId"],
+  ["storage", "storageAccounts", "Application Storage accounts", "deployStorageAccount"],
+  ["backing-storage", "backingStorageAccounts", "New backing Storage accounts", "aiFoundryStorageAccountResourceId"],
+  ["backing-cosmos", "backingCosmosAccounts", "New backing Cosmos accounts", "aiFoundryCosmosDBAccountResourceId"],
+  ["foundry-vault", "backingVaults", "New backing Key Vaults", "keyVaultResourceId"],
+  ["application-vault", "vaults", "Application Key Vaults", "deployKeyVault"],
+  ["appconfig", "configurationStores", "App Configuration stores", "deployAppConfig"],
+  ["registry", "containerRegistries", "Container Registries", "deployContainerRegistry"],
+  ["aca-environment", "containerEnvironments", "Container Apps environments", "deployContainerEnv"],
+  ["frontend-app", "frontendDeployments", "Container Apps deployment sets", "deployContainerApps / containerAppsList"],
+  ["acr-build-pool", "buildPools", "Private build pools", "deployAcrTaskAgentPool"],
+  ["firewall", "firewalls", "Local firewalls", "deployAzureFirewall"],
+  ["jumpbox", "jumpboxes", "Jumpbox VMs", "deployJumpbox"],
+  ["bastion", "bastions", "Bastion hosts", "deployBastion"],
+  ["nat", "natGateways", "NAT Gateways", "deployNatGateway"],
+  ["logs", "logWorkspaces", "New Log Analytics workspaces", "deployLogAnalytics"],
+  ["insights", "insightsInstances", "New Application Insights resources", "deployAppInsights"],
+  ["ampls", "privateMonitorScopes", "Private Monitor scopes", "enablePrivateLogAnalytics"],
+  ["dns", "privateDnsDeployments", "New private DNS zone sets", "policyManagedPrivateDns / existingPrivateDnsZone*ResourceId"],
+  ["nsg", "nsgDeployments", "NSG configuration sets", "deployNsgs"]
+].map(([id, field, label, parameter]) => ({ id, field, label, parameter }));
+
 window.architecture = {
-  quoteFields,
+  quoteFields, deploymentOptions,
+  buildAllocatedHours: s => s.buildMode === "daily" ?
+    s.buildDays * s.buildDeploymentsPerDay * s.buildMinutes / 60 : s.buildHours,
+  included(s) {
+    const foundry = s.foundryAccounts > 0;
+    const agent = foundry && s.agentServices > 0;
+    const environment = s.containerEnvironments > 0;
+    const apps = environment && s.frontendDeployments > 0;
+    const registry = s.containerRegistries > 0;
+    const monitor = s.logWorkspaces > 0 && s.insightsInstances > 0 && s.privateMonitorScopes > 0;
+    const included = {
+      "foundry-project": foundry, "foundry-tools": foundry,
+      model: foundry && s.chatDeployments > 0, embeddings: foundry && s.embeddingDeployments > 0,
+      hosted: agent, "additional-agents": agent,
+      search: s.searchServices > 0, "backing-search": agent && s.backingSearchServices > 0,
+      storage: s.storageAccounts > 0, "backing-storage": agent && s.backingStorageAccounts > 0,
+      "backing-cosmos": agent && s.backingCosmosAccounts > 0, "foundry-vault": agent && s.backingVaults > 0,
+      "application-vault": s.vaults > 0, appconfig: s.configurationStores > 0,
+      registry, "aca-environment": environment, compute: environment, "frontend-app": apps,
+      appgateway: apps, "gateway-ip": apps,
+      "extra-frontends": apps, "orchestrator-app": apps, "ingestion-app": apps,
+      "acr-build-pool": registry && s.buildPools > 0,
+      firewall: s.firewalls > 0, "firewall-policy": s.firewalls > 0,
+      "firewall-ip": s.firewalls > 0, "firewall-management-ip": s.firewalls > 0,
+      routes: s.firewalls > 0, jumpbox: s.jumpboxes > 0, "jumpbox-disk": s.jumpboxes > 0,
+      bastion: s.jumpboxes > 0 && s.bastions > 0, "bastion-ip": s.jumpboxes > 0 && s.bastions > 0,
+      nat: s.jumpboxes > 0 && s.natGateways > 0, "nat-ip": s.jumpboxes > 0 && s.natGateways > 0,
+      logs: s.logWorkspaces > 0, insights: s.logWorkspaces > 0 && s.insightsInstances > 0,
+      monitor: s.logWorkspaces > 0, ampls: monitor, dns: s.privateDnsDeployments > 0,
+      nsg: s.nsgDeployments > 0 || (apps && s.appGateway > 0)
+    };
+    for (const [suffix, parent] of [
+      ["foundry", "foundry-project"], ["foundry-storage", "backing-storage"],
+      ["foundry-search", "backing-search"], ["foundry-cosmos", "backing-cosmos"],
+      ["foundry-vault", "foundry-vault"], ["app-storage", "storage"], ["app-search", "search"],
+      ["app-vault", "application-vault"], ["appconfig", "appconfig"], ["acr", "registry"],
+      ["aca", "aca-environment"], ["monitor", "ampls"]
+    ]) included[`pe-${suffix}`] = included[parent];
+    included["private-data"] = Object.entries(included).some(([id, value]) => id.startsWith("pe-") && value) ||
+      s.applicationCosmos > 0 || s.speech > 0 || (s.apimUnits > 0 && s.apimSku === "Standard v2");
+    return included;
+  },
   defaults: {
+    ...Object.fromEntries(deploymentOptions.map(option => [option.field, 1])),
     ...Object.fromEntries(quoteFields.flatMap(field => [[`${field}MonthlyRate`, 0], [`${field}PriceSource`, ""]])),
     applicationCosmos: 0, cosmosMRU: 5, cosmosGB: 1, cosmosBackupGB: 1,
     backingCosmosMode: "manual", backingCosmosRU: 5000, backingCosmosGB: 10,
@@ -13,6 +83,7 @@ window.architecture = {
     backingStorageGB: 10, vaultOperations: 1, embeddingMillions: 5,
     orchestratorApps: 0, ingestionApps: 0, extraFrontendApps: 0, additionalAgents: 0,
     dnsQueries: 1, endpointIngressGB: 50, endpointEgressGB: 50, natGB: 10, buildHours: 730,
+    buildMode: "daily", buildDeploymentsPerDay: 1, buildDays: 30, buildMinutes: 40,
     vpnGateways: 0, expressRouteGateways: 0, buildVMs: 0,
     botServices: 0, workIQ: 0, fabricIQ: 0, webGrounding: 0, speech: 0,
     agent365: 0, defender: 0, entraLicenses: 0, purview: 0,
@@ -21,6 +92,9 @@ window.architecture = {
 
   resources(s, { priced, bill, find, publishedPrice, input, select, number, escape, MissingPrice }) {
     const rows = [];
+    const included = window.architecture.included(s);
+    const buildHours = window.architecture.buildAllocatedHours(s);
+    const dnsZones = 8 + Number(included["aca-environment"]) + Number(included.registry) + (included.ampls ? 5 : 0);
     function add(resource, count, calculate) {
       const { field, unit = "resources", settings = "", detail = "", ...metadata } = resource;
       const quoteField = quoteFields.includes(field) ? field : metadata.id === "network-watcher" ? "networkWatcherGB" : null;
@@ -217,13 +291,21 @@ window.architecture = {
     }
     add({
       id: "acr-build-pool", group: "operations", name: "ACR Tasks private build agent pool",
-      sku: "S1 / 1 allocated agent", unit: "agent pool",
+      sku: "S1 / 1 agent while allocated", unit: "agent pool",
       description: "Runs private image builds inside the VNet. Different from a separately managed build VM.",
-      settings: input("buildHours", "Allocated pool hours, including idle / month", 0, 744),
+      settings: select("buildMode", [["daily", "Per-deployment schedule"], ["allocated", "Monthly allocated hours"]], "Allocation estimate") +
+        (s.buildMode === "daily" ?
+          input("buildDeploymentsPerDay", "Deployments / day", 0, 100) +
+          input("buildDays", "Deployment days / month", 0, 31) +
+          input("buildMinutes", "Allocated minutes / deployment, including startup and shutdown", 1, 1440) :
+          input("buildHours", "Allocated pool hours, including idle / month", 0, 744, .01)) +
+        `<span class="setting-hint">${number(buildHours)} allocated hours / included pool / month. ` +
+        (s.buildMode === "daily" ? "Requires scaling to zero outside build windows. This planner does not automate that operation." :
+          "Includes idle time. No automatic scale-to-zero is assumed.") + "</span>",
       sizing: "<strong>S1 has 2 vCPU and 3 GB per agent.</strong> Size tier for build memory/CPU, instance count for parallel jobs. All allocated time, including idle, is billable.",
-      detail: "The isolated deployment defaults to deployAcrTaskAgentPool=true, S1, one Linux agent. This budget assumes 730 allocated hours, not 20 active build hours. Cost = allocated hours x 3,600 x 2 vCPU x the independently published Dedicated agent pool allocation rate. At $0.0001/vCPU-second this is $525.60 for 730 hours. No shared-task free allowance is deducted. Reducing the input requires actually scaling the pool to zero for the remaining hours. The feature is Preview and requires Premium ACR. Both offered regions are documented preview locations.",
+      detail: "The isolated deployment creates an S1 pool with one Linux agent. The initial billing hypothesis is one deployment per day for 30 days, with 40 allocated minutes per deployment including startup, build and shutdown: 20 allocated hours/month. This is not a measured build duration or shipped scale-to-zero automation. The operator or pipeline must allocate the pool before builds and scale it to zero afterwards. If it remains allocated for 730 hours, budget all 730 hours instead. Cost = allocated hours x 3,600 x 2 vCPU x the published Dedicated agent pool allocation rate. At $0.0001/vCPU-second, 20 hours costs $14.40 and 730 hours costs $525.60. No shared-task free allowance is deducted. The feature is Preview and requires Premium ACR. Both offered regions are documented preview locations.",
       parameter: "main.parameters.json: deployAcrTaskAgentPool; infra/main.bicep: acrTaskAgentPoolTier, acrTaskAgentPoolCount"
-    }, 1, () => [bill(publishedPrice("acrDedicatedPool", "allocation", s), s.buildHours * 3600 * 2,
+    }, 1, () => [bill(publishedPrice("acrDedicatedPool", "allocation", s), buildHours * 3600 * 2,
       "fixed", "Allocated S1 vCPU-seconds, including idle")]);
     add({
       id: "build-vm", group: "operations", name: "Separate DevOps build agent VM",
@@ -270,14 +352,14 @@ window.architecture = {
     ]);
     add({
       id: "dns", group: "networking", name: "Azure Private DNS zones",
-      sku: "15 zones / one VNet", unit: "private DNS zones",
+      sku: `${dnsZones} zones / one VNet`, unit: "private DNS zones",
       description: "Private names for Foundry, application services and Azure Monitor dependencies.",
       settings: input("dnsQueries", "Private DNS queries (millions / month)", 0, 1000000, 0.1),
       sizing: "<strong>Count zones, links and queries separately.</strong> Reuse zones across matching services, not one zone per endpoint.",
       detail: "Fresh defaults create cognitive services, OpenAI, AI services, Search, Cosmos, Blob, Key Vault, App Configuration, Container Apps, ACR and five Monitor zones (Application Insights, Monitor, OMS, ODS and agentsvc). Shared Search/Blob/Cosmos zones are not duplicated for application and backing resources. This sample uses global commercial DNS zone/query rates, explicitly not another region's service price. Record-set overages and DNS Resolver are excluded.",
       parameter: "infra/main.bicep: _dnsZonesList"
-    }, 15, () => [
-      bill(find("dns", "Private", "Private Zone", "1", 0, s, "Azure DNS", ""), 15 * s.hours / 730, "fixed", "Zone-months (hours / 730)"),
+    }, dnsZones, () => [
+      bill(find("dns", "Private", "Private Zone", "1", 0, s, "Azure DNS", ""), dnsZones * s.hours / 730, "fixed", "Zone-months (hours / 730)"),
       bill(find("dns", "Private", "Private Queries", "1M", 0, s, "Azure DNS", ""), s.dnsQueries, "usage", "Million private DNS queries")
     ]);
     add({

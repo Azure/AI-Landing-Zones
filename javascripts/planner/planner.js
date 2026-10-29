@@ -212,15 +212,16 @@
 
     const cpus = s.profile === "D4" ? 4 : 8;
     const memory = cpus * 4;
-    const requestedCPU = 0.5 * (1 + s.extraFrontendApps + s.orchestratorApps) + s.ingestionApps;
-    const requestedMemory = 1 + s.extraFrontendApps + s.orchestratorApps + 3 * s.ingestionApps;
+    const appsIncluded = s.containerEnvironments > 0 && s.frontendDeployments > 0;
+    const requestedCPU = appsIncluded ? 0.5 * (1 + s.extraFrontendApps + s.orchestratorApps) + s.ingestionApps : 0;
+    const requestedMemory = appsIncluded ? 1 + s.extraFrontendApps + s.orchestratorApps + 3 * s.ingestionApps : 0;
     rows.push(priced({
       id: "compute", group: "application", name: "Container Apps profile", tag: "Allocated capacity",
       description: "Dedicated compute for the frontend, not the hosted orchestrator.",
       setting: select("profile", [["D4", "D4 / 4 vCPU, 16 GiB"], ["D8", "D8 / 8 vCPU, 32 GiB"]], "Dedicated workload profile") +
         '<span class="setting-hint">Shipped main profile: D4, min 0 / max 1 node. Frontend min/max: 1.</span>',
       sizing: "<strong>Size app replicas and the node pool together.</strong> Placement, CPU and memory determine node demand. Minimum app replicas can retain a billable node.",
-      signal: requestedCPU >= s.nodes * cpus || requestedMemory >= s.nodes * memory ?
+      signal: appsIncluded && (requestedCPU >= s.nodes * cpus || requestedMemory >= s.nodes * memory) ?
         "App requests meet/exceed selected node capacity. Increase nodes/profile and reserve runtime headroom." :
         `${number(requestedCPU)} vCPU / ${number(requestedMemory)} GiB app requests before runtime overhead. More than one node requires raising the shipped maximum.`,
       quantity: input("nodes", "Allocated nodes (simulation)", 0, 100) + `<span class="setting-hint">${number(s.hours)} hours / node / month</span>`,
@@ -343,6 +344,26 @@
     }, () => [bill(find("logs", "Analytics Logs", "Analytics Logs Data Ingestion", "1 GB", 5, s), Math.max(0, s.logsGB - s.logAllowance), "usage", "GB after allocated allowance")]));
     rows.push(...window.architecture.resources(s, { priced, bill, find, publishedPrice, input, select, number, escape, MissingPrice }));
     applyOperatorEstimates(rows, s, d);
+    const included = window.architecture.included(s);
+    for (const row of rows) {
+      const options = window.architecture.deploymentOptions.filter(option => option.id === row.id);
+      if (Object.hasOwn(included, row.id)) {
+        row.scopeControlled = true;
+        row.optional = true;
+        row.included = included[row.id] && row.included !== false;
+        if (!row.included) {
+          row.amount = 0;
+          row.lines = row.lines.map(line => ({ ...line, quantity: 0, amount: 0 }));
+          row.quantity = `<fieldset disabled><legend>Retained inputs, not allocated in this scenario</legend>${row.quantity}</fieldset>`;
+        }
+      }
+      if (options.length) {
+        row.quantity = options.map(option => input(option.field, `${option.label} (0 = exclude from this estimate)`, 0, 1)).join("") +
+          '<span class="setting-hint">Zero excludes new allocation and its linked costs. Existing or shared services are not free. Check feature and deployment dependencies before applying this scenario.</span>' + row.quantity;
+        row.detail += ` Allocation controls: ${options.map(option => `${option.label}: ${option.parameter}`).join(", ")}. ` +
+          "Zero is a fresh-budget scope choice, not deletion or deallocation of existing resources. Reuse IDs require a separately budgeted existing service. Bastion and NAT follow the jumpbox in this reference. Excluding a parent also excludes dependent allocations, while retaining their inputs.";
+      }
+    }
     return window.applySizingGuidance(rows, s);
   }
 
@@ -395,7 +416,8 @@
     let preview = "";
     if (optionField && state[optionField] === 0) {
       const withOption = resources({ ...state, [optionField]: 1 });
-      if (withOption.every(resource => resource.amount !== null)) {
+      if (withOption.find(resource => resource.id === row.id).included !== false &&
+          withOption.every(resource => resource.amount !== null)) {
         preview = `<p class="option-preview">One unit adds <strong>${money(totals(withOption).total - latest.sum.total)}/month</strong>, including linked resources. Change the quantity to include it.</p>`;
       }
     }
@@ -413,7 +435,8 @@
       const url = "https://prices.azure.com/api/retail/prices?$filter=" + encodeURIComponent(`meterId eq '${meter.meterId}' and armRegionName eq '${meter.armRegionName}' and priceType eq 'Consumption'`);
       return `<div class="meter"><strong>${escape(meter.meterName)}</strong><br>${number(line.quantity)} ${escape(line.description)} x ${rate(meter.retailPrice)} = ${money(line.amount)}<br>Product: ${escape(meter.productName)} | SKU: ${escape(meter.skuName)}<br>Meter: <code>${escape(meter.meterId)}</code> | Effective: ${escape(meter.effectiveStartDate)} | Captured: ${escape(meterCapturedAt(meter))} | Region: ${escape(meter.armRegionName || "Global commercial rate")} | Tier starts: ${number(meter.tierMinimumUnits)}<br><a href="${escape(url)}" target="_blank" rel="noopener">Inspect source meter query &#8599;</a></div>`;
     }).join("");
-    const inclusion = row.optional ? row.included ? "Optional, included" : "Optional, quantity 0" :
+    const inclusion = row.scopeControlled ? row.included ? row.sku || "Included in this scenario" : "Not included in this scenario" :
+      row.optional ? row.included ? "Optional, included" : "Optional, quantity 0" :
       row.billingNote ? "Configuration / shared billing" : row.sku || "Included in the starting architecture";
     const pricing = row.quoteRequired ? "Your plan's price" : row.amount === null ? "Price to confirm" : row.operatorEstimate ? "Operator estimate" :
       row.billingNote ? "Shared / configuration" : "Public rates";
@@ -512,8 +535,12 @@
     const drivers = rows.filter(row => row.amount > 0).sort((a, b) => b.amount - a.amount);
     const leaders = drivers.slice(0, 6);
     byId("cost-driver-note").textContent = `${number(sum.total ? sum.fixed / sum.total * 100 : 0)}% of this estimate is allocated capacity. Running hours and throughput are editable billing assumptions, not measured consumption.`;
+    byId("build-budget-note").textContent = buildBudgetNote();
+    const excluded = window.architecture.deploymentOptions.filter(option => state[option.field] === 0);
+    byId("excluded-scope-note").hidden = excluded.length === 0;
+    byId("excluded-scope-note").textContent = `${excluded.length} allocation option(s) excluded from this budget. Linked allocations follow their parent. Shared resources still need a separate budget, and omitting a resource can require a different application configuration or private connectivity design. No Azure resource was changed.`;
     byId("cost-driver-items").innerHTML = leaders.map(row => {
-      const assumption = row.id === "acr-build-pool" ? `${number(state.buildHours)} allocated hours, including idle` :
+      const assumption = row.id === "acr-build-pool" ? `${number(window.architecture.buildAllocatedHours(state))} allocated hours, including idle` :
         row.id === "backing-cosmos" ? `${number(state.backingCosmosRU)} RU/s billing hypothesis, not discovered throughput` : "";
       return `<li data-driver-amount="${row.amount}"><span><a href="#entry-${row.id}" data-jump="${row.id}">${escape(row.name)}</a>${assumption ? `<small>${escape(assumption)}</small>` : ""}</span><strong>${money(row.amount)}</strong></li>`;
     }).join("");
@@ -624,6 +651,7 @@
   }
 
   function exportReport() {
+    const buildIncluded = window.architecture.included(state)["acr-build-pool"];
     const reportRows = rows => rows.map(row => ({
       id: row.id, name: row.name, capability: row.group,
       included: !(row.optional && !row.included), optional: !!row.optional,
@@ -644,6 +672,9 @@
       deploymentReference: catalog.deploymentVersion, networkIsolation: "enabled-standalone",
       warning: "PLANNING ESTIMATE, NOT A QUOTE OR CAPACITY GUARANTEE. Costs reflect the selected resources and entered usage. Your plan estimates are not public meters.",
       scenario: window.scenarios.pack(state, defaults), state: { ...state },
+      buildAllocation: { included: buildIncluded, mode: state.buildMode,
+        allocatedHoursPerMonth: buildIncluded ? window.architecture.buildAllocatedHours(state) : 0,
+        assumption: buildBudgetNote() },
       reference: { state: referenceState, subtotal: totals(referenceRows), resources: reportRows(referenceRows) },
       subtotal: latest.sum, demand: latest.demand, assessment: window.scenarios.assess(state),
       differences: window.scenarios.changes(state, referenceState),
@@ -672,6 +703,7 @@
       `Monthly subtotal: ${money(latest.sum.total)} (${money(latest.sum.public)} public + ${money(latest.sum.operator)} operator).`,
       `Same-region reference: ${money(totals(referenceRows).total)}. Monthly difference: ${signedMoney(latest.sum.total - totals(referenceRows).total)}.`,
       "Pricing coverage may differ. A delta is not a verified saving.", "",
+      "## Build pool operation", report.buildAllocation.assumption, "",
       "## Sizing assessment", assessment.status, assessment.explanation,
       ...assessment.findings.map(f => `- ${f.title}: ${f.status}. ${f.detail} Source: ${f.source}`),
       "", "## Active prices still missing",
@@ -687,6 +719,13 @@
       "", "## Exclusions", ...report.exclusions.map(text => `- ${text}`)
     ];
     return lines.join("\n");
+  }
+
+  function buildBudgetNote() {
+    if (!window.architecture.included(state)["acr-build-pool"]) return "No new private build pool is included. Provide a compatible private build path and budget any reused capacity separately.";
+    return state.buildMode === "daily" ?
+      `Build pool: ${number(state.buildDeploymentsPerDay)} deployment(s)/day x ${number(state.buildDays)} days/month x ${number(state.buildMinutes)} allocated minutes = ${number(window.architecture.buildAllocatedHours(state))} hours/month. Startup, build, shutdown and any idle allocation belong in that time. Scaling to zero between build windows is an operating assumption, not automation provided by this planner or the default deployment.` :
+      `Build pool: ${number(state.buildHours)} allocated hours/month, including idle. No automatic scale-to-zero is assumed.`;
   }
 
   async function copyText(text, description) {
@@ -816,7 +855,7 @@
       candidate.firewall = referenceFor(value).firewall;
       notify(`Region changed. No standalone ${state.firewall} price is published here, so Firewall is explicitly set to ${candidate.firewall}. This differs from the shipped Basic default and requires an IaC change. Plan-priced options and target-specific evidence were reset.`);
     }
-    if (["region", "searchSku", "searchReplicas", "searchPartitions"].includes(field) && state[field] !== value) {
+    if (["region", "searchSku", "searchReplicas", "searchPartitions", "searchServices"].includes(field) && state[field] !== value) {
       candidate.testedSearchQPS = 0;
       candidate.searchBenchmarkKey = "";
     }
@@ -827,7 +866,7 @@
     if (field === "testedSearchQPS") candidate.searchBenchmarkKey = window.scenarios.searchKey(candidate);
     if (field === "testedHostedConcurrency") candidate.hostedBenchmarkKey = window.scenarios.hostedKey(candidate);
     try {
-      state = checkedState({ version: 1, state: candidate });
+      state = checkedState({ version: window.scenarios.version, state: candidate });
     } catch (error) {
       console.warn("Input rejected", error);
       byId("input-error").textContent = `${error.message} The estimate still reflects your last valid inputs.`;
@@ -877,7 +916,7 @@
     }));
     installScenarioActions();
     restoreLink();
-    state = checkedState({ version: 1, state });
+    state = checkedState({ version: window.scenarios.version, state });
     render();
     byId("load-status").hidden = true;
     byId("planner").hidden = false;

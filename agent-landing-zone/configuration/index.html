@@ -55,7 +55,7 @@
     
       <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
-      <link rel="stylesheet" href="../../stylesheets/planner.css?v=1">
+      <link rel="stylesheet" href="../../stylesheets/planner.css?v=2">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -479,62 +479,6 @@
     
   
     Network isolation
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../sizing/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Sizing and capacity
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cost-planning/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Cost planning
   
 
     
@@ -2669,8 +2613,8 @@
 <code>maf_lite</code>, no panel and native Foundry IQ Blob ingestion.
 This page explains settings and defaults, not an execution sequence.
 <a href="../how-it-works/">How it works</a> introduces the concepts;
-<a href="../planning/">deployment design</a>, <a href="../sizing/">capacity</a> and
-<a href="../cost-planning/">cost planning</a> explain the planning decisions.</p>
+<a href="../planning/">deployment design</a> and the
+<a href="../sizing-cost-planner/">Sizing &amp; cost planner</a> explain the planning decisions.</p>
 <p>The infrastructure-only runbooks for <a href="../deploy-infra-only/">Bicep</a> and
 <a href="../deploy-terraform-infra-only/">Terraform</a>, and the full-stack runbooks for
 <a href="../deploy-full-stack/">Bicep</a> and <a href="../deploy-terraform-full-stack/">Terraform</a>,
@@ -3901,7 +3845,7 @@ child <code>hosted-agent/azure.yaml</code> also declares CPU and memory as <stro
 fields</strong>; changing those environment variables alone does not resize the
 deployed agent. Resizing requires a reviewed child-definition change compatible
 with the provisioned deployment metadata, followed by a new version. See
-<a href="../sizing/#application-hosting">host capacity requirements</a>.</p>
+<a href="../sizing-cost-planner/#application-hosting">host capacity requirements</a>.</p>
 <p>The child definition also fixes the deployed agent name, startup command and
 protocol versions. Their provisioning inputs alone do not override those
 deployment fields.</p>
