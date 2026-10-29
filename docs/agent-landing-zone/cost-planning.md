@@ -22,6 +22,15 @@ Its catalog combines Azure Retail Prices API records with exact official
 pricing-page rows. Automated daily refresh retains the last validated catalog
 if collection, parsing or validation fails; check the displayed snapshot date.
 
+The planner shows one monthly total. When you change a resource, its cost
+difference is already included in that total, not charged on top. The named
+changes include linked dependencies, such as API Management's private endpoint.
+**Largest monthly costs** ranks the main contributors and identifies allocation
+and throughput hypotheses, including idle build-pool hours.
+Open a resource to preview the cost of adding an optional unit. Capability and
+resource details expand on demand. Save, comparison and export tools are under
+**Save, compare & export**.
+
 !!! note "Pricing sources and dates"
     The shared
     [resource inventory and estimates](../bicep/deployed-resources.md) uses

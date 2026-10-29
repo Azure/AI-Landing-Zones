@@ -52,6 +52,16 @@ def run(base, candidate=None):
           assert("Optional application Cosmos and apps start at zero",["applicationCosmos","extraFrontendApps",
             "orchestratorApps","ingestionApps"].every(k=>p.state[k]===0));
           assert("No partial default estimate label",!document.querySelector("#live-total").parentElement.textContent.includes("Partial"));
+          assert("Capabilities start compact",document.querySelectorAll(".capability[open]").length===0);
+          assert("Advanced panels start closed",["decision","estimate","coverage"].every(id=>!document.getElementById(id).open));
+          assert("No unexplained default delta",document.getElementById("cost-change-summary").hidden);
+          assert("All resource editors remain available",document.querySelectorAll("[data-resource]").length===77);
+          assert("Cost drivers reconcile to the total",Math.abs(
+            [...document.querySelectorAll("[data-driver-amount]")].reduce((sum,e)=>sum+Number(e.dataset.driverAmount),0)-
+            p.snapshot.sum.total)<1e-8);
+          assert("Cost driver assumptions are explicit",document.querySelector("#cost-driver-items").textContent.includes(
+            "730 allocated hours, including idle")&&document.querySelector("#cost-driver-items").textContent.includes(
+            "5,000 RU/s billing hypothesis"));
           assert("The exact default model is priced, not a newer substitute",
             Math.abs(p.snapshot.rows.find(r=>r.id==="model").amount-
               (132*p.catalog.publishedPrices["gpt-5-nano"].prices.eastus2.input+
@@ -94,8 +104,33 @@ def run(base, candidate=None):
             !document.querySelector("#assessment-verdict").classList.contains("needs-attention"));
           return results;
         }""")
+        page.locator("#starting-point-note").click()
+        assert page.locator("#cost-drivers").evaluate("e=>e.open")
+        assert page.locator("#cost-driver-items").is_visible()
+        page.locator("#networking > summary").click()
+        page.locator("#entry-apim > summary").click()
+        assert page.locator("#entry-apim .option-preview").is_visible()
+        page.locator('[data-field="apimUnits"]').fill("1")
+        page.locator('[data-field="apimUnits"]').press("Tab")
+        assert page.evaluate("planner.state.apimUnits") == 1
+        assert page.locator("#cost-change-summary").is_visible()
+        assert "Already included in the total" in page.locator("#cost-change-summary").inner_text()
+        assert page.locator("#cost-change-items li").count() == 2
+        assert "API Management / AI Gateway" in page.locator("#cost-change-items").inner_text()
+        assert "API Management private endpoint" in page.locator("#cost-change-items").inner_text()
+        assert page.evaluate("""() => Math.abs([...document.querySelectorAll("[data-cost-delta]")]
+          .reduce((sum,el)=>sum+Number(el.dataset.costDelta),0)-
+          (planner.snapshot.sum.total-planner.exportReport().reference.subtotal.total))<1e-8""")
+        page.locator("#cost-change-items a").last.click()
+        assert page.locator("#networking").evaluate("e=>e.open")
+        assert page.locator("#cost-change-items a").last.get_attribute("href") == page.evaluate("location.hash")
+        page.locator("#reset").click()
+        assert page.locator("#cost-change-summary").is_hidden()
         set_field(page, "modelTPM", 1)
         assert page.locator("#assessment-verdict").evaluate("e=>e.classList.contains('needs-attention')")
+        assert page.locator("#sizing-alert").is_visible()
+        page.locator("#sizing-alert a").click()
+        assert page.locator("#decision").evaluate("e=>e.open")
         page.locator("#reset").click()
         set_field(page, "region", "swedencentral")
         assert page.evaluate("planner.state.firewall") == page.evaluate("planner.referenceFor('swedencentral').firewall")
@@ -104,6 +139,8 @@ def run(base, candidate=None):
         page.locator("#reset").click()
         set_field(page, "appGateway", 1)
         assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='gateway-ip').amount") > 0
+        if not page.locator("#estimate").evaluate("e=>e.open"):
+            page.locator("#estimate > summary").click()
         page.locator("#save-scenario").click()
         page.locator("#reset").click()
         page.locator("#load-scenario").click()
@@ -116,6 +153,8 @@ def run(base, candidate=None):
         page.goto(shared)
         ready(page)
         assert page.evaluate("planner.state.appGateway") == 1
+        if not page.locator("#estimate").evaluate("e=>e.open"):
+            page.locator("#estimate > summary").click()
         with page.expect_download() as downloaded:
             page.locator("#export-scenario").click()
         report = json.loads(Path(downloaded.value.path()).read_text(encoding="utf-8"))
@@ -135,6 +174,13 @@ def run(base, candidate=None):
             assert page.locator("#no-resources").is_visible()
             assert page.evaluate("planner.snapshot.sum.total") == original
             page.locator("#clear-filters").click()
+        page.locator("#reset").click()
+        set_field(page, "users", 0)
+        assert "less than the starting point" in page.locator("#live-delta").inner_text()
+        assert page.evaluate("""() => Math.abs([...document.querySelectorAll("[data-cost-delta]")]
+          .reduce((sum,e)=>sum+Number(e.dataset.costDelta),0)-
+          (planner.snapshot.sum.total-planner.exportReport().reference.subtotal.total))<1e-8""")
+        page.locator("#reset").click()
         assert not errors, errors
         stale = context.new_page()
         original_catalog = candidate or (ROOT / "docs" / "data" / "planner" / "prices.json").read_text(encoding="utf-8")

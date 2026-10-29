@@ -20,6 +20,9 @@ documented constraints and cost comparisons together for an isolated standalone
 `hosted-no-panel` reference. Its examples are hypothetical, not benchmarked
 capacity profiles. Enter assigned quota and matching measured evidence where
 available; editing demand does not resize or deploy resources.
+Open a capability and resource for its concise sizing guidance. **Check sizing**
+contains the quota, availability and measured-evidence inputs, without expanding
+all technical settings at once.
 
 Both providers use the root `main.parameters.json` values below.
 For Terraform, preprovision generates typed inputs; verify the resolved
