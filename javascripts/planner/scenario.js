@@ -13,10 +13,22 @@ window.scenarios = (() => {
     priceEvidence: "", hostedHours: 200
   };
   const searchURL = "https://learn.microsoft.com/azure/search/search-limits-quotas-capacity";
+  const searchTopologyURL = "https://learn.microsoft.com/azure/search/search-capacity-planning#partition-and-replica-combinations";
   const quotaURL = "https://learn.microsoft.com/azure/ai-foundry/openai/how-to/quota";
   const hostedURL = "https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents";
   const searchKey = s => [s.region, s.searchSku, s.searchReplicas, s.searchPartitions].join("|");
   const hostedKey = s => [s.region, s.model, s.inputTokens, s.outputTokens, s.calls].join("|");
+  const searchLimits = {
+    "Basic": { replicas: 3, partitions: [1, 2, 3], units: 9, storage: 15, vectors: 5 },
+    "Standard S1": { replicas: 12, partitions: [1, 2, 3, 4, 6, 12], units: 36, storage: 160, vectors: 35 },
+    "Standard S2": { replicas: 12, partitions: [1, 2, 3, 4, 6, 12], units: 36, storage: 512, vectors: 150 }
+  };
+
+  function validSearchTopology(sku, replicas, partitions) {
+    const limits = searchLimits[sku];
+    return !!limits && Number.isInteger(replicas) && replicas >= 1 && replicas <= limits.replicas &&
+      limits.partitions.includes(partitions) && replicas * partitions <= limits.units;
+  }
 
   function assess(s) {
     const included = window.architecture.included(s);
@@ -35,28 +47,23 @@ window.scenarios = (() => {
       (quotaStatus === "action" ? "Raise assigned quota or reduce peak demand. " :
         quotaStatus === "unknown" ? "Enter the actual assigned TPM and RPM to compare. " : "Within the entered quota. ") +
       "Azure admission estimates can differ from billable tokens; retries and burst windows still need testing.", quotaURL);
-    const modern = {
-      "Basic": { replicas: 3, partitions: 3, units: 9, storage: 15, vectors: 5 },
-      "Standard S1": { replicas: 12, partitions: 12, units: 36, storage: 160, vectors: 35 },
-      "Standard S2": { replicas: 12, partitions: 12, units: 36, storage: 512, vectors: 150 }
-    };
-    const tier = modern[s.searchSku];
+    const tier = searchLimits[s.searchSku];
     const requiredReplicas = s.availability === "query-index" ? 3 : s.availability === "queries" ? 2 : 1;
-    for (const [id, label, r, p, limits] of [
-      ["search", "Application Search", s.searchReplicas, s.searchPartitions, tier],
-      ["backing-search", "Backing Search", s.backingReplicas, s.backingPartitions, modern["Standard S1"]]
+    for (const [id, label, r, p, sku] of [
+      ["search", "Application Search", s.searchReplicas, s.searchPartitions, s.searchSku],
+      ["backing-search", "Backing Search", s.backingReplicas, s.backingPartitions, "Standard S1"]
     ]) {
       if (!included[id]) {
         add(`${id}-scope`, "unknown", `${label}: outside this budget`,
           "No new Search service is included. The selected retrieval path needs a compatible service or configuration. Any existing service needs separate capacity checks and budgeting.", searchURL);
         continue;
       }
-      const valid = r <= limits.replicas && p <= limits.partitions && r * p <= limits.units;
+      const valid = validSearchTopology(sku, r, p);
       add(`${id}-topology`, valid ? "checked" : "action", `${label}: topology`,
         `${r} replicas x ${p} partitions = ${r * p} search units. ` +
-        (valid ? "Within documented fresh-service topology limits. " : "Exceeds this tier's replica, partition or search-unit limit. ") +
+        (valid ? "Within documented fresh-service topology limits. " : "Unsupported replica, partition or search-unit combination for this tier. ") +
         (r < requiredReplicas ? `Selected availability needs at least ${requiredReplicas} replicas.` :
-          s.availability === "evaluation" ? "Evaluation selected, not an HA design." : "Meets the selected replica floor, not a workload guarantee."), searchURL);
+          s.availability === "evaluation" ? "Evaluation selected, not an HA design." : "Meets the selected replica floor, not a workload guarantee."), searchTopologyURL);
       if (r < requiredReplicas) findings[findings.length - 1].status = "action";
     }
     const storage = tier.storage * s.searchPartitions;
@@ -149,10 +156,22 @@ window.scenarios = (() => {
         if (!Number.isFinite(value) || value < min || value > max || Math.abs(units - Math.round(units)) > .00001) {
           throw new Error(`Invalid range or increment for ${key}. No scenario was loaded.`);
         }
-      } else if (enums[key] ? !enums[key].includes(value) : value.length > (key === "priceEvidence" || key.endsWith("PriceSource") ? 300 : 180)) {
+      } else if (typeof value === "string" && (enums[key] ? !enums[key].includes(value) :
+          value.length > (key === "priceEvidence" || key.endsWith("PriceSource") ? 300 : 180))) {
         throw new Error(`Invalid value for ${key}. No scenario was loaded.`);
       }
       next[key] = value;
+    }
+    for (const [label, sku, replicas, partitions] of [
+      ["Application Search", next.searchSku, next.searchReplicas, next.searchPartitions],
+      ["Backing Search", "Standard S1", next.backingReplicas, next.backingPartitions]
+    ]) {
+      if (!validSearchTopology(sku, replicas, partitions)) {
+        const limits = searchLimits[sku];
+        throw new Error(`${label}: ${sku} requires 1-${limits.replicas} replicas, ` +
+          `${limits.partitions.join(", ")} partitions and at most ${limits.units} search units. ` +
+          "Choose a supported combination. No scenario was loaded.");
+      }
     }
     if (next.buildMode === "daily" && next.buildDeploymentsPerDay * next.buildMinutes > 1440) {
       throw new Error("A single build agent cannot be allocated for more than 24 hours per deployment day. Reduce deployments or allocated minutes.");
@@ -203,5 +222,6 @@ window.scenarios = (() => {
     });
   }
 
-  return { version, storageKey, defaults, assess, bounds, validate, pack, changes, handoff, searchKey, hostedKey };
+  return { version, storageKey, defaults, assess, bounds, validate, pack, changes, handoff, searchKey, hostedKey,
+    searchLimits, validSearchTopology };
 })();

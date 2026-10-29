@@ -34,6 +34,8 @@ const deploymentOptions = [
 
 window.architecture = {
   quoteFields, deploymentOptions,
+  quoteReady: (s, field) => !!s[`${field}PriceSource`].trim() &&
+    (s[`${field}MonthlyRate`] > 0 || s[`${field}ZeroCostConfirmed`] === true),
   buildAllocatedHours: s => s.buildMode === "daily" ?
     s.buildDays * s.buildDeploymentsPerDay * s.buildMinutes / 60 : s.buildHours,
   included(s) {
@@ -77,7 +79,9 @@ window.architecture = {
   },
   defaults: {
     ...Object.fromEntries(deploymentOptions.map(option => [option.field, 1])),
-    ...Object.fromEntries(quoteFields.flatMap(field => [[`${field}MonthlyRate`, 0], [`${field}PriceSource`, ""]])),
+    ...Object.fromEntries(quoteFields.flatMap(field => [
+      [`${field}MonthlyRate`, 0], [`${field}PriceSource`, ""], [`${field}ZeroCostConfirmed`, false]
+    ])),
     appGateway: 0, applicationCosmos: 0, cosmosMRU: 5, cosmosGB: 1, cosmosBackupGB: 1,
     backingCosmosMode: "manual", backingCosmosRU: 5000, backingCosmosGB: 10,
     backingBackupMode: "continuous30", backingBackupGB: 10,
@@ -101,28 +105,31 @@ window.architecture = {
       const quoteField = quoteFields.includes(field) ? field : metadata.id === "network-watcher" ? "networkWatcherGB" : null;
       const source = quoteField ? s[`${quoteField}PriceSource`].trim() : "";
       const monthlyRate = quoteField ? s[`${quoteField}MonthlyRate`] : 0;
+      const quoteReady = !!quoteField && window.architecture.quoteReady(s, quoteField);
+      const zeroCostConfirmed = quoteReady && monthlyRate === 0;
       const quoteControls = quoteField ? input(`${quoteField}MonthlyRate`, "Monthly USD / unit (0 only if already covered)", 0, 10000000, .01) +
         `<label>Price source, date and billing scope<input type="text" maxlength="300" data-field="${quoteField}PriceSource" value="${escape(s[`${quoteField}PriceSource`])}"></label>` +
-        '<span class="setting-hint">Use the monthly price for your selected plan and billing unit. Add a source before including this option. Enter 0 only when that source confirms no incremental charge.</span>' : "";
+        `<label class="zero-price-confirmation"><input type="checkbox" data-field="${quoteField}ZeroCostConfirmed"${s[`${quoteField}ZeroCostConfirmed`] ? " checked" : ""}${monthlyRate > 0 ? " disabled" : ""}>I confirm this source covers the selected scope with no incremental charge.</label>` +
+        '<span class="setting-hint">Add a source and a positive monthly unit price before including this option. For a covered zero-cost option, enter 0 and explicitly confirm no incremental charge. Set quantity to 0 before revising an included quote to an unconfirmed zero price.</span>' : "";
       const optional = field ? window.architecture.defaults[field] === 0 : count === 0;
       const entry = {
         ...metadata,
         tag: metadata.tag || (optional ? "Optional / default: 0" : "Isolated reference"),
         optional, included: count > 0,
         setting: `<span class="setting-static">${metadata.sku || "Architecture inventory"}</span>` + settings + quoteControls,
-        quantity: field ? input(field, `${unit} (0 = not included)`, 0, 100, 1, !!quoteField && !source) : `${number(count)} ${unit}`,
+        quantity: field ? input(field, `${unit} (0 = not included)`, 0, 100, 1, !!quoteField && !quoteReady) : `${number(count)} ${unit}`,
         detail: `${detail} Quantities describe a fresh isolated standalone estimate without resource reuse. They do not discover, deploy or delete Azure resources.`,
         lines: []
       };
       if (quoteField) {
         const quantity = field ? count : s[quoteField];
-        if (quantity > 0 && !source) {
-          rows.push({ ...entry, amount: null, issue: `Enter the price source and billing scope for ${entry.name}.`, quoteRequired: true });
-        } else if (source) {
+        if (quantity > 0 && !quoteReady) {
+          rows.push({ ...entry, amount: null, issue: `Enter a source and positive monthly unit price for ${entry.name}, or explicitly confirm no incremental charge.`, quoteRequired: true });
+        } else if (quoteReady) {
           const meter = { retailPrice: monthlyRate, meterName: "Your plan's monthly unit price", unitOfMeasure: "unit-month",
             productName: entry.name, skuName: metadata.sku, armRegionName: s.region, currencyCode: "USD",
             type: "OperatorEstimate", tierMinimumUnits: 0 };
-          rows.push({ ...entry, operatorEstimate: true, estimateSource: source,
+          rows.push({ ...entry, operatorEstimate: true, estimateSource: source, zeroCostConfirmed,
             lines: [{ meter, quantity, description: field ? `${unit} x monthly unit price` : "Monthly flow-log units",
               kind: "usage", amount: monthlyRate * quantity, operatorEstimate: true }], amount: monthlyRate * quantity });
         } else {
@@ -480,7 +487,8 @@ window.architecture = {
       id: "network-watcher", group: "observability", name: "Network Watcher",
       sku: "Optional diagnostic usage", unit: "regional service",
       description: "Network diagnostics shown in the architecture, with separately metered features.",
-      settings: input("networkWatcherGB", "Optional flow-log GB / month", 0, 1000000),
+      settings: input("networkWatcherGB", "Optional flow-log GB / month", 0, 1000000, 1,
+        !window.architecture.quoteReady(s, "networkWatcherGB")),
       sizing: "<strong>Enable diagnostics intentionally and size retained flow data.</strong> A regional watcher is not a flat paid observability package.",
       detail: "No flow-log volume is assumed initially. Enter the monthly price per billed GB and a source identifying the selected diagnostic feature, processing, storage and retention scope before adding volume. Registration/base presence does not include unlimited free diagnostics.",
       billingNote: s.networkWatcherGB === 0 ? "No separately metered diagnostic usage selected." : undefined,
