@@ -31,12 +31,19 @@ Reference architectures and deployable Azure foundations for your AI application
 <span class="home-anchor" id="architecture"></span>
 <h3 id="agent-landing-zone">Agent Landing Zone</h3>
 <p>An Azure foundation for AI applications and agents, with a default application built on Microsoft Foundry.</p>
-<p markdown="span">[Read the Agent guide :octicons-arrow-right-24:](agent-landing-zone/index.md){ .text-link }</p>
+<div class="path-links" markdown="span">
+[Documentation](agent-landing-zone/index.md){ .text-link }
+[GitHub repository](https://github.com/Azure/agent-landing-zone){ .text-link }
+</div>
 </div>
 <div class="path" markdown="1">
 <h3 id="ai-gateway-landing-zone">AI Gateway Landing Zone</h3>
 <p>Shared model access for AI applications and agents, using Azure API Management.</p>
-<a class="text-link" href="#gateway-implementation">Explore gateway implementations <svg aria-hidden="true"><use href="#home-arrow"/></svg></a>
+<div class="path-links" markdown="span">
+[Documentation](ai-gateway-landing-zone/index.md){ .text-link }
+[GitHub (Bicep)](https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator){ .text-link }
+[GitHub (Terraform)](https://github.com/Azure/terraform-ai-gateway-landing-zone){ .text-link }
+</div>
 </div>
 </div>
 

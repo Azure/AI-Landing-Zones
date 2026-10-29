@@ -50,7 +50,22 @@ def run(base, screenshots):
         assert not page.locator(".alz-home a[href$='.md']").count()
         assert page.locator(".alz-home img").count() == 7
         assert page.locator(".implementation-table tbody a").count() == 8
-        assert page.locator(".paths .text-link").count() == 2
+        card_links = (
+            (
+                ("Documentation", "agent-landing-zone/"),
+                ("GitHub repository", "https://github.com/Azure/agent-landing-zone"),
+            ),
+            (
+                ("Documentation", "ai-gateway-landing-zone/"),
+                ("GitHub (Bicep)", "https://github.com/Azure-Samples/ai-hub-gateway-solution-accelerator"),
+                ("GitHub (Terraform)", "https://github.com/Azure/terraform-ai-gateway-landing-zone"),
+            ),
+        )
+        for index, links in enumerate(card_links):
+            card = page.locator(".paths .path").nth(index)
+            expect(card.locator(".text-link")).to_have_count(len(links))
+            for label, href in links:
+                expect(card.get_by_role("link", name=label, exact=True)).to_have_attribute("href", href)
         assert page.locator(".resources a").count() == 3
         assert page.locator(".resources strong").count() == 3
         assert ":octicons-" not in page.locator(".alz-home").inner_text()
@@ -63,6 +78,15 @@ def run(base, screenshots):
             assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), width
             assert page.locator(".md-sidebar--secondary").is_hidden()
             assert page.locator(".home-mobile-contents").count() == 0
+            for index, links in enumerate(card_links):
+                card = page.locator(".paths .path").nth(index)
+                bounds = card.bounding_box()
+                for label, _ in links:
+                    link = card.get_by_role("link", name=label, exact=True)
+                    expect(link).to_be_visible()
+                    link_bounds = link.bounding_box()
+                    assert link_bounds["x"] >= bounds["x"] - 1, (width, label)
+                    assert link_bounds["x"] + link_bounds["width"] <= bounds["x"] + bounds["width"] + 1, (width, label)
             for name in ("standalone", "hub", "gateway"):
                 page.locator(f"#tab-{name}").click()
                 expect(page.locator(f"#architecture-{name}")).to_be_visible()
