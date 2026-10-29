@@ -103,7 +103,7 @@ flags can exclude subnets from template management. See the
 The new VNet's default address space is `192.168.0.0/21`. Names and ranges
 can be overridden using the [subnet inputs](configuration.md#subnet-creation-and-addressing).
 
-<div class="subnet-address-plan">
+<div class="subnet-address-plan responsive-reference">
 <table role="table">
 <thead role="rowgroup">
 <tr role="row">

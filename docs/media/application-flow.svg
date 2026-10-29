@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="688" height="448" viewBox="0 0 688 448" role="img" aria-labelledby="application-flow-title application-flow-description">
+  <title id="application-flow-title">Application request dependencies</title>
+  <desc id="application-flow-description">User and Agent App UI exchange messages. The UI communicates bidirectionally with the hosted orchestrator through delegated Foundry invocation. The orchestrator exchanges requests and responses separately with the model deployment and the Foundry IQ knowledge base. A dashed one-way path from the orchestrator to Foundry tools / Toolbox represents a custom authenticated integration, not automatic consumption of portal-added tools.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#5d6eaa"/>
+    </marker>
+  </defs>
+  <rect width="688" height="448" fill="#fff"/>
+  <g fill="none" stroke="#5d6eaa" stroke-width="1.5" stroke-linejoin="round">
+    <path id="user-ui" d="M 96 60 H 146" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <path id="ui-orchestrator" d="M 282 60 H 456" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <path id="orchestrator-model" d="M 514 96 V 152 H 228 V 220" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <path id="orchestrator-knowledge-base" d="M 610 96 V 184 H 532 V 220" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <path id="orchestrator-tools" d="M 672 60 H 682 V 326 H 400 V 360" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+  </g>
+  <g fill="#f0f3ff" stroke="#5d6eaa" stroke-width="1.5">
+    <rect x="16" y="24" width="80" height="72" rx="4"/>
+    <rect x="146" y="24" width="136" height="72" rx="4"/>
+    <rect x="456" y="24" width="216" height="72" rx="4"/>
+    <rect x="128" y="220" width="200" height="64" rx="4"/>
+    <rect x="392" y="220" width="280" height="64" rx="4"/>
+    <rect x="128" y="360" width="544" height="64" rx="4"/>
+  </g>
+  <g fill="#27334b" font-family="Roboto, Arial, sans-serif" font-size="18" text-anchor="middle">
+    <text x="56" y="66">User</text>
+    <text x="214" y="66">Agent App UI</text>
+    <text x="564" y="66">Hosted orchestrator</text>
+    <text x="228" y="258">Model deployment</text>
+    <text x="532" y="258">Foundry IQ knowledge base</text>
+    <text x="400" y="398">Foundry tools / Toolbox</text>
+  </g>
+  <g fill="#27334b" font-family="Roboto, Arial, sans-serif" font-size="14" text-anchor="middle">
+    <text x="369" y="40">Delegated Foundry</text>
+    <text x="369" y="84">invocation</text>
+    <text x="534" y="314">Custom authenticated integration</text>
+  </g>
+</svg>

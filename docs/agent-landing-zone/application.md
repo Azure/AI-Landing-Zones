@@ -96,14 +96,26 @@ These are the service integration path for additional operations. The supplied
 An authenticated Toolbox integration requires application development.
 [Agent tools](agent-tools.md) describes that contract.
 
-```mermaid
-flowchart LR
-    User <--> UI["Agent App UI"]
-    UI <-->|Delegated Foundry invocation| Agent["Hosted orchestrator"]
-    Agent <--> Model["Model deployment"]
-    Agent <--> KB["Foundry IQ knowledge base"]
-    Agent -.->|Custom authenticated integration| Tools["Foundry tools / Toolbox"]
-```
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+1. **User and Agent App UI** exchange messages.
+2. **Agent App UI and hosted orchestrator** communicate through delegated
+   Foundry invocation.
+3. **The hosted orchestrator** exchanges requests and responses with the
+   model deployment and the Foundry IQ knowledge base as separate dependencies.
+4. **Foundry tools / Toolbox** require a custom authenticated integration
+   from the hosted orchestrator; the supplied application does not consume
+   portal-added tools automatically.
+
+</div>
+
+[![Application request dependencies: User, Agent App UI, hosted orchestrator, model deployment, Foundry IQ knowledge base and custom tool integration.](../media/application-flow.svg)](../media/application-flow.svg){: .runbook-diagram__image aria-label="Open full-size application request diagram"}
+
+[Open full-size diagram](../media/application-flow.svg){: .runbook-diagram__open}
+
+</div>
 
 The flow shows request dependencies, not proof of document authorization.
 The built-in native retrieval path separately exchanges and forwards a
