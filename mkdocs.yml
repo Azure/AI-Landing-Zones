@@ -35,6 +35,8 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
 nav:
   - Home: index.md
   - Agent Landing Zone:
@@ -80,6 +82,87 @@ nav:
       - "Terraform templates": agent-landing-zone/terraform.md
       - "Deploy via portal": agent-landing-zone/portal.md
       - "Troubleshooting": agent-landing-zone/troubleshooting.md
+  - AI Gateway Landing Zone:
+      - "Overview": ai-gateway-landing-zone/index.md
+      - "What's new": ai-gateway-landing-zone/whats-new.md
+      - "Benefits": ai-gateway-landing-zone/plan/governance-hub-benefits.md
+      - Citadel Blueprint:
+          - "Overview": ai-gateway-landing-zone/blueprint/index.md
+          - "Layer 1 · Governance Hub": ai-gateway-landing-zone/blueprint/layer-1-governance-hub.md
+          - "Layer 2 · Agent Operations": ai-gateway-landing-zone/blueprint/layer-2-agent-operations.md
+          - "Layer 3 · Agent Management": ai-gateway-landing-zone/blueprint/layer-3-agent-management.md
+          - "Layer 4 · Security Foundation": ai-gateway-landing-zone/blueprint/layer-4-security-foundation.md
+          - "Organizational alignment & ownership": ai-gateway-landing-zone/blueprint/organizational-alignment.md
+          - "Technical activation paths": ai-gateway-landing-zone/blueprint/activation-paths.md
+          - Original platform guides:
+              - "Technical guide": ai-gateway-landing-zone/blueprint/platform-technical-guide.md
+              - "Well-Architected alignment": ai-gateway-landing-zone/blueprint/platform-waf-alignment.md
+      - Plan:
+          - Infrastructure:
+              - "Parameters (Bicep)": ai-gateway-landing-zone/deploy/bicep-parameter-files.md
+              - "Network approach": ai-gateway-landing-zone/plan/network-approach.md
+          - Capacity planning:
+              - "Citadel sizing guide": ai-gateway-landing-zone/plan/sizing-guide.md
+              - "PTU estimation guide": ai-gateway-landing-zone/plan/ptu-estimation.md
+              - "AI Search cost estimation logic": ai-gateway-landing-zone/observability/ai-search-cost-estimation.md
+          - "Resilience & business continuity":
+              - "Resiliency guide": ai-gateway-landing-zone/resiliency/resiliency.md
+              - "Business continuity & DR guide": ai-gateway-landing-zone/resiliency/business-continuity-dr.md
+              - "Throttling events handling": ai-gateway-landing-zone/observability/throttling-events.md
+              - "App Insights alerting": ai-gateway-landing-zone/observability/app-insights-alerting.md
+              - "Cosmos global multi-master sync": ai-gateway-landing-zone/operate/cosmos-multi-region-sync.md
+      - Deploy:
+          - Bicep:
+              - "Quick deployment guide": ai-gateway-landing-zone/deploy/bicep-quick-deployment.md
+              - "Full deployment guide": ai-gateway-landing-zone/deploy/bicep-full-deployment.md
+              - Post deployment:
+                  - "Post-deployment guide": ai-gateway-landing-zone/operate/post-deployment.md
+                  - "Validation notebook setup guide": ai-gateway-landing-zone/validation/notebook-setup.md
+                  - "Validation notebooks": ai-gateway-landing-zone/validation/notebooks-bicep.md
+                  - "Notebook snippets": ai-gateway-landing-zone/validation/notebook-snippets.md
+                  - "Developer VPN": ai-gateway-landing-zone/operate/developer-vpn.md
+          - Terraform:
+              - "Overview": ai-gateway-landing-zone/deploy/terraform.md
+              - "Quick start": ai-gateway-landing-zone/deploy/terraform-quick-start.md
+              - "Variables guide": ai-gateway-landing-zone/deploy/terraform-variables.md
+              - "Full deployment guide": ai-gateway-landing-zone/deploy/terraform-deployment-guide.md
+              - "APIM policy architecture": ai-gateway-landing-zone/deploy/terraform-policy-architecture.md
+              - Post deployment:
+                  - "Validation notebooks": ai-gateway-landing-zone/validation/notebooks-terraform.md
+      - Operate:
+          - Observe:
+              - "Platform observability guide": ai-gateway-landing-zone/observability/platform-observability.md
+              - "Power BI dashboard": ai-gateway-landing-zone/observability/power-bi-dashboard.md
+          - Backend contracts:
+              - Bicep:
+                  - "LLM backend onboarding": ai-gateway-landing-zone/contracts/backend-contracts-bicep.md
+                  - "Unified AI API type onboarding": ai-gateway-landing-zone/apis/unified-ai-api-onboarding.md
+                  - "Bicep module reference": ai-gateway-landing-zone/contracts/backend-bicep-modules.md
+              - Terraform:
+                  - "LLM backend onboarding": ai-gateway-landing-zone/contracts/backend-contracts-terraform.md
+          - Access contracts:
+              - "Overview": ai-gateway-landing-zone/contracts/access-contracts-bicep.md
+              - "Reference guide": ai-gateway-landing-zone/contracts/access-contracts-quick-reference.md
+              - "Access contract policies": ai-gateway-landing-zone/contracts/access-contracts-policies.md
+              - "Resiliency guide": ai-gateway-landing-zone/contracts/access-contracts-resiliency.md
+              - "LLM access guide": ai-gateway-landing-zone/apis/llm-access.md
+              - "OpenAI-compatible API guide": ai-gateway-landing-zone/apis/openai-compatible-api.md
+              - "Key rotation guide": ai-gateway-landing-zone/contracts/access-contracts-key-rotation.md
+              - "Entra ID setup": ai-gateway-landing-zone/security/entra-id-setup.md
+              - "Entra ID auth validation": ai-gateway-landing-zone/security/entra-id-authentication.md
+              - "JWT client identity permissions": ai-gateway-landing-zone/security/jwt-client-identity.md
+              - "PII anonymization & deanonymization": ai-gateway-landing-zone/security/pii-masking.md
+              - "Agent Governance Toolkit": ai-gateway-landing-zone/security/agent-governance-toolkit.md
+              - Terraform:
+                  - "Operate access contracts": ai-gateway-landing-zone/contracts/access-contracts-terraform.md
+          - Publish contracts (preview):
+              - "Overview": ai-gateway-landing-zone/contracts/publish-contracts.md
+              - "Publish contract guide": ai-gateway-landing-zone/contracts/publish-contract-guide.md
+          - Gateway upgrade:
+              - "APIM gateway upgrade (preview)": ai-gateway-landing-zone/operate/gateway-upgrade.md
+              - "Gateway ecosystem upgrade guide": ai-gateway-landing-zone/operate/gateway-ecosystem-upgrade.md
+              - "Release version management": ai-gateway-landing-zone/operate/release-version-management.md
+          - "Foundry integration": ai-gateway-landing-zone/operate/foundry-integration.md
   - What's New: whatisnew.md
   - FAQ: architecture/faq.md
 
