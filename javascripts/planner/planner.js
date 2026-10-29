@@ -390,14 +390,22 @@
     return money(totals(rows).total) + suffix;
   }
 
-  function rowHTML(row) {
+  function rowHTML(row, expanded) {
+    const optionField = { appgateway: "appGateway", apim: "apimUnits", "application-cosmos": "applicationCosmos" }[row.id];
+    let preview = "";
+    if (optionField && state[optionField] === 0) {
+      const withOption = resources({ ...state, [optionField]: 1 });
+      if (withOption.every(resource => resource.amount !== null)) {
+        preview = `<p class="option-preview">One unit adds <strong>${money(totals(withOption).total - latest.sum.total)}/month</strong>, including linked resources. Change the quantity to include it.</p>`;
+      }
+    }
     const price = row.disabled ? '<span class="excluded">Not allocated</span>' :
       row.quoteRequired ? '<span class="setting-hint">Enter the monthly unit price for your plan.</span>' :
       row.issue ? '<span class="unpriced">Price to confirm</span>' :
       row.billingNote ? `<span class="setting-hint">${escape(row.billingNote)}</span>` :
       row.lines.map(line => `<span class="price-unit">${rate(line.meter.retailPrice)}<small>${escape(line.meter.meterName)}<br>/ ${escape(line.meter.unitOfMeasure)}</small></span>`).join("");
     const total = row.disabled ? '<span class="excluded">Not included</span>' :
-      row.amount === null ? '<span class="unpriced">Not included in subtotal</span>' : `<span class="money">${money(row.amount)}</span>${row.optional && !row.included ? '<span class="setting-hint">Not included / quantity 0</span>' : ""}`;
+      row.amount === null ? '<span class="unpriced">Not included in subtotal</span>' : `<span class="money">${money(row.amount)}</span>`;
     const meters = row.lines.map(line => {
       const meter = line.meter;
       if (line.operatorEstimate) return `<div class="meter"><strong>Operator estimate, not a public meter</strong><br>${number(line.quantity)} ${escape(line.description)} x ${rate(meter.retailPrice)} = ${money(line.amount)}<br>Source/date: ${escape(row.estimateSource)}<br>Applies to ${escape(state.region)}, selected model/runtime and workload assumptions. Not an independently verified quote.</div>`;
@@ -405,27 +413,26 @@
       const url = "https://prices.azure.com/api/retail/prices?$filter=" + encodeURIComponent(`meterId eq '${meter.meterId}' and armRegionName eq '${meter.armRegionName}' and priceType eq 'Consumption'`);
       return `<div class="meter"><strong>${escape(meter.meterName)}</strong><br>${number(line.quantity)} ${escape(line.description)} x ${rate(meter.retailPrice)} = ${money(line.amount)}<br>Product: ${escape(meter.productName)} | SKU: ${escape(meter.skuName)}<br>Meter: <code>${escape(meter.meterId)}</code> | Effective: ${escape(meter.effectiveStartDate)} | Captured: ${escape(meterCapturedAt(meter))} | Region: ${escape(meter.armRegionName || "Global commercial rate")} | Tier starts: ${number(meter.tierMinimumUnits)}<br><a href="${escape(url)}" target="_blank" rel="noopener">Inspect source meter query &#8599;</a></div>`;
     }).join("");
-    const inclusion = row.optional ? row.included ? "Optional / included" : "Optional / quantity 0" : "Reference resource";
+    const inclusion = row.optional ? row.included ? "Optional, included" : "Optional, quantity 0" :
+      row.billingNote ? "Configuration / shared billing" : row.sku || "Included in the starting architecture";
     const pricing = row.quoteRequired ? "Your plan's price" : row.amount === null ? "Price to confirm" : row.operatorEstimate ? "Operator estimate" :
       row.billingNote ? "Shared / configuration" : "Public rates";
-    return `<tbody id="entry-${row.id}" data-resource="${row.id}"><tr>
-      <td><span class="resource-name">${row.name}</span><div class="resource-description">${row.description}</div><span class="row-tag${row.optional ? " optional" : ""}">${inclusion}</span><span class="row-tag pricing-tag">${pricing}</span>${rowChanged(row) ? '<span class="row-tag">Changed vs. reference</span>' : ""}</td>
-      <td data-label="Capacity / setting">${row.setting}</td>
-      <td data-label="Sizing / when to change"><div class="sizing-text">${row.sizing}</div>${row.sizingURL || row.sourceURL ? `<a class="sizing-source" href="${escape(row.sizingURL || row.sourceURL)}" target="_blank" rel="noopener">Product guidance &#8599;</a>` : ""}<span class="sizing-alert">${row.signal || ""}</span></td>
-      <td data-label="Unit price">${price}</td>
-      <td data-label="Quantity / usage">${row.quantity}</td>
-      <td data-label="Monthly estimate" data-row-total="${row.id}">${total}</td>
-    </tr><tr class="row-details"><td colspan="6"><details id="detail-${row.id}"><summary>Sizing details, assumptions &amp; source</summary><div class="detail-content">
+    return `<details class="resource" id="entry-${row.id}" data-resource="${row.id}"${expanded.has(`entry-${row.id}`) ? " open" : ""}>
+      <summary><span class="resource-identity"><span class="resource-name">${escape(row.name)}</span><small>${escape(inclusion)}${rowChanged(row) ? " / modified" : ""}</small></span><span class="resource-cost" data-row-total="${row.id}">${total}<small>/ month</small></span><span class="disclosure" aria-hidden="true">+</span></summary>
+      <div class="resource-body"><p class="resource-description">${escape(row.description)}</p>
+      <div class="resource-inputs"><div><h4>Configuration</h4>${row.setting}</div><div><h4>Quantity &amp; usage</h4>${preview}${row.quantity}</div></div>
+      <div class="sizing-text"><h4>Sizing guidance</h4>${row.sizing}</div>${row.sizingURL || row.sourceURL ? `<a class="sizing-source" href="${escape(row.sizingURL || row.sourceURL)}" target="_blank" rel="noopener">Product guidance &#8599;</a>` : ""}<span class="sizing-alert">${row.signal || ""}</span>
+      <details class="resource-sources" id="detail-${row.id}"${expanded.has(`detail-${row.id}`) ? " open" : ""}><summary>Price calculation, assumptions &amp; sources</summary><div class="detail-content">
+      <p class="fine">${escape(pricing)}</p>${price}
       <p>${row.detail}</p><p><strong>Configuration source:</strong> <code>${escape(row.parameter)}</code></p>
       ${row.sourceURL ? `<p><a href="${escape(row.sourceURL)}" target="_blank" rel="noopener">${escape(row.sourceLabel)} &#8599;</a></p>` : ""}
       ${row.issue ? `<p class="unpriced">${escape(row.issue)} ${row.optional && !row.included ? "Not included at quantity 0. A regional price is needed before adding it to the estimate." : "Excluded from the sample subtotal, not assumed free."}</p>` : ""}
       ${meters}
-    </div></details></td></tr></tbody>`;
+    </div></details></div></details>`;
   }
 
   function render() {
     const open = new Set([...document.querySelectorAll("#capabilities details[open]")].map(element => element.id));
-    const first = byId("capabilities").children.length === 0;
     const rows = resources();
     referenceState = referenceFor(state.region);
     referenceRows = resources(referenceState);
@@ -435,8 +442,8 @@
     byId("capabilities").innerHTML = groups.map(([id, name]) => {
       const items = rows.filter(row => row.group === id);
       const pendingNames = items.filter(row => row.amount === null).map(row => row.name);
-      return `<details class="capability" id="${id}"${first || open.has(id) ? " open" : ""}><summary><span class="chevron" aria-hidden="true">&#8964;</span><h3>${name}</h3><span class="group-count">${items.length} ${items.length === 1 ? "resource" : "resources"}</span><span class="group-total">${escape(groupSummary(items))}${pendingNames.length ? `<small class="group-pending">Not included: ${escape(pendingNames.join(", "))}</small>` : ""}</span></summary>
-      <table class="resource-table" aria-label="${name} resources"><thead><tr><th>Resource / purpose</th><th>Capacity / setting</th><th>Sizing / when to change</th><th>Unit price</th><th>Quantity / usage</th><th>Monthly</th></tr></thead>${items.map(rowHTML).join("")}</table></details>`;
+      return `<details class="capability" id="${id}"${open.has(id) ? " open" : ""}><summary><h3>${name}</h3><span class="group-count">${items.length} resources</span><span class="group-total">${escape(groupSummary(items))}${pendingNames.length ? `<small class="group-pending">Not included: ${escape(pendingNames.join(", "))}</small>` : ""}</span><span class="disclosure" aria-hidden="true">+</span></summary>
+      <div class="capability-resources">${items.map(row => rowHTML(row, open)).join("")}</div></details>`;
     }).join("");
     for (const id of open) {
       const element = byId(id);
@@ -456,12 +463,10 @@
       const delta = totals(selected).total - totals(baseline).total;
       return `<div><dt>${name}</dt><dd>${escape(groupSummary(selected))}<small>Reference ${escape(groupSummary(baseline))} / delta ${escape(signedMoney(delta))}</small></dd></div>`;
     }).join("");
-    const missing = rows.filter(row => row.amount === null).length;
     const count = rows.filter(row => row.lines.length > 0 && !row.operatorEstimate).length;
     byId("coverage-count").textContent = `${count} resources have publicly sourced prices, including optional resources at quantity 0. ${rows.filter(r => r.operatorEstimate).length} use sourced plan estimates. All included costs have a price. See the scope for additional usage assumptions.`;
-    const configFields = ["model", "searchSku", "searchReplicas", "searchPartitions", "backingReplicas", "backingPartitions", "storageTier", "profile", "nodes", "appconfig", "firewall", "appGateway", "gatewayCU", "apimUnits", "apimSku", ...Object.keys(window.architecture.defaults)];
-    byId("configuration-status").textContent = configFields.some(field => state[field] !== defaults[field]) ?
-      "What-if configuration" : "Isolated reference settings";
+    byId("configuration-status").textContent = window.scenarios.changes(state, referenceState).length ?
+      "Edited scenario" : "Starting configuration";
     renderDecisions();
     filterResources();
     byId("input-error").hidden = true;
@@ -488,10 +493,37 @@
       ((state.modelInputRate === 0 && state.modelOutputRate === 0) || (state.modelInputRate > 0 && state.modelOutputRate > 0)));
     byId("quote-status").textContent = "Estimates need a source/date note. Model pricing needs both positive input and output rates. Incomplete estimates are not applied, and missing prices are not assumed free.";
     byId("live-total").textContent = money(sum.total);
-    byId("live-scope").textContent = "Allocated resources + your usage assumptions";
-    byId("live-delta").textContent = signedMoney(delta);
-    byId("live-sizing").textContent = `${assessment.status} / ${assessment.unknown} checks to refine`;
+    byId("live-scope").textContent = "Selected resources and entered usage";
+    const costChanges = rows.map(row => ({ row, delta: row.amount - referenceRows.find(r => r.id === row.id).amount }))
+      .filter(change => Math.abs(change.delta) > .000001).sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+    byId("cost-change-summary").hidden = costChanges.length === 0;
+    byId("cost-change-link").hidden = costChanges.length === 0;
+    byId("starting-point-note").hidden = costChanges.length > 0;
+    byId("live-delta").textContent = Math.abs(delta) > .000001 ?
+      `${money(Math.abs(delta))}/month ${delta > 0 ? "more" : "less"} than the starting point (${money(baseSum.total)}).` :
+      `The total is unchanged from the starting point (${money(baseSum.total)}).`;
+    const shown = costChanges.slice(0, 4);
+    byId("cost-change-items").innerHTML = shown.map(({ row, delta: change }) =>
+      `<li data-cost-delta="${change}"><a href="#entry-${row.id}" data-jump="${row.id}">${escape(row.name)}</a><strong>${escape(signedMoney(change))}</strong></li>`).join("");
+    if (costChanges.length > shown.length) {
+      const remainder = costChanges.slice(shown.length);
+      byId("cost-change-items").insertAdjacentHTML("beforeend", `<li data-cost-delta="${remainder.reduce((sum, item) => sum + item.delta, 0)}"><a href="#estimate">Other ${remainder.length} resource changes</a><strong>${escape(signedMoney(remainder.reduce((sum, item) => sum + item.delta, 0)))}</strong></li>`);
+    }
+    const drivers = rows.filter(row => row.amount > 0).sort((a, b) => b.amount - a.amount);
+    const leaders = drivers.slice(0, 6);
+    byId("cost-driver-note").textContent = `${number(sum.total ? sum.fixed / sum.total * 100 : 0)}% of this estimate is allocated capacity. Running hours and throughput are editable billing assumptions, not measured consumption.`;
+    byId("cost-driver-items").innerHTML = leaders.map(row => {
+      const assumption = row.id === "acr-build-pool" ? `${number(state.buildHours)} allocated hours, including idle` :
+        row.id === "backing-cosmos" ? `${number(state.backingCosmosRU)} RU/s billing hypothesis, not discovered throughput` : "";
+      return `<li data-driver-amount="${row.amount}"><span><a href="#entry-${row.id}" data-jump="${row.id}">${escape(row.name)}</a>${assumption ? `<small>${escape(assumption)}</small>` : ""}</span><strong>${money(row.amount)}</strong></li>`;
+    }).join("");
+    const otherCosts = drivers.slice(leaders.length).reduce((sum, row) => sum + row.amount, 0);
+    if (otherCosts > 0) byId("cost-driver-items").insertAdjacentHTML("beforeend",
+      `<li data-driver-amount="${otherCosts}"><a href="#estimate">Other resources</a><strong>${money(otherCosts)}</strong></li>`);
+    byId("live-sizing").textContent = assessment.actions ? `${assessment.actions} checks need attention` : "Quotas, capacity and availability";
     byId("live-sizing").classList.toggle("needs-attention", assessment.actions > 0);
+    byId("sizing-alert").hidden = assessment.actions === 0;
+    byId("sizing-alert").innerHTML = `${assessment.actions} capacity checks need attention. <a href="#decision">Review sizing</a>`;
     byId("demand-metrics").innerHTML = [
       ["Peak turns / minute", assessment.turnsPerMinute],
       ["Model calls / minute", assessment.rpm], ["Planning tokens / minute", assessment.tpm],
@@ -499,8 +531,8 @@
     ].map(([label, value]) => `<div><span>${label}</span><strong>${number(value)}</strong></div>`).join("");
     byId("assessment-verdict").innerHTML = `<strong>${escape(assessment.status)}</strong><span>${escape(assessment.explanation)}</span>`;
     byId("assessment-verdict").classList.toggle("needs-attention", assessment.actions > 0);
-    byId("assessment-summary").textContent = `${assessment.actions} action(s), ${assessment.unknown} evidence gap(s) / review all ${assessment.findings.length} checks`;
-    const statusLabels = { action: "Action needed", unknown: "Evidence missing", checked: "Documented check", evidence: "Operator evidence" };
+    byId("assessment-summary").textContent = `${assessment.findings.length} checks / ${assessment.unknown} inputs to confirm${assessment.actions ? ` / ${assessment.actions} actions` : ""}`;
+    const statusLabels = { action: "Action needed", unknown: "To confirm", checked: "Documented check", evidence: "Operator evidence" };
     byId("assessment-findings").innerHTML = assessment.findings.map(f =>
       `<article class="finding ${f.status}"><div><strong>${escape(f.title)}</strong><span class="row-tag">${statusLabels[f.status]}</span></div><p>${escape(f.detail)}</p><a href="${escape(f.source)}" target="_blank" rel="noopener">Product constraints &#8599;</a></article>`).join("");
     byId("reference-price").textContent = money(baseSum.total);
@@ -508,10 +540,11 @@
       const b = referenceRows.find(v => v.id === r.id);
       return (r.amount === null) !== (b.amount === null) || !!r.operatorEstimate !== !!b.operatorEstimate;
     });
-    byId("comparison-note").textContent = `${signedMoney(delta)} monthly difference. ` +
-      (coverageDiffers ? "Price sources differ: compare their scope before treating this as a saving." : "Compared using the same-region price catalog.") +
-      " Reference workload and usage assumptions are reset, not copied from your scenario.";
+    byId("comparison-note").textContent = `${signedMoney(delta)}/month compared with the starting point. This difference is already included in the selected scenario total. ` +
+      (coverageDiffers ? "Price sources differ, so review their scope." : "Both scenarios use this region's price catalog.") +
+      " The starting point keeps its original workload and usage assumptions.";
     byId("cost-composition").textContent = `${money(sum.public)} public rates + ${money(sum.operator)} your plan estimates.`;
+    byId("cost-composition").hidden = sum.operator === 0;
     byId("pending-title").textContent = pending.length ? `${pending.length} active costs still outside this subtotal` : "No active row missing a price; excluded usage still applies";
     byId("pending-prices").innerHTML = pending.map(r => `<li><a href="#entry-${r.id}" data-jump="${r.id}">${escape(r.name)}</a><span>${escape(r.issue || "Exact billing not confirmed.")}</span></li>`).join("");
     byId("pending-prices").closest(".pending-prices").hidden = pending.length === 0;
@@ -537,10 +570,12 @@
     }
     for (const [id] of groups) {
       const group = byId(id);
-      group.hidden = ![...group.querySelectorAll("tbody[data-resource]")].some(row => !row.hidden);
+      group.hidden = ![...group.querySelectorAll("[data-resource]")].some(row => !row.hidden);
       if ((query || mode !== "all") && !group.hidden) group.open = true;
     }
-    byId("resource-count").textContent = `${visible} of ${latest.rows.length} resources shown. Filters do not change the estimate.`;
+    byId("resource-count").textContent = query || mode !== "all" ?
+      `${visible} of ${latest.rows.length} resources shown. Filters do not change the estimate.` :
+      `${latest.rows.length} resources across ${groups.length} capabilities`;
     byId("no-resources").hidden = visible !== 0;
   }
 
@@ -569,7 +604,7 @@
     const url = new URL(location.href);
     url.search = "";
     url.searchParams.set("scenario", JSON.stringify(window.scenarios.pack(state, defaults)));
-    url.hash = "decision";
+    url.hash = "main";
     return url;
   }
 
@@ -670,6 +705,17 @@
     }
   }
 
+  function revealTarget(id) {
+    const target = byId(id);
+    if (!target) return;
+    if (target.matches("details")) target.open = true;
+    let parent = target.parentElement.closest("details");
+    while (parent && root.contains(parent)) {
+      parent.open = true;
+      parent = parent.parentElement.closest("details");
+    }
+  }
+
   function installScenarioActions() {
     byId("resource-search").addEventListener("input", filterResources);
     byId("resource-filter").addEventListener("change", filterResources);
@@ -682,9 +728,12 @@
       const link = event.target.closest("a");
       if (!link) return;
       const group = groups.find(([id]) => link.getAttribute("href") === `#${id}`);
-      if (!link.dataset.jump && !group) return;
-      byId("clear-filters").click();
-      (group ? byId(group[0]) : byId(`entry-${link.dataset.jump}`).closest("details.capability")).open = true;
+      if (link.dataset.jump || group) {
+        byId("clear-filters").click();
+        revealTarget(group ? group[0] : `entry-${link.dataset.jump}`);
+      } else if (link.getAttribute("href")?.startsWith("#")) {
+        revealTarget(link.getAttribute("href").slice(1));
+      }
     });
     byId("save-scenario").addEventListener("click", () => {
       try {
@@ -704,7 +753,7 @@
         const url = new URL(location.href);
         url.search = "";
         url.searchParams.set("scenario", JSON.stringify(window.scenarios.pack(candidate, defaults)));
-        url.hash = "decision";
+        url.hash = "main";
         history.replaceState(null, "", url);
         state = candidate;
         render();
@@ -832,6 +881,7 @@
     render();
     byId("load-status").hidden = true;
     byId("planner").hidden = false;
+    if (location.hash) revealTarget(location.hash.slice(1));
     window.planner = {
       get state() { return { ...state }; },
       get snapshot() { return latest; },
