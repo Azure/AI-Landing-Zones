@@ -61,6 +61,8 @@ def run(base, screenshots):
         for width in (1880, 1440, 1280, 1024, 768, 390, 320):
             page.set_viewport_size({"width": width, "height": 1000})
             assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), width
+            assert page.locator(".md-sidebar--secondary").is_hidden()
+            assert page.locator(".home-mobile-contents").count() == 0
             for name in ("standalone", "hub", "gateway"):
                 page.locator(f"#tab-{name}").click()
                 expect(page.locator(f"#architecture-{name}")).to_be_visible()
@@ -87,9 +89,8 @@ def run(base, screenshots):
         expect(page.locator(".home-project-notes")).to_have_attribute("open", "")
         expect(page.locator("#contributing")).to_be_visible()
         page.goto(base)
-        expect(page.locator(".md-sidebar--secondary")).to_be_visible()
-        assert page.locator(".md-sidebar--secondary .md-nav--secondary > ul > li > a").count() == 5
-        assert page.locator(".home-mobile-contents a").count() == 5
+        expect(page.locator(".md-sidebar--secondary")).to_be_hidden()
+        expect(page.locator(".md-sidebar--primary")).to_be_visible()
         page.locator(".home-button--primary").click()
         page.wait_for_function("location.hash === '#implementations'")
         search = page.locator('input[data-md-component="search-query"]')
@@ -97,15 +98,20 @@ def run(base, screenshots):
         expect(page.locator('[data-md-component="search-result"]')).to_contain_text("SharePoint")
         page.keyboard.press("Escape")
         page.goto(base)
-        for path in ("agent-landing-zone/application/", "agent-landing-zone/sizing-cost-planner/"):
+        for path in ("agent-landing-zone/application/", "agent-landing-zone/deploy-full-stack/",
+                     "agent-landing-zone/sizing-cost-planner/"):
             page.goto(base + path)
             assert not page.locator(".alz-home").count()
             assert not page.locator('link[href*="stylesheets/home.css"]').count()
             assert not page.locator('script[src*="javascripts/home.js"]').count()
+            if not path.endswith("sizing-cost-planner/"):
+                expect(page.locator(".md-sidebar--secondary")).to_be_visible()
         assert not errors, errors
         context = browser.new_context(java_script_enabled=False)
         fallback = context.new_page()
         fallback.goto(base)
+        assert fallback.locator(".md-sidebar--secondary").is_hidden()
+        assert fallback.locator(".home-mobile-contents").count() == 0
         for name in ("standalone", "hub", "gateway"):
             assert fallback.locator(f"#architecture-{name}").is_visible()
         assert fallback.locator(".architecture-workbench .home-tabs").is_hidden()

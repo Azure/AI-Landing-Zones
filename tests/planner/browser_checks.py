@@ -32,6 +32,17 @@ def set_field(page, field, value):
         "(element,value)=>{element.value=String(value);element.dispatchEvent(new Event('change',{bubbles:true}));}", value)
 
 
+def edit_resource_field(page, field, value):
+    control = page.locator(f'[data-field="{field}"]').first
+    control.evaluate("""element=>{
+      for(let node=element.parentElement;node;node=node.parentElement){
+        if(node.tagName==='DETAILS')node.open=true;
+      }
+    }""")
+    control.fill(str(value))
+    control.press("Tab")
+
+
 def run(base, candidate=None):
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
@@ -58,6 +69,9 @@ def run(base, candidate=None):
           assert("Advanced panels start closed",["decision","estimate","coverage"].every(id=>!document.getElementById(id).open));
           assert("No unexplained default delta",document.getElementById("cost-change-summary").hidden);
           assert("All resource editors remain available",document.querySelectorAll("[data-resource]").length===77);
+          assert("Additional app quantities remain editable at zero",
+            ["extraFrontendApps","orchestratorApps","ingestionApps"].every(field=>
+              !document.querySelector('[data-field="'+field+'"]').matches(":disabled")));
           assert("Cost drivers reconcile to the total",Math.abs(
             [...document.querySelectorAll("[data-driver-amount]")].reduce((sum,e)=>sum+Number(e.dataset.driverAmount),0)-
             p.snapshot.sum.total)<1e-8);
@@ -166,6 +180,29 @@ def run(base, candidate=None):
         assert nav.locator("a").evaluate_all(
             "links=>links.filter(a=>new URL(a.href).pathname.endsWith('/sizing-cost-planner/')).length") == 1
         baseline = page.evaluate("planner.snapshot.sum.total")
+        for field, resource in [
+            ("extraFrontendApps", "extra-frontends"), ("orchestratorApps", "orchestrator-app"),
+            ("ingestionApps", "ingestion-app")]:
+            for quantity in (1, 2, 0):
+                edit_resource_field(page, field, quantity)
+                assert page.evaluate(f"planner.state.{field}") == quantity
+                assert page.locator(f'[data-field="{field}"]').is_enabled()
+                assert page.evaluate(f"planner.snapshot.rows.find(r=>r.id==='{resource}').included") == bool(quantity)
+                assert page.evaluate("""() => Math.abs(planner.snapshot.sum.total-
+                  planner.snapshot.rows.flatMap(r=>r.lines).reduce((sum,line)=>sum+line.amount,0))<1e-8""")
+            for parent in ("containerEnvironments", "frontendDeployments"):
+                edit_resource_field(page, field, 2)
+                edit_resource_field(page, parent, 0)
+                assert page.locator(f'[data-field="{field}"]').is_disabled()
+                assert page.evaluate(f"planner.snapshot.rows.find(r=>r.id==='{resource}').amount") == 0
+                assert page.evaluate(f"planner.snapshot.rows.find(r=>r.id==='{resource}').included") is False
+                edit_resource_field(page, parent, 1)
+                assert page.locator(f'[data-field="{field}"]').is_enabled()
+                assert page.locator(f'[data-field="{field}"]').input_value() == "2"
+                assert page.evaluate(f"planner.snapshot.rows.find(r=>r.id==='{resource}').included") is True
+                edit_resource_field(page, field, 0)
+            assert abs(page.evaluate("planner.snapshot.sum.total") - baseline) < 1e-8
+        page.locator("#capabilities details[open]").evaluate_all("nodes=>nodes.forEach(node=>node.open=false)")
         page.locator("#operations > summary").click()
         page.locator("#entry-acr-build-pool > summary").click()
         assert page.locator('[data-field="buildDeploymentsPerDay"]').input_value() == "1"

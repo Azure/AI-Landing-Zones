@@ -187,4 +187,4 @@ hide:
 <script src="../../javascripts/planner/inventory.js?v=3" defer></script>
 <script src="../../javascripts/planner/guidance.js" defer></script>
 <script src="../../javascripts/planner/scenario.js?v=2" defer></script>
-<script src="../../javascripts/planner/planner.js?v=3" defer></script>
+<script src="../../javascripts/planner/planner.js?v=4" defer></script>

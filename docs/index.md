@@ -1,6 +1,8 @@
 ---
 template: home.html
 description: Azure reference architectures and deployable foundations for AI applications and agents.
+hide:
+  - toc
 ---
 
 <svg class="home-sr-only" aria-hidden="true"><symbol id="home-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="home-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>

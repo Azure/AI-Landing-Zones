@@ -353,6 +353,8 @@
         if (!row.included) {
           row.amount = 0;
           row.lines = row.lines.map(line => ({ ...line, quantity: 0, amount: 0 }));
+        }
+        if (!included[row.id] || (options.length > 0 && !row.included)) {
           row.quantity = `<fieldset disabled><legend>Retained inputs, not allocated in this scenario</legend>${row.quantity}</fieldset>`;
         }
       }
