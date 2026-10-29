@@ -135,10 +135,16 @@
     content: attr(data-label) ": ";
   }
 
-  .md-typeset .responsive-reference table:not([class]) td code {
+  .md-typeset .responsive-reference table:not([class]) :is(th, td) code {
     overflow-wrap: anywhere;
     white-space: normal;
     word-break: normal;
+  }
+
+  .md-typeset .reference-fields td::before {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.15rem;
   }
 
   .md-typeset .design-checklist tbody tr {

@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2109,37 +2109,39 @@ depend on tier, region and service creation date. Private native Blob
 ingestion also requires approved, ready shared private links; extra Search
 capacity does not bypass that gate.</p>
 <h2 id="application-hosting">Application hosting</h2>
-<table>
-<thead>
-<tr>
-<th>Host/resource</th>
-<th>Starting point</th>
-<th>Sizing considerations</th>
+<div class="reference-fields responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">Host/resource</th>
+<th role="columnheader" scope="col">Starting point</th>
+<th role="columnheader" scope="col">Sizing considerations</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>Foundry hosted orchestrator (default)</td>
-<td>The Agent Application's <code>hosted-agent/azure.yaml</code> declares <code>2</code> CPU and <code>4Gi</code> memory.</td>
-<td>Memory peaks, streaming latency and concurrent turns determine demand. <code>HOSTED_AGENT_CONTAINER_CPU</code> / <code>HOSTED_AGENT_CONTAINER_MEMORY</code> affect provisioning but do not override the child's literal deployment fields. Resizing needs a compatible child definition, provisioned deployment metadata and a new agent version. Container Apps scaling does not control this host.</td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">Foundry hosted orchestrator (default)</th>
+<td data-label="Starting point" role="cell">The Agent Application's <code>hosted-agent/azure.yaml</code> declares <code>2</code> CPU and <code>4Gi</code> memory.</td>
+<td data-label="Sizing considerations" role="cell">Memory peaks, streaming latency and concurrent turns determine demand. <code>HOSTED_AGENT_CONTAINER_CPU</code> / <code>HOSTED_AGENT_CONTAINER_MEMORY</code> affect provisioning but do not override the child's literal deployment fields. Resizing needs a compatible child definition, provisioned deployment metadata and a new agent version. Container Apps scaling does not control this host.</td>
 </tr>
-<tr>
-<td>Frontend Container App</td>
-<td>Root entry uses <code>profile_name=main</code>, <code>min_replicas=1</code>, <code>max_replicas=1</code>. With no explicit size, infrastructure placeholders use <code>0.5</code> CPU / <code>1.0Gi</code>.</td>
-<td>Active revisions, CPU, memory, concurrent streams and startup latency show runtime demand. <code>containerAppsList</code> settings and child deployment behavior both matter; placeholder sizing is not a performance guarantee.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Frontend Container App</th>
+<td data-label="Starting point" role="cell">Root entry uses <code>profile_name=main</code>, <code>min_replicas=1</code>, <code>max_replicas=1</code>. With no explicit size, infrastructure placeholders use <code>0.5</code> CPU / <code>1.0Gi</code>.</td>
+<td data-label="Sizing considerations" role="cell">Active revisions, CPU, memory, concurrent streams and startup latency show runtime demand. <code>containerAppsList</code> settings and child deployment behavior both matter; placeholder sizing is not a performance guarantee.</td>
 </tr>
-<tr>
-<td>Agent App Ingestion (optional, omitted by default)</td>
-<td>Root entry specifies <code>1.0</code> CPU / <code>3.0Gi</code> and one minimum/maximum replica on <code>main</code>.</td>
-<td>Large files and expensive formats affect peak memory, backlog and embedding/Search throttling. Additional replicas require verified duplicate handling and concurrent writes to shared sources and indexes.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Agent App Ingestion (optional, omitted by default)</th>
+<td data-label="Starting point" role="cell">Root entry specifies <code>1.0</code> CPU / <code>3.0Gi</code> and one minimum/maximum replica on <code>main</code>.</td>
+<td data-label="Sizing considerations" role="cell">Large files and expensive formats affect peak memory, backlog and embedding/Search throttling. Additional replicas require verified duplicate handling and concurrent writes to shared sources and indexes.</td>
 </tr>
-<tr>
-<td>Container Apps workload profiles</td>
-<td><code>Consumption</code> plus <code>main</code> D4 with <code>minimumCount=0</code>, <code>maximumCount=1</code>.</td>
-<td>Aggregate CPU/memory placement and per-app limits both matter. Raising app replicas alone does not raise the profile's node ceiling. Minimum app replicas can keep a node allocated despite the zero-node profile minimum.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Container Apps workload profiles</th>
+<td data-label="Starting point" role="cell"><code>Consumption</code> plus <code>main</code> D4 with <code>minimumCount=0</code>, <code>maximumCount=1</code>.</td>
+<td data-label="Sizing considerations" role="cell">Aggregate CPU/memory placement and per-app limits both matter. Raising app replicas alone does not raise the profile's node ceiling. Minimum app replicas can keep a node allocated despite the zero-node profile minimum.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>The root arrays/objects above belong in reviewed <code>main.parameters.json</code>;
 <code>infra/main.parameters.json</code> is generated. Deployed capacity can differ from
 placeholders after application deployment. <a href="../hosted-agents/">Agent hosting</a>

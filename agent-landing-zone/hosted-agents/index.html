@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2194,32 +2194,16 @@ compatibility commands; they are not required deployment steps.</p>
 <h2 id="validation-rules">Validation rules</h2>
 <p><a href="../configuration/">Deployment settings</a> distinguishes deployment inputs from
 App Configuration keys and hosted process environment.</p>
-<table>
-<thead>
-<tr>
-<th>Input</th>
-<th>Contract</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>HOSTED_AGENT_IMAGE_VERSION</code></td>
-<td>Immutable <code>sha256:</code> digest with 64 hexadecimal characters; tags are rejected.</td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_RESOURCE_SCOPE</code></td>
-<td>Explicit delegated-user audience ending in <code>/.default</code>; not the UI API scope.</td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_STARTUP_COMMAND</code></td>
-<td>Fixed to <code>uvicorn src.api.hosted_entrypoint:app --host 0.0.0.0 --port 8088</code>.</td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS</code></td>
-<td>Stream idle timeout, default <code>60</code>.</td>
-</tr>
-</tbody>
-</table>
+<dl>
+<dt><code>HOSTED_AGENT_IMAGE_VERSION</code></dt>
+<dd>Immutable <code>sha256:</code> digest with 64 hexadecimal characters; tags are rejected.</dd>
+<dt><code>HOSTED_AGENT_RESOURCE_SCOPE</code></dt>
+<dd>Explicit delegated-user audience ending in <code>/.default</code>; not the UI API scope.</dd>
+<dt><code>HOSTED_AGENT_STARTUP_COMMAND</code></dt>
+<dd>Fixed to <code>uvicorn src.api.hosted_entrypoint:app --host 0.0.0.0 --port 8088</code>.</dd>
+<dt><code>HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS</code></dt>
+<dd>Stream idle timeout, default <code>60</code>.</dd>
+</dl>
 <p>The supplied <code>hosted-agent/azure.yaml</code> declares the agent name, CPU, memory,
 protocols and startup command as literal fields. Its image and environment
 fields use azd interpolation. A custom application's <code>source.imageDigest</code>

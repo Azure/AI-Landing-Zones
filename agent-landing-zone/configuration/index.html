@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -3714,30 +3714,20 @@ delegation and NSG requirements still apply.</p>
 <h3 id="application-private-endpoint-subnet">Application private endpoint subnet</h3>
 <p>Application private endpoints use their own configured subnet, independently
 of resource group count.</p>
-<table>
-<thead>
-<tr>
-<th>Variable</th>
-<th>Native root parameter</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>AZURE_APPLICATION_PE_SUBNET_NAME</code></td>
-<td><code>applicationPeSubnetName</code></td>
-<td><code>application-pe-subnet</code></td>
-<td>Dedicated application private endpoint subnet name.</td>
-</tr>
-<tr>
-<td><code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code></td>
-<td><code>applicationPeSubnetPrefix</code></td>
-<td><code>192.168.3.128/26</code></td>
-<td>Aligned IPv4 CIDR for the application private endpoint subnet.</td>
-</tr>
-</tbody>
-</table>
+<dl>
+<dt><code>AZURE_APPLICATION_PE_SUBNET_NAME</code></dt>
+<dd>
+<p><strong>Native root parameter:</strong> <code>applicationPeSubnetName</code></p>
+<p><strong>Default:</strong> <code>application-pe-subnet</code></p>
+<p>Dedicated application private endpoint subnet name.</p>
+</dd>
+<dt><code>AZURE_APPLICATION_PE_SUBNET_PREFIX</code></dt>
+<dd>
+<p><strong>Native root parameter:</strong> <code>applicationPeSubnetPrefix</code></p>
+<p><strong>Default:</strong> <code>192.168.3.128/26</code></p>
+<p>Aligned IPv4 CIDR for the application private endpoint subnet.</p>
+</dd>
+</dl>
 <p>Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
 ACR and Azure Monitor Private Link
 Scope private endpoints use the application subnet. Foundry/grounding private

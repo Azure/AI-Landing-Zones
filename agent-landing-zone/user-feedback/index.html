@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2047,28 +2047,30 @@ and operator-surface gates to <code>false</code>; they remain false until deploy
 authorization evidence exists. <a href="../hosted-agents/">Agent hosting</a> describes the
 continuity protocol and permission requirements.</p>
 <p>The custom control calls the <strong>UI service</strong>, not the hosted container:</p>
-<table>
-<thead>
-<tr>
-<th>UI endpoint</th>
-<th>Purpose</th>
+<div class="reference-fields responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">UI endpoint</th>
+<th role="columnheader" scope="col">Purpose</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td><code>GET /panel/conversations</code></td>
-<td>Lists the caller's conversation IDs.</td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row"><code>GET /panel/conversations</code></th>
+<td data-label="Purpose" role="cell">Lists the caller's conversation IDs.</td>
 </tr>
-<tr>
-<td><code>POST /panel/conversations/{conversation_id}/feedback</code></td>
-<td>Creates or upserts that owner's feedback.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>POST /panel/conversations/{conversation_id}/feedback</code></th>
+<td data-label="Purpose" role="cell">Creates or upserts that owner's feedback.</td>
 </tr>
-<tr>
-<td><code>GET /panel/conversations/{conversation_id}/feedback</code></td>
-<td>Reads feedback after the same ownership check.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>GET /panel/conversations/{conversation_id}/feedback</code></th>
+<td data-label="Purpose" role="cell">Reads feedback after the same ownership check.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>Every request requires a delegated user bearer with <code>user_impersonation</code>,
 valid tenant/audience and active gates. Listing is scoped to the caller;
 per-conversation operations require a Cosmos owner-index match.

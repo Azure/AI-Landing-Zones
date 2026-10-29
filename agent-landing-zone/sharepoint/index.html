@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2441,56 +2441,58 @@ SharePoint's federated credentials are a different configuration.</p>
 <p>In <strong>App Configuration &gt; Configuration explorer</strong>, set the following under
 the shared <strong><code>agent-lz</code></strong> label. Preserve the environment's provisioned
 resource endpoints and identities.</p>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Value or purpose</th>
+<div class="reference-fields responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">Key</th>
+<th role="columnheader" scope="col">Value or purpose</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td><code>SHAREPOINT_TENANT_ID</code></td>
-<td>Directory/tenant ID of the SharePoint application.</td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row"><code>SHAREPOINT_TENANT_ID</code></th>
+<td data-label="Value or purpose" role="cell">Directory/tenant ID of the SharePoint application.</td>
 </tr>
-<tr>
-<td><code>SHAREPOINT_CLIENT_ID</code></td>
-<td>Application/client ID registered above.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>SHAREPOINT_CLIENT_ID</code></th>
+<td data-label="Value or purpose" role="cell">Application/client ID registered above.</td>
 </tr>
-<tr>
-<td><code>SHAREPOINT_CLIENT_SECRET_NAME</code></td>
-<td>Key Vault secret <strong>name</strong>; default <code>sharepointClientSecret</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>SHAREPOINT_CLIENT_SECRET_NAME</code></th>
+<td data-label="Value or purpose" role="cell">Key Vault secret <strong>name</strong>; default <code>sharepointClientSecret</code>.</td>
 </tr>
-<tr>
-<td><code>SHAREPOINT_FILES_FORMAT</code></td>
-<td>Comma-separated extensions, for example <code>pdf,docx,pptx</code>; this is also the current default when omitted or empty.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>SHAREPOINT_FILES_FORMAT</code></th>
+<td data-label="Value or purpose" role="cell">Comma-separated extensions, for example <code>pdf,docx,pptx</code>; this is also the current default when omitted or empty.</td>
 </tr>
-<tr>
-<td><code>KEY_VAULT_URI</code></td>
-<td>Ingestion Key Vault URI containing that secret.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>KEY_VAULT_URI</code></th>
+<td data-label="Value or purpose" role="cell">Ingestion Key Vault URI containing that secret.</td>
 </tr>
-<tr>
-<td><code>SEARCH_SERVICE_QUERY_ENDPOINT</code></td>
-<td>Target Search service root, such as <code>https://&lt;service&gt;.search.windows.net</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>SEARCH_SERVICE_QUERY_ENDPOINT</code></th>
+<td data-label="Value or purpose" role="cell">Target Search service root, such as <code>https://&lt;service&gt;.search.windows.net</code>.</td>
 </tr>
-<tr>
-<td><code>SEARCH_RAG_INDEX_NAME</code></td>
-<td>Existing compatible target index for custom ingestion.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>SEARCH_RAG_INDEX_NAME</code></th>
+<td data-label="Value or purpose" role="cell">Existing compatible target index for custom ingestion.</td>
 </tr>
-<tr>
-<td><code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code></td>
-<td>Cosmos DB account name and database containing the source definitions.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code></th>
+<td data-label="Value or purpose" role="cell">Cosmos DB account name and database containing the source definitions.</td>
 </tr>
-<tr>
-<td><code>COSMOS_DATASOURCES_CONTAINER</code></td>
-<td>Source-definition container; default <code>datasources</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>COSMOS_DATASOURCES_CONTAINER</code></th>
+<td data-label="Value or purpose" role="cell">Source-definition container; default <code>datasources</code>.</td>
 </tr>
-<tr>
-<td><code>STORAGE_ACCOUNT_NAME</code>, <code>JOBS_LOG_CONTAINER</code></td>
-<td>Job-log storage account and container; container default <code>jobs</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>STORAGE_ACCOUNT_NAME</code>, <code>JOBS_LOG_CONTAINER</code></th>
+<td data-label="Value or purpose" role="cell">Job-log storage account and container; container default <code>jobs</code>.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p><code>APP_CONFIG_ENDPOINT</code> must already be in the Container App's process
 environment so the application can load its settings. The current loader also
 reads other labels, including an all-labels selection; remove conflicting

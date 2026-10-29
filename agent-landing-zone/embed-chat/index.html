@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2006,44 +2006,46 @@ or Graph token is not valid. The portal's
 <a href="https://learn.microsoft.com/entra/identity-platform/quickstart-configure-app-access-web-apis">delegated API permissions</a>
 and consent are separate from the UI's server-side Foundry OBO exchange.
 <a href="../application-auth/">Agent Application access</a> explains that downstream path.</p>
-<table>
-<thead>
-<tr>
-<th>UI runtime setting</th>
-<th>Entra embedding contract</th>
+<div class="reference-fields responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">UI runtime setting</th>
+<th role="columnheader" scope="col">Entra embedding contract</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td><code>CHAINLIT_COPILOT_ENABLED</code></td>
-<td><code>true</code> enables embedding; default is disabled.</td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_COPILOT_ENABLED</code></th>
+<td data-label="Entra embedding contract" role="cell"><code>true</code> enables embedding; default is disabled.</td>
 </tr>
-<tr>
-<td><code>CHAINLIT_COPILOT_AUTH_MODE</code></td>
-<td><code>entra</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_COPILOT_AUTH_MODE</code></th>
+<td data-label="Entra embedding contract" role="cell"><code>entra</code>.</td>
 </tr>
-<tr>
-<td><code>CHAINLIT_URL</code></td>
-<td>Canonical UI HTTPS origin, for example <code>https://chat.contoso.com</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_URL</code></th>
+<td data-label="Entra embedding contract" role="cell">Canonical UI HTTPS origin, for example <code>https://chat.contoso.com</code>.</td>
 </tr>
-<tr>
-<td><code>CHAINLIT_ALLOWED_ORIGINS</code></td>
-<td>Exact distinct portal HTTPS origins, for example <code>https://portal.contoso.com</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_ALLOWED_ORIGINS</code></th>
+<td data-label="Entra embedding contract" role="cell">Exact distinct portal HTTPS origins, for example <code>https://portal.contoso.com</code>.</td>
 </tr>
-<tr>
-<td><code>CHAINLIT_COPILOT_ENTRA_TENANT_ID</code></td>
-<td>Issuing Entra tenant's unique ID.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_COPILOT_ENTRA_TENANT_ID</code></th>
+<td data-label="Entra embedding contract" role="cell">Issuing Entra tenant's unique ID.</td>
 </tr>
-<tr>
-<td><code>CHAINLIT_COPILOT_ENTRA_AUDIENCE</code></td>
-<td>Expected UI API access-token <code>aud</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_COPILOT_ENTRA_AUDIENCE</code></th>
+<td data-label="Entra embedding contract" role="cell">Expected UI API access-token <code>aud</code>.</td>
 </tr>
-<tr>
-<td><code>CHAINLIT_COPILOT_ENTRA_REQUIRED_SCOPE</code></td>
-<td>Scope name, normally <code>user_impersonation</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>CHAINLIT_COPILOT_ENTRA_REQUIRED_SCOPE</code></th>
+<td data-label="Entra embedding contract" role="cell">Scope name, normally <code>user_impersonation</code>.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>Origins contain only scheme, host and optional port, without wildcard, <code>null</code>,
 credentials, path, query or fragment. <code>CHAINLIT_ROOT_PATH</code> must be empty.
 The validator accepts the configured tenant and v2 issuer only.

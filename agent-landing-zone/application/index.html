@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2081,87 +2081,89 @@ network, sign-in and permission setup. <strong>Configuration</strong> needs oper
 but no new application code for that capability. <strong>Development</strong> means settings
 alone are insufficient. Preview status is stated separately; a service preview
 does not make an application integration ready.</p>
-<table>
-<thead>
-<tr>
-<th>Capability</th>
-<th>Readiness</th>
-<th>What is supplied or still needed</th>
+<div class="reference-fields responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">Capability</th>
+<th role="columnheader" scope="col">Readiness</th>
+<th role="columnheader" scope="col">What is supplied or still needed</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>Basic chat and active-session context</td>
-<td>Default, without retrieval</td>
-<td>The frontend calls the hosted <code>maf_lite</code> runtime and configured model for non-retrieval turns. Questions that trigger retrieval have the separate gate below. Context is not durable across browser reloads. <a href="../hosted-agents/#protocol-and-caller-access">Hosting</a>.</td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row">Basic chat and active-session context</th>
+<td data-label="Readiness" role="cell">Default, without retrieval</td>
+<td data-label="What is supplied or still needed" role="cell">The frontend calls the hosted <code>maf_lite</code> runtime and configured model for non-retrieval turns. Questions that trigger retrieval have the separate gate below. Context is not durable across browser reloads. <a href="../hosted-agents/#protocol-and-caller-access">Hosting</a>.</td>
 </tr>
-<tr>
-<td>Entra login and delegated Foundry invocation</td>
-<td>Configuration</td>
-<td>Registration, two API consent boundaries, Key Vault references, callback and caller grants. Follow the <a href="../application-auth/#configure-login-in-order">login sequence</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Entra login and delegated Foundry invocation</th>
+<td data-label="Readiness" role="cell">Configuration</td>
+<td data-label="What is supplied or still needed" role="cell">Registration, two API consent boundaries, Key Vault references, callback and caller grants. Follow the <a href="../application-auth/#configure-login-in-order">login sequence</a>.</td>
 </tr>
-<tr>
-<td>Native Blob source ingestion</td>
-<td>Default</td>
-<td>Foundry IQ manages the configured source pipeline without Agent App Ingestion. Source/service permissions and successful indexing are still required. <a href="../ingestion/#1-standard-ingestion-with-foundry-iq">Ingestion</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Native Blob source ingestion</th>
+<td data-label="Readiness" role="cell">Default</td>
+<td data-label="What is supplied or still needed" role="cell">Foundry IQ manages the configured source pipeline without Agent App Ingestion. Source/service permissions and successful indexing are still required. <a href="../ingestion/#1-standard-ingestion-with-foundry-iq">Ingestion</a>.</td>
 </tr>
-<tr>
-<td>Protected knowledge-base retrieval</td>
-<td>Development</td>
-<td>The hosted entry point does not supply trusted user context or a retrieval bearer. Implement authenticated retrieval and prove document allow/deny behavior; UI OBO alone does not do this. <a href="../application-auth/#3-verify-the-retrieval-identity-boundary">Identity boundary</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Protected knowledge-base retrieval</th>
+<td data-label="Readiness" role="cell">Development</td>
+<td data-label="What is supplied or still needed" role="cell">The hosted entry point does not supply trusted user context or a retrieval bearer. Implement authenticated retrieval and prove document allow/deny behavior; UI OBO alone does not do this. <a href="../application-auth/#3-verify-the-retrieval-identity-boundary">Identity boundary</a>.</td>
 </tr>
-<tr>
-<td>Foundry tools, Toolbox and MCP operations</td>
-<td>Development</td>
-<td>Portal registration is not consumed automatically by <code>maf_lite</code>; add an authenticated invocation integration. MCP knowledge sources are not automatically model-callable tools. <a href="../agent-tools/">Tools</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Foundry tools, Toolbox and MCP operations</th>
+<td data-label="Readiness" role="cell">Development</td>
+<td data-label="What is supplied or still needed" role="cell">Portal registration is not consumed automatically by <code>maf_lite</code>; add an authenticated invocation integration. MCP knowledge sources are not automatically model-callable tools. <a href="../agent-tools/">Tools</a>.</td>
 </tr>
-<tr>
-<td>Work IQ, Fabric IQ and native SharePoint integrations</td>
-<td>Development; service previews apply</td>
-<td>Source-specific templates, consent, trusted delegation and, where applicable, response handling still need integration. See <a href="../work-iq/">Work IQ</a>, <a href="../fabric-iq/">Fabric IQ</a> and <a href="../sharepoint/">SharePoint</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Work IQ, Fabric IQ and native SharePoint integrations</th>
+<td data-label="Readiness" role="cell">Development; service previews apply</td>
+<td data-label="What is supplied or still needed" role="cell">Source-specific templates, consent, trusted delegation and, where applicable, response handling still need integration. See <a href="../work-iq/">Work IQ</a>, <a href="../fabric-iq/">Fabric IQ</a> and <a href="../sharepoint/">SharePoint</a>.</td>
 </tr>
-<tr>
-<td>Custom ingestion and SharePoint indexing</td>
-<td>Configuration</td>
-<td>Select Agent App Ingestion and configure its source, Graph permissions and schedule where needed. Processing/ACL synchronization does not close the hosted retrieval identity gap. <a href="../ingestion/#3-custom-ingestion-only-when-needed">Custom ingestion</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Custom ingestion and SharePoint indexing</th>
+<td data-label="Readiness" role="cell">Configuration</td>
+<td data-label="What is supplied or still needed" role="cell">Select Agent App Ingestion and configure its source, Graph permissions and schedule where needed. Processing/ACL synchronization does not close the hosted retrieval identity gap. <a href="../ingestion/#3-custom-ingestion-only-when-needed">Custom ingestion</a>.</td>
 </tr>
-<tr>
-<td>Conversation PDF attachments</td>
-<td>Development</td>
-<td>Optional ingestion enables processing, but hosted retrieval also needs source binding, owner identity and delegated authorization. Uploads are off by default. <a href="../ingestion/#2-conversation-file-uploads">Conversation uploads</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Conversation PDF attachments</th>
+<td data-label="Readiness" role="cell">Development</td>
+<td data-label="What is supplied or still needed" role="cell">Optional ingestion enables processing, but hosted retrieval also needs source binding, owner identity and delegated authorization. Uploads are off by default. <a href="../ingestion/#2-conversation-file-uploads">Conversation uploads</a>.</td>
 </tr>
-<tr>
-<td>Text descriptions of document images</td>
-<td>Configuration</td>
-<td>Native extraction needs a supported model/region and source binding; the default chat model does not establish image verbalization. Protected retrieval still needs the integration above. <a href="../multimodality/#document-image-grounding">Document images</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Text descriptions of document images</th>
+<td data-label="Readiness" role="cell">Configuration</td>
+<td data-label="What is supplied or still needed" role="cell">Native extraction needs a supported model/region and source binding; the default chat model does not establish image verbalization. Protected retrieval still needs the integration above. <a href="../multimodality/#document-image-grounding">Document images</a>.</td>
 </tr>
-<tr>
-<td>Direct screenshot, image or voice input</td>
-<td>Not supplied</td>
-<td>Requires an application extension; document image extraction is not direct multimodal input. <a href="../multimodality/#direct-image-and-voice-extensions">Extensions</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Direct screenshot, image or voice input</th>
+<td data-label="Readiness" role="cell">Not supplied</td>
+<td data-label="What is supplied or still needed" role="cell">Requires an application extension; document image extraction is not direct multimodal input. <a href="../multimodality/#direct-image-and-voice-extensions">Extensions</a>.</td>
 </tr>
-<tr>
-<td>Durable conversation continuity and history</td>
-<td>Configuration and authorization validation</td>
-<td>Off by default. Requires reviewed delegated permissions, owner isolation and evidence gates; panel history also needs the optional panel. Enabling one flag is insufficient. <a href="../hosted-agents/#continuity-history-and-the-administrative-panel">Continuity</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Durable conversation continuity and history</th>
+<td data-label="Readiness" role="cell">Configuration and authorization validation</td>
+<td data-label="What is supplied or still needed" role="cell">Off by default. Requires reviewed delegated permissions, owner isolation and evidence gates; panel history also needs the optional panel. Enabling one flag is insufficient. <a href="../hosted-agents/#continuity-history-and-the-administrative-panel">Continuity</a>.</td>
 </tr>
-<tr>
-<td>Hosted ratings/comments and feedback administration</td>
-<td>Development</td>
-<td>The default layout has no feedback collection. Optional panel APIs still need a custom chat control/adapter and validated ownership. <a href="../user-feedback/">Feedback</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Hosted ratings/comments and feedback administration</th>
+<td data-label="Readiness" role="cell">Development</td>
+<td data-label="What is supplied or still needed" role="cell">The default layout has no feedback collection. Optional panel APIs still need a custom chat control/adapter and validated ownership. <a href="../user-feedback/">Feedback</a>.</td>
 </tr>
-<tr>
-<td>Embedding chat in an existing portal</td>
-<td>Development</td>
-<td>The UI adapter is supplied; the host portal must implement trusted token acquisition, origin/CSP and lifecycle integration. <a href="../embed-chat/">Embed chat</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Embedding chat in an existing portal</th>
+<td data-label="Readiness" role="cell">Development</td>
+<td data-label="What is supplied or still needed" role="cell">The UI adapter is supplied; the host portal must implement trusted token acquisition, origin/CSP and lifecycle integration. <a href="../embed-chat/">Embed chat</a>.</td>
 </tr>
-<tr>
-<td>Teams/M365 or Copilot Studio publication</td>
-<td>Manual configuration and validation</td>
-<td>Separate post-deployment runbooks, not automatic publication. Channels have different network and caller-identity contracts. <a href="../publish-to-teams/">Teams/M365</a> and <a href="../connect-copilot-studio/">Copilot Studio</a>.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Teams/M365 or Copilot Studio publication</th>
+<td data-label="Readiness" role="cell">Manual configuration and validation</td>
+<td data-label="What is supplied or still needed" role="cell">Separate post-deployment runbooks, not automatic publication. Channels have different network and caller-identity contracts. <a href="../publish-to-teams/">Teams/M365</a> and <a href="../connect-copilot-studio/">Copilot Studio</a>.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>In particular, successful provisioning, source ingestion or a greeting response
 does not establish protected retrieval. Use the linked capability's
 prerequisites and acceptance checks before presenting it to users.</p>

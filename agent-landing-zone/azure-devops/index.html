@@ -53,7 +53,7 @@
       
     
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css?v=2f1d2782433c">
+      <link rel="stylesheet" href="../../stylesheets/extra.css?v=56826d53ca9e">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -2498,76 +2498,78 @@ Existing environments keep their mapping.</p>
 <p>Never copy DEV's <code>.azure</code> state into TEST or PROD. Initialize or securely restore
 the intended environment on each runner, refresh its outputs when needed and
 reapply approved inputs. Keep <code>.azure</code> and sibling child state private.</p>
-<table>
-<thead>
-<tr>
-<th>Exact example input</th>
-<th>Required replacement / source</th>
+<div class="reference-fields responsive-reference">
+<table role="table">
+<thead role="rowgroup">
+<tr role="row">
+<th role="columnheader" scope="col">Exact example input</th>
+<th role="columnheader" scope="col">Required replacement / source</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td><code>REPLACE_CI_LINUX_POOL</code></td>
-<td>Authorized Linux validation pool with the toolchain above.</td>
+<tbody role="rowgroup">
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_CI_LINUX_POOL</code></th>
+<td data-label="Required replacement / source" role="cell">Authorized Linux validation pool with the toolchain above.</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_VNET_LINUX_POOL</code>, <code>REPLACE_TEST_VNET_LINUX_POOL</code>, <code>REPLACE_PROD_VNET_LINUX_POOL</code></td>
-<td>Authorized, connected Linux deployment pool for each target. May be the same pool only if its connectivity and isolation policy cover all targets.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_VNET_LINUX_POOL</code>, <code>REPLACE_TEST_VNET_LINUX_POOL</code>, <code>REPLACE_PROD_VNET_LINUX_POOL</code></th>
+<td data-label="Required replacement / source" role="cell">Authorized, connected Linux deployment pool for each target. May be the same pool only if its connectivity and isolation policy cover all targets.</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_WIF_SERVICE_CONNECTION</code>, <code>REPLACE_TEST_WIF_SERVICE_CONNECTION</code>, <code>REPLACE_PROD_WIF_SERVICE_CONNECTION</code></td>
-<td>Exact Azure DevOps WIF service connection names, authorized for this pipeline only.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_WIF_SERVICE_CONNECTION</code>, <code>REPLACE_TEST_WIF_SERVICE_CONNECTION</code>, <code>REPLACE_PROD_WIF_SERVICE_CONNECTION</code></th>
+<td data-label="Required replacement / source" role="cell">Exact Azure DevOps WIF service connection names, authorized for this pipeline only.</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_SUBSCRIPTION_ID</code>, <code>REPLACE_TEST_SUBSCRIPTION_ID</code>, <code>REPLACE_PROD_SUBSCRIPTION_ID</code></td>
-<td>Target subscription GUIDs matching those connections' allowed scopes.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_SUBSCRIPTION_ID</code>, <code>REPLACE_TEST_SUBSCRIPTION_ID</code>, <code>REPLACE_PROD_SUBSCRIPTION_ID</code></th>
+<td data-label="Required replacement / source" role="cell">Target subscription GUIDs matching those connections' allowed scopes.</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_RESOURCE_GROUP</code>, <code>REPLACE_TEST_RESOURCE_GROUP</code>, <code>REPLACE_PROD_RESOURCE_GROUP</code></td>
-<td>New target names for first provision, or the exact previously azd-provisioned groups for redeployment.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_RESOURCE_GROUP</code>, <code>REPLACE_TEST_RESOURCE_GROUP</code>, <code>REPLACE_PROD_RESOURCE_GROUP</code></th>
+<td data-label="Required replacement / source" role="cell">New target names for first provision, or the exact previously azd-provisioned groups for redeployment.</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_REGION</code>, <code>REPLACE_TEST_REGION</code>, <code>REPLACE_PROD_REGION</code></td>
-<td>Supported foundation locations (<code>AZURE_LOCATION</code>).</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_REGION</code>, <code>REPLACE_TEST_REGION</code>, <code>REPLACE_PROD_REGION</code></th>
+<td data-label="Required replacement / source" role="cell">Supported foundation locations (<code>AZURE_LOCATION</code>).</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_FOUNDRY_REGION</code>, <code>REPLACE_TEST_FOUNDRY_REGION</code>, <code>REPLACE_PROD_FOUNDRY_REGION</code></td>
-<td>Foundry/model locations with quota (<code>AZURE_AI_FOUNDRY_LOCATION</code>).</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_FOUNDRY_REGION</code>, <code>REPLACE_TEST_FOUNDRY_REGION</code>, <code>REPLACE_PROD_FOUNDRY_REGION</code></th>
+<td data-label="Required replacement / source" role="cell">Foundry/model locations with quota (<code>AZURE_AI_FOUNDRY_LOCATION</code>).</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_COSMOS_REGION</code>, <code>REPLACE_TEST_COSMOS_REGION</code>, <code>REPLACE_PROD_COSMOS_REGION</code></td>
-<td>Cosmos locations supported by the selected topology/foundation (<code>AZURE_COSMOS_LOCATION</code>).</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_COSMOS_REGION</code>, <code>REPLACE_TEST_COSMOS_REGION</code>, <code>REPLACE_PROD_COSMOS_REGION</code></th>
+<td data-label="Required replacement / source" role="cell">Cosmos locations supported by the selected topology/foundation (<code>AZURE_COSMOS_LOCATION</code>).</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_SERVICE_PRINCIPAL_OBJECT_ID</code>, <code>REPLACE_TEST_SERVICE_PRINCIPAL_OBJECT_ID</code>, <code>REPLACE_PROD_SERVICE_PRINCIPAL_OBJECT_ID</code></td>
-<td>Connection service principal <strong>object IDs</strong>; keep <code>AZURE_PRINCIPAL_TYPE: ServicePrincipal</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_SERVICE_PRINCIPAL_OBJECT_ID</code>, <code>REPLACE_TEST_SERVICE_PRINCIPAL_OBJECT_ID</code>, <code>REPLACE_PROD_SERVICE_PRINCIPAL_OBJECT_ID</code></th>
+<td data-label="Required replacement / source" role="cell">Connection service principal <strong>object IDs</strong>; keep <code>AZURE_PRINCIPAL_TYPE: ServicePrincipal</code>.</td>
 </tr>
-<tr>
-<td><code>REPLACE_DEV_HOSTED_RESOURCE_SCOPE</code>, <code>REPLACE_TEST_HOSTED_RESOURCE_SCOPE</code>, <code>REPLACE_PROD_HOSTED_RESOURCE_SCOPE</code></td>
-<td>Explicit delegated-user Foundry scope ending in <code>/.default</code>, matched to the deployed audience and consent (for example <code>https://ai.azure.com/.default</code> where that is the target audience). Required before provisioning; not the UI's <code>api://&lt;client-id&gt;/user_impersonation</code> scope.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>REPLACE_DEV_HOSTED_RESOURCE_SCOPE</code>, <code>REPLACE_TEST_HOSTED_RESOURCE_SCOPE</code>, <code>REPLACE_PROD_HOSTED_RESOURCE_SCOPE</code></th>
+<td data-label="Required replacement / source" role="cell">Explicit delegated-user Foundry scope ending in <code>/.default</code>, matched to the deployed audience and consent (for example <code>https://ai.azure.com/.default</code> where that is the target audience). Required before provisioning; not the UI's <code>api://&lt;client-id&gt;/user_impersonation</code> scope.</td>
 </tr>
-<tr>
-<td><code>environment: agentlz-dev</code>, <code>agentlz-test</code>, <code>agentlz-prod</code></td>
-<td>Precreated Azure DevOps Environment resource names. Rename consistently if required; these are approval resources, not azd environments.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>environment: agentlz-dev</code>, <code>agentlz-test</code>, <code>agentlz-prod</code></th>
+<td data-label="Required replacement / source" role="cell">Precreated Azure DevOps Environment resource names. Rename consistently if required; these are approval resources, not azd environments.</td>
 </tr>
-<tr>
-<td><code>AZURE_ENV_NAME: agentlz-dev</code>, <code>agentlz-test</code>, <code>agentlz-prod</code></td>
-<td>Unique azd names, retained exactly for subsequent refresh/deploy runs.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>AZURE_ENV_NAME: agentlz-dev</code>, <code>agentlz-test</code>, <code>agentlz-prod</code></th>
+<td data-label="Required replacement / source" role="cell">Unique azd names, retained exactly for subsequent refresh/deploy runs.</td>
 </tr>
-<tr>
-<td><code>variableGroup: agentlz-dev-secrets</code>, <code>agentlz-test-secrets</code>, <code>agentlz-prod-secrets</code></td>
-<td>Create these Library variable groups and authorize only this pipeline. Each must contain the secret variable <code>AGENTLZ_SECRET_SETTINGS_JSON</code>, initially the string <code>{}</code>.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>variableGroup: agentlz-dev-secrets</code>, <code>agentlz-test-secrets</code>, <code>agentlz-prod-secrets</code></th>
+<td data-label="Required replacement / source" role="cell">Create these Library variable groups and authorize only this pipeline. Each must contain the secret variable <code>AGENTLZ_SECRET_SETTINGS_JSON</code>, initially the string <code>{}</code>.</td>
 </tr>
-<tr>
-<td><code>AGENTLZ_SECRET_SETTINGS_JSON</code> in each group</td>
-<td>JSON object of additional documented azd/hook inputs, with string values. It cannot override the inline deployment controls. Empty <code>{}</code> is valid for the Agent Application example. This is <strong>not</strong> automatic publication of OAuth/runtime settings or a private Git credential mechanism.</td>
+<tr role="row">
+<th role="rowheader" scope="row"><code>AGENTLZ_SECRET_SETTINGS_JSON</code> in each group</th>
+<td data-label="Required replacement / source" role="cell">JSON object of additional documented azd/hook inputs, with string values. It cannot override the inline deployment controls. Empty <code>{}</code> is valid for the Agent Application example. This is <strong>not</strong> automatic publication of OAuth/runtime settings or a private Git credential mechanism.</td>
 </tr>
-<tr>
-<td>Inline <code>settings</code> in each stage</td>
-<td>Review topology, ingestion, isolation and regional settings. Add required <a href="../configuration/">Deployment settings</a> inputs for your approved network, source, models or reused resources. Keep nonsecret configuration reviewable here; never put secret values in YAML.</td>
+<tr role="row">
+<th role="rowheader" scope="row">Inline <code>settings</code> in each stage</th>
+<td data-label="Required replacement / source" role="cell">Review topology, ingestion, isolation and regional settings. Add required <a href="../configuration/">Deployment settings</a> inputs for your approved network, source, models or reused resources. Keep nonsecret configuration reviewable here; never put secret values in YAML.</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>The inline <code>settings</code> maps keep deployment inputs visible for review.
 Values are reapplied after environment refresh on every job.
 <code>RUN_FROM_JUMPBOX=true</code> <strong>requires</strong> the connected-host check; it does not create
