@@ -1,0 +1,52 @@
+name: Refresh planner prices
+
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: documentation-publication
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.11"
+      - name: Install build and browser dependencies
+        run: |
+          pip install -r requirements-docs.txt -r requirements-planner-tests.txt
+          python -m playwright install --with-deps chromium
+      - name: Collect a candidate without changing published prices
+        run: python scripts/planner/collect_prices.py --output candidate-prices.json
+      - name: Validate source records and the built planner against the candidate
+        run: |
+          python scripts/planner/validate_catalog.py candidate-prices.json
+          python -m unittest discover -s tests/planner -p "test_*.py"
+          mkdocs build --strict
+          python tests/planner/browser_checks.py --catalog candidate-prices.json
+      - name: Atomically install the validated catalog
+        run: python scripts/planner/validate_catalog.py candidate-prices.json --install
+      - name: Commit current prices
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/planner/prices.json
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: refresh validated planner prices" -m "Co-authored-by: Copilot App <223556219+Copilot@users.noreply.github.com>"
+            git push origin HEAD:main
+          fi
+      # GITHUB_TOKEN pushes do not start deploy-docs.yml. Publish this validated commit here.
+      - name: Publish documentation with the validated prices
+        run: mkdocs gh-deploy --force --clean --remote-branch gh-pages

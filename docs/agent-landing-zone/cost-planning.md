@@ -13,8 +13,17 @@ This page explains cost drivers, not deployment steps. The
 [Deploy infra only](deploy-infra-only.md) and
 [Deploy full stack](deploy-full-stack.md) runbooks cover execution.
 
+Use the [Sizing & cost planner](sizing-cost-planner.md) to compare editable
+workload and price assumptions with an isolated standalone `hosted-no-panel`
+reference. It is a planning estimate, not an Azure quote; workload examples are
+not deployment defaults or measured capacity. Review the dated price sources,
+included billing units and any sourced amounts for contract-priced options.
+Its catalog combines Azure Retail Prices API records with exact official
+pricing-page rows. Automated daily refresh retains the last validated catalog
+if collection, parsing or validation fails; check the displayed snapshot date.
+
 !!! note "Pricing sources and dates"
-    This page does not quote or reprice Azure services. The shared
+    The shared
     [resource inventory and estimates](../bicep/deployed-resources.md) uses
     **May 29, 2026, East US 2, US dollars, pay-as-you-go** example prices. Its scenarios are not
     Agent Application defaults or a full-stack quote. The
@@ -55,6 +64,27 @@ Model deployment `sku.capacity` allocates quota. To estimate model charges,
 use the deployment type, region, expected tokens and any provisioned-capacity
 commitment with the current service prices.
 
+### Planner price and budget assumptions
+
+These calculations explain the planner's initial reference using captured
+public rates. Consult its dated catalog for refreshed prices. Budget hypotheses
+are not deployed service settings.
+
+| Item | Initial price or budget calculation |
+| --- | --- |
+| `gpt-5-nano`, Global | $0.05 input / $0.40 output per million tokens, captured from the exact official model-pricing row. This is a published-page price, not a Retail API meter. |
+| Dedicated ACR Tasks S1 pool | $0.0001/vCPU-second produces $525.60 at 730 allocated hours. Allocated capacity is billed even without active builds. The rate comes from the official published pricing row. |
+| Foundry backing Cosmos DB | A fresh provisioned account is budgeted as five manual 1,000-RU/s offers (5,000 RU/s total), 10 GB of transactional data plus indexes, a separate 10 GB of `Continuous30Days` backup and one non-zone-redundant region: $296.50/month at the captured rates. The Foundry runtime owns the actual offers; these quantities are explicit budget hypotheses. |
+
+Published-page prices carry their source and capture date rather than
+Retail meter IDs. Operator-entered rates remain separately identified.
+
+The planner's Cosmos backup choice is a billing hypothesis, not a claim that
+the providers deploy the same policy: pinned Bicep AVM inherits
+`Continuous30Days`, while Terraform omits the backup policy and receives the
+API's periodic default. Verify the deployed policy and runtime-owned offers
+before approving a budget; changing the planner does not change either.
+
 ### Standalone firewall selection
 
 Isolated standalone deployments default to Basic. Include its fixed allocation,
@@ -62,6 +92,14 @@ data-processing rate, additional management public IP, logs and network
 transfer in the estimate; a lower hourly price alone is not the full cost.
 Compare current regional rates and measured volume with Standard. Select
 Standard explicitly when its DNS or capacity capabilities are required.
+
+The planner retains Basic as its initial East US 2 reference. No VNet Basic
+rate was found for Sweden Central in the Retail API or official Basic pricing
+row, so the planner offers Standard/Premium there and uses Standard as that
+region's reference. A secured-vHub rate is not a substitute for standalone VNet
+pricing. Deploying the Sweden Central reference needs a reviewed IaC change;
+the planner does not change the shipped Basic default or prove regional
+service availability.
 
 Basic needs separate data and management subnets; the management subnet must be
 /26 or larger. External hub egress uses the hub's firewall and does not create

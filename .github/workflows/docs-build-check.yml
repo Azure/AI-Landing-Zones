@@ -13,6 +13,9 @@ on:
       - overrides/**
       - mkdocs.yml
       - requirements-docs.txt
+      - requirements-planner-tests.txt
+      - scripts/planner/**
+      - tests/planner/**
       - main.py
       - .github/workflows/docs-build-check.yml
 
@@ -33,11 +36,17 @@ jobs:
           python-version: 3.11
 
       - name: Install MkDocs and dependencies
-        run: pip install -r requirements-docs.txt
+        run: |
+          pip install -r requirements-docs.txt -r requirements-planner-tests.txt
+          python -m playwright install --with-deps chromium
 
       # Strict build: the docs tree is clean of warnings, so --strict is enabled
       # to catch any new issues (broken links, pages not in nav, bad image paths)
       # before they merge. The intentionally off-nav pages are listed under
       # not_in_nav in mkdocs.yml so they do not trip the check.
       - name: Build documentation
-        run: mkdocs build --strict
+        run: |
+          python scripts/planner/validate_catalog.py
+          python -m unittest discover -s tests/planner -p "test_*.py"
+          mkdocs build --strict
+          python tests/planner/browser_checks.py

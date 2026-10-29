@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: documentation-publication
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +29,16 @@ jobs:
           python-version: 3.11
 
       - name: Install MkDocs and dependencies
-        run: pip install -r requirements-docs.txt
+        run: |
+          pip install -r requirements-docs.txt -r requirements-planner-tests.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Validate the planner and strict documentation build
+        run: |
+          python scripts/planner/validate_catalog.py
+          python -m unittest discover -s tests/planner -p "test_*.py"
+          mkdocs build --strict
+          python tests/planner/browser_checks.py
 
       - name: Deploy to GitHub Pages
         run: mkdocs gh-deploy --force --clean --remote-branch gh-pages

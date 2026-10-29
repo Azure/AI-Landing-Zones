@@ -15,6 +15,12 @@ covers resource selection; [Cost planning](cost-planning.md) covers spending.
 Execution steps belong to the [Deploy infra only](deploy-infra-only.md)
 and [Deploy full stack](deploy-full-stack.md) runbooks.
 
+The [Sizing & cost planner](sizing-cost-planner.md) brings workload assumptions,
+documented constraints and cost comparisons together for an isolated standalone
+`hosted-no-panel` reference. Its examples are hypothetical, not benchmarked
+capacity profiles. Enter assigned quota and matching measured evidence where
+available; editing demand does not resize or deploy resources.
+
 Both providers use the root `main.parameters.json` values below.
 For Terraform, preprovision generates typed inputs; verify the resolved
 capacity through its
@@ -137,9 +143,10 @@ Conversation continuity limits are not compute-sizing controls.
 
 | Resource | What to measure and decide |
 | --- | --- |
-| Agent Application Cosmos DB | `hosted-no-panel` does not deploy this account. Foundry Agent Service's backing Cosmos DB is separate and still needs its own capacity and retention review. |
+| Agent Application Cosmos DB | `hosted-no-panel` does not deploy this account. Foundry Agent Service's backing Cosmos DB is separate. |
+| Foundry Agent Service backing Cosmos DB | A fresh account uses provisioned throughput. The Foundry runtime owns actual throughput offers; the planner's five manual 1,000-RU/s offers are a budget hypothesis, not deployed settings. Verify data/index size, retention and the deployed backup policy; the providers currently differ as explained in [Cost planning](cost-planning.md#planner-price-and-budget-assumptions). |
 | Blob storage | Original files, extracted images, enabled attachments, updates, retention, transaction rate and ingestion completion time all contribute. Omitting Agent App Ingestion does not omit native source processing. |
-| Registry and private build pool | Image sizes, build duration and parallel build demand affect capacity. Isolated hosted preparation requires the private ACR Tasks pool and permitted package feeds; more runtime compute does not speed it up or connect the runner. Pool capacity depends on SKU and region. |
+| Registry and private build pool | Image sizes, build duration and parallel build demand affect capacity. Isolated hosted preparation requires the private ACR Tasks pool and permitted package feeds; more runtime compute does not speed it up or connect the runner. Size parallel work separately from allocated pool hours: dedicated S1 allocation is billed even without active builds. |
 | App Configuration and Key Vault | Startup/restart bursts and service request limits matter. Secrets remain Key Vault references, not plain configuration values. |
 | Log Analytics and Application Insights | Ingestion volume, investigation needs and compliance determine retention/sampling. Message-content capture is a privacy decision, not a required sizing test. |
 

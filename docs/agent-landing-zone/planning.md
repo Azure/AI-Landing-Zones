@@ -11,6 +11,14 @@ This page explains design choices, not their execution order.
 [Sizing and capacity](sizing.md) and [Cost planning](cost-planning.md)
 cover capacity and spending.
 
+For an isolated standalone `hosted-no-panel` scenario, use the
+[Sizing & cost planner](sizing-cost-planner.md) to explore resource quantities,
+workload assumptions and cost differences. Optional resources remain visible
+at quantity zero. The planner does not change deployment settings or replace
+the connectivity, quota and permission checks below.
+Review its regional reference and backup billing hypotheses before translating
+a scenario into IaC: planner choices do not establish deployed provider parity.
+
 <span id="choose-the-network-and-gateway-shape"></span>
 
 ## Network and gateway design
