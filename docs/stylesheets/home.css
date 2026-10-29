@@ -74,7 +74,22 @@ body:has(.alz-home) .md-nav--secondary .md-nav { display: none; }
 .alz-home [data-home-enhanced] .home-panel-title { display: none; }
 .alz-home .architecture-panel { padding-top: 20px; }
 .alz-home .architecture-panel > p { min-height: 52px; }
-.alz-home .architecture-figure { margin: 20px 0 12px; }
+.alz-home .architecture-figure { width: 100%; margin: 20px 0 12px; }
+.alz-home .architecture-figure > p { max-width: none; }
+.alz-home .home-diagram-trigger { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in; }
+html.home-diagram-visible { overflow: hidden; }
+.alz-home .home-diagram-viewer { width: calc(100vw - 32px); height: calc(100dvh - 32px); max-width: none; max-height: none; margin: auto; padding: 20px; border: 1px solid var(--home-line); border-radius: 4px; background: #fff; color: var(--home-body); }
+.alz-home .home-diagram-viewer[open] { display: flex; flex-direction: column; gap: 12px; }
+.alz-home .home-diagram-viewer::backdrop { background: rgb(12 25 43 / 78%); }
+.alz-home .home-diagram-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.alz-home .home-diagram-toolbar h2 { flex: 1 1 220px; font-size: 20px; letter-spacing: normal; }
+.alz-home .home-diagram-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.alz-home .home-diagram-toolbar :is(button, a) { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 12px; border: 1px solid var(--home-line); border-radius: 4px; background: #fff; color: var(--home-ink); font: inherit; font-size: 14px; cursor: pointer; }
+.alz-home .home-diagram-toolbar :is(button, a):hover { background: var(--home-wash); text-decoration: none; }
+.alz-home .home-diagram-toolbar button:disabled { opacity: .5; cursor: not-allowed; }
+.alz-home .home-diagram-viewer .home-diagram-help { font-size: 13px; max-width: none; color: var(--home-muted); }
+.alz-home .home-diagram-viewport { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: var(--home-wash); border: 1px solid var(--home-line); }
+.alz-home .home-diagram-image { max-width: none; height: auto; margin: 0 auto; }
 .alz-home .implementation-table { width: 100%; margin-top: 24px; border-collapse: collapse; table-layout: fixed; }
 .alz-home .implementation-table :is(th, td) { text-align: left; vertical-align: top; border-bottom: 1px solid var(--home-line); padding: 20px 0 20px 24px; }
 .alz-home .implementation-table th:first-child { width: 34%; padding-left: 0; }

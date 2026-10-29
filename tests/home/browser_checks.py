@@ -48,7 +48,7 @@ def run(base, screenshots):
         expect(page.locator(".home-button--primary")).to_have_text("Deploy AI Landing Zone")
         assert "not a blank page" not in page.locator(".hero").inner_text()
         assert not page.locator(".alz-home a[href$='.md']").count()
-        assert page.locator(".alz-home img").count() == 7
+        assert page.locator(".alz-home img:not(.home-diagram-image)").count() == 7
         assert page.locator(".implementation-table tbody a").count() == 8
         card_links = (
             (
@@ -93,11 +93,71 @@ def run(base, screenshots):
                 assert page.locator(".architecture-panel:visible").count() == 1
                 assert not page.locator(f"#architecture-{name} details").count()
                 assert page.locator(f"#architecture-{name} img").is_visible()
+                panel = page.locator(f"#architecture-{name}").bounding_box()
+                diagram = page.locator(f"#architecture-{name} img").bounding_box()
+                assert abs(diagram["width"] - panel["width"]) < 2, (width, name, diagram, panel)
             if width <= 560:
                 heading = page.locator(".implementation-table tbody th").first.bounding_box()
                 table = page.locator(".implementation-table").bounding_box()
                 assert abs(heading["width"] - table["width"]) < 2, width
+        viewer = page.locator(".home-diagram-viewer")
+        enlarged = viewer.locator(".home-diagram-image")
+        for width, names in ((1440, ("standalone", "hub", "gateway")),
+                             (390, ("standalone",)), (320, ("gateway",))):
+            page.set_viewport_size({"width": width, "height": 1000})
+            for name in names:
+                page.locator(f"#tab-{name}").click()
+                trigger = page.locator(f"#architecture-{name} .home-diagram-trigger")
+                if screenshots and name == "standalone":
+                    page.locator(".architecture-workbench").screenshot(
+                        path=str(screenshots / f"home-architecture-{width}.png"))
+                trigger.focus()
+                trigger.press("Enter")
+                expect(viewer).to_be_visible()
+                expect(viewer.get_by_role("button", name="Close", exact=True)).to_be_focused()
+                page.wait_for_function("""() => {
+                    const image = document.querySelector(".home-diagram-image");
+                    return image.complete && image.naturalWidth === 6400;
+                }""")
+                assert enlarged.bounding_box()["width"] > trigger.bounding_box()["width"]
+                expect(viewer.get_by_role("link", name="Open original")).to_have_attribute(
+                    "href", page.locator(f"#architecture-{name} img").evaluate("image => image.currentSrc || image.src"))
+                if screenshots and width == 1440 and name == "standalone":
+                    page.screenshot(path=str(screenshots / "home-architecture-expanded.png"))
+                page.keyboard.press("Tab")
+                assert viewer.evaluate("element => element.contains(document.activeElement)")
+                viewer.get_by_role("button", name="Fit diagram", exact=True).click()
+                bounds = enlarged.bounding_box()
+                stage = viewer.locator(".home-diagram-viewport")
+                assert bounds["width"] <= stage.evaluate("element => element.clientWidth") + 1
+                assert bounds["height"] <= stage.evaluate("element => element.clientHeight") + 1
+                assert viewer.get_by_role("button", name="Zoom out", exact=True).is_disabled()
+                viewer.get_by_role("button", name="Zoom in", exact=True).click()
+                assert enlarged.bounding_box()["width"] > bounds["width"]
+                viewer.get_by_role("button", name="Zoom out", exact=True).click()
+                if width == 1440:
+                    page.keyboard.press("Escape")
+                else:
+                    viewer.get_by_role("button", name="Close", exact=True).click()
+                expect(viewer).to_be_hidden()
+                expect(trigger).to_be_focused()
+                assert not page.locator("html").evaluate("element => element.classList.contains('home-diagram-visible')")
+                assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
         page.set_viewport_size({"width": 1440, "height": 1000})
+        page.locator("#tab-standalone").click()
+        page.locator("#architecture-standalone figcaption a").click()
+        expect(viewer).to_be_visible()
+        page.mouse.click(5, 5)
+        expect(viewer).to_be_hidden()
+        page.locator("#architecture-standalone .home-diagram-trigger").click()
+        enlarged.evaluate("element => { element.src = '/missing-home-diagram.png'; }")
+        expect(viewer.locator(".home-diagram-error")).to_be_visible()
+        expect(enlarged).to_be_hidden()
+        viewer.get_by_role("button", name="Close", exact=True).click()
+        page.locator("#architecture-standalone .home-diagram-trigger").click()
+        expect(viewer.locator(".home-diagram-error")).to_be_hidden()
+        expect(enlarged).to_be_visible()
+        page.keyboard.press("Escape")
         page.locator("#tab-standalone").focus()
         page.keyboard.press("End")
         expect(page.locator("#tab-gateway")).to_be_focused()
@@ -138,10 +198,12 @@ def run(base, screenshots):
         assert fallback.locator(".home-mobile-contents").count() == 0
         for name in ("standalone", "hub", "gateway"):
             assert fallback.locator(f"#architecture-{name}").is_visible()
+            assert fallback.locator(f"#architecture-{name} figcaption a").get_attribute("href")
+        assert fallback.locator(".home-diagram-trigger").count() == 0
         assert fallback.locator(".architecture-workbench .home-tabs").is_hidden()
         context.close()
         browser.close()
-    print("PASS: homepage responsive layout, tabs, original diagrams, native navigation/search, legacy anchors, no-JS fallback and page isolation")
+    print("PASS: homepage layout, full-width diagrams, accessible zoom viewer, tabs, native navigation/search, legacy anchors, no-JS fallback and page isolation")
 
 
 def main():
