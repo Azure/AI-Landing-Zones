@@ -162,6 +162,7 @@
       const replicas = backing ? s.backingReplicas : s.searchReplicas;
       const partitions = backing ? s.backingPartitions : s.searchPartitions;
       const sku = backing ? "Standard S1" : s.searchSku;
+      const limits = window.scenarios.searchLimits[sku];
       rows.push(priced({
         id: backing ? "backing-search" : "search", group: "knowledge",
         name: backing ? "Foundry backing Search" : "Application AI Search", tag: "Separate service",
@@ -170,8 +171,10 @@
           '<span class="setting-hint">Default: S1, 1 replica, 1 partition. Changes require IaC edits.</span>',
         sizing: "<strong>Partitions: index and vector footprint.</strong> Replicas: query/indexing load and availability. Raw document size does not equal index size.",
         signal: replicas === 1 ? "One replica is the default, not a high-availability recommendation." : "Check the service SLA requirements and test peak query + indexing load.",
-        quantity: input(backing ? "backingReplicas" : "searchReplicas", "Replicas (simulation)", 1, 12) +
-          input(backing ? "backingPartitions" : "searchPartitions", "Partitions (simulation)", 1, 12),
+        quantity: input(backing ? "backingReplicas" : "searchReplicas", "Replicas (simulation)", 1,
+          Math.min(limits.replicas, Math.floor(limits.units / partitions))) +
+          select(backing ? "backingPartitions" : "searchPartitions",
+            limits.partitions.filter(count => replicas * count <= limits.units), "Partitions (simulation)"),
         detail: `Monthly capacity = ${replicas} replicas x ${partitions} partitions x ${s.hours} hours. Both Search services start at Standard with one replica and one partition. SKU and counts are literals in the shipped Bicep, not root environment scaling parameters. Changes here are cost simulations, not validated deployable combinations. Availability requirements, vector/index limits, regional quota and query latency must be checked. Semantic ranker, agentic retrieval and native ingestion need separate usage assumptions. Model tokens are priced in their own rows.`,
         parameter: `infra/main.bicep: ${backing ? "Foundry Agent Service backing Search" : "searchService"}`
       }, () => [bill(find("search", sku, `${sku} Unit`, "1 Hour", 0, s), replicas * partitions * s.hours, "fixed", "Search units x hours")]));
@@ -428,7 +431,8 @@
       row.billingNote ? `<span class="setting-hint">${escape(row.billingNote)}</span>` :
       row.lines.map(line => `<span class="price-unit">${rate(line.meter.retailPrice)}<small>${escape(line.meter.meterName)}<br>/ ${escape(line.meter.unitOfMeasure)}</small></span>`).join("");
     const total = row.disabled ? '<span class="excluded">Not included</span>' :
-      row.amount === null ? '<span class="unpriced">Not included in subtotal</span>' : `<span class="money">${money(row.amount)}</span>`;
+      row.amount === null ? '<span class="unpriced">Not included in subtotal</span>' :
+      `<span class="money">${money(row.amount)}</span>${row.zeroCostConfirmed && row.included ? "<small>Operator-confirmed $0</small>" : ""}`;
     const meters = row.lines.map(line => {
       const meter = line.meter;
       if (line.operatorEstimate) return `<div class="meter"><strong>Operator estimate, not a public meter</strong><br>${number(line.quantity)} ${escape(line.description)} x ${rate(meter.retailPrice)} = ${money(line.amount)}<br>Source/date: ${escape(row.estimateSource)}<br>Applies to ${escape(state.region)}, selected model/runtime and workload assumptions. Not an independently verified quote.</div>`;
@@ -439,7 +443,8 @@
     const inclusion = row.scopeControlled ? row.included ? row.sku || "Included in this scenario" : "Not included in this scenario" :
       row.optional ? row.included ? "Optional, included" : "Optional, quantity 0" :
       row.billingNote ? "Configuration / shared billing" : row.sku || "Included in the starting architecture";
-    const pricing = row.quoteRequired ? "Your plan's price" : row.amount === null ? "Price to confirm" : row.operatorEstimate ? "Operator estimate" :
+    const pricing = row.quoteRequired ? "Your plan's price" : row.amount === null ? "Price to confirm" :
+      row.zeroCostConfirmed ? "Operator-confirmed $0, not an independently verified quote" : row.operatorEstimate ? "Operator estimate" :
       row.billingNote ? "Shared / configuration" : "Public rates";
     return `<details class="resource" id="entry-${row.id}" data-resource="${row.id}"${expanded.has(`entry-${row.id}`) ? " open" : ""}>
       <summary><span class="resource-identity"><span class="resource-name">${escape(row.name)}</span><small>${escape(inclusion)}${rowChanged(row) ? " / modified" : ""}</small></span><span class="resource-cost" data-row-total="${row.id}">${total}<small>/ month</small></span><span class="disclosure" aria-hidden="true">+</span></summary>
@@ -659,6 +664,7 @@
       monthlyUSD: row.amount, pricing: row.amount === null ? "unpriced" : row.operatorEstimate ? "operator" :
         row.billingNote ? "shared-or-configuration" : "public",
       outstanding: row.issue || null, operatorSource: row.estimateSource || null,
+      zeroCostConfirmed: !!row.zeroCostConfirmed,
       configurationSource: row.parameter,
       lines: row.lines.map(line => ({
         amountUSD: line.amount, quantity: line.quantity, description: line.description, kind: line.kind,
@@ -833,18 +839,26 @@
       element.reportValidity();
       return;
     }
-    const value = typeof defaults[field] === "number" ? Number(element.value) : element.value;
+    const value = typeof defaults[field] === "boolean" ? element.checked :
+      typeof defaults[field] === "number" ? Number(element.value) : element.value;
     if (typeof value === "number" && (!Number.isFinite(value) || element.value.trim() === "")) {
       byId("input-error").textContent = "Enter a finite number. The estimate has not been updated.";
       byId("input-error").hidden = false;
       return;
     }
     const candidate = { ...state, [field]: value };
+    for (const quotedField of window.architecture.quoteFields) {
+      if ((field === `${quotedField}MonthlyRate` && value > 0) ||
+          (field === `${quotedField}PriceSource` && state[field] !== value)) {
+        candidate[`${quotedField}ZeroCostConfirmed`] = false;
+      }
+    }
     if (field === "region" && state.region !== value) {
       for (const quotedField of window.architecture.quoteFields) {
         candidate[quotedField] = 0;
         candidate[`${quotedField}MonthlyRate`] = 0;
         candidate[`${quotedField}PriceSource`] = "";
+        candidate[`${quotedField}ZeroCostConfirmed`] = false;
       }
     }
     if (["region", "model"].includes(field) && state[field] !== value) {
@@ -881,7 +895,8 @@
   function checkedState(payload) {
     const next = window.scenarios.validate(payload, defaults, catalog.regions);
     const missing = resources(next).filter(row => row.amount === null);
-    if (missing.length) throw new Error(`Complete the pricing inputs before including: ${missing.map(row => row.name).join(", ")}.`);
+    if (missing.length) throw new Error(`Complete the pricing inputs before including: ${missing.map(row => row.name).join(", ")}. ` +
+      missing.map(row => row.issue).filter(Boolean).join(" "));
     return next;
   }
 

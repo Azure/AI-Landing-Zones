@@ -155,10 +155,53 @@ def run(base, candidate=None):
             assert(region+" uses an explicit priced Firewall reference",
               p.firewallSkus(region).includes(p.referenceFor(region).firewall));
           }
+          for(const [field,sku,id] of [
+            ["searchPartitions","Standard S1","search"],["backingPartitions","Standard S1","backing-search"],
+            ["searchPartitions","Standard S2","search"]]){
+            for(const partitions of [1,2,3,4,6,12]){
+              const s=p.validate({version:2,state:{searchSku:sku,[field]:partitions}});
+              assert("Supported Search partitions "+sku+" "+field+" "+partitions,
+                scenarios.assess(s).findings.find(f=>f.id===id+"-topology").status==="checked");
+            }
+            for(const partitions of [5,7,8,9,10,11]){
+              for(const version of [1,2]){
+                let rejected=false;
+                try{p.validate({version,state:{searchSku:sku,[field]:partitions}});}catch{rejected=true;}
+                assert("Unsupported Search partitions rejected "+sku+" "+field+" "+partitions+" v"+version,rejected);
+              }
+              assert("Invalid Search partitions never pass assessment "+field+" "+partitions,
+                scenarios.assess({...p.state,searchSku:sku,[field]:partitions}).findings
+                  .find(f=>f.id===id+"-topology").status==="action");
+            }
+          }
+          for(const state of [{searchSku:"Basic",searchPartitions:4},{searchSku:"Basic",searchReplicas:4},
+            {searchReplicas:4,searchPartitions:12},{backingReplicas:4,backingPartitions:12}]){
+            let rejected=false;try{p.validate({version:2,state});}catch{rejected=true;}
+            assert("Unsupported tier combination rejected "+JSON.stringify(state),rejected);
+          }
+          for(const partitions of [1,2,3]){
+            assert("Basic Search supports fresh-service partitions "+partitions,
+              p.validate({version:2,state:{searchSku:"Basic",searchPartitions:partitions}}).searchPartitions===partitions);
+          }
           for(const field of architecture.quoteFields){
             let rejected=false;
             try{p.validate({version:1,state:{[field]:1}});}catch{rejected=true;}
             assert("No silent zero for "+field,rejected);
+            const zeroQuote={[field]:3,[field+"MonthlyRate"]:0,
+              [field+"PriceSource"]:"Public plan reference, date and billing scope"};
+            for(const version of [1,2]){
+              let unconfirmedRejected=false;
+              try{p.validate({version,state:zeroQuote});}catch{unconfirmedRejected=true;}
+              assert("Unconfirmed zero quote rejected "+field+" v"+version,unconfirmedRejected);
+            }
+            assert("Cost boundary does not treat an unconfirmed zero as free "+field,
+              p.calculate(zeroQuote).some(r=>r.amount===null&&r.quoteRequired));
+            const confirmed=p.validate({version:2,state:{...zeroQuote,[field+"ZeroCostConfirmed"]:true}});
+            const packed=scenarios.pack(confirmed,p.defaults);
+            const restored=p.validate(packed);
+            assert("Explicit zero quote accepted and preserved "+field,
+              restored[field+"ZeroCostConfirmed"]===true&&p.calculate(restored).some(r=>
+                r.operatorEstimate&&r.zeroCostConfirmed&&r.amount===0&&r.lines[0].quantity===3));
             const s=p.validate({version:1,state:{[field]:1,[field+"MonthlyRate"]:12.5,
               [field+"PriceSource"]:"Explicit test plan price and date"}});
             assert("Sourced plan price accepted for "+field,p.calculate(s).some(r=>
@@ -166,7 +209,9 @@ def run(base, candidate=None):
           }
           for(const state of [{users:-1},{nodes:Infinity},{region:"other"},{unknown:1},{users:"100"},
             {buildMinutes:0},{buildDays:32},{buildDeploymentsPerDay:37},{buildMode:"weekly"},
-            {searchServices:2},{searchServices:.5},{searchReplicas:0},{searchPartitions:0}]){
+            {searchServices:2},{searchServices:.5},{searchReplicas:0},{searchPartitions:0},
+            {vpnGatewaysZeroCostConfirmed:"true"},{vpnGatewaysZeroCostConfirmed:1},
+            {vpnGateways:1,vpnGatewaysZeroCostConfirmed:true,vpnGatewaysPriceSource:"   "}]){
             let rejected=false;try{p.validate({version:2,state});}catch{rejected=true;}
             assert("Malformed scenario rejected "+JSON.stringify(state),rejected);
           }
@@ -180,6 +225,68 @@ def run(base, candidate=None):
         assert nav.locator("a").evaluate_all(
             "links=>links.filter(a=>new URL(a.href).pathname.endsWith('/sizing-cost-planner/')).length") == 1
         baseline = page.evaluate("planner.snapshot.sum.total")
+        for field in ("searchPartitions", "backingPartitions"):
+            control = page.locator(f'[data-field="{field}"]')
+            assert control.locator("option").evaluate_all("nodes=>nodes.map(e=>Number(e.value))") == [1, 2, 3, 4, 6, 12]
+            for value in (4, 6, 12, 1):
+                control.evaluate("""element=>{
+                  for(let node=element.parentElement;node;node=node.parentElement){
+                    if(node.tagName==='DETAILS')node.open=true;
+                  }
+                }""")
+                control.select_option(str(value))
+                assert page.evaluate(f"planner.state.{field}") == value
+            control.evaluate("""element=>{
+              element.add(new Option("Unsupported 5 partitions","5"));
+              element.value="5";
+              element.dispatchEvent(new Event("change",{bubbles:true}));
+            }""")
+            assert page.evaluate(f"planner.state.{field}") == 1
+            assert page.locator("#input-error").is_visible()
+            assert "Choose a supported combination" in page.locator("#input-error").inner_text()
+            assert abs(page.evaluate("planner.snapshot.sum.total") - baseline) < 1e-8
+            page.locator("#reset").click()
+        set_field(page, "searchSku", "Basic")
+        assert page.locator('[data-field="searchPartitions"] option').evaluate_all(
+            "nodes=>nodes.map(e=>Number(e.value))") == [1, 2, 3]
+        assert page.locator('[data-field="searchReplicas"]').get_attribute("max") == "3"
+        set_field(page, "searchPartitions", 3)
+        set_field(page, "searchReplicas", 3)
+        assert page.evaluate("planner.assessment().findings.find(f=>f.id==='search-topology').status") == "checked"
+        page.locator("#reset").click()
+        set_field(page, "searchReplicas", 12)
+        assert page.locator('[data-field="searchPartitions"] option').evaluate_all(
+            "nodes=>nodes.map(e=>Number(e.value))") == [1, 2, 3]
+        page.locator("#reset").click()
+        for field in page.evaluate("architecture.quoteFields"):
+            assert page.locator(f'[data-field="{field}"]').is_disabled()
+        edit_resource_field(page, "vpnGatewaysPriceSource", "Public plan reference, date and billing scope")
+        assert page.locator('[data-field="vpnGateways"]').is_disabled()
+        assert page.locator('[data-field="vpnGatewaysZeroCostConfirmed"]').is_enabled()
+        page.locator('[data-field="vpnGateways"]').evaluate("""element=>{
+          element.value="3";element.dispatchEvent(new Event("change",{bubbles:true}));
+        }""")
+        assert page.evaluate("planner.state.vpnGateways") == 0
+        assert page.locator("#input-error").is_visible()
+        assert "explicitly confirm no incremental charge" in page.locator("#input-error").inner_text()
+        assert abs(page.evaluate("planner.snapshot.sum.total") - baseline) < 1e-8
+        page.locator('[data-field="vpnGatewaysZeroCostConfirmed"]').check()
+        assert page.evaluate("planner.state.vpnGatewaysZeroCostConfirmed") is True
+        assert page.locator('[data-field="vpnGateways"]').is_enabled()
+        edit_resource_field(page, "vpnGateways", 3)
+        assert "Operator-confirmed $0" in page.locator('#entry-vpn [data-row-total="vpn"]').inner_text()
+        assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='vpn').amount") == 0
+        edit_resource_field(page, "vpnGatewaysMonthlyRate", 12.5)
+        assert page.evaluate("planner.state.vpnGatewaysZeroCostConfirmed") is False
+        assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='vpn').amount") == 37.5
+        edit_resource_field(page, "vpnGateways", 0)
+        edit_resource_field(page, "vpnGatewaysMonthlyRate", 0)
+        assert page.locator('[data-field="vpnGateways"]').is_disabled()
+        page.locator('[data-field="vpnGatewaysZeroCostConfirmed"]').check()
+        edit_resource_field(page, "vpnGatewaysPriceSource", "Updated public plan scope and date")
+        assert page.evaluate("planner.state.vpnGatewaysZeroCostConfirmed") is False
+        assert page.locator('[data-field="vpnGateways"]').is_disabled()
+        page.locator("#reset").click()
         for field, resource in [
             ("extraFrontendApps", "extra-frontends"), ("orchestratorApps", "orchestrator-app"),
             ("ingestionApps", "ingestion-app")]:
@@ -295,12 +402,17 @@ def run(base, candidate=None):
         page.locator("#reset").click()
         set_field(page, "appGateway", 1)
         assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='gateway-ip').amount") > 0
+        edit_resource_field(page, "vpnGatewaysPriceSource", "Covered agreement, public reference and date")
+        page.locator('[data-field="vpnGatewaysZeroCostConfirmed"]').check()
+        edit_resource_field(page, "vpnGateways", 3)
         if not page.locator("#estimate").evaluate("e=>e.open"):
             page.locator("#estimate > summary").click()
         page.locator("#save-scenario").click()
         page.locator("#reset").click()
         page.locator("#load-scenario").click()
         assert page.evaluate("planner.state.appGateway") == 1
+        assert page.evaluate("planner.state.vpnGatewaysZeroCostConfirmed") is True
+        assert page.evaluate("planner.state.vpnGateways") == 3
         page.evaluate("""() => Object.defineProperty(navigator,"clipboard",{configurable:true,
           value:{writeText:async text=>{window.copiedScenario=text;}}})""")
         page.locator("#share-scenario").click()
@@ -309,6 +421,8 @@ def run(base, candidate=None):
         page.goto(shared)
         ready(page)
         assert page.evaluate("planner.state.appGateway") == 1
+        assert page.evaluate("planner.state.vpnGatewaysZeroCostConfirmed") is True
+        assert page.evaluate("planner.state.vpnGateways") == 3
         if not page.locator("#estimate").evaluate("e=>e.open"):
             page.locator("#estimate > summary").click()
         with page.expect_download() as downloaded:
@@ -319,6 +433,10 @@ def run(base, candidate=None):
         assert report["buildAllocation"]["allocatedHoursPerMonth"] == 20
         assert "not automation" in report["buildAllocation"]["assumption"]
         assert report["outstandingActiveCosts"] == []
+        vpn = next(resource for resource in report["resources"] if resource["id"] == "vpn")
+        assert vpn["zeroCostConfirmed"] is True and vpn["monthlyUSD"] == 0
+        assert vpn["lines"][0]["quantity"] == 3
+        assert report["scenario"]["state"]["vpnGatewaysZeroCostConfirmed"] is True
         model = next(resource for resource in report["resources"] if resource["id"] == "model")
         assert all(line["source"] == "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
                    and "meterId" not in line["meter"] for line in model["lines"])
@@ -333,6 +451,10 @@ def run(base, candidate=None):
             assert page.locator("#no-resources").is_visible()
             assert page.evaluate("planner.snapshot.sum.total") == original
             page.locator("#clear-filters").click()
+        set_field(page, "region", "swedencentral")
+        assert page.evaluate("planner.state.vpnGatewaysZeroCostConfirmed") is False
+        assert page.evaluate("planner.state.vpnGateways") == 0
+        assert page.evaluate("planner.state.vpnGatewaysPriceSource") == ""
         page.locator("#reset").click()
         set_field(page, "users", 0)
         assert "less than the starting point" in page.locator("#live-delta").inner_text()
@@ -351,6 +473,27 @@ def run(base, candidate=None):
         assert legacy.evaluate("planner.state.buildMode") == "allocated"
         assert legacy.evaluate("planner.exportReport().buildAllocation.allocatedHoursPerMonth") == 20
         legacy.close()
+        invalid_scenarios = [
+            {"searchPartitions": 5}, {"backingPartitions": 7},
+            {"vpnGateways": 3, "vpnGatewaysPriceSource": "Source without a price or confirmation"},
+        ]
+        for version in (1, 2):
+            for state in invalid_scenarios:
+                rejected = context.new_page()
+                payload = {"version": version, "state": state}
+                rejected.goto(base + PATH + "?scenario=" + json.dumps(payload))
+                ready(rejected)
+                assert "Scenario rejected" in rejected.locator("#scenario-message").inner_text()
+                assert rejected.evaluate("planner.state.searchPartitions") == 1
+                assert rejected.evaluate("planner.state.backingPartitions") == 1
+                assert rejected.evaluate("planner.state.vpnGateways") == 0
+                assert abs(rejected.evaluate("planner.snapshot.sum.total") - baseline) < 1e-8
+                rejected.evaluate("(payload)=>localStorage.setItem(scenarios.storageKey,JSON.stringify(payload))", payload)
+                rejected.locator("#estimate > summary").click()
+                rejected.locator("#load-scenario").click()
+                assert "Could not load the saved scenario" in rejected.locator("#scenario-message").inner_text()
+                assert abs(rejected.evaluate("planner.snapshot.sum.total") - baseline) < 1e-8
+                rejected.close()
         for old, anchor, parent in [
             ("sizing", "application-hosting", "decision"),
             ("sizing", "workload-baseline", "decision"),

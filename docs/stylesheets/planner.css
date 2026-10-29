@@ -52,6 +52,8 @@
 #agent-lz-planner textarea { display: block; margin-top: 0.4rem; resize: vertical; }
 #agent-lz-planner label { display: block; color: var(--muted); font-size: 0.65rem; font-weight: 600; }
 #agent-lz-planner label :is(input, select, textarea) { margin-top: 0.25rem; font-weight: 400; }
+#agent-lz-planner .zero-price-confirmation { display: flex; align-items: flex-start; gap: 0.4rem; }
+#agent-lz-planner .zero-price-confirmation input { width: 1rem; min-height: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
 #agent-lz-planner :is(p, li, dd, dt) { overflow-wrap: anywhere; }
 #agent-lz-planner p { max-width: 75ch; }
 #agent-lz-planner h1 { margin-bottom: 0.8rem; }
