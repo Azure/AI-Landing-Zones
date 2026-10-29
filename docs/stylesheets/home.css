@@ -77,7 +77,7 @@ body:has(.alz-home) .md-nav--secondary .md-nav { display: none; }
 .alz-home .architecture-figure { width: 100%; margin: 20px 0 12px; }
 .alz-home .architecture-figure > p { max-width: none; }
 .alz-home .home-diagram-trigger { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in; }
-html.home-diagram-visible { overflow: hidden; }
+html:has(.home-diagram-viewer[open]) { overflow: hidden; }
 .alz-home .home-diagram-viewer { width: calc(100vw - 32px); height: calc(100dvh - 32px); max-width: none; max-height: none; margin: auto; padding: 20px; border: 1px solid var(--home-line); border-radius: 4px; background: #fff; color: var(--home-body); }
 .alz-home .home-diagram-viewer[open] { display: flex; flex-direction: column; gap: 12px; }
 .alz-home .home-diagram-viewer::backdrop { background: rgb(12 25 43 / 78%); }

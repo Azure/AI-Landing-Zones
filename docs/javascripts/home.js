@@ -31,7 +31,6 @@
       document.getElementById(image.closest('[role="tabpanel"]').getAttribute("aria-labelledby")).textContent + " architecture";
     viewer.querySelector("[data-diagram-original]").href = enlarged.src;
     viewer.showModal();
-    document.documentElement.classList.add("home-diagram-visible");
     sizeDiagram();
     viewport.scrollTo(0, 0);
   }
@@ -59,7 +58,6 @@
     viewport.scrollTo(0, 0);
   });
   viewer.querySelector("[data-diagram-close]").addEventListener("click", () => viewer.close());
-  viewer.addEventListener("close", () => document.documentElement.classList.remove("home-diagram-visible"));
   viewer.addEventListener("click", event => {
     if (event.target !== viewer) return;
     const bounds = viewer.getBoundingClientRect();

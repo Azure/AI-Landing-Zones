@@ -112,8 +112,10 @@ def run(base, screenshots):
                     page.locator(".architecture-workbench").screenshot(
                         path=str(screenshots / f"home-architecture-{width}.png"))
                 trigger.focus()
+                original_overflow = page.locator("html").evaluate("element => getComputedStyle(element).overflow")
                 trigger.press("Enter")
                 expect(viewer).to_be_visible()
+                assert page.locator("html").evaluate("element => getComputedStyle(element).overflow") == "hidden"
                 expect(viewer.get_by_role("button", name="Close", exact=True)).to_be_focused()
                 page.wait_for_function("""() => {
                     const image = document.querySelector(".home-diagram-image");
@@ -141,7 +143,7 @@ def run(base, screenshots):
                     viewer.get_by_role("button", name="Close", exact=True).click()
                 expect(viewer).to_be_hidden()
                 expect(trigger).to_be_focused()
-                assert not page.locator("html").evaluate("element => element.classList.contains('home-diagram-visible')")
+                assert page.locator("html").evaluate("element => getComputedStyle(element).overflow") == original_overflow
                 assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
         page.set_viewport_size({"width": 1440, "height": 1000})
         page.locator("#tab-standalone").click()
