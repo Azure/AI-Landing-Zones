@@ -1,0 +1,6985 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../backend-bicep-modules/">
+      
+      
+        <link rel="next" href="../access-contracts-bicep/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>LLM backend onboarding - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css?v=56826d53ca9e">
+    
+      <link rel="stylesheet" href="../../../stylesheets/planner.css?v=2">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#llm-backend-onboarding-terraform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LLM backend onboarding
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan your deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan your deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment choices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sizing-cost-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/resource-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Application
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Application
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent hosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sign-in & access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/embed-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embed chat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/user-feedback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User feedback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/multimodality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multimodality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grounding
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grounding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/foundry-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/work-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Work IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/fabric-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fabric IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sharepoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SharePoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/nl2sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL2SQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/agent-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/private-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Private access (VPN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own app
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/publish-to-teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teams & M365
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/connect-copilot-studio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Copilot Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy via portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Gateway Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/governance-hub-benefits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benefits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel Blueprint
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Citadel Blueprint
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-1-governance-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 1 · Governance Hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-2-agent-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 2 · Agent Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-3-agent-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 3 · Agent Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-4-security-foundation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 4 · Security Foundation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/organizational-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organizational alignment & ownership
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/activation-paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical activation paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_8" id="__nav_3_4_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Original platform guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Original platform guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/platform-technical-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/platform-waf-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Well-Architected alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_1" id="__nav_3_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-parameter-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters (Bicep)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/network-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network approach
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_2" id="__nav_3_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity planning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Capacity planning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/sizing-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel sizing guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/ptu-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PTU estimation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/ai-search-cost-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Search cost estimation logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience & business continuity
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resilience & business continuity
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/business-continuity-dr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Business continuity & DR guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/throttling-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Throttling events handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/app-insights-alerting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App Insights alerting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/cosmos-multi-region-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos global multi-master sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1" id="__nav_3_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-quick-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-full-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1_3" id="__nav_3_6_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/post-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post-deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebook setup guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-snippets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook snippets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/developer-vpn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer VPN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2" id="__nav_3_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-variables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variables guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-deployment-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-policy-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM policy architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2_6" id="__nav_3_6_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_1" id="__nav_3_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observe
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observe
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/platform-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform observability guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/power-bi-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power BI dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2" id="__nav_3_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backend contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_1" id="__nav_3_7_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backend-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/unified-ai-api-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified AI API type onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backend-bicep-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep module reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_2" id="__nav_3_7_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Gets Created
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-copy-and-configure-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Copy and Configure Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-your-backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure Your Backends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-configuration-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Configuration Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backend Configuration Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auth_config-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_config Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-object-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Object Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backend Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-ai-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry (ai-foundry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-openai-azure-openai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure OpenAI (azure-openai)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-external" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External (external)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-bedrock-aws-bedrock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon Bedrock (aws-bedrock)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-ai-foundry-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single AI Foundry Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-balancing-across-regions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing Across Regions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mixed-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mixed Providers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-bedrock-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon Bedrock Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Aliases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Aliases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-scope-same-api-spec-routing-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase scope: same-API-spec routing only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aliases-are-virtual-backend-pools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aliases are virtual backend pools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alias-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alias Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolution flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changes-for-direct-model-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changes for direct-model requests?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discovery-get-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discovery (GET /deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-available-models-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Available Models API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Get Available Models API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-balancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-insights-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Insights Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-not-supported-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Model not supported" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#403-forbidden-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "403 Forbidden" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#401-unauthorized-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "401 Unauthorized" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#500-awscredentialsnotconfigured-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "500 AWSCredentialsNotConfigured" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-script-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy Script Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-script-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Script Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-main-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to Main Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3" id="__nav_3_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Access contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access-contracts-quick-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access-contracts-policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contract policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access-contracts-resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/llm-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM access guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/openai-compatible-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI-compatible API guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access-contracts-key-rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key rotation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID auth validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/jwt-client-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JWT client identity permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/pii-masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII anonymization & deanonymization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/agent-governance-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3_13" id="__nav_3_7_3_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_3_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../access-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate access contracts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_4" id="__nav_3_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contracts (preview)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Publish contracts (preview)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publish-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publish-contract-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contract guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_5" id="__nav_3_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway upgrade
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway upgrade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM gateway upgrade (preview)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-ecosystem-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway ecosystem upgrade guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/release-version-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release version management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/foundry-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-gets-created" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Gets Created
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-copy-and-configure-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Copy and Configure Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-your-backends" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Configure Your Backends
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Test
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-configuration-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Configuration Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backend Configuration Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auth_config-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auth_config Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Authentication
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-object-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Object Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Types
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backend Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ai-foundry-ai-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Foundry (ai-foundry)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#azure-openai-azure-openai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Azure OpenAI (azure-openai)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-external" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        External (external)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-bedrock-aws-bedrock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon Bedrock (aws-bedrock)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Configurations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Configurations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#single-ai-foundry-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single AI Foundry Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#load-balancing-across-regions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing Across Regions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mixed-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mixed Providers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-bedrock-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amazon Bedrock Backend
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Flow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Aliases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Aliases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-scope-same-api-spec-routing-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase scope: same-API-spec routing only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aliases-are-virtual-backend-pools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aliases are virtual backend pools
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alias-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alias Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resolution-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolution flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-changes-for-direct-model-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What changes for direct-model requests?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discovery-get-deployments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discovery (GET /deployments)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-available-models-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Get Available Models API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Get Available Models API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#load-balancing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Load Balancing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-insights-query" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Insights Query
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-not-supported-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "Model not supported" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#403-forbidden-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "403 Forbidden" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#401-unauthorized-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "401 Unauthorized" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#500-awscredentialsnotconfigured-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "500 AWSCredentialsNotConfigured" Error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-script-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy Script Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-script-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test Script Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-main-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to Main Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="llm-backend-onboarding-terraform">LLM Backend Onboarding (Terraform)</h1>
+<p>Standalone Terraform deployment for onboarding LLM backends to an existing AI Citadel Governance Hub APIM instance.</p>
+<h2 id="overview">Overview</h2>
+<p>Automate the onboarding of LLM backends to your APIM-based AI Gateway with a streamlined, infrastructure-as-code approach using Terraform variable files (<code>terraform.tfvars</code>).</p>
+<p>This module enables dynamic LLM backend routing without modifying APIM policies:</p>
+<ul>
+<li>📦 <strong>Automatic Backend Creation</strong>: Create APIM backends from configuration</li>
+<li>⚖️ <strong>Load Balancing</strong>: Distribute requests across multiple backends for the same model</li>
+<li>🔄 <strong>Automatic Failover</strong>: Route to healthy backends when others are unavailable</li>
+<li>🔌 <strong>Multi-Provider Support</strong>: Microsoft Foundry, Azure OpenAI, Amazon Bedrock, and external LLM providers</li>
+<li>📝 <strong>Declarative Configuration</strong>: Simple <code>terraform.tfvars</code> files for version control</li>
+</ul>
+<blockquote>
+<p>This module is a Terraform port of the Bicep <a href="../backend-contracts-bicep/"><code>llm-backend-onboarding</code></a> module from the AI Hub Gateway Solution Accelerator.</p>
+</blockquote>
+<h2 id="what-gets-created">What Gets Created</h2>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APIM Backends</strong></td>
+<td>Individual backend resources for each LLM endpoint (native managed-identity credentials for Azure OpenAI / AI Foundry)</td>
+</tr>
+<tr>
+<td><strong>Backend Pools</strong></td>
+<td>Load-balanced pools for models with multiple backends</td>
+</tr>
+<tr>
+<td><strong>Policy Fragments</strong></td>
+<td>Dynamic routing logic for model-based routing, model aliases, and Responses API isolation</td>
+</tr>
+<tr>
+<td><strong>Get Available Models Fragment</strong></td>
+<td>Returns available model deployments with capabilities (similar to Azure Cognitive Services API)</td>
+</tr>
+<tr>
+<td><strong>Metadata Config Fragment</strong></td>
+<td>Centralized model routing config for the Unified AI API — always deployed with backend onboarding to stay in sync</td>
+</tr>
+<tr>
+<td><strong>Resolve Model Alias Fragment</strong></td>
+<td>Resolves client-facing alias names (e.g. <code>adv-gpt</code> as an alias for <code>gpt-5.2</code> and <code>gpt-4.1</code>) to actual underlying models — shared across Azure OpenAI, Universal LLM, and Unified AI APIs</td>
+</tr>
+<tr>
+<td><strong>Named Values</strong></td>
+<td>AWS Bedrock credentials (<code>aws-access-key</code>/<code>aws-secret-key</code>/<code>aws-region</code>) and dynamic per-backend API-key named values (Key Vault reference or explicit value)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Existing deployment of AI Citadel Governance Hub with:<ul>
+<li>User-assigned managed identity configured</li>
+<li>APIs for Universal LLM API and Azure OpenAI API</li>
+</ul>
+</li>
+<li>LLM backends deployed and accessible:<ul>
+<li>Microsoft Foundry with model deployments</li>
+<li>Azure OpenAI resources with model deployments</li>
+<li>Amazon Bedrock with foundation model access</li>
+<li>APIM can reach the target backends from a network perspective</li>
+</ul>
+</li>
+<li>Verify APIM's user-assigned managed identity has the required roles:<ul>
+<li><code>Cognitive Services OpenAI User</code> for Azure OpenAI</li>
+<li><code>Cognitive Services User</code> for Microsoft Foundry</li>
+</ul>
+</li>
+<li>For Amazon Bedrock:<ul>
+<li>AWS IAM user with Bedrock access and access keys generated</li>
+<li>Store the AWS access key ID and secret access key as secrets in Azure Key Vault, and grant APIM's user-assigned managed identity <code>Key Vault Secrets User</code> on that vault (already granted on the landing-zone Key Vault)</li>
+<li>Provide <code>aws_access_key_secret_uri</code>, <code>aws_secret_key_secret_uri</code> (versionless Key Vault secret URIs), and <code>aws_region</code> when deploying — the keys become Key Vault–referenced secret APIM named values (<code>aws-access-key</code>, <code>aws-secret-key</code>), compliant with the Azure Policy <em>API Management secret named values should be stored in Azure Key Vault</em>; <code>aws-region</code> is a plain named value</li>
+<li>If these variables are not provided, the named values are created as non-secret <code>NOT_CONFIGURED</code> placeholders and the gateway returns a <code>500 AWSCredentialsNotConfigured</code> error at runtime when a Bedrock backend is invoked</li>
+</ul>
+</li>
+<li>Terraform &gt;= 1.5 and Azure CLI installed</li>
+<li>Authenticated to Azure (<code>az login</code>)</li>
+</ul>
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="1-copy-and-configure-variables">1. Copy and Configure Variables</h3>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>terraform.tfvars.example<span class="w"> </span>terraform.tfvars
+<span class="c1"># Edit terraform.tfvars with your values</span>
+</code></pre></div>
+<h3 id="2-configure-your-backends">2. Configure Your Backends</h3>
+<p>Edit <code>terraform.tfvars</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="na">subscription_id</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">"00000000-0000-0000-0000-000000000000"</span><span class="c1"> # Your subscription ID</span>
+<span class="na">resource_group_name</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">"rg-citadel-governance-hub"</span><span class="c1">            # APIM resource group</span>
+<span class="na">apim_name</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span><span class="s2">"apim-citadel-governance-hub"</span><span class="c1">          # APIM instance name</span>
+<span class="na">managed_identity_client_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"00000000-0000-0000-0000-000000000000"</span><span class="c1"> # APIM managed identity client ID</span>
+
+<span class="na">llm_backend_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-foundry"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o-mini", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-07-18", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-11-20", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4.1", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2025-04-14", retirementDate = "2026-10-14", apiVersion = "2025-04-01-preview"</span><span class="p">,</span><span class="w"> </span><span class="na">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">180</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DeepSeek-R1", sku = "GlobalStandard", capacity = 1, modelFormat = "DeepSeek", modelVersion = "1", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Phi-4", sku = "GlobalStandard", capacity = 1, modelFormat = "Microsoft", modelVersion = "3", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"text-embedding-3-large", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "1", retirementDate = "2027-04-14"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="3-deploy">3. Deploy</h3>
+<div class="highlight"><pre><span></span><code>./scripts/deploy.sh
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">deploy</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<p>Or manually:</p>
+<div class="highlight"><pre><span></span><code>terraform<span class="w"> </span>init
+terraform<span class="w"> </span>plan<span class="w"> </span>-var-file<span class="o">=</span>terraform.tfvars
+terraform<span class="w"> </span>apply<span class="w"> </span>-var-file<span class="o">=</span>terraform.tfvars
+</code></pre></div>
+<h3 id="4-test">4. Test</h3>
+<div class="highlight"><pre><span></span><code>./scripts/test.sh<span class="w"> </span>--api-key<span class="w"> </span><span class="s2">"your-apim-subscription-key"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="p">./</span><span class="n">scripts</span><span class="p">/</span><span class="n">test</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-ApiKey</span> <span class="s2">"your-apim-subscription-key"</span>
+</code></pre></div>
+<h2 id="configuration-reference">Configuration Reference</h2>
+<h3 id="backend-configuration-properties">Backend Configuration Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backend_id</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Unique identifier for the APIM backend resource (usually the name of the backend resource)</td>
+</tr>
+<tr>
+<td><code>backend_type</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><code>ai-foundry</code>, <code>azure-openai</code>, <code>aws-bedrock</code>, or <code>external</code></td>
+</tr>
+<tr>
+<td><code>endpoint</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Base URL of the LLM service</td>
+</tr>
+<tr>
+<td><code>auth_scheme</code></td>
+<td>string</td>
+<td>Yes</td>
+<td><code>managedIdentity</code>, <code>apiKey</code>, or <code>token</code> (legacy; sets native MI credentials when <code>managedIdentity</code>)</td>
+</tr>
+<tr>
+<td><code>auth_type</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>managed-identity</code>, <code>aws-sigv4</code>, <code>api-key-bearer</code>, <code>api-key-header</code>, or <code>none</code>. Overrides <code>auth_scheme</code> (see <a href="#backend-authentication">Backend Authentication</a>)</td>
+</tr>
+<tr>
+<td><code>auth_config</code></td>
+<td>object</td>
+<td>No</td>
+<td>API-key credential source: <code>{ named_value_key, key_vault_secret_uri?, secret_value? }</code> (see below)</td>
+</tr>
+<tr>
+<td><code>supported_models</code></td>
+<td>list</td>
+<td>Yes</td>
+<td>Array of model objects (see Model Object Properties below)</td>
+</tr>
+<tr>
+<td><code>priority</code></td>
+<td>number</td>
+<td>No</td>
+<td>1-5, default 1 (lower = higher priority)</td>
+</tr>
+<tr>
+<td><code>weight</code></td>
+<td>number</td>
+<td>No</td>
+<td>1-1000, default 100 (load balancing weight)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="auth_config-properties"><code>auth_config</code> Properties</h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>named_value_key</code></td>
+<td>string</td>
+<td>No</td>
+<td>APIM named value that holds the credential</td>
+</tr>
+<tr>
+<td><code>key_vault_secret_uri</code></td>
+<td>string</td>
+<td>No</td>
+<td>Key Vault secret reference (recommended for production)</td>
+</tr>
+<tr>
+<td><code>secret_value</code></td>
+<td>string</td>
+<td>No</td>
+<td>Explicit value (testing only — do <strong>not</strong> use in production)</td>
+</tr>
+<tr>
+<td><code>authorization_scheme</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>api-key-bearer</code> only. Scheme prefixed to the secret (default <code>Bearer</code>). Set to <code>""</code> when the secret already contains the scheme (e.g. <code>Bearer abc…</code>) so it is sent verbatim as the <code>Authorization</code> header</td>
+</tr>
+</tbody>
+</table>
+<h4 id="backend-authentication">Backend Authentication</h4>
+<p>The effective auth type is <code>auth_type</code> when set; otherwise <code>managed-identity</code> when <code>auth_scheme = "managedIdentity"</code>, <code>api-key-bearer</code> for <code>aws-bedrock-mantle</code> / <code>gemini-openai</code> backends, and no credentials for anything else. Credentials are configured on the APIM backend resource and applied natively by APIM when the request is forwarded:</p>
+<table>
+<thead>
+<tr>
+<th>Effective auth type</th>
+<th>APIM backend <code>credentials</code></th>
+<th>Policy (<code>set-backend-authorization</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>managed-identity</code></td>
+<td><code>managedIdentity</code> (Cognitive Services scope) + <code>x-ms-client-id</code> header</td>
+<td>No-op</td>
+</tr>
+<tr>
+<td><code>api-key-bearer</code></td>
+<td><code>authorization</code> = <code>&lt;authorization_scheme&gt; {{&lt;named_value_key&gt;}}</code> (default scheme <code>Bearer</code>); with <code>authorization_scheme = ""</code>, <code>header</code> = <code>Authorization: {{&lt;named_value_key&gt;}}</code></td>
+<td>Strips caller <code>Authorization</code> / <code>api-key</code> headers</td>
+</tr>
+<tr>
+<td><code>api-key-header</code></td>
+<td><code>header</code> = <code>api-key: {{&lt;named_value_key&gt;}}</code></td>
+<td>Strips caller <code>Authorization</code> / <code>api-key</code> headers</td>
+</tr>
+<tr>
+<td><code>aws-sigv4</code></td>
+<td>None</td>
+<td>Signs the request with <code>aws-access-key</code> / <code>aws-secret-key</code> / <code>aws-region</code></td>
+</tr>
+<tr>
+<td><code>none</code></td>
+<td>None</td>
+<td>No-op</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>API-key credentials must live on the backend resource: APIM resolves <code>{{named-value}}</code> references only where they appear literally (backend credentials or policy text), not from runtime policy variables. <code>api-key-bearer</code> / <code>api-key-header</code> require <code>auth_config.named_value_key</code>. Because credentials are per backend, a backend pool may mix auth types.</p>
+</blockquote>
+<h3 id="model-object-properties">Model Object Properties</h3>
+<p>Each model in the <code>supported_models</code> array has these properties:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Model name (e.g., <code>gpt-4o</code>, <code>DeepSeek-R1</code>, <code>Phi-4</code>)</td>
+</tr>
+<tr>
+<td><code>sku</code></td>
+<td>string</td>
+<td>No</td>
+<td>SKU name for the deployment (default: <code>Standard</code>). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>capacity</code></td>
+<td>number</td>
+<td>No</td>
+<td>Capacity/TPM quota (default: 100). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>modelFormat</code></td>
+<td>string</td>
+<td>No</td>
+<td>Model format identifier, e.g., <code>OpenAI</code>, <code>DeepSeek</code>, <code>Microsoft</code> (default: <code>OpenAI</code>). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>modelVersion</code></td>
+<td>string</td>
+<td>No</td>
+<td>Version of the model (default: <code>1</code>). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>retirementDate</code></td>
+<td>string (date)</td>
+<td>No</td>
+<td>Optional retirement date for the model (YYYY-MM-DD). Used in <code>get-available-models</code> response</td>
+</tr>
+<tr>
+<td><code>apiVersion</code></td>
+<td>string</td>
+<td>No</td>
+<td>API version for OpenAI-type requests (default: <code>2024-02-15-preview</code>). Used by Unified AI API for backend routing</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>number</td>
+<td>No</td>
+<td>Request timeout in seconds (default: <code>120</code>). Used by Unified AI API for per-model timeout configuration</td>
+</tr>
+<tr>
+<td><code>inferenceApiVersion</code></td>
+<td>string</td>
+<td>No</td>
+<td>API version for inference-type requests (e.g., <code>2024-05-01-preview</code>). Used by Unified AI API for non-OpenAI models</td>
+</tr>
+</tbody>
+</table>
+<h3 id="backend-types">Backend Types</h3>
+<h4 id="ai-foundry-ai-foundry">AI Foundry (<code>ai-foundry</code>)</h4>
+<ul>
+<li>Uses Azure AI Foundry project endpoints</li>
+<li>Endpoint format: <code>https://&lt;resource&gt;.cognitiveservices.azure.com/</code></li>
+<li>Authentication: Managed identity with Cognitive Services scope</li>
+<li>No URL rewriting required</li>
+</ul>
+<h4 id="azure-openai-azure-openai">Azure OpenAI (<code>azure-openai</code>)</h4>
+<ul>
+<li>Uses Azure OpenAI Service endpoints</li>
+<li>Endpoint format: <code>https://&lt;resource&gt;.openai.azure.com/</code></li>
+<li>Authentication: Managed identity with Cognitive Services scope</li>
+<li>Automatic URL rewriting to include <code>/deployments/{model}/</code></li>
+</ul>
+<h4 id="external-external">External (<code>external</code>)</h4>
+<ul>
+<li>Uses external LLM provider endpoints</li>
+<li>Authentication: API key or backend credentials</li>
+<li>No URL rewriting</li>
+</ul>
+<h4 id="amazon-bedrock-aws-bedrock">Amazon Bedrock (<code>aws-bedrock</code>)</h4>
+<ul>
+<li>Uses Amazon Bedrock runtime endpoints</li>
+<li>Endpoint format: <code>https://bedrock-runtime.&lt;aws-region&gt;.amazonaws.com</code></li>
+<li>Authentication: AWS Signature Version 4 (SigV4) using IAM access keys stored in Azure Key Vault and exposed as Key Vault–referenced APIM named values</li>
+<li>Path construction: <code>/model/{model-id}/converse</code></li>
+<li>Requires additional variables: <code>aws_access_key_secret_uri</code>, <code>aws_secret_key_secret_uri</code>, <code>aws_region</code></li>
+<li>See <a href="https://learn.microsoft.com/en-us/azure/api-management/amazon-bedrock-passthrough-llm-api">Microsoft Learn: Import Amazon Bedrock API</a> for detailed APIM integration guidance</li>
+</ul>
+<h2 id="example-configurations">Example Configurations</h2>
+<h3 id="single-ai-foundry-backend">Single AI Foundry Backend</h3>
+<div class="highlight"><pre><span></span><code><span class="na">llm_backend_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-foundry"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o-mini", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-07-18", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-11-20", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4.1", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2025-04-14", retirementDate = "2026-10-14", apiVersion = "2025-04-01-preview"</span><span class="p">,</span><span class="w"> </span><span class="na">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">180</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DeepSeek-R1", sku = "GlobalStandard", capacity = 1, modelFormat = "DeepSeek", modelVersion = "1", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Phi-4", sku = "GlobalStandard", capacity = 1, modelFormat = "Microsoft", modelVersion = "3", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"text-embedding-3-large", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "1", retirementDate = "2027-04-14"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="load-balancing-across-regions">Load Balancing Across Regions</h3>
+<p>As <code>DeepSeek-R1</code> is available in 2 different backends, the onboarding will automatically create a backend pool for <code>DeepSeek-R1</code> and distribute traffic based on the specified priority/weights.</p>
+<div class="highlight"><pre><span></span><code><span class="na">llm_backend_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-foundry"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o-mini", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-07-18", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-11-20", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DeepSeek-R1", sku = "GlobalStandard", capacity = 1, modelFormat = "DeepSeek", modelVersion = "1", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"text-embedding-3-large", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "1", retirementDate = "2027-04-14"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aif-citadel-secondary"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-foundry"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://aif-RESOURCE_TOKEN-1.cognitiveservices.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-5", sku = "GlobalStandard", capacity = 50, modelFormat = "OpenAI", modelVersion = "1", retirementDate = "2027-02-05"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DeepSeek-R1", sku = "GlobalStandard", capacity = 1, modelFormat = "DeepSeek", modelVersion = "1", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">50</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>In this example, <code>DeepSeek-R1</code> will get a <code>DeepSeek-R1-backend-pool</code> with both backends.</p>
+<h3 id="mixed-providers">Mixed Providers</h3>
+<p>This mixes Azure OpenAI and Microsoft Foundry backends. Common models across providers are automatically load balanced (like <code>DeepSeek-R1</code> and <code>text-embedding-3-large</code> below), while unique models are routed to their specific backend.</p>
+<div class="highlight"><pre><span></span><code><span class="na">llm_backend_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-foundry"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o-mini", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-07-18", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-11-20", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DeepSeek-R1", sku = "GlobalStandard", capacity = 1, modelFormat = "DeepSeek", modelVersion = "1", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"text-embedding-3-large", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "1", retirementDate = "2027-04-14"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aoai-eastus-gpt4"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"azure-openai"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://YOUR-AOAI-RESOURCE.openai.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-5", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2025-08-07", retirementDate = "2027-02-05"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"DeepSeek-R1", sku = "GlobalStandard", capacity = 1, modelFormat = "DeepSeek", modelVersion = "1", retirementDate = "2099-12-30", inferenceApiVersion = "2024-05-01-preview"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"text-embedding-3-large", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "1", retirementDate = "2027-04-14"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="amazon-bedrock-backend">Amazon Bedrock Backend</h3>
+<p>This example adds an Amazon Bedrock backend alongside Azure backends. The <code>aws-bedrock</code> backend type uses AWS SigV4 authentication via IAM access keys stored as APIM named values.</p>
+<div class="highlight"><pre><span></span><code><span class="na">llm_backend_config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"ai-foundry"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://aif-RESOURCE_TOKEN-0.cognitiveservices.azure.com/"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"managedIdentity"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpt-4o", sku = "GlobalStandard", capacity = 100, modelFormat = "OpenAI", modelVersion = "2024-11-20", retirementDate = "2026-09-30"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">backend_id</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"bedrock-us-east-1"</span>
+<span class="w">    </span><span class="na">backend_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"aws-bedrock"</span>
+<span class="w">    </span><span class="na">endpoint</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://bedrock-runtime.us-east-1.amazonaws.com"</span>
+<span class="w">    </span><span class="na">auth_scheme</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"token"</span>
+<span class="w">    </span><span class="na">auth_type</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"aws-sigv4"</span>
+<span class="w">    </span><span class="na">supported_models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"us.anthropic.claude-3-5-haiku-20241022-v1:0", sku = "OnDemand", capacity = 1, modelFormat = "Anthropic", modelVersion = "1", retirementDate = "2099-12-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"us.anthropic.claude-3-5-sonnet-20241022-v2:0", sku = "OnDemand", capacity = 1, modelFormat = "Anthropic", modelVersion = "2", retirementDate = "2099-12-30"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"us.amazon.nova-pro-v1:0", sku = "OnDemand", capacity = 1, modelFormat = "Amazon", modelVersion = "1", retirementDate = "2099-12-30"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="na">weight</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">100</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+
+<span class="c1"># AWS credentials for Bedrock authentication (Key Vault secret URIs, versionless)</span>
+<span class="na">aws_access_key_secret_uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://&lt;your-key-vault&gt;.vault.azure.net/secrets/aws-access-key"</span>
+<span class="na">aws_secret_key_secret_uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://&lt;your-key-vault&gt;.vault.azure.net/secrets/aws-secret-key"</span>
+<span class="na">aws_region</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">"us-east-1"</span>
+</code></pre></div>
+<p>Create the secrets before applying, for example:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>keyvault<span class="w"> </span>secret<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--vault-name<span class="w"> </span>&lt;your-key-vault&gt;<span class="w"> </span>--name<span class="w"> </span>aws-access-key<span class="w"> </span>--value<span class="w"> </span><span class="s2">"&lt;your-aws-access-key-id&gt;"</span>
+az<span class="w"> </span>keyvault<span class="w"> </span>secret<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--vault-name<span class="w"> </span>&lt;your-key-vault&gt;<span class="w"> </span>--name<span class="w"> </span>aws-secret-key<span class="w"> </span>--value<span class="w"> </span><span class="s2">"&lt;your-aws-secret-access-key&gt;"</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Important</strong>: AWS access keys are never passed to Terraform or stored inline in APIM. APIM resolves them from Key Vault using its user-assigned managed identity, which must have <code>Key Vault Secrets User</code> on the vault and network reach to it. Use versionless secret URIs so APIM picks up rotated keys automatically. See <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access-key-self-managed.html#Using_CreateAccessKey">Create IAM user access keys</a> for generating AWS access keys.</p>
+</blockquote>
+<h2 id="request-flow">Request Flow</h2>
+<div class="highlight"><pre><span></span><code>1. Client → APIM Gateway
+   POST /models/chat/completions
+   Body: { "model": "gpt-4o", "messages": [...] }
+
+2. Extract Model
+   → requestedModel = "gpt-4o"
+
+3. Find Backend Pool
+   → matches "gpt-4o-backend-pool" (load balanced)
+   or direct backend if single provider
+
+4. Authenticate
+   → Get managed identity token
+   → Set Authorization header
+
+5. Route to Backend
+   → Forward to healthy backend in pool
+
+6. Return Response
+   → Client receives response with usage headers
+</code></pre></div>
+<h2 id="model-aliases">Model Aliases</h2>
+<p>Model aliases let you expose a single client-facing model name (for example <code>multi-cloud-openai</code>) that the gateway resolves at runtime to one of several underlying real models. Clients keep using the alias even when the underlying line-up changes — the gateway abstracts away the migration <strong>and</strong> transparently load-balances / fails over across the underlying members.</p>
+<h3 id="phase-scope-same-api-spec-routing-only">Phase scope: same-API-spec routing only</h3>
+<p>This phase of the accelerator does <strong>not</strong> translate between API protocols. Every alias must therefore front backends that share the <strong>same wire-level API spec</strong> — same path, same request/response shape, same auth contract. Inbound requests are routed unchanged to the picked member's underlying pool; only the JSON body's <code>model</code> field is rewritten to the resolved real model name.</p>
+<table>
+<thead>
+<tr>
+<th>Allowed (same spec)</th>
+<th>Not allowed (different specs)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundry + Bedrock-Mantle + Gemini-OpenAI under one alias served via OpenAI <code>/v1/chat/completions</code> ✅</td>
+<td>Anthropic Messages + Bedrock Converse under one alias ❌ — different request shapes</td>
+</tr>
+<tr>
+<td>Multiple Anthropic backends (regions, tenants) under one alias served via <code>/claude/v1/messages</code> ✅</td>
+<td>Foundry OpenAI-compat + Anthropic Messages under one alias ❌ — different paths and bodies</td>
+</tr>
+<tr>
+<td>Multiple Foundry models (gpt-5 + Mistral + Phi-4) under one weighted alias ✅</td>
+<td>Gemini <code>generateContent</code> + OpenAI <code>/v1/chat/completions</code> under one alias ❌</td>
+</tr>
+</tbody>
+</table>
+<p>A future phase will add <strong>protocol-passthrough backend types</strong> (e.g. <code>aws-bedrock-anthropic-passthrough</code> exposing Bedrock-hosted Claude under the Anthropic Messages spec, and <code>foundry-anthropic-passthrough</code> for Foundry-hosted Claude). When those land, an alias spanning Anthropic + Bedrock + Foundry over a single <code>/v1/messages</code> surface becomes possible without any caller-side change. The alias data model already supports this — only the per-protocol passthrough backend types are pending.</p>
+<h3 id="aliases-are-virtual-backend-pools">Aliases are virtual backend pools</h3>
+<p>Every entry in <code>model_aliases</code> becomes a <strong>virtual pool entry inside the same <code>backendPools</code> JArray that real model pools live in</strong>. APIM cannot natively put pools inside pools, so the gateway materialises this with a deploy-time-resolved JObject that carries each member's underlying poolName / poolType / authType. Alias resolution and member fallback then ride on the same <code>set-target-backend-pool</code> + retry pipeline that real models use. You get:</p>
+<ul>
+<li><strong>Same-spec load balancing and fallback</strong> — the alias resolves to a member that's compatible with the inbound API surface (filtered by <code>compatiblePoolTypes</code>); on 429/5xx the retry block walks the remaining members in resolution order. When the alias spans multiple clouds for a single shared spec (e.g. OpenAI-compat across Foundry + Bedrock-Mantle + Gemini-OpenAI), this is <strong>transparent cross-cloud fallback</strong>.</li>
+<li><strong>Routing strategies</strong> — <code>priority</code> (deterministic order with implicit fallback) or <code>weighted</code> (probabilistic distribution) configured per alias.</li>
+<li><strong>Backend path templates preserved</strong> — once a member is picked, the request takes the same code paths a direct call to that real model would have taken (URL rewrite, auth, body forwarding).</li>
+<li><strong>Consistent across the LLM API surfaces</strong> — Azure OpenAI API, Universal LLM API, and Unified AI API all resolve aliases the same way using the shared <code>set-target-backend-pool</code> fragment.</li>
+<li><strong>Compatible-pool-types filtering</strong> — when the inbound API surface restricts pool types (e.g. Universal LLM = OpenAI-compat-only, <code>/claude/</code> = anthropic-only), alias members with no compatible underlying pool are skipped automatically. An alias with no member compatible with the surface returns a clear <code>alias_no_compatible_member</code> 400.</li>
+<li><strong>Direct-model routing untouched</strong> — aliases are opt-in. Configurations that never declare <code>model_aliases</code> see exactly the same direct-pool behaviour as before.</li>
+</ul>
+<h3 id="configuration">Configuration</h3>
+<p>Add a <code>model_aliases</code> list to your <code>terraform.tfvars</code> file alongside <code>llm_backend_config</code>. Pick the scenarios that match your backend mix:</p>
+<div class="highlight"><pre><span></span><code><span class="na">model_aliases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="c1">  # Scenario A — Foundry weighted load-balance (single cloud, OpenAI-compat).</span>
+<span class="c1">  # All members must be in `ai-foundry` pools. Use weights to drive the</span>
+<span class="c1">  # random-by-weight pick on each call.</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">name</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"foundry-weighted-mix"</span>
+<span class="w">    </span><span class="na">models</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"gpt-5", "mistral-large", "Phi-4"</span><span class="p">]</span>
+<span class="w">    </span><span class="na">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"weighted"</span>
+<span class="w">    </span><span class="na">weights</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">30</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="c1">  # Scenario B — Cross-cloud OpenAI-compat (multi-cloud, same /v1/chat/completions spec).</span>
+<span class="c1">  # Members must be OpenAI-compat-capable: ai-foundry, aws-bedrock-mantle, gemini-openai.</span>
+<span class="c1">  # Priority strategy gives a primary + transparent cross-cloud fallback.</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"multi-cloud-openai"</span>
+<span class="w">    </span><span class="na">models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="s2">"gpt-4.1"</span><span class="p">,</span><span class="c1">              # ai-foundry</span>
+<span class="w">      </span><span class="s2">"openai.gpt-oss-120b"</span><span class="p">,</span><span class="c1">  # aws-bedrock-mantle</span>
+<span class="w">      </span><span class="s2">"gemini-2.5-flash-lite"</span><span class="c1"> # gemini-openai</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">    </span><span class="na">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"priority"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="c1">  # Scenario C — Native Anthropic Messages alias (/v1/messages spec).</span>
+<span class="c1">  # Today the only backend type that natively serves /v1/messages is `anthropic`,</span>
+<span class="c1">  # so alias members are limited to direct Anthropic API keys.</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="na">name</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"multi-cloud-claude"</span>
+<span class="w">    </span><span class="na">models</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"claude-sonnet-4-6", "claude-haiku-4-5"</span><span class="p">]</span>
+<span class="w">    </span><span class="na">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"priority"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="alias-properties">Alias Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>Yes</td>
+<td>Client-facing alias name. Must <strong>not</strong> collide with any real model name in <code>llm_backend_config</code>.</td>
+</tr>
+<tr>
+<td><code>models</code></td>
+<td>list(string)</td>
+<td>Yes</td>
+<td>Ordered list of underlying real models the alias may resolve to. Each must exist as a <code>name</code> in some backend's <code>supported_models</code>. May span any mix of providers.</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td>string</td>
+<td>No</td>
+<td><code>priority</code> (default) — first compatible member wins, the rest form the fallback list; <code>weighted</code> — random selection by weights, the rest form the fallback list (round-walk after the picked one).</td>
+</tr>
+<tr>
+<td><code>weights</code></td>
+<td>list(number)</td>
+<td>No</td>
+<td>Required when <code>strategy</code> is <code>weighted</code>. Same length as <code>models</code>. Higher weight = more traffic. Used at deploy time to render the alias virtual pool entry; runtime selection is random-weighted.</td>
+</tr>
+</tbody>
+</table>
+<p>Aliases surface in the <code>/deployments</code> discovery response and are honored by <code>validate-model-access</code> RBAC.</p>
+<h3 id="resolution-flow">Resolution flow</h3>
+<div class="highlight"><pre><span></span><code>1. Client calls e.g. POST /unified-ai/v1/chat/completions with "model": "multi-cloud-openai".
+
+2. validate-model-access: RBAC check on the alias name (allowedModels in the
+   product policy controls alias access — admins do NOT need to enumerate the
+   underlying real models).
+
+3. set-backend-pools: Loads the gateway's backendPools JArray. The alias appears
+   as a virtual pool entry with isAlias=true, aliasName="multi-cloud-openai",
+   members=[ {model, weight, pools[]}, ... ]. Each member's pools[] carries
+   the resolved poolName / poolType / authType for every underlying pool that
+   hosts the member model.
+
+4. set-target-backend-pool: Detects the alias. Filters members by the inbound
+   API surface's compatiblePoolTypes (so e.g. /v1/chat/completions only
+   considers OpenAI-compat-capable pool types). Picks one member based on
+   strategy. Sets:
+     - is-alias = true
+     - original-model-alias = "multi-cloud-openai"
+     - requestedModel = picked member's real model name
+     - targetBackendPool = picked member's poolName
+     - targetPoolType / targetAuthType / targetAuthConfigNamedValue
+     - alias-fallback-members = JArray of remaining members in walk order.
+
+5. resolve-model-alias: Slim post-resolution body rewrite. Replaces the JSON
+   body's model field with requestedModel so backends see the real name.
+   No-op when is-alias=false.
+
+6. set-backend-authorization + path-builder: Operate on the resolved real model
+   exactly like a direct request would.
+
+7. Backend retry block: If the request returns 429 or 5xx (pre-stream), the
+   API policy walks alias-fallback-members one entry at a time, swapping
+   targetBackendPool / requestedModel / authType in place. Cross-cloud fallback
+   (Foundry → Bedrock-Mantle → Gemini-OpenAI) is transparent to the client.
+   Once streaming has started, fallback is no longer possible.
+</code></pre></div>
+<h3 id="what-changes-for-direct-model-requests">What changes for direct-model requests?</h3>
+<p>Nothing. When <code>requestedModel</code> does not match any alias entry, <code>set-target-backend-pool</code> falls through to its existing model→pool match logic. Direct routing is unchanged.</p>
+<h3 id="access-control">Access Control</h3>
+<p><code>validate-model-access</code> runs <strong>before</strong> <code>set-target-backend-pool</code>, so the access contract's <code>allowedModels</code> list controls access to the <strong>alias name</strong>, not the underlying members. Granting <code>allowedModels = "multi-cloud-openai"</code> lets the client invoke the alias without having to also list <code>gpt-4.1</code> / <code>openai.gpt-oss-120b</code> / <code>gemini-2.5-flash-lite</code> separately. The alias becomes the contract-level abstraction.</p>
+<h3 id="discovery-get-deployments">Discovery (<code>GET /deployments</code>)</h3>
+<p>Aliases also appear in the model discovery responses (<code>get-available-models</code> fragment, used by <code>GET /deployments</code> and <code>GET /deployments/{deployment-id}</code> on the Universal LLM, Azure OpenAI, and Unified AI APIs) <strong>as first-class entries alongside real models</strong>. This means clients (including Microsoft Foundry's deployment picker) can discover and use an alias without the backend implementation leaking out.</p>
+<p>Each alias entry returned by discovery looks like:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alias"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alias"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"multi-cloud-openai"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Standard"</span><span class="p">,</span><span class="w"> </span><span class="nt">"capacity"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"model"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alias"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"multi-cloud-openai"</span><span class="p">,</span><span class="w"> </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"capabilities"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"chatCompletion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Alias for: gpt-4.1, openai.gpt-oss-120b, gemini-2.5-flash-lite (strategy: priority)"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"provisioningState"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Succeeded"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The <code>description</code> field under <code>capabilities</code> exposes which underlying models the alias maps to and which strategy is in use (with the configured weights when <code>strategy = "weighted"</code>). The discovery filter (<code>allowedModels</code> from the access contract) matches by <code>name</code>, so RBAC works for aliases identically to real models.</p>
+<h3 id="errors">Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alias_no_compatible_member</code> (400)</td>
+<td>The alias was matched but every member's underlying pool is incompatible with the inbound API surface (filtered out by <code>compatiblePoolTypes</code>). The error body includes the alias name, requested CSV of compatible pool types, and total member count.</td>
+</tr>
+<tr>
+<td><code>unauthorized_model_access</code> (403)</td>
+<td>The alias name is not in the access contract's <code>allowedModels</code> list.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="get-available-models-api">Get Available Models API</h2>
+<p>The <code>get-available-models</code> policy fragment enables an API endpoint that returns all available model deployments with their capabilities, similar to the Azure Cognitive Services deployment list API.</p>
+<p>This policy fragment is designed to support Microsoft Foundry integration with Citadel Governance Hub, allowing clients to query available models dynamically from the Foundry portal experience.</p>
+<blockquote>
+<p><strong>NOTE</strong>: This policy fragment is included in the <code>/deployments</code> get operation of the Universal LLM API by default. Currently this Microsoft Foundry feature is in <code>preview</code> and may change in future releases.</p>
+</blockquote>
+<h3 id="usage">Usage</h3>
+<p>Include the policy fragment in any API operation to return available models:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;inbound&gt;</span>
+<span class="w">    </span><span class="nt">&lt;include-fragment</span><span class="w"> </span><span class="na">fragment-id=</span><span class="s">"get-available-models"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/inbound&gt;</span>
+</code></pre></div>
+<h3 id="response-format">Response Format</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ai-foundry"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-4o"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GlobalStandard"</span><span class="p">,</span><span class="w"> </span><span class="nt">"capacity"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"model"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OpenAI"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-4o"</span><span class="p">,</span><span class="w"> </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-11-20"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"capabilities"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"chatCompletion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"provisioningState"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Succeeded"</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"aif-citadel-primary"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ai-foundry"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-4o-mini"</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GlobalStandard"</span><span class="p">,</span><span class="w"> </span><span class="nt">"capacity"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">"model"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OpenAI"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gpt-4o-mini"</span><span class="p">,</span><span class="w"> </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-11-20"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"capabilities"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"chatCompletion"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">"provisioningState"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Succeeded"</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The response is dynamically generated based on the <code>llm_backend_config</code> variable, using the optional metadata fields (<code>sku</code>, <code>capacity</code>, <code>modelFormat</code>, <code>modelVersion</code>).</p>
+<h2 id="load-balancing">Load Balancing</h2>
+<p>Models that appear in <strong>multiple backends</strong> automatically get a backend pool for load balancing and failover. For example, given two backends that both expose <code>DeepSeek-R1</code>, the onboarding creates a <code>DeepSeek-R1-backend-pool</code> containing both backends and distributes traffic based on the configured <code>priority</code>/<code>weight</code>. See <a href="#load-balancing-across-regions">Load Balancing Across Regions</a> for a full example.</p>
+<h2 id="monitoring">Monitoring</h2>
+<h3 id="key-metrics">Key Metrics</h3>
+<p>Connecting Application Insights to APIM provides insights into backend performance:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application Map</td>
+<td>Visual representation of dependency performance</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>For both operations and dependencies</td>
+</tr>
+<tr>
+<td>Failures</td>
+<td>Failures by backend</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Response time per backend</td>
+</tr>
+</tbody>
+</table>
+<h3 id="application-insights-query">Application Insights Query</h3>
+<div class="highlight"><pre><span></span><code><span class="c">// this query calculates LLM backend duration percentiles and count by target</span>
+<span class="n">let</span><span class="w"> </span><span class="n">start</span><span class="p">=</span><span class="n">ago</span><span class="p">(</span><span class="mi">24</span><span class="n">h</span><span class="p">);</span>
+<span class="n">let</span><span class="w"> </span><span class="n">end</span><span class="p">=</span><span class="n">now</span><span class="p">();</span>
+<span class="n">let</span><span class="w"> </span><span class="n">timeGrain</span><span class="p">=</span><span class="mi">5</span><span class="n">m</span><span class="p">;</span>
+
+<span class="n">let</span><span class="w"> </span><span class="n">dataset</span><span class="p">=</span><span class="n">dependencies</span>
+<span class="c">// additional filters can be applied here</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">timestamp</span><span class="w"> </span><span class="p">&lt;</span><span class="w"> </span><span class="n">end</span>
+<span class="p">|</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">client_Type</span><span class="w"> </span><span class="p">!=</span><span class="w"> </span><span class="s">"Browser"</span>
+<span class="p">;</span>
+<span class="c">// calculate duration percentiles and count for all dependencies (overall)</span>
+<span class="n">dataset</span>
+<span class="p">|</span><span class="w"> </span><span class="k">summarize</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">duration</span><span class="p">)/</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">),</span><span class="w"> </span><span class="n">percentiles</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">),</span><span class="w"> </span><span class="n">count_</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">)</span>
+<span class="p">|</span><span class="w"> </span><span class="k">project</span><span class="w"> </span><span class="n">operation_Name</span><span class="p">=</span><span class="s">"Overall"</span><span class="p">,</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">,</span><span class="w"> </span><span class="n">percentile_duration_50</span><span class="p">,</span><span class="w"> </span><span class="n">percentile_duration_95</span><span class="p">,</span><span class="w"> </span><span class="n">percentile_duration_99</span><span class="p">,</span><span class="w"> </span><span class="n">count_</span>
+<span class="p">|</span><span class="w"> </span><span class="k">union</span><span class="p">(</span><span class="n">dataset</span>
+<span class="c">// change 'target' on the below line to segment by a different property</span>
+<span class="p">|</span><span class="w"> </span><span class="k">summarize</span><span class="w"> </span><span class="n">avg_duration</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="w"> </span><span class="p">*</span><span class="w"> </span><span class="n">duration</span><span class="p">)/</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">),</span><span class="w"> </span><span class="n">percentiles</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">),</span><span class="w"> </span><span class="n">count_</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">itemCount</span><span class="p">)</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">target</span>
+<span class="p">|</span><span class="w"> </span><span class="k">sort</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">avg_duration</span><span class="w"> </span><span class="n">desc</span><span class="p">,</span><span class="w"> </span><span class="n">count_</span><span class="w"> </span><span class="n">desc</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="model-not-supported-error">"Model not supported" Error</h3>
+<ol>
+<li>Check the model name in the <code>supported_models</code> array (case-insensitive)</li>
+<li>Verify the backend pool was created in APIM</li>
+<li>Review policy fragment deployment</li>
+</ol>
+<h3 id="403-forbidden-error">"403 Forbidden" Error</h3>
+<ol>
+<li>Check the <code>allowedBackendPools</code> policy variable</li>
+<li>Verify RBAC configuration</li>
+<li>Review product/subscription access</li>
+</ol>
+<h3 id="401-unauthorized-error">"401 Unauthorized" Error</h3>
+<ol>
+<li>Verify APIM's managed identity has the required roles:<ul>
+<li><code>Cognitive Services OpenAI User</code> for Azure OpenAI</li>
+<li><code>Cognitive Services User</code> for AI Foundry</li>
+</ul>
+</li>
+<li>For Amazon Bedrock: Verify AWS IAM access keys are valid in Key Vault and that the named values <code>aws-access-key</code> / <code>aws-secret-key</code> show a successful Key Vault sync status in the Azure Portal (and <code>aws-region</code> is set)</li>
+<li><code>Unauthorized model access</code> indicates the used access contract product is restricted for the model</li>
+<li>Check the named value <code>uami-client-id</code> is set correctly to APIM's managed identity client ID</li>
+<li>For <code>api-key-bearer</code> / <code>api-key-header</code> backends: verify the backend resource's <strong>Authorization credentials</strong> reference the expected named value and that the named value (<code>auth_config.named_value_key</code>) is not the <code>NOT_CONFIGURED</code> placeholder and shows a successful Key Vault sync status</li>
+</ol>
+<h3 id="500-awscredentialsnotconfigured-error">"500 AWSCredentialsNotConfigured" Error</h3>
+<p>This error means an <code>aws-bedrock</code> backend was matched but the AWS credentials named values are still set to the <code>NOT_CONFIGURED</code> placeholder. To fix:</p>
+<ol>
+<li>Store the AWS keys in Key Vault and re-apply with <code>aws_access_key_secret_uri</code>, <code>aws_secret_key_secret_uri</code>, and <code>aws_region</code> set, <strong>or</strong></li>
+<li>Manually update the APIM named values <code>aws-access-key</code> / <code>aws-secret-key</code> in the Azure Portal to Key Vault references (avoid plain secret values — they are flagged by the <em>API Management secret named values should be stored in Azure Key Vault</em> policy), and set <code>aws-region</code></li>
+</ol>
+<p>If the named values reference Key Vault but still fail, check the named value's Key Vault status in the portal — typical causes are a missing <code>Key Vault Secrets User</code> role for APIM's managed identity or APIM lacking network access to the vault.</p>
+<h2 id="scripts">Scripts</h2>
+<blockquote>
+<p>Each script ships in two interchangeable flavours — Bash (<code>.sh</code>) and PowerShell (<code>.ps1</code>) — with identical functionality. Use whichever suits your shell.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Script</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scripts/deploy.sh</code> / <code>scripts/deploy.ps1</code></td>
+<td>Initialize, plan, and apply Terraform</td>
+</tr>
+<tr>
+<td><code>scripts/import-existing.sh</code> / <code>scripts/import-existing.ps1</code></td>
+<td>Import pre-existing APIM resources into Terraform state</td>
+</tr>
+<tr>
+<td><code>scripts/test.sh</code> / <code>scripts/test.ps1</code></td>
+<td>Test deployed backends via the APIM gateway</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deploy-script-options">Deploy Script Options</h3>
+<p>Bash (<code>deploy.sh</code>):</p>
+<div class="highlight"><pre><span></span><code>--auto-approve    Skip interactive confirmation
+--plan-only       Show plan without applying
+--destroy         Remove all onboarded backends
+--var-file FILE   Custom .tfvars file (default: terraform.tfvars)
+</code></pre></div>
+<p>PowerShell (<code>deploy.ps1</code>):</p>
+<div class="highlight"><pre><span></span><code>-AutoApprove      Skip interactive confirmation
+-PlanOnly         Show plan without applying
+-Destroy          Remove all onboarded backends
+-VarFile FILE     Custom .tfvars file (default: terraform.tfvars)
+</code></pre></div>
+<h3 id="test-script-options">Test Script Options</h3>
+<p>Bash (<code>test.sh</code>):</p>
+<div class="highlight"><pre><span></span><code>--api-key KEY       APIM subscription key (required)
+--gateway-url URL   Override auto-detected gateway URL
+--model MODEL       Specific model to test
+--all-models        Test all configured models
+--verbose           Show full response bodies
+</code></pre></div>
+<p>PowerShell (<code>test.ps1</code>):</p>
+<div class="highlight"><pre><span></span><code>-ApiKey KEY         APIM subscription key (required)
+-GatewayUrl URL     Override auto-detected gateway URL
+-Model MODEL        Specific model to test
+-AllModels          Test all configured models
+-Verbose            Show full response bodies
+</code></pre></div>
+<h2 id="outputs">Outputs</h2>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apim_name</code></td>
+<td>Name of the APIM service</td>
+</tr>
+<tr>
+<td><code>apim_gateway_url</code></td>
+<td>Gateway URL for the APIM service</td>
+</tr>
+<tr>
+<td><code>backend_ids</code></td>
+<td>Array of created backend IDs</td>
+</tr>
+<tr>
+<td><code>pool_names</code></td>
+<td>Array of created backend pool names</td>
+</tr>
+<tr>
+<td><code>model_to_pool_map</code></td>
+<td>Mapping of models to their backend pool names (models with 2+ backends)</td>
+</tr>
+<tr>
+<td><code>model_to_backend_map</code></td>
+<td>Mapping of models to direct backend IDs (models with a single backend)</td>
+</tr>
+<tr>
+<td><code>supported_models</code></td>
+<td>All supported models across all backends</td>
+</tr>
+<tr>
+<td><code>policy_fragments</code></td>
+<td>Names of the deployed policy fragments</td>
+</tr>
+</tbody>
+</table>
+<h2 id="file-structure">File Structure</h2>
+<div class="highlight"><pre><span></span><code>llm-backend-onboarding/
+├── main.tf                    # Backends, pools, policy fragments
+├── variables.tf               # Input variables
+├── outputs.tf                 # Output values
+├── versions.tf                # Terraform &amp; provider versions
+├── providers.tf               # Provider configuration
+├── terraform.tfvars.example   # Example configuration
+├── policies/                  # Policy fragment XML templates + OpenAPI specs
+│   ├── frag-set-backend-pools.xml          # dynamic (backend pools code-gen)
+│   ├── frag-get-available-models.xml       # dynamic (model + alias discovery)
+│   ├── frag-metadata-config.xml            # dynamic (model mapping + aliases)
+│   ├── frag-resolve-model-alias.xml        # dynamic (inline alias map)
+│   ├── frag-set-backend-authorization.xml
+│   ├── frag-set-target-backend-pool.xml
+│   ├── frag-set-llm-requested-model.xml
+│   ├── frag-set-llm-usage.xml
+│   ├── frag-validate-model-access.xml
+│   ├── frag-responses-id-security.xml
+│   ├── frag-responses-id-cache-store.xml
+│   ├── universal-llm-api-policy.xml
+│   ├── universal-llm-openapi.json
+│   └── models-inference-openapi.json
+├── scripts/
+│   ├── deploy.sh              # Deployment automation (Bash)
+│   ├── deploy.ps1             # Deployment automation (PowerShell)
+│   ├── import-existing.sh     # Import existing APIM resources (Bash)
+│   ├── import-existing.ps1    # Import existing APIM resources (PowerShell)
+│   ├── test.sh                # Backend testing (Bash)
+│   └── test.ps1               # Backend testing (PowerShell)
+└── README.md
+</code></pre></div>
+<h2 id="relationship-to-main-deployment">Relationship to Main Deployment</h2>
+<p>This module is <strong>independent</strong> from the main Citadel Terraform deployment (<code>../main.tf</code>). Use it when:</p>
+<ul>
+<li>You need to onboard new LLM backends without a full infrastructure redeploy</li>
+<li>Different teams manage infrastructure vs. model routing</li>
+<li>You want to iterate quickly on backend configuration</li>
+</ul>
+<p>The main deployment's <code>modules/apim</code> manages the same resources as part of the full stack. If you use both, ensure your <code>llm_backend_config</code> in the main deployment's tfvars is kept in sync.</p>
+<h2 id="related-guides">Related Guides</h2>
+<ul>
+<li><a href="../access-contracts-terraform/">Citadel Access Contracts</a> — Configure use case access to the governance hub</li>
+<li><a href="../backend-contracts-bicep/">Bicep source module</a> — The original Bicep implementation this module is ported from</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

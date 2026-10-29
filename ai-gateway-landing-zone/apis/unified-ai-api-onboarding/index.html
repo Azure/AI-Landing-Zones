@@ -1,0 +1,6082 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../../contracts/backend-contracts-bicep/">
+      
+      
+        <link rel="next" href="../../contracts/backend-bicep-modules/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Unified AI API type onboarding - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css?v=56826d53ca9e">
+    
+      <link rel="stylesheet" href="../../../stylesheets/planner.css?v=2">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#onboarding-new-api-types-to-the-unified-ai-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Unified AI API type onboarding
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan your deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan your deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment choices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sizing-cost-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/resource-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Application
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Application
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent hosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sign-in & access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/embed-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embed chat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/user-feedback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User feedback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/multimodality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multimodality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grounding
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grounding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/foundry-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/work-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Work IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/fabric-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fabric IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sharepoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SharePoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/nl2sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL2SQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/agent-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/private-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Private access (VPN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own app
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/publish-to-teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teams & M365
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/connect-copilot-studio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Copilot Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy via portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Gateway Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/governance-hub-benefits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benefits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel Blueprint
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Citadel Blueprint
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-1-governance-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 1 · Governance Hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-2-agent-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 2 · Agent Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-3-agent-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 3 · Agent Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/layer-4-security-foundation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 4 · Security Foundation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/organizational-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organizational alignment & ownership
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/activation-paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical activation paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_8" id="__nav_3_4_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Original platform guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Original platform guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/platform-technical-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint/platform-waf-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Well-Architected alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_1" id="__nav_3_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-parameter-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters (Bicep)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/network-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network approach
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_2" id="__nav_3_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity planning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Capacity planning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/sizing-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel sizing guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/ptu-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PTU estimation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/ai-search-cost-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Search cost estimation logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience & business continuity
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resilience & business continuity
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/business-continuity-dr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Business continuity & DR guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/throttling-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Throttling events handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/app-insights-alerting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App Insights alerting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/cosmos-multi-region-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos global multi-master sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1" id="__nav_3_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-quick-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-full-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1_3" id="__nav_3_6_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/post-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post-deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebook setup guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-snippets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook snippets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/developer-vpn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer VPN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2" id="__nav_3_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-variables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variables guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-deployment-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-policy-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM policy architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2_6" id="__nav_3_6_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_1" id="__nav_3_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observe
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observe
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/platform-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform observability guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/power-bi-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power BI dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2" id="__nav_3_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backend contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_1" id="__nav_3_7_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_7_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified AI API type onboarding
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified AI API type onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-access-modes-per-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two Access Modes per Provider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-set-llm-requested-model-for-new-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updating set-llm-requested-model for new providers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-define-the-api-type-in-metadata-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Define the API Type in Metadata Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Define the API Type in Metadata Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-your-api-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Your API Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-path-construction-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Add Path Construction Logic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: Add Path Construction Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-your-path-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Your Path Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#path-pattern-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path Pattern Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-behaviors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Behaviors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-backend-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Add Backend Authentication
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Add Backend Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#existing-auth-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing Auth Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-your-auth-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Your Auth Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-values-for-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Values for Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-configure-the-backend-in-llm-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure the Backend in LLM Onboarding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 4: Configure the Backend in LLM Onboarding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-configuration-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Configuration Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pass-through-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pass-Through Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-deploy-and-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Deploy and Test
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Deploy and Test">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test the Endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-with-response-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug with Response Headers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-of-files-to-modify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary of Files to Modify
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-complete-bedrock-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Complete Bedrock Onboarding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-bicep-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep module reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_2" id="__nav_3_7_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3" id="__nav_3_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Access contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-quick-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contract policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM access guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openai-compatible-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI-compatible API guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-key-rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key rotation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID auth validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/jwt-client-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JWT client identity permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/pii-masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII anonymization & deanonymization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/agent-governance-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3_13" id="__nav_3_7_3_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_3_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate access contracts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_4" id="__nav_3_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contracts (preview)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Publish contracts (preview)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/publish-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/publish-contract-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contract guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_5" id="__nav_3_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway upgrade
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway upgrade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM gateway upgrade (preview)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-ecosystem-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway ecosystem upgrade guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/release-version-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release version management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/foundry-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#two-access-modes-per-provider" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Two Access Modes per Provider
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-set-llm-requested-model-for-new-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updating set-llm-requested-model for new providers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-by-step-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-Step Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-define-the-api-type-in-metadata-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Define the API Type in Metadata Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 1: Define the API Type in Metadata Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-your-api-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Your API Type
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-path-construction-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Add Path Construction Logic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 2: Add Path Construction Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-your-path-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Your Path Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#path-pattern-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Path Pattern Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-behaviors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional Behaviors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-backend-authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Add Backend Authentication
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 3: Add Backend Authentication">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#existing-auth-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Existing Auth Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-your-auth-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding Your Auth Logic
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#named-values-for-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named Values for Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-configure-the-backend-in-llm-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure the Backend in LLM Onboarding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 4: Configure the Backend in LLM Onboarding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-configuration-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Configuration Properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pass-through-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pass-Through Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-deploy-and-test" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Deploy and Test
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 5: Deploy and Test">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test the Endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-with-response-headers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug with Response Headers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary-of-files-to-modify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary of Files to Modify
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-complete-bedrock-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Complete Bedrock Onboarding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guides" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Guides
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="onboarding-new-api-types-to-the-unified-ai-api">Onboarding New API Types to the Unified AI API</h1>
+<h2 id="overview">Overview</h2>
+<p>The Unified AI API uses a modular, fragment-based architecture that supports adding new LLM provider API types without modifying the core routing logic. Each API type is defined by a set of configurations and policy rules that control:</p>
+<ul>
+<li><strong>Path detection</strong>: How the gateway recognizes which API type a request targets</li>
+<li><strong>Model extraction</strong>: How the requested model is identified from the request</li>
+<li><strong>Path construction</strong>: How the backend URI is built for the target provider</li>
+<li><strong>Authentication</strong>: How credentials are set for the backend provider</li>
+</ul>
+<p>This guide walks through every step required to add a new API type, using <strong>Amazon Bedrock</strong> as a concrete example.</p>
+<blockquote>
+<p><strong>Another worked example: image models.</strong> The <code>image</code> api-type (Azure OpenAI gpt-image, Black Forest Labs FLUX, Microsoft MAI) was added following exactly these steps — a new <code>image</code> api-type with <code>base-path: /v1/images</code>, new <code>azure-flux</code>/<code>azure-mai</code> backend types with their own <code>backend-path-templates</code>, a <code>{modelPath}</code> slug placeholder resolved in <code>path-builder</code>, and an <code>x-ai-model</code> header fallback for multipart edits in <code>request-processor</code>. See <a href="../llm-access/#image-models">LLM Access Guide — Image Models</a> and <a href="../../contracts/backend-contracts-bicep/#image-models">LLM Backend Onboarding — Image Models</a>.</p>
+</blockquote>
+<h2 id="architecture-context">Architecture Context</h2>
+<p>The Unified AI API handles all request patterns through a single wildcard endpoint (<code>/unified-ai/*</code>). The routing flow is:</p>
+<div class="highlight"><pre><span></span><code>Client Request → Request Processor (detect API type + extract model)
+              → Security Handler (authenticate client)
+              → Backend Pool Selection (find target backend)
+              → Backend Authorization (authenticate to backend)
+              → Path Builder (construct backend URI)
+              → Forward to Backend
+</code></pre></div>
+<p>Each step uses APIM policy fragments. Adding a new API type requires updates to specific fragments and configuration files.</p>
+<h2 id="two-access-modes-per-provider">Two Access Modes per Provider</h2>
+<p>Most non-Azure providers can be onboarded under one or both of the following access modes. Pick the one(s) you need before editing fragments.</p>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Inbound API surface</th>
+<th>Path examples</th>
+<th>Backend <code>poolType</code></th>
+<th>URL rewrite responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OpenAI-compatible</strong></td>
+<td>Universal LLM (<code>/models/*</code>) <strong>and</strong> Unified AI <code>inference</code> (<code>/unified-ai/v1/*</code>)</td>
+<td><code>/models/chat/completions</code>, <code>/unified-ai/v1/chat/completions</code></td>
+<td><code>azure-openai</code>, <code>ai-foundry</code>, <code>aws-bedrock-mantle</code>, <code>gemini-openai</code></td>
+<td><code>frag-set-backend-authorization</code> (Universal LLM) or <code>frag-path-builder</code> via <code>config-backend-path-templates</code> (Unified AI inference)</td>
+</tr>
+<tr>
+<td><strong>Native (provider-specific)</strong></td>
+<td>Unified AI prefixed paths only (<code>/unified-ai/{provider}/*</code>)</td>
+<td><code>/unified-ai/bedrock/model/{id}/converse</code>, <code>/unified-ai/gemini/v1beta/models/{id}:generateContent</code>, <code>/unified-ai/claude/v1/messages</code></td>
+<td><code>aws-bedrock</code>, <code>gemini</code>, <code>anthropic</code></td>
+<td><code>frag-path-builder</code> (per api-type <code>&lt;when&gt;</code> block)</td>
+</tr>
+</tbody>
+</table>
+<p>Two design rules that protect surface isolation:</p>
+<ol>
+<li><strong>Universal LLM API restricts pool selection to OpenAI-compat pool types.</strong> Its policy sets <code>compatiblePoolTypes="azure-openai,ai-foundry,aws-bedrock-mantle,gemini-openai"</code> before <code>set-target-backend-pool</code> runs. If the same model id is registered against both a native pool (e.g. <code>aws-bedrock</code>) and an OpenAI-compat pool (e.g. <code>aws-bedrock-mantle</code>), the gateway will only consider the OpenAI-compat pool — the native one has no <code>/chat/completions</code> rewrite branch and would let an unrewritten path reach the provider, returning errors like <code>com.amazon.coral.service#UnknownOperationException</code> from AWS Bedrock.</li>
+<li><strong>Each Unified AI api-type declares its own <code>compatible-pool-types</code>.</strong> Native api-types like <code>bedrock</code> declare <code>compatible-pool-types: 'aws-bedrock'</code>; the OpenAI-compat <code>inference</code> api-type declares <code>compatible-pool-types: 'ai-foundry,azure-openai,aws-bedrock-mantle,gemini-openai'</code>. This keeps surfaces from cross-routing without relying on suffix tricks.</li>
+</ol>
+<p>When you add a new provider, decide whether you need:</p>
+<ul>
+<li><strong>Native only</strong> (e.g. provider has no OpenAI-compat surface): add a Unified AI api-type with its own prefix and <code>compatible-pool-types</code> matching its native pool type.</li>
+<li><strong>OpenAI-compat only</strong> (e.g. provider exposes only <code>/v1/chat/completions</code>): add the backend with a pool type already in Universal LLM's compatible list (<code>aws-bedrock-mantle</code>, <code>gemini-openai</code>, etc.). Add a <code>&lt;when&gt;</code> rewrite branch in <code>frag-set-backend-authorization</code> for Universal LLM, and a path template in <code>config-backend-path-templates</code> for the Unified AI <code>inference</code> api-type.</li>
+<li><strong>Both</strong>: define two backends (one per pool type) and update both the api-type entry and the OpenAI-compat artifacts.</li>
+</ul>
+<h2 id="updating-set-llm-requested-model-for-new-providers">Updating <code>set-llm-requested-model</code> for new providers</h2>
+<p>The <code>set-llm-requested-model</code> fragment is invoked from <strong>all three</strong> LLM API policies (Universal LLM, Azure OpenAI, Unified AI request-processor falls back to it implicitly via shared logic) <strong>and</strong> from Citadel access-contract product policies (<code>default-ai-product-policy.xml</code>) so that <code>validate-model-access</code> can enforce <code>allowedModels</code> regardless of which surface the call lands on.</p>
+<p>Existing patterns it recognizes (in order):</p>
+<ol>
+<li><code>deployment-id</code> named path parameter (Azure OpenAI named operations)</li>
+<li><code>/deployments/{model}/...</code> segment (Azure OpenAI wildcards, <code>/openai/deployments/...</code>)</li>
+<li><code>/model/{modelId}/...</code> singular segment (AWS Bedrock Converse / Invoke; URL-decoded)</li>
+<li><code>/models/{modelId}:method</code> plural segment with <code>:</code> terminator (Gemini native; URL-decoded)</li>
+<li>Request body <code>model</code> field (OpenAI-compat, Anthropic Messages, Bedrock OpenAI-compat)</li>
+</ol>
+<p>If your new provider exposes the model in a different URL position (anything other than the patterns above) <strong>or</strong> in a body field other than <code>model</code>, you must extend <code>frag-set-llm-requested-model.xml</code> (both copies under <code>bicep/infra/modules/apim/policies/</code> and <code>bicep/infra/llm-backend-onboarding/modules/policies/</code>). Otherwise the access contract will return 400 <code>missing_model_parameter</code> for every native call, even when the request is valid for the provider.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting, ensure you have:</p>
+<ul>
+<li>A working deployment of AI Citadel Governance Hub with the Unified AI API</li>
+<li>Understanding of the target provider's API format (endpoint URLs, auth mechanism, request/response format)</li>
+<li>Access to deploy Bicep templates to your APIM instance</li>
+</ul>
+<h2 id="step-by-step-guide">Step-by-Step Guide</h2>
+<h3 id="step-1-define-the-api-type-in-metadata-configuration">Step 1: Define the API Type in Metadata Configuration</h3>
+<p>The <code>metadata-config</code> fragment is the central configuration that defines all supported API types. Each API type needs three properties:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>base-path</code></td>
+<td>The URL path prefix that identifies this API type in incoming requests</td>
+</tr>
+<tr>
+<td><code>path-segment</code></td>
+<td>The path segment used for model extraction from the URL</td>
+</tr>
+<tr>
+<td><code>api-version</code></td>
+<td>Default API version sent to the backend</td>
+</tr>
+</tbody>
+</table>
+<p><strong>File</strong>: <code>bicep/infra/llm-backend-onboarding/modules/policies/frag-metadata-config.xml</code>
+(also mirrored in <code>bicep/infra/modules/apim/policies/frag-metadata-config.xml</code>)</p>
+<h4 id="how-it-works">How It Works</h4>
+<p>The <code>request-processor</code> fragment iterates over all entries in <code>api-types</code> and matches the incoming request path against each <code>base-path</code>. The first match determines the API type.</p>
+<h4 id="adding-your-api-type">Adding Your API Type</h4>
+<p>Add a new entry to the <code>api-types</code> object in the metadata config. The key is your API type identifier (used throughout all fragments).</p>
+<p><strong>Example — Adding Amazon Bedrock (native Converse / InvokeModel):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="err">'bedrock</span><span class="mi">-</span><span class="kc">nat</span><span class="err">ive'</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="err">'base</span><span class="mi">-</span><span class="err">pa</span><span class="kc">t</span><span class="err">h'</span><span class="p">:</span><span class="w"> </span><span class="err">'/bedrock'</span><span class="p">,</span>
+<span class="w">    </span><span class="err">'pa</span><span class="kc">t</span><span class="err">h</span><span class="mi">-</span><span class="err">segme</span><span class="kc">nt</span><span class="err">'</span><span class="p">:</span><span class="w"> </span><span class="err">'/bedrock'</span><span class="p">,</span>
+<span class="w">    </span><span class="err">'api</span><span class="mi">-</span><span class="err">versio</span><span class="kc">n</span><span class="err">'</span><span class="p">:</span><span class="w"> </span><span class="err">'bedrock</span><span class="mi">-2024-04-15</span><span class="err">'</span><span class="p">,</span>
+<span class="w">    </span><span class="err">'compa</span><span class="kc">t</span><span class="err">ible</span><span class="mi">-</span><span class="err">pool</span><span class="mi">-</span><span class="kc">t</span><span class="err">ypes'</span><span class="p">:</span><span class="w"> </span><span class="err">'aws</span><span class="mi">-</span><span class="err">bedrock'</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The <code>compatible-pool-types</code> CSV restricts which backend pools the request can land on — here, only pools whose <code>poolType == 'aws-bedrock'</code>. This prevents the gateway from accidentally routing a <code>/unified-ai/bedrock/...</code> call to an <code>aws-bedrock-mantle</code> (OpenAI-compat) pool that happens to advertise the same model name. Native and OpenAI-compat surfaces stay isolated without requiring suffix tricks on model ids.</p>
+<h4 id="important-considerations">Important Considerations</h4>
+<ol>
+<li>
+<p><strong>Prefix matching with longest-match wins</strong>: The <code>request-processor</code> uses <strong>case-insensitive <code>StartsWith</code></strong> matching against the request path (after stripping the <code>/unified-ai</code> API prefix) and selects the <strong>longest matching <code>base-path</code></strong>. This means declaration order in <code>api-types</code> does <strong>not</strong> affect routing — <code>/openai/v1/responses</code> will always win over <code>/openai/v1</code> or <code>/openai</code> for a request like <code>/openai/v1/responses/{id}</code>. Unrecognized prefixes (e.g. <code>/v2/openai/...</code>) are rejected with <code>403 PathNotAllowed</code>.</p>
+</li>
+<li>
+<p><strong>The <code>base-path</code> must be unique</strong>: No two API types should declare the same <code>base-path</code> value.</p>
+</li>
+<li>
+<p><strong>Optional <code>backend</code> property</strong>: If your API type should always route to a specific backend (bypassing model-based pool routing), add a <code>backend</code> property:
+   <div class="highlight"><pre><span></span><code><span class="err">'my</span><span class="mi">-</span><span class="err">api</span><span class="mi">-</span><span class="kc">t</span><span class="err">ype'</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="err">'base</span><span class="mi">-</span><span class="err">pa</span><span class="kc">t</span><span class="err">h'</span><span class="p">:</span><span class="w"> </span><span class="err">'/my</span><span class="mi">-</span><span class="err">pa</span><span class="kc">t</span><span class="err">h'</span><span class="p">,</span>
+<span class="w">    </span><span class="err">'pa</span><span class="kc">t</span><span class="err">h</span><span class="mi">-</span><span class="err">segme</span><span class="kc">nt</span><span class="err">'</span><span class="p">:</span><span class="w"> </span><span class="err">'/my</span><span class="mi">-</span><span class="err">pa</span><span class="kc">t</span><span class="err">h'</span><span class="p">,</span>
+<span class="w">    </span><span class="err">'api</span><span class="mi">-</span><span class="err">versio</span><span class="kc">n</span><span class="err">'</span><span class="p">:</span><span class="w"> </span><span class="err">'</span><span class="mi">2024-01-01</span><span class="err">'</span><span class="p">,</span>
+<span class="w">    </span><span class="err">'backe</span><span class="kc">n</span><span class="err">d'</span><span class="p">:</span><span class="w"> </span><span class="err">'my</span><span class="mi">-</span><span class="err">speci</span><span class="kc">f</span><span class="err">ic</span><span class="mi">-</span><span class="err">backe</span><span class="kc">n</span><span class="err">d</span><span class="mi">-</span><span class="err">id'</span>
+<span class="p">}</span>
+</code></pre></div>
+   This sets <code>apiTypeOverrideBackend</code> in the request processor, which tells <code>set-target-backend-pool</code> to skip pool matching.</p>
+</li>
+<li>
+<p><strong>Both copies must be updated</strong>: The metadata config exists in two locations:</p>
+<ul>
+<li><code>bicep/infra/llm-backend-onboarding/modules/policies/frag-metadata-config.xml</code> — Used when deploying via the LLM backend onboarding module</li>
+<li><code>bicep/infra/modules/apim/policies/frag-metadata-config.xml</code> — Used when deploying the full Citadel infrastructure</li>
+</ul>
+</li>
+</ol>
+<h3 id="step-2-add-path-construction-logic">Step 2: Add Path Construction Logic</h3>
+<p>The <code>path-builder</code> fragment reconstructs the backend URI based on the detected API type. You need to add a <code>&lt;when&gt;</code> condition for your new API type.</p>
+<p><strong>File</strong>: <code>bicep/infra/modules/apim/policies/frag-path-builder.xml</code></p>
+<h4 id="how-it-works_1">How It Works</h4>
+<p>The path builder uses a <code>&lt;choose&gt;</code> block to select path construction logic based on the <code>api-type</code> variable (set by request-processor). It sets the <code>finalPath</code> variable, which is then used to rewrite the request URI.</p>
+<h4 id="available-variables">Available Variables</h4>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>api-type</code></td>
+<td>request-processor</td>
+<td>The detected API type identifier</td>
+</tr>
+<tr>
+<td><code>api-base-path</code></td>
+<td>request-processor</td>
+<td>The base path from metadata config</td>
+</tr>
+<tr>
+<td><code>requestedModel</code></td>
+<td>request-processor</td>
+<td>The extracted model name</td>
+</tr>
+<tr>
+<td><code>response-id</code></td>
+<td>request-processor</td>
+<td>Response ID (for responses API)</td>
+</tr>
+<tr>
+<td><code>selected-api-version</code></td>
+<td>request-processor</td>
+<td>API version for the request</td>
+</tr>
+</tbody>
+</table>
+<h4 id="adding-your-path-logic">Adding Your Path Logic</h4>
+<p>Add a new <code>&lt;when&gt;</code> block inside the <code>&lt;choose&gt;</code> element, before the default <code>&lt;otherwise&gt;</code> block.</p>
+<p><strong>Example — Amazon Bedrock path (strip the <code>/bedrock</code> prefix and forward the rest):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="cm">&lt;!-- Amazon Bedrock native: /bedrock/model/{model}/converse → /model/{model}/converse --&gt;</span>
+<span class="nt">&lt;when</span><span class="w"> </span><span class="na">condition=</span><span class="s">"@(context.Variables.GetValueOrDefault&lt;string&gt;("</span><span class="err">api-type",</span><span class="w"> </span><span class="err">"").Equals("bedrock-native",</span><span class="w"> </span><span class="err">StringComparison.OrdinalIgnoreCase))"</span><span class="nt">&gt;</span>
+<span class="w">    </span><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">"finalPath"</span><span class="w"> </span><span class="na">value=</span><span class="s">"@{</span>
+<span class="s">        var basePath = context.Variables.GetValueOrDefault&lt;string&gt;("</span><span class="err">api-base-path",</span><span class="w"> </span><span class="err">"");</span>
+<span class="w">        </span><span class="err">var</span><span class="w"> </span><span class="na">rawPath  =</span><span class="w"> </span><span class="s">context.Request.OriginalUrl.Path;</span>
+<span class="w">        </span><span class="err">var</span><span class="w"> </span><span class="na">idx      =</span><span class="w"> </span><span class="s">rawPath.IndexOf(basePath,</span><span class="w"> </span><span class="err">StringComparison.OrdinalIgnoreCase);</span>
+<span class="w">        </span><span class="err">return</span><span class="w"> </span><span class="err">idx</span><span class="w"> </span><span class="nt">&gt;</span>=<span class="w"> </span>0<span class="w"> </span>?<span class="w"> </span>rawPath.Substring(idx<span class="w"> </span>+<span class="w"> </span>basePath.Length)<span class="w"> </span>:<span class="w"> </span>rawPath;
+<span class="w">    </span>}"<span class="w"> </span>/&gt;
+<span class="nt">&lt;/when&gt;</span>
+</code></pre></div>
+<h4 id="path-pattern-reference">Path Pattern Reference</h4>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>When to Use</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{base-path}/chat/completions</code></td>
+<td>OpenAI-compatible APIs</td>
+<td>Gemini, Inference</td>
+</tr>
+<tr>
+<td><code>{base-path}/deployments/{model}/chat/completions</code></td>
+<td>Deployment-based APIs</td>
+<td>Azure OpenAI</td>
+</tr>
+<tr>
+<td><code>{base-path}</code> or <code>{base-path}/{id}</code></td>
+<td>Resource-based APIs</td>
+<td>Responses API</td>
+</tr>
+<tr>
+<td><code>/bedrock/model/{model}/converse</code> (prefix-strip)</td>
+<td>Provider-specific native paths</td>
+<td>Amazon Bedrock, Gemini native</td>
+</tr>
+<tr>
+<td>Fixed path with body-model rewrite</td>
+<td>Provider-specific paths whose API has no model in URL</td>
+<td>Anthropic Claude (<code>/claude/v1/messages</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Stateful APIs (Responses API)</strong> — When your new api-type exposes server-side stateful resources keyed by an id (similar to OpenAI's Responses API <code>response_id</code>), pair it with the cross-API <code>responses-id-security</code> / <code>responses-id-cache-store</code> fragments described in <a href="../llm-access/#step-15-responses-api-id-security-responses-id-security-responses-id-cache-store">LLM access guide</a>. Those fragments are wired in once per API policy and cover Universal LLM, Azure OpenAI, and Unified AI surfaces, returning <strong>403</strong> on cross-subscription or cross-product access and <strong>404</strong> on unknown ids. Ownership mappings last 30 days, matching the default OpenAI Responses API retention period.</p>
+</blockquote>
+<h4 id="additional-behaviors">Additional Behaviors</h4>
+<p>Your path builder block can also:</p>
+<ul>
+<li><strong>Set query parameters</strong>: Use <code>&lt;set-query-parameter&gt;</code> to inject API version or other params</li>
+<li><strong>Modify the request body</strong>: Use <code>&lt;set-body&gt;</code> to add/transform fields (e.g., inject <code>model</code> field)</li>
+<li><strong>URL-encode model IDs</strong>: Use <code>System.Uri.EscapeDataString()</code> for models with special characters (e.g., Bedrock's <code>us.anthropic.claude-3-5-haiku-20241022-v1:0</code>)</li>
+</ul>
+<h3 id="step-3-add-backend-authentication">Step 3: Add Backend Authentication</h3>
+<p>The <code>set-backend-authorization</code> fragment configures how APIM authenticates to each backend type. If your new API type uses a different authentication mechanism than the existing ones, you need to add a new <code>&lt;when&gt;</code> block.</p>
+<p><strong>Files</strong> (both must be updated):</p>
+<ul>
+<li><code>bicep/infra/llm-backend-onboarding/modules/policies/frag-set-backend-authorization.xml</code></li>
+<li><code>bicep/infra/modules/apim/policies/frag-set-backend-authorization.xml</code></li>
+</ul>
+<h4 id="existing-auth-patterns">Existing Auth Patterns</h4>
+<table>
+<thead>
+<tr>
+<th>Backend Type</th>
+<th>Auth Mechanism</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ai-foundry</code></td>
+<td>Azure Managed Identity</td>
+<td><code>&lt;authentication-managed-identity&gt;</code> with Cognitive Services scope</td>
+</tr>
+<tr>
+<td><code>azure-openai</code></td>
+<td>Azure Managed Identity</td>
+<td>Same as ai-foundry + URL rewriting</td>
+</tr>
+<tr>
+<td><code>external</code></td>
+<td>Backend credentials</td>
+<td>No auth header (credentials configured on backend resource)</td>
+</tr>
+<tr>
+<td><code>aws-bedrock</code></td>
+<td>AWS SigV4</td>
+<td>Custom policy computing HMAC-SHA256 signature</td>
+</tr>
+</tbody>
+</table>
+<h4 id="adding-your-auth-logic">Adding Your Auth Logic</h4>
+<p>Add a new <code>&lt;when&gt;</code> block that matches on <code>targetPoolType</code> (which comes from the <code>backendType</code> in your backend configuration).</p>
+<p><strong>Example — AWS SigV4 for Amazon Bedrock:</strong></p>
+<p>The AWS Signature Version 4 authentication requires:</p>
+<ol>
+<li>Computing a SHA-256 hash of the request body</li>
+<li>Constructing a canonical request string</li>
+<li>Deriving a signing key from the secret key + date + region + service</li>
+<li>Computing an HMAC-SHA256 signature</li>
+<li>Setting the <code>Authorization</code>, <code>X-Amz-Date</code>, <code>X-Amz-Content-Sha256</code>, and <code>Host</code> headers</li>
+</ol>
+<p>The full implementation uses APIM named values for credentials:</p>
+<ul>
+<li><code>aws-access-key</code>: AWS IAM access key ID</li>
+<li><code>aws-secret-key</code>: AWS IAM secret access key</li>
+<li><code>aws-region</code>: AWS region (e.g., <code>us-east-1</code>)</li>
+</ul>
+<p>See the <a href="https://learn.microsoft.com/en-us/azure/api-management/amazon-bedrock-passthrough-llm-api">Microsoft Learn guide on Amazon Bedrock APIM integration</a> for the complete SigV4 policy implementation.</p>
+<h4 id="named-values-for-credentials">Named Values for Credentials</h4>
+<p>If your auth mechanism requires secrets (API keys, tokens), store them as APIM named values:</p>
+<ol>
+<li><strong>Add parameters</strong> to <code>llm-policy-fragments.bicep</code> for the credentials</li>
+<li><strong>Create named value resources</strong> conditionally (only when backends of your type exist)</li>
+<li><strong>Reference in policy</strong> using <code>{{named-value-name}}</code> syntax</li>
+</ol>
+<p><strong>Example — Adding AWS named values in Bicep:</strong></p>
+<div class="highlight"><pre><span></span><code>// In llm-policy-fragments.bicep
+
+// Parameters
+@secure()
+param awsAccessKey string = ''
+@secure()
+param awsSecretKey string = ''
+param awsRegion string = ''
+
+// Check if any backend uses this type
+var hasBedrockBackend = length(filter(llmBackendConfig, config =&gt; config.backendType == 'aws-bedrock')) &gt; 0
+
+// Always create named values (with safe defaults) so the policy fragment compiles
+// even when no backends of this type are configured.
+resource awsAccessKeyNamedValue 'Microsoft.ApiManagement/service/namedValues@2024-06-01-preview' = {
+  name: 'aws-access-key'
+  parent: apimService
+  properties: {
+    displayName: 'aws-access-key'
+    value: !empty(awsAccessKey) ? awsAccessKey : 'NOT_CONFIGURED'
+    secret: true
+  }
+}
+</code></pre></div>
+<blockquote>
+<p><strong>Important</strong>: APIM resolves <code>{{named-value}}</code> references at policy save/compile time, not at runtime. If a named value doesn't exist in APIM, the policy fragment deployment will fail. Always create the named values — even with placeholder defaults — and add a runtime guard in the policy to return a clear error when the placeholder is detected. For example:
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;choose&gt;</span>
+<span class="w">    </span><span class="nt">&lt;when</span><span class="w"> </span><span class="na">condition=</span><span class="s">"@("</span><span class="err">{{aws-access-key}}"</span><span class="w"> </span><span class="err">==</span><span class="w"> </span><span class="err">"NOT_CONFIGURED")"</span><span class="nt">&gt;</span>
+<span class="w">        </span><span class="nt">&lt;return-response&gt;</span>
+<span class="w">            </span><span class="nt">&lt;set-status</span><span class="w"> </span><span class="na">code=</span><span class="s">"500"</span><span class="w"> </span><span class="na">reason=</span><span class="s">"Internal Server Error"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">            </span><span class="nt">&lt;set-body&gt;</span>{"error":<span class="w"> </span>{"code":<span class="w"> </span>"AWSCredentialsNotConfigured",<span class="w"> </span>...}}<span class="nt">&lt;/set-body&gt;</span>
+<span class="w">        </span><span class="nt">&lt;/return-response&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/when&gt;</span>
+<span class="nt">&lt;/choose&gt;</span>
+</code></pre></div></p>
+</blockquote>
+<h3 id="step-4-configure-the-backend-in-llm-onboarding">Step 4: Configure the Backend in LLM Onboarding</h3>
+<p>Add your backend to the <code>llmBackendConfig</code> array in your <code>.bicepparam</code> file with a new <code>backendType</code> value.</p>
+<p><strong>File</strong>: Your deployment parameter file (e.g., <code>llm-backends-dev-local.bicepparam</code>)</p>
+<h4 id="backend-configuration-properties">Backend Configuration Properties</h4>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value for Your API Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backendId</code></td>
+<td>Unique identifier (e.g., <code>bedrock-us-east-1</code>)</td>
+</tr>
+<tr>
+<td><code>backendType</code></td>
+<td>Your new type identifier (e.g., <code>aws-bedrock</code>) — must match the <code>targetPoolType</code> in auth fragment</td>
+</tr>
+<tr>
+<td><code>endpoint</code></td>
+<td>Base URL of the provider (e.g., <code>https://bedrock-runtime.us-east-1.amazonaws.com</code>)</td>
+</tr>
+<tr>
+<td><code>authType</code></td>
+<td>Authentication type (e.g., <code>aws-sigv4</code>, <code>managed-identity</code>, <code>api-key-bearer</code>). The legacy <code>authScheme</code> is still tolerated but superseded by <code>authType</code>.</td>
+</tr>
+<tr>
+<td><code>supportedModels</code></td>
+<td>Array of model definitions with metadata</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Stateful models:</strong> add <code>sessionAwareModel: true</code> to any model object that must keep a client pinned to one backend across a session (e.g., the OpenAI Responses / Assistants APIs). When that model is served by a multi-backend pool, the pool gets session affinity so requests replaying the affinity cookie stick to the same backend. A single backend can mix session-aware and stateless models. Tune the cookie with <code>configureSessionAffinity</code> / <code>sessionAffinityDefaults</code> (default cookie <code>ai-gateway-affinity</code>) or a per-backend <code>sessionAffinity</code> override. See <a href="../../contracts/backend-contracts-bicep/#session-affinity-configuration">LLM Backend Onboarding — Session Affinity Configuration</a>.</p>
+</blockquote>
+<p><strong>Example — Amazon Bedrock backend:</strong></p>
+<div class="highlight"><pre><span></span><code>param llmBackendConfig = [
+  {
+    backendId: 'bedrock-us-east-1'
+    backendType: 'aws-bedrock'
+    endpoint: 'https://bedrock-runtime.us-east-1.amazonaws.com'
+    authType: 'aws-sigv4'
+    supportedModels: [
+      {
+        "name": "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+        "sku": "OnDemand"
+        "capacity": 1
+        "modelFormat": "Anthropic"
+        "modelVersion": "1"
+        "retirementDate": "2099-12-30"
+      }
+      {
+        "name": "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+        "sku": "OnDemand"
+        "capacity": 1
+        "modelFormat": "Anthropic"
+        "modelVersion": "2"
+        "retirementDate": "2099-12-30"
+      }
+    ]
+    priority: 1
+    weight: 100
+  }
+]
+
+// AWS credentials (required for aws-bedrock backends)
+param awsAccessKey = '&lt;your-aws-access-key-id&gt;'
+param awsSecretKey = '&lt;your-aws-secret-access-key&gt;'
+param awsRegion = 'us-east-1'
+</code></pre></div>
+<h4 id="pass-through-parameters">Pass-Through Parameters</h4>
+<p>Ensure the new parameters flow through the module chain:</p>
+<ol>
+<li><strong><code>main.bicep</code></strong> — Add parameters and pass to <code>llmPolicyFragments</code> module</li>
+<li><strong><code>modules/llm-policy-fragments.bicep</code></strong> — Accept parameters and create named values</li>
+<li><strong><code>modules/llm-backends.bicep</code></strong> — No changes needed (backend creation is generic)</li>
+<li><strong><code>modules/llm-backend-pools.bicep</code></strong> — No changes needed (pool creation is generic)</li>
+</ol>
+<h3 id="step-5-deploy-and-test">Step 5: Deploy and Test</h3>
+<h4 id="deploy">Deploy</h4>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>deployment<span class="w"> </span>sub<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>llm-backend-onboarding<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--location<span class="w"> </span>&lt;location&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--template-file<span class="w"> </span>main.bicep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--parameters<span class="w"> </span>llm-backends-dev-local.bicepparam
+</code></pre></div>
+<h4 id="verify-configuration">Verify Configuration</h4>
+<ol>
+<li><strong>Check APIM backends</strong>: Verify the new backend resource was created in the Azure Portal under API Management → Backends</li>
+<li><strong>Check named values</strong>: Verify credential named values were created (e.g., <code>aws-access-key</code>, <code>aws-secret-key</code>, <code>aws-region</code>)</li>
+<li><strong>Check policy fragments</strong>: Verify <code>metadata-config</code> fragment includes your new API type and model mappings</li>
+</ol>
+<h4 id="test-the-endpoint">Test the Endpoint</h4>
+<p>Send a request through the Unified AI API using your new API type's path pattern:</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"https://&lt;apim-gateway&gt;/unified-ai/bedrock/model/us.anthropic.claude-3-5-haiku-20241022-v1:0/converse"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"api-key: &lt;subscription-key&gt;"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">    "messages": [</span>
+<span class="s1">      {</span>
+<span class="s1">        "role": "user",</span>
+<span class="s1">        "content": [{"text": "Hello"}]</span>
+<span class="s1">      }</span>
+<span class="s1">    ],</span>
+<span class="s1">    "inferenceConfig": {</span>
+<span class="s1">      "maxTokens": 512,</span>
+<span class="s1">      "temperature": 0.5</span>
+<span class="s1">    }</span>
+<span class="s1">  }'</span>
+</code></pre></div>
+<h4 id="debug-with-response-headers">Debug with Response Headers</h4>
+<p>Enable debug headers in your product policy to trace routing decisions:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;set-variable</span><span class="w"> </span><span class="na">name=</span><span class="s">"enableResponseHeaders"</span><span class="w"> </span><span class="na">value=</span><span class="s">"true"</span><span class="w"> </span><span class="nt">/&gt;</span>
+</code></pre></div>
+<p>Then check the response headers:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Expected Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UAIG-API-Type</code></td>
+<td><code>bedrock-native</code></td>
+</tr>
+<tr>
+<td><code>UAIG-Model-Id</code></td>
+<td><code>us.anthropic.claude-3-5-haiku-20241022-v1:0</code></td>
+</tr>
+<tr>
+<td><code>UAIG-Backend</code></td>
+<td><code>bedrock-us-east-1</code></td>
+</tr>
+<tr>
+<td><code>UAIG-Final-Path</code></td>
+<td><code>/model/us.anthropic.claude-3-5-haiku-20241022-v1%3A0/converse</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="summary-of-files-to-modify">Summary of Files to Modify</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Change</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>llm-backend-onboarding/modules/policies/frag-metadata-config.xml</code></td>
+<td>Add API type definition</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>modules/apim/policies/frag-metadata-config.xml</code></td>
+<td>Add API type definition (mirror)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>modules/apim/policies/frag-path-builder.xml</code></td>
+<td>Add path construction logic</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>llm-backend-onboarding/modules/policies/frag-set-llm-requested-model.xml</code></td>
+<td>Add new URL/body model-extraction pattern</td>
+<td>If provider's model location is not covered by existing patterns</td>
+</tr>
+<tr>
+<td><code>modules/apim/policies/frag-set-llm-requested-model.xml</code></td>
+<td>Add new URL/body model-extraction pattern (mirror)</td>
+<td>If provider's model location is not covered by existing patterns</td>
+</tr>
+<tr>
+<td><code>llm-backend-onboarding/modules/policies/frag-set-backend-authorization.xml</code></td>
+<td>Add auth logic for new backend type</td>
+<td>If new auth needed</td>
+</tr>
+<tr>
+<td><code>modules/apim/policies/frag-set-backend-authorization.xml</code></td>
+<td>Add auth logic (mirror)</td>
+<td>If new auth needed</td>
+</tr>
+<tr>
+<td><code>llm-backend-onboarding/modules/llm-policy-fragments.bicep</code></td>
+<td>Add credential parameters and named values</td>
+<td>If new credentials needed</td>
+</tr>
+<tr>
+<td><code>llm-backend-onboarding/main.bicep</code></td>
+<td>Pass through new parameters</td>
+<td>If new credentials needed</td>
+</tr>
+<tr>
+<td>Your <code>.bicepparam</code> file</td>
+<td>Add backend configuration</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h2 id="checklist">Checklist</h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> API type added to <code>frag-metadata-config.xml</code> (both copies)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>base-path</code> is unique and doesn't conflict with existing API types</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>compatible-pool-types</code> set on the api-type to isolate native vs OpenAI-compat surfaces</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Path builder logic added to <code>frag-path-builder.xml</code> (or <code>config-backend-path-templates</code> entry for OpenAI-compat under <code>inference</code>)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>set-llm-requested-model</code> extended (both copies) if provider's model location is not already covered</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Backend auth logic added to <code>frag-set-backend-authorization.xml</code> (both copies, if new auth type)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Named values created for credentials (if applicable)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Parameters passed through <code>main.bicep</code> → <code>llm-policy-fragments.bicep</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Backend configured in <code>.bicepparam</code> with correct <code>backendType</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Models listed in <code>supportedModels</code> with appropriate metadata</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Deployment tested with debug headers enabled</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Documentation updated (routing architecture guide, backend onboarding README)</li>
+</ul>
+<h2 id="example-complete-bedrock-onboarding">Example: Complete Bedrock Onboarding</h2>
+<p>For a complete working example of onboarding Amazon Bedrock as a new API type, see:</p>
+<ul>
+<li><strong>Backend Configuration</strong>: <a href="../../contracts/backend-contracts-bicep/#amazon-bedrock-backend">LLM Backend Onboarding README</a> — Amazon Bedrock backend example</li>
+<li><strong>Routing Architecture</strong>: <a href="../llm-access/">LLM Access Guide</a> — Bedrock request flow and path construction</li>
+<li><strong>APIM Integration</strong>: <a href="https://learn.microsoft.com/en-us/azure/api-management/amazon-bedrock-passthrough-llm-api">Microsoft Learn: Amazon Bedrock APIM Integration</a> — AWS SigV4 authentication policy details</li>
+</ul>
+<h2 id="related-guides">Related Guides</h2>
+<ul>
+<li><a href="../llm-access/">LLM Access Guide</a> - Complete routing flow documentation</li>
+<li><a href="../../contracts/backend-contracts-bicep/">LLM Backend Onboarding</a> - Backend configuration reference</li>
+<li><a href="../../deploy/bicep-parameter-files/">Parameters Usage Guide</a> - Parameter file configuration</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

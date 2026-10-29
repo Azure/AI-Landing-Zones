@@ -1,0 +1,7046 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../layer-1-governance-hub/">
+      
+      
+        <link rel="next" href="../layer-3-agent-management/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Layer 2 · Agent Operations - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css?v=56826d53ca9e">
+    
+      <link rel="stylesheet" href="../../../stylesheets/planner.css?v=2">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#layer-2-agent-operations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Layer 2 · Agent Operations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan your deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan your deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment choices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sizing-cost-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/resource-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Application
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Application
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent hosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sign-in & access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/embed-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embed chat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/user-feedback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User feedback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/multimodality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multimodality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grounding
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grounding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/foundry-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/work-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Work IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/fabric-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fabric IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sharepoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SharePoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/nl2sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL2SQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/agent-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/private-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Private access (VPN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own app
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/publish-to-teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teams & M365
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/connect-copilot-studio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Copilot Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy via portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Gateway Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/governance-hub-benefits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benefits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel Blueprint
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Citadel Blueprint
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layer-1-governance-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 1 · Governance Hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 2 · Agent Operations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 2 · Agent Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-foundry-the-ai-experience-engine-and-its-first-line-of-trust" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Foundry — the AI experience engine, and its first line of trust
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#one-layer-two-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One layer, two jobs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-two-roles-of-foundry-runtime-and-observability-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The two roles of Foundry: runtime and observability plane
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#role-1-foundry-as-agent-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role 1 · Foundry as agent runtime
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Role 1 · Foundry as agent runtime">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-form-factors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent form factors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hosted-agents-deploy-custom-code-built-with-open-frameworks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted agents — deploy custom code built with open frameworks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-hosted-agents-inherit-automatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What hosted agents inherit automatically
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composition-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composition: skills
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-agent patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#role-2-foundry-as-the-universal-observability-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role 2 · Foundry as the universal observability plane
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Role 2 · Foundry as the universal observability plane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-mechanism-opentelemetry-genai-semantic-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The mechanism: OpenTelemetry GenAI semantic conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-semantic-conventions-that-make-this-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The semantic conventions that make this work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#across-the-full-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Across the full lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-and-interoperable-by-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open and interoperable by design
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#every-agent-gets-context-tools-collaboration-and-any-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Every agent gets context, tools, collaboration, and any model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Every agent gets context, tools, collaboration, and any model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#context-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context engineering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-by-design-building-agents-on-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open by design: building agents on Foundry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Open by design: building agents on Foundry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#microsoft-agent-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Agent Framework
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecosystem-interoperability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ecosystem interoperability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#low-code-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Low-code options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-genaiops-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GenAIOps lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The GenAIOps lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shift-left" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shift left
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#foundry-control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry Control Plane
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Foundry Control Plane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        At a glance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracing-and-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracing and debugging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-evaluations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent evaluations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent evaluations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evaluator-families" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluator families
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observability-evaluations-mapped-to-agent-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability evaluations mapped to agent risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation as code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eval-driven-development-and-cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eval-driven development and CI/CD
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Eval-driven development and CI/CD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variant-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variant comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-controls-and-guardrails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent controls and guardrails
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent controls and guardrails">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#controls-mapped-to-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controls mapped to failure modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#three-filter-types-in-content-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three filter types in Content Safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-red-teaming-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Red Teaming Agent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI Red Teaming Agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attack-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attack strategies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-the-scorecard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading the scorecard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-asr-is-high" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When ASR is high
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continuous-monitoring-and-alerting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continuous monitoring and alerting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Continuous monitoring and alerting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-signal-to-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From signal to action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimization-and-the-improvement-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimization and the improvement loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fleet-wide-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fleet-wide operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-by-persona" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability by persona
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-the-other-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with the other layers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integration with the other layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defense-in-depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defense in depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partner-ecosystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partner ecosystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership &amp; outcomes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#activation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Activation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Activation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related guidance
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layer-3-agent-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 3 · Agent Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layer-4-security-foundation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 4 · Security Foundation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../organizational-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organizational alignment & ownership
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../activation-paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical activation paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_8" id="__nav_3_4_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Original platform guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Original platform guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform-technical-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform-waf-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Well-Architected alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_1" id="__nav_3_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-parameter-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters (Bicep)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/network-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network approach
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_2" id="__nav_3_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity planning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Capacity planning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/sizing-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel sizing guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/ptu-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PTU estimation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/ai-search-cost-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Search cost estimation logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience & business continuity
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resilience & business continuity
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/business-continuity-dr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Business continuity & DR guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/throttling-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Throttling events handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/app-insights-alerting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App Insights alerting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/cosmos-multi-region-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos global multi-master sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1" id="__nav_3_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-quick-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-full-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1_3" id="__nav_3_6_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/post-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post-deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebook setup guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-snippets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook snippets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/developer-vpn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer VPN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2" id="__nav_3_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-variables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variables guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-deployment-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-policy-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM policy architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2_6" id="__nav_3_6_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_1" id="__nav_3_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observe
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observe
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/platform-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform observability guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/power-bi-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power BI dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2" id="__nav_3_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backend contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_1" id="__nav_3_7_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/unified-ai-api-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified AI API type onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-bicep-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep module reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_2" id="__nav_3_7_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3" id="__nav_3_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Access contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-quick-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contract policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/llm-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM access guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/openai-compatible-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI-compatible API guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-key-rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key rotation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID auth validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/jwt-client-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JWT client identity permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/pii-masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII anonymization & deanonymization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/agent-governance-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3_13" id="__nav_3_7_3_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_3_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate access contracts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_4" id="__nav_3_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contracts (preview)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Publish contracts (preview)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/publish-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/publish-contract-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contract guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_5" id="__nav_3_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway upgrade
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway upgrade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM gateway upgrade (preview)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-ecosystem-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway ecosystem upgrade guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/release-version-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release version management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/foundry-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-foundry-the-ai-experience-engine-and-its-first-line-of-trust" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Foundry — the AI experience engine, and its first line of trust
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#one-layer-two-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One layer, two jobs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-two-roles-of-foundry-runtime-and-observability-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The two roles of Foundry: runtime and observability plane
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#role-1-foundry-as-agent-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role 1 · Foundry as agent runtime
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Role 1 · Foundry as agent runtime">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-form-factors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent form factors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hosted-agents-deploy-custom-code-built-with-open-frameworks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted agents — deploy custom code built with open frameworks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-hosted-agents-inherit-automatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What hosted agents inherit automatically
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composition-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composition: skills
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-agent patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#role-2-foundry-as-the-universal-observability-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Role 2 · Foundry as the universal observability plane
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Role 2 · Foundry as the universal observability plane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-mechanism-opentelemetry-genai-semantic-conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The mechanism: OpenTelemetry GenAI semantic conventions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-semantic-conventions-that-make-this-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The semantic conventions that make this work
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#across-the-full-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Across the full lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-and-interoperable-by-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open and interoperable by design
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#every-agent-gets-context-tools-collaboration-and-any-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Every agent gets context, tools, collaboration, and any model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Every agent gets context, tools, collaboration, and any model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#context-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Context engineering
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-by-design-building-agents-on-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open by design: building agents on Foundry
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Open by design: building agents on Foundry">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#microsoft-agent-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Agent Framework
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ecosystem-interoperability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ecosystem interoperability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#low-code-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Low-code options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-genaiops-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The GenAIOps lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The GenAIOps lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shift-left" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shift left
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#foundry-control-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Foundry Control Plane
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Foundry Control Plane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        At a glance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracing-and-debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracing and debugging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-evaluations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent evaluations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent evaluations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evaluator-families" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluator families
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observability-evaluations-mapped-to-agent-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability evaluations mapped to agent risks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-as-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation as code
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#eval-driven-development-and-cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eval-driven development and CI/CD
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Eval-driven development and CI/CD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#variant-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variant comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-controls-and-guardrails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent controls and guardrails
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent controls and guardrails">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#controls-mapped-to-failure-modes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controls mapped to failure modes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#three-filter-types-in-content-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three filter types in Content Safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-red-teaming-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI Red Teaming Agent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AI Red Teaming Agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attack-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attack strategies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reading-the-scorecard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading the scorecard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-asr-is-high" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When ASR is high
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continuous-monitoring-and-alerting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continuous monitoring and alerting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Continuous monitoring and alerting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-signal-to-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From signal to action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimization-and-the-improvement-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optimization and the improvement loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fleet-wide-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fleet-wide operations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-by-persona" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observability by persona
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-the-other-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with the other layers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integration with the other layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defense-in-depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defense in depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#partner-ecosystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Partner ecosystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership &amp; outcomes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#activation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Activation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Activation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related guidance
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="layer-2-agent-operations">Layer 2 · Agent Operations</h1>
+<h3 id="microsoft-foundry-the-ai-experience-engine-and-its-first-line-of-trust">Microsoft Foundry — the AI experience engine, and its first line of trust</h3>
+<p><a href="../">⬅️ Back to Overview</a></p>
+<blockquote>
+<p><strong>Intelligence</strong> — <em>where the AI experience is delivered</em>
+<strong>Agent-level trust</strong> — <em>traces · evals · red-teaming · guardrails</em>
+<strong>Owned by the agent builder</strong> (built on infrastructure from Platform Engineering, to standards set by the AI CoE)</p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#one-layer-two-jobs">One layer, two jobs</a></li>
+<li><a href="#the-two-roles-of-foundry-runtime-and-observability-plane">The two roles of Foundry</a></li>
+<li><a href="#role-1-foundry-as-agent-runtime">Role 1 · Foundry as agent runtime</a></li>
+<li><a href="#role-2-foundry-as-the-universal-observability-plane">Role 2 · Foundry as the universal observability plane</a></li>
+<li><a href="#every-agent-gets-context-tools-collaboration-and-any-model">Every agent gets context, tools, collaboration, any model</a></li>
+<li><a href="#open-by-design-building-agents-on-foundry">Open by design</a></li>
+<li><a href="#the-genaiops-lifecycle">The GenAIOps lifecycle</a></li>
+<li><a href="#foundry-control-plane">Foundry Control Plane</a></li>
+<li><a href="#tracing-and-debugging">Tracing and debugging</a></li>
+<li><a href="#agent-evaluations">Agent evaluations</a></li>
+<li><a href="#eval-driven-development-and-cicd">Eval-driven development and CI/CD</a></li>
+<li><a href="#agent-controls-and-guardrails">Agent controls and guardrails</a></li>
+<li><a href="#ai-red-teaming-agent">AI Red Teaming Agent</a></li>
+<li><a href="#continuous-monitoring-and-alerting">Continuous monitoring and alerting</a></li>
+<li><a href="#fleet-wide-operations">Fleet-wide operations</a></li>
+<li><a href="#observability-by-persona">Observability by persona</a></li>
+<li><a href="#integration-with-the-other-layers">Integration with the other layers</a></li>
+<li><a href="#ownership-outcomes">Ownership &amp; outcomes</a></li>
+<li><a href="#activation">Activation</a></li>
+</ul>
+<hr />
+<h2 id="one-layer-two-jobs">One layer, two jobs</h2>
+<p>This is the reframe that matters most in the updated blueprint:</p>
+<blockquote>
+<p><strong>Agent Operations delivers the experience — <em>and</em> its first line of trust.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>① Delivers the experience</strong> <em>(Intelligence)</em></td>
+<td>The agents that deliver the AI experience: any agent type, grounded in your data (IQ), using your tools (MCP), collaborating agent-to-agent, on any model.</td>
+</tr>
+<tr>
+<td><strong>② Carries agent-level trust</strong> <em>(Trust, built in)</em></td>
+<td>End-to-end <strong>traces</strong>, AI <strong>evals</strong>, <strong>red-teaming</strong>, and <strong>guardrails</strong> — tuned to each agent's type and objective. <strong>The builder owns this.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Trust is not the job of a couple of security controls off to the side. It <strong>starts inside Agent Operations</strong>, and three platform controls — <a href="../layer-1-governance-hub/">Governance Hub</a>, <a href="../layer-3-agent-management/">Agent Management</a>, and <a href="../layer-4-security-foundation/">Security Foundation</a> — then make it <strong>hold at scale</strong>.</p>
+<p><strong>The layer that delivers intelligence is also the first line of trust.</strong></p>
+<hr />
+<h2 id="the-two-roles-of-foundry-runtime-and-observability-plane">The two roles of Foundry: runtime and observability plane</h2>
+<p>This distinction is the single most important thing to understand about Layer 2 — and the most commonly missed.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Foundry plays two independent roles. You can adopt either one, or both.</strong></p>
+<p><strong>① Foundry as a runtime</strong> — you <em>host</em> agents in Foundry (prompt agents and hosted agents). These agents <strong>automatically inherit every Foundry capability</strong>: tracing, evaluations, guardrails, identity, IQ grounding, MCP tools, and control-plane operations, with little or no wiring.</p>
+<p><strong>② Foundry as the agent control plane for agents running elsewhere</strong> — agents on <strong>AKS, Azure Container Apps, other clouds, or on-premises</strong> forward <strong>OpenTelemetry GenAI semantic traces</strong> into Foundry-connected Application Insights. They then light up in the <strong>same</strong> observability plane — centralized traces, AI evaluations, quality and safety signals, and fleet operations — <strong>without being hosted in Foundry at all</strong>.</p>
+</div>
+<div class="highlight"><pre><span></span><code>        ┌─────────────────────── ROLE 1: RUNTIME ───────────────────────┐
+        │  Prompt agents  ·  Hosted agents (BYO container/framework)    │
+        │  → inherit tracing, evals, guardrails, identity, IQ, MCP      │
+        └───────────────────────────────┬───────────────────────────────┘
+                                        │
+                                        ▼
+                        ┌───────────────────────────────┐
+                        │   MICROSOFT FOUNDRY           │
+                        │   Control Plane               │
+                        │   • end-to-end traces         │
+                        │   • AI evaluations            │
+                        │   • guardrails &amp; controls     │
+                        │   • fleet-wide operations     │
+                        └───────────────▲───────────────┘
+                                        │
+                        Foundry-connected Application Insights
+                                        ▲
+                                        │  OTel GenAI semantic traces
+        ┌───────────────────────────────┴───────────────────────────────┐
+        │  ROLE 2: OBSERVABILITY PLANE FOR AGENTS RUNNING ELSEWHERE     │
+        │  AKS · Azure Container Apps · other clouds · on-premises      │
+        │  Copilot Studio · third-party runtimes · any OTel emitter     │
+        └───────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<p><strong>Why this matters commercially and architecturally:</strong></p>
+<ul>
+<li>It <strong>decouples the hosting decision from the governance decision</strong>. A customer who will not (or cannot) host agents in Foundry can still standardize observability, evaluation, and compliance signals on Foundry.</li>
+<li>It removes the false choice between <em>"adopt Foundry as a runtime"</em> and <em>"no Foundry at all."</em> The observability plane is adoptable on its own.</li>
+<li>It is the path through which Platform (BYO) and third-party agents reach Layer 2.</li>
+<li><strong>The managed runtime is a convenience; the observability is the strategic value.</strong></li>
+</ul>
+<blockquote>
+<p><strong>Think of Foundry as the unified control plane for running <em>and</em> observing agents — whether you choose to host them there or not.</strong></p>
+</blockquote>
+<hr />
+<h2 id="role-1-foundry-as-agent-runtime">Role 1 · Foundry as agent runtime</h2>
+<p>Foundry provides a <strong>managed runtime for all agent form factors</strong> — and it is <strong>model-agnostic and framework-agnostic</strong>, so teams adopt new models and frameworks without sacrificing enterprise guarantees.</p>
+<h3 id="agent-form-factors">Agent form factors</h3>
+<table>
+<thead>
+<tr>
+<th>Form factor</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prompt agents</strong></td>
+<td>Declarative, low-code agents defined primarily by instructions, tools, and knowledge — the fastest path from idea to a working agent.</td>
+</tr>
+<tr>
+<td><strong>Hosted agents</strong></td>
+<td>Custom-code agents built with <strong>open agent frameworks</strong>, packaged as containers and deployed into Foundry. The unified runtime foundation for code-first work.</td>
+</tr>
+<tr>
+<td><strong>Workflow agents</strong></td>
+<td>Longer-running, orchestrated processes.</td>
+</tr>
+<tr>
+<td><strong>Coding agents</strong></td>
+<td>Development-time agents that use the same primitives — agent loops, tools, knowledge, memory, evals, observability.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hosted-agents-deploy-custom-code-built-with-open-frameworks">Hosted agents — deploy custom code built with open frameworks</h3>
+<p>Instead of managing containers, scaling policies, and runtime isolation yourself, Foundry provides a <strong>hosted execution environment purpose-built for agent workloads</strong>:</p>
+<ul>
+<li><strong>Framework-agnostic by design</strong> — keep your preferred open-source agent framework; Foundry Agent Service handles deployment, scaling, security, and operations</li>
+<li><strong>Long-running workflows, background tasks, and cross-agent collaboration</strong> handled within a managed runtime that scales automatically</li>
+<li><strong>Session-level isolation</strong> and fast startup for multi-tenant agent workloads</li>
+<li><strong>Observability and governance still built in</strong> — trace execution flows, monitor tool calls, and enforce policies without custom infrastructure</li>
+</ul>
+<blockquote>
+<p><strong>Build however you want, and run with enterprise-grade reliability and control.</strong></p>
+</blockquote>
+<h3 id="what-hosted-agents-inherit-automatically">What hosted agents inherit automatically</h3>
+<p>This is the practical payoff of choosing Foundry as the runtime — these are <strong>enterprise defaults, not integration projects</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Inherited capability</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identity</strong></td>
+<td>Distinct agent identities with full auditability; <strong>no stored secrets</strong>. Each project and each published agent gets its own <a href="../layer-3-agent-management/">Entra Agent ID</a>.</td>
+</tr>
+<tr>
+<td><strong>Token management &amp; OBO</strong></td>
+<td>Built-in token handling plus <strong>on-behalf-of flows</strong> for user-scoped actions</td>
+</tr>
+<tr>
+<td><strong>Tracing</strong></td>
+<td>Connect Application Insights and <strong>tracing turns on automatically — no code</strong></td>
+</tr>
+<tr>
+<td><strong>Evaluations</strong></td>
+<td>Agent evaluators run without refactoring the agent</td>
+</tr>
+<tr>
+<td><strong>Guardrails</strong></td>
+<td>Runtime and control-plane content safety, applied at the right lifecycle point</td>
+</tr>
+<tr>
+<td><strong>Context &amp; tools</strong></td>
+<td>Foundry IQ grounding and MCP tool access, assembled by the platform</td>
+</tr>
+<tr>
+<td><strong>Governance</strong></td>
+<td>AI Gateway controls and continuous monitoring for responsible AI</td>
+</tr>
+<tr>
+<td><strong>Distribution</strong></td>
+<td>Publish straight into <strong>Microsoft 365 and Teams</strong>; deploy from <strong>GitHub</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="composition-skills">Composition: skills</h3>
+<p>The primary unit of composition is shifting from multi-agent orchestration to <strong>skills</strong> — reusable, governable capabilities that can improve over time and be shared across agents, rather than logic locked inside a single agent's orchestration graph.</p>
+<h3 id="multi-agent-patterns">Multi-agent patterns</h3>
+<p>Agents can call each other as tools (<strong>Connected Agents</strong>), passing tasks between specialized agents to solve complex problems collaboratively — with <strong>A2A</strong> for cross-platform agent collaboration.</p>
+<hr />
+<h2 id="role-2-foundry-as-the-universal-observability-plane">Role 2 · Foundry as the universal observability plane</h2>
+<p><strong>The observability story is not limited to agents running on Foundry's managed runtime. It extends to your entire agent ecosystem.</strong></p>
+<p>Most enterprises have agents everywhere: <strong>SaaS agents like Copilot</strong>, <strong>platform agents hosted on AKS or ACA</strong>, <strong>agents on other clouds or on-premises</strong>, and <strong>third-party agents</strong> from other vendors. The question is how to get a single pane of glass across all of them.</p>
+<h3 id="the-mechanism-opentelemetry-genai-semantic-conventions">The mechanism: OpenTelemetry GenAI semantic conventions</h3>
+<p><strong>Any agent — regardless of where it runs — can be configured to emit GenAI semantic logs using OTel.</strong> Those logs flow through <strong>Foundry-connected Application Insights</strong> into Foundry, and once they are in Foundry you unlock the full ecosystem: end-to-end agent traces, continuous AI evaluations, compliance controls, and quality and safety signals — <strong>all in one place</strong>.</p>
+<div class="highlight"><pre><span></span><code>   Your agent (anywhere)
+   AKS · ACA · other cloud · on-prem · 3rd-party · Copilot Studio
+            │
+            │  1. Instrument with OTel GenAI semantic conventions
+            │     (gen_ai.* spans — pro-code SDKs emit the richest detail)
+            ▼
+   2. Export to Foundry-connected Application Insights
+            │
+            ▼
+   3. Microsoft Foundry
+            ├── End-to-end agent traces
+            ├── Continuous AI evaluations
+            ├── Compliance controls
+            ├── Quality &amp; safety signals
+            └── Fleet-wide operations
+</code></pre></div>
+<blockquote>
+<p><strong>It doesn't matter if the agent is a Copilot extension, a custom agent on AKS, or a third-party solution — they all light up in the same observability plane.</strong></p>
+</blockquote>
+<h3 id="the-semantic-conventions-that-make-this-work">The semantic conventions that make this work</h3>
+<p>Microsoft is among the <strong>leading contributors to OpenTelemetry and the related W3C communities</strong>, and those contributions flow into services across the portfolio. Specific to generative-AI observability:</p>
+<table>
+<thead>
+<tr>
+<th>Convention set</th>
+<th>What it standardizes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM semantics</strong></td>
+<td>Model calls, prompts, completions, token usage, latency</td>
+</tr>
+<tr>
+<td><strong>Evaluation semantics</strong></td>
+<td>Evaluation results carried as first-class telemetry</td>
+</tr>
+<tr>
+<td><strong>Events semantics</strong></td>
+<td>Discrete agent lifecycle and decision events</td>
+</tr>
+<tr>
+<td><strong>MCP conventions</strong></td>
+<td>Tool invocation over Model Context Protocol</td>
+</tr>
+<tr>
+<td><strong>Azure MCP Server instrumentation</strong></td>
+<td>Out-of-the-box instrumentation for MCP servers</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Because it is an open standard, a wide variety of agentic frameworks are supported</strong> — and because you own the instrumentation in your own code, you can capture the richest detail available.</p>
+<h3 id="across-the-full-lifecycle">Across the full lifecycle</h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>What observability gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Development</strong></td>
+<td>Trace agent behavior, run evaluations, and catch issues <strong>before anything hits production</strong></td>
+</tr>
+<tr>
+<td><strong>Production</strong></td>
+<td>The same observability keeps running <strong>continuously</strong> — so you are never flying blind</td>
+</tr>
+</tbody>
+</table>
+<h3 id="open-and-interoperable-by-design">Open and interoperable by design</h3>
+<p>Foundry Observability is built to <strong>integrate with your existing monitoring estate, not replace it</strong>:</p>
+<ul>
+<li><strong>Azure Monitor</strong> — Application Insights and Log Analytics underneath; Azure Workbooks, dashboards, and Grafana on top</li>
+<li><strong>APM partners</strong> — designed to integrate with third-party APM tooling (for example Dynatrace, New Relic, Datadog) rather than compete with them</li>
+<li><strong>Export and integration are straightforward</strong>, so customers retain control of their own telemetry data</li>
+</ul>
+<hr />
+<h2 id="every-agent-gets-context-tools-collaboration-and-any-model">Every agent gets context, tools, collaboration, and any model</h2>
+<p><strong>Agents never run alone.</strong> Whatever you build, every agent gets:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Capability</th>
+<th>Delivered by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🧠</td>
+<td><strong>Context · IQ</strong></td>
+<td>Agentic retrieval through <strong>Foundry IQ</strong> — grounded in your data, moving beyond classic RAG by blending retrieval, memory, and tool signals into coherent, task-aware context</td>
+</tr>
+<tr>
+<td>🧰</td>
+<td><strong>Tools · MCP</strong></td>
+<td>A rich selection of <strong>MCP tools</strong> — 1,400+ MCP-enabled connectors, plus REST and Logic Apps abstracted behind consistent, governed endpoints</td>
+</tr>
+<tr>
+<td>🤝</td>
+<td><strong>Collaboration</strong></td>
+<td>Agent-to-agent (<strong>A2A</strong>); <strong>Connected Agents</strong> let agents call each other as tools</td>
+</tr>
+<tr>
+<td>🎛️</td>
+<td><strong>Any model</strong></td>
+<td>Foundry Model Catalog, GPU-hosted, or externally hosted — with API compatibility for leading model platforms</td>
+</tr>
+<tr>
+<td>🧩</td>
+<td><strong>Memory</strong></td>
+<td>Managed memory, managed conversations, <strong>agentic/episodic memory</strong>, or a BYO memory store</td>
+</tr>
+</tbody>
+</table>
+<p><strong>And agent-level trust, built in:</strong> 🔍 Traces · 📊 Evals · 🎯 Red-teaming · 🚧 Guardrails</p>
+<h3 id="context-engineering">Context engineering</h3>
+<p>Agent reliability degrades when tools are overloaded or unranked, knowledge is poorly structured, or prompts are naïvely constructed. Classic RAG makes this worse — long-context execution often dilutes or drops critical signals (the <em>"lost in the middle"</em> problem).</p>
+<p>The platform's answer is to treat <strong>context as a first-class primitive assembled at runtime</strong>: selecting, ranking, and composing knowledge, memory, and tool outputs based on the agent's intent and state — rather than static prompt wiring done by the developer. Context becomes <strong>observable and improvable</strong>, not just an input.</p>
+<p>The <strong>IQ family</strong> compounds this across the estate: <strong>Foundry IQ</strong> contributes curated institutional knowledge, <strong>Work IQ</strong> contributes flow-of-work signals, and <strong>Fabric IQ</strong> grounds agents in live business state and shared data models.</p>
+<hr />
+<h2 id="open-by-design-building-agents-on-foundry">Open by design: building agents on Foundry</h2>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>What it delivers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Open by design</strong></td>
+<td>Build with <strong>any framework or protocol</strong></td>
+</tr>
+<tr>
+<td><strong>Connected intelligence</strong></td>
+<td>Memory, knowledge, and <strong>1,400+ MCP-enabled connectors</strong></td>
+</tr>
+<tr>
+<td><strong>Enterprise-grade security and reach</strong></td>
+<td>Deploy confidently, with <strong>one-click publishing to Microsoft 365</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="microsoft-agent-framework">Microsoft Agent Framework</h3>
+<p>An <strong>open-source engine</strong> for building and orchestrating intelligent AI agents — open standards and interoperability, community-driven and extensible by design, ready for production. It implements <strong>A2A</strong> communication and <strong>MCP</strong> so agents can cooperate across <strong>Azure, AWS, Google Cloud, and on-premises</strong> environments.</p>
+<p>🔗 <a href="https://aka.ms/AgentFramework">https://aka.ms/AgentFramework</a></p>
+<h3 id="ecosystem-interoperability">Ecosystem interoperability</h3>
+<p>Enterprises consistently flag <strong>vendor lock-in</strong> as a top adoption risk, and most operate agents across <strong>two or more environments</strong> — Kubernetes with public-cloud VMs, and hybrid on-premises/cloud estates. Foundry's posture answers that directly:</p>
+<ul>
+<li><strong>API compatibility with leading model platforms</strong>, so solutions built for other providers run with minimal friction</li>
+<li><strong>Unified agent, model, and tool endpoints across providers</strong>, preserving portability while layering on enterprise guarantees</li>
+<li><strong>Open standards</strong> (MCP, A2A) for interoperability across labs, aggregators, and tooling vendors</li>
+<li><strong>Ecosystem assets as first-class primitives</strong> — tools, agent templates, skills, and knowledge connectors that are discoverable, reusable, and governable</li>
+</ul>
+<blockquote>
+<p>This is the architectural reason the Citadel Blueprint can honestly claim <em>"opinionated where it speeds you up, open everywhere it matters."</em></p>
+</blockquote>
+<h3 id="low-code-options">Low-code options</h3>
+<p><strong>Logic Apps Agent Loop</strong> and <strong>Copilot Studio</strong> cover low-code agent development. Copilot Studio–built agents can leverage Citadel-governed LLMs, MCP tools, and agents via an access contract.</p>
+<hr />
+<h2 id="the-genaiops-lifecycle">The GenAIOps lifecycle</h2>
+<p>Foundry Observability is aligned to the end-to-end workflow rather than bolted onto the end of it:</p>
+<div class="highlight"><pre><span></span><code>        PLAN                  DEVELOP                 OPERATE
+          │                      │                       │
+          ├── Govern ────────────┼───────────────────────┤
+          ├── Evaluate ──────────┼───────────────────────┤
+          ├── Mitigate ──────────┼───────────────────────┤
+                                 │       ├── Monitor
+                                 │       └── Optimize
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Plan</strong></td>
+<td>Select the best model using benchmarks and leaderboards; get guidance for evaluation; evaluate and compare models before committing</td>
+</tr>
+<tr>
+<td><strong>Develop</strong></td>
+<td>Catch issues early pre-production; automate pre-deployment checks; quick feedback cycles; the same govern/evaluate/mitigate capabilities available during active development</td>
+</tr>
+<tr>
+<td><strong>Operate</strong></td>
+<td>Identify and debug issues; assess and improve; track resource usage; continuous evaluation and monitoring in production</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Two reasons to monitor: monitor to optimize, and monitor to protect.</strong></p>
+<h3 id="shift-left">Shift left</h3>
+<p>Finding a risk during design is far cheaper than finding it after release. The practical sequence — sensitive-use assessment and AI threat modeling at design, evaluations and observability during build, red teaming before release sign-off, and incident response after — means <strong>AI red teaming is a powerful tool but an expensive place to find your first risk</strong>. Invest in the earlier phases for the highest return.</p>
+<hr />
+<h2 id="foundry-control-plane">Foundry Control Plane</h2>
+<blockquote>
+<p><strong>Everything developers need to observe, secure, and manage fleets of agents in one place.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>What it delivers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔭 <strong>End-to-end observability</strong></td>
+<td>Understand every agent's <strong>health, cost, and behavior in real time</strong></td>
+</tr>
+<tr>
+<td>🚧 <strong>Define guardrails &amp; controls</strong></td>
+<td>Keep agents <strong>safe, grounded, and on task</strong> across inputs, outputs, and tools</td>
+</tr>
+<tr>
+<td>🔐 <strong>Secure every agent</strong></td>
+<td>Enforce <strong>enterprise identity, runtime defense, and sensitive data protection</strong></td>
+</tr>
+<tr>
+<td>🚀 <strong>Manage agent fleets</strong></td>
+<td>See and govern your <strong>entire agent fleet across clouds, frameworks, and teams</strong> from one control plane</td>
+</tr>
+</tbody>
+</table>
+<p>Foundry Control Plane is <strong>deeply integrated with Microsoft's security portfolio</strong> to provide a <em>secure by design</em> foundation, letting developers define agent identity and access controls, gain <strong>contextualized alerts and posture recommendations</strong>, and activate data security and compliance for every Foundry-built application or agent.</p>
+<h3 id="at-a-glance">At a glance</h3>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Capabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Controls</strong></td>
+<td>Agent behavior control · tool-level agent runtime guardrails · extensive risk coverage · Purview sensitivity labels for RAG</td>
+</tr>
+<tr>
+<td><strong>Observability</strong></td>
+<td>Continuous evaluations · continuous red teaming · threshold-based alerts · agent evaluators for quality, security, safety</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Entra Agent ID · Purview for data security · Defender alerts and recommendations · partner integrations (Palo Alto Networks, Zenity)</td>
+</tr>
+<tr>
+<td><strong>Fleet-wide operations</strong></td>
+<td>100% of your agent estate · enterprise-grade compliance · developer to-do list</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tracing-and-debugging">Tracing and debugging</h2>
+<p>Effortlessly enable LLM and agent tracing to gain comprehensive insight into execution flows — <strong>what the agent decided, which tools it called, what came back, and where time and tokens went</strong>.</p>
+<p>A trace exposes the full <strong>agent execution flow</strong> step by step:</p>
+<div class="highlight"><pre><span></span><code>  first-message                          7.7s   423t
+   ├── LLM   [inference]                 2.5s   150t
+   ├── Tool  [tool_call]                 1.2s    75t
+   ├── Tool  [tool_execution]            3.5s   200t
+   │    ├── Embedding [generation]       0.5s    50t
+   │    └── Retriever [retrieval]        0.3s    30t
+   ├── LLM   [inference]                 2.0s   120t
+   └── LLM   [assistant_message]         0.8s    40t
+</code></pre></div>
+<p>For each span you can inspect <strong>Input/Output</strong>, <strong>Attributes</strong>, and <strong>Evaluations</strong> — including the system message, user input, and final response, with per-step latency and token counts.</p>
+<p><strong>How the telemetry is structured in Azure Monitor:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Signal type</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Metrics</strong></td>
+<td>Operational metrics such as total tokens and average duration</td>
+</tr>
+<tr>
+<td><strong>Logs</strong></td>
+<td>All the evaluation data</td>
+</tr>
+<tr>
+<td><strong>Traces</strong></td>
+<td>Instrumented through Application Insights <strong>distributed tracing</strong></td>
+</tr>
+</tbody>
+</table>
+<p>From there you can <strong>drill down with Log Analytics</strong> for troubleshooting and deeper diagnostics, <strong>query with KQL</strong> for root-cause analysis, <strong>create visualizations</strong> with Azure dashboards, Workbooks and Grafana, and <strong>operationalize at scale</strong> with smart alerts and automated actions.</p>
+<hr />
+<h2 id="agent-evaluations">Agent evaluations</h2>
+<p><strong>Evaluate agents before they ship, then continuously monitor them in production using real traffic.</strong></p>
+<p>The signals are <strong>agent-specific</strong>, alongside quality, safety, and cost. When something degrades, <strong>alerts take you straight from detection to the exact evaluation or trace</strong> — no digging through dashboards.</p>
+<h3 id="evaluator-families">Evaluator families</h3>
+<table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Evaluators</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agents</strong></td>
+<td>Intent Resolution · Tool Call Accuracy · Task Adherence · Response Completeness</td>
+</tr>
+<tr>
+<td><strong>Quality</strong></td>
+<td>Groundedness · Relevance · Coherence · Fluency · Similarity · <strong>Document Retrieval</strong> · NLP metrics (e.g. F1 Score) · <strong>AOAI Graders</strong></td>
+</tr>
+<tr>
+<td><strong>Risk &amp; Safety</strong></td>
+<td>Direct Attack Jailbreaks · <strong>Indirect Attack Jailbreaks (XPIA)</strong> · Hate and Unfairness · Sexual · Violence · Self-Harm · Protected Material · <strong>Ungrounded Attributes</strong> · <strong>Code Vulnerability</strong></td>
+</tr>
+<tr>
+<td><strong>+ Custom Evaluators</strong></td>
+<td>Define your own metrics for tailored, use-case-specific evaluation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="observability-evaluations-mapped-to-agent-risks">Observability evaluations mapped to agent risks</h3>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Evaluators</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sensitive data leakage</strong></td>
+<td>Sensitive data leakage — plus support in the AI Red Teaming Agent</td>
+</tr>
+<tr>
+<td><strong>Agent hijacking (XPIA)</strong></td>
+<td>Agentic jailbreak &amp; XPIA via the AI Red Teaming Agent</td>
+</tr>
+<tr>
+<td><strong>Unpredictable behavior</strong></td>
+<td>Task adherence · Tool selection · Tool input accuracy · Tool output utilization · Intent resolution</td>
+</tr>
+<tr>
+<td><strong>High-risk actions</strong></td>
+<td>Prohibited actions — plus support in the AI Red Teaming Agent</td>
+</tr>
+<tr>
+<td><strong>Resource use</strong></td>
+<td>Task navigation efficiency · Tool call success</td>
+</tr>
+<tr>
+<td><strong>Content harms</strong></td>
+<td>Sexual, self-harm, violence, hate and unfairness · Groundedness · Protected materials</td>
+</tr>
+</tbody>
+</table>
+<h3 id="evaluation-as-code">Evaluation as code</h3>
+<p>Named, <strong>reusable, versioned evaluators and graders</strong> score entire rollouts end to end, producing structured outputs usable as diagnostics, reward signals, and training data. Context-specific evaluation suites with <strong>auto-generated evaluators and test datasets</strong> help teams reach meaningful coverage quickly.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Generate test data for robust evaluations.</strong> Test data should reflect the real-world interactions users will actually have with the agent — not idealized happy paths. The evaluation SDK provides end-to-end <strong>synthetic data generation</strong> so you can test adversarial and non-adversarial interactions <strong>in the absence of production data</strong>.</p>
+</div>
+<hr />
+<h2 id="eval-driven-development-and-cicd">Eval-driven development and CI/CD</h2>
+<p>Evaluations belong <strong>inside the development workflow</strong>, not as a pre-launch gate.</p>
+<table>
+<thead>
+<tr>
+<th>Integration</th>
+<th>What it enables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure AI Agent Evaluation GitHub Action</strong></td>
+<td>Run agent evaluations automatically in GitHub CI workflows</td>
+</tr>
+<tr>
+<td><strong>Azure DevOps workflow extension</strong></td>
+<td>The same automated batch evaluation in ADO pipelines</td>
+</tr>
+<tr>
+<td><strong>Flexible triggers</strong></td>
+<td>On commit (events) · scheduled · manual</td>
+</tr>
+<tr>
+<td><strong>App Configuration</strong></td>
+<td>Roll out agent changes progressively</td>
+</tr>
+<tr>
+<td><strong>App templates &amp; agent config support</strong></td>
+<td>A code-first path from evaluation to production</td>
+</tr>
+</tbody>
+</table>
+<h3 id="variant-comparison">Variant comparison</h3>
+<p>CI runs compare a candidate agent against a baseline across <strong>operational metrics</strong> (client/server run duration, completion and prompt tokens), <strong>AI quality</strong> (intent resolution, task adherence, relevance, coherence, fluency passing rates), and <strong>risk and safety</strong> (violent, sexual, self-harm, hateful content defect rates; indirect attack defect rate and its sub-scores for manipulated content, intrusion, and information gathering).</p>
+<p>Each metric is labelled <strong>Baseline · Improved · Degraded · Inconclusive</strong> — so a regression is visible in the pull request rather than discovered in production.</p>
+<blockquote>
+<p>A typical failure this catches: a commit accidentally disables a tool call, and the <strong>Tool Call Accuracy</strong> and <strong>Task Adherence</strong> rates regress against baseline before the change is ever merged.</p>
+</blockquote>
+<p><strong>Customer proof:</strong> Veeam integrated the AI Red Teaming Agent and evaluations directly into their development workflow to ensure their agent provides accurate, non-hallucinated information.</p>
+<hr />
+<h2 id="agent-controls-and-guardrails">Agent controls and guardrails</h2>
+<blockquote>
+<p><strong>Guardrails on inputs, outputs, and tools — keeping agents safe and grounded.</strong></p>
+</blockquote>
+<p>What's different with agents is <strong>where you intervene</strong>. These guardrails don't just run on prompts and completions — you apply them at the right point in the <strong>agent lifecycle</strong>:</p>
+<div class="highlight"><pre><span></span><code>   User inputs  →  Tool calls  →  Tool responses  →  Agent actions &amp; outputs
+       ▲              ▲                ▲                      ▲
+       └──────────────┴────────────────┴──────────────────────┘
+                  Guardrails apply at every point
+</code></pre></div>
+<p>That matters because agents call tools, move data, and take actions. <strong>If you don't govern behavior at runtime, you're always reacting after the fact.</strong></p>
+<h3 id="controls-mapped-to-failure-modes">Controls mapped to failure modes</h3>
+<table>
+<thead>
+<tr>
+<th>Failure mode</th>
+<th>Controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sensitive data leakage</strong></td>
+<td>PII scanning of tools · PII scanning by tool type</td>
+</tr>
+<tr>
+<td><strong>Task drift</strong></td>
+<td>Task adherence · Task adherence by tool type</td>
+</tr>
+<tr>
+<td><strong>Agent hijacking</strong></td>
+<td>Spotlighting of prompts and tool responses · Indirect prompt injection (XPIA) scanning of tool responses · IPI scanning of prompts · Spotlighting &amp; IPI scanning by tool type</td>
+</tr>
+<tr>
+<td><strong>Content harms</strong></td>
+<td>Sexual, self-harm, violence, hate and unfairness · Groundedness · Protected materials</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Traditional safety still matters</strong> — content harms, groundedness, protected materials. The difference is they are all part of the <strong>same control framework</strong>. Developers don't have to stitch together separate systems.</p>
+<p><strong>The result: agent behavior becomes predictable and governable, even as you scale from a handful of agents to entire fleets.</strong></p>
+<h3 id="three-filter-types-in-content-safety">Three filter types in Content Safety</h3>
+<table>
+<thead>
+<tr>
+<th>Filter type</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Configurable content filters</strong></td>
+<td>Harmful content — violence, hate speech, sexual content, self-harm and more — adjustable by severity level, set to <strong>medium threshold by default</strong>. Custom filters can be created from small training datasets.</td>
+</tr>
+<tr>
+<td><strong>Prompt shields</strong></td>
+<td>Detection models for model inputs that spot attempts to attack or manipulate the AI system outside its intended purpose — <strong>direct attacks, indirect attacks, and spotlighting</strong></td>
+</tr>
+<tr>
+<td><strong>Additional detection models</strong></td>
+<td>Flag other risky inputs or outputs — <strong>protected or copyrighted material</strong>, code vulnerabilities, and <strong>ungrounded attributes</strong> (fabricated or unsupported claims not reflected in source material)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Build resilient solutions with the same customizable controls used by Microsoft Copilot:</strong> simulate, detect, and mitigate harmful content and security threats at runtime — including prompt attacks, hallucinations, and bias — while seeing real-time alerts and recommendations from Microsoft Security.</p>
+<hr />
+<h2 id="ai-red-teaming-agent">AI Red Teaming Agent</h2>
+<p><strong>Accelerate AI risk discovery with PyRIT integration.</strong></p>
+<p><strong>PyRIT</strong> (Python Risk Identification Tool) is an open-access automation framework designed to enhance red teaming in GenAI systems — probing for novel harms, risks, and jailbreaks in multimodal generative AI models. Integrating it into Foundry complements the existing risk and safety evaluations with the ability to <strong>systematically evaluate how your model or application behaves when probed by an adversary</strong>.</p>
+<h3 id="what-it-does">What it does</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Automated scans for content safety risks</strong></td>
+<td>Automatically scan model and application endpoints by simulating adversarial probing, with Microsoft-provided seed datasets and an adversarial LLM covering hate and unfairness, sexual, violence, and self-harm</td>
+</tr>
+<tr>
+<td><strong>Evaluate probing success</strong></td>
+<td>Score each attack-response pair to generate <strong>Attack Success Rate (ASR)</strong></td>
+</tr>
+<tr>
+<td><strong>Reporting and logging</strong></td>
+<td>Generate a <strong>scorecard</strong> of attack techniques and risk categories to decide whether the system is ready for deployment. Findings are logged, monitored, and tracked over time in Foundry for compliance and continuous risk mitigation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="attack-strategies">Attack strategies</h3>
+<p>A broad library of transformations is available — including <strong>Flip</strong>, <strong>CharSwap</strong>, <strong>CharacterSpace</strong>, <strong>Diacritic</strong>, <strong>Leetspeak</strong>, <strong>Morse</strong>, <strong>Binary</strong>, <strong>Base64</strong>, <strong>ROT13</strong>, <strong>Caesar</strong>, <strong>Atbash</strong>, <strong>AnsiAttack</strong>, <strong>AsciiArt</strong>, <strong>AsciiSmuggler</strong>, <strong>UnicodeConfusable</strong>, <strong>UnicodeSubstitution</strong>, <strong>StringJoin</strong>, <strong>SuffixAppend</strong>, <strong>Url</strong>, <strong>Tense</strong> (past-tense conversion), and <strong>Jailbreak</strong> (UPIA) — plus <strong>Compose</strong> to chain two strategies in a single attack.</p>
+<h3 id="reading-the-scorecard">Reading the scorecard</h3>
+<p>Complexity reflects <strong>adversarial budget</strong>, classified as <strong>Easy, Moderate, and Difficult</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Complexity</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Baseline</strong></td>
+<td>Direct adversarial probing</td>
+</tr>
+<tr>
+<td><strong>Easy</strong></td>
+<td>Single transformation — e.g. flipping characters</td>
+</tr>
+<tr>
+<td><strong>Moderate</strong></td>
+<td>A more capable single technique — e.g. past-tense conversion</td>
+</tr>
+<tr>
+<td><strong>Difficult</strong></td>
+<td>Composed techniques — e.g. past-tense conversion <strong>plus</strong> Base64 encoding</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>A high ASR from <em>easy</em>-complexity attacks is far more dangerous than the same rate from difficult ones</strong> — it means a low-budget adversary succeeds. Read the scorecard by complexity band, not just the overall number.</p>
+</div>
+<h3 id="when-asr-is-high">When ASR is high</h3>
+<p>Mitigate with <strong>Azure AI Content Safety Prompt Shields</strong>, <strong>content safety filters</strong>, <strong>safety system messages / metaprompts</strong>, and improving the underlying model or instructions.</p>
+<p><strong>Continuous red teaming</strong> is available as an ongoing observability capability, not just a one-time exercise.</p>
+<hr />
+<h2 id="continuous-monitoring-and-alerting">Continuous monitoring and alerting</h2>
+<p>A <strong>single pane of glass dashboard</strong> brings operational, evaluation, and safety signals together:</p>
+<table>
+<thead>
+<tr>
+<th>Signal group</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Operational metrics</strong></td>
+<td>Total tokens · total requests · total token cost · latency · average duration</td>
+</tr>
+<tr>
+<td><strong>Evaluation metrics</strong></td>
+<td>Groundedness · coherence · relevance — tracked with trend deltas over time</td>
+</tr>
+<tr>
+<td><strong>Safety metrics</strong></td>
+<td>Jailbreak rate · hallucination rate · <strong>daily safety defect rate</strong> broken out by defect type</td>
+</tr>
+<tr>
+<td><strong>Resource usage</strong></td>
+<td>Consumption per agent and per project</td>
+</tr>
+<tr>
+<td><strong>Security alerts</strong></td>
+<td>Surfaced from Microsoft Security alongside quality signals</td>
+</tr>
+</tbody>
+</table>
+<h3 id="from-signal-to-action">From signal to action</h3>
+<ol>
+<li><strong>Measure what matters</strong> — query the underlying telemetry with <strong>KQL</strong> in Log Analytics</li>
+<li><strong>Explore and focus</strong> — drill into the underlying issue; use traces for root-cause analysis</li>
+<li><strong>Proactively detect</strong> — define <strong>alert rules</strong> from those queries so the next occurrence is caught early, with routing to the right team</li>
+</ol>
+<blockquote>
+<p>A typical journey: an AI engineer lacks early-warning signals for declining performance in risk-and-safety evaluators, which delays detection of drift. The fix is not more dashboards — it is <strong>KQL-derived alert rules with agreed thresholds</strong>, routed to an owner.</p>
+</blockquote>
+<h3 id="optimization-and-the-improvement-loop">Optimization and the improvement loop</h3>
+<p>Observability is only half the value if signals do not close the loop. The intent is to convert observability signals into <strong>actionable intelligence</strong>: root-cause analysis, <strong>optimization recommendations</strong>, and business-relevant ROI metrics (quality, cost, latency, success rates) that matter to enterprise stakeholders — fed back into build and release pipelines.</p>
+<p>Supporting capabilities include <strong>prompt optimization</strong> (generate, rank and track prompt variants with lineage, diffs, rollback and optional human approval gates), <strong>fine-tuning from captured traces</strong>, and <strong>safe release</strong> via versioned prompts and configurations with canary/A-B deployments and regression detection.</p>
+<p><strong>Agent Optimizer</strong> learns from how an agent actually behaves and recommends better configurations — sharper instructions, skills and tool descriptions, and the right model choice.</p>
+<hr />
+<h2 id="fleet-wide-operations">Fleet-wide operations</h2>
+<blockquote>
+<p><strong>One dashboard for every agent: health, performance, cost, compliance.</strong></p>
+</blockquote>
+<p>Foundry Control Plane gives teams a <strong>single view across the entire agent fleet</strong>. It becomes a working <strong>to-do list</strong>: policy alerts, security alerts, evaluation alerts. Instead of hunting through systems, teams see exactly what matters and <strong>move directly from detection to action</strong>.</p>
+<p><strong>And this is not limited to one project or one platform.</strong> Agents built in <strong>Foundry, Copilot Studio, or third-party platforms and clouds</strong> can all be registered, observed, and governed through the same control plane.</p>
+<table>
+<thead>
+<tr>
+<th>Fleet capability</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Track 100% of your agent estate</strong></td>
+<td>Every registered agent, across clouds, frameworks, and teams</td>
+</tr>
+<tr>
+<td><strong>Manage activation and lifecycle</strong></td>
+<td>Onboard, activate, and retire agents</td>
+</tr>
+<tr>
+<td><strong>Visualize fleet health and anomalies</strong></td>
+<td>Health, performance, cost, and compliance in one place</td>
+</tr>
+<tr>
+<td><strong>Enterprise-grade compliance</strong></td>
+<td>Compliance signals surfaced alongside operational ones</td>
+</tr>
+</tbody>
+</table>
+<p><strong>That is what makes scale possible — not just visibility, but the ability to operate hundreds or thousands of agents with clarity and confidence.</strong></p>
+<hr />
+<h2 id="observability-by-persona">Observability by persona</h2>
+<p><strong>One estate, many lenses.</strong> The same telemetry, surfaced for the people who act on it — and <strong>each lens ends in an action</strong>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>🟣 <strong>Central IT, FinOps &amp; Security</strong></th>
+<th>🔵 <strong>Agent owners &amp; builders</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scope</strong></td>
+<td>See the <strong>whole estate</strong></td>
+<td>See <strong>their own agents</strong></td>
+</tr>
+<tr>
+<td><strong>Primary views</strong></td>
+<td><strong>Agent 365 dashboard</strong> — organization-wide view of every agent: security signals, access patterns, usage and activation<br/><br/><strong>Governance Hub performance, usage &amp; chargeback</strong> — via the AI Gateway, through Power BI–powered dashboards</td>
+<td><strong>Foundry Observability</strong> — end-to-end performance, traces, evals &amp; quality signals per agent<br/><br/><strong>Foundry usage &amp; cost</strong> — per-agent consumption for the team that owns it</td>
+</tr>
+<tr>
+<td><strong>Act on it</strong></td>
+<td>Assign capacity controls and quotas<br/>Govern model access with RBAC — Governance Hub<br/>Suspend rogue agents — block in Agent 365 or revoke the access contract<br/>Alert on critical events — backend, authorization, content-safety, PII failures</td>
+<td>Apply capacity controls to their own agents<br/><strong>Agent Optimizer</strong> — learns from agent behavior and recommends better configurations</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Same signals, different altitude — everyone sees what they need to act on, nobody flies blind.</strong> This isn't redundant waste; it's the right view for each audience, <strong>with the levers to act on it</strong>.</p>
+<hr />
+<h2 id="integration-with-the-other-layers">Integration with the other layers</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Integration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔷 <strong>Layer 1</strong> (Governance Hub)</td>
+<td>Relies on the runtime AI Gateway for policy enforcement and consumes its telemetry for observability and compliance. A Foundry connection routes agents to governed models ("Admin-Connected-Models").</td>
+</tr>
+<tr>
+<td>🟢 <strong>Layer 3</strong> (Agent Management)</td>
+<td>Each Foundry project and published agent gets its own <strong>Entra Agent ID automatically — no stored secrets</strong>. All unpublished or in-development agents in a project <strong>share a common identity</strong>, simplifying administration and reducing identity sprawl; <strong>once published, an agent gains its own blueprint and identity</strong>. Foundry agent identities register with Agent 365 for unified management.</td>
+</tr>
+<tr>
+<td>🛡️ <strong>Layer 4</strong> (Security Foundation)</td>
+<td><strong>Purview</strong> strengthens data protection across all agent interactions, provides audit visibility, and surfaces data-related risk tied to agent behavior — with compliance conflicts visible to developers in the Control Plane. <strong>Defender</strong> provides posture alerts, attack-path analysis, threat intelligence, and integrated risk signals; <strong>Foundry guardrail detections flow to Defender in real time</strong> and are synthesized with threat intelligence into contextual alerts. <strong>Entra</strong> provides durable identity, access governance, and lineage tracking.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="defense-in-depth">Defense in depth</h3>
+<p>Agent Operations is one of <strong>three places content safety can be enforced</strong> (alongside the Governance Hub and the Security Foundation) — specifically through <strong>Foundry Agent Service runtime and control-plane guardrails</strong>. Where it can't apply — for example an agent running outside Foundry on a self-hosted GPU VM — the <strong>Governance Hub holds the line at the gateway</strong>.</p>
+<h3 id="partner-ecosystem">Partner ecosystem</h3>
+<table>
+<thead>
+<tr>
+<th>Partner</th>
+<th>Capabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Credo AI</strong></td>
+<td>Policy-to-code translation, governance-ready artifacts, real-time evaluator feedback</td>
+</tr>
+<tr>
+<td><strong>Saidot</strong></td>
+<td>EU AI Act–focused risk evaluations, dataset simulation, and compliance mapping</td>
+</tr>
+<tr>
+<td><strong>Palo Alto Networks · Zenity</strong></td>
+<td>Control Plane security partner integrations</td>
+</tr>
+<tr>
+<td><strong>APM vendors</strong></td>
+<td>Dynatrace, New Relic, Datadog and similar — integrated with, not replaced</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="ownership-outcomes">Ownership &amp; outcomes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Accountable</strong></td>
+<td><strong>AI CoE</strong> <em>(runtime &amp; tooling approval)</em> · <strong>Platform Engineering</strong> <em>(runtime infrastructure)</em> · <strong>AI Engineering &amp; App Dev</strong> <em>(build &amp; operate)</em> · <strong>LOB sponsor</strong> <em>(business value)</em></td>
+</tr>
+<tr>
+<td><strong>The question it answers</strong></td>
+<td><em>"Can my teams build and ship agents fast, connected to our data, without re-platforming or breaking the rules?"</em></td>
+</tr>
+<tr>
+<td><strong>What you gain</strong></td>
+<td>A sanctioned runtime where builders move fast and <strong>automatically inherit the Layer 1, 3 &amp; 4 controls</strong> — governance as an enabler, not a tax.</td>
+</tr>
+<tr>
+<td><strong>The advantage</strong></td>
+<td><strong>Ship agents faster, safely.</strong> Templated landing zones and built-in guardrails turn months of setup into repeatable, observable deployments at enterprise velocity.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key RACI rows</strong> <em>(full matrix in <a href="../organizational-alignment/">Organizational Alignment &amp; Ownership</a>)</em></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decision</th>
+<th>Accountable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1</td>
+<td>Approve &amp; standardize runtimes &amp; dev tooling</td>
+<td><strong>AI CoE</strong></td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>Provide runtime infrastructure</td>
+<td><strong>Platform Eng</strong></td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>Build, own &amp; operate agents &amp; use cases</td>
+<td><strong>AI Eng &amp; App Dev</strong> <em>(LOB owns business value)</em></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Infrastructure plus standards.</strong> Platform Engineering provisions and operates the runtime; AI Engineering builds on top; the AI CoE approves which runtimes and dev tools are allowed — so builders innovate fast <strong>inside guardrails</strong>.</p>
+<p><strong>And remember the trust dimension:</strong> agent-level trust — traces, evals, red-teaming, guardrails — <strong>is owned by the agent builder</strong>.</p>
+</blockquote>
+<hr />
+<h2 id="activation">Activation</h2>
+<p><strong>Track 2 — Agent Operations</strong></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deep Dive</strong></td>
+<td><strong>Microsoft Foundry</strong> — Control Plane for rapid agent development</td>
+</tr>
+<tr>
+<td><strong>Proof of Value</strong></td>
+<td><strong>Build &amp; Iterate PoV</strong> — onboard agents with guardrails &amp; quality signals</td>
+</tr>
+<tr>
+<td><strong>Production</strong></td>
+<td><strong>Fleet Operations</strong> — observability &amp; evaluations at scale</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Deploy:</strong> Foundry Landing Zone — <a href="../../../agent-landing-zone/">Agent Landing Zone</a> — <strong>one spoke per business unit or use case</strong>, templated and configurable.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>Two adoption paths — and they are independent.</strong></p>
+<p><strong>Path A — Foundry as runtime.</strong> Start with prompt agents or hosted agents. Controls are inherited; you configure only the gateway connection.</p>
+<p><strong>Path B — Foundry as observability plane.</strong> Keep agents where they run today (AKS, ACA, another cloud, on-premises) and instrument them with <strong>OTel GenAI semantic conventions</strong> exporting to <strong>Foundry-connected Application Insights</strong>. You gain centralized traces, evaluations, and fleet visibility without re-platforming a single agent.</p>
+<p>Many customers run <strong>both</strong>, and Path B is often the faster route to estate-wide visibility.</p>
+</div>
+<p><strong>Sizing:</strong> this layer depends heavily on <strong>agent type, dependent services</strong> (AI Search, databases), and <strong>active consumption</strong> — an agent serving 20 internal users is very different from one serving 2M external users. See the <a href="../../../architecture/cost-guide/">Cost Guide — Azure AI Landing Zones</a>.</p>
+<p><strong>Exit criteria</strong></p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> At least one spoke landing zone deployed from template</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Application Insights connected; end-to-end tracing live for pilot agents</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <strong>Non-Foundry agents emitting <code>gen_ai.*</code> OTel spans into the same observability plane</strong></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Agent-specific evaluators running pre-ship and continuously in production</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Evaluation GitHub Action / Azure DevOps extension wired into CI with baseline variant comparison</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> AI Red Teaming Agent scan completed, scorecard reviewed <strong>by complexity band</strong></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Guardrails configured at the right lifecycle points — inputs, tool calls, tool responses, outputs</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Monitoring dashboard live; <strong>KQL-derived alert rules</strong> defined with agreed thresholds and routing</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Fleet dashboard showing health, performance, cost, and compliance for registered agents</li>
+</ul>
+<p>➡️ Full track detail: <a href="../activation-paths/">Technical Activation Paths</a></p>
+<h3 id="resources">Resources</h3>
+<ul>
+<li><a href="../../../">Azure AI Landing Zones</a></li>
+<li>Microsoft Foundry Control Plane overview: <a href="https://learn.microsoft.com/azure/ai-foundry/control-plane/overview">https://learn.microsoft.com/azure/ai-foundry/control-plane/overview</a></li>
+<li>Microsoft Agent Framework: <a href="https://aka.ms/AgentFramework">https://aka.ms/AgentFramework</a></li>
+<li>Evaluate AI applications and agents: <a href="https://aka.ms/evaluateazureai">https://aka.ms/evaluateazureai</a></li>
+<li>AI Red Teaming Agent — concepts: <a href="https://learn.microsoft.com/azure/ai-foundry/concepts/ai-red-teaming-agent">https://learn.microsoft.com/azure/ai-foundry/concepts/ai-red-teaming-agent</a></li>
+<li>AI Red Teaming Agent — how-to: <a href="https://learn.microsoft.com/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent">https://learn.microsoft.com/azure/ai-foundry/how-to/develop/run-scans-ai-red-teaming-agent</a></li>
+<li>Azure AI Agent Evaluation GitHub Action: <a href="https://github.com/marketplace/actions/azure-ai-agent-evaluation">https://github.com/marketplace/actions/azure-ai-agent-evaluation</a></li>
+<li>Foundry SDK: <a href="https://aka.ms/aifoundrysdk">https://aka.ms/aifoundrysdk</a></li>
+<li>Citadel end-to-end guidance: <a href="../">AI Citadel Blueprint overview</a></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Capability maturity moves quickly.</strong> Some capabilities described here are in preview while others are generally available. <strong>Verify current status on Microsoft Learn before committing to a delivery date.</strong></p>
+</div>
+<hr />
+<h2 id="related-guidance">Related guidance</h2>
+<ul>
+<li><a href="../">Overview — AI Citadel Blueprint</a></li>
+<li><a href="../layer-1-governance-hub/">Layer 1 · Governance Hub</a></li>
+<li><a href="../layer-3-agent-management/">Layer 3 · Agent Management</a></li>
+<li><a href="../layer-4-security-foundation/">Layer 4 · Security Foundation</a></li>
+<li><a href="../organizational-alignment/">Organizational Alignment &amp; Ownership</a></li>
+<li><a href="../activation-paths/">Technical Activation Paths</a></li>
+</ul>
+<hr />
+<p><sub>AI Citadel Blueprint × Frontier Transformation · Microsoft · Global Black Belt</sub></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

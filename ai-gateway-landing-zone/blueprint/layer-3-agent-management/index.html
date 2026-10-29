@@ -1,0 +1,6695 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AI Landing Zones">
+      
+      
+        <meta name="author" content="Microsoft">
+      
+      
+      
+        <link rel="prev" href="../layer-2-agent-operations/">
+      
+      
+        <link rel="next" href="../layer-4-security-foundation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../media/logo.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Layer 3 · Agent Management - AI Landing Zones</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css?v=56826d53ca9e">
+    
+      <link rel="stylesheet" href="../../../stylesheets/planner.css?v=2">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#layer-3-agent-management" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AI Landing Zones" class="md-header__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AI Landing Zones
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Layer 3 · Agent Management
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AI Landing Zones" class="md-nav__button md-logo" aria-label="AI Landing Zones" data-md-component="logo">
+      
+  <img src="../../../media/logo.svg" alt="logo">
+
+    </a>
+    AI Landing Zones
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Azure/AI-Landing-Zones" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan your deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan your deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How it works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/planning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment choices
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/network-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sizing-cost-planner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sizing & cost planner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/resource-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/design-checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Checklist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Application
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Application
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/hosted-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent hosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_3" id="__nav_2_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Frontend
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Frontend
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sign-in & access
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/embed-chat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embed chat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/user-feedback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User feedback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/multimodality/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multimodality
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_6" id="__nav_2_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grounding
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Grounding
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/foundry-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/work-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Work IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/fabric-iq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fabric IQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/sharepoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SharePoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/nl2sql/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NL2SQL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/agent-tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy infra only
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy infra only
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-infra-only/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy full stack
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy full stack
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Bicep
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/deploy-terraform-full-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    With Terraform
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/application-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/private-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Private access (VPN)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/build-your-own-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bring your own app
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/publish-to-teams/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teams & M365
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/connect-copilot-studio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Copilot Studio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/azure-devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Azure DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform templates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/portal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy via portal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent-landing-zone/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Gateway Landing Zone
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Gateway Landing Zone
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../whats-new/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's new
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/governance-hub-benefits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benefits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel Blueprint
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Citadel Blueprint
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layer-1-governance-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 1 · Governance Hub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layer-2-agent-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 2 · Agent Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 3 · Agent Management
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 3 · Agent Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-agent-365-the-command-center-for-every-agent-whoever-built-it-and-wherever-it-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Agent 365 — the command center for every agent, whoever built it and wherever it runs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#positioning-the-agent-command-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positioning: the agent command center
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Positioning: the agent command center">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-governing-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The governing principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-agents-need-their-own-identity-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why agents need their own identity class
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why agents need their own identity class">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-agent-interaction-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three agent interaction patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-compounding-surface-saas-endpoint-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The compounding surface: SaaS, endpoint, cloud
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The compounding surface: SaaS, endpoint, cloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#every-interaction-surface-needs-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Every interaction surface needs protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observe-govern-secure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observe · Govern · Secure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observe-see-the-whole-estate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observe — see the whole estate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Observe — see the whole estate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-estate-four-personas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One estate, four personas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#govern-guardrails-and-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Govern — guardrails and lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Govern — guardrails and lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-settings-the-tenant-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent settings — the tenant default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin-actions-how-an-agent-reaches-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin actions — how an agent reaches users
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lifecycle-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lifecycle automation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connected-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connected agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secure-identity-access-data-threats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secure — identity, access, data, threats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Secure — identity, access, data, threats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conditional-access-for-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional access for agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#global-secure-access-for-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Secure Access for agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entra-agent-id-the-identity-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entra Agent ID: the identity model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entra Agent ID: the identity model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#anatomy-of-an-agent-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anatomy of an agent identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication scenarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#governance-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governance tooling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprints-and-policy-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprints and policy templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Blueprints and policy templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-blueprints-are-the-control-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why blueprints are the control point
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#heterogeneous-by-design-any-agent-any-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heterogeneous by design: any agent, any builder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Heterogeneous by design: any agent, any builder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-sources-that-land-natively" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent sources that land natively
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-365-sdk-bring-everything-else" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent 365 SDK — bring everything else
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#third-party-agent-integration-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Third-party agent integration flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-connective-tissue-linking-traffic-to-an-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The connective tissue: linking traffic to an agent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The connective tissue: linking traffic to an agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-attribution-problem-it-solves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The attribution problem it solves
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#triage-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triage in practice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regulatory-alignment-and-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regulatory alignment and audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites-and-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites and dependencies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites and dependencies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#suggested-enablement-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suggested enablement baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-the-other-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with the other layers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integration with the other layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defense-in-depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defense in depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#where-it-earns-its-keep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where it earns its keep
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership &amp; outcomes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#activation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Activation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Activation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related guidance
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layer-4-security-foundation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Layer 4 · Security Foundation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../organizational-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Organizational alignment & ownership
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../activation-paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical activation paths
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4_8" id="__nav_3_4_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Original platform guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Original platform guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform-technical-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Technical guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../platform-waf-alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Well-Architected alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plan
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_1" id="__nav_3_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-parameter-files/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters (Bicep)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/network-approach/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Network approach
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_2" id="__nav_3_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capacity planning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Capacity planning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/sizing-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citadel sizing guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plan/ptu-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PTU estimation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/ai-search-cost-estimation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Search cost estimation logic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5_3" id="__nav_3_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resilience & business continuity
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resilience & business continuity
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resiliency/business-continuity-dr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Business continuity & DR guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/throttling-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Throttling events handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/app-insights-alerting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App Insights alerting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/cosmos-multi-region-sync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos global multi-master sync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1" id="__nav_3_6_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-quick-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/bicep-full-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_1_3" id="__nav_3_6_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/post-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post-deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebook setup guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebook-snippets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notebook snippets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/developer-vpn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer VPN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2" id="__nav_3_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-variables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variables guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-deployment-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Full deployment guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deploy/terraform-policy-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM policy architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6_2_6" id="__nav_3_6_2_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Post deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_6_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Post deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../validation/notebooks-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Validation notebooks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operate
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_1" id="__nav_3_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Observe
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Observe
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/platform-observability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Platform observability guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/power-bi-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Power BI dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2" id="__nav_3_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backend contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Backend contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_1" id="__nav_3_7_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bicep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/unified-ai-api-onboarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unified AI API type onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-bicep-modules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bicep module reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_2_2" id="__nav_3_7_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/backend-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3" id="__nav_3_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contracts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Access contracts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-bicep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-quick-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Access contract policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-resiliency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resiliency guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/llm-access/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM access guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apis/openai-compatible-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenAI-compatible API guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-key-rotation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key rotation guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/entra-id-authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entra ID auth validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/jwt-client-identity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    JWT client identity permissions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/pii-masking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII anonymization & deanonymization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/agent-governance-toolkit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance Toolkit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_3_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_3_13" id="__nav_3_7_3_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Terraform
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_3_7_3_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_3_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Terraform
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/access-contracts-terraform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operate access contracts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_4" id="__nav_3_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contracts (preview)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Publish contracts (preview)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/publish-contracts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contracts/publish-contract-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publish contract guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7_5" id="__nav_3_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway upgrade
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_3_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gateway upgrade
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIM gateway upgrade (preview)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/gateway-ecosystem-upgrade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gateway ecosystem upgrade guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/release-version-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release version management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operate/foundry-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Foundry integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../whatisnew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What's New
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#microsoft-agent-365-the-command-center-for-every-agent-whoever-built-it-and-wherever-it-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Microsoft Agent 365 — the command center for every agent, whoever built it and wherever it runs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#positioning-the-agent-command-center" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positioning: the agent command center
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Positioning: the agent command center">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-governing-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The governing principle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-agents-need-their-own-identity-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why agents need their own identity class
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Why agents need their own identity class">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-agent-interaction-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three agent interaction patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-compounding-surface-saas-endpoint-cloud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The compounding surface: SaaS, endpoint, cloud
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The compounding surface: SaaS, endpoint, cloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#every-interaction-surface-needs-protection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Every interaction surface needs protection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observe-govern-secure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observe · Govern · Secure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observe-see-the-whole-estate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observe — see the whole estate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Observe — see the whole estate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-estate-four-personas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One estate, four personas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#govern-guardrails-and-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Govern — guardrails and lifecycle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Govern — guardrails and lifecycle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-settings-the-tenant-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent settings — the tenant default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#admin-actions-how-an-agent-reaches-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Admin actions — how an agent reaches users
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lifecycle-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lifecycle automation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connected-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Connected agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#secure-identity-access-data-threats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secure — identity, access, data, threats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Secure — identity, access, data, threats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#conditional-access-for-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conditional access for agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#global-secure-access-for-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global Secure Access for agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entra-agent-id-the-identity-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entra Agent ID: the identity model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entra Agent ID: the identity model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#anatomy-of-an-agent-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Anatomy of an agent identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authentication-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication scenarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#governance-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Governance tooling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#blueprints-and-policy-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blueprints and policy templates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Blueprints and policy templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-blueprints-are-the-control-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why blueprints are the control point
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#heterogeneous-by-design-any-agent-any-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heterogeneous by design: any agent, any builder
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Heterogeneous by design: any agent, any builder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-sources-that-land-natively" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent sources that land natively
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-365-sdk-bring-everything-else" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent 365 SDK — bring everything else
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#third-party-agent-integration-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Third-party agent integration flow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-connective-tissue-linking-traffic-to-an-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The connective tissue: linking traffic to an agent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The connective tissue: linking traffic to an agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-attribution-problem-it-solves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The attribution problem it solves
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#triage-in-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triage in practice
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regulatory-alignment-and-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regulatory alignment and audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites-and-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites and dependencies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prerequisites and dependencies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#suggested-enablement-baseline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suggested enablement baseline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integration-with-the-other-layers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integration with the other layers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Integration with the other layers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defense-in-depth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defense in depth
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#where-it-earns-its-keep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where it earns its keep
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ownership-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ownership &amp; outcomes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#activation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Activation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Activation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-guidance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related guidance
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="layer-3-agent-management">Layer 3 · Agent Management</h1>
+<h3 id="microsoft-agent-365-the-command-center-for-every-agent-whoever-built-it-and-wherever-it-runs">Microsoft Agent 365 — the command center for every agent, whoever built it and wherever it runs</h3>
+<p><a href="../">⬅️ Back to Overview</a></p>
+<blockquote>
+<p><strong>Platform · IDENTIFY</strong> — <em>every agent owned &amp; managed</em>
+<strong>Owned by IAM &amp; security</strong></p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#positioning-the-agent-command-center">Positioning: the agent command center</a></li>
+<li><a href="#why-agents-need-their-own-identity-class">Why agents need their own identity class</a></li>
+<li><a href="#the-compounding-surface-saas-endpoint-cloud">The compounding surface: SaaS, endpoint, cloud</a></li>
+<li><a href="#observe-govern-secure">Observe · Govern · Secure</a></li>
+<li><a href="#observe-see-the-whole-estate">Observe — see the whole estate</a></li>
+<li><a href="#govern-guardrails-and-lifecycle">Govern — guardrails and lifecycle</a></li>
+<li><a href="#secure-identity-access-data-threats">Secure — identity, access, data, threats</a></li>
+<li><a href="#entra-agent-id-the-identity-model">Entra Agent ID: the identity model</a></li>
+<li><a href="#blueprints-and-policy-templates">Blueprints and policy templates</a></li>
+<li><a href="#heterogeneous-by-design-any-agent-any-builder">Heterogeneous by design: any agent, any builder</a></li>
+<li><a href="#the-connective-tissue-linking-traffic-to-an-agent">The connective tissue: linking traffic to an agent</a></li>
+<li><a href="#regulatory-alignment-and-audit">Regulatory alignment and audit</a></li>
+<li><a href="#prerequisites-and-dependencies">Prerequisites and dependencies</a></li>
+<li><a href="#integration-with-the-other-layers">Integration with the other layers</a></li>
+<li><a href="#ownership-outcomes">Ownership &amp; outcomes</a></li>
+<li><a href="#activation">Activation</a></li>
+</ul>
+<hr />
+<h2 id="positioning-the-agent-command-center">Positioning: the agent command center</h2>
+<p>Layer 3 is where an agent stops being anonymous software and becomes a <strong>managed enterprise asset</strong>. Microsoft Agent 365 is <strong>the control plane for agents</strong> — and the critical word is <em>heterogeneous</em>.</p>
+<blockquote>
+<p><strong>Agent 365 is not the control plane for Microsoft agents. It is the control plane for <em>every</em> agent.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Agent type</th>
+<th>How it lands in Agent 365</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SaaS</strong> — Microsoft 365 Copilot, Copilot Studio</td>
+<td>Native — automatic identity and registry entry</td>
+</tr>
+<tr>
+<td><strong>Managed runtime</strong> — Microsoft Foundry Agent Service</td>
+<td>Native — identity per project and per published agent</td>
+</tr>
+<tr>
+<td><strong>Platform / BYO</strong> — your framework on AKS, ACA, Agent Framework</td>
+<td>Register via workload identity + the <strong>Agent 365 SDK</strong></td>
+</tr>
+<tr>
+<td><strong>Third-party &amp; on-prem</strong> — partner and non-Microsoft runtimes</td>
+<td>Federate via the <strong>Agent 365 SDK</strong>; a broad partner ecosystem already integrates with it</td>
+</tr>
+</tbody>
+</table>
+<p><strong>One registry. One identity model. One policy surface. One audit trail.</strong></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>Identity is the connective tissue of the entire Citadel Blueprint.</strong> Once an agent is in Agent 365, <a href="../layer-4-security-foundation/">Layer 4</a> security and governance apply to it <strong>automatically</strong> — Defender posture and threat protection, Purview data governance and audit, Entra access control. Get identity right and the security layer comes along almost for free. <strong>This is the highest-leverage step in the whole blueprint, and the most under-scoped in most customer conversations.</strong></p>
+</div>
+<h3 id="the-governing-principle">The governing principle</h3>
+<blockquote>
+<p><strong>The best way to manage agents is to extend the infrastructure you already use for managing users.</strong></p>
+</blockquote>
+<p>Same Entra. Same Purview. Same Defender. Same admin center. <strong>Agents simply become another identity type.</strong> That is what keeps security consistent and reduces blind spots as agent numbers grow — and it is why the team that owns user identity today is the natural owner of agent identity tomorrow.</p>
+<hr />
+<h2 id="why-agents-need-their-own-identity-class">Why agents need their own identity class</h2>
+<p>Agents belong in the same identity conversation as users, apps, and devices, because <strong>they take actions and access resources</strong>. But they do not fit neatly into the old buckets:</p>
+<ul>
+<li>Sometimes an agent acts <strong>on behalf of a user</strong>.</li>
+<li>Sometimes it behaves more like an <strong>application</strong>.</li>
+<li>Unlike traditional apps, agents are <strong>not static</strong> — they can acquire new skills as model capabilities evolve, which changes what they are able to do over time.</li>
+</ul>
+<p>That is exactly why an agent needs to be treated as a <strong>first-class identity</strong>. When it has one, you can answer the questions that actually matter:</p>
+<blockquote>
+<p><strong>Who is it? What can it access? What did it do? And can I revoke it?</strong></p>
+</blockquote>
+<p>Without an identity, those answers get fuzzy fast. You cannot separate human actions from agent actions, apply consistent controls, or respond quickly when something changes. <strong>If an agent is compromised, it operates at speed and scale</strong> — identity is how you get attribution, enforce protections consistently, and investigate quickly.</p>
+<h3 id="three-agent-interaction-patterns">Three agent interaction patterns</h3>
+<p>As agent roles change, so should permissions. The identity model supports three:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Behavior</th>
+<th>Permission model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Interactive agents</strong> — <em>"Assist me"</em></td>
+<td>Acts on demand by user prompting, or on behalf of a user</td>
+<td>Uses <strong>delegated user permissions</strong>; needs no access rights of its own. Ideal for summarizing email or responding to queries.</td>
+</tr>
+<tr>
+<td><strong>Autonomous agents</strong> — <em>"Do it for me"</em></td>
+<td>Acts on behalf of itself, or coordinates actions on the user's behalf and schedule</td>
+<td>Has <strong>its own roles and permissions</strong>, enabling complex goal-oriented work independently — monitoring logs, auditing activity.</td>
+</tr>
+<tr>
+<td><strong>Digital colleagues</strong> — <em>"Work with others"</em></td>
+<td>Collaborates with agents, tools, and people; provisions its own access; achieves goals on its own behalf and schedule</td>
+<td>Fully provisioned with <strong>user-like credentials</strong> — can join Teams, create and edit documents, interact in conversations, and collaborate with other agents via the registry.</td>
+</tr>
+</tbody>
+</table>
+<p>All three are <strong>governed, auditable, and discoverable through a standards-based registry</strong>.</p>
+<hr />
+<h2 id="the-compounding-surface-saas-endpoint-cloud">The compounding surface: SaaS, endpoint, cloud</h2>
+<p>Agent sprawl is not a single problem — it <strong>compounds across three distinct surfaces</strong>, each with its own risk profile.</p>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>The questions it raises</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>☁️ SaaS agents</strong></td>
+<td>What agents are employees using via the internet? What are their risk levels? What information is being shared with them? <em>(This is the next evolution of shadow IT — without visibility, every interaction is a potential data leak.)</em></td>
+</tr>
+<tr>
+<td><strong>💻 Endpoint agents</strong></td>
+<td>What agents do employees have installed on their devices? What guardrails are built into them? What access and permissions are employees granting? <em>(An over-permissioned agent on an endpoint is a new attack vector sitting right on the device.)</em></td>
+</tr>
+<tr>
+<td><strong>🏗️ Cloud agents</strong></td>
+<td>What agents are being developed across cloud and AI platforms? What vulnerabilities could be exploited? What built-in guardrails does the platform provide? <em>(These have the deepest integrations — APIs, MCP servers, data stores, other agents.)</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>These three surfaces don't just add risk — they multiply it.</strong> A SaaS agent an employee grants access to can reach endpoint data. A cloud agent can invoke tools that touch SaaS and endpoint resources. The sprawl compounds because <strong>agents interact across boundaries in ways traditional security models were never designed for.</strong></p>
+<h3 id="every-interaction-surface-needs-protection">Every interaction surface needs protection</h3>
+<table>
+<thead>
+<tr>
+<th>Interaction</th>
+<th>What must be protected</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>H2A</strong> — human to agent (prompt)</td>
+<td>Protect prompts; govern which users can access which agents; prevent users compromising agents</td>
+</tr>
+<tr>
+<td><strong>A2H</strong> — agent to human (response)</td>
+<td>Screen responses; apply labels and DLP to what comes back</td>
+</tr>
+<tr>
+<td><strong>A2A</strong> — agent to agent (invocation)</td>
+<td>Guardrails on which agents may interact; protect A2A connections; prevent agents oversharing data between them</td>
+</tr>
+<tr>
+<td><strong>A2LLM</strong> — agent to model (inference)</td>
+<td>Prevent agents becoming a vehicle for model poisoning</td>
+</tr>
+<tr>
+<td><strong>A2App</strong> — agent to tools/APIs (invocation)</td>
+<td>Access governance, real-time protection, and data security policy on MCP tools, APIs, and data sources</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="observe-govern-secure">Observe · Govern · Secure</h2>
+<p>The whole of Agent 365 in three pillars.</p>
+<table>
+<thead>
+<tr>
+<th>Pillar</th>
+<th>Purpose</th>
+<th>Capabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>👁️ <strong>Observe</strong></td>
+<td><em>Monitor and manage agents in real time</em></td>
+<td><strong>Registry</strong> — register and track every agent · <strong>Mapping</strong> — visualize agent usage and behavior · <strong>Analytics</strong> — measure adoption, performance and ROI · <strong>Role-specific oversight</strong> — extend visibility to security and business leaders</td>
+</tr>
+<tr>
+<td>🛡️ <strong>Govern</strong></td>
+<td><em>Govern agents throughout their lifecycle</em></td>
+<td><strong>Onboarding</strong> — bring agents under control from day one · <strong>Integration management</strong> — control what agents can access and do · <strong>Lifecycle management</strong> — automate lifecycle policies · <strong>Audit and logging</strong> — strengthen traceability and be audit-ready · <strong>Data compliance</strong> — meet AI regulations and policies</td>
+</tr>
+<tr>
+<td>🔐 <strong>Secure</strong></td>
+<td><em>Protect all agents comprehensively</em></td>
+<td><strong>Access control</strong> — protect agent identities and access · <strong>Data security</strong> — prevent oversharing and data leaks · <strong>Threat protection</strong> — defend against threats and vulnerabilities</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Observe is inventory. Govern is lifecycle and guardrails. Secure is identity, data, and threats.</strong> For most organizations with divisions building independently, <strong>visibility pays first</strong>.</p>
+</blockquote>
+<hr />
+<h2 id="observe-see-the-whole-estate">Observe — see the whole estate</h2>
+<p><em>Gain visibility into agents in your environment, understand how they're used, and act quickly on performance, behavior, and risk signals before they impact the business.</em></p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>What it gives you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent registry</strong></td>
+<td>A unified view across Microsoft platforms <strong>and</strong> non-Microsoft ecosystems. Every agent registered and tracked.</td>
+</tr>
+<tr>
+<td><strong>Agent analytics — measure effectiveness</strong></td>
+<td>Track adoption, quality, performance, speed of task completion, and impact. <strong>This is the evidence layer for a board-level business case.</strong></td>
+</tr>
+<tr>
+<td><strong>Agent map — visualize usage and behavior</strong></td>
+<td>See how agents fit into the broader ecosystem, connect with other agents, and perform over time. <strong>The fastest way to spot an agent chained to sensitive content.</strong></td>
+</tr>
+<tr>
+<td><strong>Custom security attributes</strong></td>
+<td>Tag and group agents in Entra, then apply shared control policies to a whole group at once.</td>
+</tr>
+<tr>
+<td><strong>Sign-in and audit logs</strong></td>
+<td>All agent activities logged, <strong>consistent with user audit logs</strong> — same tooling, same investigation workflow.</td>
+</tr>
+<tr>
+<td><strong>Role-specific oversight</strong></td>
+<td>The right view for IT admins, security teams, AI admins, and business decision makers — each persona sees what they need to act on.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="one-estate-four-personas">One estate, four personas</h3>
+<p>Agent management spans every role — <strong>no one person can be all of these, and that is good security practice</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Persona</th>
+<th>Their question</th>
+<th>What they need</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IT admin</strong></td>
+<td><em>"How do I unlock agents to deliver safe and scalable impact?"</em></td>
+<td>Bring agents under management · review &amp; approve · agent usage · permissions, licences and tool access · ROI</td>
+</tr>
+<tr>
+<td><strong>Security &amp; compliance</strong></td>
+<td><em>"Are the agents secure and our data protected?"</em></td>
+<td>Enforce least privilege · secure agent access to resources · prevent data leaks · protection from threats and vulnerabilities</td>
+</tr>
+<tr>
+<td><strong>AI admin</strong></td>
+<td><em>"How do I balance compliance and innovation with AI?"</em></td>
+<td>Ensure responsible AI usage · manage secure data access · review and approve AI agent usage</td>
+</tr>
+<tr>
+<td><strong>Business decision maker</strong></td>
+<td><em>"Are agents making my department successful?"</em></td>
+<td>ROI · status against strategic departmental goals · agent usage</td>
+</tr>
+</tbody>
+</table>
+<p>➡️ The builder-side lens — Foundry Observability, per-agent traces, evals, and cost — lives in <a href="../layer-2-agent-operations/#observability-by-persona">Layer 2 · Agent Operations</a>. <strong>Same signals, different altitude.</strong></p>
+<hr />
+<h2 id="govern-guardrails-and-lifecycle">Govern — guardrails and lifecycle</h2>
+<p><em>Establish guardrails for agents and people, onboard agents with IT oversight, and govern agent access to resources and data. Be audit-ready with built-in compliance and data retention.</em></p>
+<h3 id="agent-settings-the-tenant-default">Agent settings — the tenant default</h3>
+<p>Administrators enforce security, compliance, and governance standards while enabling flexibility for collaboration:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Options</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Allowed agent types</strong></td>
+<td>Allow agents built by <strong>Microsoft</strong> · built by <strong>your organization</strong> · built by <strong>external publishers</strong> — each independently controllable</td>
+</tr>
+<tr>
+<td><strong>Sharing</strong></td>
+<td>All users can share org-wide · no users can share org-wide (direct sharing with individuals still allowed) · only <strong>specific groups</strong> can share broadly</td>
+</tr>
+<tr>
+<td><strong>User access</strong></td>
+<td>All users <em>(default)</em> · no users · <strong>specific users or groups</strong></td>
+</tr>
+<tr>
+<td><strong>Catalog visibility</strong></td>
+<td>Set which users and groups can view and install <strong>specific</strong> agents</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>A practical first question for any deployment: <strong>would you allow external-publisher agents at all in phase one?</strong></p>
+</blockquote>
+<h3 id="admin-actions-how-an-agent-reaches-users">Admin actions — how an agent reaches users</h3>
+<p>IT approval is a <strong>real gate</strong>, not a formality:</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Flow</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Publish</strong> — make an agent available for installation</td>
+<td>Developer creates and tests → submits for approval → admin views pending submissions → admin starts the publishing wizard → applies default or custom <strong>template</strong> → reviews permissions and grants consent</td>
+</tr>
+<tr>
+<td><strong>Activate</strong> — allow users/groups to install and create instances</td>
+<td>User requests activation → admin views pending submissions → activation wizard → apply template → review permissions, grant consent</td>
+</tr>
+<tr>
+<td><strong>Deploy</strong> — automatically install for users so it's ready to use</td>
+<td>Admin selects an undeployed agent from the registry → selects users or groups → reviews permissions, grants consent</td>
+</tr>
+<tr>
+<td><strong>Approve updates</strong></td>
+<td>When a developer publishes an update it appears as <strong>Update pending</strong>. <strong>Until approved, the previous version stays live for users</strong> — no silent change in production.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lifecycle-automation">Lifecycle automation</h3>
+<p>Rules-based agent management <strong>automatically enforces lifecycle policies</strong>:</p>
+<ul>
+<li>⏱️ <strong>Expire inactive agents</strong> — after a pilot phase there are always agents nobody uses and nobody retired</li>
+<li>🚩 <strong>Flag ownerless agents</strong> — with an alert and escalation workflow for unresolved cases, plus <strong>bulk reassignment</strong> to a manager</li>
+<li>🚫 <strong>Block risky agents</strong></li>
+<li>🔄 <strong>Auto-revoke access</strong> via Entra Lifecycle Workflows — triggers include <strong>owner departure</strong> (account disabled), <strong>agent retirement</strong>, and <strong>risk threshold exceeded</strong></li>
+</ul>
+<blockquote>
+<p><strong>Ownerless agents</strong> arise when the user who created a shared agent is deleted from the organization. You can block, remove, or <strong>reassign ownership</strong> — the new owner gains full edit and delete permissions plus access to files the previous owner uploaded, and the previous owner loses all access including read rights.</p>
+</blockquote>
+<h3 id="connected-agents">Connected agents</h3>
+<p>Connected agents are other Copilot-enabled agents that can <strong>share data</strong> with an agent — users can query and receive responses that include information from these linked agents.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><strong>Connecting two agents connects their data reach.</strong> Treat a connection request as a data-access decision, not a convenience feature.</p>
+</div>
+<hr />
+<h2 id="secure-identity-access-data-threats">Secure — identity, access, data, threats</h2>
+<p><em>Secure agent identities, control access to resources, prevent data oversharing and leaks, and defend against threats and vulnerabilities.</em></p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Capability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Access control</strong></td>
+<td><strong>Guardrails</strong> — policies defining who can create, onboard and manage agents · <strong>Governed access</strong> — give agents access to the apps and resources they need to complete a task · <strong>Conditional access</strong> — enforce real-time access based on context and risk</td>
+</tr>
+<tr>
+<td><strong>Start secure</strong></td>
+<td>Extend <strong>conditional access and identity protection</strong> from users to agents — protecting agent identities and preventing breaches</td>
+</tr>
+<tr>
+<td><strong>Data security</strong></td>
+<td>Visibility into AI-related data exposure; protect the data agents create and access from <strong>oversharing, leaks, and risky behavior</strong></td>
+</tr>
+<tr>
+<td><strong>DSPM for AI</strong></td>
+<td>Shows which agents are active and <strong>where sensitive data is exposed</strong></td>
+</tr>
+<tr>
+<td><strong>Threat protection</strong></td>
+<td>Protect agents from threats, vulnerabilities and adversarial attacks. Detect, investigate and remediate incidents quickly, <strong>with visibility into attack paths</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="conditional-access-for-agents">Conditional access for agents</h3>
+<p>Conditional Access policies can target <strong>agent identities</strong> directly:</p>
+<ul>
+<li><strong>Target</strong> — agent identities (select <em>Agent</em> as the identity type) and/or specific agent resources</li>
+<li><strong>Conditions</strong> — agent risk level, location, device compliance</li>
+<li><strong>Grant</strong> — require compliant resource · <strong>Block</strong> — deny high-risk agent access immediately</li>
+</ul>
+<p><strong>Entra ID Protection for agents</strong> contributes the risk signals: accessing unfamiliar resources, high sign-in attempt volume, anomalous patterns — automatically detecting and responding to risky agent identity behavior in real time.</p>
+<p><strong>Access scoping principles</strong></p>
+<ol>
+<li>Grant agents <strong>only the MCP permissions they need</strong> — review permissions at the <strong>blueprint</strong> level, not agent by agent.</li>
+<li>Use <strong>custom security attributes</strong> in Entra to group agents and apply shared access restrictions.</li>
+</ol>
+<h3 id="global-secure-access-for-agents">Global Secure Access for agents</h3>
+<p>For Copilot Studio agents that use <strong>Computer Use or web browsing</strong>:</p>
+<ul>
+<li><strong>Web content filtering</strong> for agent-initiated web access</li>
+<li><strong>Threat filtering</strong> for outbound agent traffic</li>
+</ul>
+<blockquote>
+<p><strong>Agent 365 extends Zero Trust identity controls to every AI agent in your tenant.</strong></p>
+</blockquote>
+<hr />
+<h2 id="entra-agent-id-the-identity-model">Entra Agent ID: the identity model</h2>
+<p>Every Agent 365 agent receives a <strong>Microsoft Entra Agent ID</strong> — its enterprise identity. Entra Agent ID delivers <em>secure access for AI agents, just as you do for employees</em>, across three pillars:</p>
+<table>
+<thead>
+<tr>
+<th>Pillar</th>
+<th>What it delivers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Manage AI agents at scale</strong></td>
+<td>Visibility into the full agent fleet — agents built on Microsoft platforms <strong>and third parties, with or without Agent ID</strong> — brought under consistent guardrails. New agents are created with <strong>identity built in and secure by default</strong>.</td>
+</tr>
+<tr>
+<td><strong>Govern agent identities and lifecycle</strong></td>
+<td>Maintain accountability, manage lifecycle from creation to deactivation, and <strong>prevent access accumulating</strong> as teams and agent capabilities change — so agents do not outlive their purpose.</td>
+</tr>
+<tr>
+<td><strong>Protect agent access to resources</strong></td>
+<td>Enforce policy-based access controls, <strong>block risky agents</strong> when signals indicate compromise, and prevent agents reaching malicious or unauthorized resources.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="anatomy-of-an-agent-identity">Anatomy of an agent identity</h3>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identifier</strong></td>
+<td>Each agent identity has a unique ID</td>
+</tr>
+<tr>
+<td><strong>Display name</strong></td>
+<td>The name shown when the agent is used</td>
+</tr>
+<tr>
+<td><strong>Sponsor</strong></td>
+<td><strong>The human user responsible for the agent</strong> — this is the accountability anchor</td>
+</tr>
+<tr>
+<td><strong>Blueprint</strong></td>
+<td>The reusable template the identity derives from</td>
+</tr>
+<tr>
+<td><em>(optional)</em> <strong>Agent user</strong></td>
+<td>A user-like identity for agents that act like colleagues</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How it is modeled:</strong> an agent identity is a <strong>single-tenant service principal with an <code>agent</code> subtype classification</strong>. Unlike non-agentic service principals that operate independently, agent identities <strong>require their parent blueprint</strong> for impersonation and token exchange.</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent platform</strong></td>
+<td>The application used to build agents (Copilot Studio, Microsoft Foundry, Security Copilot, third-party)</td>
+</tr>
+<tr>
+<td><strong>Agent blueprint</strong></td>
+<td>An application holding the agent's business logic and orchestration; <strong>creates and manages agent identities</strong>. Composed of a blueprint <em>application</em> (creates identities) plus a blueprint <em>service principal</em> (stores credentials).</td>
+</tr>
+<tr>
+<td><strong>Agent identity</strong></td>
+<td>An app-like identity derived from a service principal, representing an autonomous agent (<code>@odata.type: agentIdentity</code>). A blueprint can obtain tokens for its child identities through federated identity credential impersonation.</td>
+</tr>
+<tr>
+<td><strong>Agent ID user</strong></td>
+<td>An identity that acts like a user to access resources (<code>@odata.type: agentUser</code>). Each is tied to a specific agent instance parent, and from there to a blueprint.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="authentication-scenarios">Authentication scenarios</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Attended</strong> <em>(delegated / on-behalf-of)</em></td>
+<td>The agent operates on behalf of a human user, using delegated permissions the user granted, acting under the user's authority.</td>
+</tr>
+<tr>
+<td><strong>Unattended — application</strong></td>
+<td>The agent acts under its own authority as a service/application identity, using app-assigned roles, RBAC, or Microsoft Graph permissions.</td>
+</tr>
+<tr>
+<td><strong>Unattended — agentic user</strong></td>
+<td>The agent acts as an <strong>autonomous identity with user-like claims</strong>, authenticating and operating independently.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="governance-tooling">Governance tooling</h3>
+<ul>
+<li><strong>Agent ID Administrator</strong> — a built-in RBAC role for dedicated agent-governance staff</li>
+<li><strong>Agent registry</strong> and <strong>agent collections</strong> in the Entra admin center</li>
+<li><strong>Agent sign-in logs</strong> — agent activity alongside user, service principal, and managed identity sign-ins</li>
+</ul>
+<hr />
+<h2 id="blueprints-and-policy-templates">Blueprints and policy templates</h2>
+<p>Two distinct concepts that are easy to confuse — and together they are how an agent <strong>starts secure instead of being secured afterwards</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent blueprint</strong></td>
+<td><strong>Identity &amp; architecture template</strong> — an Entra-backed definition of an agent <em>type</em>. Defines what the agent is allowed to do, what systems or data it can access, who is responsible for it, and how it proves who it is.</td>
+</tr>
+<tr>
+<td><strong>Policy template</strong></td>
+<td><strong>Governance configuration bundle</strong> — a predefined set of security, compliance, and access rules applied at publish/activate time. A <strong>default template</strong> includes essential security and compliance controls; <strong>custom templates</strong> add policies per your organization's requirements.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-blueprints-are-the-control-point">Why blueprints are the control point</h3>
+<blockquote>
+<p>Instead of managing every agent individually, <strong>you manage a class of agents through its blueprint.</strong> Approve the blueprint once, and teams can create agents that inherit its permissions and policies.</p>
+</blockquote>
+<p>This gives you scalability <strong>and</strong> control:</p>
+<ul>
+<li>Defines capabilities, required <strong>MCP tool access</strong>, security/compliance constraints, and audit rules</li>
+<li>Users request an instance; admins activate the blueprint → <strong>all instances inherit its rules</strong></li>
+<li>Prevents shadow and rogue agents; anchors every agent in Entra-backed identity and permissions</li>
+<li><strong>If a class of agents is compromised or behaves unusually, you disable the blueprint and every agent in that class is turned off</strong> — no per-agent firefighting</li>
+</ul>
+<blockquote>
+<p><strong>Blueprints are the control point you use to govern what comes in and out of your organization.</strong></p>
+</blockquote>
+<hr />
+<h2 id="heterogeneous-by-design-any-agent-any-builder">Heterogeneous by design: any agent, any builder</h2>
+<p><strong>Agent 365 is not just for Microsoft — it's for any agent.</strong></p>
+<h3 id="agent-sources-that-land-natively">Agent sources that land natively</h3>
+<p>Microsoft 365 Copilot · Copilot Studio · Microsoft Foundry · Microsoft Teams · Security Copilot</p>
+<h3 id="agent-365-sdk-bring-everything-else">Agent 365 SDK — bring everything else</h3>
+<p>A broad <strong>partner ecosystem already integrates with the Agent 365 SDK</strong>, so those agents are ready to start secure out of the box. The SDK carries <strong>Entra, Defender, and Purview</strong>, plus <strong>observability based on OpenTelemetry</strong>.</p>
+<p>Integrated partners span agent platforms, enterprise SaaS, and frameworks — including Anthropic, OpenAI, SAP, ServiceNow, Workday, Adobe, Databricks, LangChain, CrewAI, Cognition, Glean, Perplexity, Box, Cursor, NVIDIA, Sophos, Zendesk, and others.</p>
+<h3 id="third-party-agent-integration-flow">Third-party agent integration flow</h3>
+<p>Third-party agent platforms (for example Gemini or Amazon Bedrock) often need secure access to protected resources — custom REST APIs, Azure Blob Storage — during their reasoning or orchestration loops.</p>
+<div class="highlight"><pre><span></span><code>  3P Agent Runtime          Agent Host App         Entra Agent ID SDK        Microsoft Entra ID
+  (Gemini/Bedrock/…)        (Tool Executor)           (sidecar)               (Token Service)
+        │                         │                       │                         │
+        │── tool call requested ─▶│                       │                         │
+        │                         │── execute tool ──────▶│                         │
+        │                         │                       │── request token ───────▶│
+        │                         │                       │◀── access token (JWT) ──│
+        │                         │◀──────────────────────│                         │
+        │                         │                                                 │
+        │                         └──▶ Protected Resource (Authorization: Bearer …) │
+        │◀─ tool result ──────────┘
+</code></pre></div>
+<p>The agent runtime <strong>does not handle authentication or OAuth directly</strong>. The host runtime forwards the request to the SDK, which establishes the execution context — <strong>autonomous</strong> (agent-only identity) or <strong>delegated</strong> (on behalf of a signed-in user via OAuth 2.0 on-behalf-of). Two access models are available:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Token Broker</strong></td>
+<td>The SDK acquires an OAuth 2.0 access token from Entra and returns it to the host, which adds it to the Authorization header. <strong>Ideal when you want direct control over API calls.</strong></td>
+</tr>
+<tr>
+<td><strong>Downstream Call Broker</strong></td>
+<td>The SDK handles <strong>both</strong> token acquisition and the HTTP call — minimal involvement in authentication for the host.</td>
+</tr>
+</tbody>
+</table>
+<p>Tokens are standard <strong>JWTs</strong> with issuer, audience, expiration, and authorization claims. <strong>Open standards throughout: A2A protocol, MCP, OIDC, OAuth 2.0.</strong></p>
+<blockquote>
+<p>This is how identity stays consistent whether an agent runs in Foundry, on AKS, on-premises, or on another cloud entirely.</p>
+</blockquote>
+<hr />
+<h2 id="the-connective-tissue-linking-traffic-to-an-agent">The connective tissue: linking traffic to an agent</h2>
+<p>This is the role that makes Agent 365 more than an inventory: <strong>it is what attributes activity to a specific, owned agent, and what aggregates signals from every layer into one control plane.</strong></p>
+<h3 id="the-attribution-problem-it-solves">The attribution problem it solves</h3>
+<p>Most AI traffic reaches models <strong>via proxies or gateways, losing the user identity in the process</strong>. Without an identity layer you can see that <em>something</em> called a model — you cannot say <em>which agent</em>, <em>on whose behalf</em>, <em>under what approval</em>, or <em>with what data</em>.</p>
+<p>Agent 365 closes that gap:</p>
+<table>
+<thead>
+<tr>
+<th>Signal source</th>
+<th>What it contributes</th>
+<th>Where it lands</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔷 <strong>Layer 1 · Governance Hub</strong></td>
+<td>Gateway audit logs — identity, access contract, model, routing, outcome for <strong>every call</strong></td>
+<td>Streamed to Defender / Sentinel, correlated to the agent identity</td>
+</tr>
+<tr>
+<td>🔶 <strong>Layer 2 · Agent Operations</strong></td>
+<td>Foundry traces, evaluations, guardrail decisions, red-team findings</td>
+<td>Correlated per agent; Foundry agents carry their Entra Agent ID</td>
+</tr>
+<tr>
+<td>🟢 <strong>Layer 3 · Agent Management</strong></td>
+<td>Agent sign-in logs, registry metadata, blueprint, <strong>named sponsor</strong>, lifecycle state, approval history</td>
+<td>The Agent 365 dashboard and Entra audit logs</td>
+</tr>
+<tr>
+<td>🛡️ <strong>Layer 4 · Security Foundation</strong></td>
+<td>Defender posture, threat detections and attack paths; Purview classification, DLP and audit of interactions</td>
+<td><strong>Consolidated into the unified Agent 365 dashboard</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agent 365 consolidates Entra, Defender, and Purview insights into a single agent-centric view.</strong> That is what turns four separate telemetry streams into one answerable question: <em>"what did this agent do, and was it allowed to?"</em></p>
+<h3 id="triage-in-practice">Triage in practice</h3>
+<p>Because activity is attributable, investigation becomes a normal security workflow rather than an archaeology exercise. A worked example from the field:</p>
+<ol>
+<li>Foundry guardrails <strong>block a jailbreak attempt</strong> on a procurement agent → real-time signal exchange raises a Defender alert.</li>
+<li>The analyst sees <strong>other alerts correlated into the same incident</strong> — because attackers try multiple routes.</li>
+<li>A phishing alert shows a malicious URL sent to the agent — <strong>blocked by policy</strong> preventing agents from accessing user-supplied URLs.</li>
+<li>A <strong>Purview DLP alert</strong>, surfaced <em>in the same Defender portal</em>, shows sensitive data processing was blocked and an external email with sensitive data prevented — <strong>exactly as it would have been for a user</strong>.</li>
+<li>The analyst resolves the incident and returns the agent to work — <strong>with evidence</strong>.</li>
+</ol>
+<p>Advanced hunting queries can pivot directly on agent activity — for example filtering cloud app events for agent invocation and inference actions — so the SOC can build custom detections on the same substrate it already uses.</p>
+<hr />
+<h2 id="regulatory-alignment-and-audit">Regulatory alignment and audit</h2>
+<p>Compliance cannot be a manual checkbox at the scale of thousands of agents. Agent 365 is where <strong>regulatory obligations become evidence</strong>, because it is the only layer that can answer <em>which agent, owned by whom, did what, to which data, under which approved blueprint</em>.</p>
+<table>
+<thead>
+<tr>
+<th>Regulatory need</th>
+<th>What Agent 365 and its foundation provide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inventory &amp; registration of AI systems</strong></td>
+<td>An authoritative registry spanning Microsoft <strong>and</strong> non-Microsoft agents — the system-of-record for "what AI do we run?"</td>
+</tr>
+<tr>
+<td><strong>Accountability &amp; human oversight</strong></td>
+<td>Every agent has a <strong>named sponsor</strong> and owner; ownerless agents are detected, escalated, and reassigned by rule</td>
+</tr>
+<tr>
+<td><strong>Attribution &amp; traceability</strong></td>
+<td>Agent sign-in and audit logs <strong>consistent with user audit logs</strong>; activity attributable to a specific agent identity rather than a shared gateway credential</td>
+</tr>
+<tr>
+<td><strong>Change control</strong></td>
+<td>Publish/activate approval gates; <strong>update-pending</strong> status so no version change reaches users unreviewed; versioned blueprints</td>
+</tr>
+<tr>
+<td><strong>Least privilege &amp; access review</strong></td>
+<td>Blueprint-level permission review, custom security attributes, conditional access, access packages, expiration and recertification</td>
+</tr>
+<tr>
+<td><strong>Right to revoke</strong></td>
+<td>Block the agent in Agent 365, disable the <strong>blueprint</strong> to stop an entire class, revoke the access contract at the <a href="../layer-1-governance-hub/">Governance Hub</a>, or auto-revoke via lifecycle workflow</td>
+</tr>
+<tr>
+<td><strong>Data handling evidence</strong></td>
+<td>Purview audit of interactions, classification of prompts and responses, DLP enforcement, retention and eDiscovery — see <a href="../layer-4-security-foundation/">Layer 4</a></td>
+</tr>
+<tr>
+<td><strong>Assessment &amp; reporting</strong></td>
+<td><strong>Compliance Manager assessment templates for the EU AI Act, NIST AI RMF and ISO 42001</strong> provide guided control mapping and evidence collection</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>The reason this matters:</strong> a regulator's question is never <em>"is your platform secure?"</em> It is <em>"show me this specific decision, made by this specific system, and prove who was accountable."</em> Layer 3 is the layer that can answer it.</p>
+</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Best practice: establish ALL governance policies BEFORE enabling self-service agent creation.</strong> Proactive governance prevents agent sprawl — retrofitting it afterwards is materially harder.</p>
+</div>
+<hr />
+<h2 id="prerequisites-and-dependencies">Prerequisites and dependencies</h2>
+<p>Agent 365 <strong>extends</strong> security and governance to agents — it does not replace the foundation underneath it. It relies on capabilities you configure in the underlying Microsoft 365 security stack:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>What Agent 365 depends on it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purview</strong></td>
+<td>Advanced classification; auto-labeling of grounding data; audit</td>
+</tr>
+<tr>
+<td><strong>Defender</strong></td>
+<td>Agent detection; posture and runtime protection; threat hunting and investigation</td>
+</tr>
+<tr>
+<td><strong>Entra</strong></td>
+<td>Identity protection; network controls for agents</td>
+</tr>
+<tr>
+<td><strong>Intune</strong></td>
+<td>Controls for local agents on Windows endpoints</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong>The security foundation is not an optional add-on to the Agent 365 story</strong> — it supplies the core security, identity, endpoint, and data capabilities Agent 365 functionality relies on. Confirm the current licensing prerequisites and the exact capability set with your Microsoft account team; <strong>align with the Security team early</strong> for assessment and sizing.</p>
+</div>
+<h3 id="suggested-enablement-baseline">Suggested enablement baseline</h3>
+<ol>
+<li><strong>Enable audit logs</strong> — Purview portal → Audit → verify auditing is ON for the organization</li>
+<li><strong>Connect Defender</strong> — Defender portal → Settings → Security for AI → connect the Microsoft 365 connector</li>
+<li><strong>Review the Agent 365 enterprise app</strong> — Entra admin center → Enterprise Apps → review permissions and user assignments</li>
+<li><strong>Create a conditional access policy</strong> targeting agent identities</li>
+<li><strong>Review initial agent risk posture</strong> — Purview → DSPM for AI → AI observability → top recommendations</li>
+<li><strong>Create an Insider Risk Management policy</strong> using the <em>Risky AI Usage</em> template</li>
+<li><strong>Publish sensitivity labels</strong> for SharePoint and OneDrive</li>
+<li><strong>Validate</strong> with advanced hunting on agent invocation and inference events</li>
+</ol>
+<hr />
+<h2 id="integration-with-the-other-layers">Integration with the other layers</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Integration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🔷 <strong>Layer 1</strong> (Governance Hub)</td>
+<td>Agent identities are <strong>validated at the gateway</strong> for access control and policy enforcement. Gateway audit logs carry the calling identity, so traffic is attributable to a registered agent. <strong>Revoking an agent's access contract is a second, independent kill switch</strong> alongside blocking it in Agent 365.</td>
+</tr>
+<tr>
+<td>🔶 <strong>Layer 2</strong> (Agent Operations)</td>
+<td>Foundry integrates <strong>natively</strong> with Entra Agent ID across the lifecycle. All unpublished or in-development agents in a project <strong>share a common identity</strong> — simplifying administration, reducing identity sprawl, and preserving developer autonomy during experimentation. <strong>Once published, an agent gains its own blueprint and identity</strong> bound to the agent application resource. Copilot Studio integrates natively via opt-in, with in-development agents in an environment sharing a common blueprint.</td>
+</tr>
+<tr>
+<td>🛡️ <strong>Layer 4</strong> (Security Foundation)</td>
+<td><strong>Entra</strong> provides durable identity at build time, access governance with conditional permissions, identity alignment with existing enterprise systems, lineage tracking, and permission control through familiar identity governance. <strong>Defender</strong> monitors for identity-based threats and contributes agent inventory and attack-path context. <strong>Purview</strong> enforces data governance based on agent access and behavior. <strong>Agent 365 consolidates all three into one dashboard.</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="defense-in-depth">Defense in depth</h3>
+<p>Agent Management is the <strong>primary enforcement point for agent types whose traffic never touches your gateway or Foundry</strong>. The worked example: <strong>Microsoft Copilot agents</strong> — their traffic doesn't traverse your gateway or Foundry, so those controls can't apply out of the box, but <strong>Agent 365 together with Defender enforces it</strong>, on top of Copilot's own native protections.</p>
+<p><strong>Same risk, multiple enforcement points — if one control can't apply or is bypassed, another does.</strong></p>
+<h3 id="where-it-earns-its-keep">Where it earns its keep</h3>
+<p>The moment agents act <strong>autonomously</strong> on the state of the business — Frontier pillar 3, <em>Reshape business processes</em> — Agent Management becomes critical: <strong>whose identity, who owns it, can I revoke it.</strong> Same controls, higher stakes.</p>
+<hr />
+<h2 id="ownership-outcomes">Ownership &amp; outcomes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Accountable</strong></td>
+<td><strong>IAM</strong> <em>(identity, lifecycle &amp; inventory)</em> · <strong>AI Engineering</strong> <em>(register &amp; own)</em> · <strong>Security</strong> <em>(behavioural insight)</em></td>
+</tr>
+<tr>
+<td><strong>The question it answers</strong></td>
+<td><em>"When an agent acts, whose identity is it using, who owns it, what can it touch, and can I see it and revoke it?"</em></td>
+</tr>
+<tr>
+<td><strong>What you gain</strong></td>
+<td>Every agent becomes a first-class, owned, <strong>least-privilege</strong> enterprise identity with full inventory and behavioural visibility — <strong>closing the shadow-agent gap before it appears</strong>.</td>
+</tr>
+<tr>
+<td><strong>The advantage</strong></td>
+<td><strong>Every agent owned and accountable.</strong> First-class identities give each agent a clear owner, lifecycle, and audit trail — <strong>no orphaned or shadow agents across the estate</strong>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key RACI rows</strong> <em>(full matrix in <a href="../organizational-alignment/">Organizational Alignment &amp; Ownership</a>)</em></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decision</th>
+<th>Accountable</th>
+<th>Responsible</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.1</td>
+<td>Issue &amp; govern agent identities</td>
+<td><strong>IAM</strong></td>
+<td>AI Eng</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Agent lifecycle &amp; ownership</td>
+<td><strong>IAM</strong></td>
+<td>AI Eng</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>Agent inventory &amp; behavioural insight</td>
+<td><strong>IAM</strong></td>
+<td>Security</td>
+</tr>
+</tbody>
+</table>
+<p><strong>IAM is accountable across all three activities.</strong> AI Engineering is responsible for <strong>registering its agents and being the named sponsor</strong>. Security is responsible for the <strong>behavioural and threat insight</strong> that Agent 365 surfaces.</p>
+<blockquote>
+<p><strong>Who should own agent identity? The team that owns user identity today.</strong> That is the whole logic of extending existing infrastructure rather than standing up a parallel one.</p>
+</blockquote>
+<hr />
+<h2 id="activation">Activation</h2>
+<p><strong>Track 3 — Agent Management</strong></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deep Dive</strong></td>
+<td><strong>Microsoft Agent 365</strong> — agent management, ownership &amp; lifecycle; design the <strong>agent blueprints</strong> and policy templates</td>
+</tr>
+<tr>
+<td><strong>Proof of Value</strong></td>
+<td><strong>Govern Agents PoV</strong> — register, activate, monitor &amp; retire real agents, proving visibility and control</td>
+</tr>
+<tr>
+<td><strong>Production</strong></td>
+<td><strong>Scale Identities</strong> — safely and consistently across the organization</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Activate — no infrastructure to provision.</strong> Agent 365 requires <strong>no landing zone</strong>.</p>
+<p><strong>Exit criteria</strong></p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Audit logs enabled; Defender connector configured; sensitivity labels published</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Agent blueprints and policy templates defined and approved</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Every published agent carries a unique Entra Agent ID with a <strong>named sponsor</strong></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Agent settings configured — allowed agent types, sharing, user access, catalog visibility</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Publish / activate / deploy approval gates operating</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Shadow-agent detection running; discovered agents triaged</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Lifecycle rules live — expire inactive, flag ownerless, block risky, auto-revoke on owner departure</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Conditional access policies targeting agent identities</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Non-Microsoft agents registered via the Agent 365 SDK</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Authoritative inventory and agent map visible in the Agent 365 dashboard</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Revocation tested — block in Agent 365, disable the blueprint, <strong>and</strong> revoke the access contract at the gateway</li>
+</ul>
+<p>➡️ Full track detail: <a href="../activation-paths/">Technical Activation Paths</a></p>
+<h3 id="resources">Resources</h3>
+<ul>
+<li>Governing agent identities with Entra ID: <a href="https://learn.microsoft.com/entra/id-governance/agent-id-governance-overview">https://learn.microsoft.com/entra/id-governance/agent-id-governance-overview</a></li>
+<li>Microsoft Entra Agent ID: <a href="https://learn.microsoft.com/entra/agent-id/">https://learn.microsoft.com/entra/agent-id/</a></li>
+<li>Conditional Access for agent identities: <a href="https://learn.microsoft.com/entra/identity/conditional-access/agent-id">https://learn.microsoft.com/entra/identity/conditional-access/agent-id</a></li>
+<li>Citadel end-to-end guidance: <a href="../">AI Citadel Blueprint overview</a></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Capability maturity moves quickly.</strong> Several capabilities described here are in preview at the time of writing while others are generally available. <strong>Verify current status on Microsoft Learn before committing to a delivery date</strong> — do not promise a preview capability as production-ready.</p>
+</div>
+<hr />
+<h2 id="related-guidance">Related guidance</h2>
+<ul>
+<li><a href="../">Overview — AI Citadel Blueprint</a></li>
+<li><a href="../layer-1-governance-hub/">Layer 1 · Governance Hub</a></li>
+<li><a href="../layer-2-agent-operations/">Layer 2 · Agent Operations</a></li>
+<li><a href="../layer-4-security-foundation/">Layer 4 · Security Foundation</a> — what identity unlocks</li>
+<li><a href="../organizational-alignment/">Organizational Alignment &amp; Ownership</a></li>
+<li><a href="../activation-paths/">Technical Activation Paths</a></li>
+</ul>
+<hr />
+<p><sub>AI Citadel Blueprint × Frontier Transformation · Microsoft · Global Black Belt</sub></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <div style="
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  text-align: center;
+  font-size: 0.95em;
+  padding: 1em 0;
+">
+  © 2026 Azure AI Landing Zones
+</div>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.icon", "content.iconify", "navigation.tracking", "content.code.annotate", "navigation.top"], "search": "../../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>
