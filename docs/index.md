@@ -1,8 +1,3 @@
----
-hide:
-  - toc
----
-
 # AI Landing Zones
 
 Build AI applications and agents on a secure, resilient Azure foundation.

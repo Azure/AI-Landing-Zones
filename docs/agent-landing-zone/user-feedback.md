@@ -50,12 +50,30 @@ continuity protocol and permission requirements.
 
 The custom control calls the **UI service**, not the hosted container:
 
-| UI endpoint | Purpose |
-| --- | --- |
-| `GET /panel/conversations` | Lists the caller's conversation IDs. |
-| `POST /panel/conversations/{conversation_id}/feedback` | Creates or upserts that owner's feedback. |
-| `GET /panel/conversations/{conversation_id}/feedback` | Reads feedback after the same ownership check. |
-
+<div class="reference-fields responsive-reference" markdown="1">
+<table role="table" markdown="1">
+<thead role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="col" role="columnheader" markdown="span">UI endpoint</th>
+<th scope="col" role="columnheader" markdown="span">Purpose</th>
+</tr>
+</thead>
+<tbody role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`GET /panel/conversations`</th>
+<td role="cell" data-label="Purpose" markdown="span">Lists the caller's conversation IDs.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`POST /panel/conversations/{conversation_id}/feedback`</th>
+<td role="cell" data-label="Purpose" markdown="span">Creates or upserts that owner's feedback.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`GET /panel/conversations/{conversation_id}/feedback`</th>
+<td role="cell" data-label="Purpose" markdown="span">Reads feedback after the same ownership check.</td>
+</tr>
+</tbody>
+</table>
+</div>
 Every request requires a delegated user bearer with `user_impersonation`,
 valid tenant/audience and active gates. Listing is scoped to the caller;
 per-conversation operations require a Cosmos owner-index match.

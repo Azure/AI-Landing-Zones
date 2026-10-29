@@ -331,19 +331,58 @@ In **App Configuration > Configuration explorer**, set the following under
 the shared **`agent-lz`** label. Preserve the environment's provisioned
 resource endpoints and identities.
 
-| Key | Value or purpose |
-| --- | --- |
-| `SHAREPOINT_TENANT_ID` | Directory/tenant ID of the SharePoint application. |
-| `SHAREPOINT_CLIENT_ID` | Application/client ID registered above. |
-| `SHAREPOINT_CLIENT_SECRET_NAME` | Key Vault secret **name**; default `sharepointClientSecret`. |
-| `SHAREPOINT_FILES_FORMAT` | Comma-separated extensions, for example `pdf,docx,pptx`; this is also the current default when omitted or empty. |
-| `KEY_VAULT_URI` | Ingestion Key Vault URI containing that secret. |
-| `SEARCH_SERVICE_QUERY_ENDPOINT` | Target Search service root, such as `https://<service>.search.windows.net`. |
-| `SEARCH_RAG_INDEX_NAME` | Existing compatible target index for custom ingestion. |
-| `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` | Cosmos DB account name and database containing the source definitions. |
-| `COSMOS_DATASOURCES_CONTAINER` | Source-definition container; default `datasources`. |
-| `STORAGE_ACCOUNT_NAME`, `JOBS_LOG_CONTAINER` | Job-log storage account and container; container default `jobs`. |
-
+<div class="reference-fields responsive-reference" markdown="1">
+<table role="table" markdown="1">
+<thead role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="col" role="columnheader" markdown="span">Key</th>
+<th scope="col" role="columnheader" markdown="span">Value or purpose</th>
+</tr>
+</thead>
+<tbody role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`SHAREPOINT_TENANT_ID`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Directory/tenant ID of the SharePoint application.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`SHAREPOINT_CLIENT_ID`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Application/client ID registered above.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`SHAREPOINT_CLIENT_SECRET_NAME`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Key Vault secret **name**; default `sharepointClientSecret`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`SHAREPOINT_FILES_FORMAT`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Comma-separated extensions, for example `pdf,docx,pptx`; this is also the current default when omitted or empty.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`KEY_VAULT_URI`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Ingestion Key Vault URI containing that secret.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`SEARCH_SERVICE_QUERY_ENDPOINT`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Target Search service root, such as `https://<service>.search.windows.net`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`SEARCH_RAG_INDEX_NAME`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Existing compatible target index for custom ingestion.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`DATABASE_ACCOUNT_NAME`, `DATABASE_NAME`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Cosmos DB account name and database containing the source definitions.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`COSMOS_DATASOURCES_CONTAINER`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Source-definition container; default `datasources`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`STORAGE_ACCOUNT_NAME`, `JOBS_LOG_CONTAINER`</th>
+<td role="cell" data-label="Value or purpose" markdown="span">Job-log storage account and container; container default `jobs`.</td>
+</tr>
+</tbody>
+</table>
+</div>
 `APP_CONFIG_ENDPOINT` must already be in the Container App's process
 environment so the application can load its settings. The current loader also
 reads other labels, including an all-labels selection; remove conflicting

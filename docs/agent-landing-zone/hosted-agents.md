@@ -54,12 +54,19 @@ The procedure is in [application redeployment](deploy-full-stack.md#redeploy-app
 [Deployment settings](configuration.md) distinguishes deployment inputs from
 App Configuration keys and hosted process environment.
 
-| Input | Contract |
-| --- | --- |
-| `HOSTED_AGENT_IMAGE_VERSION` | Immutable `sha256:` digest with 64 hexadecimal characters; tags are rejected. |
-| `HOSTED_AGENT_RESOURCE_SCOPE` | Explicit delegated-user audience ending in `/.default`; not the UI API scope. |
-| `HOSTED_AGENT_STARTUP_COMMAND` | Fixed to `uvicorn src.api.hosted_entrypoint:app --host 0.0.0.0 --port 8088`. |
-| `HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS` | Stream idle timeout, default `60`. |
+<dl markdown="1">
+<dt markdown="span">`HOSTED_AGENT_IMAGE_VERSION`</dt>
+<dd markdown="span">Immutable `sha256:` digest with 64 hexadecimal characters; tags are rejected.</dd>
+
+<dt markdown="span">`HOSTED_AGENT_RESOURCE_SCOPE`</dt>
+<dd markdown="span">Explicit delegated-user audience ending in `/.default`; not the UI API scope.</dd>
+
+<dt markdown="span">`HOSTED_AGENT_STARTUP_COMMAND`</dt>
+<dd markdown="span">Fixed to `uvicorn src.api.hosted_entrypoint:app --host 0.0.0.0 --port 8088`.</dd>
+
+<dt markdown="span">`HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS`</dt>
+<dd markdown="span">Stream idle timeout, default `60`.</dd>
+</dl>
 
 The supplied `hosted-agent/azure.yaml` declares the agent name, CPU, memory,
 protocols and startup command as literal fields. Its image and environment

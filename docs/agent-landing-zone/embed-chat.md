@@ -27,16 +27,46 @@ or Graph token is not valid. The portal's
 and consent are separate from the UI's server-side Foundry OBO exchange.
 [Agent Application access](application-auth.md) explains that downstream path.
 
-| UI runtime setting | Entra embedding contract |
-| --- | --- |
-| `CHAINLIT_COPILOT_ENABLED` | `true` enables embedding; default is disabled. |
-| `CHAINLIT_COPILOT_AUTH_MODE` | `entra`. |
-| `CHAINLIT_URL` | Canonical UI HTTPS origin, for example `https://chat.contoso.com`. |
-| `CHAINLIT_ALLOWED_ORIGINS` | Exact distinct portal HTTPS origins, for example `https://portal.contoso.com`. |
-| `CHAINLIT_COPILOT_ENTRA_TENANT_ID` | Issuing Entra tenant's unique ID. |
-| `CHAINLIT_COPILOT_ENTRA_AUDIENCE` | Expected UI API access-token `aud`. |
-| `CHAINLIT_COPILOT_ENTRA_REQUIRED_SCOPE` | Scope name, normally `user_impersonation`. |
-
+<div class="reference-fields responsive-reference" markdown="1">
+<table role="table" markdown="1">
+<thead role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="col" role="columnheader" markdown="span">UI runtime setting</th>
+<th scope="col" role="columnheader" markdown="span">Entra embedding contract</th>
+</tr>
+</thead>
+<tbody role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_COPILOT_ENABLED`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">`true` enables embedding; default is disabled.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_COPILOT_AUTH_MODE`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">`entra`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_URL`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">Canonical UI HTTPS origin, for example `https://chat.contoso.com`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_ALLOWED_ORIGINS`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">Exact distinct portal HTTPS origins, for example `https://portal.contoso.com`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_COPILOT_ENTRA_TENANT_ID`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">Issuing Entra tenant's unique ID.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_COPILOT_ENTRA_AUDIENCE`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">Expected UI API access-token `aud`.</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">`CHAINLIT_COPILOT_ENTRA_REQUIRED_SCOPE`</th>
+<td role="cell" data-label="Entra embedding contract" markdown="span">Scope name, normally `user_impersonation`.</td>
+</tr>
+</tbody>
+</table>
+</div>
 Origins contain only scheme, host and optional port, without wildcard, `null`,
 credentials, path, query or fragment. `CHAINLIT_ROOT_PATH` must be empty.
 The validator accepts the configured tenant and v2 issuer only.

@@ -26,23 +26,89 @@ but no new application code for that capability. **Development** means settings
 alone are insufficient. Preview status is stated separately; a service preview
 does not make an application integration ready.
 
-| Capability | Readiness | What is supplied or still needed |
-| --- | --- | --- |
-| Basic chat and active-session context | Default, without retrieval | The frontend calls the hosted `maf_lite` runtime and configured model for non-retrieval turns. Questions that trigger retrieval have the separate gate below. Context is not durable across browser reloads. [Hosting](hosted-agents.md#protocol-and-caller-access). |
-| Entra login and delegated Foundry invocation | Configuration | Registration, two API consent boundaries, Key Vault references, callback and caller grants. Follow the [login sequence](application-auth.md#configure-login-in-order). |
-| Native Blob source ingestion | Default | Foundry IQ manages the configured source pipeline without Agent App Ingestion. Source/service permissions and successful indexing are still required. [Ingestion](ingestion.md#1-standard-ingestion-with-foundry-iq). |
-| Protected knowledge-base retrieval | Development | The hosted entry point does not supply trusted user context or a retrieval bearer. Implement authenticated retrieval and prove document allow/deny behavior; UI OBO alone does not do this. [Identity boundary](application-auth.md#3-verify-the-retrieval-identity-boundary). |
-| Foundry tools, Toolbox and MCP operations | Development | Portal registration is not consumed automatically by `maf_lite`; add an authenticated invocation integration. MCP knowledge sources are not automatically model-callable tools. [Tools](agent-tools.md). |
-| Work IQ, Fabric IQ and native SharePoint integrations | Development; service previews apply | Source-specific templates, consent, trusted delegation and, where applicable, response handling still need integration. See [Work IQ](work-iq.md), [Fabric IQ](fabric-iq.md) and [SharePoint](sharepoint.md). |
-| Custom ingestion and SharePoint indexing | Configuration | Select Agent App Ingestion and configure its source, Graph permissions and schedule where needed. Processing/ACL synchronization does not close the hosted retrieval identity gap. [Custom ingestion](ingestion.md#3-custom-ingestion-only-when-needed). |
-| Conversation PDF attachments | Development | Optional ingestion enables processing, but hosted retrieval also needs source binding, owner identity and delegated authorization. Uploads are off by default. [Conversation uploads](ingestion.md#2-conversation-file-uploads). |
-| Text descriptions of document images | Configuration | Native extraction needs a supported model/region and source binding; the default chat model does not establish image verbalization. Protected retrieval still needs the integration above. [Document images](multimodality.md#document-image-grounding). |
-| Direct screenshot, image or voice input | Not supplied | Requires an application extension; document image extraction is not direct multimodal input. [Extensions](multimodality.md#direct-image-and-voice-extensions). |
-| Durable conversation continuity and history | Configuration and authorization validation | Off by default. Requires reviewed delegated permissions, owner isolation and evidence gates; panel history also needs the optional panel. Enabling one flag is insufficient. [Continuity](hosted-agents.md#continuity-history-and-the-administrative-panel). |
-| Hosted ratings/comments and feedback administration | Development | The default layout has no feedback collection. Optional panel APIs still need a custom chat control/adapter and validated ownership. [Feedback](user-feedback.md). |
-| Embedding chat in an existing portal | Development | The UI adapter is supplied; the host portal must implement trusted token acquisition, origin/CSP and lifecycle integration. [Embed chat](embed-chat.md). |
-| Teams/M365 or Copilot Studio publication | Manual configuration and validation | Separate post-deployment runbooks, not automatic publication. Channels have different network and caller-identity contracts. [Teams/M365](publish-to-teams.md) and [Copilot Studio](connect-copilot-studio.md). |
-
+<div class="reference-fields responsive-reference" markdown="1">
+<table role="table" markdown="1">
+<thead role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="col" role="columnheader" markdown="span">Capability</th>
+<th scope="col" role="columnheader" markdown="span">Readiness</th>
+<th scope="col" role="columnheader" markdown="span">What is supplied or still needed</th>
+</tr>
+</thead>
+<tbody role="rowgroup" markdown="1">
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Basic chat and active-session context</th>
+<td role="cell" data-label="Readiness" markdown="span">Default, without retrieval</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">The frontend calls the hosted `maf_lite` runtime and configured model for non-retrieval turns. Questions that trigger retrieval have the separate gate below. Context is not durable across browser reloads. [Hosting](hosted-agents.md#protocol-and-caller-access).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Entra login and delegated Foundry invocation</th>
+<td role="cell" data-label="Readiness" markdown="span">Configuration</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Registration, two API consent boundaries, Key Vault references, callback and caller grants. Follow the [login sequence](application-auth.md#configure-login-in-order).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Native Blob source ingestion</th>
+<td role="cell" data-label="Readiness" markdown="span">Default</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Foundry IQ manages the configured source pipeline without Agent App Ingestion. Source/service permissions and successful indexing are still required. [Ingestion](ingestion.md#1-standard-ingestion-with-foundry-iq).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Protected knowledge-base retrieval</th>
+<td role="cell" data-label="Readiness" markdown="span">Development</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">The hosted entry point does not supply trusted user context or a retrieval bearer. Implement authenticated retrieval and prove document allow/deny behavior; UI OBO alone does not do this. [Identity boundary](application-auth.md#3-verify-the-retrieval-identity-boundary).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Foundry tools, Toolbox and MCP operations</th>
+<td role="cell" data-label="Readiness" markdown="span">Development</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Portal registration is not consumed automatically by `maf_lite`; add an authenticated invocation integration. MCP knowledge sources are not automatically model-callable tools. [Tools](agent-tools.md).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Work IQ, Fabric IQ and native SharePoint integrations</th>
+<td role="cell" data-label="Readiness" markdown="span">Development; service previews apply</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Source-specific templates, consent, trusted delegation and, where applicable, response handling still need integration. See [Work IQ](work-iq.md), [Fabric IQ](fabric-iq.md) and [SharePoint](sharepoint.md).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Custom ingestion and SharePoint indexing</th>
+<td role="cell" data-label="Readiness" markdown="span">Configuration</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Select Agent App Ingestion and configure its source, Graph permissions and schedule where needed. Processing/ACL synchronization does not close the hosted retrieval identity gap. [Custom ingestion](ingestion.md#3-custom-ingestion-only-when-needed).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Conversation PDF attachments</th>
+<td role="cell" data-label="Readiness" markdown="span">Development</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Optional ingestion enables processing, but hosted retrieval also needs source binding, owner identity and delegated authorization. Uploads are off by default. [Conversation uploads](ingestion.md#2-conversation-file-uploads).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Text descriptions of document images</th>
+<td role="cell" data-label="Readiness" markdown="span">Configuration</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Native extraction needs a supported model/region and source binding; the default chat model does not establish image verbalization. Protected retrieval still needs the integration above. [Document images](multimodality.md#document-image-grounding).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Direct screenshot, image or voice input</th>
+<td role="cell" data-label="Readiness" markdown="span">Not supplied</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Requires an application extension; document image extraction is not direct multimodal input. [Extensions](multimodality.md#direct-image-and-voice-extensions).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Durable conversation continuity and history</th>
+<td role="cell" data-label="Readiness" markdown="span">Configuration and authorization validation</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Off by default. Requires reviewed delegated permissions, owner isolation and evidence gates; panel history also needs the optional panel. Enabling one flag is insufficient. [Continuity](hosted-agents.md#continuity-history-and-the-administrative-panel).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Hosted ratings/comments and feedback administration</th>
+<td role="cell" data-label="Readiness" markdown="span">Development</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">The default layout has no feedback collection. Optional panel APIs still need a custom chat control/adapter and validated ownership. [Feedback](user-feedback.md).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Embedding chat in an existing portal</th>
+<td role="cell" data-label="Readiness" markdown="span">Development</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">The UI adapter is supplied; the host portal must implement trusted token acquisition, origin/CSP and lifecycle integration. [Embed chat](embed-chat.md).</td>
+</tr>
+<tr role="row" markdown="1">
+<th scope="row" role="rowheader" markdown="span">Teams/M365 or Copilot Studio publication</th>
+<td role="cell" data-label="Readiness" markdown="span">Manual configuration and validation</td>
+<td role="cell" data-label="What is supplied or still needed" markdown="span">Separate post-deployment runbooks, not automatic publication. Channels have different network and caller-identity contracts. [Teams/M365](publish-to-teams.md) and [Copilot Studio](connect-copilot-studio.md).</td>
+</tr>
+</tbody>
+</table>
+</div>
 In particular, successful provisioning, source ingestion or a greeting response
 does not establish protected retrieval. Use the linked capability's
 prerequisites and acceptance checks before presenting it to users.

@@ -662,10 +662,29 @@ delegation and NSG requirements still apply.
 Application private endpoints use their own configured subnet, independently
 of resource group count.
 
-| Variable | Native root parameter | Default | Purpose |
-| --- | --- | --- | --- |
-| `AZURE_APPLICATION_PE_SUBNET_NAME` | `applicationPeSubnetName` | `application-pe-subnet` | Dedicated application private endpoint subnet name. |
-| `AZURE_APPLICATION_PE_SUBNET_PREFIX` | `applicationPeSubnetPrefix` | `192.168.3.128/26` | Aligned IPv4 CIDR for the application private endpoint subnet. |
+<dl markdown="1">
+<dt markdown="span">`AZURE_APPLICATION_PE_SUBNET_NAME`</dt>
+<dd markdown="block">
+
+**Native root parameter:** `applicationPeSubnetName`
+
+**Default:** `application-pe-subnet`
+
+Dedicated application private endpoint subnet name.
+
+</dd>
+
+<dt markdown="span">`AZURE_APPLICATION_PE_SUBNET_PREFIX`</dt>
+<dd markdown="block">
+
+**Native root parameter:** `applicationPeSubnetPrefix`
+
+**Default:** `192.168.3.128/26`
+
+Aligned IPv4 CIDR for the application private endpoint subnet.
+
+</dd>
+</dl>
 
 Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
 ACR and Azure Monitor Private Link
