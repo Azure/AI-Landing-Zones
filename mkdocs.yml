@@ -44,8 +44,6 @@ nav:
           - "How it works": agent-landing-zone/how-it-works.md
           - "Deployment choices": agent-landing-zone/planning.md
           - "Network isolation": agent-landing-zone/network-isolation.md
-          - "Sizing and capacity": agent-landing-zone/sizing.md
-          - "Cost planning": agent-landing-zone/cost-planning.md
           - "Sizing & cost planner": agent-landing-zone/sizing-cost-planner.md
           - "Deployment settings": agent-landing-zone/configuration.md
           - "Resource naming": agent-landing-zone/resource-naming.md
@@ -96,6 +94,8 @@ not_in_nav: |
   /agent-landing-zone/operations.md
   /agent-landing-zone/deploy-bicep.md
   /agent-landing-zone/deploy-terraform.md
+  /agent-landing-zone/sizing.md
+  /agent-landing-zone/cost-planning.md
 
 extra:
   generator: false
@@ -103,4 +103,4 @@ extra:
 extra_css:
   # Update the content version when styles change to invalidate browser caches.
   - stylesheets/extra.css?v=56826d53ca9e
-  - stylesheets/planner.css?v=1
+  - stylesheets/planner.css?v=2

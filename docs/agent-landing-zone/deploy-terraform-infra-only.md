@@ -33,7 +33,7 @@ Private deployments need a connected runner with private DNS resolution,
 routes and data-plane permissions. It must also reach the state backend and
 approved provider/module registries. An ACR Tasks pool is not the deployment
 host. Review [network isolation](network-isolation.md), service/model quota
-and [cost planning](cost-planning.md); infrastructure-only is still billable.
+and the [Sizing & cost planner](sizing-cost-planner.md). Infrastructure-only is still billable.
 
 Commands marked `bash` use Bash syntax. Replace every `<placeholder>` with an
 approved value. In PowerShell, remove any Bash continuation backslashes and

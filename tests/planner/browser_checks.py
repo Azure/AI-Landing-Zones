@@ -60,15 +60,65 @@ def run(base, candidate=None):
             [...document.querySelectorAll("[data-driver-amount]")].reduce((sum,e)=>sum+Number(e.dataset.driverAmount),0)-
             p.snapshot.sum.total)<1e-8);
           assert("Cost driver assumptions are explicit",document.querySelector("#cost-driver-items").textContent.includes(
-            "730 allocated hours, including idle")&&document.querySelector("#cost-driver-items").textContent.includes(
-            "5,000 RU/s billing hypothesis"));
+            "5,000 RU/s billing hypothesis")&&document.querySelector("#build-budget-note").textContent.includes(
+            "1 deployment(s)/day x 30 days/month x 40 allocated minutes = 20 hours/month"));
           assert("The exact default model is priced, not a newer substitute",
             Math.abs(p.snapshot.rows.find(r=>r.id==="model").amount-
               (132*p.catalog.publishedPrices["gpt-5-nano"].prices.eastus2.input+
               22*p.catalog.publishedPrices["gpt-5-nano"].prices.eastus2.output))<1e-8);
-          assert("Dedicated allocation includes all 730 idle and active hours",
+          assert("Daily deployments price 20 allocated hours, not a whole month",
             Math.abs(p.snapshot.rows.find(r=>r.id==="acr-build-pool").amount-
-              730*3600*2*p.catalog.publishedPrices.acrDedicatedPool.prices.eastus2.allocation)<1e-8);
+              20*3600*2*p.catalog.publishedPrices.acrDedicatedPool.prices.eastus2.allocation)<1e-8);
+          assert("No scale-to-zero automation is claimed",document.querySelector("#build-budget-note").textContent.includes(
+            "not automation provided by this planner or the default deployment"));
+          for (const [override,hours] of [
+            [{buildDeploymentsPerDay:2},40], [{buildDays:31},31*40/60],
+            [{buildMinutes:60},30], [{buildDeploymentsPerDay:0},0],
+            [{buildDays:0},0], [{buildMode:"allocated",buildHours:730},730],
+            [{buildMode:"allocated",buildHours:12.5},12.5]]) {
+            const s=p.validate({version:2,state:override});
+            assert("Exact build schedule "+JSON.stringify(override),
+              Math.abs(p.calculate(s).find(r=>r.id==="acr-build-pool").amount-
+                hours*3600*2*p.catalog.publishedPrices.acrDedicatedPool.prices.eastus2.allocation)<1e-8);
+          }
+          for(const legacy of [{},{buildHours:20},{buildHours:0}]){
+            const s=p.validate({version:1,state:legacy});
+            const packed=scenarios.pack(s,p.defaults);
+            const reloaded=p.validate(packed);
+            assert("Legacy allocation preserved "+JSON.stringify(legacy),
+              s.buildMode==="allocated"&&reloaded.buildMode==="allocated"&&
+              architecture.buildAllocatedHours(reloaded)===(legacy.buildHours??730)&&packed.version===2);
+          }
+          for(const option of architecture.deploymentOptions){
+            const row=p.snapshot.rows.find(r=>r.id===option.id);
+            assert("Allocation option has a real resource "+option.field,!!row&&
+              !!document.querySelector('[data-field="'+option.field+'"]'));
+            const changed=p.calculate({[option.field]:0});
+            const omitted=changed.find(r=>r.id===option.id);
+            assert("Zero excludes new allocation "+option.field,omitted.amount===0&&
+              omitted.lines.every(l=>l.quantity===0&&l.amount===0));
+            assert("Totals reconcile after exclusion "+option.field,Math.abs(
+              p.totals(changed).total-changed.reduce((sum,r)=>sum+r.amount,0))<1e-8);
+          }
+          for(const [field,children] of [
+            ["searchServices",["search","pe-app-search"]],
+            ["containerRegistries",["registry","acr-build-pool","pe-acr"]],
+            ["containerEnvironments",["aca-environment","compute","frontend-app","pe-aca"]],
+            ["jumpboxes",["jumpbox","jumpbox-disk","bastion","bastion-ip","nat","nat-ip"]],
+            ["firewalls",["firewall","firewall-ip","firewall-management-ip","firewall-policy","routes"]],
+            ["logWorkspaces",["logs","insights","ampls","pe-monitor"]],
+            ["agentServices",["hosted","backing-search","backing-storage","backing-cosmos","foundry-vault",
+              "pe-foundry-search","pe-foundry-storage","pe-foundry-cosmos","pe-foundry-vault"]]]){
+            assert("Linked allocations follow "+field,p.calculate({[field]:0}).filter(r=>children.includes(r.id))
+              .every(r=>!r.included&&r.amount===0));
+          }
+          const noSearch=p.calculate({searchServices:0});
+          assert("Application Search does not remove backing Search",
+            noSearch.find(r=>r.id==="backing-search").amount===p.snapshot.rows.find(r=>r.id==="backing-search").amount);
+          assert("Shared Search DNS zone is not incorrectly removed",
+            noSearch.find(r=>r.id==="dns").amount===p.snapshot.rows.find(r=>r.id==="dns").amount);
+          assert("Entire new allocation scope can be excluded",p.totals(p.calculate(
+            Object.fromEntries(architecture.deploymentOptions.map(o=>[o.field,0])))).total===0);
           assert("Five provisioned Cosmos offers and separate backup/storage are included",
             p.snapshot.rows.find(r=>r.id==="backing-cosmos").lines.map(l=>l.quantity).join(",")==="36500,10,10");
           for(const region of Object.keys(p.catalog.regions)){
@@ -96,14 +146,51 @@ def run(base, candidate=None):
             assert("Sourced plan price accepted for "+field,p.calculate(s).some(r=>
               r.operatorEstimate&&r.estimateSource==="Explicit test plan price and date"&&r.amount===12.5));
           }
-          for(const state of [{users:-1},{nodes:Infinity},{region:"other"},{unknown:1},{users:"100"}]){
-            let rejected=false;try{p.validate({version:1,state});}catch{rejected=true;}
+          for(const state of [{users:-1},{nodes:Infinity},{region:"other"},{unknown:1},{users:"100"},
+            {buildMinutes:0},{buildDays:32},{buildDeploymentsPerDay:37},{buildMode:"weekly"},
+            {searchServices:2},{searchServices:.5},{searchReplicas:0},{searchPartitions:0}]){
+            let rejected=false;try{p.validate({version:2,state});}catch{rejected=true;}
             assert("Malformed scenario rejected "+JSON.stringify(state),rejected);
           }
           assert("Neutral sizing baseline",p.assessment().status==="Sizing baseline"&&
             !document.querySelector("#assessment-verdict").classList.contains("needs-attention"));
           return results;
         }""")
+        nav = page.locator(".md-sidebar--primary")
+        assert not nav.locator("a").evaluate_all(
+            "links=>links.some(a=>/\\/(sizing|cost-planning)\\/$/.test(new URL(a.href).pathname))")
+        assert nav.locator("a").evaluate_all(
+            "links=>links.filter(a=>new URL(a.href).pathname.endsWith('/sizing-cost-planner/')).length") == 1
+        baseline = page.evaluate("planner.snapshot.sum.total")
+        page.locator("#operations > summary").click()
+        page.locator("#entry-acr-build-pool > summary").click()
+        assert page.locator('[data-field="buildDeploymentsPerDay"]').input_value() == "1"
+        assert page.locator('[data-field="buildMinutes"]').input_value() == "40"
+        set_field(page, "buildMinutes", 60)
+        assert abs(page.evaluate("planner.exportReport().buildAllocation.allocatedHoursPerMonth") - 30) < 1e-8
+        set_field(page, "buildMode", "allocated")
+        assert page.locator('[data-field="buildHours"]').input_value() == "730"
+        assert "No automatic scale-to-zero" in page.locator("#build-budget-note").text_content()
+        set_field(page, "buildPools", 0)
+        assert page.evaluate("planner.exportReport().buildAllocation.included") is False
+        assert page.evaluate("planner.exportReport().buildAllocation.allocatedHoursPerMonth") == 0
+        assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='acr-build-pool').amount") == 0
+        page.locator("#reset").click()
+        page.locator("#knowledge > summary").click()
+        page.locator("#entry-search > summary").click()
+        search_cost = page.evaluate("planner.snapshot.rows.filter(r=>['search','pe-app-search'].includes(r.id)).reduce((s,r)=>s+r.amount,0)")
+        page.locator('[data-field="searchServices"]').fill("0")
+        page.locator('[data-field="searchServices"]').press("Tab")
+        assert page.evaluate("planner.state.searchServices") == 0
+        assert page.locator("#entry-search [data-row-total=search]").inner_text().startswith("$0.00")
+        assert page.locator("#excluded-scope-note").is_visible()
+        assert page.locator('[data-field="searchReplicas"]').is_disabled()
+        assert abs(baseline - page.evaluate("planner.snapshot.sum.total") - search_cost) < 1e-8
+        assert not any(f["id"].startswith("search-") and f["status"] == "action"
+                       for f in page.evaluate("planner.assessment().findings"))
+        set_field(page, "searchServices", 1)
+        assert page.locator('[data-field="searchReplicas"]').is_enabled()
+        assert abs(page.evaluate("planner.snapshot.sum.total") - baseline) < 1e-8
         page.locator("#starting-point-note").click()
         assert page.locator("#cost-drivers").evaluate("e=>e.open")
         assert page.locator("#cost-driver-items").is_visible()
@@ -159,6 +246,9 @@ def run(base, candidate=None):
             page.locator("#export-scenario").click()
         report = json.loads(Path(downloaded.value.path()).read_text(encoding="utf-8"))
         assert len(report["resources"]) == 77 and report["state"]["appGateway"] == 1
+        assert report["scenario"]["version"] == 2
+        assert report["buildAllocation"]["allocatedHoursPerMonth"] == 20
+        assert "not automation" in report["buildAllocation"]["assumption"]
         assert report["outstandingActiveCosts"] == []
         model = next(resource for resource in report["resources"] if resource["id"] == "model")
         assert all(line["source"] == "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
@@ -181,6 +271,30 @@ def run(base, candidate=None):
           .reduce((sum,e)=>sum+Number(e.dataset.costDelta),0)-
           (planner.snapshot.sum.total-planner.exportReport().reference.subtotal.total))<1e-8""")
         page.locator("#reset").click()
+        legacy = context.new_page()
+        legacy.goto(base + PATH + "?scenario=" + json.dumps({"version": 1, "state": {}}))
+        ready(legacy)
+        assert legacy.evaluate("planner.state.buildMode") == "allocated"
+        assert legacy.evaluate("planner.exportReport().buildAllocation.allocatedHoursPerMonth") == 730
+        legacy.locator("#estimate > summary").click()
+        legacy.evaluate("localStorage.setItem(scenarios.storageKey,JSON.stringify({version:1,state:{buildHours:20}}))")
+        legacy.locator("#load-scenario").click()
+        assert legacy.evaluate("planner.state.buildMode") == "allocated"
+        assert legacy.evaluate("planner.exportReport().buildAllocation.allocatedHoursPerMonth") == 20
+        legacy.close()
+        for old, anchor, parent in [
+            ("sizing", "application-hosting", "decision"),
+            ("sizing", "workload-baseline", "decision"),
+            ("cost-planning", "planner-price-and-budget-assumptions", "coverage"),
+            ("cost-planning", "control-spend-without-weakening-the-design", "coverage")]:
+            moved = context.new_page()
+            moved.goto(base + f"/agent-landing-zone/{old}/#{anchor}")
+            moved.wait_for_url("**/sizing-cost-planner/**")
+            ready(moved)
+            assert moved.url.endswith("#" + anchor)
+            assert moved.locator("#" + anchor).count() == 1
+            assert moved.locator("#" + parent).evaluate("e=>e.open")
+            moved.close()
         assert not errors, errors
         stale = context.new_page()
         original_catalog = candidate or (ROOT / "docs" / "data" / "planner" / "prices.json").read_text(encoding="utf-8")

@@ -11,8 +11,8 @@ The default Agent Application uses Foundry hosted orchestration with
 `maf_lite`, no panel and native Foundry IQ Blob ingestion.
 This page explains settings and defaults, not an execution sequence.
 [How it works](how-it-works.md) introduces the concepts;
-[deployment design](planning.md), [capacity](sizing.md) and
-[cost planning](cost-planning.md) explain the planning decisions.
+[deployment design](planning.md) and the
+[Sizing & cost planner](sizing-cost-planner.md) explain the planning decisions.
 
 The infrastructure-only runbooks for [Bicep](deploy-infra-only.md) and
 [Terraform](deploy-terraform-infra-only.md), and the full-stack runbooks for
@@ -771,7 +771,7 @@ child `hosted-agent/azure.yaml` also declares CPU and memory as **literal
 fields**; changing those environment variables alone does not resize the
 deployed agent. Resizing requires a reviewed child-definition change compatible
 with the provisioned deployment metadata, followed by a new version. See
-[host capacity requirements](sizing.md#application-hosting).
+[host capacity requirements](sizing-cost-planner.md#application-hosting).
 
 The child definition also fixes the deployed agent name, startup command and
 protocol versions. Their provisioning inputs alone do not override those

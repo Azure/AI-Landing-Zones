@@ -4,7 +4,7 @@ Estimate the **deployment you intend to run**, not an all-services-enabled
 template. Begin with the [resource inventory and scenario estimates](../bicep/deployed-resources.md),
 then build a regional estimate in the
 [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
-Use the [sizing guide](../agent-landing-zone/sizing.md) to identify the capacity
+Use the [Sizing & cost planner](../agent-landing-zone/sizing-cost-planner.md) to identify the capacity
 assumptions you need to test.
 
 !!! warning "Estimate dates and pricing evidence"

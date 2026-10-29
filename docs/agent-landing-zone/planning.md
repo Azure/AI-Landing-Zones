@@ -8,8 +8,7 @@ also deploys application code.
 This page explains design choices, not their execution order.
 [Deploy infra only](deploy-infra-only.md) and
 [Deploy full stack](deploy-full-stack.md) are the deployment runbooks;
-[Sizing and capacity](sizing.md) and [Cost planning](cost-planning.md)
-cover capacity and spending.
+the [Sizing & cost planner](sizing-cost-planner.md) covers capacity and spending.
 
 For an isolated standalone `hosted-no-panel` scenario, use the
 [Sizing & cost planner](sizing-cost-planner.md) to explore resource quantities,

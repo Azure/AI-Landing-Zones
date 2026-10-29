@@ -51,8 +51,9 @@ commands, validation and rollback.
   network integration and deployment tools. The
   [Design checklist](../architecture/design-checklist.md) supports architecture
   and security review.
-- **How much capacity and budget are needed?** [Sizing and capacity](sizing.md)
-  and [Cost planning](cost-planning.md) describe the starting points.
+- **How much capacity and budget are needed?** The
+  [Sizing & cost planner](sizing-cost-planner.md) combines guidance, resource
+  choices and editable estimates.
 - **Do I only need Azure resources?** Deploy infra only
   [with Bicep](deploy-infra-only.md) or [with Terraform](deploy-terraform-infra-only.md).
 - **Do I want the supplied application running?** Deploy full stack

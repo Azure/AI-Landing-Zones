@@ -253,7 +253,7 @@ strategy eligibility and image behavior, see [Agent hosting](hosted-agents.md).
 ## From understanding to deployment
 
 The planning references explain [deployment design](planning.md),
-[sizing](sizing.md) and [cost](cost-planning.md).
+the [Sizing & cost planner](sizing-cost-planner.md).
 For execution, choose the outcome and then the provider:
 
 - **Deploy infra only:** [With Bicep](deploy-infra-only.md) or
