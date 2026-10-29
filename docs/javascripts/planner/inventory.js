@@ -21,6 +21,7 @@ const deploymentOptions = [
   ["frontend-app", "frontendDeployments", "Container Apps deployment sets", "deployContainerApps / containerAppsList"],
   ["acr-build-pool", "buildPools", "Private build pools", "deployAcrTaskAgentPool"],
   ["firewall", "firewalls", "Local firewalls", "deployAzureFirewall"],
+  ["appgateway", "appGateway", "Gateways", "publicIngress.enabled"],
   ["jumpbox", "jumpboxes", "Jumpbox VMs", "deployJumpbox"],
   ["bastion", "bastions", "Bastion hosts", "deployBastion"],
   ["nat", "natGateways", "NAT Gateways", "deployNatGateway"],
@@ -77,7 +78,7 @@ window.architecture = {
   defaults: {
     ...Object.fromEntries(deploymentOptions.map(option => [option.field, 1])),
     ...Object.fromEntries(quoteFields.flatMap(field => [[`${field}MonthlyRate`, 0], [`${field}PriceSource`, ""]])),
-    applicationCosmos: 0, cosmosMRU: 5, cosmosGB: 1, cosmosBackupGB: 1,
+    appGateway: 0, applicationCosmos: 0, cosmosMRU: 5, cosmosGB: 1, cosmosBackupGB: 1,
     backingCosmosMode: "manual", backingCosmosRU: 5000, backingCosmosGB: 10,
     backingBackupMode: "continuous30", backingBackupGB: 10,
     backingStorageGB: 10, vaultOperations: 1, embeddingMillions: 5,

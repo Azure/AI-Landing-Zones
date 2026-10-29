@@ -26,7 +26,9 @@ def ready(page):
 
 
 def set_field(page, field, value):
-    page.locator(f'[data-field="{field}"]').first.evaluate(
+    element = page.locator(f'[data-field="{field}"]').first
+    assert element.is_enabled(), f"{field} must be editable"
+    element.evaluate(
         "(element,value)=>{element.value=String(value);element.dispatchEvent(new Event('change',{bubbles:true}));}", value)
 
 
@@ -93,6 +95,8 @@ def run(base, candidate=None):
             const row=p.snapshot.rows.find(r=>r.id===option.id);
             assert("Allocation option has a real resource "+option.field,!!row&&
               !!document.querySelector('[data-field="'+option.field+'"]'));
+            assert("Allocation control remains editable "+option.field,
+              !document.querySelector('[data-field="'+option.field+'"]').matches(":disabled"));
             const changed=p.calculate({[option.field]:0});
             const omitted=changed.find(r=>r.id===option.id);
             assert("Zero excludes new allocation "+option.field,omitted.amount===0&&
@@ -195,6 +199,34 @@ def run(base, candidate=None):
         assert page.locator("#cost-drivers").evaluate("e=>e.open")
         assert page.locator("#cost-driver-items").is_visible()
         page.locator("#networking > summary").click()
+        page.locator("#entry-appgateway > summary").click()
+        gateway = page.locator('[data-field="appGateway"]')
+        assert gateway.count() == 1
+        assert gateway.is_enabled(), "The gateway allocation control must remain editable at quantity zero"
+        gateway_baseline = page.evaluate("planner.snapshot.sum.total")
+        for quantity in (1, 0, 1):
+            gateway.fill(str(quantity))
+            gateway.press("Tab")
+            assert page.evaluate("planner.state.appGateway") == quantity
+            assert gateway.is_enabled()
+            assert page.locator('[data-field="gatewayCU"]').is_enabled() == bool(quantity)
+            assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='gateway-ip').amount > 0") == bool(quantity)
+            assert (page.evaluate("planner.snapshot.sum.total") > gateway_baseline) == bool(quantity)
+        set_field(page, "frontendDeployments", 0)
+        assert gateway.is_enabled()
+        assert page.locator('[data-field="gatewayCU"]').is_disabled()
+        gateway.fill("0")
+        gateway.press("Tab")
+        gateway.fill("1")
+        gateway.press("Tab")
+        assert page.evaluate("planner.state.appGateway") == 1
+        assert page.evaluate("planner.snapshot.rows.filter(r=>['appgateway','gateway-ip'].includes(r.id)).every(r=>r.amount===0)")
+        set_field(page, "frontendDeployments", 1)
+        assert page.locator('[data-field="gatewayCU"]').is_enabled()
+        assert page.evaluate("planner.snapshot.rows.find(r=>r.id==='gateway-ip').amount") > 0
+        gateway.fill("0")
+        gateway.press("Tab")
+        assert abs(page.evaluate("planner.snapshot.sum.total") - gateway_baseline) < 1e-8
         page.locator("#entry-apim > summary").click()
         assert page.locator("#entry-apim .option-preview").is_visible()
         page.locator('[data-field="apimUnits"]').fill("1")
