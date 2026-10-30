@@ -75,6 +75,14 @@
   font: inherit;
 }
 
+.md-typeset p {
+  text-wrap: pretty;
+}
+
+.md-typeset li {
+  text-wrap: balance;
+}
+
 [dir] .md-top {
   /* Material sets the header offset inline; keep this control off the text. */
   top: auto !important;
@@ -251,11 +259,6 @@
 
 .md-typeset .landing-zone-overview p {
   margin: 0;
-  text-wrap: pretty;
-}
-
-.md-typeset .landing-zone-overview + .admonition.note > p:not(.admonition-title) {
-  text-wrap: pretty;
 }
 
 @media (max-width: 48em) {
