@@ -60,6 +60,22 @@ def run(base, candidate=None):
           const assert=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};
           assert("All 77 architecture resources are present",p.snapshot.rows.length===77);
           assert("Every active default resource has a price",p.snapshot.rows.every(r=>r.amount!==null));
+          const embedding=p.snapshot.rows.find(r=>r.id==="embeddings");
+          assert("Embedding deployment type and capacities are explicit",
+            embedding.sku==="text-embedding-3-large / GlobalStandard"&&
+            embedding.detail.includes("declared capacity 100")&&
+            embedding.detail.includes("fallback keeps capacity 10"));
+          assert("Embedding processing boundary and regional override are explicit",
+            embedding.detail.includes("outside the resource region")&&
+            embedding.detail.includes("sku.name to Standard"));
+          assert("Embedding price proxy is not presented as verified Global pricing",
+            embedding.detail.includes("regional price meter as a budgeting proxy")&&
+            embedding.detail.includes("not a verified Global Standard quote"));
+          assert("Embedding estimate retains its exact regional meter and token calculation",
+            embedding.lines.length===1&&
+            embedding.lines[0].meter.skuName==="text-embedding-3-large-regional"&&
+            Math.abs(embedding.amount-p.state.embeddingMillions*1000*
+              embedding.lines[0].meter.retailPrice)<1e-8);
           assert("The total reconciles with all billable lines",Math.abs(p.snapshot.sum.total-
             p.snapshot.rows.flatMap(r=>r.lines).reduce((a,l)=>a+l.amount,0))<1e-8);
           assert("Optional application Cosmos and apps start at zero",["applicationCosmos","extraFrontendApps",

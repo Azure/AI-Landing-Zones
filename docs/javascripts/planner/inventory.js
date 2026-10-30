@@ -173,11 +173,11 @@ window.architecture = {
     }, s.additionalAgents);
     add({
       id: "embeddings", group: "foundry", name: "Embedding model",
-      sku: "text-embedding-3-large / Standard", unit: "model deployment",
+      sku: "text-embedding-3-large / GlobalStandard", unit: "model deployment",
       description: "Creates document and query vectors. Separate from chat-model token usage.",
       settings: input("embeddingMillions", "Recurring embedding tokens (millions)", 0, 1000000, 0.1),
       sizing: "<strong>Measure extracted tokens, chunk overlap and refresh volume.</strong> Initial ingestion and monthly refresh are separate events.",
-      detail: "5M recurring tokens and 50M initial-ingestion tokens are hypothetical. This row estimates recurring tokens only. Initial-ingestion spend must be budgeted separately. Shipped deployment capacity is 100, not a token allowance.",
+      detail: "The embedding default is version 1, GlobalStandard, declared capacity 100; the empty-list foundation fallback keeps capacity 10. Global deployment processing may occur outside the resource region. For regional processing, explicitly set the embedding entry's sku.name to Standard and verify regional availability and quota. This separate embedding row retains the existing regional price meter as a budgeting proxy, not a verified Global Standard quote. Confirm the applicable price before deployment. 5M recurring tokens and 50M initial-ingestion tokens are hypothetical. This row estimates recurring tokens only. Initial-ingestion spend must be budgeted separately. Deployment capacity is not a token allowance.",
       parameter: "main.parameters.json: modelDeploymentList[text-embedding]"
     }, 1, () => [
       bill(find("embedding", "text-embedding-3-large-regional", "text-embedding-3-large-regional Tokens", "1K", 0, s, "Azure OpenAI"),

@@ -365,6 +365,24 @@ lists names, CIDRs and delegations.
 
 The `modelDeploymentList` parameter defines which AI models to deploy in the Foundry account.
 
+| Purpose | Model | Version | Default deployment type (`sku.name`) | Declared capacity | Empty-list foundation fallback capacity |
+|---|---|---|---|---|---|
+| embedding | text-embedding-3-large | 1 | GlobalStandard | 100 | 10 |
+
+Both Bicep and Terraform use `GlobalStandard` for this embedding model. The
+foundation fallback applies when `modelDeploymentList` is empty; it does not
+replace the declared capacity of 100. Deployment names, API versions and vector
+dimensions are unchanged.
+
+[Azure's Global Standard availability table](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability#global-standard)
+lists support for this model/version. Global deployment processing may occur
+outside the resource region. If regional processing is required, explicitly set
+the embedding entry's `sku.name` to `Standard` and verify regional model
+availability and quota.
+
+The example below uses custom capacity 40 for both models, not the declared
+embedding default or the empty-list fallback.
+
 ```json
 "modelDeploymentList": {
   "value": [
@@ -390,7 +408,7 @@ The `modelDeploymentList` parameter defines which AI models to deploy in the Fou
         "version": "1"
       },
       "sku": {
-        "name": "Standard",
+        "name": "GlobalStandard",
         "capacity": 40
       },
       "canonical_name": "EMBEDDING_DEPLOYMENT_NAME",

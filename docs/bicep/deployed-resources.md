@@ -89,11 +89,16 @@ can also differ from native Bicep defaults.
 | AI Foundry account (Cognitive Services `kind=AIServices`) | ✅ | `deployAiFoundry` | S0; billed only per token |
 | AI Foundry project | ✅ | `deployAfProject` | Created inside the account |
 | Model deployment: chat | ✅ | `modelDeploymentList[0]` | `gpt-5-nano`, GlobalStandard, capacity 40 |
-| Model deployment: embeddings | ✅ | `modelDeploymentList[1]` | `text-embedding-3-large`, Standard, capacity 10 |
+| Model deployment: embeddings | ✅ | `modelDeploymentList[1]` | `text-embedding-3-large`, version 1, GlobalStandard, declared capacity 100 (empty-list foundation fallback: 10) |
 | Grounding with Bing | 🟧 | `deployGroundingWithBing` | Root defaults off; when selected, billed per query |
 | Foundry-dedicated AI Search | ✅ 🔧 | `deployAAfAgentSvc` / `aiSearchResourceId` | Standard SKU, **1 partition × 1 replica** (scale up for AI Search read/write SLA) |
 | Foundry-dedicated Storage | ✅ 🔧 | `deployAAfAgentSvc` / `aiFoundryStorageAccountResourceId` | Standard_LRS, Hot |
 | Foundry-dedicated Cosmos DB | ✅ 🔧 | `deployAAfAgentSvc` / `aiFoundryCosmosDBAccountResourceId` | NoSQL, autoscale |
+
+Global embedding deployment processing may occur outside the resource region.
+If regional processing is required, explicitly set the embedding entry's
+`sku.name` to `Standard` and verify regional availability and quota. See
+[model deployment defaults and overrides](parameterization.md#model-deployments).
 
 ### Workload data path
 
@@ -177,7 +182,7 @@ deployGroundingWithBing = true    (explicit scenario choice; native foundation d
 |---|---:|---|
 | AI Foundry account + project | $0 | Per-token model usage |
 | Model: `gpt-5-nano` (GlobalStandard, cap 40) | $0 | ~$0.05 / 1M input tokens, ~$0.40 / 1M output tokens — pay-as-you-go |
-| Model: `text-embedding-3-large` (Standard, cap 10) | $0 | ~$0.13 / 1M tokens |
+| Model: `text-embedding-3-large` (GlobalStandard, declared cap 100; fallback 10) | $0 | ~$0.13 / 1M tokens (illustrative estimate; verify deployment-specific pricing) |
 | Grounding with Bing (S1) | $0 | ~$3 per 1,000 transactions |
 | **Foundry AI Search** (Standard, 1p × 1r) | **~$245** | Index storage; queries scale with QPS. Scale to 3r for read/write SLA (~$735/mo) |
 | Foundry Storage (Standard_LRS, Hot) | ~$1 | ~$0.018 / GB + ~$0.005 / 10K ops |
