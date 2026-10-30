@@ -7,6 +7,7 @@ for all changes and fixes.
 
 | Release | Highlights |
 | --- | --- |
+| [v5.6.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.6.0) | Clear provider-specific infrastructure layout and shared automation. Embeddings now default to Global Standard in Bicep and Terraform, with explicit regional overrides retained. |
 | [v5.5.3](https://github.com/Azure/agent-landing-zone/releases/tag/v5.5.3) | Lower-cost Basic firewall by default for isolated standalone deployments, with matching Bicep/Terraform management networking and topology-aware subnet reservations. |
 | [v5.5.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.5.0) | Integrated per-user knowledge security: native Search document permissions, protected citation downloads and interactive Conditional Access recovery. |
 | [v5.4.0](https://github.com/Azure/agent-landing-zone/releases/tag/v5.4.0) | Integrated Terraform with the native azd lifecycle for [infrastructure-only](deploy-terraform-infra-only.md) and [full-stack](deploy-terraform-full-stack.md) deployment, using Azure Storage remote state. Bicep remains the default. |
