@@ -2,9 +2,14 @@
 
 import datetime
 import hashlib
+import http.client
 from html.parser import HTMLParser
 import json
+import logging
 import math
+import time
+import urllib.error
+import urllib.parse
 import urllib.request
 
 
@@ -82,15 +87,35 @@ def extract(html, key):
     }
 
 
+def read_source(url, *, expected_host="azure.microsoft.com"):
+    request = urllib.request.Request(url, headers={
+        "User-Agent": "AgentLandingZone-PriceCatalog/1.0",
+        "Accept": "application/json" if expected_host == "prices.azure.com" else "text/html",
+    })
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(request, timeout=90) as response:
+                target = urllib.parse.urlparse(response.geturl())
+                if target.scheme != "https" or target.hostname != expected_host or target.username or \
+                        target.password or target.port not in {None, 443}:
+                    raise ValueError("Unexpected official-source redirect")
+                raw = response.read(10_000_001)
+            if len(raw) > 10_000_000:
+                raise ValueError("Unexpected official-source size")
+            return raw.decode("utf-8")
+        except (urllib.error.URLError, TimeoutError, ConnectionError, http.client.IncompleteRead) as error:
+            if isinstance(error, urllib.error.HTTPError) and error.code not in {408, 429, 500, 502, 503, 504}:
+                raise
+            if attempt == 3:
+                logging.error("Official source %s unavailable after 4 attempts: %s", request.full_url, error)
+                raise
+            retry_after = (error.headers or {}).get("Retry-After", "") \
+                if isinstance(error, urllib.error.HTTPError) else ""
+            wait = min(int(retry_after), 120) if retry_after.isdigit() else 10 * (attempt + 1)
+            logging.warning("Official source %s unavailable (%s), retrying in %s seconds (attempt %s/4)",
+                            request.full_url, error, wait, attempt + 2)
+            time.sleep(wait)
+
+
 def collect():
-    result = {}
-    for key, url in SOURCES.items():
-        request = urllib.request.Request(url, headers={"User-Agent": "AgentLandingZone-PriceCatalog/1.0"})
-        with urllib.request.urlopen(request, timeout=90) as response:
-            if response.geturl().split("/")[2] != "azure.microsoft.com":
-                raise ValueError("Unexpected published-pricing redirect")
-            html = response.read(10_000_001)
-        if len(html) > 10_000_000:
-            raise ValueError("Unexpected published-pricing page size")
-        result[key] = extract(html.decode("utf-8"), key)
-    return result
+    return {key: extract(read_source(url), key) for key, url in SOURCES.items()}
