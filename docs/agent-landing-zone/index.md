@@ -55,6 +55,6 @@ commands, validation and rollback.
   [Sizing & cost planner](sizing-cost-planner.md) combines guidance, resource
   choices and editable estimates.
 - **Do I only need Azure resources?** Deploy infra only
-  [with Bicep](deploy-infra-only.md) or [with Terraform](deploy-terraform-infra-only.md).
+  [with&nbsp;Bicep](deploy-infra-only.md) or [with&nbsp;Terraform](deploy-terraform-infra-only.md).
 - **Do I want the supplied application running?** Deploy full stack
-  [with Bicep](deploy-full-stack.md) or [with Terraform](deploy-terraform-full-stack.md).
+  [with&nbsp;Bicep](deploy-full-stack.md) or [with&nbsp;Terraform](deploy-terraform-full-stack.md).
