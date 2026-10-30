@@ -75,12 +75,9 @@
   font: inherit;
 }
 
-.md-typeset p {
-  text-wrap: pretty;
-}
-
+.md-typeset p,
 .md-typeset li {
-  text-wrap: balance;
+  text-wrap: pretty;
 }
 
 [dir] .md-top {
