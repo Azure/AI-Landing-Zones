@@ -92,7 +92,7 @@ resource scope. Deployment roles can differ from application data-access roles.
 
 | Tool | Available path | Boundary to understand |
 | --- | --- | --- |
-| Bicep with `azd` (default) | [Deploy infra only](deploy-infra-only.md) or [Deploy full stack](deploy-full-stack.md). | Product infrastructure at `infra/`, with shared hooks for parameter composition, service configuration, RBAC and application deployment. |
+| Bicep with `azd` (default) | [Deploy infra only](deploy-infra-only.md) or [Deploy full stack](deploy-full-stack.md). | Product Bicep infrastructure at `infra/bicep/`, with shared root `scripts/` hooks for parameter composition, service configuration, RBAC and application deployment. |
 | Terraform with `azd` | [Deploy infra only](deploy-terraform-infra-only.md) or [Deploy full stack](deploy-terraform-full-stack.md); [Terraform overview](terraform.md). | Native provider at `infra/terraform/` in the same product repository. Shared hooks configure services and deploy manifest-pinned applications. Prepare remote state outside workload teardown before first provision. Direct `terraform apply` is not a substitute for this azd lifecycle. |
 | Azure portal | [Portal overview](portal.md). | ARM-based infrastructure with its own defaults and platform-integration behavior. It can create placeholder application resources; it does not execute Agent platform hooks or the hosted image/version workflow. |
 
@@ -133,7 +133,7 @@ Shared groups require owner-reviewed, itemized cleanup.
 ## Resource selection and reuse
 
 The selected application's definition and resolved provider inputs describe
-the resources (`infra/main.parameters.json` for Bicep; the native Terraform
+the resources (`infra/bicep/main.parameters.json` for Bicep; the native Terraform
 adapter and tfvars for Terraform). The default is **`hosted-no-panel`**, with
 `maf_lite` orchestration and native Foundry IQ Blob ingestion.
 

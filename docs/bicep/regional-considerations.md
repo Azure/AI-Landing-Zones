@@ -32,7 +32,7 @@ This is not an exhaustive list; AI Foundry and AI Services model deployments are
 
 !!! info "Regional preflight checks"
     The platform's `azd preprovision` hook invokes
-    `infra/scripts/Invoke-PreflightChecks.ps1`. Its read-only regional pass
+    `scripts/infra/Invoke-PreflightChecks.ps1`. Its read-only regional pass
     checks **subscription drift** vs. the azd environment,
     **provider/location support per resource type** (AI Search, Cosmos DB,
     Container Apps, AI Foundry/Cognitive Services, Key Vault, Storage,

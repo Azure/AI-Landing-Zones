@@ -1,13 +1,13 @@
 # Parameterization
 
 This reference describes native parameters of the Bicep foundation maintained
-in Agent Landing Zone's `infra/`. The platform's root `main.parameters.json`
+in Agent Landing Zone's `infra/bicep/`. The platform's root `main.parameters.json`
 supplies reviewed values and `${VARIABLE_NAME}` substitutions. Use `azd env set`
 only for substitutions actually present in that file; native arrays and objects
 need reviewed file changes.
 
 Agent Landing Zone composes its own root parameter file and regenerates
-`infra/main.parameters.json`. Its definition and topology can override foundation
+`infra/bicep/main.parameters.json`. Its definition and topology can override foundation
 choices. See [Agent configuration](../agent-landing-zone/configuration.md) rather
 than assuming every foundation deploy toggle is an Agent environment variable.
 Execute changes through the [infrastructure](../agent-landing-zone/deploy-infra-only.md)
@@ -100,7 +100,7 @@ Omitting all three inputs from a compatible parameter file uses the defaults. Th
 
 Keep customizations in the platform's reviewed, version-controlled root
 `main.parameters.json`. The platform hooks compose
-`infra/main.parameters.json`; do not patch that generated copy or change the
+`infra/bicep/main.parameters.json`; do not patch that generated copy or change the
 pinned AVM to apply these settings. See
 [foundation customization](accelerator-pattern.md) and the
 [deployment and migration guidance](how-to-deploy.md#solution-storage-profile).
@@ -266,7 +266,7 @@ This parameter is marked `@secure()`.
 | Parameter | Env variable | Description |
 |---|---|---|
 | `existingVnetResourceId` | `EXISTING_VNET_RESOURCE_ID` | Existing VNet to deploy the workload subnets into. Used together with `useExistingVNet=true`. |
-| `hubIntegrationHubVnetResourceId` | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | Resource ID of the hub VNet to peer with. When set and `hubIntegrationCreateHubPeering=true`, the deployment creates the spoke→hub peering automatically (the reverse hub→spoke direction is the operator's responsibility — see `tests/scripts/Add-HubSpokePeering.ps1`). |
+| `hubIntegrationHubVnetResourceId` | `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID` | Resource ID of the hub VNet to peer with. When set and `hubIntegrationCreateHubPeering=true`, the deployment creates the spoke→hub peering automatically (the reverse hub→spoke direction requires the hub owner's authorization and action — see [peering and bootstrap ordering](hub-and-spoke.md#peering-and-bootstrap-ordering)). |
 | `hubIntegrationExistingRouteTableResourceId` | `HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID` | Existing Route Table to attach to the spoke workload subnets. When set, the deployment skips local RT creation and assumes the RT is already configured with the correct default route. |
 
 ### Hub jumpbox / Bastion / NAT

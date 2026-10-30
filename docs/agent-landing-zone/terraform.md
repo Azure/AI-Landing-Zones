@@ -22,7 +22,7 @@ flowchart TB
 
     subgraph infrastructure["Infrastructure provisioning — choose one provider"]
         direction LR
-        bicep["Bicep — default<br/>infra/"]
+        bicep["Bicep — default<br/>infra/bicep/"]
         terraform["Terraform — integrated option<br/>infra/terraform/ · AVM composition"]
     end
 

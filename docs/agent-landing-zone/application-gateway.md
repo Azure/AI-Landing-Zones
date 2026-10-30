@@ -100,7 +100,7 @@ confirm the selected backend is the UI, never ingestion or an old orchestrator.
 Keep the existing hosted deployment inputs. If you choose to preview, first
 regenerate the selected environment's composed parameters: azd 1.37.1 preview
 does **not** run preprovision hooks and can otherwise read stale
-`infra/main.parameters.json` instead of your edited root file.
+`infra/bicep/main.parameters.json` instead of your edited root file.
 
 Select the intended azd environment and activate the prepared Python
 environment. From the platform root on the connected host, run **one**

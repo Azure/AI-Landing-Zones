@@ -58,7 +58,9 @@ a deployment until they and the protected checks in Step 4 are complete.
 Use your reviewed platform revision. Keep
 `manifest.json`, `app-definition.json`, `main.parameters.json`,
 `azure.yaml`, `infra/`, `config/`, `contracts/` and `scripts/` together at its root.
-Infrastructure is under `infra/`. Commit your configuration and compatible component pins
+Bicep is under `infra/bicep/`; Terraform stays under `infra/terraform/`.
+Lifecycle hooks stay in root `scripts/`, with infrastructure helpers in `scripts/infra/`.
+Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
 The downloadable example initially deploys the **Agent Application** with
@@ -416,7 +418,8 @@ After refresh, reviewed environment settings are applied, then the template runs
 
 Preup validates/checks binding before standalone provisioning. Preprovision
 resolves topology using `python -m config.deployment.topology` and composes
-`infra/main.parameters.json`; subsequent hooks use `--describe` to read its JSON.
+`infra/bicep/main.parameters.json`; subsequent hooks use `--describe` to read its JSON.
+This tracked Bicep seed is regenerated; never commit resolved environment values.
 Post-provision configures application services and roles. Provision prepares
 the hosted foundation prerequisites. Deploy automatically builds or reuses the
 immutable image, materializes its application handoff and creates the hosted

@@ -79,6 +79,11 @@ def main():
               "The example must not bypass the legacy warning by default")
 
     ci_steps = pipeline["stages"][0]["jobs"][0]["steps"]
+    ci_body = "\n".join(s.get("bash", "") for s in ci_steps)
+    check("az bicep build --file infra/bicep/main.bicep --stdout" in ci_body,
+          "CI must compile the product Bicep entrypoint from the platform root")
+    check("infra/main.bicep" not in ci_body and "infra/scripts/" not in ci_body,
+          "CI must not use removed product infrastructure paths")
     deploy_steps = deployment["strategy"]["runOnce"]["deploy"]["steps"]
     scripts = []
     python_blocks = 0

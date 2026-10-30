@@ -59,7 +59,7 @@ not successive updates to one deployment.
 Explicit infrastructure parameters include `keyVaultName`,
 `storageAccountName`, `searchServiceName` and `aiFoundryAccountName`.
 They belong in the reviewed root `main.parameters.json`, not the generated
-`infra/main.parameters.json`. The root file does not map these examples to
+`infra/bicep/main.parameters.json`. The root file does not map these examples to
 environment variables.
 
 A nonempty explicit name normally takes precedence. The template can

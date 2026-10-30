@@ -25,5 +25,5 @@ For the Bicep entry point, lifecycle hooks, generated parameters and manifest
 contract, read [How it works](how-it-works.md).
 For supported settings and naming, use [Deployment settings](configuration.md) and
 the [foundation parameter reference](../bicep/parameterization.md).
-Run the supported lifecycle from the platform root: calling `infra/main.bicep`
+Run the supported lifecycle from the platform root: calling `infra/bicep/main.bicep`
 directly omits required validation, configuration and application work.

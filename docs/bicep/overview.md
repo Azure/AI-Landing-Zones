@@ -1,12 +1,13 @@
 # Bicep foundation overview
 
 The AI Landing Zone Bicep foundation is maintained in
-[Azure/agent-landing-zone under `infra/`](https://github.com/Azure/agent-landing-zone/tree/main/infra).
+[Azure/agent-landing-zone under `infra/bicep/`](https://github.com/Azure/agent-landing-zone/tree/main/infra/bicep).
 It is repository-owned source, reviewed and released with Agent Landing Zone,
 alongside application composition, service configuration and deployment hooks.
 Run the lifecycle from the Agent Landing Zone repository root, not `infra/`.
 
-![Architecture Diagram](https://raw.githubusercontent.com/Azure/agent-landing-zone/main/infra/media/Architecture%20Diagram.png)
+See the [AI Landing Zone architecture](../architecture/design-checklist.md)
+for the platform design context.
 
 ## Deployment modes
 
@@ -24,9 +25,8 @@ option for approved, short-lived evaluations without sensitive data.
 | Self-contained | `standalone`; use `NETWORK_ISOLATION=true` for the recommended private network | [Standalone network](standalone.md) |
 | Existing hub integration | `ailz-integrated`; explicit private networking, hub routing, peering, DNS and shared-service inputs | [Hub-and-spoke network](hub-and-spoke.md) |
 
-The hub test fixture is not a third production topology. Neither preset
-automatically supplies an operational hub, DNS resolver or connected deployment
-host.
+Neither preset automatically supplies an operational hub, DNS resolver or
+connected deployment host.
 
 ## What gets deployed
 

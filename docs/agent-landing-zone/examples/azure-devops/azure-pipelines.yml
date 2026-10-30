@@ -30,7 +30,7 @@ stages:
         python -m pip install -r config/requirements.txt
         python -m config.appdefinition --validate app-definition.json
         python -m json.tool manifest.json >/dev/null
-        az bicep build --file infra/main.bicep --stdout >/dev/null
+        az bicep build --file infra/bicep/main.bicep --stdout >/dev/null
       workingDirectory: $(Pipeline.Workspace)/s/agent-landing-zone
       env:
         EXPECTED_COMMIT: $(Build.SourceVersion)

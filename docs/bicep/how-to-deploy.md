@@ -135,7 +135,8 @@ The rule grants network eligibility, not data permissions. The scanner's managed
 Use the actual `HUB_INTEGRATION_*` and `EXISTING_*_RESOURCE_ID` mappings
 listed in the [hub-and-spoke reference](hub-and-spoke.md#hub-integration-inputs).
 A deployment-mode label alone does not establish routing, private DNS or access.
-Test-hub fixtures are not production hub setup.
+The hub and DNS owners must authorize and prepare the shared resources and
+complete manually managed reverse peering.
 
 ## Next steps
 - [Public Ingress with Application Gateway](public-ingress.md) — Publish a private Container App through Application Gateway WAF v2

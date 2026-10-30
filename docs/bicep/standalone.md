@@ -20,7 +20,7 @@ The network/security owners approve addresses, egress and public exceptions.
 Confirm regional capacity, resource-provider registration and scoped deployment
 permissions before provisioning.
 
-Agent Landing Zone owns the foundation under `infra/` and runs it through
+Agent Landing Zone owns the Bicep foundation under `infra/bicep/` and runs it through
 platform lifecycle hooks. Do not use a separate foundation checkout.
 The [inventory and cost estimates](deployed-resources.md) describe foundation
 building blocks; selected application resources can differ.
@@ -83,7 +83,7 @@ The NAT gateway supports its configured subnet; it is not a firewall or a
 substitute for reviewing effective routes. Inspect the local firewall route and
 required destinations in the
 [network isolation reference](../agent-landing-zone/network-isolation.md)
-and [foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep).
+and [foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/bicep/modules/networking/azure-firewall.bicep).
 Agent platform build egress also includes its own dependency-specific inputs.
 An ACR Tasks pool does not make the deployment host VNet-connected.
 

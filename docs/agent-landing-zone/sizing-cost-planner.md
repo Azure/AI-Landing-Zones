@@ -95,7 +95,7 @@ hide:
         <p>Use representative nonproduction tests with response-time, error-rate, ingestion-delay and concurrency targets. Include real tools, document sizes, authentication and document allow/deny behavior. Traces distinguish model throttling, Search limits, tool waits and host CPU/memory pressure. Compare before and after a capacity change.</p>
         <span id="turn-the-result-into-a-cost-plan"></span>
         <h3 id="capacity-and-cost">Apply reviewed settings</h3>
-        <p>Keep platform inputs in the root <code>main.parameters.json</code>. <code>infra/main.parameters.json</code> and Terraform inputs are generated. Verify the composed deployment, component versions and actual metrics rather than treating placeholders as measured capacity. Preserve Bicep/Terraform parity and use the <a href="../deploy-infra-only/">infrastructure</a> or <a href="../deploy-full-stack/">full-stack</a> runbook for execution.</p>
+        <p>Keep platform inputs in the root <code>main.parameters.json</code>. The tracked Bicep seed <code>infra/bicep/main.parameters.json</code> is regenerated. Terraform inputs and its preflight-only diagnostic <code>infra/shared/main.parameters.json</code> are generated and ignored. Never commit resolved environment values. Verify the composed deployment, component versions and actual metrics rather than treating placeholders as measured capacity. Preserve Bicep/Terraform parity and use the <a href="../deploy-infra-only/">infrastructure</a> or <a href="../deploy-full-stack/">full-stack</a> runbook for execution.</p>
       </details>
       <div id="demand-metrics" class="demand-metrics"></div>
       <div id="assessment-verdict" class="assessment-verdict"></div>

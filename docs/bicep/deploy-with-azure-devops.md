@@ -10,7 +10,7 @@ for runner prerequisites, federated service connections, protected
 Environments, stage-specific inputs and source promotion.
 
 The foundation is maintained in
-[Azure/agent-landing-zone under `infra/`](https://github.com/Azure/agent-landing-zone/tree/main/infra).
+[Azure/agent-landing-zone under `infra/bicep/`](https://github.com/Azure/agent-landing-zone/tree/main/infra/bicep).
 Pipeline jobs must retain the platform files and execute lifecycle commands
 from the repository root. Do not use a separate foundation checkout or assume
 its pipeline paths and lifecycle are interchangeable with the platform.

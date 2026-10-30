@@ -188,7 +188,7 @@ uses `EXISTING_LOG_ANALYTICS_WORKSPACE_RESOURCE_ID` and, when applicable,
 Apply the [hub-and-spoke DNS and peering contract](../bicep/hub-and-spoke.md)
 before provisioning. A network operator may need to complete reverse peering
 and DNS links as soon as a fresh spoke VNet exists, before bootstrap can finish.
-Use an approved production hub, not the `infra/tests/hub/` fixture.
+Use an existing, approved production hub with its network and DNS owners.
 
 #### Public service endpoints
 
@@ -223,8 +223,8 @@ one value, such as `NETWORK_ISOLATION`. Put settings containing lists or groups
 of related fields, such as the complete address plan, `allowedIpRanges`, Storage
 controls and `publicIngress`, in the reviewed **root** `main.parameters.json`.
 
-Platform hooks regenerate `infra/main.parameters.json`;
-do not edit that generated copy. The
+Platform hooks regenerate the tracked Bicep seed `infra/bicep/main.parameters.json`;
+do not edit that generated copy or commit resolved environment values. The
 [parameter reference](../bicep/parameterization.md) describes foundation inputs;
 [Deployment settings](configuration.md) describes platform composition and overrides.
 
@@ -268,7 +268,7 @@ preparation is needed only if you choose to preview first.
 
 !!! warning "Preview preparation can create resource groups"
     With azd 1.37.1, `azd provision --preview` does **not** run preprovision
-    hooks. It reads the existing `infra/main.parameters.json`, which may still
+    hooks. It reads the existing `infra/bicep/main.parameters.json`, which may still
     be the checked-in seed or another environment's composition, and cannot
     bootstrap missing additional destination groups.
 

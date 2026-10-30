@@ -31,11 +31,6 @@ The deployment host needs private DNS resolution and network/data-plane access.
 An ACR Tasks pool is not a connected deployment host. Bastion is interactive VM
 access, not a VPN for a workstation.
 
-!!! warning "Test fixtures are not shared-platform deployments"
-    Foundation `infra/tests/hub/` and `infra/tests/scripts/` simulate a hub. Do not deploy
-    them into an operational connectivity subscription or copy their empty
-    route, disabled Search, skipped bootstrap or skipped preflight settings.
-
 ## Address and subnet contract
 
 <a id="2-initialize-and-plan-addresses"></a>
@@ -79,7 +74,7 @@ permissions and routes before choosing a shared table.
 
 Allow required spoke source CIDRs and destinations before bootstrap, image pulls
 and data-plane configuration. Review the
-[foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep)
+[foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/bicep/modules/networking/azure-firewall.bicep)
 and the Agent platform's [build-egress requirements](../agent-landing-zone/network-isolation.md).
 Check return paths, DNS transport, NSGs and forwarded traffic rather than
 opening unrestricted Internet access. Peering is not transitive.

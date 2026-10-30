@@ -154,7 +154,7 @@ window.architecture = {
       sizing: "<strong>Plan quota, project boundaries and private access.</strong> Project count is not hosted compute or model capacity.",
       detail: "Includes the Foundry Agent Service control-plane configuration and capability host. Runtime compute, model usage and backing resources have their own rows.",
       billingNote: "No separate project allocation added. Runtime and service usage are separate.",
-      parameter: "infra/main.bicep: aiFoundry; deployAfProject; deployAAfAgentSvc"
+      parameter: "infra/bicep/main.bicep: aiFoundry; deployAfProject; deployAAfAgentSvc"
     }, 1);
     add({
       id: "foundry-tools", group: "foundry", name: "Foundry Tools, connections & evaluations",
@@ -162,7 +162,7 @@ window.architecture = {
       description: "Connects tools and knowledge to agents and supports evaluation workflows.",
       sizing: "<strong>Budget each tool and evaluation execution.</strong> Evaluation traffic adds model tokens and telemetry, not another project allocation.",
       billingNote: "Configuration is represented here. Executed tools, evaluations and models are not free.",
-      parameter: "infra/main.bicep: aiFoundryConnectionSearch, aiFoundryConnectionStorage, aiFoundryConnectionInsights"
+      parameter: "infra/bicep/main.bicep: aiFoundryConnectionSearch, aiFoundryConnectionStorage, aiFoundryConnectionInsights"
     }, 1);
     add({
       id: "additional-agents", group: "foundry", name: "Additional hosted agents",
@@ -212,7 +212,7 @@ window.architecture = {
       settings: input("backingStorageGB", "Backing storage GB / month", 0, 50000),
       sizing: "<strong>Measure agent artifacts, files and retention.</strong> Do not reuse the application's corpus size as measured backing storage.",
       detail: "Standard_LRS is sourced from the deployment. Hot storage and 10 GB are illustrative. This row prices base stored capacity only and caps the sample below the first 51,200 GB tier. Operations, retrieval, retained versions and transfer are excluded.",
-      parameter: "main.parameters.json: aiFoundryStorageSku; infra/main.bicep: aiFoundryStorageAccount"
+      parameter: "main.parameters.json: aiFoundryStorageSku; infra/bicep/main.bicep: aiFoundryStorageAccount"
     }, 1, () => [bill(find("storage", "Hot LRS", "Hot LRS Data Stored", "1 GB/Month", 0, s),
       s.backingStorageGB, "usage", "Backing GB-month")]);
     add({
@@ -226,7 +226,7 @@ window.architecture = {
         input("backingBackupGB", "Backup data, GB-month", 0, 1000000),
       sizing: "<strong>Inspect the actual service-created databases and containers.</strong> Peak RU/s, hot partitions, 429s and retention determine capacity.",
       detail: "The fresh backing account is provisioned, not serverless. Microsoft documents three initial 1,000-RU/s containers and two more for Responses agents. The starting budget assumes five distinct manual 1,000-RU/s offers, 10 GB transactional storage and 10 GB backup, in one non-zone-redundant region. These are explicit billing hypotheses, not measured service-created settings or deployment guarantees. Sum each distinct offer once, not every container on a shared offer. For autoscale enter the average of billed hourly throughput, respecting each offer's 10% floor, not consumed RU or configured maximum alone. The 1.5x autoscale rate is applied once. Bicep inherits Continuous30Days from its pinned AVM. Terraform does not explicitly set that backup policy, so confirm the effective policy or select the included periodic-copy hypothesis. Continuous30Days backup is GB-month, not GB multiplied by retention days. Extra regions, manual-throughput zone surcharges, restores and excess periodic copies need separate scenarios.",
-      parameter: "infra/modules/ai-foundry/foundry/modules/cosmosDb.bicep; infra/terraform/main.foundry.tf",
+      parameter: "infra/bicep/modules/ai-foundry/foundry/modules/cosmosDb.bicep; infra/terraform/main.foundry.tf",
       sourceURL: "https://learn.microsoft.com/azure/foundry/agents/how-to/use-your-own-resources",
       sourceLabel: "Foundry service-created Cosmos containers and capacity"
     }, 1, () => {
@@ -252,7 +252,7 @@ window.architecture = {
         input("cosmosBackupGB", "Continuous30Days backup GB-month / account", 0, 1000000),
       sizing: "<strong>Measure RU per operation, partition distribution and retention.</strong> Serverless consumed RU is not provisioned RU/s. Validate burst and storage limits.",
       detail: "DEPLOY_COSMOS_DB defaults to false. When enabled the account uses EnableServerless, no free tier, Session consistency and Continuous30Days backup. This what-if assumes 5M RU, 1 GB transactional storage and a separate 1 GB backup-data hypothesis per account, not measured usage. Continuous backup storage is priced per GB-month. Database/container configuration is part of the account. Restores, analytical storage and transfer require separate assumptions. Its private endpoint appears separately and follows this quantity.",
-      parameter: "main.parameters.json: deployCosmosDb; infra/main.bicep: cosmosDBAccount, cosmosSqlDatabase"
+      parameter: "main.parameters.json: deployCosmosDb; infra/bicep/main.bicep: cosmosDBAccount, cosmosSqlDatabase"
     }, s.applicationCosmos, () => [
       bill(find("cosmos", "RUs", "1M RUs", "1M", 0, s, "Azure Cosmos DB serverless"), s.applicationCosmos * s.cosmosMRU, "usage", "Million consumed RU"),
       bill(find("cosmos", "RUs", "Data Stored", "1 GB/Month", 0, s, "Azure Cosmos DB"), s.applicationCosmos * s.cosmosGB, "usage", "Application GB-month"),
@@ -261,8 +261,8 @@ window.architecture = {
     ]);
 
     for (const [id, name, source] of [
-      ["foundry-vault", "Foundry backing Key Vault", "infra/modules/ai-foundry/foundry/modules/keyVault.bicep"],
-      ["application-vault", "Application Key Vault", "main.parameters.json: deployKeyVault; infra/modules/application/key-vault.bicep"]
+      ["foundry-vault", "Foundry backing Key Vault", "infra/bicep/modules/ai-foundry/foundry/modules/keyVault.bicep"],
+      ["application-vault", "Application Key Vault", "main.parameters.json: deployKeyVault; infra/bicep/modules/application/key-vault.bicep"]
     ]) {
       add({
         id, group: "application", name, sku: "Standard", unit: "vault",
@@ -280,7 +280,7 @@ window.architecture = {
       description: "Shared hosting boundary for frontend and optional Container Apps.",
       sizing: "<strong>Plan subnet space, workload profiles and private ingress together.</strong> An environment is not one billed node per application.",
       detail: "The environment and its private endpoint are present in this isolated reference. Dedicated-node capacity and its plan-management meter are already in the Container Apps profile row. This row adds the service-specific Environment Private Endpoint hourly meter, distinct from the network private-endpoint allocation shown under Networking. Other environment-specific meters are not assumed included.",
-      parameter: "main.parameters.json: deployContainerEnv; infra/modules/application/container-environment.bicep"
+      parameter: "main.parameters.json: deployContainerEnv; infra/bicep/modules/application/container-environment.bicep"
     }, 1, () => [bill(find("compute", "Environment", "Environment Private Endpoint", "1 Hour", 0, s), s.hours, "fixed", "Private environment hours")]);
     for (const [id, field, name, count, sku, detail] of [
       ["frontend-app", null, "Frontend Container App", 1, "main / 0.5 vCPU / 1 GiB", "One frontend remains in the composed hosted-no-panel application list. Min/max replicas default to 1."],
@@ -294,7 +294,7 @@ window.architecture = {
         sizing: "<strong>Size replicas, CPU and memory before increasing nodes.</strong> An extra app can fit an existing node. Adding it must not automatically bill a second full node.",
         detail: `${detail} Each included app is modelled with one replica. These requests feed the profile's fit warning. Shared-node costs are not added again here. Platform overhead and production headroom still need validation.`,
         billingNote: "Compute is counted in Container Apps profile, not charged again per app.",
-        parameter: "main.parameters.json: containerAppsList; infra/main.bicep: containerApps; composed hosted-no-panel topology"
+        parameter: "main.parameters.json: containerAppsList; infra/bicep/main.bicep: containerApps; composed hosted-no-panel topology"
       }, count);
     }
     add({
@@ -312,7 +312,7 @@ window.architecture = {
           "Includes idle time. No automatic scale-to-zero is assumed.") + "</span>",
       sizing: "<strong>S1 has 2 vCPU and 3 GB per agent.</strong> Size tier for build memory/CPU, instance count for parallel jobs. All allocated time, including idle, is billable.",
       detail: "The isolated deployment creates an S1 pool with one Linux agent. The initial billing hypothesis is one deployment per day for 30 days, with 40 allocated minutes per deployment including startup, build and shutdown: 20 allocated hours/month. This is not a measured build duration or shipped scale-to-zero automation. The operator or pipeline must allocate the pool before builds and scale it to zero afterwards. If it remains allocated for 730 hours, budget all 730 hours instead. Cost = allocated hours x 3,600 x 2 vCPU x the published Dedicated agent pool allocation rate. At $0.0001/vCPU-second, 20 hours costs $14.40 and 730 hours costs $525.60. No shared-task free allowance is deducted. The feature is Preview and requires Premium ACR. Both offered regions are documented preview locations.",
-      parameter: "main.parameters.json: deployAcrTaskAgentPool; infra/main.bicep: acrTaskAgentPoolTier, acrTaskAgentPoolCount"
+      parameter: "main.parameters.json: deployAcrTaskAgentPool; infra/bicep/main.bicep: acrTaskAgentPoolTier, acrTaskAgentPoolCount"
     }, 1, () => [bill(publishedPrice("acrDedicatedPool", "allocation", s), buildHours * 3600 * 2,
       "fixed", "Allocated S1 vCPU-seconds, including idle")]);
     add({
@@ -342,7 +342,7 @@ window.architecture = {
         description: `Private connection for ${name}. Counts its endpoint, not one charge per private IP or DNS zone.`,
         sizing: "<strong>Count service/subresource connections.</strong> Validate DNS resolution, subnet addresses and processed data. Reuse does not make an allocated endpoint free.",
         detail: "The baseline has 12 independently identified private endpoints. Optional application Cosmos, Standard v2 APIM and Speech add linked endpoints when included. Premium v2 APIM is modelled with VNet injection instead. This row includes hourly endpoint allocation only. The API publishes the applicable commercial price under Global. Endpoint data-processing volume is priced once in its separate shared row, avoiding multiplication of the same traffic across all endpoints.",
-        parameter: "infra/main.bicep: _peList, privateEndpointPrivateLinkScope; Foundry associated-resource modules"
+        parameter: "infra/bicep/main.bicep: _peList, privateEndpointPrivateLinkScope; Foundry associated-resource modules"
       }, count, () => [bill(find("private", "Standard", "Standard Private Endpoint", "1 Hour", 0, s, "Virtual Network Private Link", "Global"), count * s.hours, "fixed", "Endpoint-hours")]);
     }
     add({
@@ -365,7 +365,7 @@ window.architecture = {
       settings: input("dnsQueries", "Private DNS queries (millions / month)", 0, 1000000, 0.1),
       sizing: "<strong>Count zones, links and queries separately.</strong> Reuse zones across matching services, not one zone per endpoint.",
       detail: "Fresh defaults create cognitive services, OpenAI, AI services, Search, Cosmos, Blob, Key Vault, App Configuration, Container Apps, ACR and five Monitor zones (Application Insights, Monitor, OMS, ODS and agentsvc). Shared Search/Blob/Cosmos zones are not duplicated for application and backing resources. This sample uses global commercial DNS zone/query rates, explicitly not another region's service price. Record-set overages and DNS Resolver are excluded.",
-      parameter: "infra/main.bicep: _dnsZonesList"
+      parameter: "infra/bicep/main.bicep: _dnsZonesList"
     }, dnsZones, () => [
       bill(find("dns", "Private", "Private Zone", "1", 0, s, "Azure DNS", ""), dnsZones * s.hours / 730, "fixed", "Zone-months (hours / 730)"),
       bill(find("dns", "Private", "Private Queries", "1M", 0, s, "Azure DNS", ""), s.dnsQueries, "usage", "Million private DNS queries")
@@ -377,7 +377,7 @@ window.architecture = {
       sizing: "<strong>Allocate IP headroom for scale and maintenance.</strong> A subnet reserves addresses but does not deploy the service named after it.",
       detail: "Default subnet inventory: agent, pe, application-pe, AzureBastion, AzureFirewall, AzureFirewallManagement, AppGateway, jumpbox, ACA environment, DevOps build agents, Power Platform and AI Gateway. GatewaySubnet is separately optional (initial 0). AppGateway and AI Gateway subnets can exist while their appliances remain at 0. Public gateway ingress does not disable private backend isolation.",
       billingNote: "No VNet/subnet allocation added. Gateways, endpoints, peering and transfer are separate.",
-      parameter: "main.parameters.json: deploy*Subnet; infra/main.bicep: selectedSubnetDefinitions"
+      parameter: "main.parameters.json: deploy*Subnet; infra/bicep/main.bicep: selectedSubnetDefinitions"
     }, 1);
     for (const [id, name, description, detail] of [
       ["nsg", "Network security groups", "Subnet traffic controls, including Bastion and AI Gateway boundaries.", "Exact NSG instances follow selected subnet definitions. App Gateway's NSG follows its optional gateway. They are configuration resources, not extra firewall instances."],
@@ -388,7 +388,7 @@ window.architecture = {
         id, name, description, group: "networking", sku: "Configuration", unit: "configuration set",
         sizing: "<strong>Size policy complexity and operational ownership.</strong> These controls do not replace billed packet-processing services.",
         detail, billingNote: "No separate base allocation added. Diagnostics and related network services are separate.",
-        parameter: "infra/main.bicep; infra/modules/networking"
+        parameter: "infra/bicep/main.bicep; infra/bicep/modules/networking"
       }, 1);
     }
     const publicIPs = [
@@ -402,7 +402,7 @@ window.architecture = {
         description: "Dedicated management or egress address, separate from the optional UI gateway IP.",
         sizing: "<strong>Count allocated addresses, not active requests.</strong> An idle service can retain a billable public IP.",
         detail: "Fresh Basic Firewall uses separate data-plane and management addresses. Bastion and NAT each have their own address. The optional WAF gateway address is already listed separately and is not included again here.",
-        parameter: "infra/modules/networking: azure-firewall.bicep, bastion.bicep, nat-gateway.bicep"
+        parameter: "infra/bicep/modules/networking: azure-firewall.bicep, bastion.bicep, nat-gateway.bicep"
       }, count, () => [bill(find("publicip", "Standard", "Standard IPv4 Static Public IP", "1 Hour", 0, s, "IP Addresses"),
         count * s.hours, "fixed", "Allocated public-IP-hours")]);
     }
@@ -425,7 +425,7 @@ window.architecture = {
       description: "Private administrative workstation for the isolated standalone deployment.",
       sizing: "<strong>Size operator tools and simultaneous sessions.</strong> Chat traffic is not its workload. Allocation hours, OS and disk are independent costs.",
       detail: "With isolation enabled, no existing-resource IDs and the legacy deployVM=true fallback, the fresh reference creates jumpbox, Bastion and NAT. Windows Server 2022 and Standard_D2s_v3 are sourced defaults. This row prices Windows PAYG compute only, not Azure Hybrid Benefit or the disk listed separately.",
-      parameter: "main.parameters.json: vmSize, deployVM; infra/main.bicep: _deployJumpbox, testVm"
+      parameter: "main.parameters.json: vmSize, deployVM; infra/bicep/main.bicep: _deployJumpbox, testVm"
     }, 1, () => [bill(find("vm", "D2s v3", "D2s v3", "1 Hour", 0, s, "Virtual Machines DSv3 Series Windows"), s.hours, "fixed", "Windows VM-hours")]);
     add({
       id: "jumpbox-disk", group: "operations", name: "Jumpbox OS disk",
@@ -433,7 +433,7 @@ window.architecture = {
       description: "Persistent administrative VM disk, charged independently from VM runtime.",
       sizing: "<strong>Check provisioned tier, IOPS and throughput.</strong> A requested 250 GiB disk is billed in its managed-disk size tier.",
       detail: "The template requests Standard_LRS, 250 GiB. S15 (256 GiB) is used for this tiered size estimate. Disk allocation persists if compute is deallocated. Transactions, snapshots and backups are excluded.",
-      parameter: "infra/main.bicep: testVm.osDisk"
+      parameter: "infra/bicep/main.bicep: testVm.osDisk"
     }, 1, () => [bill(find("disk", "S15 LRS", "S15 LRS Disk", "1/Month", 0, s, "Standard HDD Managed Disks"), s.hours / 730, "fixed", "Disk-months (hours / 730)")]);
     add({
       id: "bastion", group: "operations", name: "Azure Bastion",
@@ -441,7 +441,7 @@ window.architecture = {
       description: "Administrative access to the private jumpbox, separate from end-user application ingress.",
       sizing: "<strong>Size concurrent administrative sessions and scale units.</strong> Standard is the sourced tier. Native-client tunneling is off initially.",
       detail: "Base host allocation is priced, with its public IP listed separately. Additional scale units, outbound transfer and session-recording storage are excluded.",
-      parameter: "main.parameters.json: bastionSkuName; infra/main.bicep: _deployBastion"
+      parameter: "main.parameters.json: bastionSkuName; infra/bicep/main.bicep: _deployBastion"
     }, 1, () => [bill(find("bastion", "Standard", "Standard Gateway", "1 Hour", 0, s, "Azure Bastion"), s.hours, "fixed", "Bastion-hours")]);
     add({
       id: "nat", group: "operations", name: "NAT Gateway",
@@ -450,7 +450,7 @@ window.architecture = {
       settings: input("natGB", "Processed GB / month", 0, 1000000),
       sizing: "<strong>Measure SNAT port demand and processed traffic.</strong> Monthly GB does not establish connection-rate capacity.",
       detail: "The fresh isolated jumpbox path creates its own Standard NAT Gateway. 10 GB/month is hypothetical. The API publishes the applicable commercial Standard rates under Global, not a regional fallback. Its public IP is priced separately. Transfer and additional addresses are excluded.",
-      parameter: "infra/main.bicep: _deployNatGateway; infra/modules/networking/nat-gateway.bicep"
+      parameter: "infra/bicep/main.bicep: _deployNatGateway; infra/bicep/modules/networking/nat-gateway.bicep"
     }, 1, () => [
       bill(find("nat", "Standard", "Standard Gateway", "1 Hour", 0, s, "NAT Gateway", "Global"), s.hours, "fixed", "NAT gateway-hours"),
       bill(find("nat", "Standard", "Standard Data Processed", "1 GB", 0, s, "NAT Gateway", "Global"), s.natGB, "usage", "NAT processed GB")
@@ -505,7 +505,7 @@ window.architecture = {
         sizing: "<strong>Plan scope, ownership and least privilege.</strong> Configuration objects do not represent additional application servers.",
         detail: "The inventory represents a configuration set, not an asserted count of individual role assignments or principals. Workload policy sets start at 0 because the pictured governance policy is not established by this template as an automatically deployed assignment. Service-specific policy/assessment features can have separate charges.",
         billingNote: "No separate base allocation added. Paid governance/security features remain separate.",
-        parameter: "infra/main.bicep: managed identities, role-assignment modules, deploymentTags; architecture governance"
+        parameter: "infra/bicep/main.bicep: managed identities, role-assignment modules, deploymentTags; architecture governance"
       }, id === "policies" ? s.workloadPolicies : 1);
     }
     for (const [field, name, unit, description] of [

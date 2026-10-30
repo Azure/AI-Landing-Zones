@@ -7,7 +7,7 @@ This page answers the two questions operators always ask before approving an AI 
 
 !!! info "Foundation scope"
     This inventory describes **native Bicep foundation building blocks** under
-    Agent Landing Zone's `infra/`, not the
+    Agent Landing Zone's `infra/bicep/`, not the
     Agent application footprint. Agent Landing Zone composes its own services,
     topology and component selection. Foundry backing resources are separate
     from application stores, and conditional creation/reuse applies across all

@@ -176,7 +176,7 @@
           select(backing ? "backingPartitions" : "searchPartitions",
             limits.partitions.filter(count => replicas * count <= limits.units), "Partitions (simulation)"),
         detail: `Monthly capacity = ${replicas} replicas x ${partitions} partitions x ${s.hours} hours. Both Search services start at Standard with one replica and one partition. SKU and counts are literals in the shipped Bicep, not root environment scaling parameters. Changes here are cost simulations, not validated deployable combinations. Availability requirements, vector/index limits, regional quota and query latency must be checked. Semantic ranker, agentic retrieval and native ingestion need separate usage assumptions. Model tokens are priced in their own rows.`,
-        parameter: `infra/main.bicep: ${backing ? "Foundry Agent Service backing Search" : "searchService"}`
+        parameter: `infra/bicep/main.bicep: ${backing ? "Foundry Agent Service backing Search" : "searchService"}`
       }, () => [bill(find("search", sku, `${sku} Unit`, "1 Hour", 0, s), replicas * partitions * s.hours, "fixed", "Search units x hours")]));
     }
 
@@ -191,7 +191,7 @@
         input("reads", "Read operations (10K units)", 0, 1000000, 0.1) +
         input("writes", "Write operations (10K units)", 0, 1000000, 0.1),
       detail: "Storage uses tiered GB-month prices plus read/write operation units. The example is 10,000 text documents / 10 GB, 50,000 reads and 10,000 writes per month. The separate embedding row includes 5M recurring tokens. Initial ingestion of 50M tokens is a separate one-time budget. Document bytes do not reliably predict tokens, chunks, vectors or index bytes. List operations, retained versions, extractions, Cool data retrieval, early deletion and transfer require separate usage assumptions. Changing access tier may require changes beyond a deployment parameter.",
-      parameter: "main.parameters.json: deployStorageAccount; infra/main.bicep: storage account Standard_LRS"
+      parameter: "main.parameters.json: deployStorageAccount; infra/bicep/main.bicep: storage account Standard_LRS"
     }, () => {
       const tier = s.storageTier.split(" ")[0];
       const tiers = records("storage", s).filter(r => r.skuName === s.storageTier &&
@@ -244,7 +244,7 @@
       signal: "Premium is retained for private connectivity, not an optional cost upgrade.",
       quantity: `1 registry<br><span class="setting-hint">${number(s.hours / 24)} billed days / month</span>`,
       detail: "The isolated deployment uses Premium for private connectivity. Network isolation cannot be disabled in this planner, and the registry cannot be downgraded. This row prices base registry allocation. The dedicated ACR build pool is priced separately under Operations & build. Image storage beyond the Premium allowance, shared-task executions, additional replicas and transfer need additional usage assumptions.",
-      parameter: "infra/main.bicep: containerRegistry.skuName"
+      parameter: "infra/bicep/main.bicep: containerRegistry.skuName"
     }, () => [bill(find("registry", "Premium", "Premium Registry Unit", "1/Day", 0, s), s.hours / 24, "fixed", "Registry-days")]));
     rows.push(priced({
       id: "appconfig", group: "application", name: "App Configuration", tag: "Deployment default",
@@ -255,7 +255,7 @@
       signal: "Capacity selection is not based on end-user count alone.",
       quantity: `1 store<br><span class="setting-hint">${number(s.hours / 24)} billed days / month</span>`,
       detail: "The shipped App Configuration module declares Standard. Other choices require a reviewed IaC change. Sample prices only the base instance, not operations or snapshot overages, replica instances or multi-region failover.",
-      parameter: "infra/modules/application/app-configuration-store.bicep: store.sku"
+      parameter: "infra/bicep/modules/application/app-configuration-store.bicep: store.sku"
     }, () => [bill(find("appconfig", s.appconfig, `${s.appconfig} Instance`, "1/Day", 0, s), s.hours / 24, "fixed", "Store-days")]));
 
     const firewall = {
@@ -270,7 +270,7 @@
       quantity: input("firewallGB", "Processed GB / month", 0, 1000000) +
         `<span class="setting-hint">${number(s.hours)} allocated hours / month</span>`,
       detail: "Network isolation and a local firewall remain part of this standalone reference. Basic is a firewall SKU, not a non-isolated deployment mode. Only standalone regional SKUs with exact deployment and data-processing prices are offered. Sweden Central's published Basic secured-virtual-hub rate is not borrowed for this VNet topology. Where standalone Basic pricing is absent, the regional comparison explicitly uses Standard, which needs an AZURE_FIREWALL_SKU IaC change. Basic has management networking prerequisites. Public IP allocation and entered log ingestion are priced in separate rows. Extra Standard/Premium capacity units and transfer require additional assumptions.",
-      parameter: "main.parameters.json: AZURE_FIREWALL_SKU; infra/main.bicep: _localFirewall"
+      parameter: "main.parameters.json: AZURE_FIREWALL_SKU; infra/bicep/main.bicep: _localFirewall"
     };
     rows.push(priced(firewall, () => [
         bill(find("firewall", s.firewall, `${s.firewall} Deployment`, "1 Hour", 0, s), s.hours, "fixed", "Firewall deployment hours"),
@@ -286,7 +286,7 @@
       signal: "A provisioned gateway has a fixed hourly charge, even with no traffic.",
       quantity: input("gatewayCU", "Average billed CUs / gateway", 0, 10000, 0.1),
       detail: "The public-ingress runbook uses WAF_v2, Prevention, OWASP CRS 3.2 and autoscale minCapacity 0 / maxCapacity 2. This fresh-deployment reference starts with publicIngress.enabled=false, so gateway and associated public IP quantities start at 0. When included, cost = hours x (fixed gateway rate + average billed capacity units x CU rate). The initial 1 CU is a hypothetical usage input, not a deployed setting or a conversion from autoscale instances. The Standard Regional static IPv4 public IP is priced separately below. WAF policy is part of this WAF_v2 design, not another gateway allocation. Dedicated subnet default: /27, with /24 recommended for growth. Live HTTPS needs a hostname, Key Vault certificate and explicit client CIDRs. Certificate operations, diagnostics, transfer and optional CAPTCHA are excluded. Setting quantity back to 0 only removes this simulated allocation. Setting publicIngress.enabled=false in an incremental deployment does not delete existing ingress resources.",
-      parameter: "main.parameters.json: publicIngress.enabled; infra/modules/networking/public-ingress.bicep",
+      parameter: "main.parameters.json: publicIngress.enabled; infra/bicep/modules/networking/public-ingress.bicep",
       sourceURL: "https://azure.github.io/AI-Landing-Zones/agent-landing-zone/application-gateway/",
       sourceLabel: "Application Gateway runbook"
     }, () => [
@@ -304,7 +304,7 @@
       signal: "The address is billed while allocated, not only while serving requests.",
       quantity: `${number(s.appGateway)} public IP${s.appGateway === 1 ? "" : "s"}<br><span class="setting-hint">Linked quantity, default: 0</span>`,
       detail: "The public-ingress module creates one Standard Regional static IPv4 public IP for its WAF_v2 gateway. Quantity follows the gateway selector to prevent omitting or double-counting this dependency. Hourly address allocation is priced separately from WAF_v2 fixed and capacity-unit charges. No DNS, data-transfer or other platform public IP costs are included in this row. Quantity 0 describes omission from this fresh estimate, not deletion of an existing address.",
-      parameter: "infra/modules/networking/public-ingress.bicep: publicIp",
+      parameter: "infra/bicep/modules/networking/public-ingress.bicep: publicIp",
       sourceURL: "https://azure.github.io/AI-Landing-Zones/agent-landing-zone/application-gateway/",
       sourceLabel: "Application Gateway runbook"
     }, () => [
@@ -322,7 +322,7 @@
       quantity: input("apimUnits", "Scale units, one instance (0 = none)", 0, 10) +
         '<span class="setting-hint">First unit + additional units, not separate APIM instances.</span>',
       detail: `Starts at 0 units because API Management is optional and separately integrated. The ${s.apimSku} selection is a pricing hypothesis, not a shipped APIM default. Base allocation = one first unit when included + max(0, units - 1) additional units, each multiplied by hours and its own meter rate. Units represent capacity within one APIM instance. A second independent instance would need its own first-unit allocation. This sample allows up to 10 units and does not infer a supported workload from the unit count. Standard v2 private ingress needs an inbound private endpoint and appropriate public-access settings in addition to outbound VNet integration. Premium v2 can instead use VNet injection. The platform AI Gateway subnet is not an APIM deployment. Private endpoints/DNS, request overages, workspaces, self-hosted gateways, model tokens, diagnostics and data transfer are excluded. This row estimates base capacity only, not the complete AI Gateway cost.`,
-      parameter: "Separate AI Gateway integration; infra/main.bicep: AI Gateway subnet",
+      parameter: "Separate AI Gateway integration; infra/bicep/main.bicep: AI Gateway subnet",
       sourceURL: "https://learn.microsoft.com/azure/api-management/v2-service-tiers-overview",
       sourceLabel: "API Management tiers and networking"
     }, () => [

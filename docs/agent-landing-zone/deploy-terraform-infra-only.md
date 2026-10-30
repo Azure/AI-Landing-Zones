@@ -224,8 +224,8 @@ Preprovision validates the provider/application binding, resolves the shared
 topology and runs a typed adapter to generate
 `infra/terraform/main.tfvars.json`. This file is ignored by Git and regenerated;
 do not edit it.
-For Terraform, `infra/main.parameters.json` is a shared preflight diagnostic
-artifact, not the Terraform deployment input. Also leave generated `.azure/`
+For Terraform, the generated, ignored `infra/shared/main.parameters.json` is a
+preflight-only diagnostic artifact, never a Terraform deployment input. Also leave generated `.azure/`
 files to azd.
 
 When a managed jumpbox is enabled and no password is supplied, Terraform owns

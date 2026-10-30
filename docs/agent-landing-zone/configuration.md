@@ -31,9 +31,11 @@ environments that may contain secrets.
     `main.parameters.json`. Structured values use `parameters.<name>.value`.
     Preprovision resolves the shared topology and generates typed inputs.
 
-    Bicep consumes `infra/main.parameters.json`. Terraform consumes the ignored
-    `infra/terraform/main.tfvars.json`; its `infra/main.parameters.json` is a
-    shared preflight diagnostic artifact. Do not edit either generated file or
+    Bicep consumes `infra/bicep/main.parameters.json`, a tracked seed regenerated
+    by the hooks. Terraform consumes the ignored
+    `infra/terraform/main.tfvars.json`; its ignored `infra/shared/main.parameters.json`
+    is only a generated preflight diagnostic artifact, never a Terraform input.
+    Do not edit or commit resolved values in these generated files or
     generated `.azure/` inputs.
 
 ## Terraform backend settings
