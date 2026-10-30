@@ -78,6 +78,27 @@ def run(base, screenshots):
             assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), width
             assert page.locator(".md-sidebar--secondary").is_hidden()
             assert page.locator(".home-mobile-contents").count() == 0
+            short_copy = page.locator(
+                ".hero > p, .section > p, .path > p, .use-case > p, "
+                ".guidance-layout header > p, .resources > p"
+            )
+            for paragraph in short_copy.all():
+                assert paragraph.evaluate("""element => {
+                    const parent = element.parentElement;
+                    const style = getComputedStyle(parent);
+                    let available = parent.clientWidth -
+                        parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+                    if (parent.matches(".use-case")) {
+                        available = parseFloat(style.gridTemplateColumns.split(" ").at(-1));
+                    }
+                    return Math.abs(element.getBoundingClientRect().width - available) < 2;
+                }
+                """), (width, paragraph.inner_text())
+            assert page.locator(
+                ".alz-home .home-disclosure > p"
+            ).evaluate_all("""elements => elements.length > 0 && elements.every(element =>
+                getComputedStyle(element).maxWidth !== "none")
+            """), width
             for index, links in enumerate(card_links):
                 card = page.locator(".paths .path").nth(index)
                 bounds = card.bounding_box()
@@ -106,6 +127,18 @@ def run(base, screenshots):
                     assert lines == 1, (width, name, lines)
                 diagram = page.locator(f"#architecture-{name} img").bounding_box()
                 assert abs(diagram["width"] - panel["width"]) < 2, (width, name, diagram, panel)
+                caption = page.locator(f"#architecture-{name} figcaption")
+                assert caption.evaluate("""element => {
+                    const style = getComputedStyle(element);
+                    return style.textAlign === "left" && style.fontSize === "14px";
+                }"""), (width, name)
+                for paragraph in caption.locator("p").all():
+                    bounds = paragraph.bounding_box()
+                    assert abs(bounds["width"] - diagram["width"]) < 2, (width, name)
+                    assert abs(bounds["x"] - diagram["x"]) < 2, (width, name)
+                    assert paragraph.evaluate(
+                        'element => getComputedStyle(element).textAlign === "left"'
+                    ), (width, name)
             if width <= 560:
                 heading = page.locator(".implementation-table tbody th").first.bounding_box()
                 table = page.locator(".implementation-table").bounding_box()

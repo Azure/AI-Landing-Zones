@@ -61,6 +61,8 @@ Reference architectures and deployable Azure foundations for your AI application
 
 ## Reference architectures. { #reference-architectures }
 
+Explore Agent Landing Zone on its own, connected to a platform hub, or integrated with AI Gateway Landing Zone.
+
 <div class="architecture-workbench" data-home-tabs markdown="1">
 <div class="home-tabs" role="tablist" aria-label="Reference architecture" hidden>
 <button type="button" role="tab" id="tab-standalone" aria-selected="true" aria-controls="architecture-standalone">Standalone</button>
@@ -70,9 +72,9 @@ Reference architectures and deployable Azure foundations for your AI application
 
 <div id="architecture-standalone" class="architecture-panel" role="tabpanel" aria-labelledby="tab-standalone" tabindex="0" markdown="1">
 <div class="home-anchor" id="standalone"></div>
-<h3 class="home-panel-title" id="standalone-panel-title">Standalone</h3>
+<h3 class="home-panel-title" id="standalone-panel-title">Standalone Agent Landing Zone</h3>
 
-The workload uses its own virtual network and networking services, without a shared platform hub.
+Agent Landing Zone uses its own virtual network and networking services, without a shared platform hub.
 
 <figure class="architecture-figure" markdown="1">
 ![Standalone Agent Landing Zone reference architecture](architecture/media/AI-Landing-Zone-without-platform.png?v=aa651551c880){ width=6400 height=3946 loading=lazy }
@@ -86,9 +88,9 @@ Resource selection and reuse depend on your implementation and settings. This re
 
 <div id="architecture-hub" class="architecture-panel" role="tabpanel" aria-labelledby="tab-hub" tabindex="0" markdown="1">
 <div class="home-anchor" id="with-platform-hub"></div>
-<h3 class="home-panel-title" id="platform-hub-panel-title">With Platform Hub</h3>
+<h3 class="home-panel-title" id="platform-hub-panel-title">Agent Landing Zone with Platform Hub</h3>
 
-The workload connects to a platform hub that provides shared connectivity, DNS and egress services.
+Agent Landing Zone connects to a platform hub that provides shared connectivity, DNS and egress services.
 
 <figure class="architecture-figure" markdown="1">
 ![Agent Landing Zone with Platform Hub reference architecture](architecture/media/AI-Landing-Zone-with-platform.png?v=e868bb76bceb){ width=6400 height=3822 loading=lazy }
@@ -101,7 +103,7 @@ Resource selection and reuse depend on your implementation and settings. This re
 </div>
 
 <div id="architecture-gateway" class="architecture-panel" role="tabpanel" aria-labelledby="tab-gateway" tabindex="0" markdown="1">
-<h3 class="home-panel-title">AI Gateway</h3>
+<h3 class="home-panel-title">Agent Landing Zone with AI Gateway</h3>
 
 Combine Agent Landing Zone, a platform hub and a separate AI Gateway Landing Zone. The gateway has its own deployment and connectivity requirements; Agent Landing Zone does not provision it automatically.
 
