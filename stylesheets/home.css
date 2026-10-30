@@ -3,9 +3,6 @@ body:has(.alz-home) .md-main__inner { gap: 40px; margin-top: 52px; padding: 0 40
 body:has(.alz-home) .md-content__inner { margin: 0; }
 body:has(.alz-home) .md-nav--secondary .md-nav { display: none; }
 
-@media (min-width: 76.25em) {
-  body:has(.alz-home) .md-sidebar--primary { width: 184px; }
-}
 @media (min-width: 60em) {
   body:has(.alz-home) .md-sidebar--secondary { width: 160px; }
   body:has(.alz-home) .md-sidebar { padding-top: 0; }
