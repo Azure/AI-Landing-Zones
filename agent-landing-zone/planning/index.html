@@ -4877,7 +4877,7 @@ resource scope. Deployment roles can differ from application data-access roles.<
 <tr>
 <td>Bicep with <code>azd</code> (default)</td>
 <td><a href="../deploy-infra-only/">Deploy infra only</a> or <a href="../deploy-full-stack/">Deploy full stack</a>.</td>
-<td>Product infrastructure at <code>infra/</code>, with shared hooks for parameter composition, service configuration, RBAC and application deployment.</td>
+<td>Product Bicep infrastructure at <code>infra/bicep/</code>, with shared root <code>scripts/</code> hooks for parameter composition, service configuration, RBAC and application deployment.</td>
 </tr>
 <tr>
 <td>Terraform with <code>azd</code></td>
@@ -4921,7 +4921,7 @@ Shared groups require owner-reviewed, itemized cleanup.</p>
 <p><span id="select-reuse-or-omit-resources"></span></p>
 <h2 id="resource-selection-and-reuse">Resource selection and reuse</h2>
 <p>The selected application's definition and resolved provider inputs describe
-the resources (<code>infra/main.parameters.json</code> for Bicep; the native Terraform
+the resources (<code>infra/bicep/main.parameters.json</code> for Bicep; the native Terraform
 adapter and tfvars for Terraform). The default is <strong><code>hosted-no-panel</code></strong>, with
 <code>maf_lite</code> orchestration and native Foundry IQ Blob ingestion.</p>
 <table>

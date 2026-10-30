@@ -4649,11 +4649,12 @@
 
 <h1 id="bicep-foundation-overview">Bicep foundation overview</h1>
 <p>The AI Landing Zone Bicep foundation is maintained in
-<a href="https://github.com/Azure/agent-landing-zone/tree/main/infra">Azure/agent-landing-zone under <code>infra/</code></a>.
+<a href="https://github.com/Azure/agent-landing-zone/tree/main/infra/bicep">Azure/agent-landing-zone under <code>infra/bicep/</code></a>.
 It is repository-owned source, reviewed and released with Agent Landing Zone,
 alongside application composition, service configuration and deployment hooks.
 Run the lifecycle from the Agent Landing Zone repository root, not <code>infra/</code>.</p>
-<p><img alt="Architecture Diagram" src="https://raw.githubusercontent.com/Azure/agent-landing-zone/main/infra/media/Architecture%20Diagram.png" /></p>
+<p>See the <a href="../../architecture/design-checklist/">AI Landing Zone architecture</a>
+for the platform design context.</p>
 <h2 id="deployment-modes">Deployment modes</h2>
 <p>The network design is distinct from the Agent application's orchestrator topology.
 <code>deploymentMode</code> records intent; explicit flags and resource IDs determine the
@@ -4683,9 +4684,8 @@ option for approved, short-lived evaluations without sensitive data.</p>
 </tr>
 </tbody>
 </table>
-<p>The hub test fixture is not a third production topology. Neither preset
-automatically supplies an operational hub, DNS resolver or connected deployment
-host.</p>
+<p>Neither preset automatically supplies an operational hub, DNS resolver or
+connected deployment host.</p>
 <h2 id="what-gets-deployed">What gets deployed</h2>
 <p>Enabled parameters select Foundry/model services, workload data services,
 container runtimes, configuration/secrets, observability, network resources and

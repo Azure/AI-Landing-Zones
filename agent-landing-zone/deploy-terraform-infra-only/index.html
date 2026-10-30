@@ -5184,8 +5184,8 @@ native types. For example, an empty public IP allowlist is the existing
 topology and runs a typed adapter to generate
 <code>infra/terraform/main.tfvars.json</code>. This file is ignored by Git and regenerated;
 do not edit it.
-For Terraform, <code>infra/main.parameters.json</code> is a shared preflight diagnostic
-artifact, not the Terraform deployment input. Also leave generated <code>.azure/</code>
+For Terraform, the generated, ignored <code>infra/shared/main.parameters.json</code> is a
+preflight-only diagnostic artifact, never a Terraform deployment input. Also leave generated <code>.azure/</code>
 files to azd.</p>
 <p>When a managed jumpbox is enabled and no password is supplied, Terraform owns
 the persistent generated password. Treat state and generated inputs as

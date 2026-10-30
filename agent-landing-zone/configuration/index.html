@@ -5466,9 +5466,11 @@ different requirements.</p>
 <p>Both providers use documented environment inputs and root
 <code>main.parameters.json</code>. Structured values use <code>parameters.&lt;name&gt;.value</code>.
 Preprovision resolves the shared topology and generates typed inputs.</p>
-<p>Bicep consumes <code>infra/main.parameters.json</code>. Terraform consumes the ignored
-<code>infra/terraform/main.tfvars.json</code>; its <code>infra/main.parameters.json</code> is a
-shared preflight diagnostic artifact. Do not edit either generated file or
+<p>Bicep consumes <code>infra/bicep/main.parameters.json</code>, a tracked seed regenerated
+by the hooks. Terraform consumes the ignored
+<code>infra/terraform/main.tfvars.json</code>; its ignored <code>infra/shared/main.parameters.json</code>
+is only a generated preflight diagnostic artifact, never a Terraform input.
+Do not edit or commit resolved values in these generated files or
 generated <code>.azure/</code> inputs.</p>
 </div>
 <h2 id="terraform-backend-settings">Terraform backend settings</h2>

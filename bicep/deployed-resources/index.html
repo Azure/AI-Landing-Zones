@@ -4817,7 +4817,7 @@
 <div class="admonition info">
 <p class="admonition-title">Foundation scope</p>
 <p>This inventory describes <strong>native Bicep foundation building blocks</strong> under
-Agent Landing Zone's <code>infra/</code>, not the
+Agent Landing Zone's <code>infra/bicep/</code>, not the
 Agent application footprint. Agent Landing Zone composes its own services,
 topology and component selection. Foundry backing resources are separate
 from application stores, and conditional creation/reuse applies across all
@@ -5016,7 +5016,7 @@ can also differ from native Bicep defaults.</p>
 <td>Model deployment: embeddings</td>
 <td>✅</td>
 <td><code>modelDeploymentList[1]</code></td>
-<td><code>text-embedding-3-large</code>, Standard, capacity 10</td>
+<td><code>text-embedding-3-large</code>, version 1, GlobalStandard, declared capacity 100 (empty-list foundation fallback: 10)</td>
 </tr>
 <tr>
 <td>Grounding with Bing</td>
@@ -5044,6 +5044,10 @@ can also differ from native Bicep defaults.</p>
 </tr>
 </tbody>
 </table>
+<p>Global embedding deployment processing may occur outside the resource region.
+If regional processing is required, explicitly set the embedding entry's
+<code>sku.name</code> to <code>Standard</code> and verify regional availability and quota. See
+<a href="../parameterization/#model-deployments">model deployment defaults and overrides</a>.</p>
 <h3 id="workload-data-path">Workload data path</h3>
 <table>
 <thead>
@@ -5303,9 +5307,9 @@ deployGroundingWithBing = true    (explicit scenario choice; native foundation d
 <td>~$0.05 / 1M input tokens, ~$0.40 / 1M output tokens — pay-as-you-go</td>
 </tr>
 <tr>
-<td>Model: <code>text-embedding-3-large</code> (Standard, cap 10)</td>
+<td>Model: <code>text-embedding-3-large</code> (GlobalStandard, declared cap 100; fallback 10)</td>
 <td style="text-align: right;">$0</td>
-<td>~$0.13 / 1M tokens</td>
+<td>~$0.13 / 1M tokens (illustrative estimate; verify deployment-specific pricing)</td>
 </tr>
 <tr>
 <td>Grounding with Bing (S1)</td>

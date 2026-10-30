@@ -4696,7 +4696,7 @@ for those procedures, not a third deployment path.</p>
 The network/security owners approve addresses, egress and public exceptions.
 Confirm regional capacity, resource-provider registration and scoped deployment
 permissions before provisioning.</p>
-<p>Agent Landing Zone owns the foundation under <code>infra/</code> and runs it through
+<p>Agent Landing Zone owns the Bicep foundation under <code>infra/bicep/</code> and runs it through
 platform lifecycle hooks. Do not use a separate foundation checkout.
 The <a href="../deployed-resources/">inventory and cost estimates</a> describe foundation
 building blocks; selected application resources can differ.</p>
@@ -4821,7 +4821,7 @@ the recommendation. That minimum is not a future-scale guarantee.</p>
 substitute for reviewing effective routes. Inspect the local firewall route and
 required destinations in the
 <a href="../../agent-landing-zone/network-isolation/">network isolation reference</a>
-and <a href="https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep">foundation firewall source</a>.
+and <a href="https://github.com/Azure/agent-landing-zone/blob/main/infra/bicep/modules/networking/azure-firewall.bicep">foundation firewall source</a>.
 Agent platform build egress also includes its own dependency-specific inputs.
 An ACR Tasks pool does not make the deployment host VNet-connected.</p>
 <p>With empty native <code>allowedIpRanges</code>, private service endpoints are the intended

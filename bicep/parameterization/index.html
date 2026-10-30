@@ -4959,12 +4959,12 @@
 
 <h1 id="parameterization">Parameterization</h1>
 <p>This reference describes native parameters of the Bicep foundation maintained
-in Agent Landing Zone's <code>infra/</code>. The platform's root <code>main.parameters.json</code>
+in Agent Landing Zone's <code>infra/bicep/</code>. The platform's root <code>main.parameters.json</code>
 supplies reviewed values and <code>${VARIABLE_NAME}</code> substitutions. Use <code>azd env set</code>
 only for substitutions actually present in that file; native arrays and objects
 need reviewed file changes.</p>
 <p>Agent Landing Zone composes its own root parameter file and regenerates
-<code>infra/main.parameters.json</code>. Its definition and topology can override foundation
+<code>infra/bicep/main.parameters.json</code>. Its definition and topology can override foundation
 choices. See <a href="../../agent-landing-zone/configuration/">Agent configuration</a> rather
 than assuming every foundation deploy toggle is an Agent environment variable.
 Execute changes through the <a href="../../agent-landing-zone/deploy-infra-only/">infrastructure</a>
@@ -5165,7 +5165,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 <p>Keep customizations in the platform's reviewed, version-controlled root
 <code>main.parameters.json</code>. The platform hooks compose
-<code>infra/main.parameters.json</code>; do not patch that generated copy or change the
+<code>infra/bicep/main.parameters.json</code>; do not patch that generated copy or change the
 pinned AVM to apply these settings. See
 <a href="../accelerator-pattern/">foundation customization</a> and the
 <a href="../how-to-deploy/#solution-storage-profile">deployment and migration guidance</a>.</p>
@@ -5557,7 +5557,7 @@ string without needing access to the AppInsights resource.</p>
 <tr>
 <td><code>hubIntegrationHubVnetResourceId</code></td>
 <td><code>HUB_INTEGRATION_HUB_VNET_RESOURCE_ID</code></td>
-<td>Resource ID of the hub VNet to peer with. When set and <code>hubIntegrationCreateHubPeering=true</code>, the deployment creates the spoke→hub peering automatically (the reverse hub→spoke direction is the operator's responsibility — see <code>tests/scripts/Add-HubSpokePeering.ps1</code>).</td>
+<td>Resource ID of the hub VNet to peer with. When set and <code>hubIntegrationCreateHubPeering=true</code>, the deployment creates the spoke→hub peering automatically (the reverse hub→spoke direction requires the hub owner's authorization and action — see <a href="../hub-and-spoke/#peering-and-bootstrap-ordering">peering and bootstrap ordering</a>).</td>
 </tr>
 <tr>
 <td><code>hubIntegrationExistingRouteTableResourceId</code></td>
@@ -5814,6 +5814,39 @@ lists names, CIDRs and delegations.</p>
 <h2 id="complex-objects">Complex objects</h2>
 <h3 id="model-deployments">Model deployments</h3>
 <p>The <code>modelDeploymentList</code> parameter defines which AI models to deploy in the Foundry account.</p>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Model</th>
+<th>Version</th>
+<th>Default deployment type (<code>sku.name</code>)</th>
+<th>Declared capacity</th>
+<th>Empty-list foundation fallback capacity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>embedding</td>
+<td>text-embedding-3-large</td>
+<td>1</td>
+<td>GlobalStandard</td>
+<td>100</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<p>Both Bicep and Terraform use <code>GlobalStandard</code> for this embedding model. The
+foundation fallback applies when <code>modelDeploymentList</code> is empty; it does not
+replace the declared capacity of 100. Deployment names, API versions and vector
+dimensions are unchanged.</p>
+<p><a href="https://learn.microsoft.com/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability#global-standard">Azure's Global Standard availability table</a>
+lists support for this model/version. Global deployment processing may occur
+outside the resource region. If regional processing is required, explicitly set
+the embedding entry's <code>sku.name</code> to <code>Standard</code> and verify regional model
+availability and quota.</p>
+<p>The example below uses custom capacity 40 for both models, not the declared
+embedding default or the empty-list fallback.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">"modelDeploymentList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
@@ -5838,7 +5871,7 @@ lists names, CIDRs and delegations.</p>
 <span class="w">        </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">"sku"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Standard"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GlobalStandard"</span><span class="p">,</span>
 <span class="w">        </span><span class="nt">"capacity"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">"canonical_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EMBEDDING_DEPLOYMENT_NAME"</span><span class="p">,</span>

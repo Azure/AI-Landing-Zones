@@ -4725,12 +4725,6 @@ provider registration and scoped access.</p>
 <p>The deployment host needs private DNS resolution and network/data-plane access.
 An ACR Tasks pool is not a connected deployment host. Bastion is interactive VM
 access, not a VPN for a workstation.</p>
-<div class="admonition warning">
-<p class="admonition-title">Test fixtures are not shared-platform deployments</p>
-<p>Foundation <code>infra/tests/hub/</code> and <code>infra/tests/scripts/</code> simulate a hub. Do not deploy
-them into an operational connectivity subscription or copy their empty
-route, disabled Search, skipped bootstrap or skipped preflight settings.</p>
-</div>
 <h2 id="address-and-subnet-contract">Address and subnet contract</h2>
 <p><a id="2-initialize-and-plan-addresses"></a></p>
 <p>Review the <a href="../standalone/#address-planning">complete address plan</a> against hub,
@@ -4806,7 +4800,7 @@ Neither input being set does not enforce hub egress. Confirm region, association
 permissions and routes before choosing a shared table.</p>
 <p>Allow required spoke source CIDRs and destinations before bootstrap, image pulls
 and data-plane configuration. Review the
-<a href="https://github.com/Azure/agent-landing-zone/blob/main/infra/modules/networking/azure-firewall.bicep">foundation firewall source</a>
+<a href="https://github.com/Azure/agent-landing-zone/blob/main/infra/bicep/modules/networking/azure-firewall.bicep">foundation firewall source</a>
 and the Agent platform's <a href="../../agent-landing-zone/network-isolation/">build-egress requirements</a>.
 Check return paths, DNS transport, NSGs and forwarded traffic rather than
 opening unrestricted Internet access. Peering is not transitive.</p>

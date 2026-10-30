@@ -4638,7 +4638,7 @@
 
 <h1 id="customize-the-incorporated-foundation">Customize the incorporated foundation</h1>
 <p>The maintained Bicep foundation lives in
-<a href="https://github.com/Azure/agent-landing-zone/tree/main/infra">Azure/agent-landing-zone under <code>infra/</code></a>.
+<a href="https://github.com/Azure/agent-landing-zone/tree/main/infra/bicep">Azure/agent-landing-zone under <code>infra/bicep/</code></a>.
 It is regular repository-owned source, not a Git submodule or a separate
 checkout to initialize. Foundation changes are reviewed and released with the
 platform.</p>
@@ -4654,7 +4654,7 @@ when the foundation is needed before application deployment, or
 <code>config/</code>, <code>contracts/</code> and <code>scripts/</code> together at the reviewed platform
 revision. Run <code>azd</code> from the platform root.</p>
 <p>The platform hooks validate the selected application and immutable environment
-binding, compose the root parameters into <code>infra/main.parameters.json</code>, and
+binding, compose the root parameters into <code>infra/bicep/main.parameters.json</code>, and
 run foundation preflight. Do not edit the generated parameter copy or replace
 the hooks with submodule initialization scripts.
 See <a href="../../agent-landing-zone/how-it-works/">How it works</a> and
