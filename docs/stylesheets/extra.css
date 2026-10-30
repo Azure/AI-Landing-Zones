@@ -1,4 +1,14 @@
-/* Minimal nav typography tweak: reduce left sidebar size for better density */
+/* Keep nested navigation readable without shrinking or truncating labels. */
+
+@media (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 15rem;
+  }
+
+  .md-sidebar--primary .md-sidebar__inner {
+    padding-right: 1rem;
+  }
+}
 
 .md-nav--primary .md-nav__link,
 .md-nav--primary .md-nav__title {
@@ -7,7 +17,7 @@
 }
 
 .md-nav--primary .md-nav__link > .md-ellipsis {
-  text-wrap: balance;
+  white-space: normal;
 }
 
 .md-sidebar__scrollwrap {

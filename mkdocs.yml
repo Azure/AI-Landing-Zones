@@ -199,5 +199,5 @@ extra:
 
 extra_css:
   # Update the content version when styles change to invalidate browser caches.
-  - stylesheets/extra.css?v=19b37e885e4f
+  - stylesheets/extra.css?v=f72664258cf8
   - stylesheets/planner.css?v=3

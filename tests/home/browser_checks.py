@@ -4,6 +4,7 @@ import argparse
 import functools
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import re
 import threading
 
 from playwright.sync_api import expect, sync_playwright
@@ -25,6 +26,47 @@ LEGACY_ANCHORS = (
 class Handler(SimpleHTTPRequestHandler):
     def log_message(self, *_):
         pass
+
+
+def check_application_navigation(page, base, screenshots):
+    labels = (
+        "Agent Application", "Chat & channels", "Knowledge & retrieval",
+        "Document ingestion", "Development & customization",
+    )
+    for width in (1880, 1440, 1280):
+        page.set_viewport_size({"width": width, "height": 1000})
+        for path in ("", "agent-landing-zone/application/"):
+            page.goto(base + path)
+            sidebar = page.locator(".md-sidebar--primary")
+            expect(sidebar).to_be_visible()
+            nav = sidebar.locator(".md-nav--primary")
+            for name in ("Agent Landing Zone", "Agent Application"):
+                label = nav.locator("label.md-nav__link").filter(
+                    has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
+                )
+                toggle = page.locator("#" + label.get_attribute("for"))
+                if not toggle.is_checked():
+                    label.click()
+            for name in labels:
+                link = nav.locator(".md-nav__link:visible").filter(
+                    has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
+                )
+                text = link.locator(":scope > .md-ellipsis")
+                metrics = text.evaluate("""element => {
+                    const style = getComputedStyle(element);
+                    return {
+                        height: element.getBoundingClientRect().height,
+                        lineHeight: parseFloat(style.lineHeight),
+                        fontSize: parseFloat(style.fontSize),
+                        overflow: element.scrollWidth > element.clientWidth
+                    };
+                }""")
+                assert metrics["height"] <= metrics["lineHeight"] + 1, (width, path, name, metrics)
+                assert metrics["fontSize"] >= 14 and not metrics["overflow"], (width, path, name, metrics)
+            assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), (width, path)
+            if screenshots and width == 1280:
+                name = "navigation-application-desktop.png" if path else "navigation-home-desktop.png"
+                page.screenshot(path=str(screenshots / name))
 
 
 def run(base, screenshots):
@@ -235,6 +277,7 @@ def run(base, screenshots):
             assert not page.locator('script[src*="javascripts/home.js"]').count()
             if not path.endswith("sizing-cost-planner/"):
                 expect(page.locator(".md-sidebar--secondary")).to_be_visible()
+        check_application_navigation(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
         for path in ("", "agent-landing-zone/application/"):
             page.goto(base + path)
