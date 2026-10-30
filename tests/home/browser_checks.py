@@ -29,7 +29,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 def run(base, screenshots):
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch()
+        browser = playwright.chromium.launch(ignore_default_args=["--hide-scrollbars"])
         page = browser.new_page(viewport={"width": 1440, "height": 1000})
         errors = []
         page.on("pageerror", lambda error: errors.append(str(error)))
@@ -207,15 +207,27 @@ def run(base, screenshots):
             page.goto(base + path)
             sidebar = page.locator(".md-sidebar--primary .md-sidebar__scrollwrap")
             page.mouse.move(1400, 490)
-            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarWidth") == "thin"
-            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "rgb(203, 210, 220) rgba(0, 0, 0, 0)"
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarWidth") == "auto"
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "auto"
+            thumb_style = sidebar.evaluate("""element => {
+                const scrollbar = getComputedStyle(element, "::-webkit-scrollbar");
+                const thumb = getComputedStyle(element, "::-webkit-scrollbar-thumb");
+                return {
+                    hitWidth: parseFloat(scrollbar.width),
+                    paintWidth: parseFloat(scrollbar.width) - parseFloat(thumb.borderLeftWidth) - parseFloat(thumb.borderRightWidth),
+                    clip: thumb.backgroundClip,
+                    color: thumb.backgroundColor
+                };
+            }""")
+            assert thumb_style == {"hitWidth": 8, "paintWidth": 2, "clip": "padding-box", "color": "rgb(203, 210, 220)"}, thumb_style
             sidebar.hover()
-            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "rgb(135, 147, 163) rgba(0, 0, 0, 0)"
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "auto"
+            assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(135, 147, 163)"
             nav_link = sidebar.locator("a.md-nav__link:visible").first
             nav_link.focus()
             expect(nav_link).to_be_focused()
             page.mouse.move(1400, 490)
-            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "rgb(135, 147, 163) rgba(0, 0, 0, 0)"
+            assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(135, 147, 163)"
             if not path and not page.locator("#__nav_2").is_checked():
                 sidebar.locator('label.md-nav__link[for="__nav_2"]').click()
             if not page.locator("#__nav_2_3").is_checked():
@@ -226,6 +238,17 @@ def run(base, screenshots):
             }""")
             sidebar.hover()
             page.mouse.wheel(0, 300)
+            page.wait_for_function("""() =>
+                document.querySelector(".md-sidebar--primary .md-sidebar__scrollwrap").scrollTop > 0
+            """)
+            assert sidebar.evaluate("element => element.offsetWidth - element.clientWidth") in (0, 8)
+            sidebar.evaluate("element => { element.scrollTop = 0; }")
+            bounds = sidebar.bounding_box()
+            drag_x = bounds["x"] + bounds["width"] - 4
+            page.mouse.move(drag_x, bounds["y"] + 12)
+            page.mouse.down()
+            page.mouse.move(drag_x, bounds["y"] + 92, steps=5)
+            page.mouse.up()
             page.wait_for_function("""() =>
                 document.querySelector(".md-sidebar--primary .md-sidebar__scrollwrap").scrollTop > 0
             """)

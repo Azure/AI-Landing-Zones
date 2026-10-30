@@ -21,12 +21,18 @@
 }
 
 .md-sidebar__scrollwrap::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
+}
+
+.md-sidebar__scrollwrap::-webkit-scrollbar-button {
+  display: none;
 }
 
 .md-sidebar__scrollwrap::-webkit-scrollbar-thumb {
   background-color: #cbd2dc;
-  border-radius: 4px;
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 8px;
 }
 
 .md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb,
@@ -34,6 +40,15 @@
 .md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb:hover,
 .md-sidebar__scrollwrap:focus-within::-webkit-scrollbar-thumb:hover {
   background-color: #8793a3;
+}
+
+@supports selector(::-webkit-scrollbar) {
+  /* Native scrollbar properties otherwise override the 2px painted thumb. */
+  .md-sidebar__scrollwrap,
+  .md-sidebar__scrollwrap:is(:hover, :focus-within) {
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+  }
 }
 
 /* Slightly reduce section labels as well (Material renders them as labels) */
