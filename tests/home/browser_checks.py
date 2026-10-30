@@ -69,6 +69,60 @@ def check_application_navigation(page, base, screenshots):
                 page.screenshot(path=str(screenshots / name))
 
 
+def check_prose_wrapping(page, base, screenshots):
+    for width in (1880, 1440, 1280, 1024, 768, 390, 320):
+        for text_scale in (1, 1.25):
+            page.set_viewport_size({"width": width, "height": 1000})
+            page.goto(base + "agent-landing-zone/")
+            if text_scale != 1:
+                page.evaluate("""scale => {
+                    const root = document.documentElement;
+                    root.style.fontSize = `${parseFloat(getComputedStyle(root).fontSize) * scale}px`;
+                }""", text_scale)
+            page.evaluate("document.fonts.ready")
+            content = page.locator(".md-content__inner")
+            targets = [
+                content.locator(":scope > p").filter(has_text="The default full-stack deployment"),
+                content.locator(":scope > p").filter(has_text="The planning and Agent Application"),
+                *content.locator(":scope > ul > li").all(),
+            ]
+            assert len(targets) == 7
+            for target in targets:
+                metrics = target.evaluate(r"""element => {
+                    const words = [];
+                    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+                    while (walker.nextNode()) {
+                        const node = walker.currentNode;
+                        for (const match of node.textContent.matchAll(/\S+/g)) {
+                            if (!/[\p{L}\p{N}]/u.test(match[0])) continue;
+                            const range = document.createRange();
+                            range.setStart(node, match.index);
+                            range.setEnd(node, match.index + match[0].length);
+                            const rect = range.getBoundingClientRect();
+                            if (rect.height) words.push({word: match[0], top: Math.round(rect.top)});
+                        }
+                    }
+                    const lastTop = Math.max(...words.map(word => word.top));
+                    return {
+                        lastLine: words.filter(word => word.top === lastTop).map(word => word.word),
+                        lines: new Set(words.map(word => word.top)).size,
+                        fontSize: parseFloat(getComputedStyle(element).fontSize),
+                        overflow: element.scrollWidth > element.clientWidth
+                    };
+                }""")
+                assert metrics["lines"] == 1 or len(metrics["lastLine"]) >= 2, (
+                    width, text_scale, target.inner_text(), metrics
+                )
+                assert metrics["fontSize"] >= 16 and not metrics["overflow"], (width, text_scale, metrics)
+            assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), (
+                width, text_scale
+            )
+            if screenshots and text_scale == 1 and width in (1280, 390):
+                targets[0].evaluate("element => window.scrollTo(0, element.getBoundingClientRect().top + window.scrollY - 80)")
+                name = "prose-desktop.png" if width == 1280 else "prose-mobile.png"
+                page.screenshot(path=str(screenshots / name))
+
+
 def run(base, screenshots):
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(ignore_default_args=["--hide-scrollbars"])
@@ -278,6 +332,7 @@ def run(base, screenshots):
             if not path.endswith("sizing-cost-planner/"):
                 expect(page.locator(".md-sidebar--secondary")).to_be_visible()
         check_application_navigation(page, base, screenshots)
+        check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
         for path in ("", "agent-landing-zone/application/"):
             page.goto(base + path)
