@@ -10,6 +10,32 @@
   text-wrap: balance;
 }
 
+.md-sidebar__scrollwrap {
+  scrollbar-color: #cbd2dc transparent;
+  scrollbar-width: thin;
+}
+
+.md-sidebar__scrollwrap:hover,
+.md-sidebar__scrollwrap:focus-within {
+  scrollbar-color: #8793a3 transparent;
+}
+
+.md-sidebar__scrollwrap::-webkit-scrollbar {
+  width: 4px;
+}
+
+.md-sidebar__scrollwrap::-webkit-scrollbar-thumb {
+  background-color: #cbd2dc;
+  border-radius: 4px;
+}
+
+.md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb,
+.md-sidebar__scrollwrap:focus-within::-webkit-scrollbar-thumb,
+.md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb:hover,
+.md-sidebar__scrollwrap:focus-within::-webkit-scrollbar-thumb:hover {
+  background-color: #8793a3;
+}
+
 /* Slightly reduce section labels as well (Material renders them as labels) */
 .md-nav--primary .md-nav__item--section > label.md-nav__link {
   font-size: 0.7rem;

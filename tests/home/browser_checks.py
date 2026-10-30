@@ -202,6 +202,45 @@ def run(base, screenshots):
             assert not page.locator('script[src*="javascripts/home.js"]').count()
             if not path.endswith("sizing-cost-planner/"):
                 expect(page.locator(".md-sidebar--secondary")).to_be_visible()
+        page.set_viewport_size({"width": 1440, "height": 500})
+        for path in ("", "agent-landing-zone/application/"):
+            page.goto(base + path)
+            sidebar = page.locator(".md-sidebar--primary .md-sidebar__scrollwrap")
+            page.mouse.move(1400, 490)
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarWidth") == "thin"
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "rgb(203, 210, 220) rgba(0, 0, 0, 0)"
+            sidebar.hover()
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "rgb(135, 147, 163) rgba(0, 0, 0, 0)"
+            nav_link = sidebar.locator("a.md-nav__link:visible").first
+            nav_link.focus()
+            expect(nav_link).to_be_focused()
+            page.mouse.move(1400, 490)
+            assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "rgb(135, 147, 163) rgba(0, 0, 0, 0)"
+            if not path and not page.locator("#__nav_2").is_checked():
+                sidebar.locator('label.md-nav__link[for="__nav_2"]').click()
+            if not page.locator("#__nav_2_3").is_checked():
+                sidebar.locator('label.md-nav__link[for="__nav_2_3"]').click()
+            page.wait_for_function("""() => {
+                const sidebar = document.querySelector(".md-sidebar--primary .md-sidebar__scrollwrap");
+                return sidebar.scrollHeight > sidebar.clientHeight;
+            }""")
+            sidebar.hover()
+            page.mouse.wheel(0, 300)
+            page.wait_for_function("""() =>
+                document.querySelector(".md-sidebar--primary .md-sidebar__scrollwrap").scrollTop > 0
+            """)
+            if screenshots and not path:
+                page.screenshot(path=str(screenshots / "navigation-scrollbar-desktop.png"))
+        page.set_viewport_size({"width": 390, "height": 700})
+        page.goto(base)
+        page.locator('.md-header label[for="__drawer"]').click()
+        expect(page.locator(".md-sidebar--primary")).to_be_visible()
+        page.wait_for_function("""() =>
+            document.querySelector(".md-sidebar--primary").getBoundingClientRect().left >= -1
+        """)
+        expect(page.locator(".md-sidebar--primary a.md-nav__link:visible").first).to_be_visible()
+        if screenshots:
+            page.screenshot(path=str(screenshots / "navigation-scrollbar-mobile.png"))
         assert not errors, errors
         context = browser.new_context(java_script_enabled=False)
         fallback = context.new_page()
