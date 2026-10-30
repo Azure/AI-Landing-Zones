@@ -6,10 +6,9 @@ import datetime
 import json
 import logging
 import pathlib
-import time
-import urllib.error
 import urllib.parse
-import urllib.request
+
+from published_prices import read_source
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 BASE = "https://prices.azure.com/api/retail/prices"
@@ -43,18 +42,7 @@ def fetch(query):
     source = url
     records = []
     while url:
-        for attempt in range(4):
-            try:
-                with urllib.request.urlopen(url, timeout=90) as response:
-                    page = json.load(response)
-                break
-            except urllib.error.HTTPError as error:
-                if error.code not in {429, 503} or attempt == 3:
-                    raise
-                retry_after = error.headers.get("Retry-After", "")
-                wait = min(int(retry_after), 120) if retry_after.isdigit() else 10 * (attempt + 1)
-                logging.warning("Azure pricing HTTP %s, retrying in %s seconds", error.code, wait)
-                time.sleep(wait)
+        page = json.loads(read_source(url, expected_host="prices.azure.com"))
         records.extend(page["Items"])
         url = page.get("NextPageLink")
         if url:
