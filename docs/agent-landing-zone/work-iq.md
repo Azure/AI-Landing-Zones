@@ -28,6 +28,15 @@ Enable the named source with `WORK_IQ_ENABLED` and
 unverified consent stop provisioning instead of silently removing the source.
 [Foundry IQ](foundry-iq.md) explains the integrated identity boundary.
 
+For application retrieval, select `RETRIEVAL_BACKEND=foundry_iq`.
+`WORK_IQ_ENABLED` defaults to `false` and the source name defaults to empty.
+The source must belong to the selected knowledge base. These runtime settings
+do not register it or grant Microsoft 365 access.
+`FOUNDRY_IQ_MAX_RUNTIME_SECONDS` defaults to `120` and provides the retrieve
+runtime ceiling when remote sources are enabled.
+[Application settings](application-settings.md) explains effective values and
+the restart or new hosted version needed after a change.
+
 <span id="prepare-the-tenant"></span>
 
 ## Tenant and governance requirements
@@ -39,7 +48,7 @@ Microsoft 365 Copilot licensing does not replace this billing setup.
 
 Tenant enablement, delegated consent and retrieval-service access are separate
 requirements. The source administrator needs permission to manage knowledge
-objects; Microsoft recommends Search Service Contributor for keyless management.
+objects. Microsoft recommends Search Service Contributor for keyless management.
 Network-isolated Azure resources still need the permitted paths to Microsoft 365
 and Microsoft Entra services.
 
@@ -62,9 +71,9 @@ app registration. These are distinct Entra objects, not source names.
 
 | Runtime setting | Required value |
 | --- | --- |
-| `WORK_IQ_APPLICATION_ID` | Work IQ app's application/client ID; the bundled UI requires the same value as `OAUTH_AZURE_AD_CLIENT_ID`. |
+| `WORK_IQ_APPLICATION_ID` | Work IQ app's application/client ID. The bundled UI requires the same value as `OAUTH_AZURE_AD_CLIENT_ID`. |
 | `WORK_IQ_FEDERATED_CREDENTIAL_ID` | Object ID returned when creating the app's federated credential, not the Search principal ID or credential name. |
-| `WORK_IQ_TENANT_ID` | App tenant ID when different from Search's tenant; otherwise optional. It must match the bundled UI's OAuth tenant. |
+| `WORK_IQ_TENANT_ID` | App tenant ID when different from Search's tenant. Otherwise optional. It must match the bundled UI's OAuth tenant. |
 
 These are nonsecret UUIDs, published with label `agent-lz` when explicitly
 supplied as deployment environment inputs. They do not create the Entra objects
@@ -91,13 +100,28 @@ defines registration, federation and client consent. For the bundled UI, use
 its OAuth app as the Work IQ application: expose `access_as_user`, grant
 `WorkIQAgent.Ask` and configure Search federation on that registration.
 The built-in path validates and forwards the original app-audience assertion
-through `x-client-work-iq-assertion`; it never substitutes the Search token or
+through `x-client-work-iq-assertion`. It never substitutes the Search token or
 invokes Work IQ as the workload. It does not exchange an assertion for a
-separate Work IQ app; mismatched application or UI-tenant settings fail closed.
+separate Work IQ app. Mismatched application or UI-tenant settings fail closed.
 Bearer tokens must stay out of prompts, history and logs.
 
 <span id="verify-before-connecting-users"></span>
 <span id="diagnose-or-back-out"></span>
+
+The backend's classic OBO helper also needs
+`OAUTH_AZURE_AD_TENANT_ID`, `OAUTH_AZURE_AD_CLIENT_ID` and
+`OAUTH_AZURE_AD_CLIENT_SECRET` for exchanges where applicable. Keep the secret
+server-side as a Key Vault reference. It is not a credential embedded in the
+Work IQ knowledge-source definition. Follow
+[Application authentication](application-auth.md) for the complete login and
+delegation setup.
+
+Do not treat connector-level source omission as successful Work IQ grounding.
+The source builder can skip an empty name or missing OBO token with a warning.
+The context provider requires user delegation for enabled remote sources, and
+the native protected path additionally requires the Work IQ assertion and
+compatible API. A Toolbox call ID is not a substitute for either token.
+`FOUNDRY_IQ_FORWARD_SOURCE_AUTH` is deprecated and ignored.
 
 ## Acceptance and recovery
 
@@ -117,3 +141,5 @@ authorized action.
 The separate [Work IQ MCP product](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/mcp/overview)
 exposes callable tools. It is separate from the `workIQ` knowledge source and
 does not replace this source's consent or delegated assertion requirements.
+See [Tools & MCP](agent-tools.md) for callable operations and
+[Monitoring & audit](application-monitoring.md) for operational traces.

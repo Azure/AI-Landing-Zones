@@ -8,6 +8,23 @@ content and return source references.
 This page describes Foundry IQ and the Agent Application's integration limits.
 Deployment follows the [Deploy full stack runbook](deploy-full-stack.md).
 
+## Choose the retrieval backend
+
+The orchestrator's runtime default for `RETRIEVAL_BACKEND` is `ai_search`.
+The platform can supply `foundry_iq` for a native knowledge-base topology.
+Empty or unknown runtime values fall back to `ai_search`, so read back the
+effective setting rather than relying on a misspelled value. Restart after
+changing this cached selection.
+
+`ai_search` queries the configured index directly. `foundry_iq` calls a
+knowledge base and combines its configured sources. The selector applies to
+the shared knowledge-search connector and the MAF Lite, MAF Agent Service and
+multimodal context providers. It does not reroute the
+[NL2SQL strategy](nl2sql.md#direct-nl2sql-strategy) or replace callable
+[MCP tools](agent-tools.md).
+[Application settings](application-settings.md) describes how to change runtime
+values. [Strategies & prompts](agent-strategies.md) describes hosting eligibility.
+
 <span id="before-you-start"></span>
 <span id="1-choose-who-manages-the-source"></span>
 
@@ -60,7 +77,7 @@ The connector reads runtime values from App Configuration with label `agent-lz`.
 
 | Setting | Meaning in the shipped connector |
 | --- | --- |
-| `RETRIEVAL_BACKEND` | `foundry_iq` selects knowledge-base retrieval in this connector; it does not attach a native agent tool. |
+| `RETRIEVAL_BACKEND` | `foundry_iq` selects knowledge-base retrieval in this connector. It does not attach a native agent tool. |
 | `RETRIEVAL_AUTH_MODE` | `native_search` carries the separately delegated Search credential into native permission enforcement. |
 | `KNOWLEDGE_BASE_ENDPOINT` | Search service root, such as `https://<service>.search.windows.net`, not a Foundry project or retrieve URL. |
 | `KNOWLEDGE_BASE_NAME` | Knowledge-base object name, not an index name. |
@@ -77,19 +94,19 @@ retrieve requests and response parsing, not an API-version edit alone.
 
 The supplied UI and hosted strategy integrate the user authorization path.
 The UI obtains a delegated Search token through OBO and forwards it with
-`x-client-search-token`; the hosted connector passes the raw token in
+`x-client-search-token`. The hosted connector passes the raw token in
 `x-ms-query-source-authorization`. The connector's workload credential
 authenticates transport to Search, not the user's entitlement to documents.
 This path needs no customer-written Toolbox integration.
 
 Native permission filtering is enabled for the application index's user,
-group and RBAC scope fields. Indexing must populate the appropriate metadata;
-turning on filtering cannot reconstruct missing ACLs. Conversation uploads
+group and RBAC scope fields. Indexing must populate the appropriate metadata.
+Turning on filtering cannot reconstruct missing ACLs. Conversation uploads
 also require their conversation/uploader restrictions.
 
 Source contracts differ. Work IQ uses a distinct app-audience assertion and
 `x-ms-query-work-iq-source-authorization`, not the Search token. Indexed
-SharePoint requires compatible permission-ingestion configuration; Fabric
+SharePoint requires compatible permission-ingestion configuration. Fabric
 sources require compatible preview APIs and user permissions. A source
 registration or runtime connector alone does not establish that the complete
 deployment combination is supported.
@@ -100,20 +117,127 @@ source authorization are unavailable.
 [Application authentication](application-auth.md) describes consent and
 allowed/denied-user acceptance.
 
+## Generic MCP knowledge sources
+
+Use this default-off preview to retrieve grounding from registered
+`mcpServer` knowledge sources. It is not the callable `mcp` agent strategy and
+does not create sources. Register each source on the selected knowledge base
+first, with the same name, server and tools as the runtime metadata.
+
+| Runtime setting | Default | Required choice |
+| --- | --- | --- |
+| `FOUNDRY_IQ_MCP_ENABLED` | `false` | Set `true` to enable conversational MCP planning. |
+| `FOUNDRY_IQ_MCP_SOURCES_JSON` | `[]` | Supply a non-empty source array when enabled. |
+| `FOUNDRY_IQ_API_VERSION` | `2026-05-01-preview` | This exact API contract is required for this MCP preview. |
+| `FOUNDRY_IQ_MCP_REASONING_EFFORT` | `low` | `low` or `medium`. |
+| `FOUNDRY_IQ_MCP_TRUSTED_HOSTS` | Empty | Exact hostname allowlist, required when enabled. |
+| `FOUNDRY_IQ_MAX_RUNTIME_SECONDS` | `120` | Integer from `30` to `600`. |
+| `FOUNDRY_IQ_MCP_LOG_TOOL_ARGUMENTS` | `false` | Leave off unless debug argument logging is approved. |
+
+These settings belong in [Application settings](application-settings.md), not
+in a chat request. The exact MCP API requirement differs from the remote
+Work IQ and Fabric contracts. Do not combine incompatible source requirements
+in one connector by changing only the API version.
+
+For example, after registering a reviewed read-only source, configure
+`FOUNDRY_IQ_MCP_TRUSTED_HOSTS=mcp.contoso.com` and the following source metadata.
+The names and resource scope are illustrative, not provisioned resources.
+
+```json
+[
+  {
+    "name": "monitor-mcp",
+    "description": "Read-only monitoring knowledge.",
+    "serverURL": "https://mcp.contoso.com/mcp",
+    "failOnError": true,
+    "maxOutputDocuments": 5,
+    "tools": [
+      {
+        "name": "query_logs",
+        "outputParsing": {
+          "kind": "json",
+          "jsonParameters": {
+            "documentsPath": "$.results[*]",
+            "includeContext": true
+          }
+        },
+        "inclusionMode": "reranked",
+        "maxOutputTokens": 2048
+      }
+    ],
+    "queryHeaders": [
+      {
+        "name": "Authorization",
+        "valueFrom": {
+          "kind": "managedIdentity",
+          "scope": "api://monitor-mcp/.default"
+        }
+      }
+    ]
+  }
+]
+```
+
+### Source limits and credentials
+
+Each source needs a unique name, HTTPS server URL and non-empty tool list.
+Tool names must be unique within the source. Each tool declares output parsing,
+`inclusionMode` (`reranked` or `always`) and `maxOutputTokens` from `1` to `8192`.
+Parsing kinds are `auto`, `none`, `json` and `split`.
+`json` needs a `documentsPath` and optional boolean `includeContext`.
+`split` supports page or sentence splitting, positive page length and page-count
+limits, non-negative overlap smaller than page length, and a default language.
+Do not mix parsing parameters across kinds or add unknown fields.
+The [API reference](application-api.md) is the payload reference.
+
+`failOnError=true` makes a reported source failure fail the request.
+Choose `false` only when partial grounding is acceptable. Per-source
+`maxOutputDocuments` accepts `1` to `50`. The separate
+`FOUNDRY_IQ_MAX_OUTPUT_DOCUMENTS` can bound final grounding records.
+
+Trusted hosts are bare hostnames, supplied as comma/newline-separated values
+or a JSON array. Matching is exact after lowercasing and removing a trailing
+dot, not wildcard or subdomain matching. Server URLs reject embedded credentials,
+queries, fragments, IP literals, single-label names and reserved/local names
+such as `localhost`, `.internal` or `.test`. This validation does not replace
+DNS and network egress controls.
+
+Each query header has a unique valid HTTP field name and `valueFrom` metadata.
+Reserved and hop-by-hop headers such as `Host` and `Connection` are rejected.
+Do not put literal tokens, API keys or credential values in the source JSON.
+
+| `valueFrom.kind` | Configuration and access |
+| --- | --- |
+| `managedIdentity` | Explicit resource `scope`. Grant the workload identity access. The credential chain can use Azure CLI locally. |
+| `obo` | Explicit target-resource `scope`. Uses the original incoming user assertion, backend OBO configuration and consent, not a reused Search token. |
+| `keyVaultSecret` | `secretName` in `KEY_VAULT_URI`. Grant secret-read access and store the complete header value in the vault. |
+| `none` | No scope or secret name. Omits that header rather than creating anonymous access to a protected source. |
+
+Only `keyVaultSecret` accepts `secretName`, with `1` to `127` letters, digits or
+hyphens. `scope` is forbidden for `keyVaultSecret` and `none`.
+Missing credentials or failed delegation fail the request rather than
+downgrading to `none`. The retrieve call references registered source names and
+relays resolved source-specific query headers. It does not send server URLs or
+tool definitions as registration instructions.
+
+Normal telemetry omits tool arguments. Debug logging performs bounded redaction,
+which cannot guarantee that arbitrary arguments are safe to export.
+Use [Monitoring & audit](application-monitoring.md) for the logging policy.
+
 <span id="apply-a-runtime-change-safely"></span>
 
 ## Ownership and connectivity
 
 Platform Search setup reconciles named sources and knowledge bases from
 `config/search/search.j2`. Later provisioning can replace manual additions to
-those objects. Operator-owned sources and knowledge bases need distinct names;
-changes to platform-owned objects belong in reviewed templates.
+those objects. Operator-owned sources and knowledge bases need distinct names.
+Changes to platform-owned objects belong in reviewed templates.
 Knowledge-base updates must preserve all intended source references.
 
 Source administration, ingestion and retrieval use separate permissions:
-the administrator manages knowledge objects; Search's ingestion identity reads
-the source and calls extraction/embedding services; the retrieval identity
-authenticates to Search; the end user's delegated identity authorizes protected
+the administrator manages knowledge objects. Search's ingestion identity reads
+the source and calls extraction/embedding services. The retrieval identity
+authenticates to Search. The end user's delegated identity authorizes protected
 content. A service role is not a substitute for user authorization.
 
 Private deployments need both runtime-to-Search access and Search-to-source/model

@@ -163,25 +163,16 @@ These have different caller-identity contracts from the UI.
 
 ### Continuity, history and the administrative panel
 
-Without continuity, multi-turn context lasts only for the active UI session.
-Reload, browser restart or a new chat loses that context. The hosted container
-does not read or write managed Conversations.
+The hosted container does not read or write managed Conversations. Without
+optional UI-owned continuity, multi-turn context lasts only for the active UI
+session. Reloading the browser or starting a new chat loses that context.
 
-`HOSTED_CONTINUITY_ENABLED` defaults to `false`. Delegated continuity requires
-validated owner isolation, Responses protocol at least `2.0.0`, and the
-middle-tier identity's reviewed agent-scoped `UserIdentityImpersonation` data
-action. `HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED` is an evidence gate,
-not a way to grant those permissions. Provisioning leaves it false.
-When validated continuity is active, the UI sends the authorized transcript
-to the stateless container, which still does not load managed history.
-
-Panel user routes additionally require actual panel deployment,
-`PANEL_HISTORY_ENABLED` and active continuity; otherwise they return HTTP 503.
-The panel's delegated enumeration and operator surfaces have separate gates,
-`PANEL_HISTORY_OWNER_BINDING_VALIDATED` and `PANEL_OPERATOR_SURFACES_ENABLED`.
-They remain false until their own authorization checks have evidence.
-Cosmos holds owner-index/feedback metadata; managed transcripts reside in
-Foundry. [User feedback](user-feedback.md) explains the missing UI integration.
+Continuity is disabled by default and requires validated user isolation,
+not just a deployment flag. Follow [Conversations & files](conversations.md)
+for ownership modes, required grants, settings and history limits.
+Administrative access has separate deployment and authorization gates, covered
+in [Administration](operations.md). [User feedback](user-feedback.md) explains
+the additional feedback integration.
 
 ## Configuration TLS compatibility
 
@@ -199,6 +190,9 @@ covers transport diagnosis without disabling certificate validation.
 <span id="telemetry-and-topology-changes"></span>
 
 ## Telemetry
+
+Use [Monitoring & audit](application-monitoring.md) for component audit events,
+privacy settings and operational investigation.
 
 Prompt/completion capture is off by default. The deployment input
 `HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT` maps to the hosted process variable

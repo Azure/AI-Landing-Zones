@@ -106,6 +106,8 @@ reload without deleting stored metadata or changing hosted chat routing.
 
 ## Administrative views
 
+See [Administration](operations.md) for panel setup and operator access.
+
 When the ingestion service is selected, its separate hosted-panel API exposes
 `GET /api/panel/feedback` and counts in `GET /api/panel/overview`. It validates
 an Entra bearer with the `Admin` app role and rejects missing tenant configuration.

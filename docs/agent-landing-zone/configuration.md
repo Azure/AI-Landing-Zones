@@ -786,7 +786,7 @@ and `32000` estimated tokens. These are not character limits or a limit
 on ordinary session chat. See [Hosted agents](hosted-agents.md) for the
 continuity activation and history limitations.
 
-[UI continuity configuration](https://github.com/Azure/agent-app-ui/blob/main/docs/python-development.md#optional-continuity)
+[UI continuity configuration](conversations.md#continuity-settings)
 explains user-ownership checks, signed access capabilities and conversation
 storage. These belong to the application runtime, not infrastructure inputs.
 
@@ -832,6 +832,11 @@ custom source-build path. See
 
 ## Runtime settings
 
+Use [Application settings](application-settings.md) for runtime configuration
+tasks and effective-value checks. [Conversations & files](conversations.md)
+covers continuity settings. The declarations below describe how deployment
+publishes and owns those values.
+
 Post-provision publishes runtime settings to Azure App Configuration with
 the label `agent-lz`. That is the label for platform-owned settings.
 
@@ -860,36 +865,12 @@ existing governance or continuity owner for those references.
 
 ### Effective settings
 
-The Agent Application components do not read exclusively from `agent-lz`. Their startup
-loaders also select other component labels, and later matching selections
-can overwrite earlier values.
-
-Agent App UI and Agent App Ingestion endpoint loaders
-end with `label_filter=None`, which leaves the label filter unset and can
-read other labels.
-
-The orchestrator uses the explicit null label `"\0"` for its last
-selection, which reads unlabelled keys rather than all labels. Unlabelled
-values can still override `agent-lz` values.
-
-Conflicting component-labelled or unlabelled values can therefore replace a
-value written under `agent-lz`. Environment isolation needs separate stores
-and identities, not just different labels.
-
-Process variables can also override remote values in the orchestrator and
-optional ingestion component when `allow_environment_variables` is enabled.
-Their parsing differs: the orchestrator recognizes `1`, `true` and `yes`,
-whereas ingestion treats any nonempty string, including `false`, as enabled.
-This parsing difference is a risk, not a recommended way to override settings.
-
-An unavailable store does not make every component stop: some loaders disable
-remote reads or use configured fallback paths. Runtime validation therefore
-needs to confirm the effective settings and authorization behavior, not only
-that the process started.
-
-Settings are loaded at startup. A changed key requires the affected Container
-App to restart, or a new hosted version to be deployed, before the new startup
-configuration is loaded. Running hosted versions are immutable.
+An accepted configuration write does not confirm the value used by a running
+application. Compatibility labels, unlabelled keys and component-specific
+environment overrides can replace it. Startup settings need a process reload
+or a new hosted version. Follow
+[effective-value checks](application-settings.md#overrides-and-effective-values)
+for the component-specific behavior.
 
 Change foundation-owned settings in their declared inputs and runtime-owned
 settings through their publisher; a missing-only default seed does not make

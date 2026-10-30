@@ -13,8 +13,9 @@ different application. Choose the branch that matches your change:
 
 | Goal | Start here |
 | --- | --- |
-| Change a documented setting | [Deployment settings](configuration.md); no source fork needed |
-| Extend the Agent Application orchestrator or tools | [Agent tools](agent-tools.md), then pin only changed components below |
+| Change a documented runtime setting | [Application settings](application-settings.md), no source fork needed |
+| Change deployment inputs | [Deployment settings](configuration.md) |
+| Extend an Agent Application component | [Customize components](customize-components.md), then pin only changed components below |
 | Deploy a different application | The custom hosted example and its application definition below |
 
 For the Agent Application orchestrator hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
@@ -62,6 +63,11 @@ editing the definition.
 <span id="customize-a-bundled-component"></span>
 
 ### Customize an Agent Application component
+
+For source ownership, local execution, and contributor checks, start with
+[Customize components](customize-components.md), [Run locally](local-development.md),
+and [Tests & quality checks](application-testing.md). This runbook covers
+adopting the resulting source through deployment inputs, not implementing it.
 
 Prefer configuration first. Fork only runtime repositories whose source you
 change; an orchestrator extension does not require UI or ingestion forks.

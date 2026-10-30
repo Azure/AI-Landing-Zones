@@ -2,227 +2,124 @@
 
 # Agent Application
 
-Agent Application is the customizable reference app supplied by Agent Landing Zone.
-The supplied `app-definition.json` identifies its UI, orchestrator and optional
-ingestion components. Deployment composition applies the selected topology to
-that definition. A fresh environment uses `hosted-no-panel`: Agent App UI runs
-in Azure Container Apps and Agent App Orchestrator runs as a container in
-Foundry Agent Service. Its default strategy is `maf_lite`.
+Agent Application is the reference application included with Agent Landing Zone.
+It brings together a chat interface, an agent orchestration service and optional
+document processing. You can configure the supplied application or adapt its
+components to your own requirements.
 
-These pages explain the components and their integration boundaries.
-The [Deploy full stack runbook](deploy-full-stack.md) contains the deployment
-procedure. [Bring your own app](build-your-own-app.md) covers customer-owned
-applications.
+Start with [Deploy full stack](deploy-full-stack.md) to deploy the application.
+The guides below explain how to configure, operate and extend it.
 
-## Capability readiness
+## How the components fit together
 
-Use this matrix to distinguish supplied behavior from work your team must do.
-It describes the default **hosted Agent Application**, not every feature
-offered by the underlying Foundry service.
+| Component | What it does |
+| --- | --- |
+| Agent App UI | Provides the web chat, sign-in, citations and conversation controls. |
+| Agent App Orchestrator | Runs the selected agent strategy, calls the model and connects retrieval and tools. |
+| Agent App Ingestion | Provides optional application-managed document processing and indexing. |
 
-**Default** means supplied in the selected topology after normal deployment,
-network, sign-in and permission setup. **Configuration** needs operator changes
-but no new application code for that capability. **Development** means settings
-alone are insufficient. Preview status is stated separately; a service preview
-does not make an application integration ready.
+In the default topology, the UI runs in Azure Container Apps and the
+orchestrator runs as a hosted agent in Microsoft Foundry. Foundry IQ manages
+ingestion for the configured native Blob source. Deploy Agent App Ingestion
+only when your chosen processing or conversation-upload workflow needs it.
 
-<div class="reference-fields responsive-reference" markdown="1">
-<table role="table" markdown="1">
-<thead role="rowgroup" markdown="1">
-<tr role="row" markdown="1">
-<th scope="col" role="columnheader" markdown="span">Capability</th>
-<th scope="col" role="columnheader" markdown="span">Readiness</th>
-<th scope="col" role="columnheader" markdown="span">What is supplied or still needed</th>
-</tr>
-</thead>
-<tbody role="rowgroup" markdown="1">
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Basic chat and active-session context</th>
-<td role="cell" data-label="Readiness" markdown="span">Default, without retrieval</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">The frontend calls the hosted `maf_lite` runtime and configured model for non-retrieval turns. Questions that trigger retrieval have the separate gate below. Context is not durable across browser reloads. [Hosting](hosted-agents.md#protocol-and-caller-access).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Entra login and delegated Foundry invocation</th>
-<td role="cell" data-label="Readiness" markdown="span">Configuration</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Registration, two API consent boundaries, Key Vault references, callback and caller grants. Follow the [login sequence](application-auth.md#configure-login-in-order).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Native Blob source ingestion</th>
-<td role="cell" data-label="Readiness" markdown="span">Default</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Foundry IQ manages the configured source pipeline without Agent App Ingestion. Source/service permissions and successful indexing are still required. [Ingestion](ingestion.md#1-standard-ingestion-with-foundry-iq).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Protected knowledge-base retrieval</th>
-<td role="cell" data-label="Readiness" markdown="span">Development</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">The hosted entry point does not supply trusted user context or a retrieval bearer. Implement authenticated retrieval and prove document allow/deny behavior; UI OBO alone does not do this. [Identity boundary](application-auth.md#3-verify-the-retrieval-identity-boundary).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Foundry tools, Toolbox and MCP operations</th>
-<td role="cell" data-label="Readiness" markdown="span">Development</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Portal registration is not consumed automatically by `maf_lite`; add an authenticated invocation integration. MCP knowledge sources are not automatically model-callable tools. [Tools](agent-tools.md).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Work IQ, Fabric IQ and native SharePoint integrations</th>
-<td role="cell" data-label="Readiness" markdown="span">Development; service previews apply</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Source-specific templates, consent, trusted delegation and, where applicable, response handling still need integration. See [Work IQ](work-iq.md), [Fabric IQ](fabric-iq.md) and [SharePoint](sharepoint.md).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Custom ingestion and SharePoint indexing</th>
-<td role="cell" data-label="Readiness" markdown="span">Configuration</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Select Agent App Ingestion and configure its source, Graph permissions and schedule where needed. Processing/ACL synchronization does not close the hosted retrieval identity gap. [Custom ingestion](ingestion.md#3-custom-ingestion-only-when-needed).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Conversation PDF attachments</th>
-<td role="cell" data-label="Readiness" markdown="span">Development</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Optional ingestion enables processing, but hosted retrieval also needs source binding, owner identity and delegated authorization. Uploads are off by default. [Conversation uploads](ingestion.md#2-conversation-file-uploads).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Text descriptions of document images</th>
-<td role="cell" data-label="Readiness" markdown="span">Configuration</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Native extraction needs a supported model/region and source binding; the default chat model does not establish image verbalization. Protected retrieval still needs the integration above. [Document images](multimodality.md#document-image-grounding).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Direct screenshot, image or voice input</th>
-<td role="cell" data-label="Readiness" markdown="span">Not supplied</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Requires an application extension; document image extraction is not direct multimodal input. [Extensions](multimodality.md#direct-image-and-voice-extensions).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Durable conversation continuity and history</th>
-<td role="cell" data-label="Readiness" markdown="span">Configuration and authorization validation</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Off by default. Requires reviewed delegated permissions, owner isolation and evidence gates; panel history also needs the optional panel. Enabling one flag is insufficient. [Continuity](hosted-agents.md#continuity-history-and-the-administrative-panel).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Hosted ratings/comments and feedback administration</th>
-<td role="cell" data-label="Readiness" markdown="span">Development</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">The default layout has no feedback collection. Optional panel APIs still need a custom chat control/adapter and validated ownership. [Feedback](user-feedback.md).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Embedding chat in an existing portal</th>
-<td role="cell" data-label="Readiness" markdown="span">Development</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">The UI adapter is supplied; the host portal must implement trusted token acquisition, origin/CSP and lifecycle integration. [Embed chat](embed-chat.md).</td>
-</tr>
-<tr role="row" markdown="1">
-<th scope="row" role="rowheader" markdown="span">Teams/M365 or Copilot Studio publication</th>
-<td role="cell" data-label="Readiness" markdown="span">Manual configuration and validation</td>
-<td role="cell" data-label="What is supplied or still needed" markdown="span">Separate post-deployment runbooks, not automatic publication. Channels have different network and caller-identity contracts. [Teams/M365](publish-to-teams.md) and [Copilot Studio](connect-copilot-studio.md).</td>
-</tr>
-</tbody>
-</table>
-</div>
-In particular, successful provisioning, source ingestion or a greeting response
-does not establish protected retrieval. Use the linked capability's
-prerequisites and acceptance checks before presenting it to users.
+The application repositories contain the code. These guides are the shared
+documentation for all three components. The
+[release manifest](https://github.com/Azure/agent-landing-zone/blob/main/manifest.json)
+records their compatible versions.
+
+<span id="capability-readiness"></span>
+
+## Before you invite users
+
+Deployment creates the selected resources, but connecting a source and signing
+in do not by themselves prove that every user has the right document access.
+Complete the [sign-in and access setup](application-auth.md), configure the
+sources you need and check both allowed and denied access.
+
+Optional capabilities have their own prerequisites. Conversation history,
+file uploads, additional channels and external tools are not all enabled by
+the default deployment. Each guide explains what is supplied, what to configure
+and where application development is needed.
 
 <span id="choose-a-task"></span>
+<span id="application-components"></span>
 
-## Application components
+## Find your guide
 
-### Frontend
+<span id="agent-hosting"></span>
+<span id="model-tools-and-knowledge-base"></span>
 
-An Entra **tenant** is an organization's identity directory. An API **access
-token** is a credential: its **audience** identifies the receiving API, and a
-delegated **scope** identifies a permitted operation on behalf of a user.
-It is a **bearer** token because possession lets a caller present it, so it
-must stay protected.
+### Agents
 
-A **delegated call** acts for the signed-in user;
-on-behalf-of (OBO) exchanges that user's token for a downstream API token.
+Choose [where the agent runs](hosted-agents.md), select its
+[strategy and prompts](agent-strategies.md), or connect
+[tools and MCP servers](agent-tools.md). A tool lets an agent perform an
+operation. Retrieval supplies information for its answer.
 
-Agent App UI supplies chat, sign-in and the delegated call to the hosted agent.
-Its optional embedding and feedback surfaces have separate integration limits.
+<span id="frontend"></span>
 
-| Concept | Reference |
-| --- | --- |
-| UI admission, Foundry invocation and document authorization | [Sign-in and document access](application-auth.md) |
-| Chat inside an existing portal | [Embed chat](embed-chat.md) |
-| Ratings and comments | [User feedback](user-feedback.md) |
+### Chat & channels
 
-### Agent hosting
+Configure [sign-in and access](application-auth.md),
+[conversations and files](conversations.md), and [user feedback](user-feedback.md).
+To reach users elsewhere, [embed chat in a portal](embed-chat.md),
+[publish to Teams and Microsoft 365](publish-to-teams.md), or
+[connect Copilot Studio](connect-copilot-studio.md).
+These channels have different identity and network requirements. They do not
+all use the web chat's session or sign-in flow.
 
-[Agent hosting](hosted-agents.md) explains the hosted container, immutable image
-handoff and runtime identities. Hosting the container in Foundry does not turn
-its code into a portal-managed prompt agent.
+<span id="grounding"></span>
 
-### Model, tools and knowledge base
+### Knowledge & retrieval
 
-**Grounding** supplies retrieved information so the model can answer from
-connected sources.
+Retrieval finds relevant information from your connected sources so that
+the agent can use it in an answer. Start with [Foundry IQ](foundry-iq.md),
+then follow the guide for [Work IQ](work-iq.md), [Fabric IQ](fabric-iq.md),
+[SharePoint](sharepoint.md) or [structured data and NL2SQL](nl2sql.md).
+These guides explain the available integration paths and their prerequisites.
 
-The default `maf_lite` code calls the configured model deployment directly.
-Its configured grounding path is the Foundry IQ knowledge-base connector,
-with `RETRIEVAL_BACKEND=foundry_iq` as the fresh default. A knowledge base
-binds sources and returns retrieved content; it is not the model or the
-hosted container.
+<span id="ingestion"></span>
+<span id="capabilities-and-extensions"></span>
 
-Foundry offers native tools and Toolbox connections. A **Toolbox** groups tools
-and their connections, including tools exposed through **Model Context Protocol
-(MCP)**, a protocol for making operations callable by agents.
-These are the service integration path for additional operations. The supplied
-`maf_lite` code does **not** automatically consume a Toolbox added in the portal.
-An authenticated Toolbox integration requires application development.
-[Agent tools](agent-tools.md) describes that contract.
+### Document ingestion
 
-<div class="runbook-diagram" markdown="1">
+Decide [when you need the ingestion service](ingestion.md), check
+[document formats and image processing](multimodality.md), and configure
+[jobs and schedules](ingestion-jobs.md).
+Preparing a shared document collection is different from uploading a file
+to a conversation. Processing images inside a document also does not imply
+support for direct image or voice input in chat.
 
-<div class="runbook-diagram__summary" markdown="1">
+### Operations
 
-1. **User and Agent App UI** exchange messages.
-2. **Agent App UI and hosted orchestrator** communicate through delegated
-   Foundry invocation.
-3. **The hosted orchestrator** exchanges requests and responses with the
-   model deployment and the Foundry IQ knowledge base as separate dependencies.
-4. **Foundry tools / Toolbox** require a custom authenticated integration
-   from the hosted orchestrator; the supplied application does not consume
-   portal-added tools automatically.
+Change [application settings](application-settings.md), use the
+[administrative panels](operations.md), and review
+[monitoring and audit events](application-monitoring.md).
+For failures, use [Troubleshooting](troubleshooting.md).
 
-</div>
+### AgentOps
 
-[![Application request dependencies: User, Agent App UI, hosted orchestrator, model deployment, Foundry IQ knowledge base and custom tool integration.](../media/application-flow.svg)](../media/application-flow.svg){: .runbook-diagram__image aria-label="Open full-size application request diagram"}
+Use the [AgentOps Accelerator](agentops.md) to evaluate, ship and operate
+your workload on Agent Landing Zone.
 
-[Open full-size diagram](../media/application-flow.svg){: .runbook-diagram__open}
+### Development & customization
 
-</div>
-
-The flow shows request dependencies, not proof of document authorization.
-The built-in native retrieval path separately exchanges and forwards a
-delegated Search token; native permissions remain enforced independently of
-Foundry invocation. Required retrieval fails without that credential.
-This path does not require adding a Toolbox in the portal or customer-written
-identity integration. Consent, source permissions and allow/deny validation
-remain necessary; see [Agent Application access](application-auth.md).
-
-### Ingestion
-
-Fresh environments use native Foundry IQ ingestion for the configured Blob
-source, without Agent App Ingestion. The optional ingestion Container App
-provides application-managed processing and eligible conversation PDF uploads.
-Native source ingestion alone does not enable chat attachments.
-[Ingestion and conversation uploads](ingestion.md) explains these boundaries.
-
-### Grounding
-
-| Knowledge | Reference |
-| --- | --- |
-| Documents and knowledge-base retrieval | [Foundry IQ](foundry-iq.md) |
-| Microsoft 365 knowledge | [Work IQ](work-iq.md) |
-| Fabric data and data agents | [Fabric IQ](fabric-iq.md) |
-| SharePoint content | [SharePoint](sharepoint.md) |
-
-### Capabilities and extensions
-
-[Multimodality](multimodality.md) distinguishes document image extraction from
-direct image or voice input. [NL2SQL](nl2sql.md) explains structured-data
-grounding and the boundary for custom SQL tools.
+[Run the components locally](local-development.md),
+[customize their behavior](customize-components.md), consult the
+[API reference](application-api.md), and run the
+[tests and quality checks](application-testing.md).
+To replace the reference application, follow [Bring your own app](build-your-own-app.md).
 
 ## Know what you are changing
 
-**Deployment inputs** select Azure resources and application components.
-**Runtime settings** control the supplied application's behavior, typically in
-Azure App Configuration with label `agent-lz`. Other applications can have
-different runtime settings. [Deployment settings](configuration.md) identifies
-the owner and location of each value.
+**Deployment settings** select resources, networking and which components are
+deployed. They belong in the [deployment configuration](configuration.md).
+**Application settings** control runtime behavior and normally live in Azure
+App Configuration under the `agent-lz` label.
+[Application settings](application-settings.md) explains how to change them
+and when a reload or restart is required.
 
-Runtime configuration is cached in process. A changed hosted runtime setting
-requires a new agent version; affected UI or ingestion processes also need to
-reload their settings. The [Deploy full stack runbook](deploy-full-stack.md)
-covers deployment and redeployment.
+Keep deployment and redeployment steps in the
+[deployment runbook](deploy-full-stack.md). Do not run deployment hooks merely
+to inspect a configuration value or execute a local test.

@@ -52,20 +52,38 @@ nav:
       - "Design Checklist": architecture/design-checklist.md
       - Agent Application:
           - "Overview": agent-landing-zone/application.md
-          - "Agent hosting": agent-landing-zone/hosted-agents.md
-          - Frontend:
+          - Agents:
+              - "Hosting": agent-landing-zone/hosted-agents.md
+              - "Strategies & prompts": agent-landing-zone/agent-strategies.md
+              - "Tools & MCP": agent-landing-zone/agent-tools.md
+          - "Chat & channels":
               - "Sign-in & access": agent-landing-zone/application-auth.md
+              - "Conversations & files": agent-landing-zone/conversations.md
               - "Embed chat": agent-landing-zone/embed-chat.md
               - "User feedback": agent-landing-zone/user-feedback.md
-          - "Ingestion": agent-landing-zone/ingestion.md
-          - "Multimodality": agent-landing-zone/multimodality.md
-          - Grounding:
+              - "Teams & Microsoft 365": agent-landing-zone/publish-to-teams.md
+              - "Copilot Studio": agent-landing-zone/connect-copilot-studio.md
+          - "Knowledge & retrieval":
               - "Foundry IQ": agent-landing-zone/foundry-iq.md
               - "Work IQ": agent-landing-zone/work-iq.md
               - "Fabric IQ": agent-landing-zone/fabric-iq.md
               - "SharePoint": agent-landing-zone/sharepoint.md
               - "NL2SQL": agent-landing-zone/nl2sql.md
-          - "Tools & MCP": agent-landing-zone/agent-tools.md
+          - "Document ingestion":
+              - "Overview": agent-landing-zone/ingestion.md
+              - "Document formats & images": agent-landing-zone/multimodality.md
+              - "Jobs & schedules": agent-landing-zone/ingestion-jobs.md
+          - Operations:
+              - "Application settings": agent-landing-zone/application-settings.md
+              - "Administration": agent-landing-zone/operations.md
+              - "Monitoring & audit": agent-landing-zone/application-monitoring.md
+          - "AgentOps": agent-landing-zone/agentops.md
+          - "Development & customization":
+              - "Run locally": agent-landing-zone/local-development.md
+              - "Customize components": agent-landing-zone/customize-components.md
+              - "API reference": agent-landing-zone/application-api.md
+              - "Tests & quality checks": agent-landing-zone/application-testing.md
+              - "Bring your own app": agent-landing-zone/build-your-own-app.md
       - Runbooks:
           - Deploy infra only:
               - "With Bicep": agent-landing-zone/deploy-infra-only.md
@@ -75,9 +93,6 @@ nav:
               - "With Terraform": agent-landing-zone/deploy-terraform-full-stack.md
           - "Application Gateway": agent-landing-zone/application-gateway.md
           - "Private access (VPN)": agent-landing-zone/private-access.md
-          - "Bring your own app": agent-landing-zone/build-your-own-app.md
-          - "Teams & M365": agent-landing-zone/publish-to-teams.md
-          - "Copilot Studio": agent-landing-zone/connect-copilot-studio.md
           - "Azure DevOps": agent-landing-zone/azure-devops.md
       - "Terraform templates": agent-landing-zone/terraform.md
       - "Deploy via portal": agent-landing-zone/portal.md
@@ -174,7 +189,6 @@ not_in_nav: |
   /bicep/*.md
   /architecture/cost-guide.md
   /agent-landing-zone/customer-environments.md
-  /agent-landing-zone/operations.md
   /agent-landing-zone/deploy-bicep.md
   /agent-landing-zone/deploy-terraform.md
   /agent-landing-zone/sizing.md

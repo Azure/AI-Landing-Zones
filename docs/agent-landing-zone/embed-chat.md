@@ -6,8 +6,7 @@ portal page's document structure, not an iframe containing another web page.
 
 This is Agent App UI embedding, not Copilot Studio. The UI remains in Container
 Apps, with the orchestrator hosted in Foundry and grounding through Foundry IQ.
-The [pinned UI embedding reference](https://github.com/Azure/agent-app-ui/blob/v3.3.0/docs/copilot-embedding.md)
-contains the component integration contract.
+This page covers widget configuration, portal integration and session lifecycle.
 
 This page describes requirements, not a turnkey portal integration.
 Portal token acquisition, Content Security Policy (CSP) and widget lifecycle
@@ -81,6 +80,22 @@ override embedding settings. The UI loads them at startup.
 [Deployment settings](configuration.md) identifies their configuration boundary.
 The existing session-signing secret stays protected.
 
+### Session settings
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `CHAINLIT_COPILOT_SESSION_TTL_SECONDS` | `3600` | Maximum session lifetime, from `60` to `86400` seconds. Entra token expiry can end it earlier. |
+| `CHAINLIT_COPILOT_MAX_SESSIONS` | `1000` | Process-local session bound, from `1` to `10000`. |
+| `CHAINLIT_COPILOT_BOOTSTRAP_RATE_LIMIT_PER_MINUTE` | `60` | Per-client bootstrap limit, from `1` to `600`. Use a gateway for authoritative distributed throttling. |
+| `CHAINLIT_COOKIE_SAMESITE` | `lax` | `lax`, `strict` or `none`. Cross-site cookies require HTTPS and can still be blocked by browser policy. |
+| `CHAINLIT_AUTH_SECRET` | Required secret | At least 32 UTF-8 bytes, held in Key Vault through the existing secret mechanism. |
+
+Embedding defaults to disabled. When enabled, it requires an explicit valid
+`CHAINLIT_COPILOT_AUTH_MODE`. Nonempty environment values override the embedding
+loader's App Configuration values. Blank values fall back to remote configuration.
+The store must still be reachable and authorized. See
+[Application settings](application-settings.md).
+
 The widget requires one Uvicorn process, one active Container Apps revision
 and exactly one replica because sessions and rate limits are process-local.
 Same-site HTTPS subdomains work with the default `CHAINLIT_COOKIE_SAMESITE=lax`.
@@ -131,6 +146,48 @@ caller boundary. Protected document access still requires the
 [hosted retrieval integration](application-auth.md#3-verify-the-retrieval-identity-boundary);
 the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
 alone does not establish downstream consent or source permissions.
+
+### Bootstrap and mount the widget
+
+Acquire a UI API access token with your portal's existing authentication library.
+The example below expects that token in `uiAccessToken` and an element with
+`id="agent-lz-status"` in the portal. It does not implement token acquisition.
+
+```javascript
+const chainlitServer = "https://chat.contoso.com"
+const status = document.getElementById("agent-lz-status")
+const bootstrap = await fetch(`${chainlitServer}/copilot/auth/bootstrap`, {
+  method: "POST",
+  credentials: "include",
+  headers: { Authorization: "Bearer " + uiAccessToken },
+})
+if (!bootstrap.ok) {
+  status.textContent = "The assistant session could not be established. Sign in again or contact support."
+  throw new Error(`Assistant bootstrap failed: ${bootstrap.status}`)
+}
+const probe = await fetch(`${chainlitServer}/project/settings`, {
+  credentials: "include",
+})
+if (!probe.ok) {
+  status.textContent = "The browser did not accept the assistant session."
+  throw new Error(`Assistant session check failed: ${probe.status}`)
+}
+await new Promise((resolve, reject) => {
+  const script = document.createElement("script")
+  script.src = `${chainlitServer}/copilot/index.js`
+  script.onload = resolve
+  script.onerror = reject
+  document.head.appendChild(script)
+})
+window.mountChainlitWidget({ chainlitServer, theme: "light" })
+status.textContent = ""
+```
+
+Run this in an asynchronous portal initialization function or module. Never
+pass the user token as the widget's `accessToken`. Do not retry an Entra failure
+with anonymous bootstrap.
+
+### Recover sign-in
 
 Use the bundled recovery helper rather than implementing a claims handshake.
 After authenticated bootstrap, load it with credentials and install it against
@@ -185,6 +242,18 @@ the process-local session and download-grant state.
 
 <span id="4-verify-before-publishing"></span>
 
+### Logout and account changes
+
+1. Call `stopRecovery()` if the helper was installed, then unmount the widget.
+2. Clear the widget's `chainlit-copilot-thread-id` local-storage selection.
+3. Call `POST /copilot/auth/logout` with `credentials: "include"`.
+4. Clear the portal's old account state.
+5. Acquire the new account's UI token before bootstrapping another session.
+
+Never reuse the previous account's token, opaque session or thread selection.
+Each session allows at most four admitted physical Socket.IO connections.
+Expiry, eviction and logout invalidate its registered sockets and tasks.
+
 ## Integration evidence
 
 Successful bootstrap and cookie acceptance allow `/project/settings` and the
@@ -204,6 +273,41 @@ anonymous fallback or service-identity retrieval.
 The portal widget and `CHAINLIT_COPILOT_ENABLED` control different sides of the
 integration. Disabling the UI setting takes effect after a UI process reload.
 It does not remove standalone chat or alter the hosted agent.
+
+Remove the portal widget first, then disable embedding and reload the UI.
+Keep the approved single-revision, single-replica deployment during a rollback.
+Previously active embedded sessions are not restored by reverting an image.
+
+## Anonymous mode
+
+Use `CHAINLIT_COPILOT_AUTH_MODE=anonymous` only for an intentionally public
+assistant or an endpoint protected by an authenticated gateway. Bootstrap has
+no bearer header in this mode. Sending one returns `400`.
+
+The portal's own login does not protect a separately reachable UI endpoint.
+An origin allowlist is not user authentication. Anonymous sessions have unique,
+ephemeral principals, cannot resume another session and cannot use durable
+threads, uploads, feedback or private citation downloads.
+
+The default user-delegated hosted backend needs a user token, which anonymous
+mode does not supply. Selecting anonymous embedding alone does not create a
+working anonymous chat backend. Never change identity mode to work around a
+failed user authorization check.
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| Startup fails | Explicit auth mode, distinct HTTPS origins, empty `CHAINLIT_ROOT_PATH` and reachable configuration. |
+| Bootstrap `401` | UI API token, tenant, audience, delegated scope, expiry and signing keys. |
+| Bootstrap `403` | Exact portal Origin and user-admission policy. |
+| Bootstrap `429` | Honor `Retry-After` and review gateway throttling. |
+| Bootstrap `503` | Configuration readiness and Entra signing-key availability. |
+| Bootstrap works but widget requests fail | Cookie acceptance, SameSite policy, exact Origin, proxy routes and WebSocket upgrades. |
+| Socket connects then closes | Session expiry, affinity and one-process/one-revision/one-replica requirements. |
+| Portal blocks scripts or sockets | CSP `script-src` and `connect-src`, including the approved `wss://` destination. |
+
+For general application failures, use [Troubleshooting](troubleshooting.md).
 
 ## Unsupported edges
 

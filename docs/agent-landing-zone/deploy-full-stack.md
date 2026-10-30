@@ -430,6 +430,35 @@ Infrastructure, RBAC, topology or ingestion-selection changes require the full
 workflow, not deploy-only. Changing a selection does not delete previously
 deployed resources or revoke old permissions; retirement is separately authorized.
 
+#### Component builds and deployment destinations
+
+The component deployment hooks use existing platform resources. Their empty
+Bicep entrypoints do not provision standalone environments.
+For routine application updates, use root `azd deploy` as described above.
+
+When diagnosing a component-only build, check the selected
+[build mode](configuration.md#deployment-controls):
+
+- `BUILD_MODE=local` builds `linux/amd64` with Docker and pushes to ACR.
+  An explicit local choice fails if Docker is unavailable.
+- `BUILD_MODE=acr-task` uses `az acr build`. A network-isolated remote build
+  requires `ACR_TASK_AGENT_POOL`.
+- Without an explicit mode, recognized legacy `USE_DOCKER` values take
+  precedence over automatic selection. Otherwise isolation or a configured
+  pool selects ACR Tasks, followed by Docker availability.
+- Use exact legacy boolean values without whitespace for portable PowerShell
+  and Bash behavior. Unknown explicit build modes fail.
+
+Hosted orchestrator image preparation is a separate path that always uses ACR
+Tasks. Setting `BUILD_MODE=local` does not replace that hosted image workflow.
+
+Component scripts prefer a nonempty shell `APP_CONFIG_ENDPOINT` over the azd
+environment value. Confirm the endpoint before invoking them. They read the
+application destination from `AZURE_APP_RESOURCE_GROUP` under `agent-lz`.
+Only a successful missing or empty read falls back to `AZURE_RESOURCE_GROUP`.
+An inaccessible store or conflicting destinations stops deployment.
+Do not treat deployment hooks as offline checks or run them from a test suite.
+
 ### Change a runtime setting
 
 First check [Deployment settings](configuration.md) for ownership and overwrite behavior.
