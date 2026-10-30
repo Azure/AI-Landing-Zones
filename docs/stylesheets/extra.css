@@ -11,13 +11,13 @@
 }
 
 .md-sidebar__scrollwrap {
-  scrollbar-color: #cbd2dc transparent;
+  scrollbar-color: #e6e9ee transparent;
   scrollbar-width: thin;
 }
 
 .md-sidebar__scrollwrap:hover,
 .md-sidebar__scrollwrap:focus-within {
-  scrollbar-color: #8793a3 transparent;
+  scrollbar-color: #cbd2dc transparent;
 }
 
 .md-sidebar__scrollwrap::-webkit-scrollbar {
@@ -29,7 +29,7 @@
 }
 
 .md-sidebar__scrollwrap::-webkit-scrollbar-thumb {
-  background-color: #cbd2dc;
+  background-color: #e6e9ee;
   background-clip: padding-box;
   border: 3px solid transparent;
   border-radius: 8px;
@@ -39,7 +39,7 @@
 .md-sidebar__scrollwrap:focus-within::-webkit-scrollbar-thumb,
 .md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb:hover,
 .md-sidebar__scrollwrap:focus-within::-webkit-scrollbar-thumb:hover {
-  background-color: #8793a3;
+  background-color: #cbd2dc;
 }
 
 @supports selector(::-webkit-scrollbar) {

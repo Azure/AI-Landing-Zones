@@ -219,15 +219,15 @@ def run(base, screenshots):
                     color: thumb.backgroundColor
                 };
             }""")
-            assert thumb_style == {"hitWidth": 8, "paintWidth": 2, "clip": "padding-box", "color": "rgb(203, 210, 220)"}, thumb_style
+            assert thumb_style == {"hitWidth": 8, "paintWidth": 2, "clip": "padding-box", "color": "rgb(230, 233, 238)"}, thumb_style
             sidebar.hover()
             assert sidebar.evaluate("element => getComputedStyle(element).scrollbarColor") == "auto"
-            assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(135, 147, 163)"
+            assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(203, 210, 220)"
             nav_link = sidebar.locator("a.md-nav__link:visible").first
             nav_link.focus()
             expect(nav_link).to_be_focused()
             page.mouse.move(1400, 490)
-            assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(135, 147, 163)"
+            assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(203, 210, 220)"
             if not path and not page.locator("#__nav_2").is_checked():
                 sidebar.locator('label.md-nav__link[for="__nav_2"]').click()
             if not page.locator("#__nav_2_3").is_checked():
