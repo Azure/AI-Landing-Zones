@@ -35,7 +35,7 @@ interface connects users to it. [Agent Application](application.md) explains
 the components, knowledge sources and application behavior.
 
 The planning and Agent Application pages explain concepts and settings.
-Execution steps stay together in the **Runbooks**, with prerequisites,
+Execution steps stay together in **Deploy**, with prerequisites,
 commands, validation and rollback.
 
 <span id="choose-your-path"></span>
@@ -58,3 +58,7 @@ commands, validation and rollback.
   [with&nbsp;Bicep](deploy-infra-only.md) or [with&nbsp;Terraform](deploy-terraform-infra-only.md).
 - **Do I want the supplied application running?** Deploy full stack
   [with&nbsp;Bicep](deploy-full-stack.md) or [with&nbsp;Terraform](deploy-terraform-full-stack.md).
+
+For an existing environment, **Operate** brings together
+[updates and recovery](deployment-operations.md) and
+[troubleshooting](troubleshooting.md).

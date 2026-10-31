@@ -42,14 +42,29 @@ nav:
   - Agent Landing Zone:
       - "Overview": agent-landing-zone/index.md
       - "What's new": agent-landing-zone/whats-new.md
-      - Plan your deployment:
+      - Plan:
           - "How it works": agent-landing-zone/how-it-works.md
           - "Deployment choices": agent-landing-zone/planning.md
+          - "Design checklist": architecture/design-checklist.md
           - "Network isolation": agent-landing-zone/network-isolation.md
           - "Sizing & cost planner": agent-landing-zone/sizing-cost-planner.md
           - "Deployment settings": agent-landing-zone/configuration.md
           - "Resource naming": agent-landing-zone/resource-naming.md
-      - "Design Checklist": architecture/design-checklist.md
+      - Deploy:
+          - Bicep:
+              - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
+              - "Deploy full stack": agent-landing-zone/deploy-full-stack.md
+          - Terraform:
+              - "Overview": agent-landing-zone/terraform.md
+              - "Deploy infra only": agent-landing-zone/deploy-terraform-infra-only.md
+              - "Deploy full stack": agent-landing-zone/deploy-terraform-full-stack.md
+          - "Deploy via portal": agent-landing-zone/portal.md
+          - "Azure DevOps": agent-landing-zone/azure-devops.md
+          - "Application Gateway": agent-landing-zone/application-gateway.md
+          - "Private access (VPN)": agent-landing-zone/private-access.md
+      - Operate:
+          - "Updates & recovery": agent-landing-zone/deployment-operations.md
+          - "Troubleshooting": agent-landing-zone/troubleshooting.md
       - Agent Application:
           - "Overview": agent-landing-zone/application.md
           - Agents:
@@ -84,19 +99,6 @@ nav:
               - "API reference": agent-landing-zone/application-api.md
               - "Tests & quality checks": agent-landing-zone/application-testing.md
               - "Bring your own app": agent-landing-zone/build-your-own-app.md
-      - Runbooks:
-          - Deploy infra only:
-              - "With Bicep": agent-landing-zone/deploy-infra-only.md
-              - "With Terraform": agent-landing-zone/deploy-terraform-infra-only.md
-          - Deploy full stack:
-              - "With Bicep": agent-landing-zone/deploy-full-stack.md
-              - "With Terraform": agent-landing-zone/deploy-terraform-full-stack.md
-          - "Application Gateway": agent-landing-zone/application-gateway.md
-          - "Private access (VPN)": agent-landing-zone/private-access.md
-          - "Azure DevOps": agent-landing-zone/azure-devops.md
-      - "Terraform templates": agent-landing-zone/terraform.md
-      - "Deploy via portal": agent-landing-zone/portal.md
-      - "Troubleshooting": agent-landing-zone/troubleshooting.md
   - AI Gateway Landing Zone:
       - "Overview": ai-gateway-landing-zone/index.md
       - "What's new": ai-gateway-landing-zone/whats-new.md

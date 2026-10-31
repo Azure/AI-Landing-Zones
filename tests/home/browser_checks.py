@@ -28,6 +28,82 @@ class Handler(SimpleHTTPRequestHandler):
         pass
 
 
+def expand_navigation_group(page, nav, name):
+    label = nav.locator("label.md-nav__link").filter(
+        has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
+    )
+    toggle = page.locator("#" + label.get_attribute("for"))
+    if not toggle.is_checked():
+        label.click()
+    return label.locator("..").locator(":scope > nav.md-nav")
+
+
+def check_lifecycle_navigation(page, base, screenshots):
+    page.set_viewport_size({"width": 1440, "height": 1000})
+    page.goto(base + "agent-landing-zone/")
+    primary = page.locator(".md-nav--primary")
+    agent = expand_navigation_group(page, primary, "Agent Landing Zone")
+    labels = agent.locator(":scope > ul > li").evaluate_all("""items => items.map(item =>
+        item.querySelector(":scope > .md-nav__link > .md-ellipsis").textContent.trim()
+    )""")
+    assert labels == ["Overview", "What's new", "Plan", "Deploy", "Operate", "Agent Application"], labels
+    for name in ("Plan", "Deploy", "Operate"):
+        expand_navigation_group(page, agent, name)
+    if screenshots:
+        page.screenshot(path=str(screenshots / "lifecycle-navigation-desktop.png"), animations="disabled")
+    plan_label = agent.locator("label.md-nav__link").filter(has_text=re.compile(r"^\s*Plan\s*$"))
+    plan_toggle = page.locator("#" + plan_label.get_attribute("for"))
+    plan_label.focus()
+    page.keyboard.press("Enter")
+    expect(plan_toggle).not_to_be_checked()
+    page.keyboard.press("Enter")
+    expect(plan_toggle).to_be_checked()
+
+    routes = (
+        ("agent-landing-zone/how-it-works/", ("Agent Landing Zone", "Plan")),
+        ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
+        ("agent-landing-zone/deploy-infra-only/", ("Agent Landing Zone", "Deploy", "Bicep")),
+        ("agent-landing-zone/deploy-full-stack/", ("Agent Landing Zone", "Deploy", "Bicep")),
+        ("agent-landing-zone/terraform/", ("Agent Landing Zone", "Deploy", "Terraform")),
+        ("agent-landing-zone/deploy-terraform-infra-only/", ("Agent Landing Zone", "Deploy", "Terraform")),
+        ("agent-landing-zone/deploy-terraform-full-stack/", ("Agent Landing Zone", "Deploy", "Terraform")),
+        ("agent-landing-zone/deployment-operations/", ("Agent Landing Zone", "Operate")),
+        ("agent-landing-zone/troubleshooting/", ("Agent Landing Zone", "Operate")),
+        ("agent-landing-zone/application/", ("Agent Landing Zone", "Agent Application")),
+        ("agent-landing-zone/agentops/", ("Agent Landing Zone", "Agent Application")),
+        ("agent-landing-zone/operations/", ("Agent Landing Zone", "Agent Application", "Operations")),
+        ("ai-gateway-landing-zone/deploy/bicep-quick-deployment/",
+         ("AI Gateway Landing Zone", "Deploy", "Bicep")),
+    )
+    for width in (1440, 390, 320):
+        page.set_viewport_size({"width": width, "height": 1000})
+        for path, groups in routes:
+            response = page.goto(base + path)
+            assert response.status == 200, path
+            branch = primary
+            for name in groups:
+                label = branch.locator("label.md-nav__link").filter(
+                    has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
+                )
+                expect(page.locator("#" + label.get_attribute("for"))).to_be_checked()
+                branch = label.locator("..").locator(":scope > nav.md-nav")
+            active_item = branch.locator(":scope > ul > li.md-nav__item--active")
+            active = active_item.locator(":scope > a.md-nav__link--active")
+            expect(active).to_have_count(1)
+            assert active.evaluate("element => new URL(element.href).pathname === location.pathname"), path
+            if width < 768:
+                page.locator('.md-header label[for="__drawer"]').click()
+                page.wait_for_function("""() =>
+                    document.querySelector(".md-sidebar--primary").getBoundingClientRect().left >= -1
+                """)
+                expect(active_item.locator(":scope > .md-nav__link--active:visible")).to_have_count(1)
+                if screenshots and width == 390 and path.endswith("deployment-operations/"):
+                    page.screenshot(path=str(screenshots / "lifecycle-navigation-mobile.png"), animations="disabled")
+            assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), (
+                width, path
+            )
+
+
 def check_application_navigation(page, base, screenshots):
     labels = (
         "Agent Application", "Chat & channels", "Knowledge & retrieval",
@@ -40,13 +116,9 @@ def check_application_navigation(page, base, screenshots):
             sidebar = page.locator(".md-sidebar--primary")
             expect(sidebar).to_be_visible()
             nav = sidebar.locator(".md-nav--primary")
+            branch = nav
             for name in ("Agent Landing Zone", "Agent Application"):
-                label = nav.locator("label.md-nav__link").filter(
-                    has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
-                )
-                toggle = page.locator("#" + label.get_attribute("for"))
-                if not toggle.is_checked():
-                    label.click()
+                branch = expand_navigation_group(page, branch, name)
             for name in labels:
                 link = nav.locator(".md-nav__link:visible").filter(
                     has_text=re.compile(r"^\s*" + re.escape(name) + r"\s*$")
@@ -331,6 +403,7 @@ def run(base, screenshots):
             assert not page.locator('script[src*="javascripts/home.js"]').count()
             if not path.endswith("sizing-cost-planner/"):
                 expect(page.locator(".md-sidebar--secondary")).to_be_visible()
+        check_lifecycle_navigation(page, base, screenshots)
         check_application_navigation(page, base, screenshots)
         check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
@@ -359,10 +432,8 @@ def run(base, screenshots):
             expect(nav_link).to_be_focused()
             page.mouse.move(1400, 490)
             assert sidebar.evaluate('element => getComputedStyle(element, "::-webkit-scrollbar-thumb").backgroundColor') == "rgb(203, 210, 220)"
-            if not path and not page.locator("#__nav_2").is_checked():
-                sidebar.locator('label.md-nav__link[for="__nav_2"]').click()
-            if not page.locator("#__nav_2_3").is_checked():
-                sidebar.locator('label.md-nav__link[for="__nav_2_3"]').click()
+            agent = expand_navigation_group(page, sidebar, "Agent Landing Zone")
+            expand_navigation_group(page, agent, "Plan")
             page.wait_for_function("""() => {
                 const sidebar = document.querySelector(".md-sidebar--primary .md-sidebar__scrollwrap");
                 return sidebar.scrollHeight > sidebar.clientHeight;
@@ -408,7 +479,7 @@ def run(base, screenshots):
         assert fallback.locator(".architecture-workbench .home-tabs").is_hidden()
         context.close()
         browser.close()
-    print("PASS: homepage layout, full-width diagrams, accessible zoom viewer, tabs, native navigation/search, legacy anchors, no-JS fallback and page isolation")
+    print("PASS: homepage layout, full-width diagrams, accessible zoom viewer, tabs, lifecycle navigation, native navigation/search, legacy anchors, no-JS fallback and page isolation")
 
 
 def main():
