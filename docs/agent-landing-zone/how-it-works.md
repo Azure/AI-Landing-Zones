@@ -23,7 +23,7 @@ where Azure AI Search prepares Blob documents for retrieval.
 
 The sections below explain how that application and its
 infrastructure are prepared. The **Deploy infra only** and
-**Deploy full stack** runbooks provide the execution steps.
+**Deploy full stack** guides provide the execution steps.
 
 ## How to read deployment settings
 
@@ -45,7 +45,7 @@ supports preflight diagnostics only; Bicep uses `infra/bicep/main.parameters.jso
 for deployment.
 The [Deployment settings](configuration.md) reference lists inputs and defaults;
 choose the provider-specific **Deploy infra only** or **Deploy full stack**
-runbook for their application order.
+guide for their application order.
 
 !!! note "Application-specific runtime settings"
     Runtime settings control an application's behavior and vary by application.
@@ -256,7 +256,7 @@ The same source pins do not guarantee the same image digest when images are
 built independently. If a promotion process requires the identical image,
 its digest and registry availability need separate preservation and verification.
 
-The full-stack runbooks for [Bicep](deploy-full-stack.md) and
+The full-stack deployment guides for [Bicep](deploy-full-stack.md) and
 [Terraform](deploy-terraform-full-stack.md) provide execution steps. For
 strategy eligibility and image behavior, see [Agent hosting](hosted-agents.md).
 
@@ -271,5 +271,5 @@ For execution, choose the outcome and then the provider:
 - **Deploy full stack:** [With Bicep](deploy-full-stack.md) or
   [With Terraform](deploy-terraform-full-stack.md).
 
-Those runbooks contain the
+Those guides contain the
 prerequisites, topology-specific sequence and validation steps.

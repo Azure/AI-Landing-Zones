@@ -7,7 +7,7 @@ Hosted feedback requires a custom UI control and validated conversation
 ownership. [Foundry hosted agents](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents)
 provide the container runtime, not this feedback integration.
 
-This page describes those boundaries. The [Deploy full stack runbook](deploy-full-stack.md)
+This page describes those boundaries. The [full-stack deployment guide](deploy-full-stack.md)
 covers deployment and redeployment, not a ready-made feedback customization.
 
 <span id="choose-the-supported-path"></span>

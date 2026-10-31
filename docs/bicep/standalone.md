@@ -75,7 +75,7 @@ the recommendation. That minimum is not a future-scale guarantee.
 | `DEPLOYMENT_MODE` | `standalone`; records intent, not a replacement for explicit flags |
 | `NETWORK_ISOLATION` | `true` |
 | `DEPLOY_AZURE_FIREWALL` | `true` for local inspected egress |
-| `DEPLOY_JUMPBOX`, `DEPLOY_BASTION`, `DEPLOY_NAT_GATEWAY` | Independently selected; the canonical runbook shows the self-contained choice |
+| `DEPLOY_JUMPBOX`, `DEPLOY_BASTION`, `DEPLOY_NAT_GATEWAY` | Independently selected; the canonical guide shows the self-contained choice |
 | `BASTION_SKU_NAME`, `BASTION_ENABLE_TUNNELING` | Standard/Premium with tunneling for native RDP |
 | `DEPLOY_ACR_TASK_AGENT_POOL` | The Agent platform selects a pool for private remote builds; review the [build-mode contract](../agent-landing-zone/network-isolation.md) before overriding |
 

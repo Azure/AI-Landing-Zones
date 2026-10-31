@@ -89,7 +89,7 @@ does not imply cross-conversation personalization.
    Do not put credentials, user tokens or private configuration in prompts.
 4. For bundled prompt changes, follow
    [Customize components](customize-components.md) and deploy the reviewed
-   image through the [deployment runbook](deploy-full-stack.md).
+   image through the [deployment guide](deploy-full-stack.md).
 5. Start a new hosted version for hosted settings or image changes. Restart
    affected classic processes after changing strategy or cached dependencies.
 6. Check a representative question, a required-source failure and an

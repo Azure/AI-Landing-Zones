@@ -8,7 +8,9 @@ agent** without enabling Foundry public network access.
 You will reuse the existing Foundry agent and network, then create a relay flow
 and a dedicated pilot agent in Copilot Studio.
 
-## What you'll have after this runbook
+<span id="what-youll-have-after-this-runbook"></span>
+
+## Expected outcome
 
 A Copilot Studio agent that calls your private Foundry agent through an
 authenticated Power Automate flow.
@@ -22,7 +24,7 @@ identity of the person chatting.
 
 ## When to use
 
-Use this runbook when Copilot Studio needs to call an existing private Foundry
+Use this guide when Copilot Studio needs to call an existing private Foundry
 agent through an authenticated flow. It is a shared-connection relay, not the
 native connected-agent setup or automatic per-user delegation.
 
@@ -38,7 +40,7 @@ Foundry private endpoint. Do not reuse the private-endpoint or Container Apps
 subnet for Power Platform delegation.
 
 !!! note "Why use a flow in this scenario?"
-    This runbook covers **Foundry with Public Network Access (PNA) disabled**.
+    This guide covers **Foundry with Public Network Access (PNA) disabled**.
     It uses a Power Automate flow because the HTTP connector supports
     [virtual network integration](https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation),
     allowing HTTPS requests to reach Foundry through its private endpoint.

@@ -10,7 +10,7 @@ primary network/DNS configuration, checks CIDR conflicts, writes Bicep parameter
 runs Azure validation/what-if, deploys on explicit approval, generates VPN profiles,
 and validates private DNS and trusted HTTPS from the local machine.
 
-This infrastructure runbook intentionally lives in `validation-local` and is
+This infrastructure deployment guide intentionally lives in `validation-local` and is
 tracked individually; generated `.runs` artifacts remain ignored. Unlike the
 application validation suite, it must work **before** private APIM access exists,
 so discovery uses ARM rather than initializing the APIM data-plane client.

@@ -14,9 +14,9 @@ use [Deploy infra only with Terraform](deploy-terraform-infra-only.md).
 
 ## When to use
 
-Use this runbook when you need foundation resources first, or will supply your
+Use this guide when you need foundation resources first, or will supply your
 own application. To deploy the Agent Application now, use
-the [Deploy full stack](deploy-full-stack.md) runbook.
+the [Deploy full stack](deploy-full-stack.md) guide.
 
 <span id="before-you-start"></span>
 
@@ -106,7 +106,7 @@ before first provision.
 Run one `azd provision` command from the repository root to deploy across all
 three groups. Do not run a separate deployment for each group. These instructions
 apply to this Bicep procedure. The integrated
-[Terraform runbook](deploy-terraform-infra-only.md) uses the same product
+[Terraform deployment guide](deploy-terraform-infra-only.md) uses the same product
 lifecycle and root parameter source, with separate backend settings.
 The portal has its own deployment procedure.
 
@@ -245,7 +245,7 @@ The default Agent layout is `hosted-no-panel`, using `maf_lite` and Foundry IQ
 without Agent App Ingestion. Set `HOSTED_AGENT_RESOURCE_SCOPE` to the approved
 delegated Foundry audience followed by `/.default` before provisioning, even
 when application deployment will happen later. See the linked full-stack
-runbook for identity inputs, downstream consent and protected-retrieval acceptance.
+guide for identity inputs, downstream consent and protected-retrieval acceptance.
 
 ### Step 4: Preview and provision
 
@@ -426,7 +426,7 @@ reviewing the preview. Apply approved root parameter changes with the provisioni
 
 Update the coordinated platform and its `infra/` tree together.
 Use the [reapply procedure](deploy-full-stack.md#upgrade-to-a-new-release)
-and [rollback](deploy-full-stack.md#rollback) in the Deploy full stack runbook.
+and [rollback](deploy-full-stack.md#rollback) in the full-stack deployment guide.
 
 Retry a partial deployment with the same approved revision and environment after
 repairing the specific failure. Review resource and data changes separately
@@ -437,7 +437,7 @@ Turning a deploy flag off is not deletion or permission cleanup.
 ### Add an application later
 
 Deploy the same bound application and selected components.
-Follow [Step 4 of the Deploy full stack runbook](deploy-full-stack.md#step-4-deploy):
+Follow [Step 4 of the full-stack deployment guide](deploy-full-stack.md#step-4-deploy):
 run `azd deploy` from the configured foundation. Deployment automatically
 prepares the hosted image and its handoff; no second provision is required.
 Custom definitions follow their own component contract.

@@ -7,7 +7,7 @@ search:
 
 # Deploy with Bicep
 
-Follow the runbook for the required result:
+Follow the guide for the required result:
 
 - [Deploy infra only](deploy-infra-only.md): provision the foundation from
   Agent Landing Zone without building or deploying application images.

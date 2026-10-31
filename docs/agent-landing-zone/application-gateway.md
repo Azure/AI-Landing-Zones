@@ -8,7 +8,9 @@ applies web application firewall (WAF) rules, and forwards requests over HTTPS t
 The basic routing rule forwards all UI paths, including enabled application
 routes. Keep application authentication and route authorization enabled.
 
-## What you'll have after this runbook
+<span id="what-youll-have-after-this-runbook"></span>
+
+## Expected outcome
 
 Approved users reach the web UI through Application Gateway and its WAF;
 the UI and Foundry retain their private backend paths.
@@ -18,14 +20,14 @@ the UI and Foundry retain their private backend paths.
 The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
 bases. Their private connectivity, authentication, and authorization still apply.
-Start with a working deployment from the [Deploy full stack runbook](deploy-full-stack.md) and
+Start with a working deployment from the [full-stack deployment guide](deploy-full-stack.md) and
 [application authentication](application-auth.md).
 For hosted runtime/network prerequisites, use [Hosted agents](hosted-agents.md)
 and Microsoft's [hosted-agent networking and limitations](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents).
 
 ## When to use
 
-Use this runbook when the UI already works privately and approved users need a
+Use this guide when the UI already works privately and approved users need a
 controlled public entry point. Choose the supported entry point before editing:
 
 ### Choose the entry point
@@ -46,8 +48,8 @@ adding this gateway. Do not change isolation as part of an ingress retry.
 ## Prerequisites
 
 - A deployed UI in an isolated Container Apps environment, and a deployment
-  host with the private connectivity required by the full-stack runbook.
-- Provisioning permissions from that runbook, including permission to assign
+  host with the private connectivity required by the full-stack deployment guide.
+- Provisioning permissions from that guide, including permission to assign
   the gateway identity's Key Vault role. Certificate import, DNS changes, and
   Entra app-registration changes may require separate administrators.
 - An approved DNS name, such as `chat.contoso.com`, and control of its DNS
@@ -252,7 +254,7 @@ Distribute the `https://` URL directly.
    should be blocked. With test accounts and known restricted documents,
    verify permitted retrieval and denial for an unauthorized user through
    Foundry IQ using the delegated native path described in the
-   [Deploy full stack runbook](deploy-full-stack.md). The gateway's network
+   [full-stack deployment guide](deploy-full-stack.md). The gateway's network
    admission does not grant source permissions.
 
 The shipped WAF uses the Open Worldwide Application Security Project Core Rule

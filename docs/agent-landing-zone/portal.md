@@ -6,8 +6,8 @@ Agent Application.
 
 The [portal deployment guide](../portal/Readme.md) describes that separate
 infrastructure workflow. Its options and defaults are specific to the portal
-templates, not to the Agent Landing Zone runbooks.
+templates, not to the Agent Landing Zone guides.
 
 For the Agent Application, the [Deploy full stack](deploy-full-stack.md)
-runbook contains the complete procedure, including service configuration,
+guide contains the complete procedure, including service configuration,
 hosted agent image preparation and application deployment.

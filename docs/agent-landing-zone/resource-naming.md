@@ -7,7 +7,7 @@ resource or move its data.
 
 This page explains the naming model. The
 [Deploy infra only](deploy-infra-only.md) and
-[Deploy full stack](deploy-full-stack.md) runbooks provide the input and
+[Deploy full stack](deploy-full-stack.md) guides provide the input and
 preview steps. [Deployment settings](configuration.md) describes other inputs;
 [resource reuse](planning.md#select-reuse-or-omit-resources) is separate from naming.
 
@@ -78,7 +78,7 @@ resources or require replacement. Endpoints, identities, role assignments and
 private connections can change, while data remains in the original resources.
 Parallel resources can also incur duplicate costs.
 
-The runbooks' preview allows comparison with existing names and resource IDs.
+The guides' preview allows comparison with existing names and resource IDs.
 It needs deployment permissions, not just Reader access, and can reveal naming
 collisions after truncation. Unexpected creates or deletes need review before
 any resource changes proceed.

@@ -7,7 +7,7 @@ The [Terraform AI Landing Zone module](https://github.com/Azure/terraform-azurer
 provides infrastructure building blocks and examples. Use its source and input
 reference for Terraform-managed foundations.
 
-For Agent Landing Zone, choose the product's runbooks by outcome and provider:
+For Agent Landing Zone, choose the product's guides by outcome and provider:
 
 - **Deploy infra only:** [With Bicep](../agent-landing-zone/deploy-infra-only.md)
   or [With Terraform](../agent-landing-zone/deploy-terraform-infra-only.md).

@@ -5,9 +5,11 @@ search:
 
 <span id="deployment-guidance-has-moved"></span>
 
-# Terraform runbooks
+<span id="terraform-runbooks"></span>
 
-Choose the Agent Landing Zone runbook by outcome:
+# Terraform deployment guides
+
+Choose the Agent Landing Zone guide by outcome:
 
 - [Deploy infra only with Terraform](deploy-terraform-infra-only.md)
 - [Deploy full stack with Terraform](deploy-terraform-full-stack.md)

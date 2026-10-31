@@ -8,7 +8,7 @@ default. Select Terraform once in the checkout's root `azure.yaml`.
 
 ## Choose the outcome
 
-| Goal | Runbook |
+| Goal | Guide |
 | --- | --- |
 | Create and configure Azure resources without application images | [Deploy infra only with Terraform](deploy-terraform-infra-only.md) |
 | Provision the foundation and deploy the Agent Application | [Deploy full stack with Terraform](deploy-terraform-full-stack.md) |
@@ -115,7 +115,7 @@ follow the [declared ownership contract](configuration.md#configuration-ownershi
   sensitive values. Do not commit them. Review dependency updates deliberately,
   rather than upgrading providers to repair an unrelated deployment failure.
 
-See the [Terraform infrastructure runbook](deploy-terraform-infra-only.md)
+See the [Terraform infrastructure deployment guide](deploy-terraform-infra-only.md)
 for backend readiness, updates and removal boundaries.
 
 ## Validation scope
@@ -125,11 +125,11 @@ public foundation, using in-memory test state without applying resources.
 Native backend operations, full-stack and private deployments, runtime RBAC
 and recovery were not exercised in Azure. Validate your deployment with the
 [foundation](deploy-terraform-infra-only.md#validation) and
-[application](deploy-terraform-full-stack.md#validation) runbook checks.
+[application](deploy-terraform-full-stack.md#validation) guide checks.
 
 ## Related reference
 
 The [AI Landing Zone Terraform foundation reference](../terraform/index.md)
 is for composing a foundation directly from the shared AVM pattern.
 For Agent Landing Zone service configuration and application deployment,
-use the product runbooks above.
+use the product guides above.

@@ -11,7 +11,7 @@ Agent Landing Zone composes its own root parameter file and regenerates
 choices. See [Agent configuration](../agent-landing-zone/configuration.md) rather
 than assuming every foundation deploy toggle is an Agent environment variable.
 Execute changes through the [infrastructure](../agent-landing-zone/deploy-infra-only.md)
-or [full-stack](../agent-landing-zone/deploy-full-stack.md) runbook.
+or [full-stack](../agent-landing-zone/deploy-full-stack.md) guide.
 
 ```bash
 # Example: set a parameter via azd
@@ -279,7 +279,7 @@ ID alone suppresses every local resource.
 |---|---|---|
 | `existingBastionResourceId` | `EXISTING_BASTION_RESOURCE_ID` | Hub-managed Bastion host that has line-of-sight to the spoke jumpbox via peering. |
 | `existingNatGatewayResourceId` | `EXISTING_NAT_GATEWAY_RESOURCE_ID` | Hub-managed NAT Gateway to associate with the spoke subnets for outbound egress. |
-| `existingJumpboxResourceId` | `EXISTING_JUMPBOX_RESOURCE_ID` | Reference to a hub-managed jumpbox VM. Informational — surfaced to runbooks and post-provision scripts. |
+| `existingJumpboxResourceId` | `EXISTING_JUMPBOX_RESOURCE_ID` | Reference to a hub-managed jumpbox VM. Informational — surfaced to guides and post-provision scripts. |
 
 ### Private DNS zones
 

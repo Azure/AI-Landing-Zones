@@ -161,6 +161,6 @@ checks remain unperformed. Follow its local engineering and contribution rules.
 
 When a customized component is ready for separately authorized deployment,
 use [Bring your own app](build-your-own-app.md#customize-a-bundled-component).
-That runbook owns source pinning, application definitions, deployment, and
+That guide owns source pinning, application definitions, deployment, and
 rollback. Changing a Git remote or pushing a component branch does not update
 the platform's validated combination.

@@ -12,7 +12,7 @@ This page describes requirements, not a turnkey portal integration.
 Portal token acquisition, Content Security Policy (CSP) and widget lifecycle
 require application work.
 Infrastructure deployment and component reloads follow the
-[Deploy full stack runbook](deploy-full-stack.md).
+[full-stack deployment guide](deploy-full-stack.md).
 
 <span id="before-you-start"></span>
 <span id="1-configure-the-ui"></span>

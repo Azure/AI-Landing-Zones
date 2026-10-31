@@ -5,7 +5,7 @@ search:
 
 # Deploy with Azure DevOps
 
-Use the maintained [Agent Landing Zone Azure DevOps runbook](../agent-landing-zone/azure-devops.md)
+Use the maintained [Agent Landing Zone Azure DevOps deployment guide](../agent-landing-zone/azure-devops.md)
 for runner prerequisites, federated service connections, protected
 Environments, stage-specific inputs and source promotion.
 
@@ -16,7 +16,7 @@ from the repository root. Do not use a separate foundation checkout or assume
 its pipeline paths and lifecycle are interchangeable with the platform.
 
 For infrastructure-only automation, apply the
-[infrastructure runbook](../agent-landing-zone/deploy-infra-only.md)
+[infrastructure guide](../agent-landing-zone/deploy-infra-only.md)
 with the same reviewed platform revision, parameters, identity and connected
 runner requirements. Review the selected application's egress plan, run
 `azd hooks run preup`, and use the root `azd provision` lifecycle; omit

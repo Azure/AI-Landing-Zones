@@ -136,10 +136,10 @@ Resource selection and reuse depend on your implementation and settings. The Age
 <tbody role="rowgroup" markdown="1">
 <tr role="row" markdown="1">
 <th scope="row" role="rowheader">Agent Landing Zone</th>
-<td role="cell" data-label="Bicep" markdown="block">[Full stack runbook](agent-landing-zone/deploy-full-stack.md)
+<td role="cell" data-label="Bicep" markdown="block">[Full-stack deployment guide](agent-landing-zone/deploy-full-stack.md)
 
 [Infrastructure only](agent-landing-zone/deploy-infra-only.md)</td>
-<td role="cell" data-label="Terraform" markdown="block">[Full stack runbook](agent-landing-zone/deploy-terraform-full-stack.md)
+<td role="cell" data-label="Terraform" markdown="block">[Full-stack deployment guide](agent-landing-zone/deploy-terraform-full-stack.md)
 
 [Infrastructure only](agent-landing-zone/deploy-terraform-infra-only.md)</td>
 </tr>

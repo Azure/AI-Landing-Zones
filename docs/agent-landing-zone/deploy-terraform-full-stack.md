@@ -96,7 +96,7 @@ azd provision
 ```
 
 Skip this step if you have already completed and validated the
-infrastructure-only runbook for this environment.
+infrastructure-only deployment guide for this environment.
 
 <a id="deploy-the-application"></a>
 
@@ -180,4 +180,4 @@ blocks rather than bypassing them. Keep backend storage and recovery access
 outside workload teardown. Retained data, shared network/DNS resources and
 backend retirement require separate owner decisions.
 Terraform uses recorded, state-scoped ownership across its groups; the
-infrastructure runbook explains the preview and explicit destruction commands.
+infrastructure guide explains the preview and explicit destruction commands.

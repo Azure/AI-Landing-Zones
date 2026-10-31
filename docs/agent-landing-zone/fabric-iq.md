@@ -10,7 +10,7 @@ binds business entities and relationships to data.
 This page explains the integrated native knowledge-source options and their
 authorization requirements.
 Deployment procedures are in the
-[Deploy full stack runbook](deploy-full-stack.md).
+[full-stack deployment guide](deploy-full-stack.md).
 
 For direct database connections, use the separate
 [NL2SQL strategy](nl2sql.md#direct-nl2sql-strategy). A Fabric SQL endpoint
@@ -120,4 +120,4 @@ Broader managed-identity grants cannot repair missing delegation. Recovery
 restores the previous application and settings, removes only the pilot source
 reference and retains Fabric items or Search objects still used elsewhere.
 Approved application changes start a new hosted version through the
-[Deploy full stack runbook](deploy-full-stack.md#redeploy-applications-only).
+[full-stack deployment guide](deploy-full-stack.md#redeploy-applications-only).

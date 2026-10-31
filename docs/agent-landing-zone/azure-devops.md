@@ -8,13 +8,15 @@ protected approvals. This optional continuous integration and deployment
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.
 
-The downloadable pipeline and validation examples in this runbook use Bicep.
+The downloadable pipeline and validation examples in this guide use Bicep.
 They are not a validated Terraform pipeline. For the integrated
 Terraform lifecycle and its separate backend/runner prerequisites, use
 [Deploy full stack with Terraform](deploy-terraform-full-stack.md) before
 designing corresponding automation.
 
-## What you'll have after this runbook
+<span id="what-youll-have-after-this-runbook"></span>
+
+## Expected outcome
 
 One reviewed source revision promoted through DEV, TEST and PROD, with
 protected approvals and a private deployment path for each environment.
@@ -26,11 +28,11 @@ does not promote one identical image between environments.
 
 ## When to use
 
-Use this runbook when your team needs repeatable source promotion with separate
+Use this guide when your team needs repeatable source promotion with separate
 deployment identities and approval gates for each environment.
 
 For interactive execution, use the [Deploy infra only](deploy-infra-only.md)
-or [Deploy full stack](deploy-full-stack.md) runbook. For component changes, see
+or [Deploy full stack](deploy-full-stack.md) guide. For component changes, see
 [Custom applications](build-your-own-app.md#customize-a-bundled-component).
 
 !!! info "Choose the right pipeline"
@@ -85,7 +87,7 @@ procedure for changing runtime layouts.
 
 !!! warning "Automation does not close runtime capability gaps"
     Keep `maf_lite` and Foundry IQ as the default runtime choices. The
-    source-permission acceptance in the Deploy full stack runbook applies to
+    source-permission acceptance in the full-stack deployment guide applies to
     CI/CD. The integrated native path still needs downstream consent and
     real-user allow/deny evidence before promotion. Pipeline settings, weaker
     source permissions and successful greetings are not substitutes.

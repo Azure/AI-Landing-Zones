@@ -5,7 +5,7 @@ Foundry Agent Service tool. Custom ingestion is optional for SharePoint groundin
 
 This page explains content flow, permissions and accelerator readiness.
 Deployment procedures are in the
-[Deploy full stack runbook](deploy-full-stack.md).
+[full-stack deployment guide](deploy-full-stack.md).
 
 <span id="before-you-start"></span>
 <span id="connect-the-source"></span>
@@ -109,7 +109,7 @@ source described above.
 ### 1. Prepare the ingestion application
 
 Select `DEPLOY_INGESTION_CONTAINER_APP=true` through the
-[Deploy full stack runbook](deploy-full-stack.md). This is a deployment choice,
+[full-stack deployment guide](deploy-full-stack.md). This is a deployment choice,
 not a switch to enable in an otherwise undeployed application. Use the
 compatible ingestion component from your platform release.
 

@@ -3,7 +3,7 @@
 Agent App Orchestrator runs as a container in Foundry Agent Service. The fresh
 default is `DEPLOYMENT_TOPOLOGY=hosted-no-panel` with `maf_lite` orchestration.
 The UI remains in Azure Container Apps. This page explains the hosting contract;
-the [Deploy full stack runbook](deploy-full-stack.md) contains the ordered
+the [full-stack deployment guide](deploy-full-stack.md) contains the ordered
 deployment and recovery procedures.
 
 ## Topologies

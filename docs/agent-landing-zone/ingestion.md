@@ -5,7 +5,7 @@ and custom processing are separate capabilities that can require optional
 **Agent App Ingestion**.
 
 This page explains those boundaries. Deployment steps are in the
-[Deploy full stack runbook](deploy-full-stack.md). Source and index inputs are
+[full-stack deployment guide](deploy-full-stack.md). Source and index inputs are
 described in [Deployment settings](configuration.md#ingestion-application-selection).
 
 <span id="choose-a-source-ingestion-path"></span>
@@ -136,7 +136,7 @@ native Foundry tool. Its `SHAREPOINT_*` credentials are not the
 `SHAREPOINT_REMOTE_*` retrieval settings. Secrets belong in Key Vault.
 
 For the bundled Agent Application, `DEPLOY_INGESTION_CONTAINER_APP` selects
-the optional component through the [Deploy full stack runbook](deploy-full-stack.md),
+the optional component through the [full-stack deployment guide](deploy-full-stack.md),
 not a runtime-only edit. Existing environments retain their recorded selection.
 custom application definitions retain their declared components. Selection does
 not change retrieval bindings or document authorization.

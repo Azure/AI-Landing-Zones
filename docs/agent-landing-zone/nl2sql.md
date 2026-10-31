@@ -6,7 +6,7 @@ the result. Agent Application offers two distinct routes. Choose the route
 before configuring its metadata, identity and permissions.
 
 Deployment follows the
-[Deploy full stack runbook](deploy-full-stack.md).
+[full-stack deployment guide](deploy-full-stack.md).
 
 <span id="choose-the-supported-route"></span>
 

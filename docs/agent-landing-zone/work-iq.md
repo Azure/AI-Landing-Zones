@@ -6,7 +6,7 @@ context at retrieval time, without Agent App Ingestion or a landing-zone index
 copy of the Microsoft 365 corpus.
 
 This page explains the integration contract. Deployment procedures remain in
-the [Deploy full stack runbook](deploy-full-stack.md).
+the [full-stack deployment guide](deploy-full-stack.md).
 
 <span id="check-hosted-support-first"></span>
 

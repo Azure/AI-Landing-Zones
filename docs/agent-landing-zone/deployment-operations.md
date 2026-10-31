@@ -1,6 +1,6 @@
 # Updates & recovery
 
-Use the existing runbooks for changes to a deployed environment. Choose your
+Use the existing deployment guides for changes to a deployed environment. Choose your
 infrastructure provider below and follow the linked procedure, including its
 prerequisites, validation and recovery guidance.
 

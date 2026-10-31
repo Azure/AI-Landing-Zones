@@ -6,7 +6,7 @@ Agent Application can ground text answers in image descriptions extracted
 from documents. This differs from passing an image or audio directly to a
 model. The default hosted `maf_lite` path uses text input and retrieved text.
 This page explains capability boundaries. The
-[Deploy full stack runbook](deploy-full-stack.md) contains deployment procedures.
+[full-stack deployment guide](deploy-full-stack.md) contains deployment procedures.
 
 <span id="choose-a-scenario"></span>
 
@@ -176,7 +176,7 @@ conversation-upload retrieval works.
 
 Runtime configuration is cached. A changed hosted setting needs a new agent
 version. Affected UI and ingestion processes also need to reload. Source/model
-changes follow the [Deploy full stack runbook](deploy-full-stack.md).
+changes follow the [full-stack deployment guide](deploy-full-stack.md).
 The pinned API remains part of the application contract rather than an
 independent setting to change without compatibility validation.
 

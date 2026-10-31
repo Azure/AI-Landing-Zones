@@ -1,13 +1,13 @@
 # Deployment choices
 
 Deployment design covers **network ownership, deployment tooling and resource
-selection**. It is separate from whether a runbook stops at infrastructure or
+selection**. It is separate from whether a guide stops at infrastructure or
 also deploys application code.
 
 [How it works](how-it-works.md) introduces the concepts and input formats.
 This page explains design choices, not their execution order.
 [Deploy infra only](deploy-infra-only.md) and
-[Deploy full stack](deploy-full-stack.md) are the deployment runbooks;
+[Deploy full stack](deploy-full-stack.md) are the deployment guides;
 the [Sizing & cost planner](sizing-cost-planner.md) covers capacity and spending.
 
 For an isolated standalone `hosted-no-panel` scenario, use the
@@ -96,7 +96,7 @@ resource scope. Deployment roles can differ from application data-access roles.
 | Terraform with `azd` | [Deploy infra only](deploy-terraform-infra-only.md) or [Deploy full stack](deploy-terraform-full-stack.md); [Terraform overview](terraform.md). | Native provider at `infra/terraform/` in the same product repository. Shared hooks configure services and deploy manifest-pinned applications. Prepare remote state outside workload teardown before first provision. Direct `terraform apply` is not a substitute for this azd lifecycle. |
 | Azure portal | [Portal overview](portal.md). | ARM-based infrastructure with its own defaults and platform-integration behavior. It can create placeholder application resources; it does not execute Agent platform hooks or the hosted image/version workflow. |
 
-The [Deploy infra only](deploy-infra-only.md) runbook provisions the
+The [Deploy infra only](deploy-infra-only.md) guide provisions the
 platform's foundation without building or deploying application images.
 Select Bicep or Terraform in the checkout's root `azure.yaml` before first
 provision. Bicep is the default. Use the selected provider for provisioning,
@@ -176,5 +176,5 @@ Transport Layer Security (TLS) encrypts connections and verifies service
 certificates. Native Blob shared links need administrator approval.
 Sign-in and retrieval
 validation includes both allowed and denied users, not only endpoint access.
-The runbooks include these checks, the deployment preview and the execution
+The guides include these checks, the deployment preview and the execution
 sequence for the reviewed capacity and cost plan.

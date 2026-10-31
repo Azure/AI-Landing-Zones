@@ -281,14 +281,14 @@
       tag: "Optional / default: 0", optional: true, included: s.appGateway > 0,
       description: "Public HTTPS ingress for the UI, with private backends. Does not publish Foundry APIs.",
       setting: '<span class="setting-static">WAF_v2 / Prevention</span>' +
-        '<span class="setting-hint">Runbook default: disabled. Autoscale: min 0 / max 2 instances.</span>',
+        '<span class="setting-hint">Deployment guide default: disabled. Autoscale: min 0 / max 2 instances.</span>',
       sizing: "<strong>Size for throughput, connections and WAF processing.</strong> Watch consumed capacity units and latency. Autoscale instance bounds are not billable capacity units.",
       signal: "A provisioned gateway has a fixed hourly charge, even with no traffic.",
       quantity: input("gatewayCU", "Average billed CUs / gateway", 0, 10000, 0.1),
-      detail: "The public-ingress runbook uses WAF_v2, Prevention, OWASP CRS 3.2 and autoscale minCapacity 0 / maxCapacity 2. This fresh-deployment reference starts with publicIngress.enabled=false, so gateway and associated public IP quantities start at 0. When included, cost = hours x (fixed gateway rate + average billed capacity units x CU rate). The initial 1 CU is a hypothetical usage input, not a deployed setting or a conversion from autoscale instances. The Standard Regional static IPv4 public IP is priced separately below. WAF policy is part of this WAF_v2 design, not another gateway allocation. Dedicated subnet default: /27, with /24 recommended for growth. Live HTTPS needs a hostname, Key Vault certificate and explicit client CIDRs. Certificate operations, diagnostics, transfer and optional CAPTCHA are excluded. Setting quantity back to 0 only removes this simulated allocation. Setting publicIngress.enabled=false in an incremental deployment does not delete existing ingress resources.",
+      detail: "The Application Gateway deployment guide uses WAF_v2, Prevention, OWASP CRS 3.2 and autoscale minCapacity 0 / maxCapacity 2. This fresh-deployment reference starts with publicIngress.enabled=false, so gateway and associated public IP quantities start at 0. When included, cost = hours x (fixed gateway rate + average billed capacity units x CU rate). The initial 1 CU is a hypothetical usage input, not a deployed setting or a conversion from autoscale instances. The Standard Regional static IPv4 public IP is priced separately below. WAF policy is part of this WAF_v2 design, not another gateway allocation. Dedicated subnet default: /27, with /24 recommended for growth. Live HTTPS needs a hostname, Key Vault certificate and explicit client CIDRs. Certificate operations, diagnostics, transfer and optional CAPTCHA are excluded. Setting quantity back to 0 only removes this simulated allocation. Setting publicIngress.enabled=false in an incremental deployment does not delete existing ingress resources.",
       parameter: "main.parameters.json: publicIngress.enabled; infra/bicep/modules/networking/public-ingress.bicep",
       sourceURL: "https://azure.github.io/AI-Landing-Zones/agent-landing-zone/application-gateway/",
-      sourceLabel: "Application Gateway runbook"
+      sourceLabel: "Application Gateway deployment guide"
     }, () => [
       bill(find("appgateway", "Standard", "Standard Fixed Cost", "1/Hour", 0, s, "Application Gateway WAF v2"),
         s.appGateway * s.hours, "fixed", "Gateway-hours"),
@@ -299,14 +299,14 @@
       id: "gateway-ip", group: "networking", name: "Gateway public IP",
       tag: "Linked to Application Gateway", optional: true, included: s.appGateway > 0,
       description: "Dedicated public frontend address for the optional UI gateway.",
-      setting: '<span class="setting-static">Standard / Regional / IPv4</span><span class="setting-hint">Static allocation, following the runbook.</span>',
+      setting: '<span class="setting-static">Standard / Regional / IPv4</span><span class="setting-hint">Static allocation, following the deployment guide.</span>',
       sizing: "<strong>One address per included gateway.</strong> Quantity follows the gateway automatically. This address does not replace firewall, NAT or other public IPs.",
       signal: "The address is billed while allocated, not only while serving requests.",
       quantity: `${number(s.appGateway)} public IP${s.appGateway === 1 ? "" : "s"}<br><span class="setting-hint">Linked quantity, default: 0</span>`,
       detail: "The public-ingress module creates one Standard Regional static IPv4 public IP for its WAF_v2 gateway. Quantity follows the gateway selector to prevent omitting or double-counting this dependency. Hourly address allocation is priced separately from WAF_v2 fixed and capacity-unit charges. No DNS, data-transfer or other platform public IP costs are included in this row. Quantity 0 describes omission from this fresh estimate, not deletion of an existing address.",
       parameter: "infra/bicep/modules/networking/public-ingress.bicep: publicIp",
       sourceURL: "https://azure.github.io/AI-Landing-Zones/agent-landing-zone/application-gateway/",
-      sourceLabel: "Application Gateway runbook"
+      sourceLabel: "Application Gateway deployment guide"
     }, () => [
       bill(find("publicip", "Standard", "Standard IPv4 Static Public IP", "1 Hour", 0, s, "IP Addresses"),
         s.appGateway * s.hours, "fixed", "Allocated public-IP-hours")

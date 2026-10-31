@@ -348,7 +348,7 @@ Start with the [benefits](plan/governance-hub-benefits.md) of the Governance Hub
 | | [PTU estimation guide](plan/ptu-estimation.md) | Azure OpenAI / Foundry LLM sizing guide for PTU vs Pay-as-you-Go capacity planning |
 | | [AI Search cost estimation logic](observability/ai-search-cost-estimation.md) | Cost estimation logic for Azure AI Search behind the gateway |
 | Resilience & business continuity | [Resiliency guide](resiliency/resiliency.md) | Circuit breaker, session affinity, automated failover, error handling, and alerting — what each does, how it works, and when to configure it |
-| | [Business continuity & DR guide](resiliency/business-continuity-dr.md) | Plan business continuity and disaster recovery for the hub itself: topologies, global routing and an operational runbook |
+| | [Business continuity & DR guide](resiliency/business-continuity-dr.md) | Plan business continuity and disaster recovery for the hub itself: topologies, global routing and operational procedures |
 | | [Throttling events handling](observability/throttling-events.md) | Comprehensive, opt-in alerting on throttling, backend, authorization, content-safety, and PII events per use case, model, and backend |
 | | [App Insights alerting](observability/app-insights-alerting.md) | Deploy Azure Monitor alert rules for the gateway's alert events |
 | | [Cosmos global multi-master sync](operate/cosmos-multi-region-sync.md) | Link two or more hub deployments through a shared multi-region, multi-write Cosmos DB topology |

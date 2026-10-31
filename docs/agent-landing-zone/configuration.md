@@ -14,8 +14,8 @@ This page explains settings and defaults, not an execution sequence.
 [deployment design](planning.md) and the
 [Sizing & cost planner](sizing-cost-planner.md) explain the planning decisions.
 
-The infrastructure-only runbooks for [Bicep](deploy-infra-only.md) and
-[Terraform](deploy-terraform-infra-only.md), and the full-stack runbooks for
+The infrastructure-only deployment guides for [Bicep](deploy-infra-only.md) and
+[Terraform](deploy-terraform-infra-only.md), and the full-stack deployment guides for
 [Bicep](deploy-full-stack.md) and [Terraform](deploy-terraform-full-stack.md),
 describe input commands, provisioning and validation.
 Read individual keys instead of dumping
@@ -449,7 +449,7 @@ audience review and allow/deny tests with real user identities before activation
 Restoring `["rbacScope"]` requires source reconfiguration and verification
 of source/index permission metadata, including already-ingested documents.
 Allowed and denied users both need validation before access resumes. The
-[Deploy full stack](deploy-full-stack.md) runbook covers reconfiguration.
+[Deploy full stack](deploy-full-stack.md) guide covers reconfiguration.
 See also
 [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
 
@@ -577,7 +577,7 @@ azd env set DEPLOY_SUBNETS true
 For **externally managed subnets**, use the same existing-VNet inputs but set
 `azd env set DEPLOY_SUBNETS false`. Confirm all required subnets already exist
 with the configured names, prefixes, delegations and NSG requirements.
-Then continue with the selected deployment runbook; these inputs do not
+Then continue with the selected deployment guide; these inputs do not
 configure peering, DNS forwarding or runner connectivity.
 
 #### Names and address ranges
@@ -879,6 +879,6 @@ definitions validate settings but do not publish them; the application
 must publish its own runtime settings.
 
 The [Deploy full stack](deploy-full-stack.md#change-a-runtime-setting)
-runbook provides commands, including [secret rotation](deploy-full-stack.md#rotate-a-secret) for
+guide provides commands, including [secret rotation](deploy-full-stack.md#rotate-a-secret) for
 versioned versus unversioned Key Vault references. Changing deployment selection,
 RBAC or infrastructure requires the matching full workflow, not just a key edit.

@@ -5,7 +5,7 @@ search:
 
 # Bicep deployment considerations
 
-Deployment instructions are consolidated into two runbooks:
+Deployment instructions are consolidated into two guides:
 
 - [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
   provisions the incorporated foundation from the Agent Landing Zone root.
@@ -22,7 +22,7 @@ details. It is not an alternative initialization or provisioning procedure.
 <a id="optional-public-endpoint"></a>
 
 Choose public, private standalone or private hub integration in the
-[foundation runbook](../agent-landing-zone/deploy-infra-only.md#step-3-choose-the-foundation-shape).
+[foundation guide](../agent-landing-zone/deploy-infra-only.md#step-3-choose-the-foundation-shape).
 Use [standalone](standalone.md) and [hub-and-spoke](hub-and-spoke.md) for their
 address, DNS, routing, access and ownership contracts. Optional
 [Application Gateway ingress](public-ingress.md) is separate from private

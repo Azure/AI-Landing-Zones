@@ -6,7 +6,7 @@ knowledge base as a native tool, so the agent can ground answers in retrieved
 content and return source references.
 
 This page describes Foundry IQ and the Agent Application's integration limits.
-Deployment follows the [Deploy full stack runbook](deploy-full-stack.md).
+Deployment follows the [full-stack deployment guide](deploy-full-stack.md).
 
 ## Choose the retrieval backend
 
@@ -258,6 +258,6 @@ configuration, downstream consent and supported header path, not anonymous
 retrieval or broader managed-identity grants.
 
 Configuration is cached in the running application. Approved changes require
-the [Deploy full stack runbook](deploy-full-stack.md#redeploy-applications-only)
+the [full-stack deployment guide](deploy-full-stack.md#redeploy-applications-only)
 to start a new hosted version. Recovery restores the previous compatible image
 and settings while retaining source documents and knowledge objects.

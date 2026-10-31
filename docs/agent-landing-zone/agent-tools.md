@@ -10,7 +10,7 @@ grounding. These are different integration boundaries.
 The supplied `mcp` strategy can consume an MCP server. Other strategies do not
 automatically load a portal-managed tool list. This page explains that choice
 and the separate hosted authorization contract. Deployment and redeployment
-follow the [Deploy full stack runbook](deploy-full-stack.md).
+follow the [full-stack deployment guide](deploy-full-stack.md).
 
 <span id="choose-the-extension-point"></span>
 

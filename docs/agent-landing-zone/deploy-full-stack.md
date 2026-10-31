@@ -17,7 +17,9 @@ This procedure uses the default Bicep provider. For Terraform, use
 [Deploy full stack with Terraform](deploy-terraform-full-stack.md); application
 configuration and deployment are shared.
 
-## What you'll have after this runbook
+<span id="what-youll-have-after-this-runbook"></span>
+
+## Expected outcome
 
 Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
 orchestrator and native Foundry IQ ingestion and retrieval.
@@ -55,10 +57,10 @@ orchestrator and native Foundry IQ ingestion and retrieval.
 
 ## When to use
 
-Use this runbook for a new Agent Application deployment or to add it to its
+Use this guide for a new Agent Application deployment or to add it to its
 already configured Agent foundation. For a customer-owned application, use
-the [Bring your own app](build-your-own-app.md) runbook.
-Only need infrastructure? Use the [Deploy infra only](deploy-infra-only.md) runbook.
+the [Bring your own app](build-your-own-app.md) guide.
+Only need infrastructure? Use the [Deploy infra only](deploy-infra-only.md) guide.
 For the relationship between the template, its manifest and lifecycle hooks,
 see [How it works](how-it-works.md).
 
@@ -248,7 +250,7 @@ custom processing are required. They are additional capabilities, not default
 deployment steps.
 
 For a different application, stop here and follow the
-[Bring your own app runbook](build-your-own-app.md) before first provision.
+[Bring your own app guide](build-your-own-app.md) before first provision.
 One environment binds to one application ID.
 
 #### Network and build mode
@@ -557,7 +559,9 @@ do not delete shared hub, DNS or monitoring resources.
 
 <a id="next-steps"></a>
 
-### Related runbooks
+<span id="related-runbooks"></span>
+
+### Related guides
 
 - [Connect Copilot Studio to a private Foundry agent](connect-copilot-studio.md)
 - [Deploy infra only](deploy-infra-only.md)
@@ -632,7 +636,7 @@ does not promise persistent history, feedback integration or uploads.
 Use [Troubleshooting](troubleshooting.md) for failures.
 
 For optional channel distribution after acceptance, use the
-[Publish to Teams and M365 runbook](publish-to-teams.md). Publication is not
+[Teams and Microsoft 365 guide](publish-to-teams.md). Publication is not
 part of this deployment.
 
 <span id="roll-back-to-a-previous-release"></span>

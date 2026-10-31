@@ -26,8 +26,8 @@ application lifecycle.
 
 | Outcome | With Bicep | With Terraform |
 | --- | --- | --- |
-| **Deploy infra only:** create and configure Azure resources without application code | [Runbook](deploy-infra-only.md) | [Runbook](deploy-terraform-infra-only.md) |
-| **Deploy full stack:** create infrastructure and deploy the Agent Application, including a Foundry hosted agent | [Runbook](deploy-full-stack.md) | [Runbook](deploy-terraform-full-stack.md) |
+| **Deploy infra only:** create and configure Azure resources without application code | [Guide](deploy-infra-only.md) | [Guide](deploy-terraform-infra-only.md) |
+| **Deploy full stack:** create infrastructure and deploy the Agent Application, including a Foundry hosted agent | [Guide](deploy-full-stack.md) | [Guide](deploy-terraform-full-stack.md) |
 
 The default full-stack deployment runs the agent in **Foundry Agent Service**,
 the Microsoft Foundry service that hosts and operates agents. A web chat

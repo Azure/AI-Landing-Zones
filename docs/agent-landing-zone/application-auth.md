@@ -8,7 +8,7 @@ grant access to every document. Follow the setup sequence below for the default
 Foundry-hosted agent and Container Apps frontend. Azure CLI and azd sign-in
 authenticate the deployment operator, not application users.
 Deployment and redeployment belong to the
-[Deploy full stack runbook](deploy-full-stack.md).
+[full-stack deployment guide](deploy-full-stack.md).
 
 <span id="before-you-start"></span>
 <span id="1-configure-ui-sign-in"></span>
@@ -69,7 +69,7 @@ known as `Entra`), the downstream scope is `https://ai.azure.com/.default`.
 Confirm the deployed endpoint's audience with its owner; do not substitute
 the UI API scope or a management-plane audience. Set
 `HOSTED_AGENT_RESOURCE_SCOPE` in the selected azd environment before provision,
-as shown in the [full-stack runbook](deploy-full-stack.md#orchestrator-topology).
+as shown in the [full-stack deployment guide](deploy-full-stack.md#orchestrator-topology).
 This value is separate from the UI login scopes in step 4.
 
 The [Foundry client authorization procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token)
@@ -187,7 +187,7 @@ access. Source/document grants remain a separate data-owner decision.
 ### 6. Reload the UI and verify each boundary
 
 For the first deployment, return to root `azd deploy` in the
-[full-stack runbook](deploy-full-stack.md#step-4-deploy). For an existing UI,
+[full-stack deployment guide](deploy-full-stack.md#step-4-deploy). For an existing UI,
 restart/redeploy its Container App after publishing settings, then sign out
 and sign in again. The UI caches settings at startup.
 A UI-only authentication change does not require restarting the hosted agent.

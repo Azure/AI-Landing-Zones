@@ -8,7 +8,9 @@ HTTPS access to the workload services from that computer. Once connected,
 you can run deployment hooks or development tools directly; **Bastion and a
 jumpbox are not required for this path**.
 
-## What you'll have after this runbook
+<span id="what-youll-have-after-this-runbook"></span>
+
+## Expected outcome
 
 Your computer connected to the private VNet through a VPN, without Bastion
 or a jumpbox.
@@ -20,7 +22,7 @@ same access with the appropriate peering, gateway transit, client routes and DNS
 
 ## When to use
 
-Use this runbook when a workstation must reach private workload endpoints
+Use this guide when a workstation must reach private workload endpoints
 without using a jumpbox. Reuse an approved corporate VPN when available; create
 a new gateway only with the network owner's approval.
 
@@ -34,7 +36,7 @@ Resolver. These tasks need network administration outside `azd`.
 ## Prerequisites
 
 - Use the reviewed platform checkout, intended azd environment and approved
-  inputs from the [Deploy full stack runbook](deploy-full-stack.md). This procedure does
+  inputs from the [full-stack deployment guide](deploy-full-stack.md). This procedure does
   not change the hosted orchestrator topology or Foundry IQ configuration.
 - Arrange network permissions at the gateway, VNet, peering and DNS scopes.
   The network administrator needs permission to create or update those
@@ -106,8 +108,8 @@ For a fresh VPN-only deployment, you may explicitly set `DEPLOY_JUMPBOX=false`
 and `DEPLOY_BASTION=false` before provisioning. They otherwise default on for
 isolation. Verify the VPN before removing an existing access path.
 
-Provision using the [Deploy infra only runbook](deploy-infra-only.md). If the VPN
-cannot exist until the VNet is provisioned, use that runbook's deferred
+Provision using the [infrastructure-only deployment guide](deploy-infra-only.md). If the VPN
+cannot exist until the VNet is provisioned, use that guide's deferred
 post-provision procedure, then return here. Deferral leaves application setup
 incomplete and does not bypass earlier private-access checks.
 
@@ -253,8 +255,8 @@ image builds. Test the remaining service hosts individually.
 
 - **Deployment host:** authenticate Azure CLI and azd with the approved deployment
   identity. Complete deferred post-provision using
-  the [Deploy infra only runbook](deploy-infra-only.md), then continue
-  the [Deploy full stack runbook](deploy-full-stack.md) for hosted image preparation and
+  the [infrastructure-only deployment guide](deploy-infra-only.md), then continue
+  the [full-stack deployment guide](deploy-full-stack.md) for hosted image preparation and
   application deployment. `RUN_FROM_JUMPBOX=true` requests connectivity checks;
   despite its name, it works from a VPN-connected host and does not require
   a jumpbox. Keep the private ACR Task pool for hosted image preparation;

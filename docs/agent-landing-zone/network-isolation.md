@@ -35,8 +35,8 @@ isolation enabled. Those public paths and any reused network or DNS resources
 remain part of the connectivity design.
 
 The [Deploy infra only](deploy-infra-only.md) and
-[Deploy full stack](deploy-full-stack.md) runbooks contain the procedures.
-The [Azure DevOps runbook](azure-devops.md) covers optional pipeline automation.
+[Deploy full stack](deploy-full-stack.md) guides contain the procedures.
+The [Azure DevOps deployment guide](azure-devops.md) covers optional pipeline automation.
 [Deployment choices](planning.md) explains standalone and hub integration.
 An AI Gateway governs model requests, not workload networking or user access.
 Private endpoints, DNS, routes, firewall rules and authorization remain necessary.
@@ -58,7 +58,7 @@ precedence in [Deployment settings](configuration.md#general) still apply.
     use that publication path. Other Foundry APIs remain private, and the
     template does not enable this exception.
 
-The [Connect Copilot Studio](connect-copilot-studio.md) runbook describes an
+The [Connect Copilot Studio](connect-copilot-studio.md) guide describes an
 authenticated agent flow and Power Platform VNet delegation to reach the Foundry
 private endpoint; it does not require the Activity-route public exception.
 
@@ -229,7 +229,7 @@ runs lifecycle hooks. An existing environment can need private App Configuration
 access before ARM deployment to resolve its topology. Post-provision also needs
 private connectivity, so an unconnected host cannot complete every stage.
 
-The matching deployment runbook therefore requires a connected host. The
+The matching deployment guide therefore requires a connected host. The
 default Foundry hosted deployment automatically prepares its image and
 application handoff during `azd deploy`, as described in
 [Deploy full stack](deploy-full-stack.md).
@@ -263,7 +263,7 @@ installed by default and is unnecessary for ACR Task agent-pool builds.
 The connected host needs the same reviewed platform Git commit or release tag
 and approved inputs as the original workspace. Its local azd environment also
 needs current provisioning outputs. The
-[Deploy infra only](deploy-infra-only.md) runbook explains environment
+[Deploy infra only](deploy-infra-only.md) guide explains environment
 selection, output refresh and separate provisioning/configuration steps.
 
 The jumpbox's managed identity, an Azure-managed service identity that does
@@ -282,7 +282,7 @@ for the current role catalog and scopes. New grants need time to propagate.
 An infrastructure-only deployment stops after provisioning and post-provision
 configuration. It can contain placeholder Container Apps without running the
 selected applications. The [Deploy full stack](deploy-full-stack.md)
-runbook also deploys application code.
+guide also deploys application code.
 
 ### Post-provision can be deferred
 
@@ -301,7 +301,7 @@ the application is **not** configured. Deferral does not bypass earlier topology
 or provisioning checks. Configuration remains incomplete until deferral is
 cleared and configuration succeeds from a connected host. The
 [Deploy infra only](deploy-infra-only.md#complete-a-deferred-post-provision)
-runbook provides those steps.
+guide provides those steps.
 
 When the deferral settings are not set and the private endpoints cannot be reached, post-provision fails with:
 
@@ -320,7 +320,7 @@ use an **ACR Task agent pool** inside the VNet
 pool when network isolation is enabled.
 
 If the pool is missing, `azd deploy` stops before building. Pool creation uses
-`DEPLOY_ACR_TASK_AGENT_POOL=true` through the matching deployment runbook.
+`DEPLOY_ACR_TASK_AGENT_POOL=true` through the matching deployment guide.
 Where a component supports local builds, `BUILD_MODE=local` instead needs a
 VNet-connected host with working Docker.
 
@@ -462,7 +462,7 @@ Never delete shared foundation groups or externally managed policy content.
 
 ## Private connectivity checks
 
-The runbooks check service hostnames from the deployment runner, including
+The guides check service hostnames from the deployment runner, including
 the host in `APP_CONFIG_ENDPOINT`:
 
 | Check | Expected result | Meaning |
@@ -518,7 +518,7 @@ label alone does not configure egress or change hub resources.
 is rejected; its policy omits DNS settings. It applies only when the
 `deployAzureFirewall` and `networkIsolation` gates enable firewall deployment.
 It is intended for a topology that deliberately uses the firewall as its DNS
-forwarding path. The matching deployment runbook applies the selection through
+forwarding path. The matching deployment guide applies the selection through
 normal provisioning.
 
 Enabling the proxy does
@@ -620,4 +620,4 @@ Hub integration uses `DEPLOYMENT_MODE=ailz-integrated` with explicit settings:
 [Deployment settings](configuration.md#network-and-security) lists the inputs;
 [hub-and-spoke design](../bicep/hub-and-spoke.md) explains their network effects.
 Execution steps belong to the
-[Deploy infra only](deploy-infra-only.md) runbook.
+[Deploy infra only](deploy-infra-only.md) guide.

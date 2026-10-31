@@ -199,6 +199,6 @@ Critical events can be a sign of potential service degradation, and it is import
 The gateway provides a single, opt-in mechanism to emit these events as custom metrics and take measures to address them. When designing your alerts, keep in mind:
 
 - **Alerts should be reserved for significant events that require attention** — not noisy notifications that get ignored over time. This is why the fragment defaults to the platform-health categories (throttling, quota-exceeded, backend failures), and everything else is opt-in per use case.
-- **Have a runbook** to address the root cause of an event (add pool capacity, tune the circuit breaker, define a model alias fallback, fix an access contract).
+- **Define a response procedure** to address the root cause of an event (add pool capacity, tune the circuit breaker, define a model alias fallback, fix an access contract).
 - **Keep an eye on the alerts and tune thresholds** as traffic patterns change.
 - **Watch dimension cardinality** — `emit-metric` allows at most **6** custom dimensions, and `deploymentName` can be high-cardinality; excessive cardinality increases custom-metric cost. Scope opt-in categories to the use cases that truly need them.

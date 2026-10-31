@@ -9,7 +9,7 @@ confirm the application can authenticate and use its dependencies.
 
 ## When to use
 
-Use this runbook after a provisioning, configuration, deployment or runtime
+Use this guide after a provisioning, configuration, deployment or runtime
 failure. Diagnose the failing stage before retrying or changing inputs.
 
 | What you see | Start here |
@@ -115,7 +115,7 @@ digest before deployment is normal; it does not require another provision.
 build, pinned source, registry access and private ACR Tasks pool, then retry
 `azd deploy`. A foundation project or registry binding mismatch must be resolved
 against the intended environment, not bypassed by editing output flags.
-Follow the [Deploy full stack runbook](deploy-full-stack.md#step-4-deploy).
+Follow the [full-stack deployment guide](deploy-full-stack.md#step-4-deploy).
 For an unchanged, compatible image, use the
 [redeployment guidance](deploy-full-stack.md#redeploy-applications-only).
 Let the workflow generate its output flags.
@@ -541,7 +541,7 @@ Missing <KEY>. Run provisioning and load the selected azd environment outputs be
 
 **Correct:** Confirm the environment first. If it is already provisioned and
 you moved machines, use `azd env refresh`. If provision is incomplete, follow
-the [Deploy infra only runbook](deploy-infra-only.md) to generate the required outputs.
+the [infrastructure-only deployment guide](deploy-infra-only.md) to generate the required outputs.
 
 **Verify:** Confirm the outputs identify this environment's resources before
 retrying the failed stage.
@@ -868,7 +868,7 @@ diagnose with request references and dependency status.
 ### Related pages
 
 - [Copilot Studio private integration](connect-copilot-studio.md#troubleshooting)
-- [Deploy full stack runbook](deploy-full-stack.md)
+- [Full-stack deployment guide](deploy-full-stack.md)
 - [Deployment settings](configuration.md)
 - [Network isolation](network-isolation.md)
 - [Ingestion](ingestion.md)

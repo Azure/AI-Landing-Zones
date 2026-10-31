@@ -51,5 +51,5 @@ infrastructure checkout at deployment time.
 
 Upgrade through a coordinated platform release and preserve the previous
 compatible revision and approved inputs for rollback. Follow the
-[upgrade and rollback runbook](../agent-landing-zone/deploy-full-stack.md#upgrade-to-a-new-release)
+[update and recovery procedure](../agent-landing-zone/deploy-full-stack.md#upgrade-to-a-new-release)
 rather than fetching a foundation tag into `infra/`.

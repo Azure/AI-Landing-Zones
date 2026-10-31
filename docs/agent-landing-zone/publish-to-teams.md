@@ -6,14 +6,16 @@
 
 Publish an agent already **hosted in Microsoft Foundry** to **Teams and
 Microsoft 365 Copilot**. Start with a tested agent in a private-network Foundry
-project, then use its endpoint, identity and version throughout this runbook.
+project, then use its endpoint, identity and version throughout this procedure.
 The agent can be part of your own application.
 
 You will create a Bot Service resource, enable channel access and publish the
 agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.
 
-## What you'll have after this runbook
+<span id="what-youll-have-after-this-runbook"></span>
+
+## Expected outcome
 
 Your existing Foundry agent available in Teams and Microsoft 365 Copilot,
 with authenticated messages delivered through Azure Bot Service.
@@ -64,7 +66,7 @@ the channel service calls the public Foundry Activity route shown above.
 
 ## When to use
 
-Use this runbook after the hosted agent works and you need Teams or Microsoft
+Use this guide after the hosted agent works and you need Teams or Microsoft
 365 Copilot distribution while Foundry public network access remains disabled. For a Copilot
 Studio private relay instead, use [Connect Copilot Studio](connect-copilot-studio.md).
 
@@ -96,7 +98,7 @@ it is not the resource you are configuring.
 - **Agent:** Have a working hosted agent in a Foundry project, with its own
   agent identity, a stable endpoint and a version you have tested. If you still
   need to deploy an application, start with
-  the [Deploy full stack runbook](deploy-full-stack.md) or
+  the [full-stack deployment guide](deploy-full-stack.md) or
   [Custom applications](build-your-own-app.md), then return here.
 - **Network access:** Run the commands from a
   [VNet-connected host](network-isolation.md#reach-the-private-network) that
@@ -184,7 +186,7 @@ az account show --query "{subscription:id,tenant:tenantId}" --output table
 
 $pna = az cognitiveservices account show --name $foundryName `
     --resource-group $resourceGroup --query properties.publicNetworkAccess --output tsv
-if ($pna -ne "Disabled") { throw "This runbook requires Foundry PNA Disabled." }
+if ($pna -ne "Disabled") { throw "This guide requires Foundry PNA Disabled." }
 
 $work = Join-Path $HOME ("teams-publication-" + (Get-Date -Format "yyyyMMdd-HHmmss"))
 New-Item -ItemType Directory -Path $work | Out-Null
@@ -241,7 +243,7 @@ Grant this access before sharing the app link.
 
 !!! note "If the agent identity check fails"
     Stop and have the agent owner supply a supported agent identity and stable
-    endpoint before retrying this runbook.
+    endpoint before retrying this procedure.
     Bot Service needs the agent identity's client ID
     (`instance_identity.client_id`), not the project's managed identity or an
     application registration belonging to another client.

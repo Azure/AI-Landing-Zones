@@ -7,7 +7,7 @@ application panel or application Cosmos DB in this layout. Native Foundry IQ
 ingestion is selected by default; Agent App Ingestion is optional.
 Foundry's own backing resources are separate from application data stores.
 
-The [full-stack runbook](../agent-landing-zone/deploy-full-stack.md) provisions
+The [full-stack deployment guide](../agent-landing-zone/deploy-full-stack.md) provisions
 the composed layout, not the raw root parameters alone. Custom definitions,
 optional services and reused resources can change the assignments below.
 Inspect the selected environment's effective principals and scopes before

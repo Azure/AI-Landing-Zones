@@ -121,5 +121,5 @@ App Configuration under the `agent-lz` label.
 and when a reload or restart is required.
 
 Keep deployment and redeployment steps in the
-[deployment runbook](deploy-full-stack.md). Do not run deployment hooks merely
+[deployment guide](deploy-full-stack.md). Do not run deployment hooks merely
 to inspect a configuration value or execute a local test.

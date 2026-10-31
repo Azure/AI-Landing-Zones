@@ -25,7 +25,7 @@ This guide is about the **resiliency of the Governance Hub itself** (the gateway
 6. [DevOps alignment](#6-devops-alignment)
 7. [Backend resiliency (scope boundary)](#7-backend-resiliency-scope-boundary)
 8. [Reference implementation walkthrough](#8-reference-implementation-walkthrough)
-9. [Operational runbook](#9-operational-runbook)
+9. [Operational procedures](#9-operational-procedures)
 10. [Related guides & modules](#10-related-guides-modules)
 
 ---
@@ -384,7 +384,9 @@ The primary gateway generates the subscription key; the additional gateway **reu
 
 ---
 
-## 9. Operational runbook
+<span id="9-operational-runbook"></span>
+
+## 9. Operational procedures
 
 | Event | Action | Expected outcome |
 |---|---|---|

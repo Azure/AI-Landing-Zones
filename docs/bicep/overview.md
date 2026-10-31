@@ -55,7 +55,9 @@ and regional readiness. A passing check is not proof of regional capacity,
 private DNS resolution, data-plane authorization or application readiness.
 Resolve findings instead of skipping the checks.
 
-## Use the canonical runbooks
+<span id="use-the-canonical-runbooks"></span>
+
+## Use the deployment guides
 
 - [Deploy infrastructure only](../agent-landing-zone/deploy-infra-only.md)
   — provision the incorporated foundation without application image deployment.

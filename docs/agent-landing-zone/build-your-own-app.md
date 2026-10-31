@@ -8,7 +8,7 @@ authentication, UI and ingestion API contracts for any components it reuses.
 
 ## When to use
 
-Use this runbook when documented configuration is insufficient or you need a
+Use this guide when documented configuration is insufficient or you need a
 different application. Choose the branch that matches your change:
 
 | Goal | Start here |
@@ -34,7 +34,7 @@ strategy flag.
 ## Prerequisites
 
 - Prepare the platform checkout, Python hook dependencies, Azure sign-in and
-  deployment permissions in the [Deploy full stack runbook](deploy-full-stack.md).
+  deployment permissions in the [full-stack deployment guide](deploy-full-stack.md).
   Commands below run from the platform root unless stated otherwise.
 - The deployment identity must be able to create scoped role assignments.
   Private Git sources also require noninteractive read access on the actual
@@ -46,7 +46,7 @@ strategy flag.
 - Private deployments require a connected host with private DNS resolution.
   An ACR build pool does not provide that host's connectivity.
 - For a different application, create a **new azd environment** through the
-  deployment runbook and select its definition before provisioning.
+  deployment guide and select its definition before provisioning.
 
 Definitions and manifests are deployment inputs, not runtime configuration.
 Keep secrets out of both. For App Configuration updates under label `agent-lz`
@@ -66,7 +66,7 @@ editing the definition.
 
 For source ownership, local execution, and contributor checks, start with
 [Customize components](customize-components.md), [Run locally](local-development.md),
-and [Tests & quality checks](application-testing.md). This runbook covers
+and [Tests & quality checks](application-testing.md). This guide covers
 adopting the resulting source through deployment inputs, not implementing it.
 
 Prefer configuration first. Fork only runtime repositories whose source you
@@ -91,7 +91,7 @@ For an orchestrator customization:
     python -m config.appdefinition --validate app-definition.json
     ```
 
-5. Commit both pin files together. Follow the [Deploy full stack runbook](deploy-full-stack.md)
+5. Commit both pin files together. Follow the [full-stack deployment guide](deploy-full-stack.md)
    and [hosted image preparation](hosted-agents.md), which builds from the
    manifest-pinned orchestrator. A startup-variable change cannot convert a
    Container App image into a supported hosted image.
@@ -193,7 +193,7 @@ this release's deployment.
    receives its required hosted foundation resources.
 
     Then provision the selected definition using
-    the [Deploy infra only runbook](deploy-infra-only.md), and run root `azd deploy`.
+    the [infrastructure-only deployment guide](deploy-infra-only.md), and run root `azd deploy`.
     Its service uses its own source/image
     contract, not the Agent Application hosted image-preparation handoff.
 
@@ -349,7 +349,7 @@ authorization with representative tasks and allowed and denied identities.
 Use the validation/selection commands above with your own definition path.
 Pre-deploy rechecks definition and binding; mismatches exit with code 2.
 For foundation without application deployment, follow
-the [Deploy infra only runbook](deploy-infra-only.md).
+the [infrastructure-only deployment guide](deploy-infra-only.md).
 
 ### `config.appdefinition` reference
 
@@ -360,7 +360,7 @@ profile assignment. Do not use binding commands to replace an environment's appl
 
 ### Related pages
 
-- [Deploy full stack runbook](deploy-full-stack.md)
+- [Full-stack deployment guide](deploy-full-stack.md)
 - [Hosted agents](hosted-agents.md)
 - [Deployment settings](configuration.md)
 
