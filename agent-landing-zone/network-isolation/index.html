@@ -27,7 +27,7 @@
     
     
       
-        <title>Network isolation - AI Landing Zones</title>
+        <title>Network design - AI Landing Zones</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#network-isolation" class="md-skip">
+        <a href="#network-design" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Network isolation
+              Network design
             
           </span>
         </div>
@@ -415,34 +415,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../how-it-works/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    How it works
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../planning/" class="md-nav__link">
         
   
@@ -515,7 +487,7 @@
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Network design
   
 
     
@@ -533,7 +505,7 @@
   <span class="md-ellipsis">
     
   
-    Network isolation
+    Network design
   
 
     
@@ -559,10 +531,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-changes-with-isolation" class="md-nav__link">
+  <a href="#public-and-private-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What changes with isolation
+        Public and private access
       
     </span>
   </a>
@@ -570,239 +542,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#isolation-and-provisioning" class="md-nav__link">
+  <a href="#plan-each-connectivity-path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Isolation and provisioning
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Isolation and provisioning">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#choose-subnet-ownership" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choose subnet ownership
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#default-subnets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Default subnets
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Default subnets">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#subnet-delegations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Subnet delegations
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-network-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Private network access
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Private network access">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#jumpbox-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Jumpbox access
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#connected-host-requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connected-host requirements
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Connected-host requirements">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#post-provision-can-be-deferred" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Post-provision can be deferred
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#image-builds-in-isolated-deployments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Image builds in isolated deployments
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Image builds in isolated deployments">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#application-specific-package-feeds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Application-specific package feeds
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#component-runtime-egress" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Component runtime egress
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Component runtime egress">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#review-before-provisioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Review before provisioning
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#policy-ownership" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Policy ownership
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#source-scope-and-recovery" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Source scope and recovery
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-connectivity-checks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Private connectivity checks
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Private connectivity checks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#firewall-sku-and-management-networking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Firewall SKU and management networking
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#opt-in-firewall-dns-proxy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Opt-in firewall DNS proxy
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-native-blob-ingestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Private native Blob ingestion
+        Plan each connectivity path
       
     </span>
   </a>
@@ -810,10 +553,65 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#integrate-with-an-existing-hub" class="md-nav__link">
+  <a href="#plan-dns-and-routing-together" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integrate with an existing hub
+        Plan DNS and routing together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allocate-subnets-and-agree-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allocate subnets and agree ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agree-outbound-access-and-firewall-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agree outbound access and firewall ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-operator-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare operator access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#account-for-integration-specific-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Account for integration-specific paths
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continue-to-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continue to configuration
       
     </span>
   </a>
@@ -844,62 +642,6 @@
     
   
     Sizing & cost planner
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Deployment settings
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../resource-naming/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Resource naming
   
 
     
@@ -1474,7 +1216,7 @@
   <span class="md-ellipsis">
     
   
-    Agent Application
+    Reference
   
 
     
@@ -1487,6 +1229,117 @@
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../resource-naming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource naming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Application
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1539,10 +1392,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7_2" id="__nav_2_7_2_label" tabindex="0">
             
   
   
@@ -1560,8 +1413,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_2">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1678,10 +1531,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3" >
         
           
-          <label class="md-nav__link" for="__nav_2_6_3" id="__nav_2_6_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
             
   
   
@@ -1699,8 +1552,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_3">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1901,10 +1754,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4" >
         
           
-          <label class="md-nav__link" for="__nav_2_6_4" id="__nav_2_6_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
             
   
   
@@ -1922,8 +1775,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_4">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2096,10 +1949,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5" >
         
           
-          <label class="md-nav__link" for="__nav_2_6_5" id="__nav_2_6_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
             
   
   
@@ -2117,8 +1970,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_5">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2235,10 +2088,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_6" >
         
           
-          <label class="md-nav__link" for="__nav_2_6_6" id="__nav_2_6_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7_6" id="__nav_2_7_6_label" tabindex="0">
             
   
   
@@ -2256,8 +2109,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_6">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2402,10 +2255,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_8" >
         
           
-          <label class="md-nav__link" for="__nav_2_6_8" id="__nav_2_6_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_7_8" id="__nav_2_7_8_label" tabindex="0">
             
   
   
@@ -2423,8 +2276,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_8">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -5512,10 +5365,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-changes-with-isolation" class="md-nav__link">
+  <a href="#public-and-private-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What changes with isolation
+        Public and private access
       
     </span>
   </a>
@@ -5523,239 +5376,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#isolation-and-provisioning" class="md-nav__link">
+  <a href="#plan-each-connectivity-path" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Isolation and provisioning
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Isolation and provisioning">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#choose-subnet-ownership" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choose subnet ownership
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#default-subnets" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Default subnets
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Default subnets">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#subnet-delegations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Subnet delegations
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-network-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Private network access
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Private network access">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#jumpbox-access" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Jumpbox access
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#connected-host-requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connected-host requirements
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Connected-host requirements">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#post-provision-can-be-deferred" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Post-provision can be deferred
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#image-builds-in-isolated-deployments" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Image builds in isolated deployments
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Image builds in isolated deployments">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#application-specific-package-feeds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Application-specific package feeds
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#component-runtime-egress" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Component runtime egress
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Component runtime egress">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#review-before-provisioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Review before provisioning
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#policy-ownership" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Policy ownership
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#source-scope-and-recovery" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Source scope and recovery
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-connectivity-checks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Private connectivity checks
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Private connectivity checks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#firewall-sku-and-management-networking" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Firewall SKU and management networking
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#opt-in-firewall-dns-proxy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Opt-in firewall DNS proxy
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#private-native-blob-ingestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Private native Blob ingestion
+        Plan each connectivity path
       
     </span>
   </a>
@@ -5763,10 +5387,65 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#integrate-with-an-existing-hub" class="md-nav__link">
+  <a href="#plan-dns-and-routing-together" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Integrate with an existing hub
+        Plan DNS and routing together
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#allocate-subnets-and-agree-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allocate subnets and agree ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agree-outbound-access-and-firewall-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agree outbound access and firewall ownership
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-operator-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare operator access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#account-for-integration-specific-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Account for integration-specific paths
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#continue-to-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continue to configuration
       
     </span>
   </a>
@@ -5793,673 +5472,161 @@
   
 
 
-<h1 id="network-isolation">Network isolation</h1>
-<p>Use <strong>private networking for production and workloads with sensitive data</strong>.
-Set <code>NETWORK_ISOLATION=true</code> explicitly before provisioning. The template's
-current default is <code>false</code>; that default is not the recommended production
-configuration.</p>
-<p>Reserve public service endpoints for organization-approved, short-lived
-evaluations or demonstrations with synthetic or non-sensitive data. Public
-endpoints still require authentication and authorization, but those checks do
-not make them private. Do not disable isolation to work around connectivity or
-deployment failures.</p>
-<p>This page explains connectivity, DNS and build requirements rather than
-deployment steps. <a href="../how-it-works/">How it works</a>
-introduces the input formats and deployment lifecycle.</p>
-<p>Both providers use the root <code>main.parameters.json</code> examples on this page.
-For Terraform, preprovision generates typed inputs automatically; see the
-<a href="../deploy-terraform-infra-only/#step-4-choose-the-application-and-foundation-inputs">Terraform input procedure</a>.</p>
-<p>A <strong>private endpoint</strong> gives a service a private IP address in a VNet.
-Private DNS directs its normal hostname to that address. A <strong>virtual private
-network (VPN)</strong> connects an authorized remote computer or network to the VNet.</p>
-<p>A <strong>jumpbox</strong> is a virtual machine (VM) used for administration; Azure Bastion
-provides remote access to it. A NAT gateway provides outbound address
-translation. None of these connections grants permission to read service data.</p>
-<p>With <code>NETWORK_ISOLATION=true</code>, Agent Landing Zone uses private endpoints and private DNS for the deployed workload services. With the default empty <code>allowedIpRanges</code>, public access to those service endpoints is disabled. Azure Resource Manager remains public; telemetry and optional public ingress have separate settings.</p>
-<p>An explicit, nonempty <code>allowedIpRanges</code> in <code>main.parameters.json</code> enables
-IP-restricted public access on services that support those rules, even with
-isolation enabled. Those public paths and any reused network or DNS resources
-remain part of the connectivity design.</p>
-<p>The <a href="../deploy-infra-only/">Deploy infra only</a> and
-<a href="../deploy-full-stack/">Deploy full stack</a> guides contain the procedures.
-The <a href="../azure-devops/">Azure DevOps deployment guide</a> covers optional pipeline automation.
-<a href="../planning/">Deployment choices</a> explains standalone and hub integration.
-An AI Gateway governs model requests, not workload networking or user access.
-Private endpoints, DNS, routes, firewall rules and authorization remain necessary.</p>
-<p>With the <a href="../configuration/#resource-group-destinations">resource group destinations</a>,
-locally owned private endpoints default to the resolved network group, which
-can differ from their services' groups. The explicit
-<code>AZURE_PE_RESOURCE_GROUP_NAME</code> override and existing-VNet/<code>SIDE_BY_SIDE</code>
-precedence in <a href="../configuration/#general">Deployment settings</a> still apply.</p>
-<div class="admonition note">
-<p class="admonition-title">Teams and Microsoft 365 Copilot publication</p>
-<p><a href="../publish-to-teams/">Publish to Teams and M365</a> adds a manual, source-IP-filtered
-public exception for the Foundry Activity route while Foundry and Bot Service
-public network access stays disabled. Microsoft calls this a <strong>source
-IP-filtered Activity Protocol public endpoint</strong>.</p>
-<p>Channel messages use <strong>public HTTPS, not Private Link</strong>, so this path is
-<strong>not private end to end</strong>. If public agent ingress is prohibited, do not
-use that publication path. Other Foundry APIs remain private, and the
-template does not enable this exception.</p>
-</div>
-<p>The <a href="../connect-copilot-studio/">Connect Copilot Studio</a> guide describes an
-authenticated agent flow and Power Platform VNet delegation to reach the Foundry
-private endpoint; it does not require the Activity-route public exception.</p>
-<h2 id="what-changes-with-isolation">What changes with isolation</h2>
+<p><span id="network-isolation"></span></p>
+<h1 id="network-design">Network design</h1>
+<p>After choosing the <a href="../planning/#decide-who-owns-the-network">network arrangement</a>,
+plan how operators, build agents and services will reach one another.
+This page explains connectivity and ownership. Use
+<a href="../configuration/#network-and-security">Deployment settings</a> for input names
+and the deployment guides for execution.</p>
+<p>A virtual network (<strong>VNet</strong>) contains the workload's private address space.
+A <strong>private endpoint</strong> gives a service a private address in that network.
+Private DNS directs the normal service hostname to that address.</p>
+<p><span id="what-changes-with-isolation"></span>
+<span id="enable-isolation"></span></p>
+<h2 id="public-and-private-access">Public and private access</h2>
+<p>Use <strong>private networking for production and sensitive data</strong>.
+<code>NETWORK_ISOLATION</code> defaults to <code>false</code>, so the recommended private design
+requires explicit selection before provisioning.</p>
+<p>With isolation enabled and an empty <code>allowedIpRanges</code>, workload services use
+private endpoints and private DNS, with public service access disabled.
+A nonempty allowlist can enable IP-restricted public paths on supported
+services. Azure Resource Manager remains public. Telemetry and optional
+public ingress have their own settings.</p>
+<p>Public endpoints still require authentication and authorization.
+Private endpoints do not grant access to data. Neither is a reason to bypass
+identity checks or weaken the network to recover a failure.</p>
+<p><span id="private-network-access"></span>
+<span id="reach-the-private-network"></span>
+<span id="connected-host-requirements"></span>
+<span id="image-builds-in-isolated-deployments"></span></p>
+<h2 id="plan-each-connectivity-path">Plan each connectivity path</h2>
 <table>
 <thead>
 <tr>
-<th>Area</th>
-<th><code>NETWORK_ISOLATION=false</code></th>
-<th><code>NETWORK_ISOLATION=true</code></th>
+<th>Path</th>
+<th>What must be reachable</th>
+<th>Planning consequence</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Workload service access</td>
-<td>Public endpoints, with service authentication and authorization</td>
-<td>Private endpoints by default</td>
+<td>Deployment host to services</td>
+<td>Private configuration, secrets and service APIs, as well as Azure management APIs.</td>
+<td>Use an authorized VPN-connected workstation, VM or runner with the required DNS and routes. Provisioning can also need private access.</td>
 </tr>
 <tr>
-<td>DNS</td>
-<td>Public DNS</td>
-<td>Private DNS zones linked to the VNet</td>
+<td>Build agents to registry and dependencies</td>
+<td>The private registry and approved package destinations.</td>
+<td>Isolated remote builds use a pool inside the VNet. This pool does not connect the deployment host.</td>
 </tr>
 <tr>
-<td>Jumpbox, Azure Bastion, NAT gateway</td>
-<td>Not deployed by default</td>
-<td>Deployed by default</td>
+<td>Workloads to services</td>
+<td>The selected model, data, configuration and tool endpoints.</td>
+<td>Plan private paths and approved outbound access, then grant the appropriate service permissions separately.</td>
 </tr>
 <tr>
-<td>Container image builds</td>
-<td>Local Docker or regular ACR Tasks</td>
-<td>ACR Task agent pool inside the VNet by default</td>
-</tr>
-<tr>
-<td>Post-provision and deploy</td>
-<td>Run from an authorized host that can reach the endpoints</td>
-<td>Run from an authorized host connected to the VNet</td>
+<td>Search to sources and models</td>
+<td>The source and extraction/embedding services.</td>
+<td>Native private ingestion can require Search-managed links and approval by the target owners.</td>
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The ACR Task agent pool is created only for isolated deployments. When isolation is off, supported components can build with local Docker or regular ACR Tasks. No pool is created, even if <code>DEPLOY_ACR_TASK_AGENT_POOL</code> is <code>true</code>.</p>
-</div>
-<p><span id="enable-isolation"></span></p>
-<h2 id="isolation-and-provisioning">Isolation and provisioning</h2>
-<p><code>NETWORK_ISOLATION=true</code> is resolved before provisioning. The selected topology,
-subnet creation flags and resource ownership determine which subnets are
-created. Choose who manages them before first provision.</p>
-<h3 id="choose-subnet-ownership">Choose subnet ownership</h3>
-<p>These choices apply with network isolation enabled. Hub connectivity and DNS
-remain separate decisions.</p>
-<table>
-<thead>
-<tr>
-<th>Network choice</th>
-<th><code>USE_EXISTING_VNET</code></th>
-<th><code>DEPLOY_SUBNETS</code></th>
-<th>Responsibility</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>New VNet and subnets</td>
-<td><code>false</code></td>
-<td><code>true</code></td>
-<td>The template creates the VNet and selected subnets.</td>
-</tr>
-<tr>
-<td>Existing VNet, template-managed subnets</td>
-<td><code>true</code></td>
-<td><code>true</code></td>
-<td>Supply <code>EXISTING_VNET_RESOURCE_ID</code>; the template creates/updates selected subnets.</td>
-</tr>
-<tr>
-<td>Existing VNet, externally managed subnets</td>
-<td><code>true</code></td>
-<td><code>false</code></td>
-<td>Supply the VNet ID; its owner prepares every subnet required by enabled consumers.</td>
-</tr>
-</tbody>
-</table>
-<p>Using an existing VNet does not make deployment read-only. Individual creation
-flags can exclude subnets from template management. See the
-<a href="../configuration/#network-selection-examples">network selection examples</a>.</p>
-<h3 id="default-subnets">Default subnets</h3>
-<p>The new VNet's default address space is <code>192.168.0.0/21</code>. Names and ranges
-can be overridden using the <a href="../configuration/#subnet-creation-and-addressing">subnet inputs</a>.</p>
-<div class="subnet-address-plan responsive-reference">
-<table role="table">
-<thead role="rowgroup">
-<tr role="row">
-<th scope="col" role="columnheader">Purpose</th>
-<th scope="col" role="columnheader">Default name</th>
-<th scope="col" role="columnheader">Default CIDR</th>
-</tr>
-</thead>
-<tbody role="rowgroup">
-<tr role="row">
-<th scope="row" role="rowheader">Foundry Agent Service</th>
-<td role="cell" data-label="Default name"><code>agent-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.0.0/24</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Container Apps environment</th>
-<td role="cell" data-label="Default name"><code>aca-environment-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.1.0/24</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Foundry/grounding private endpoints</th>
-<td role="cell" data-label="Default name"><code>pe-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.2.0/26</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Bastion</th>
-<td role="cell" data-label="Default name"><code>AzureBastionSubnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.2.64/26</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Firewall</th>
-<td role="cell" data-label="Default name"><code>AzureFirewallSubnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.2.128/26</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">VPN/ExpressRoute reservation</th>
-<td role="cell" data-label="Default name"><code>GatewaySubnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.2.192/26</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Application Gateway</th>
-<td role="cell" data-label="Default name"><code>AppGatewaySubnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.3.0/27</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Jumpbox</th>
-<td role="cell" data-label="Default name"><code>jumpbox-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.3.64/27</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Build agents</th>
-<td role="cell" data-label="Default name"><code>devops-build-agents-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.3.96/27</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Application private endpoints</th>
-<td role="cell" data-label="Default name"><code>application-pe-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.3.128/26</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Basic firewall management</th>
-<td role="cell" data-label="Default name"><code>AzureFirewallManagementSubnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.3.192/26</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">Power Platform</th>
-<td role="cell" data-label="Default name"><code>powerplatform-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.4.0/24</code></td>
-</tr>
-<tr role="row">
-<th scope="row" role="rowheader">AI Gateway</th>
-<td role="cell" data-label="Default name"><code>ai-gateway-subnet</code></td>
-<td role="cell" data-label="Default CIDR"><code>192.168.5.0/24</code></td>
-</tr>
-</tbody>
-</table>
-</div>
-
-<h4 id="subnet-delegations">Subnet delegations</h4>
-<ul>
-<li><strong>Foundry Agent Service and Container Apps environment:</strong>
-  <code>Microsoft.App/environments</code>.</li>
-<li><strong>Power Platform:</strong> <code>Microsoft.PowerPlatform/enterprisePolicies</code>.</li>
-<li><strong>AI Gateway:</strong> <code>Microsoft.Web/serverFarms</code>.</li>
-<li><strong>All other subnets in this plan:</strong> no delegation.</li>
-</ul>
-<p>Firewall data subnet creation defaults to the local firewall requirement.
-The management subnet is used only by a standalone Basic firewall.
-GatewaySubnet is opt-in. The table is an address plan, not an unconditional
-resource inventory; shared-hub services do not require these reservations
-in the spoke.</p>
-<p><strong>Creation is not service selection.</strong> A false subnet creation flag does not
-disable its consumers: any enabled consumer still needs a valid subnet.
-With isolation off, no VNet or subnets are provisioned.</p>
-<p><strong>Prepared subnets are not deployed services.</strong> These reservations do not deploy
-APIM or VPN/ExpressRoute gateways, create a Power Platform enterprise policy,
-or associate a Power Platform environment. Those integrations need separate setup.</p>
-<p>Enabled application Cosmos DB, Key Vault, App Configuration, Container Apps,
-ACR and Azure Monitor Private Link Scope endpoints use the
-<a href="../configuration/#optional-application-private-endpoint-subnet">application private endpoint subnet</a>.
-Foundry/grounding endpoints use <code>pe-subnet</code> by default. Application endpoints
-never fall back to the Foundry subnet, including when application subnet
-creation is disabled. This separation is independent of resource group count.</p>
-<p>Keep the reserved name <code>GatewaySubnet</code>; do not attach an NSG, default-route
-UDR or delegation to it. AI Gateway uses APIM Standard v2/Premium v2 outbound
-VNet integration, with a subnet of <code>/27</code> or larger, delegated to
-<code>Microsoft.Web/serverFarms</code> and associated with an NSG. Preserve an outbound
-HTTPS path to Azure Key Vault. No reserved subnet name is required for APIM;
-do not place APIM private endpoints in its delegated integration subnet.</p>
-<p>The Power Platform <code>/24</code> is a capacity default, not a platform minimum.
-Size for environment demand: approximately 25–30 IPs per production
-environment or 6–10 per nonproduction environment, plus five subnet-reserved IPs.
-See <a href="https://learn.microsoft.com/power-platform/admin/vnet-support-overview#estimating-subnet-size-for-power-platform-environments">Power Platform subnet sizing</a>.</p>
-<p>Azure Resource Manager (ARM) creates and manages Azure resources through a
-public control plane, but <code>azd provision</code> also
-runs lifecycle hooks. An existing environment can need private App Configuration
-access before ARM deployment to resolve its topology. Post-provision also needs
-private connectivity, so an unconnected host cannot complete every stage.</p>
-<p>The matching deployment guide therefore requires a connected host. The
-default Foundry hosted deployment automatically prepares its image and
-application handoff during <code>azd deploy</code>, as described in
-<a href="../deploy-full-stack/">Deploy full stack</a>.</p>
-<p><span id="reach-the-private-network"></span></p>
-<h2 id="private-network-access">Private network access</h2>
-<p>Private services can be reached through:</p>
-<ul>
-<li><strong>Point-to-site or site-to-site VPN</strong> into the landing zone VNet or a peered hub.</li>
-<li><strong>A VM or build agent</strong> in the VNet or a peered VNet, with private DNS zone access.</li>
-<li><strong>The jumpbox VM</strong> deployed by the landing zone, reached through Azure Bastion.</li>
-</ul>
-<p><span id="use-the-jumpbox"></span></p>
-<h3 id="jumpbox-access">Jumpbox access</h3>
-<p>The default jumpbox is a Windows VM. Unless overridden, its administrator user is
-<code>testvmuser</code>. The password is supplied through the secure <code>vmAdminPassword</code>
-provisioning input, not a documented Key Vault secret. Unavailable credentials
-require an authorized administrator's approved reset procedure, without
-exposing passwords in shell history or logs.</p>
-<p>Azure Bastion provides portal access to the VM. It still needs the
-<a href="../deploy-full-stack/#prerequisites">deployment prerequisites</a>. Docker is not
-installed by default and is unnecessary for ACR Task agent-pool builds.</p>
-<h2 id="connected-host-requirements">Connected-host requirements</h2>
-<p>The connected host needs the same reviewed platform Git commit or release tag
-and approved inputs as the original workspace. Its local azd environment also
-needs current provisioning outputs. The
-<a href="../deploy-infra-only/">Deploy infra only</a> guide explains environment
-selection, output refresh and separate provisioning/configuration steps.</p>
-<p>The jumpbox's managed identity, an Azure-managed service identity that does
-not need a stored password, needs the selected application's configuration
-and build roles.</p>
-<p>For hosted-agent authoring,
-the runner needs <strong>Foundry User</strong> on the exact
-Foundry project, plus read access to the Foundry account. Cognitive Services
-Contributor and OpenAI User alone do not grant the agent data-plane actions.</p>
-<p>Subscription or resource-group Owner is not an appropriate fix for this denial.
-See <a href="https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry">Foundry RBAC</a>
-for the current role catalog and scopes. New grants need time to propagate.</p>
-<p>An infrastructure-only deployment stops after provisioning and post-provision
-configuration. It can contain placeholder Container Apps without running the
-selected applications. The <a href="../deploy-full-stack/">Deploy full stack</a>
-guide also deploys application code.</p>
-<h3 id="post-provision-can-be-deferred">Post-provision can be deferred</h3>
-<p>When isolation is enabled, post-provision can be <strong>deferred</strong> instead of failing.
-<code>RUN_FROM_JUMPBOX=false</code> (or <code>0</code>, <code>no</code>, <code>skip</code>) requests deferral, as does
-<code>AZURE_SKIP_NETWORK_ISOLATION_WARNING=true</code> while <code>RUN_FROM_JUMPBOX</code> is not
-truthy. A truthy <code>RUN_FROM_JUMPBOX</code>, such as <code>true</code>, requests the connectivity
-check even if the warning flag is set. Deferral produces:</p>
-<div class="highlight"><pre><span></span><code>Post-provision configuration explicitly deferred; application setup is incomplete.
-</code></pre></div>
-<p>If the other provisioning stages succeed, <code>azd provision</code> reports success, but
-the application is <strong>not</strong> configured. Deferral does not bypass earlier topology
-or provisioning checks. Configuration remains incomplete until deferral is
-cleared and configuration succeeds from a connected host. The
-<a href="../deploy-infra-only/#complete-a-deferred-post-provision">Deploy infra only</a>
-guide provides those steps.</p>
-<p>When the deferral settings are not set and the private endpoints cannot be reached, post-provision fails with:</p>
-<div class="highlight"><pre><span></span><code>Private post-provision prerequisites failed. Connect through VPN/VNet and rerun postProvision; configuration has not started.
-</code></pre></div>
+<p>The public Azure management plane alone is not enough for the platform
+workflow. Configuration checks can run before or after resource provisioning.
+A disconnected operator cannot assume that <code>azd provision</code> will complete.</p>
+<p><span id="verify-private-connectivity"></span>
+<span id="private-connectivity-checks"></span></p>
+<h2 id="plan-dns-and-routing-together">Plan DNS and routing together</h2>
+<p>Private DNS must resolve service hostnames to the intended private addresses.
+Connect zones to the right networks and arrange forwarding for VPN clients
+and connected hubs. Peering by itself does not propagate DNS.</p>
+<p>Routing and firewall policy must permit the connection in both directions.
+TLS must still validate the original service hostname. Successful connectivity
+does not prove that the calling identity can use the API or retrieve a document.</p>
+<p>Hub integration requires agreement with the platform team about reverse
+peering, routes, DNS, gateway transit and changes to shared resources.
+Policy-managed DNS and explicitly reused DNS zones are alternative arrangements.
+Their owners must provide the necessary links and readiness.</p>
+<p><span id="isolation-and-provisioning"></span>
+<span id="choose-subnet-ownership"></span>
+<span id="default-subnets"></span>
+<span id="subnet-delegations"></span></p>
+<h2 id="allocate-subnets-and-agree-ownership">Allocate subnets and agree ownership</h2>
+<p>Decide whether the template creates the VNet and subnets, manages selected
+subnets in an existing VNet, or uses externally managed subnets.
+An existing VNet is not automatically read-only.</p>
+<p>Reserve nonoverlapping address space for enabled consumers. The
+<a href="../configuration/#default-subnets">subnet address plan</a> lists default ranges
+and delegations. These are configurable reservations, not a promise that
+every listed service is deployed.</p>
+<p>Turning off subnet creation does not turn off its consumer. Required subnets
+must already exist with compatible sizes, names, delegations and security
+associations. Application private endpoints have a separate subnet from
+Foundry/grounding endpoints, independently of resource group count.</p>
+<p>VPN gateways, AI Gateway and Power Platform integrations need their own
+setup. Reserving a subnet does not deploy or connect them.
+See <a href="../configuration/#subnet-creation-and-addressing">subnet inputs</a>.</p>
+<p><span id="component-runtime-egress"></span>
+<span id="review-before-provisioning"></span>
+<span id="policy-ownership"></span>
+<span id="source-scope-and-recovery"></span>
+<span id="application-specific-package-feeds"></span>
+<span id="firewall-sku-and-management-networking"></span>
+<span id="opt-in-firewall-dns-proxy"></span></p>
+<h2 id="agree-outbound-access-and-firewall-ownership">Agree outbound access and firewall ownership</h2>
+<p>Distinguish build-package access from the destinations used by running workloads.
+Approve only the destinations required by the selected components.
+The <a href="../configuration/#outbound-access">outbound-access reference</a>
+explains how declarations become scoped rules.</p>
+<p>For a platform-managed firewall, the workflow reconciles its owned rules.
+For an external firewall, it reports requirements for the network owner to
+approve and apply. It does not modify that external policy.</p>
+<p>Workloads sharing a source subnet share its allowed destinations.
+Subnet-scoped rules are not component-level isolation. Use dedicated subnets
+or environments when separate outbound boundaries are required.</p>
+<p>Standalone private deployments default to a Basic firewall. Choose Standard
+when its features, such as DNS proxy, are required, and plan the corresponding
+<a href="../configuration/#firewall-sku-and-management-networking">firewall networking</a>.
+Enabling DNS proxy does not redirect client DNS or repair missing private-zone links.</p>
+<p><span id="jumpbox-access"></span>
+<span id="use-the-jumpbox"></span>
+<span id="post-provision-can-be-deferred"></span></p>
+<h2 id="prepare-operator-access">Prepare operator access</h2>
+<p>An approved VPN, a connected VM/runner or a jumpbox reached through Bastion
+can provide private access. Choose the path with the network and identity owners.
+See <a href="../private-access/">Private access</a> or
+<a href="../deploy-infra-only/#access-the-jumpbox">jumpbox access</a> for setup.</p>
+<p>The host needs the reviewed inputs, deployment state and scoped permissions.
+A managed identity does not automatically grant the necessary service roles.
+See the deployment guide's prerequisites.</p>
+<p>Deferring post-provision leaves configuration incomplete, even if resource
+provisioning reports success. Deferral does not establish connectivity or
+bypass deployment checks. Follow the
+<a href="../deploy-infra-only/#complete-a-deferred-post-provision">deferred-configuration procedure</a>
+from a connected host before deploying applications.</p>
+<p><span id="private-native-blob-ingestion"></span></p>
+<h2 id="account-for-integration-specific-paths">Account for integration-specific paths</h2>
+<p>For private native Blob ingestion, plan Search-to-source/model links and
+approval by the authorized target owners. Pending approval is not fixed by
+public access or weaker permissions. See
+<a href="../configuration/#search-shared-private-links">Search private-link requirements</a>
+and <a href="../foundry-iq/#ownership-and-connectivity">Foundry IQ connectivity</a>.</p>
 <div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p><code>RUN_FROM_JUMPBOX</code> only controls whether post-provision is deferred. It does not provide connectivity. <code>azd deploy</code> always checks private reachability, and fails with "Private deployment prerequisites failed" when the host cannot reach the endpoints.</p>
+<p class="admonition-title">A private foundation does not make every integration private</p>
+<p><a href="../publish-to-teams/">Teams and Microsoft 365 Copilot publication</a> uses a
+manually enabled, source-IP-filtered public Activity endpoint. It is
+<strong>not private end to end</strong>. Do not use that path when public agent ingress
+is prohibited. Other Foundry APIs remain private.</p>
 </div>
-<h2 id="image-builds-in-isolated-deployments">Image builds in isolated deployments</h2>
-<p>Public build agents cannot reach the default private registry. Remote builds
-use an <strong>ACR Task agent pool</strong> inside the VNet
-(<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code>). Hosted topology composition selects this
-pool when network isolation is enabled.</p>
-<p>If the pool is missing, <code>azd deploy</code> stops before building. Pool creation uses
-<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code> through the matching deployment guide.
-Where a component supports local builds, <code>BUILD_MODE=local</code> instead needs a
-VNet-connected host with working Docker.</p>
-<p>The local alternative applies to component scripts that support <code>BUILD_MODE=local</code>.
-Automatic hosted orchestrator image preparation and isolated custom source builds
-still require the private pool. Supplying an already-built immutable digest can
-skip those builds. To deploy without a pool, the root pre-deploy check also
-requires <code>BUILD_MODE=local</code>. Each remaining service must support local builds
-for that exception to work.</p>
-<h3 id="application-specific-package-feeds">Application-specific package feeds</h3>
-<p>The root deployment defaults include dependency-verified package feed
-destinations alongside common language and OS package registries, through
-the scoped infrastructure build-egress configuration. This is a build-only
-allowlist, not a runtime or general Internet exception. It does not allow
-every mirror recorded in a custom application's lockfile. The exact component
-commit's <code>resolved</code> URLs and download redirects determine its build needs.</p>
-<p>Additional dependencies are declared in
-<code>parameters.additionalAcrTaskBuildFqdns.value</code> in the root <code>main.parameters.json</code>.
-This is an explicit array, not an <code>azd</code> environment variable. Provisioning
-applies it; the connected runner needs the same reviewed parameter file to
-preserve the setting on later provisions.</p>
-<p>The Agent Application orchestrator frontend lockfile uses
-<code>ms-feed-2.pkgs.visualstudio.com</code>, <code>ms-feed-12.pkgs.visualstudio.com</code>,
-<code>ms-feed-17.pkgs.visualstudio.com</code>, and <code>ms-feed-25.pkgs.visualstudio.com</code>.
-Their public package downloads redirect to <code>*.vsblob.vsassets.io</code>.
-These four exact feeds and the redirect content delivery network (CDN) are included in the Agent Landing
-Zone default build allowlist. <code>packages.microsoft.com</code> is already included in
-the OS-package rule and does not need an additional entry.</p>
-<p>With <code>extendFirewallForAcrTaskBuilds=true</code> (the default) and an effective ACR
-Task agent pool, the feeds, redirect CDN, and additional hosts are allowed only
-from the build-agent subnet over HTTPS on port 443. They are not added to
-jumpbox, application, or agent-subnet rules. The additional-host array defaults
-to empty.</p>
-<p>Disabling the build-egress extension removes these package rules.
-Re-enabling it restores them. This egress rule has no DNS-proxy dependency and
-does not change client DNS.</p>
-<p>Do not enable public registry access, allow all Internet egress, disable TLS
-verification, or change dependency integrity hashes to work around a failed build.</p>
-<p>See <a href="../troubleshooting/#package-installation-fails-inside-the-build-pool">Package installation fails inside the build pool</a>
-for diagnosis.</p>
-<h2 id="component-runtime-egress">Component runtime egress</h2>
-<p>Application components declare additional runtime destinations in
-<a href="../build-your-own-app/#runtime-egress-declarations"><code>components[].egress</code></a>.
-The plan follows actual enabled workloads: optional ingestion, hosted or
-preserved Container App orchestration, and additive custom applications.
-The bundled UI needs no additional fixed destination. Both orchestrator and
-ingestion initialize tiktoken, whose empty-cache startup downloads encoding
-assets from <code>openaipublic.blob.core.windows.net</code> over HTTPS/443.</p>
-<p>These are runtime rules, not build-feed rules or replacements for private
-endpoints, authentication, DNS or routing. Configured SharePoint, SQL, MCP
-and other custom destinations require their own dependency review.</p>
-<h3 id="review-before-provisioning">Review before provisioning</h3>
-<p>From the platform root with the prepared Python environment, set the intended
-topology, ingestion selection and application definition in the selected azd
-environment, then run:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.egress<span class="w"> </span>--plan<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
-</code></pre></div>
-<p>This reads the named local azd environment and validates declarations without
-Azure access. Review <code>policyMode</code>, selected components, destinations and
-purposes. The preprovision hook repeats this calculation, prints it and saves
-<code>.azure/&lt;environment-name&gt;/component-egress-plan.json</code> before foundation
-deployment. Approval of provisioning includes these declared requirements.</p>
-<p>After infrastructure exists and local provisioning outputs are current, use:</p>
-<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>config.deployment.egress<span class="w"> </span>--review<span class="w"> </span>--environment<span class="w"> </span>&lt;environment-name&gt;
-</code></pre></div>
-<p>This is read-only. It resolves actual workload subnet prefixes and, for a
-deployment-managed policy, reports additions, updates and removals. A fresh
-deployment cannot resolve subnet prefixes until its infrastructure exists.
-Postprovision and predeploy print this resolved plan before managed
-reconciliation. If postprovision is explicitly deferred, reconciliation is
-also deferred; predeploy still enforces the connectivity and plan checks.</p>
-<h3 id="policy-ownership">Policy ownership</h3>
-<table>
-<thead>
-<tr>
-<th>Deployment</th>
-<th>Behavior</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>NETWORK_ISOLATION=false</code></td>
-<td>No component firewall reads or writes; declarations do not create a firewall</td>
-</tr>
-<tr>
-<td>Isolated with a deployment-managed firewall</td>
-<td>Reconciles only marked application rules in <code>AgentLzComponentEgress</code>, priority 400</td>
-</tr>
-<tr>
-<td>Isolated with an external firewall</td>
-<td>Reports required rules and components without egress declarations; never reads or mutates the external policy</td>
-</tr>
-</tbody>
-</table>
-<p>For managed policies, the runner needs management-plane subnet reads and
-<code>Microsoft.Network/firewallPolicies/ruleCollectionGroups/read</code> and <code>write</code>
-on the deployment policy. The reconciler does not write the parent policy.
-For external policies, the network owner compares the report with their own
-policy and applies approved changes. Reporting does not prove that egress is
-allowed.</p>
-<p>Shared destination/protocol/port tuples produce one rule, with sources and
-ownership combined across components. Removing one owner narrows sources where
-possible; the rule remains until its final declared owner disappears.</p>
-<p>Enabled components without declarations retain their owned requirements.
-Other rules and collections, including unmarked entries inside
-the component group, are preserved. Ownership collisions, malformed marked
-rules, conflicting priorities or concurrent changes fail rather than being
-silently adopted or overwritten.</p>
-<h3 id="source-scope-and-recovery">Source scope and recovery</h3>
-<p>Rules use the actual provisioned Container Apps or Foundry agent subnet
-prefixes, including existing-VNet selections, not the whole VNet or <code>*</code>.
-<strong>Subnet scope is not component isolation:</strong> every workload sharing a source
-subnet can use its union of allowed destinations. Existing platform rules can
-also allow traffic. Use dedicated subnets or environments and an approved
-network design when workloads need distinct egress boundaries.</p>
-<p>After changing declarations or selections, review the new local plan and run
-the normal provisioning sequence before deploying. A missing or stale saved
-plan stops apply before Azure access. Do not copy a plan or provisioning
-outputs from another environment.</p>
-<p>For rollback, first review explicit empty declarations for the components
-whose additional rules should be removed, then reconcile using the current
-hooks. Keep declarations for any remaining consumers. Only afterward roll
-back hooks or metadata: reverting code alone does not remove existing rules.
-Never delete shared foundation groups or externally managed policy content.</p>
-<p><span id="verify-private-connectivity"></span></p>
-<h2 id="private-connectivity-checks">Private connectivity checks</h2>
-<p>The guides check service hostnames from the deployment runner, including
-the host in <code>APP_CONFIG_ENDPOINT</code>:</p>
-<table>
-<thead>
-<tr>
-<th>Check</th>
-<th>Expected result</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>DNS</td>
-<td>Only private IPv4 addresses (10.x, 172.16 through 31.x or 192.168.x)</td>
-<td>The runner resolves the private endpoint rather than the public endpoint.</td>
-</tr>
-<tr>
-<td>Transmission Control Protocol (TCP)</td>
-<td>Connection succeeds on port 443</td>
-<td>Routing and firewall policy allow the endpoint connection.</td>
-</tr>
-<tr>
-<td>TLS</td>
-<td>Handshake succeeds with the original hostname and normal certificate validation</td>
-<td>The connection reaches the expected service securely.</td>
-</tr>
-</tbody>
-</table>
-<p>Public DNS answers usually indicate a missing private-zone link or an
-incorrect VPN/hub forwarding path.</p>
-<p>On Windows, <code>nslookup</code> can differ from the operating system resolver used by
-the Python prerequisite check, especially with VPN Name Resolution Policy
-Table (NRPT) rules. That check requires private IPv4 answers and rejects mixed
-public/private, IPv6, loopback and link-local answers.</p>
-<p>It then verifies TCP 443
-and TLS without sending an HTTP request or credentials. Connectivity is not
-authorization: API access and document permissions still need tests with the
-intended user identities.</p>
-<h3 id="firewall-sku-and-management-networking">Firewall SKU and management networking</h3>
-<p>New isolated standalone deployments select <code>AZURE_FIREWALL_SKU=Basic</code>.
-Select <code>Standard</code> explicitly when DNS proxy, network-rule FQDN filtering or
-greater capacity is required. Basic supports application HTTP(S) FQDN rules
-and IP/service-tag network rules; assess its approximately 250 Mbps capacity
-class against build, image-download and ingestion peaks.</p>
-<table>
-<thead>
-<tr>
-<th>Topology</th>
-<th>Local firewall data subnet/IP</th>
-<th>Local management subnet/IP</th>
-<th>GatewaySubnet</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Standalone Basic</td>
-<td>Required</td>
-<td>Required</td>
-<td>Explicit reservation only</td>
-</tr>
-<tr>
-<td>Standalone Standard</td>
-<td>Required</td>
-<td>None</td>
-<td>Explicit reservation only</td>
-</tr>
-<tr>
-<td>External hub, with or without gateway</td>
-<td>No IP; data subnet only if explicitly reserved</td>
-<td>None</td>
-<td>Explicit local reservation only</td>
-</tr>
-<tr>
-<td>Public/non-isolated</td>
-<td>None</td>
-<td>None</td>
-<td>None</td>
-</tr>
-</tbody>
-</table>
-<p>Both local SKUs use <code>AzureFirewallSubnet</code>. Basic additionally needs the
-exact name <code>AzureFirewallManagementSubnet</code>, a /26-or-larger range and a
-separate Standard/static public IP and management NIC configuration.
-Keep management networking free of generic NSGs, workload default routes,
-NAT, delegations and service endpoints. Validate externally managed subnet
-routing with the network owner. Workload routes use the data-plane private IP.</p>
-<p>For external hub egress, explicitly disable local firewall deployment and
-configure the approved external next hop or route table. A deployment-mode
-label alone does not configure egress or change hub resources.</p>
-<h3 id="opt-in-firewall-dns-proxy">Opt-in firewall DNS proxy</h3>
-<p><code>ENABLE_FIREWALL_DNS_PROXY</code> defaults to <code>false</code> and maps to the Bicep boolean
-<code>enableFirewallDnsProxy</code> (also default <code>false</code>), which sets
-<code>dnsSettings.enableProxy</code> on a <code>Standard</code> firewall. Basic with proxy enabled
-is rejected; its policy omits DNS settings. It applies only when the
-<code>deployAzureFirewall</code> and <code>networkIsolation</code> gates enable firewall deployment.
-It is intended for a topology that deliberately uses the firewall as its DNS
-forwarding path. The matching deployment guide applies the selection through
-normal provisioning.</p>
-<p>Enabling the proxy does
-<strong>not</strong> redirect VNet or VPN clients to the firewall or rewrite their DNS
-configuration. It is independent of the build-feed egress allowlist.</p>
-<p>Client DNS routing and private-zone resolution remain separate requirements.
-A proxy cannot repair missing zone links, VPN routes or application
-authentication. Disabling it requires confirmation that the deployed DNS path
-does not depend on it before reprovisioning.</p>
-<h2 id="private-native-blob-ingestion">Private native Blob ingestion</h2>
-<p>For the default native Blob path, Search reads and processes Blob documents
-for Foundry IQ retrieval. A <code>searchIndex</code> source instead exposes an index
-populated by another pipeline. Their private-network setup differs.</p>
-<p>Native <code>azureBlob</code> ingestion uses outbound shared private links managed by
-Search. Configuration verifies deployment-owned links, targets and groups
-before dependent cleanup/mutation and again before knowledge source creation.
-It <strong>does not automatically approve</strong> target connections. Pending links
-require approval by an authorized target administrator for each connection.</p>
-<p>The gate is limited to <code>NETWORK_ISOLATION=true</code>, <code>RETRIEVAL_BACKEND=foundry_iq</code>
-and rendered native <code>azureBlob</code> sources, excluding the <code>searchIndex</code> pattern.
-It checks the Agent Application Search link to deployment Blob storage (<code>blob</code>)
-and the links to the deployment Foundry account (<code>openai_account</code>,
-<code>foundry_account</code>, <code>cognitiveservices_account</code>). It does not configure the
-separate Foundry Search service or unrelated services.</p>
-<p>Exact names come from
-the template's <code>SEARCH_SHARED_PRIVATE_LINKS</code> manifest, including bounded
-Foundry names. The exact Search shared-link GET must return the expected
-name, target and group. If its body includes a resource ID, that must match
-too.</p>
-<p>The target service receives a private endpoint connection (PEC) request.
-Because its name, message and endpoint ID may not identify the originating
-Search link, an administrator must verify and approve the correct request.
-The configuration script reads the deployment's Search links and leaves
-target-side approval to that administrator. See Microsoft's
-<a href="https://learn.microsoft.com/en-us/azure/search/search-indexer-howto-access-private">approval and shared-link status procedure, sections 2 and 3</a>.</p>
-<p>A <code>Pending</code> source link stops immediately with its exact Search ID, target
-ID, group and link name for administrator investigation and approval.
-After approval, configuration needs another run. Each source link must report connection
-status <code>Approved</code> and provisioning state <code>Succeeded</code> before configuration
-continues. Read timeouts or denials require restored connectivity or Search
-read permissions, not public access. See
-<a href="../troubleshooting/#search-shared-private-links-are-not-ready">Search shared private links are not ready</a>.</p>
-<p>Polling has a 600-second total readiness budget, a 10-second interval and
-ARM request timeouts of at most 30 seconds (limited by the remaining budget).
-Each exact Search shared link must be <code>Approved</code> and <code>Succeeded</code>, the
-documented source-side readiness signal. Approved links whose provisioning
-is still propagating use bounded polling. Pending approval does not spend
-this budget waiting for an unprovable target match.</p>
-<p>Administrator-approved
-links are usable even when target PECs are paginated, opaque or unreadable
-by the runner. The existing Azure CLI/managed-identity credential is reused.
-The runner needs Search shared-link read permission, with no new secret,
-target PEC read/write requirement or automatic RBAC grant.</p>
-<p>Native ingestion supports configured Foundry IQ source kinds and is not
-feature-equivalent to Agent App Ingestion. Choosing it does not remove
-Entra ID authentication, on-behalf-of (OBO) token exchange, RBAC or
-document-level authorization. OBO exchanges a user's token for another API's
-token while retaining that user's delegated identity.</p>
-<p>Azure Data Lake Storage (ADLS) Gen2 uses Blob storage with a hierarchical
-directory namespace. In particular,
-<code>FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS=[]</code> is a deliberate shared-source
-metadata choice for active, supported non-ADLS native Blob ingestion, not a
-workaround for a private connection failure.</p>
-<p>Infrastructure-published <code>[]</code>
-for <code>ai_search</code> (any pattern) or <code>foundry_iq</code> / <code>searchIndex</code> is accepted as
-unused metadata, not a shared-source opt-in: no native Blob source is rendered.
-See
-<a href="../configuration/#explicit-shared-source-permission-options">Explicit shared-source permission options</a>.</p>
-<h2 id="integrate-with-an-existing-hub">Integrate with an existing hub</h2>
-<p>Hub integration uses <code>DEPLOYMENT_MODE=ailz-integrated</code> with explicit settings:</p>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>DEPLOYMENT_MODE=ailz-integrated</code></td>
-<td>Declares integration intent; does not attach a hub or override component flags by itself</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_HUB_VNET_RESOURCE_ID</code></td>
-<td>Hub VNet to peer with</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_CREATE_HUB_PEERING</code></td>
-<td>Create spoke-to-hub peering for a new spoke VNet (default <code>true</code>); hub owner supplies reverse peering. Existing VNet peerings are externally managed</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_PEERING_ALLOW_GATEWAY_TRANSIT</code></td>
-<td>Allow gateway transit (default <code>false</code>)</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_PEERING_USE_REMOTE_GATEWAYS</code></td>
-<td>Use the hub gateway (default <code>false</code>)</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_EGRESS_NEXT_HOP_IP</code></td>
-<td>Next hop for egress, for example the hub firewall</td>
-</tr>
-<tr>
-<td><code>HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID</code></td>
-<td>Existing route table to attach</td>
-</tr>
-<tr>
-<td><code>AZURE_PE_RESOURCE_GROUP_NAME</code>, <code>AZURE_PE_LOCATION</code></td>
-<td>Where to place private endpoints</td>
-</tr>
-<tr>
-<td><code>EXISTING_*</code></td>
-<td>Reuse the existing VNet, private DNS zones, jumpbox, Bastion, NAT gateway or monitoring resources</td>
-</tr>
-</tbody>
-</table>
-<p><a href="../configuration/#network-and-security">Deployment settings</a> lists the inputs;
-<a href="../../bicep/hub-and-spoke/">hub-and-spoke design</a> explains their network effects.
-Execution steps belong to the
-<a href="../deploy-infra-only/">Deploy infra only</a> guide.</p>
+<p><a href="../connect-copilot-studio/">Copilot Studio</a> uses a different, delegated
+Power Platform private-network path and does not require that Activity exception.</p>
+<p><span id="integrate-with-an-existing-hub"></span></p>
+<h2 id="continue-to-configuration">Continue to configuration</h2>
+<p>Use <a href="../configuration/#hub-integration">Deployment settings</a> for hub, DNS,
+subnet and resource-reuse inputs. The provider-specific
+<a href="../#infrastructure-and-application">deployment guides</a> own the commands,
+connectivity checks and validation.</p>
 
 
 
