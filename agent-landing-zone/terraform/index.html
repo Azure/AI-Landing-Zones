@@ -5414,7 +5414,7 @@ default. Select Terraform once in the checkout's root <code>azure.yaml</code>.</
 <thead>
 <tr>
 <th>Goal</th>
-<th>Runbook</th>
+<th>Guide</th>
 </tr>
 </thead>
 <tbody>
@@ -5520,7 +5520,7 @@ follow the <a href="../configuration/#configuration-ownership-and-declarations">
   sensitive values. Do not commit them. Review dependency updates deliberately,
   rather than upgrading providers to repair an unrelated deployment failure.</li>
 </ul>
-<p>See the <a href="../deploy-terraform-infra-only/">Terraform infrastructure runbook</a>
+<p>See the <a href="../deploy-terraform-infra-only/">Terraform infrastructure deployment guide</a>
 for backend readiness, updates and removal boundaries.</p>
 <h2 id="validation-scope">Validation scope</h2>
 <p>Verification includes offline tests and an Azure-authenticated plan of the
@@ -5528,12 +5528,12 @@ public foundation, using in-memory test state without applying resources.
 Native backend operations, full-stack and private deployments, runtime RBAC
 and recovery were not exercised in Azure. Validate your deployment with the
 <a href="../deploy-terraform-infra-only/#validation">foundation</a> and
-<a href="../deploy-terraform-full-stack/#validation">application</a> runbook checks.</p>
+<a href="../deploy-terraform-full-stack/#validation">application</a> guide checks.</p>
 <h2 id="related-reference">Related reference</h2>
 <p>The <a href="../../terraform/">AI Landing Zone Terraform foundation reference</a>
 is for composing a foundation directly from the shared AVM pattern.
 For Agent Landing Zone service configuration and application deployment,
-use the product runbooks above.</p>
+use the product guides above.</p>
 
 
 

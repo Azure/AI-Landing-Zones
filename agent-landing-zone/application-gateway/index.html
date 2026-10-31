@@ -1043,10 +1043,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5422,10 +5422,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5598,19 +5598,20 @@ its Container Apps environment private. The optional gateway terminates TLS,
 applies web application firewall (WAF) rules, and forwards requests over HTTPS to <strong>one Container App</strong>.
 The basic routing rule forwards all UI paths, including enabled application
 routes. Keep application authentication and route authorization enabled.</p>
-<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p><span id="what-youll-have-after-this-runbook"></span></p>
+<h2 id="expected-outcome">Expected outcome</h2>
 <p>Approved users reach the web UI through Application Gateway and its WAF;
 the UI and Foundry retain their private backend paths.</p>
 <p><img alt="An approved user's browser reaches the public HTTPS frontend of Application Gateway. The gateway forwards to the private UI Container App, which calls Foundry through a private endpoint." src="../../media/runbooks/application-gateway.png" /></p>
 <p>The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
 bases. Their private connectivity, authentication, and authorization still apply.
-Start with a working deployment from the <a href="../deploy-full-stack/">Deploy full stack runbook</a> and
+Start with a working deployment from the <a href="../deploy-full-stack/">full-stack deployment guide</a> and
 <a href="../application-auth/">application authentication</a>.
 For hosted runtime/network prerequisites, use <a href="../hosted-agents/">Hosted agents</a>
 and Microsoft's <a href="https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents">hosted-agent networking and limitations</a>.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook when the UI already works privately and approved users need a
+<p>Use this guide when the UI already works privately and approved users need a
 controlled public entry point. Choose the supported entry point before editing:</p>
 <h3 id="choose-the-entry-point">Choose the entry point</h3>
 <table>
@@ -5643,8 +5644,8 @@ adding this gateway. Do not change isolation as part of an ingress retry.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>A deployed UI in an isolated Container Apps environment, and a deployment
-  host with the private connectivity required by the full-stack runbook.</li>
-<li>Provisioning permissions from that runbook, including permission to assign
+  host with the private connectivity required by the full-stack deployment guide.</li>
+<li>Provisioning permissions from that guide, including permission to assign
   the gateway identity's Key Vault role. Certificate import, DNS changes, and
   Entra app-registration changes may require separate administrators.</li>
 <li>An approved DNS name, such as <code>chat.contoso.com</code>, and control of its DNS
@@ -5810,7 +5811,7 @@ Distribute the <code>https://</code> URL directly.</p>
    should be blocked. With test accounts and known restricted documents,
    verify permitted retrieval and denial for an unauthorized user through
    Foundry IQ using the delegated native path described in the
-   <a href="../deploy-full-stack/">Deploy full stack runbook</a>. The gateway's network
+   <a href="../deploy-full-stack/">full-stack deployment guide</a>. The gateway's network
    admission does not grant source permissions.</li>
 </ol>
 <p>The shipped WAF uses the Open Worldwide Application Security Project Core Rule

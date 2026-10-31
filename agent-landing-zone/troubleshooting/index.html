@@ -6404,7 +6404,7 @@ section below. Deployment proceeds through resource provisioning, service
 configuration, image preparation and application deployment. Runtime checks
 confirm the application can authenticate and use its dependencies.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook after a provisioning, configuration, deployment or runtime
+<p>Use this guide after a provisioning, configuration, deployment or runtime
 failure. Diagnose the failing stage before retrying or changing inputs.</p>
 <table>
 <thead>
@@ -6524,7 +6524,7 @@ digest before deployment is normal; it does not require another provision.</p>
 build, pinned source, registry access and private ACR Tasks pool, then retry
 <code>azd deploy</code>. A foundation project or registry binding mismatch must be resolved
 against the intended environment, not bypassed by editing output flags.
-Follow the <a href="../deploy-full-stack/#step-4-deploy">Deploy full stack runbook</a>.
+Follow the <a href="../deploy-full-stack/#step-4-deploy">full-stack deployment guide</a>.
 For an unchanged, compatible image, use the
 <a href="../deploy-full-stack/#redeploy-applications-only">redeployment guidance</a>.
 Let the workflow generate its output flags.</p>
@@ -6833,7 +6833,7 @@ provisioned resources and keep permissions scoped to the required containers.</p
 <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code>.</p>
 <p><strong>Correct:</strong> Confirm the environment first. If it is already provisioned and
 you moved machines, use <code>azd env refresh</code>. If provision is incomplete, follow
-the <a href="../deploy-infra-only/">Deploy infra only runbook</a> to generate the required outputs.</p>
+the <a href="../deploy-infra-only/">infrastructure-only deployment guide</a> to generate the required outputs.</p>
 <p><strong>Verify:</strong> Confirm the outputs identify this environment's resources before
 retrying the failed stage.</p>
 <h4 id="private-post-provision-prerequisites-failed">Private post-provision prerequisites failed</h4>
@@ -7102,7 +7102,7 @@ diagnose with request references and dependency status.</p>
 <h3 id="related-pages">Related pages</h3>
 <ul>
 <li><a href="../connect-copilot-studio/#troubleshooting">Copilot Studio private integration</a></li>
-<li><a href="../deploy-full-stack/">Deploy full stack runbook</a></li>
+<li><a href="../deploy-full-stack/">Full-stack deployment guide</a></li>
 <li><a href="../configuration/">Deployment settings</a></li>
 <li><a href="../network-isolation/">Network isolation</a></li>
 <li><a href="../ingestion/">Ingestion</a></li>

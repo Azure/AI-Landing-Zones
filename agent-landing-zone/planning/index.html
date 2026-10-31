@@ -5381,12 +5381,12 @@
 
 <h1 id="deployment-choices">Deployment choices</h1>
 <p>Deployment design covers <strong>network ownership, deployment tooling and resource
-selection</strong>. It is separate from whether a runbook stops at infrastructure or
+selection</strong>. It is separate from whether a guide stops at infrastructure or
 also deploys application code.</p>
 <p><a href="../how-it-works/">How it works</a> introduces the concepts and input formats.
 This page explains design choices, not their execution order.
 <a href="../deploy-infra-only/">Deploy infra only</a> and
-<a href="../deploy-full-stack/">Deploy full stack</a> are the deployment runbooks;
+<a href="../deploy-full-stack/">Deploy full stack</a> are the deployment guides;
 the <a href="../sizing-cost-planner/">Sizing &amp; cost planner</a> covers capacity and spending.</p>
 <p>For an isolated standalone <code>hosted-no-panel</code> scenario, use the
 <a href="../sizing-cost-planner/">Sizing &amp; cost planner</a> to explore resource quantities,
@@ -5502,7 +5502,7 @@ resource scope. Deployment roles can differ from application data-access roles.<
 </tr>
 </tbody>
 </table>
-<p>The <a href="../deploy-infra-only/">Deploy infra only</a> runbook provisions the
+<p>The <a href="../deploy-infra-only/">Deploy infra only</a> guide provisions the
 platform's foundation without building or deploying application images.
 Select Bicep or Terraform in the checkout's root <code>azure.yaml</code> before first
 provision. Bicep is the default. Use the selected provider for provisioning,
@@ -5594,7 +5594,7 @@ Transport Layer Security (TLS) encrypts connections and verifies service
 certificates. Native Blob shared links need administrator approval.
 Sign-in and retrieval
 validation includes both allowed and denied users, not only endpoint access.
-The runbooks include these checks, the deployment preview and the execution
+The guides include these checks, the deployment preview and the execution
 sequence for the reviewed capacity and cost plan.</p>
 
 

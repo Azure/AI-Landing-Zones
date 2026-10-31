@@ -5342,7 +5342,7 @@ hosted in Foundry. Changing an input does not rename an existing Azure
 resource or move its data.</p>
 <p>This page explains the naming model. The
 <a href="../deploy-infra-only/">Deploy infra only</a> and
-<a href="../deploy-full-stack/">Deploy full stack</a> runbooks provide the input and
+<a href="../deploy-full-stack/">Deploy full stack</a> guides provide the input and
 preview steps. <a href="../configuration/">Deployment settings</a> describes other inputs;
 <a href="../planning/#select-reuse-or-omit-resources">resource reuse</a> is separate from naming.</p>
 <p>Both providers read naming overrides from root <code>main.parameters.json</code>.
@@ -5417,7 +5417,7 @@ names stable. Changing a token or explicit resource name can create parallel
 resources or require replacement. Endpoints, identities, role assignments and
 private connections can change, while data remains in the original resources.
 Parallel resources can also incur duplicate costs.</p>
-<p>The runbooks' preview allows comparison with existing names and resource IDs.
+<p>The guides' preview allows comparison with existing names and resource IDs.
 It needs deployment permissions, not just Reader access, and can reveal naming
 collisions after truncation. Unexpected creates or deletes need review before
 any resource changes proceed.</p>

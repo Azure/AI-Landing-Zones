@@ -5367,7 +5367,7 @@ to add private developer access to an existing accelerator. It discovers the act
 primary network/DNS configuration, checks CIDR conflicts, writes Bicep parameters,
 runs Azure validation/what-if, deploys on explicit approval, generates VPN profiles,
 and validates private DNS and trusted HTTPS from the local machine.</p>
-<p>This infrastructure runbook intentionally lives in <code>validation-local</code> and is
+<p>This infrastructure deployment guide intentionally lives in <code>validation-local</code> and is
 tracked individually; generated <code>.runs</code> artifacts remain ignored. Unlike the
 application validation suite, it must work <strong>before</strong> private APIM access exists,
 so discovery uses ARM rather than initializing the APIM data-plane client.</p>

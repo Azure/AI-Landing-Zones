@@ -1621,10 +1621,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5457,10 +5457,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5665,7 +5665,8 @@
 agent</strong> without enabling Foundry public network access.</p>
 <p>You will reuse the existing Foundry agent and network, then create a relay flow
 and a dedicated pilot agent in Copilot Studio.</p>
-<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p><span id="what-youll-have-after-this-runbook"></span></p>
+<h2 id="expected-outcome">Expected outcome</h2>
 <p>A Copilot Studio agent that calls your private Foundry agent through an
 authenticated Power Automate flow.</p>
 <p><img alt="Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API." src="../../media/runbooks/connect-copilot-studio.png" /></p>
@@ -5673,7 +5674,7 @@ authenticated Power Automate flow.</p>
 <p>Foundry receives the flow connection user's identity, not automatically the
 identity of the person chatting.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook when Copilot Studio needs to call an existing private Foundry
+<p>Use this guide when Copilot Studio needs to call an existing private Foundry
 agent through an authenticated flow. It is a shared-connection relay, not the
 native connected-agent setup or automatic per-user delegation.</p>
 <p>The delegated subnet is in <strong>your Azure VNet</strong>, not inside Copilot Studio.
@@ -5686,7 +5687,7 @@ Foundry private endpoint. Do not reuse the private-endpoint or Container Apps
 subnet for Power Platform delegation.</p>
 <div class="admonition note">
 <p class="admonition-title">Why use a flow in this scenario?</p>
-<p>This runbook covers <strong>Foundry with Public Network Access (PNA) disabled</strong>.
+<p>This guide covers <strong>Foundry with Public Network Access (PNA) disabled</strong>.
 It uses a Power Automate flow because the HTTP connector supports
 <a href="https://learn.microsoft.com/connectors/webcontents/#virtual-network-support-subnet-delegation">virtual network integration</a>,
 allowing HTTPS requests to reach Foundry through its private endpoint.</p>

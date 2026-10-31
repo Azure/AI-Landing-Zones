@@ -3477,10 +3477,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-operational-runbook" class="md-nav__link">
+  <a href="#9-operational-procedures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Operational runbook
+        9. Operational procedures
       
     </span>
   </a>
@@ -5784,10 +5784,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-operational-runbook" class="md-nav__link">
+  <a href="#9-operational-procedures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Operational runbook
+        9. Operational procedures
       
     </span>
   </a>
@@ -5849,7 +5849,7 @@
 <li><a href="#6-devops-alignment">DevOps alignment</a></li>
 <li><a href="#7-backend-resiliency-scope-boundary">Backend resiliency (scope boundary)</a></li>
 <li><a href="#8-reference-implementation-walkthrough">Reference implementation walkthrough</a></li>
-<li><a href="#9-operational-runbook">Operational runbook</a></li>
+<li><a href="#9-operational-procedures">Operational procedures</a></li>
 <li><a href="#10-related-guides-modules">Related guides &amp; modules</a></li>
 </ol>
 <hr />
@@ -6304,7 +6304,8 @@ param additionalFoundries = [
 <p><strong>5. Wire it into CI/CD.</strong> Commit all <code>.bicepparam</code> files; let the pipeline run <code>what-if</code> → deploy (primary-first ordering is automatic) → smoke test both regions.</p>
 <p><strong>6. Validate &amp; drill.</strong> Fail a region (disable an origin / stop the primary gateway) and confirm: clients still succeed via the surviving region on the <strong>same key</strong>, usage still writes to Cosmos, and telemetry consolidates globally.</p>
 <hr />
-<h2 id="9-operational-runbook">9. Operational runbook</h2>
+<p><span id="9-operational-runbook"></span></p>
+<h2 id="9-operational-procedures">9. Operational procedures</h2>
 <table>
 <thead>
 <tr>

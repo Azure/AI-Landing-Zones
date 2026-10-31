@@ -5821,8 +5821,8 @@ IP-restricted public access on services that support those rules, even with
 isolation enabled. Those public paths and any reused network or DNS resources
 remain part of the connectivity design.</p>
 <p>The <a href="../deploy-infra-only/">Deploy infra only</a> and
-<a href="../deploy-full-stack/">Deploy full stack</a> runbooks contain the procedures.
-The <a href="../azure-devops/">Azure DevOps runbook</a> covers optional pipeline automation.
+<a href="../deploy-full-stack/">Deploy full stack</a> guides contain the procedures.
+The <a href="../azure-devops/">Azure DevOps deployment guide</a> covers optional pipeline automation.
 <a href="../planning/">Deployment choices</a> explains standalone and hub integration.
 An AI Gateway governs model requests, not workload networking or user access.
 Private endpoints, DNS, routes, firewall rules and authorization remain necessary.</p>
@@ -5842,7 +5842,7 @@ IP-filtered Activity Protocol public endpoint</strong>.</p>
 use that publication path. Other Foundry APIs remain private, and the
 template does not enable this exception.</p>
 </div>
-<p>The <a href="../connect-copilot-studio/">Connect Copilot Studio</a> runbook describes an
+<p>The <a href="../connect-copilot-studio/">Connect Copilot Studio</a> guide describes an
 authenticated agent flow and Power Platform VNet delegation to reach the Foundry
 private endpoint; it does not require the Activity-route public exception.</p>
 <h2 id="what-changes-with-isolation">What changes with isolation</h2>
@@ -6049,7 +6049,7 @@ public control plane, but <code>azd provision</code> also
 runs lifecycle hooks. An existing environment can need private App Configuration
 access before ARM deployment to resolve its topology. Post-provision also needs
 private connectivity, so an unconnected host cannot complete every stage.</p>
-<p>The matching deployment runbook therefore requires a connected host. The
+<p>The matching deployment guide therefore requires a connected host. The
 default Foundry hosted deployment automatically prepares its image and
 application handoff during <code>azd deploy</code>, as described in
 <a href="../deploy-full-stack/">Deploy full stack</a>.</p>
@@ -6075,7 +6075,7 @@ installed by default and is unnecessary for ACR Task agent-pool builds.</p>
 <p>The connected host needs the same reviewed platform Git commit or release tag
 and approved inputs as the original workspace. Its local azd environment also
 needs current provisioning outputs. The
-<a href="../deploy-infra-only/">Deploy infra only</a> runbook explains environment
+<a href="../deploy-infra-only/">Deploy infra only</a> guide explains environment
 selection, output refresh and separate provisioning/configuration steps.</p>
 <p>The jumpbox's managed identity, an Azure-managed service identity that does
 not need a stored password, needs the selected application's configuration
@@ -6090,7 +6090,7 @@ for the current role catalog and scopes. New grants need time to propagate.</p>
 <p>An infrastructure-only deployment stops after provisioning and post-provision
 configuration. It can contain placeholder Container Apps without running the
 selected applications. The <a href="../deploy-full-stack/">Deploy full stack</a>
-runbook also deploys application code.</p>
+guide also deploys application code.</p>
 <h3 id="post-provision-can-be-deferred">Post-provision can be deferred</h3>
 <p>When isolation is enabled, post-provision can be <strong>deferred</strong> instead of failing.
 <code>RUN_FROM_JUMPBOX=false</code> (or <code>0</code>, <code>no</code>, <code>skip</code>) requests deferral, as does
@@ -6104,7 +6104,7 @@ the application is <strong>not</strong> configured. Deferral does not bypass ear
 or provisioning checks. Configuration remains incomplete until deferral is
 cleared and configuration succeeds from a connected host. The
 <a href="../deploy-infra-only/#complete-a-deferred-post-provision">Deploy infra only</a>
-runbook provides those steps.</p>
+guide provides those steps.</p>
 <p>When the deferral settings are not set and the private endpoints cannot be reached, post-provision fails with:</p>
 <div class="highlight"><pre><span></span><code>Private post-provision prerequisites failed. Connect through VPN/VNet and rerun postProvision; configuration has not started.
 </code></pre></div>
@@ -6118,7 +6118,7 @@ use an <strong>ACR Task agent pool</strong> inside the VNet
 (<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code>). Hosted topology composition selects this
 pool when network isolation is enabled.</p>
 <p>If the pool is missing, <code>azd deploy</code> stops before building. Pool creation uses
-<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code> through the matching deployment runbook.
+<code>DEPLOY_ACR_TASK_AGENT_POOL=true</code> through the matching deployment guide.
 Where a component supports local builds, <code>BUILD_MODE=local</code> instead needs a
 VNet-connected host with working Docker.</p>
 <p>The local alternative applies to component scripts that support <code>BUILD_MODE=local</code>.
@@ -6244,7 +6244,7 @@ back hooks or metadata: reverting code alone does not remove existing rules.
 Never delete shared foundation groups or externally managed policy content.</p>
 <p><span id="verify-private-connectivity"></span></p>
 <h2 id="private-connectivity-checks">Private connectivity checks</h2>
-<p>The runbooks check service hostnames from the deployment runner, including
+<p>The guides check service hostnames from the deployment runner, including
 the host in <code>APP_CONFIG_ENDPOINT</code>:</p>
 <table>
 <thead>
@@ -6340,7 +6340,7 @@ label alone does not configure egress or change hub resources.</p>
 is rejected; its policy omits DNS settings. It applies only when the
 <code>deployAzureFirewall</code> and <code>networkIsolation</code> gates enable firewall deployment.
 It is intended for a topology that deliberately uses the firewall as its DNS
-forwarding path. The matching deployment runbook applies the selection through
+forwarding path. The matching deployment guide applies the selection through
 normal provisioning.</p>
 <p>Enabling the proxy does
 <strong>not</strong> redirect VNet or VPN clients to the firewall or rewrite their DNS
@@ -6459,7 +6459,7 @@ See
 <p><a href="../configuration/#network-and-security">Deployment settings</a> lists the inputs;
 <a href="../../bicep/hub-and-spoke/">hub-and-spoke design</a> explains their network effects.
 Execution steps belong to the
-<a href="../deploy-infra-only/">Deploy infra only</a> runbook.</p>
+<a href="../deploy-infra-only/">Deploy infra only</a> guide.</p>
 
 
 

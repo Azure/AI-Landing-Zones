@@ -5841,7 +5841,7 @@
 with pinned deployment inputs. A different application must implement the
 authentication, UI and ingestion API contracts for any components it reuses.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook when documented configuration is insufficient or you need a
+<p>Use this guide when documented configuration is insufficient or you need a
 different application. Choose the branch that matches your change:</p>
 <table>
 <thead>
@@ -5882,7 +5882,7 @@ strategy flag.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>Prepare the platform checkout, Python hook dependencies, Azure sign-in and
-  deployment permissions in the <a href="../deploy-full-stack/">Deploy full stack runbook</a>.
+  deployment permissions in the <a href="../deploy-full-stack/">full-stack deployment guide</a>.
   Commands below run from the platform root unless stated otherwise.</li>
 <li>The deployment identity must be able to create scoped role assignments.
   Private Git sources also require noninteractive read access on the actual
@@ -5894,7 +5894,7 @@ strategy flag.</p>
 <li>Private deployments require a connected host with private DNS resolution.
   An ACR build pool does not provide that host's connectivity.</li>
 <li>For a different application, create a <strong>new azd environment</strong> through the
-  deployment runbook and select its definition before provisioning.</li>
+  deployment guide and select its definition before provisioning.</li>
 </ul>
 <p>Definitions and manifests are deployment inputs, not runtime configuration.
 Keep secrets out of both. For App Configuration updates under label <code>agent-lz</code>
@@ -5909,7 +5909,7 @@ editing the definition.</p>
 <h3 id="customize-an-agent-application-component">Customize an Agent Application component</h3>
 <p>For source ownership, local execution, and contributor checks, start with
 <a href="../customize-components/">Customize components</a>, <a href="../local-development/">Run locally</a>,
-and <a href="../application-testing/">Tests &amp; quality checks</a>. This runbook covers
+and <a href="../application-testing/">Tests &amp; quality checks</a>. This guide covers
 adopting the resulting source through deployment inputs, not implementing it.</p>
 <p>Prefer configuration first. Fork only runtime repositories whose source you
 change; an orchestrator extension does not require UI or ingestion forks.
@@ -5931,7 +5931,7 @@ Changing its Git remote does not change component repository URLs.</p>
 </code></pre></div>
 </li>
 <li>
-<p>Commit both pin files together. Follow the <a href="../deploy-full-stack/">Deploy full stack runbook</a>
+<p>Commit both pin files together. Follow the <a href="../deploy-full-stack/">full-stack deployment guide</a>
    and <a href="../hosted-agents/">hosted image preparation</a>, which builds from the
    manifest-pinned orchestrator. A startup-variable change cannot convert a
    Container App image into a supported hosted image.</p>
@@ -6018,7 +6018,7 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
    not a second Agent Application deployment path. The custom hosted component
    receives its required hosted foundation resources.</p>
 <p>Then provision the selected definition using
-  the <a href="../deploy-infra-only/">Deploy infra only runbook</a>, and run root <code>azd deploy</code>.
+  the <a href="../deploy-infra-only/">infrastructure-only deployment guide</a>, and run root <code>azd deploy</code>.
   Its service uses its own source/image
   contract, not the Agent Application hosted image-preparation handoff.</p>
 </li>
@@ -6144,7 +6144,7 @@ authorization with representative tasks and allowed and denied identities.</p>
 <p>Use the validation/selection commands above with your own definition path.
 Pre-deploy rechecks definition and binding; mismatches exit with code 2.
 For foundation without application deployment, follow
-the <a href="../deploy-infra-only/">Deploy infra only runbook</a>.</p>
+the <a href="../deploy-infra-only/">infrastructure-only deployment guide</a>.</p>
 <h3 id="configappdefinition-reference"><code>config.appdefinition</code> reference</h3>
 <p>Use <code>python -m config.appdefinition --help</code> for options. The
 <a href="https://github.com/Azure/agent-landing-zone/blob/main/config/appdefinition/__main__.py">CLI source</a>
@@ -6152,7 +6152,7 @@ defines validation, binding checks, environment selection and Container App
 profile assignment. Do not use binding commands to replace an environment's application.</p>
 <h3 id="related-pages">Related pages</h3>
 <ul>
-<li><a href="../deploy-full-stack/">Deploy full stack runbook</a></li>
+<li><a href="../deploy-full-stack/">Full-stack deployment guide</a></li>
 <li><a href="../hosted-agents/">Hosted agents</a></li>
 <li><a href="../configuration/">Deployment settings</a></li>
 </ul>

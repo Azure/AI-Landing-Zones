@@ -5757,7 +5757,7 @@
 <p>The gateway provides a single, opt-in mechanism to emit these events as custom metrics and take measures to address them. When designing your alerts, keep in mind:</p>
 <ul>
 <li><strong>Alerts should be reserved for significant events that require attention</strong> — not noisy notifications that get ignored over time. This is why the fragment defaults to the platform-health categories (throttling, quota-exceeded, backend failures), and everything else is opt-in per use case.</li>
-<li><strong>Have a runbook</strong> to address the root cause of an event (add pool capacity, tune the circuit breaker, define a model alias fallback, fix an access contract).</li>
+<li><strong>Define a response procedure</strong> to address the root cause of an event (add pool capacity, tune the circuit breaker, define a model alias fallback, fix an access contract).</li>
 <li><strong>Keep an eye on the alerts and tune thresholds</strong> as traffic patterns change.</li>
 <li><strong>Watch dimension cardinality</strong> — <code>emit-metric</code> allows at most <strong>6</strong> custom dimensions, and <code>deploymentName</code> can be high-cardinality; excessive cardinality increases custom-metric cost. Scope opt-in categories to the use cases that truly need them.</li>
 </ul>

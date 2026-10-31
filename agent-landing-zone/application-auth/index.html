@@ -5611,7 +5611,7 @@ grant access to every document. Follow the setup sequence below for the default
 Foundry-hosted agent and Container Apps frontend. Azure CLI and azd sign-in
 authenticate the deployment operator, not application users.
 Deployment and redeployment belong to the
-<a href="../deploy-full-stack/">Deploy full stack runbook</a>.</p>
+<a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
 <p><span id="before-you-start"></span>
 <span id="1-configure-ui-sign-in"></span>
 <span id="ui-sign-in"></span></p>
@@ -5676,7 +5676,7 @@ known as <code>Entra</code>), the downstream scope is <code>https://ai.azure.com
 Confirm the deployed endpoint's audience with its owner; do not substitute
 the UI API scope or a management-plane audience. Set
 <code>HOSTED_AGENT_RESOURCE_SCOPE</code> in the selected azd environment before provision,
-as shown in the <a href="../deploy-full-stack/#orchestrator-topology">full-stack runbook</a>.
+as shown in the <a href="../deploy-full-stack/#orchestrator-topology">full-stack deployment guide</a>.
 This value is separate from the UI login scopes in step 4.</p>
 <p>The <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token">Foundry client authorization procedure</a>
 explains downstream permission and consent. The UI exchanges its user's API
@@ -5772,7 +5772,7 @@ for a restricted pilot, do not leave both lists empty.</p>
 access. Source/document grants remain a separate data-owner decision.</p>
 <h3 id="6-reload-the-ui-and-verify-each-boundary">6. Reload the UI and verify each boundary</h3>
 <p>For the first deployment, return to root <code>azd deploy</code> in the
-<a href="../deploy-full-stack/#step-4-deploy">full-stack runbook</a>. For an existing UI,
+<a href="../deploy-full-stack/#step-4-deploy">full-stack deployment guide</a>. For an existing UI,
 restart/redeploy its Container App after publishing settings, then sign out
 and sign in again. The UI caches settings at startup.
 A UI-only authentication change does not require restarting the hosted agent.

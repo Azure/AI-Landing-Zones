@@ -1015,10 +1015,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5478,10 +5478,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5710,22 +5710,23 @@ protected approvals. This optional continuous integration and deployment
 (CI/CD) flow automates the
 platform's application and foundation lifecycle; Azure DevOps is not required
 for an interactive deployment.</p>
-<p>The downloadable pipeline and validation examples in this runbook use Bicep.
+<p>The downloadable pipeline and validation examples in this guide use Bicep.
 They are not a validated Terraform pipeline. For the integrated
 Terraform lifecycle and its separate backend/runner prerequisites, use
 <a href="../deploy-terraform-full-stack/">Deploy full stack with Terraform</a> before
 designing corresponding automation.</p>
-<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p><span id="what-youll-have-after-this-runbook"></span></p>
+<h2 id="expected-outcome">Expected outcome</h2>
 <p>One reviewed source revision promoted through DEV, TEST and PROD, with
 protected approvals and a private deployment path for each environment.</p>
 <p><img alt="Azure DevOps promotes the same reviewed source from CI through DEV, TEST and PROD with approvals. A self-hosted deployment runner deploys resources; a separate ACR Tasks pool builds images for each environment." src="../../media/runbooks/azure-devops.png?v=straight-arrows" /></p>
 <p>Each environment builds its own images from the reviewed source. The pipeline
 does not promote one identical image between environments.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook when your team needs repeatable source promotion with separate
+<p>Use this guide when your team needs repeatable source promotion with separate
 deployment identities and approval gates for each environment.</p>
 <p>For interactive execution, use the <a href="../deploy-infra-only/">Deploy infra only</a>
-or <a href="../deploy-full-stack/">Deploy full stack</a> runbook. For component changes, see
+or <a href="../deploy-full-stack/">Deploy full stack</a> guide. For component changes, see
 <a href="../build-your-own-app/#customize-a-bundled-component">Custom applications</a>.</p>
 <div class="admonition info">
 <p class="admonition-title">Choose the right pipeline</p>
@@ -5797,7 +5798,7 @@ procedure for changing runtime layouts.</p>
 <div class="admonition warning">
 <p class="admonition-title">Automation does not close runtime capability gaps</p>
 <p>Keep <code>maf_lite</code> and Foundry IQ as the default runtime choices. The
-source-permission acceptance in the Deploy full stack runbook applies to
+source-permission acceptance in the full-stack deployment guide applies to
 CI/CD. The integrated native path still needs downstream consent and
 real-user allow/deny evidence before promotion. Pipeline settings, weaker
 source permissions and successful greetings are not substitutes.</p>

@@ -5543,7 +5543,7 @@ It has no administration panel and uses native Foundry IQ Blob ingestion,
 where Azure AI Search prepares Blob documents for retrieval.</p>
 <p>The sections below explain how that application and its
 infrastructure are prepared. The <strong>Deploy infra only</strong> and
-<strong>Deploy full stack</strong> runbooks provide the execution steps.</p>
+<strong>Deploy full stack</strong> guides provide the execution steps.</p>
 <h2 id="how-to-read-deployment-settings">How to read deployment settings</h2>
 <p>A <strong>deployment parameter</strong> tells the template what to create or reuse, such
 as a private network or an existing hub. An <strong><code>azd</code> environment</strong> groups the
@@ -5575,7 +5575,7 @@ supports preflight diagnostics only; Bicep uses <code>infra/bicep/main.parameter
 for deployment.
 The <a href="../configuration/">Deployment settings</a> reference lists inputs and defaults;
 choose the provider-specific <strong>Deploy infra only</strong> or <strong>Deploy full stack</strong>
-runbook for their application order.</p>
+guide for their application order.</p>
 <div class="admonition note">
 <p class="admonition-title">Application-specific runtime settings</p>
 <p>Runtime settings control an application's behavior and vary by application.
@@ -5806,7 +5806,7 @@ there is no required standalone preparation command.</p>
 <p>The same source pins do not guarantee the same image digest when images are
 built independently. If a promotion process requires the identical image,
 its digest and registry availability need separate preservation and verification.</p>
-<p>The full-stack runbooks for <a href="../deploy-full-stack/">Bicep</a> and
+<p>The full-stack deployment guides for <a href="../deploy-full-stack/">Bicep</a> and
 <a href="../deploy-terraform-full-stack/">Terraform</a> provide execution steps. For
 strategy eligibility and image behavior, see <a href="../hosted-agents/">Agent hosting</a>.</p>
 <h2 id="from-understanding-to-deployment">From understanding to deployment</h2>
@@ -5819,7 +5819,7 @@ For execution, choose the outcome and then the provider:</p>
 <li><strong>Deploy full stack:</strong> <a href="../deploy-full-stack/">With Bicep</a> or
   <a href="../deploy-terraform-full-stack/">With Terraform</a>.</li>
 </ul>
-<p>Those runbooks contain the
+<p>Those guides contain the
 prerequisites, topology-specific sequence and validation steps.</p>
 
 

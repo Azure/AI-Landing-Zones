@@ -5801,9 +5801,9 @@ including when no Agent Application images will be deployed.
 Bicep is the default infrastructure provider. For Terraform,
 use <a href="../deploy-terraform-infra-only/">Deploy infra only with Terraform</a>.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook when you need foundation resources first, or will supply your
+<p>Use this guide when you need foundation resources first, or will supply your
 own application. To deploy the Agent Application now, use
-the <a href="../deploy-full-stack/">Deploy full stack</a> runbook.</p>
+the <a href="../deploy-full-stack/">Deploy full stack</a> guide.</p>
 <p><span id="before-you-start"></span></p>
 <h2 id="prerequisites">Prerequisites</h2>
 <p>Complete the <a href="../deploy-full-stack/#prerequisites">permissions and tooling prerequisites</a>.
@@ -5888,7 +5888,7 @@ before first provision.</p>
 <p>Run one <code>azd provision</code> command from the repository root to deploy across all
 three groups. Do not run a separate deployment for each group. These instructions
 apply to this Bicep procedure. The integrated
-<a href="../deploy-terraform-infra-only/">Terraform runbook</a> uses the same product
+<a href="../deploy-terraform-infra-only/">Terraform deployment guide</a> uses the same product
 lifecycle and root parameter source, with separate backend settings.
 The portal has its own deployment procedure.</p>
 <p><span id="step-3-choose-the-foundation-shape"></span></p>
@@ -6015,7 +6015,7 @@ Preserve the existing layout and ingestion selection during recovery.</p>
 without Agent App Ingestion. Set <code>HOSTED_AGENT_RESOURCE_SCOPE</code> to the approved
 delegated Foundry audience followed by <code>/.default</code> before provisioning, even
 when application deployment will happen later. See the linked full-stack
-runbook for identity inputs, downstream consent and protected-retrieval acceptance.</p>
+guide for identity inputs, downstream consent and protected-retrieval acceptance.</p>
 <h3 id="step-4-preview-and-provision">Step 4: Preview and provision</h3>
 <p>Review the selected application's
 <a href="../network-isolation/#review-before-provisioning">runtime egress plan</a> before
@@ -6182,7 +6182,7 @@ If previewing changes, repeat the
 reviewing the preview. Apply approved root parameter changes with the provisioning step above.</p>
 <p>Update the coordinated platform and its <code>infra/</code> tree together.
 Use the <a href="../deploy-full-stack/#upgrade-to-a-new-release">reapply procedure</a>
-and <a href="../deploy-full-stack/#rollback">rollback</a> in the Deploy full stack runbook.</p>
+and <a href="../deploy-full-stack/#rollback">rollback</a> in the full-stack deployment guide.</p>
 <p>Retry a partial deployment with the same approved revision and environment after
 repairing the specific failure. Review resource and data changes separately
 when reverting code. Do not delete data, rename subnets, move existing
@@ -6190,7 +6190,7 @@ resources to another region, weaken isolation or bypass preflight to recover.
 Turning a deploy flag off is not deletion or permission cleanup.</p>
 <h3 id="add-an-application-later">Add an application later</h3>
 <p>Deploy the same bound application and selected components.
-Follow <a href="../deploy-full-stack/#step-4-deploy">Step 4 of the Deploy full stack runbook</a>:
+Follow <a href="../deploy-full-stack/#step-4-deploy">Step 4 of the full-stack deployment guide</a>:
 run <code>azd deploy</code> from the configured foundation. Deployment automatically
 prepares the hosted image and its handoff; no second provision is required.
 Custom definitions follow their own component contract.</p>

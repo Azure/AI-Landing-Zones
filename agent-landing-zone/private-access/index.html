@@ -1071,10 +1071,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5405,10 +5405,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5564,14 +5564,15 @@ Zone using a point-to-site (P2S) VPN. The result is private DNS resolution and
 HTTPS access to the workload services from that computer. Once connected,
 you can run deployment hooks or development tools directly; <strong>Bastion and a
 jumpbox are not required for this path</strong>.</p>
-<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p><span id="what-youll-have-after-this-runbook"></span></p>
+<h2 id="expected-outcome">Expected outcome</h2>
 <p>Your computer connected to the private VNet through a VPN, without Bastion
 or a jumpbox.</p>
 <p><img alt="A computer reaches workload services through a VPN Gateway and private endpoint, with a reachable DNS resolver and private DNS zones." src="../../media/runbooks/private-access-vpn.png" /></p>
 <p>The figure shows a standalone gateway. An approved hub VPN can provide the
 same access with the appropriate peering, gateway transit, client routes and DNS.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook when a workstation must reach private workload endpoints
+<p>Use this guide when a workstation must reach private workload endpoints
 without using a jumpbox. Reuse an approved corporate VPN when available; create
 a new gateway only with the network owner's approval.</p>
 <p>The foundation creates private endpoints and DNS zones when isolation is
@@ -5582,7 +5583,7 @@ Resolver. These tasks need network administration outside <code>azd</code>.</p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>Use the reviewed platform checkout, intended azd environment and approved
-  inputs from the <a href="../deploy-full-stack/">Deploy full stack runbook</a>. This procedure does
+  inputs from the <a href="../deploy-full-stack/">full-stack deployment guide</a>. This procedure does
   not change the hosted orchestrator topology or Foundry IQ configuration.</li>
 <li>Arrange network permissions at the gateway, VNet, peering and DNS scopes.
   The network administrator needs permission to create or update those
@@ -5652,8 +5653,8 @@ not configure P2S client routes or authentication. Use the
 <p>For a fresh VPN-only deployment, you may explicitly set <code>DEPLOY_JUMPBOX=false</code>
 and <code>DEPLOY_BASTION=false</code> before provisioning. They otherwise default on for
 isolation. Verify the VPN before removing an existing access path.</p>
-<p>Provision using the <a href="../deploy-infra-only/">Deploy infra only runbook</a>. If the VPN
-cannot exist until the VNet is provisioned, use that runbook's deferred
+<p>Provision using the <a href="../deploy-infra-only/">infrastructure-only deployment guide</a>. If the VPN
+cannot exist until the VNet is provisioned, use that guide's deferred
 post-provision procedure, then return here. Deferral leaves application setup
 incomplete and does not bypass earlier private-access checks.</p>
 <h3 id="2-configure-the-gateway-and-authentication">2. Configure the gateway and authentication</h3>
@@ -5787,8 +5788,8 @@ image builds. Test the remaining service hosts individually.</p>
 <ul>
 <li><strong>Deployment host:</strong> authenticate Azure CLI and azd with the approved deployment
   identity. Complete deferred post-provision using
-  the <a href="../deploy-infra-only/">Deploy infra only runbook</a>, then continue
-  the <a href="../deploy-full-stack/">Deploy full stack runbook</a> for hosted image preparation and
+  the <a href="../deploy-infra-only/">infrastructure-only deployment guide</a>, then continue
+  the <a href="../deploy-full-stack/">full-stack deployment guide</a> for hosted image preparation and
   application deployment. <code>RUN_FROM_JUMPBOX=true</code> requests connectivity checks;
   despite its name, it works from a VPN-connected host and does not require
   a jumpbox. Keep the private ACR Task pool for hosted image preparation;

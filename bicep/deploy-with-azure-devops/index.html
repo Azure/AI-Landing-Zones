@@ -5207,7 +5207,7 @@
 
 
 <h1 id="deploy-with-azure-devops">Deploy with Azure DevOps</h1>
-<p>Use the maintained <a href="../../agent-landing-zone/azure-devops/">Agent Landing Zone Azure DevOps runbook</a>
+<p>Use the maintained <a href="../../agent-landing-zone/azure-devops/">Agent Landing Zone Azure DevOps deployment guide</a>
 for runner prerequisites, federated service connections, protected
 Environments, stage-specific inputs and source promotion.</p>
 <p>The foundation is maintained in
@@ -5216,7 +5216,7 @@ Pipeline jobs must retain the platform files and execute lifecycle commands
 from the repository root. Do not use a separate foundation checkout or assume
 its pipeline paths and lifecycle are interchangeable with the platform.</p>
 <p>For infrastructure-only automation, apply the
-<a href="../../agent-landing-zone/deploy-infra-only/">infrastructure runbook</a>
+<a href="../../agent-landing-zone/deploy-infra-only/">infrastructure guide</a>
 with the same reviewed platform revision, parameters, identity and connected
 runner requirements. Review the selected application's egress plan, run
 <code>azd hooks run preup</code>, and use the root <code>azd provision</code> lifecycle; omit

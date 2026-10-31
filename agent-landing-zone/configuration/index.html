@@ -6060,8 +6060,8 @@ This page explains settings and defaults, not an execution sequence.
 <a href="../how-it-works/">How it works</a> introduces the concepts;
 <a href="../planning/">deployment design</a> and the
 <a href="../sizing-cost-planner/">Sizing &amp; cost planner</a> explain the planning decisions.</p>
-<p>The infrastructure-only runbooks for <a href="../deploy-infra-only/">Bicep</a> and
-<a href="../deploy-terraform-infra-only/">Terraform</a>, and the full-stack runbooks for
+<p>The infrastructure-only deployment guides for <a href="../deploy-infra-only/">Bicep</a> and
+<a href="../deploy-terraform-infra-only/">Terraform</a>, and the full-stack deployment guides for
 <a href="../deploy-full-stack/">Bicep</a> and <a href="../deploy-terraform-full-stack/">Terraform</a>,
 describe input commands, provisioning and validation.
 Read individual keys instead of dumping
@@ -6718,7 +6718,7 @@ audience review and allow/deny tests with real user identities before activation
 <p>Restoring <code>["rbacScope"]</code> requires source reconfiguration and verification
 of source/index permission metadata, including already-ingested documents.
 Allowed and denied users both need validation before access resumes. The
-<a href="../deploy-full-stack/">Deploy full stack</a> runbook covers reconfiguration.
+<a href="../deploy-full-stack/">Deploy full stack</a> guide covers reconfiguration.
 See also
 <a href="../network-isolation/#private-native-blob-ingestion">Private native Blob ingestion</a>.</p>
 <h3 id="protected-download-configuration">Protected download configuration</h3>
@@ -6968,7 +6968,7 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 <p>For <strong>externally managed subnets</strong>, use the same existing-VNet inputs but set
 <code>azd env set DEPLOY_SUBNETS false</code>. Confirm all required subnets already exist
 with the configured names, prefixes, delegations and NSG requirements.
-Then continue with the selected deployment runbook; these inputs do not
+Then continue with the selected deployment guide; these inputs do not
 configure peering, DNS forwarding or runner connectivity.</p>
 <h4 id="names-and-address-ranges">Names and address ranges</h4>
 <p>Subnet name and prefix parameters can be overridden in root
@@ -7401,7 +7401,7 @@ every key operator-owned. Custom application
 definitions validate settings but do not publish them; the application
 must publish its own runtime settings.</p>
 <p>The <a href="../deploy-full-stack/#change-a-runtime-setting">Deploy full stack</a>
-runbook provides commands, including <a href="../deploy-full-stack/#rotate-a-secret">secret rotation</a> for
+guide provides commands, including <a href="../deploy-full-stack/#rotate-a-secret">secret rotation</a> for
 versioned versus unversioned Key Vault references. Changing deployment selection,
 RBAC or infrastructure requires the matching full workflow, not just a key edit.</p>
 

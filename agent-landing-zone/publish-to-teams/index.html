@@ -1593,10 +1593,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5418,10 +5418,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-youll-have-after-this-runbook" class="md-nav__link">
+  <a href="#expected-outcome" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What you'll have after this runbook
+        Expected outcome
       
     </span>
   </a>
@@ -5586,12 +5586,13 @@
 <h2 id="objective">Objective</h2>
 <p>Publish an agent already <strong>hosted in Microsoft Foundry</strong> to <strong>Teams and
 Microsoft 365 Copilot</strong>. Start with a tested agent in a private-network Foundry
-project, then use its endpoint, identity and version throughout this runbook.
+project, then use its endpoint, identity and version throughout this procedure.
 The agent can be part of your own application.</p>
 <p>You will create a Bot Service resource, enable channel access and publish the
 agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.</p>
-<h2 id="what-youll-have-after-this-runbook">What you'll have after this runbook</h2>
+<p><span id="what-youll-have-after-this-runbook"></span></p>
+<h2 id="expected-outcome">Expected outcome</h2>
 <p>Your existing Foundry agent available in Teams and Microsoft 365 Copilot,
 with authenticated messages delivered through Azure Bot Service.</p>
 <div class="admonition warning">
@@ -5631,7 +5632,7 @@ as <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copi
 prescribes. That resource setting <strong>does not make Teams/M365 delivery private</strong>:
 the channel service calls the public Foundry Activity route shown above.</p>
 <h2 id="when-to-use">When to use</h2>
-<p>Use this runbook after the hosted agent works and you need Teams or Microsoft
+<p>Use this guide after the hosted agent works and you need Teams or Microsoft
 365 Copilot distribution while Foundry public network access remains disabled. For a Copilot
 Studio private relay instead, use <a href="../connect-copilot-studio/">Connect Copilot Studio</a>.</p>
 <p>Microsoft calls this a <strong>source IP-filtered Activity Protocol public
@@ -5671,7 +5672,7 @@ it is not the resource you are configuring.</p>
 <li><strong>Agent:</strong> Have a working hosted agent in a Foundry project, with its own
   agent identity, a stable endpoint and a version you have tested. If you still
   need to deploy an application, start with
-  the <a href="../deploy-full-stack/">Deploy full stack runbook</a> or
+  the <a href="../deploy-full-stack/">full-stack deployment guide</a> or
   <a href="../build-your-own-app/">Custom applications</a>, then return here.</li>
 <li><strong>Network access:</strong> Run the commands from a
   <a href="../network-isolation/#reach-the-private-network">VNet-connected host</a> that
@@ -5753,7 +5754,7 @@ approval described below before enabling it.</p>
 
 <span class="nv">$pna</span> <span class="p">=</span> <span class="n">az</span> <span class="n">cognitiveservices</span> <span class="n">account</span> <span class="n">show</span> <span class="p">-</span><span class="n">-name</span> <span class="nv">$foundryName</span> <span class="p">`</span>
     <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">-</span><span class="n">-query</span> <span class="n">properties</span><span class="p">.</span><span class="n">publicNetworkAccess</span> <span class="p">-</span><span class="n">-output</span> <span class="n">tsv</span>
-<span class="k">if</span> <span class="p">(</span><span class="nv">$pna</span> <span class="o">-ne</span> <span class="s2">"Disabled"</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"This runbook requires Foundry PNA Disabled."</span> <span class="p">}</span>
+<span class="k">if</span> <span class="p">(</span><span class="nv">$pna</span> <span class="o">-ne</span> <span class="s2">"Disabled"</span><span class="p">)</span> <span class="p">{</span> <span class="k">throw</span> <span class="s2">"This guide requires Foundry PNA Disabled."</span> <span class="p">}</span>
 
 <span class="nv">$work</span> <span class="p">=</span> <span class="nb">Join-Path</span> <span class="nv">$HOME</span> <span class="p">(</span><span class="s2">"teams-publication-"</span> <span class="p">+</span> <span class="p">(</span><span class="nb">Get-Date</span> <span class="n">-Format</span> <span class="s2">"yyyyMMdd-HHmmss"</span><span class="p">))</span>
 <span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Path</span> <span class="nv">$work</span> <span class="p">|</span> <span class="nb">Out-Null</span>
@@ -5822,7 +5823,7 @@ Grant this access before sharing the app link.</p>
 <div class="admonition note">
 <p class="admonition-title">If the agent identity check fails</p>
 <p>Stop and have the agent owner supply a supported agent identity and stable
-endpoint before retrying this runbook.
+endpoint before retrying this procedure.
 Bot Service needs the agent identity's client ID
 (<code>instance_identity.client_id</code>), not the project's managed identity or an
 application registration belonging to another client.</p>
