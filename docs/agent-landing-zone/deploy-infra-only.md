@@ -134,7 +134,8 @@ files** below for details.
 `DEPLOYMENT_MODE` identifies the network design, but does not configure routing,
 DNS or isolation by itself. Configure those through the settings for your chosen
 approach below. `DEPLOYMENT_TOPOLOGY` separately chooses where the orchestrator
-runs. See [How it works](how-it-works.md) for how deployment settings are applied.
+runs. See [Deployment inputs](configuration.md#deployment-inputs) for input
+formats and generated files.
 
 #### Private standalone network
 
@@ -212,7 +213,7 @@ azd env set DEPLOYMENT_MODE standalone
 
 | Choice | Required review |
 | --- | --- |
-| Existing VNet | Choose [subnet ownership](network-isolation.md#choose-subnet-ownership) and apply the [matching inputs](configuration.md#network-selection-examples). Both peering directions are externally managed for BYO VNet |
+| Existing VNet | Choose [subnet ownership](network-isolation.md#allocate-subnets-and-agree-ownership) and apply the [matching inputs](configuration.md#network-selection-examples). Both peering directions are externally managed for BYO VNet |
 | Shared private DNS | Supply the applicable `EXISTING_PRIVATE_DNS_ZONE_*_RESOURCE_ID` inputs. Their owner supplies VNet links or resolver forwarding; peering alone does not propagate DNS |
 | Azure Policy-managed DNS | Use `POLICY_MANAGED_PRIVATE_DNS=true` instead of BYO zone overrides and agree who creates zone groups, records and links |
 | Approved public exception | Review native `allowedIpRanges` and Storage trusted-service/resource-instance exceptions to confirm the approved service-specific public access |
@@ -249,12 +250,34 @@ guide for identity inputs, downstream consent and protected-retrieval acceptance
 
 ### Step 4: Preview and provision
 
-Review the selected application's
-[runtime egress plan](network-isolation.md#review-before-provisioning) before
-approving provisioning:
-`python -m config.deployment.egress --plan --environment <environment-name>`.
-This command is local and read-only; it does not run the preparation hook
-or create resource groups.
+#### Review component egress
+
+With the prepared Python environment and intended application/component
+selection, review the local, read-only declaration plan:
+
+```bash
+python -m config.deployment.egress --plan --environment <environment-name>
+```
+
+This requires no Azure access and does not run preparation hooks or create
+groups. Review the policy ownership, selected components, destinations and
+purposes before approving provisioning.
+
+Once infrastructure exists and the local outputs are current, inspect the
+resolved plan without applying changes:
+
+```bash
+python -m config.deployment.egress --review --environment <environment-name>
+```
+
+For a managed firewall this reports proposed additions, updates and removals.
+An external policy remains report-only and needs its owner's action.
+A fresh deployment cannot resolve workload subnet prefixes before provision.
+See the [ownership and scope contract](configuration.md#outbound-access).
+
+After approved declaration or selection changes, run the selected provider's
+normal provisioning sequence before deploying. It saves the environment's
+plan and reconciles authorized owned rules. Keep the same binding and inputs.
 
 First run `azd hooks run preup` to validate the definition and
 binding before azd's resource-group initialization.
@@ -359,6 +382,26 @@ python -m config.deployment.outputs
 ```
 
 This does not replace deferred or failed service configuration.
+
+### Access the jumpbox
+
+Use Azure Bastion's portal connection to the deployed Windows VM.
+Unless overridden, its administrator username is `testvmuser`.
+The password comes from the secure `vmAdminPassword` provisioning input,
+not a documented Key Vault secret. Missing credentials need an authorized
+administrator's approved reset procedure. Never expose passwords in shell
+history or logs.
+
+Install the [deployment prerequisites](deploy-full-stack.md#prerequisites).
+Docker is not installed by default and is unnecessary for ACR Task pool builds.
+The VM's managed identity still needs the required scoped configuration/build
+roles. Hosted authoring requires Foundry User on the exact project and
+account read access, not broader subscription or resource-group Owner.
+Allow new grants to propagate.
+
+Then continue with the same-environment procedure below.
+For Terraform, preserve its additional records through
+[deferred private configuration](deploy-terraform-infra-only.md#complete-deferred-private-configuration).
 
 <span id="lifecycle"></span>
 

@@ -343,7 +343,7 @@ parameters and their exact environment bindings. A false creation flag does
 not disable a consumer: its valid subnet must already exist in the selected
 VNet, or the consumer must be explicitly disabled. Application private endpoints
 use their configured subnet without falling back to the Foundry PE subnet.
-The [default allocation table](../agent-landing-zone/network-isolation.md#isolation-and-provisioning)
+The [default allocation table](../agent-landing-zone/configuration.md#default-subnets)
 lists names, CIDRs and delegations.
 
 ## Virtual Machine

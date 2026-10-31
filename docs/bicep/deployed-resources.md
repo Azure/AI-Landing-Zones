@@ -126,7 +126,7 @@ If regional processing is required, explicitly set the embedding entry's
 
 | Resource | Marker | Flag / parameter | Default config |
 |---|---|---|---|
-| VNet + subnets | 🔒 🔧 | `useExistingVNet` / `deploySubnets` / individual subnet flags | [Twelve default subnets](../agent-landing-zone/network-isolation.md#isolation-and-provisioning), including separate Foundry/application PEs, Power Platform, AI Gateway and reserved `GatewaySubnet` |
+| VNet + subnets | 🔒 🔧 | `useExistingVNet` / `deploySubnets` / individual subnet flags | [Subnet address plan](../agent-landing-zone/configuration.md#default-subnets), including separate Foundry/application PEs, Power Platform, AI Gateway and reserved `GatewaySubnet` |
 | NSGs | 🔒 | `deployNsgs` | Service-specific attachments and locked-down rules; no NSG on `GatewaySubnet`; AI Gateway integration requires an NSG |
 | Private endpoints | 🔒 | (auto, per service) | **~13–15 PEs** — one per PE-capable resource (2× Search, 2× Storage, 2× Cosmos, KV, AppConfig, ACR, Foundry, etc.) |
 | Private DNS zones (×15) | 🔒 🔧 | `existingPrivateDnsZone*ResourceId` (one parameter per zone) | All 15 zones BYO-capable individually |

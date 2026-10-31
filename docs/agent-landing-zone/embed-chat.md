@@ -77,7 +77,8 @@ describes the distinction.
 These are UI runtime settings, normally under App Configuration label
 `agent-lz`, not azd deployment inputs. Nonempty process environment values
 override embedding settings. The UI loads them at startup.
-[Deployment settings](configuration.md) identifies their configuration boundary.
+[Application settings](application-settings.md#overrides-and-effective-values)
+explains runtime overrides and effective values.
 The existing session-signing secret stays protected.
 
 ### Session settings

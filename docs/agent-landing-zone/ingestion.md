@@ -232,4 +232,4 @@ For every path, acceptance includes a document that an allowed user can
 retrieve with its citation and that a denied user cannot retrieve. Source
 permissions, query-time enforcement and private-network connectivity require
 separate validation. Private Blob ingestion is covered in
-[Network isolation](network-isolation.md#private-native-blob-ingestion).
+[Network design](configuration.md#search-shared-private-links).

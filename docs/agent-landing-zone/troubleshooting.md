@@ -182,6 +182,26 @@ the declared capabilities. Check the routed version before testing the agent.
 Keep registry authentication identity-based, grants narrowly scoped and
 delegated-user/OBO authentication intact.
 
+#### Private connectivity checks
+
+Check service hostnames from the actual deployment runner, including
+`APP_CONFIG_ENDPOINT`. Test these boundaries separately:
+
+| Check | Expected result |
+| --- | --- |
+| DNS | Only private IPv4 addresses in 10.x, 172.16 through 31.x or 192.168.x. |
+| TCP | Connection succeeds on port 443. |
+| TLS | The original hostname validates with normal certificate verification. |
+
+Public answers usually indicate a missing private-zone link or incorrect
+VPN/hub forwarding. On Windows, `nslookup` can differ from the operating
+system resolver used by the prerequisite check, especially with VPN NRPT rules.
+That check rejects mixed public/private, IPv6, loopback and link-local answers.
+
+The transport check sends no HTTP request or credential. Successful DNS,
+TCP and TLS are not proof of API or document authorization. Test those
+separately with the intended identities. Keep isolation and TLS verification.
+
 #### Private deployment prerequisites failed
 
 **Symptom:**
@@ -195,7 +215,7 @@ TLS to App Configuration, or to the Foundry project endpoint for hosted
 topologies. The gate allows up to 20 seconds per endpoint.
 
 **Correct:** Move to the approved jumpbox, VPN or peered-VNet runner and inspect
-the [private connectivity path](network-isolation.md#verify-private-connectivity).
+the [private connectivity path](troubleshooting.md#private-connectivity-checks).
 The `RUN_FROM_JUMPBOX` input requests a connectivity check from that host.
 
 **Verify:** Resolve and reach each required endpoint from that runner, then
@@ -224,7 +244,7 @@ azd provision
 For supported Container App builds, local Docker on a connected host is an
 alternative. The jumpbox does not include Docker by default. Automatic hosted
 image preparation and isolated custom source builds require the supported ACR
-Tasks path. See [isolated image builds](network-isolation.md#image-builds-in-isolated-deployments).
+Tasks path. See [isolated image builds](configuration.md#private-image-builds).
 
 **Verify:** Confirm the selected environment has the provisioned pool output
 and that a build runs in it. Then resume the topology's
@@ -246,7 +266,7 @@ and the shipped firewall changes are provisioned. The platform includes the
 orchestrator's Microsoft npm feeds, `*.vsblob.vsassets.io` and the existing
 `packages.microsoft.com` OS-package allowance. For additional verified
 dependencies, use
-[application-specific package feeds](network-isolation.md#application-specific-package-feeds).
+[application-specific package feeds](configuration.md#application-specific-package-feeds).
 Keep exceptions limited to build-subnet HTTPS traffic.
 
 **Verify:** Retry the same pinned source and confirm package installation and
@@ -262,7 +282,7 @@ tiktoken encoding from `openaipublic.blob.core.windows.net`.
 subnet against firewall logs. A warm tokenizer cache can conceal this
 dependency; successful image builds do not verify runtime egress.
 
-**Correct:** Review the selected components' [runtime egress declarations](network-isolation.md#component-runtime-egress).
+**Correct:** Review the selected components' [runtime egress declarations](configuration.md#outbound-access).
 Both bundled tokenizer consumers declare this exact host. For a managed
 firewall, follow the normal provisioning sequence to save the declaration
 plan and reconcile its owned rules. For an external firewall, send the
@@ -367,7 +387,7 @@ report both `Approved` and `Succeeded`.
 processing and authorized retrieval. The gate runs before dependent Search
 mutation and source creation. Retain private access and the readiness gate;
 approve only the requests for the intended source targets.
-See [Private native Blob ingestion](network-isolation.md#private-native-blob-ingestion).
+See [Private native Blob ingestion](configuration.md#search-shared-private-links).
 
 #### Ingestion selection does not match the source configuration
 
@@ -413,7 +433,7 @@ unused metadata; the source's access policy remains unchanged.
 **Correct:** Supply valid JSON for the intended source policy. For protected
 Blob ingestion, restore `["rbacScope"]`. Nonempty non-ADLS Blob lists support
 only `rbacScope` and `sensitivityLabels`. Review
-[the accepted permission values](configuration.md#explicit-shared-source-permission-options)
+[the accepted permission values](foundry-iq.md#shared-source-permission-metadata)
 for source and pattern constraints.
 
 **Verify:** Rerun source configuration, inspect permission metadata and test
@@ -430,7 +450,7 @@ settings and build-feed egress are configured separately.
 
 **Correct:** Inspect the affected client's DNS server, zone links and forwarding
 path. Make client DNS changes deliberately and separately from proxy enablement.
-See [Firewall DNS proxy](network-isolation.md#opt-in-firewall-dns-proxy).
+See [Firewall DNS proxy](configuration.md#opt-in-firewall-dns-proxy).
 
 **Verify:** Resolve the required names and test private TLS from the actual
 client with public access still disabled.
@@ -453,7 +473,7 @@ redeploy. Keep certificate verification, the minimum TLS version and scoped
 role assignments intact.
 
 If bootstrap resolves a UI-only secret, inspect the
-[actual label selectors](configuration.md#runtime-settings): in the SDK,
+[actual label selectors](application-settings.md#overrides-and-effective-values): in the SDK,
 `None` selects all labels, while `"\0"` selects only unlabelled settings.
 Use the intended selector while retaining scoped vault permissions and labels.
 
@@ -724,7 +744,7 @@ the transcript is available. Repeat as another user and confirm access is denied
    [health checks](#check-application-health).
 2. Read startup and request logs using [correlated diagnostics](#monitoring).
 3. Inspect the effective configuration using the
-   [actual component selectors](configuration.md#runtime-settings).
+   [actual component selectors](application-settings.md#overrides-and-effective-values).
 4. Follow the first failing model, retrieval, tool or identity dependency.
 
 **Correct:** Repair the identified dependency, then use the appropriate
@@ -870,5 +890,5 @@ diagnose with request references and dependency status.
 - [Copilot Studio private integration](connect-copilot-studio.md#troubleshooting)
 - [Full-stack deployment guide](deploy-full-stack.md)
 - [Deployment settings](configuration.md)
-- [Network isolation](network-isolation.md)
+- [Network design](network-isolation.md)
 - [Ingestion](ingestion.md)

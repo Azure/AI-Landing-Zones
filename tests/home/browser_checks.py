@@ -46,22 +46,38 @@ def check_lifecycle_navigation(page, base, screenshots):
     labels = agent.locator(":scope > ul > li").evaluate_all("""items => items.map(item =>
         item.querySelector(":scope > .md-nav__link > .md-ellipsis").textContent.trim()
     )""")
-    assert labels == ["Overview", "What's new", "Plan", "Deploy", "Operate", "Agent Application"], labels
-    for name in ("Plan", "Deploy", "Operate"):
-        expand_navigation_group(page, agent, name)
+    assert labels == [
+        "Overview", "What's new", "Plan", "Deploy", "Operate", "Reference",
+        "Agent Application",
+    ], labels
+    for name in ("Plan", "Deploy", "Operate", "Reference"):
+        branch = expand_navigation_group(page, agent, name)
+        if name in ("Plan", "Reference"):
+            actual = branch.locator(":scope > ul > li > a .md-ellipsis").all_text_contents()
+            expected = {
+                "Plan": ["Deployment choices", "Design checklist", "Network design", "Sizing & cost planner"],
+                "Reference": ["Deployment settings", "Resource naming"],
+            }[name]
+            assert [label.strip() for label in actual] == expected, (name, actual)
     if screenshots:
         page.screenshot(path=str(screenshots / "lifecycle-navigation-desktop.png"), animations="disabled")
-    plan_label = agent.locator("label.md-nav__link").filter(has_text=re.compile(r"^\s*Plan\s*$"))
-    plan_toggle = page.locator("#" + plan_label.get_attribute("for"))
-    plan_label.focus()
-    page.keyboard.press("Enter")
-    expect(plan_toggle).not_to_be_checked()
-    page.keyboard.press("Enter")
-    expect(plan_toggle).to_be_checked()
+    for name in ("Plan", "Reference"):
+        label = agent.locator("label.md-nav__link").filter(
+            has_text=re.compile(r"^\s*" + name + r"\s*$")
+        )
+        toggle = page.locator("#" + label.get_attribute("for"))
+        label.focus()
+        page.keyboard.press("Enter")
+        expect(toggle).not_to_be_checked()
+        page.keyboard.press("Enter")
+        expect(toggle).to_be_checked()
 
     routes = (
-        ("agent-landing-zone/how-it-works/", ("Agent Landing Zone", "Plan")),
+        ("agent-landing-zone/planning/", ("Agent Landing Zone", "Plan")),
+        ("agent-landing-zone/network-isolation/", ("Agent Landing Zone", "Plan")),
         ("architecture/design-checklist/", ("Agent Landing Zone", "Plan")),
+        ("agent-landing-zone/configuration/", ("Agent Landing Zone", "Reference")),
+        ("agent-landing-zone/resource-naming/", ("Agent Landing Zone", "Reference")),
         ("agent-landing-zone/deploy-infra-only/", ("Agent Landing Zone", "Deploy", "Bicep")),
         ("agent-landing-zone/deploy-full-stack/", ("Agent Landing Zone", "Deploy", "Bicep")),
         ("agent-landing-zone/terraform/", ("Agent Landing Zone", "Deploy", "Terraform")),
@@ -102,6 +118,51 @@ def check_lifecycle_navigation(page, base, screenshots):
             assert page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), (
                 width, path
             )
+
+
+def check_documentation_roles(page, base):
+    page.set_viewport_size({"width": 1440, "height": 1000})
+    page.goto(base + "agent-landing-zone/")
+    content = page.locator(".md-content__inner")
+    expect(content.get_by_role("heading", name="How the template works", exact=True)).to_have_count(1)
+    expect(content.locator('a[href*="how-it-works/"]')).to_have_count(0)
+
+    page.goto(base + "agent-landing-zone/planning/")
+    expect(content.locator("pre")).to_have_count(0)
+    for application_setting in ("hosted-no-panel", "maf_lite", "RETRIEVAL_BACKEND"):
+        assert application_setting not in content.inner_text(), application_setting
+
+    page.goto(base + "agent-landing-zone/network-isolation/")
+    expect(content.locator("h1")).to_have_text("Network design")
+    expect(content.locator("pre, .subnet-address-plan")).to_have_count(0)
+    expect(content.locator('a[href$="configuration/#default-subnets"]')).to_have_count(1)
+    expect(content.locator('a[href$="configuration/#outbound-access"]')).to_have_count(1)
+    assert "not private end to end" in content.inner_text()
+
+    page.goto(base + "agent-landing-zone/configuration/")
+    expect(content.locator(".subnet-address-plan tbody tr")).to_have_count(13)
+    for heading in ("Deployment inputs", "Outbound access", "Generated values and script state"):
+        expect(content.get_by_role("heading", name=heading, exact=True)).to_have_count(1)
+
+    response = page.goto(base + "agent-landing-zone/how-it-works/")
+    assert response.status == 200
+    expect(page.locator('.md-nav--primary a[href*="how-it-works/"]')).to_have_count(0)
+    for anchor in (
+        "how-the-template-works", "how-it-works", "how-to-read-deployment-settings",
+        "repository-boundaries", "the-manifest-records-a-validated-combination",
+        "parameters-describe-the-environment", "azureyaml-connects-azd-to-the-lifecycle",
+        "deployment-lifecycle", "app-configuration-carries-runtime-settings",
+        "who-publishes-settings", "how-applications-load-settings",
+        "secrets-and-environment-boundaries", "why-hosted-agents-need-image-preparation",
+        "from-understanding-to-deployment",
+    ):
+        expect(content.locator(f'[id="{anchor}"]')).to_have_count(1)
+    search = page.request.get(base + "search/search_index.json")
+    assert search.ok
+    entries = search.json()["docs"]
+    assert not any(entry["location"].startswith("agent-landing-zone/how-it-works/") for entry in entries)
+    for path in ("configuration/", "resource-naming/", "network-isolation/"):
+        assert any(entry["location"] == "agent-landing-zone/" + path for entry in entries), path
 
 
 def check_application_navigation(page, base, screenshots):
@@ -404,6 +465,7 @@ def run(base, screenshots):
             if not path.endswith("sizing-cost-planner/"):
                 expect(page.locator(".md-sidebar--secondary")).to_be_visible()
         check_lifecycle_navigation(page, base, screenshots)
+        check_documentation_roles(page, base)
         check_application_navigation(page, base, screenshots)
         check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})

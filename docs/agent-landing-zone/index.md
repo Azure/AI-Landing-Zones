@@ -19,12 +19,11 @@ Source code: [Azure/agent-landing-zone](https://github.com/Azure/agent-landing-z
 
 ## Infrastructure and application
 
-The deployment template creates Azure resources separately from the application
-code that runs on them. Choose the outcome first, then the infrastructure
-provider. Bicep is the default; integrated Terraform uses the same azd
+Choose the outcome first, then the infrastructure provider.
+Bicep is the default. Integrated Terraform uses the same azd
 application lifecycle.
 
-| Outcome | With Bicep | With Terraform |
+| Outcome | Bicep | Terraform |
 | --- | --- | --- |
 | **Deploy infra only:** create and configure Azure resources without application code | [Guide](deploy-infra-only.md) | [Guide](deploy-terraform-infra-only.md) |
 | **Deploy full stack:** create infrastructure and deploy the Agent Application, including a Foundry hosted agent | [Guide](deploy-full-stack.md) | [Guide](deploy-terraform-full-stack.md) |
@@ -34,9 +33,27 @@ the Microsoft Foundry service that hosts and operates agents. A web chat
 interface connects users to it. [Agent Application](application.md) explains
 the components, knowledge sources and application behavior.
 
-The planning and Agent Application pages explain concepts and settings.
-Execution steps stay together in **Deploy**, with prerequisites,
-commands, validation and rollback.
+The planning and Agent Application pages explain infrastructure decisions
+and application behavior respectively. **Reference** lists deployment inputs.
+Execution steps stay together in **Deploy**, with prerequisites, commands,
+validation and rollback.
+
+## How the template works
+
+The Azure Developer CLI (`azd`) coordinates the selected infrastructure
+provider and the platform's service configuration. The workflow separates
+preparing Azure resources from publishing application code.
+
+| Stage | What the template does |
+| --- | --- |
+| Inputs | Resolves the selected environment, target, network and resource choices. |
+| Provision | Creates or reuses the selected infrastructure, configures services and prepares access. |
+| Deploy | Builds or reuses images and publishes the selected application. |
+
+An infrastructure-only deployment stops after resource provisioning and
+service configuration. It does not publish application images or start a
+hosted agent. A full-stack deployment completes the application stage too.
+The deployment guides provide the supported sequence and its checks.
 
 <span id="choose-your-path"></span>
 <span id="agent-application"></span>
@@ -45,8 +62,8 @@ commands, validation and rollback.
 
 ## Where do I start?
 
-- **What does the template do?** [How it works](how-it-works.md) introduces the
-  deployment flow and explains where settings belong.
+- **What does the template do?** [How the template works](#how-the-template-works)
+  explains resource provisioning and application deployment.
 - **What needs planning?** [Deployment choices](planning.md) covers resources,
   network integration and deployment tools. The
   [Design checklist](../architecture/design-checklist.md) supports architecture

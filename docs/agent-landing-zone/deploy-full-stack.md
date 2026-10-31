@@ -61,8 +61,9 @@ Use this guide for a new Agent Application deployment or to add it to its
 already configured Agent foundation. For a customer-owned application, use
 the [Bring your own app](build-your-own-app.md) guide.
 Only need infrastructure? Use the [Deploy infra only](deploy-infra-only.md) guide.
-For the relationship between the template, its manifest and lifecycle hooks,
-see [How it works](how-it-works.md).
+The [template overview](index.md#how-the-template-works) explains provisioning
+and application deployment. [Source pinning](build-your-own-app.md#source-pinning)
+explains the manifest contract for customizations.
 
 ## Prerequisites
 
@@ -220,8 +221,8 @@ Set the deployment choices below in the selected azd environment with
 `azd env set` before provisioning. Settings containing lists or groups of related
 fields go in the root `main.parameters.json` file, as described in the linked
 infrastructure choices.
-[How it works](how-it-works.md) explains input processing;
-[Deployment settings](configuration.md) identifies input ownership.
+[Deployment inputs](configuration.md#deployment-inputs) explains input formats,
+ownership and generated provider files.
 
 #### Orchestrator topology
 
@@ -268,7 +269,7 @@ not the recommended production setup.
 | --- | --- |
 | Private, self-contained network | `azd env set NETWORK_ISOLATION true`; review the [standalone design](../bicep/standalone.md) |
 | Private spoke using an existing hub | `NETWORK_ISOLATION=true`, explicit hub routing, peering, DNS and shared-service inputs from the [hub-and-spoke reference](../bicep/hub-and-spoke.md) |
-| Existing VNet | Choose [subnet ownership](network-isolation.md#choose-subnet-ownership) and apply the [matching inputs](configuration.md#network-selection-examples); review delegations and NSGs before provision |
+| Existing VNet | Choose [subnet ownership](network-isolation.md#allocate-subnets-and-agree-ownership) and apply the [matching inputs](configuration.md#network-selection-examples); review delegations and NSGs before provision |
 | Public service endpoints, evaluation only | Read the [public-endpoint conditions and commands](deploy-infra-only.md#public-service-endpoints) first. Authentication does not make an endpoint private. |
 
 Apply the approved foundation inputs from
@@ -295,8 +296,9 @@ azd env set DEPLOY_ACR_TASK_AGENT_POOL true
 
 Hosted image preparation uses Azure Container Registry (ACR) Tasks, not local
 Docker. With isolation enabled, keep the private build pool.
-See [network isolation](network-isolation.md) for build egress,
-DNS and private-link readiness requirements.
+Use [Network design](network-isolation.md) for DNS and private connectivity,
+and the [build-feed reference](configuration.md#application-specific-package-feeds)
+for scoped package access.
 
 ### Step 4: Deploy
 
@@ -309,12 +311,12 @@ platform root with the same azd environment selected.
 Confirm the runner has Foundry agent authoring access on the exact project
 (Foundry User or an appropriate equivalent),
 account read access and the required scoped role-assignment authority.
-Review [private-runner permissions](network-isolation.md) and
+Review [deployment prerequisites](#prerequisites) and
 [hosted identities](hosted-agents.md) for the required scopes.
 
 Review the resource scopes, public access, routes and role changes before
 approving provisioning. Also review the application's
-[outbound network requirements](network-isolation.md#review-before-provisioning)
+[outbound network requirements](deploy-infra-only.md#review-component-egress)
 with `python -m config.deployment.egress --plan --environment <environment-name>`.
 Deployment applies managed firewall rules automatically. If you use an external
 firewall, give the generated report to its owner to arrange the required access.
@@ -657,6 +659,21 @@ part of this deployment.
    compatibility; deployment does not rebuild it.
 5. Restore directly managed runtime keys separately from the source checkout,
    reload affected components and repeat [Validation](#validation) before cutover.
+
+### Outbound rule recovery
+
+When removing component egress requirements, first review explicit empty
+declarations for the components whose owned rules should be removed.
+Keep declarations for remaining consumers and reconcile with the current
+hooks before reverting hooks or metadata. A missing declaration is not
+equivalent to an explicit empty one.
+
+Reverting code alone does not remove existing rules. Review the resolved
+report and resulting scoped changes. Preserve unmanaged entries and other
+owners' rules. An external firewall remains its owner's responsibility,
+never a target for automatic policy writes or shared-group deletion.
+Use the [review procedure](deploy-infra-only.md#review-component-egress)
+with the selected provider's normal workflow.
 
 Restoring code does not restore data or reverse schema changes. If reversal is
 unsupported, arrange an approved forward repair or service-specific recovery.

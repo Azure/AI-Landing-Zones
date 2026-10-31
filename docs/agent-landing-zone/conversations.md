@@ -51,7 +51,9 @@ Invalid required settings fail startup.
 
 The standalone UI loader defaults history limits to `HOSTED_HISTORY_MAX_ITEMS=40`
 and `HOSTED_HISTORY_MAX_TOKENS=8000`. Platform composition can publish different
-values. Valid ranges are `1` to `500` items and `256` to `200000` estimated tokens.
+values: its continuity defaults are `100` items and `32000` estimated tokens,
+with capability key ID `v1`. These values do not activate continuity.
+Valid ranges are `1` to `500` items and `256` to `200000` estimated tokens.
 
 The store client reads one ascending page of at most 100 items and does not
 follow pagination. Larger item settings do not extend that read. It trims the

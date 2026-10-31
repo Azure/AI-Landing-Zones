@@ -77,12 +77,12 @@ the recommendation. That minimum is not a future-scale guarantee.
 | `DEPLOY_AZURE_FIREWALL` | `true` for local inspected egress |
 | `DEPLOY_JUMPBOX`, `DEPLOY_BASTION`, `DEPLOY_NAT_GATEWAY` | Independently selected; the canonical guide shows the self-contained choice |
 | `BASTION_SKU_NAME`, `BASTION_ENABLE_TUNNELING` | Standard/Premium with tunneling for native RDP |
-| `DEPLOY_ACR_TASK_AGENT_POOL` | The Agent platform selects a pool for private remote builds; review the [build-mode contract](../agent-landing-zone/network-isolation.md) before overriding |
+| `DEPLOY_ACR_TASK_AGENT_POOL` | The Agent platform selects a pool for private remote builds. Review the [build-mode contract](../agent-landing-zone/configuration.md#private-image-builds) before overriding |
 
 The NAT gateway supports its configured subnet; it is not a firewall or a
 substitute for reviewing effective routes. Inspect the local firewall route and
 required destinations in the
-[network isolation reference](../agent-landing-zone/network-isolation.md)
+[outbound-access reference](../agent-landing-zone/configuration.md#outbound-access)
 and [foundation firewall source](https://github.com/Azure/agent-landing-zone/blob/main/infra/bicep/modules/networking/azure-firewall.bicep).
 Agent platform build egress also includes its own dependency-specific inputs.
 An ACR Tasks pool does not make the deployment host VNet-connected.

@@ -1,180 +1,104 @@
 # Deployment choices
 
-Deployment design covers **network ownership, deployment tooling and resource
-selection**. It is separate from whether a guide stops at infrastructure or
-also deploys application code.
+Use this page to choose the infrastructure arrangement before provisioning.
+It compares the template's options, not the commands or the application's
+behavior. The [overview](index.md) explains what the template delivers.
 
-[How it works](how-it-works.md) introduces the concepts and input formats.
-This page explains design choices, not their execution order.
-[Deploy infra only](deploy-infra-only.md) and
-[Deploy full stack](deploy-full-stack.md) are the deployment guides;
-the [Sizing & cost planner](sizing-cost-planner.md) covers capacity and spending.
+## Choose an infrastructure provider
 
-For an isolated standalone `hosted-no-panel` scenario, use the
-[Sizing & cost planner](sizing-cost-planner.md) to explore resource quantities,
-workload assumptions and cost differences. Optional resources remain visible
-at quantity zero. The planner does not change deployment settings or replace
-the connectivity, quota and permission checks below.
-Review its regional reference and backup billing hypotheses before translating
-a scenario into IaC: planner choices do not establish deployed provider parity.
-
-<span id="choose-the-network-and-gateway-shape"></span>
-
-## Network and gateway design
-
-An Azure **virtual network (VNet)** contains private address ranges and
-**subnets**, smaller ranges assigned to services. **Domain Name System (DNS)**
-resolution turns a service hostname into an IP address. A **hub** is a shared
-network; a **spoke** is a workload network connected to it. **Peering** connects
-VNets, while routes determine where traffic goes. **Egress** means outbound
-traffic. A **NAT gateway** translates private outbound addresses to a public
-address.
-
-For production and workloads with sensitive data, choose a private network,
-whether standalone or connected to an existing hub. Set
-`NETWORK_ISOLATION=true` explicitly: the template currently defaults to `false`.
-Standalone describes who manages the network; it does not mean the services
-should be public.
-
-Use public service endpoints only for approved, short-lived evaluations or
-demonstrations without sensitive data. Authentication remains required, but
-does not provide private network access.
-
-| Choice | Purpose | Configuration and dependencies |
-| --- | --- | --- |
-| Standalone (default network ownership) | The workload team owns its network, DNS and operations, without a platform hub dependency. | `DEPLOYMENT_MODE=standalone` and `NETWORK_ISOLATION=true` for private networking. Plan outbound access, private DNS and a connected deployment host. |
-| Hub integration | A platform team owns shared connectivity, firewall, DNS or monitoring. | `DEPLOYMENT_MODE=ailz-integrated` plus explicit isolation, peering, routing, DNS and reuse inputs. Spoke resources can be omitted where the hub supplies them. |
-| AI Gateway | Multiple workloads need centrally governed model access, such as routing, authentication or token policies. | The separate [AI Gateway implementation](../index.md#ai-gateway-landing-zone) has its own endpoint, authentication, supported APIs, policies and network requirements. Agent Bicep does not deploy or connect it automatically. |
-
-For isolated standalone deployments, Basic is the local firewall default;
-select Standard explicitly when required. Basic also needs a management subnet
-and public IP. External hub egress, with or without a hub gateway, creates no
-local firewall management resources and no firewall data subnet by default.
-GatewaySubnet is opt-in in every topology. Review the
-[network resource matrix](network-isolation.md#firewall-sku-and-management-networking)
-before choosing address ranges.
-
-AI Gateway governs model access and can accompany either network topology.
-Workload connectivity and user/document authorization remain separate requirements.
-[Application Gateway](application-gateway.md) serves a different purpose:
-optional web application firewall (WAF) protection for access to the web UI.
-
-Hub integration needs agreement with the platform team on:
-
-- **Routes and peering:** owners for both directions and a hub ID in
-  `HUB_INTEGRATION_HUB_VNET_RESOURCE_ID`. Egress uses either
-  `HUB_INTEGRATION_EGRESS_NEXT_HOP_IP` or
-  `HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID`, not both, with matching
-  return routes and gateway-transit settings.
-- **Spoke resources:** `DEPLOY_AZURE_FIREWALL`, `DEPLOY_BASTION` and
-  `DEPLOY_NAT_GATEWAY` can be disabled where the hub supplies those services
-  under agreed ownership.
-- **DNS:** template-owned zones, supported
-  `EXISTING_PRIVATE_DNS_ZONE_*_RESOURCE_ID` inputs, or
-  `POLICY_MANAGED_PRIVATE_DNS=true`. Policy-managed DNS and bring-your-own
-  (BYO) zone IDs are alternative modes. Zone owners must supply the required
-  links/forwarding;
-  peering alone does not propagate DNS.
-- **Runner:** the host that executes deployment commands needs private
-  connectivity and service DNS resolution. This connection is
-  required separately from the private Azure Container Registry (ACR) pool
-  used for image builds. The registry stores those images.
-
-See [Network isolation](network-isolation.md) for connectivity requirements and
-[hub-and-spoke design](../bicep/hub-and-spoke.md) for supported network settings.
-
+<span id="deployment-tooling"></span>
 <span id="choose-the-deployment-tool"></span>
 
-## Deployment tooling
-
-Azure **role-based access control (RBAC)** grants an identity a role at a
-resource scope. Deployment roles can differ from application data-access roles.
-
-| Tool | Available path | Boundary to understand |
+| Provider | When to choose it | What to account for |
 | --- | --- | --- |
-| Bicep with `azd` (default) | [Deploy infra only](deploy-infra-only.md) or [Deploy full stack](deploy-full-stack.md). | Product Bicep infrastructure at `infra/bicep/`, with shared root `scripts/` hooks for parameter composition, service configuration, RBAC and application deployment. |
-| Terraform with `azd` | [Deploy infra only](deploy-terraform-infra-only.md) or [Deploy full stack](deploy-terraform-full-stack.md); [Terraform overview](terraform.md). | Native provider at `infra/terraform/` in the same product repository. Shared hooks configure services and deploy manifest-pinned applications. Prepare remote state outside workload teardown before first provision. Direct `terraform apply` is not a substitute for this azd lifecycle. |
-| Azure portal | [Portal overview](portal.md). | ARM-based infrastructure with its own defaults and platform-integration behavior. It can create placeholder application resources; it does not execute Agent platform hooks or the hosted image/version workflow. |
+| Bicep, the default | Your team uses Azure-native infrastructure tooling. | Use the product's `azd` workflow for provisioning, service configuration and later updates. |
+| Terraform | Your team standardizes on Terraform state and workflows. | Prepare remote storage outside workload teardown and an authorized single-writer process. Native azd disables state locking. Azure validation remains pending. |
 
-The [Deploy infra only](deploy-infra-only.md) guide provisions the
-platform's foundation without building or deploying application images.
-Select Bicep or Terraform in the checkout's root `azure.yaml` before first
-provision. Bicep is the default. Use the selected provider for provisioning,
-updates and removal. Resource reuse needs explicit state and dependency
-ownership. For direct use of the shared AVM pattern, see the
-[Terraform foundation reference](../terraform/index.md).
+Both use the same platform workflow. Direct Bicep deployment or
+`terraform apply` does not replace its configuration and validation stages.
+Choose the provider before first provision and retain it for updates and removal.
+See the [Terraform overview](terraform.md) for its constraints.
 
-Native azd disables Terraform state locking. Shared and production deployments
-require a [single authorized writer](deploy-terraform-infra-only.md#state-protection)
-and queued, non-canceling execution per actual backend state identity.
-Azure validation is pending.
+The [Azure portal path](portal.md) is a separate infrastructure workflow with
+its own defaults. It does not execute the full application deployment.
 
-## Resource group ownership
+<span id="network-and-gateway-design"></span>
+<span id="choose-the-network-and-gateway-shape"></span>
 
-New Agent environments default to three workload resource groups.
-The
-[resource group destinations](configuration.md#resource-group-destinations)
-separate application, Foundry/grounding and workload networking ownership,
-with one, two or three distinct groups in the same subscription. This is an
-**Agent azd contract** for the Bicep and integrated Terraform paths.
-Existing environments retain their destination mapping.
-Network isolation and hub/BYO integration remain separate decisions.
+## Decide who owns the network
 
-Agree names, owners, scoped deployment/RBAC/data permissions and retention
-before a new deployment. Prefer pre-created groups when the deploying identity
-must not create groups at subscription scope, and set `CREATE_RESOURCE_GROUPS=false`.
-New environments otherwise create missing additional groups by default.
-One root provisioning workflow
-coordinates the groups; three independent manual deployments are not required.
-Shared groups require owner-reviewed, itemized cleanup.
+| Arrangement | Responsibility | Plan with the owners |
+| --- | --- | --- |
+| Standalone | The workload team operates its network and connectivity. | Address space, DNS, outbound access and deployment-host connectivity. |
+| Integrated with an existing hub | The platform team supplies agreed shared connectivity or services. | Peering in both directions, routes, DNS, service reuse and responsibility for changes. |
 
+Network ownership and public/private access are independent decisions.
+Standalone does not mean public. An integration label alone does not connect
+a hub or configure its firewall. [Network design](network-isolation.md)
+explains the required connectivity.
+
+## Decide how services are reached
+
+Use **private networking for production and sensitive data**. The template's
+isolation default is `false`, so enable the private design explicitly.
+Private access needs working DNS, routes and an authorized connected host.
+
+Public service endpoints are only for approved, short-lived evaluations
+without sensitive data. Authentication remains necessary but does not make
+an endpoint private. Do not remove isolation to work around deployment failures.
+
+## Agree resource ownership and reuse
+
+<span id="resource-selection-and-reuse"></span>
 <span id="select-reuse-or-omit-resources"></span>
 
-## Resource selection and reuse
+List the AI services, data stores, compute and monitoring required by the
+workload. Decide which supported resources to create or reuse and who
+operates them. Reuse requires compatible configuration and explicit ownership,
+not just a resource name or a disabled creation flag.
 
-The selected application's definition and resolved provider inputs describe
-the resources (`infra/bicep/main.parameters.json` for Bicep; the native Terraform
-adapter and tfvars for Terraform). The default is **`hosted-no-panel`**, with
-`maf_lite` orchestration and native Foundry IQ Blob ingestion.
-
-| Resource family | Selection or reuse decision |
+| Area | Decision to record |
 | --- | --- |
-| Agent Application hosts and stores | Fresh environments use `DEPLOYMENT_TOPOLOGY=hosted-no-panel`: hosted orchestrator, frontend, no panel and no Agent Application Cosmos DB. [Agent hosting](hosted-agents.md) explains this layout's capabilities and limits. Existing selections are retained unless explicitly changed. |
-| Agent App Ingestion | `DEPLOY_INGESTION_CONTAINER_APP=false` is the fresh default for native Blob ingestion. The optional component supports custom processing and conversation uploads; [Ingestion](ingestion.md) describes those requirements and independently populated indexes. Omitting the component leaves existing resources and grants in place. |
-| Search, Storage and Foundry agent backing services | Agent Application Search/Storage and Agent Service backing resources are separate. Where enabled and not reused, Agent Service can add another Search, Storage and Cosmos DB. Native parameters `aiSearchResourceId`, `aiFoundryStorageAccountResourceId` and `aiFoundryCosmosDBAccountResourceId` reuse a dedicated backing trio for the same Foundry instance, not arbitrary shared workload stores. |
-| Network and access infrastructure | `USE_EXISTING_VNET=true` requires `EXISTING_VNET_RESOURCE_ID` and agreed subnet/delegation ownership for `DEPLOY_SUBNETS`. Supported jumpbox, Bastion and NAT reuse have their own `EXISTING_*` inputs. Existing VNet peerings are externally managed. |
-| Monitoring | Supported existing Log Analytics/Application Insights inputs require workspace compatibility, owner agreement and the intended private monitoring path. Mixing sources is not a substitute for those requirements. |
-| Optional add-ons | Speech, Bing grounding and public ingress require explicit selection. Disabling a service is not a reuse mechanism and can break its consumers. |
+| Network and DNS | Who manages the VNet, subnets, links, forwarding and routes? |
+| Foundry backing services | Will Foundry create its dedicated backing resources or reuse a supported dedicated set for the same instance? They are not arbitrary shared application stores. |
+| Monitoring | Who owns the workspace, retention, access and private monitoring path? Reuse requires compatible workspace selections. |
+| Optional services | Which consumers actually require them? Omitting a resource can break its consumers and does not remove existing resources or grants. |
 
-Set the Foundry backing IDs above in **root `main.parameters.json`**, not as
-unmapped `azd` environment variables. Preprovision generates typed Terraform
-inputs from that same source. See
-[Deployment settings](configuration.md) for mapped inputs and
-[the shared inventory](../bicep/deployed-resources.md) for broader resource detail.
-`DEPLOY_AAF_AGENT_SVC` is required by the default Foundry hosting path, not an
-optional resource-count reduction.
+### Resource group ownership
 
+New environments use three logical destinations: Foundry/grounding,
+application resources and workload networking. They can map to one, two or
+three groups in the same subscription. Existing environments retain their mapping.
+
+Agree owners, deployment permissions, retention and cleanup responsibilities
+before first provision. Prefer pre-created groups when the deploying identity
+must not create them. A single platform workflow coordinates the destinations.
+See [resource group inputs](configuration.md#resource-group-destinations)
+for defaults, permissions and provider-specific removal rules.
+
+## Consider optional gateway integration
+
+AI Gateway governs model access and can accompany either standalone or
+hub-integrated networking. It is not a third network topology and is not
+deployed or connected automatically. Its endpoint, policies, authentication
+and network requirements need separate integration.
+
+[AI Gateway Landing Zone](../ai-gateway-landing-zone/index.md) explains that
+option. It does not replace workload networking or user/document authorization.
+[Application Gateway](application-gateway.md) has a different purpose:
+optional protected public web ingress.
+
+<span id="deployment-readiness"></span>
 <span id="check-readiness-before-deployment"></span>
 
-## Deployment readiness
+## Review the plan and choose a guide
 
-A deployment plan identifies the platform Git commit or release tag, selected
-application, topology, enabled/reused services, regions and
-[naming inputs](resource-naming.md). A Git commit identifies the exact code;
-the manifest records the compatible component code. The environment also
-records the selected application definition, as explained in
-[How it works](how-it-works.md#parameters-describe-the-environment).
+Use the [Design checklist](../architecture/design-checklist.md) for the
+architecture review and the [Sizing & cost planner](sizing-cost-planner.md)
+for capacity and budget. Planner scenarios are estimates, not deployment
+settings or evidence of deployed provider parity.
 
-Readiness includes regional service/model quota, supported
-[host capabilities](hosted-agents.md) and resource-creation permissions.
-Role assignment needs additional scoped permissions; Contributor alone is
-insufficient. Hosted authoring needs project data-plane access. Hub and DNS
-access requires approval from the resource owners.
-
-Private deployments additionally require working runner DNS and routes.
-Transport Layer Security (TLS) encrypts connections and verifies service
-certificates. Native Blob shared links need administrator approval.
-Sign-in and retrieval
-validation includes both allowed and denied users, not only endpoint access.
-The guides include these checks, the deployment preview and the execution
-sequence for the reviewed capacity and cost plan.
+Then choose [infrastructure only](index.md#infrastructure-and-application)
+or full stack and follow its provider-specific guide. Those guides own the
+prerequisites, quota and permission checks, preview, execution and validation.
+Use [Deployment settings](configuration.md) when an input needs clarification.

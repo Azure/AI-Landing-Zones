@@ -86,8 +86,9 @@ across that owner's conversations; retrying it upserts the owner's record.
 Tokens are not body fields or URL parameters.
 
 Runtime settings normally use App Configuration label `agent-lz` and load at
-UI startup. [Deployment settings](configuration.md) describes overrides;
-changes require a UI process reload. Source changes require a compatible
+UI startup. [Application settings](application-settings.md#overrides-and-effective-values)
+describes overrides.
+Changes require a UI process reload. Source changes require a compatible
 application build. Neither enabling flags nor deploying the panel implements
 the missing control.
 

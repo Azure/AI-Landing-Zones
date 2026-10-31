@@ -117,6 +117,55 @@ source authorization are unavailable.
 [Application authentication](application-auth.md) describes consent and
 allowed/denied-user acceptance.
 
+## Shared-source permission metadata
+
+Ingestion permission metadata records access information alongside indexed
+content. `rbacScope` records Azure RBAC scopes; `sensitivityLabels` records
+information-protection labels. Retrieval must still enforce the applicable
+permissions for the caller.
+
+`FOUNDRY_IQ_INGESTION_PERMISSION_OPTIONS` controls the configured source's
+ingestion permission metadata. Omission or an actual null value retains the protected default
+`["rbacScope"]`. An explicit JSON empty array, `[]`, is an opt-in for a
+deliberately shared source **when native Blob ingestion is active**.
+An empty array is distinct from an omitted setting.
+
+For active native Blob ingestion, the shared-source empty list is accepted
+with `RETRIEVAL_BACKEND=foundry_iq`, `FOUNDRY_IQ_PATTERN=azureBlob`,
+`azureBlob` knowledge source kind
+and a recognized non-ADLS source. Active ADLS Gen2, mismatched source
+configuration and ambiguous ADLS configuration fail closed. Nonempty Blob
+permission lists accept only `rbacScope` and `sensitivityLabels`.
+
+The infrastructure also publishes `[]` as **unused metadata** for inactive
+native Blob ingestion: `ai_search` with any pattern, or `foundry_iq` with
+the `searchIndex` pattern. Those empty lists remain accepted because no
+native Blob knowledge source is rendered. They are not shared-source opt-ins
+and do not change the independently populated index's authorization.
+
+Malformed JSON, a single value instead of a JSON list, the text `null`,
+invalid list entries and unsupported permission names fail with actionable
+diagnostics.
+Invalid input fails closed rather than silently removing protection.
+An actual null and the text `null` are different inputs.
+
+For active native Blob ingestion, `[]` is appropriate only when policy permits
+the source's documents to be shared without that ingestion permission metadata.
+It does not grant document access by
+itself or change other sources, application authentication, Entra ID/OBO,
+retrieval authorization, RBAC or private network restrictions.
+
+It is not a
+workaround for an authentication or private-link failure. Its use requires
+audience review and allow/deny tests with real user identities before activation.
+
+Restoring `["rbacScope"]` requires source reconfiguration and verification
+of source/index permission metadata, including already-ingested documents.
+Allowed and denied users both need validation before access resumes. The
+[Deploy full stack](deploy-full-stack.md) guide covers reconfiguration.
+See also
+[Private native Blob ingestion](configuration.md#search-shared-private-links).
+
 ## Generic MCP knowledge sources
 
 Use this default-off preview to retrieve grounding from registered
@@ -244,7 +293,7 @@ Private deployments need both runtime-to-Search access and Search-to-source/mode
 connectivity. The platform attempts to set generated Blob indexers to private
 execution, but skips that update if an indexer does not yet exist.
 Generated indexer state and shared private-link approvals still need validation
-before sensitive ingestion. See [Network isolation](network-isolation.md).
+before sensitive ingestion. See [Network design](network-isolation.md).
 
 <span id="4-verify-and-recover"></span>
 

@@ -25,7 +25,7 @@ The platform hooks validate the selected application and immutable environment
 binding, compose the root parameters into `infra/bicep/main.parameters.json`, and
 run foundation preflight. Do not edit the generated parameter copy or replace
 the hooks with submodule initialization scripts.
-See [How it works](../agent-landing-zone/how-it-works.md) and
+See the [template overview](../agent-landing-zone/index.md#how-the-template-works) and
 [Deployment settings](../agent-landing-zone/configuration.md).
 
 <a id="boolean-rewrite-edge-case"></a>

@@ -32,7 +32,7 @@ role-assignment or service data-plane access.
 Private deployments need a connected runner with private DNS resolution,
 routes and data-plane permissions. It must also reach the state backend and
 approved provider/module registries. An ACR Tasks pool is not the deployment
-host. Review [network isolation](network-isolation.md), service/model quota
+host. Review [network design](network-isolation.md), service/model quota
 and the [Sizing & cost planner](sizing-cost-planner.md). Infrastructure-only is still billable.
 
 Commands marked `bash` use Bash syntax. Replace every `<placeholder>` with an

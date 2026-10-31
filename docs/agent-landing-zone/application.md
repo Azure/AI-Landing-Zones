@@ -18,10 +18,18 @@ The guides below explain how to configure, operate and extend it.
 | Agent App Orchestrator | Runs the selected agent strategy, calls the model and connects retrieval and tools. |
 | Agent App Ingestion | Provides optional application-managed document processing and indexing. |
 
-In the default topology, the UI runs in Azure Container Apps and the
-orchestrator runs as a hosted agent in Microsoft Foundry. Foundry IQ manages
+## Default deployment
+
+The default deployment has web chat in Azure Container Apps and an
+orchestrator hosted in Microsoft Foundry, without an administrative panel
+or application-owned Cosmos DB. The deployment setting calls this layout
+`hosted-no-panel`. It does not mean Foundry has no backing resources of its own.
+
+Foundry IQ manages
 ingestion for the configured native Blob source. Deploy Agent App Ingestion
 only when your chosen processing or conversation-upload workflow needs it.
+Hosting does not enable durable history, continuity, feedback or document
+authorization by itself. Those have independent requirements in their guides.
 
 The application repositories contain the code. These guides are the shared
 documentation for all three components. The

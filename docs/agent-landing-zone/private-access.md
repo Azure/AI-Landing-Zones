@@ -58,7 +58,7 @@ changing them, and identify which changes affect other users.
 
 The following deployment inputs control workload isolation and hub connectivity.
 Set them in the selected azd environment with `azd env set`; see
-[How it works](how-it-works.md) for input processing.
+[Deployment inputs](configuration.md#deployment-inputs) for input formats.
 For a **new** isolated environment, enable isolation before provisioning:
 
 ```bash
@@ -67,7 +67,7 @@ azd env set NETWORK_ISOLATION true
 
 Keep `parameters.allowedIpRanges.value` empty in `main.parameters.json` for
 the default private-only workload service posture. Do not enable public access
-to make the VPN work. See [Network isolation](network-isolation.md) for the
+to make the VPN work. See [Network design](network-isolation.md) for the
 separate control-plane, telemetry and optional ingress boundaries.
 
 Choose one network path:
@@ -102,7 +102,7 @@ Preserve approved egress routing through
 `HUB_INTEGRATION_EGRESS_NEXT_HOP_IP` or
 `HUB_INTEGRATION_EXISTING_ROUTE_TABLE_RESOURCE_ID` where required. These do
 not configure P2S client routes or authentication. Use the
-[network reference](network-isolation.md) for other reuse inputs.
+[reuse reference](configuration.md#existing-resources) for other reuse inputs.
 
 For a fresh VPN-only deployment, you may explicitly set `DEPLOY_JUMPBOX=false`
 and `DEPLOY_BASTION=false` before provisioning. They otherwise default on for
@@ -271,7 +271,7 @@ Configure service RBAC and document permissions separately from network access.
 Preserve application authentication, OBO and source access-control lists.
 For hosted-agent authoring, verify the runner's **Foundry User** role on the
 exact project and account read access as described in
-[Network isolation](network-isolation.md). Do not grant Owner to solve a
+[Network design](network-isolation.md). Do not grant Owner to solve a
 data-plane denial.
 
 <span id="recover-or-disconnect"></span>

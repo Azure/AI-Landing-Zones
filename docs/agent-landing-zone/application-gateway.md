@@ -35,7 +35,7 @@ controlled public entry point. Choose the supported entry point before editing:
 | Need | Choice |
 | --- | --- |
 | Public UI for approved client networks, private backend services | Use the template's public gateway below, with explicit public outbound IP address ranges (CIDRs). |
-| UI accessible only from your corporate network | Leave `publicIngress.enabled` false and use VPN/peering plus private DNS. See [Network isolation](network-isolation.md). |
+| UI accessible only from your corporate network | Leave `publicIngress.enabled` false and use VPN/peering plus private DNS. See [Network design](network-isolation.md). |
 | An internal Application Gateway or an existing corporate ingress | Integrate it separately with the UI backend. The template option has a public IP only; it has no private-frontend switch. |
 
 The gateway requires network isolation. With `NETWORK_ISOLATION=false`,

@@ -70,7 +70,8 @@ The downloadable example initially deploys the **Agent Application** with
 reviewed topology and ingestion selection across the three environments.
 The table lists deployment inputs placed in each stage's YAML `settings` map
 in Step 3; the task applies them to its selected azd environment.
-[How it works](how-it-works.md) explains how the hooks process these inputs.
+[Deployment inputs](configuration.md#deployment-inputs) explains their formats
+and generated provider files.
 
 | Input | Choices and effect |
 | --- | --- |
@@ -98,7 +99,7 @@ Create authorized **Linux self-hosted Azure Pipelines agent pools**, with a runn
 able to reach each environment's private endpoints through its VNet or a peered
 hub/VPN. Bootstrap the deployment network before this full-stack pipeline: an
 agent cannot depend on the VNet it is about to create to become reachable.
-Use [Network isolation](network-isolation.md) for DNS, routing and egress checks.
+Use [Network design](network-isolation.md) for DNS, routing and egress checks.
 The CI-only pool need not reach Azure data-plane endpoints.
 
 Every runner needs Bash, PowerShell 7 (`pwsh`), jq, Git, curl, Azure CLI with Bicep,

@@ -21,8 +21,11 @@ Follow the guide for the required result:
 <a id="reference"></a>
 <a id="related-pages"></a>
 
-For the Bicep entry point, lifecycle hooks, generated parameters and manifest
-contract, read [How it works](how-it-works.md).
+For the template's purpose and stages, read the
+[overview](index.md#how-the-template-works).
+Use [deployment inputs](configuration.md#deployment-inputs) for generated
+parameters and [source pinning](build-your-own-app.md#source-pinning)
+for the manifest contract.
 For supported settings and naming, use [Deployment settings](configuration.md) and
 the [foundation parameter reference](../bicep/parameterization.md).
 Run the supported lifecycle from the platform root: calling `infra/bicep/main.bicep`

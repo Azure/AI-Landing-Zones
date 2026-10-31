@@ -43,13 +43,10 @@ nav:
       - "Overview": agent-landing-zone/index.md
       - "What's new": agent-landing-zone/whats-new.md
       - Plan:
-          - "How it works": agent-landing-zone/how-it-works.md
           - "Deployment choices": agent-landing-zone/planning.md
           - "Design checklist": architecture/design-checklist.md
-          - "Network isolation": agent-landing-zone/network-isolation.md
+          - "Network design": agent-landing-zone/network-isolation.md
           - "Sizing & cost planner": agent-landing-zone/sizing-cost-planner.md
-          - "Deployment settings": agent-landing-zone/configuration.md
-          - "Resource naming": agent-landing-zone/resource-naming.md
       - Deploy:
           - Bicep:
               - "Deploy infra only": agent-landing-zone/deploy-infra-only.md
@@ -65,6 +62,9 @@ nav:
       - Operate:
           - "Updates & recovery": agent-landing-zone/deployment-operations.md
           - "Troubleshooting": agent-landing-zone/troubleshooting.md
+      - Reference:
+          - "Deployment settings": agent-landing-zone/configuration.md
+          - "Resource naming": agent-landing-zone/resource-naming.md
       - Agent Application:
           - "Overview": agent-landing-zone/application.md
           - Agents:
@@ -193,6 +193,7 @@ not_in_nav: |
   /agent-landing-zone/customer-environments.md
   /agent-landing-zone/deploy-bicep.md
   /agent-landing-zone/deploy-terraform.md
+  /agent-landing-zone/how-it-works.md
   /agent-landing-zone/sizing.md
   /agent-landing-zone/cost-planning.md
 

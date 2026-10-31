@@ -36,7 +36,7 @@ checks; anonymous or workload identity is not a fallback for source permissions.
 Private deployments need a connected deployment host and, for the remote
 private-registry build path, the approved ACR Tasks VNet pool. The pool does
 not provide private connectivity to the deployment host.
-Review [network isolation](network-isolation.md), quotas and recurring costs.
+Review [network design](network-isolation.md), quotas and recurring costs.
 
 Replace every `<placeholder>` with an approved value before running a command.
 
@@ -170,6 +170,10 @@ Rollback is not automatic. Review the complete compatible source, manifest,
 inputs and image digest against current resources and data before reapplying.
 Reverting code does not restore data or state. Use owner-reviewed state/service
 recovery or a forward repair when reversal is unsafe.
+
+For component outbound rules, follow the shared
+[rule-recovery order](deploy-full-stack.md#outbound-rule-recovery)
+before reverting hooks. Keep Terraform state and single-writer controls intact.
 
 ## Remove the environment
 

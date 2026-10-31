@@ -51,7 +51,7 @@ evidence of successful processing, not the model name alone.
 
 The ingestion identity's source/model access is independent of the user's
 retrieval permissions. Private connectivity follows
-[Network isolation](network-isolation.md). Protected hosted retrieval uses the
+[Network design](network-isolation.md). Protected hosted retrieval uses the
 [integrated delegated identity path](application-auth.md#3-verify-the-retrieval-identity-boundary)
 and still needs allow/deny validation. Image extraction does not authorize users.
 

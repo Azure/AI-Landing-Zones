@@ -152,8 +152,9 @@ Use label `agent-lz`. The frontend managed identity needs App Configuration
 Data Reader and Key Vault Secrets User at the relevant scopes; see
 [default hosted permissions](../bicep/permissions.md#frontend-container-app).
 Remove or update conflicting UI process-environment or other selected-label
-overrides. [Deployment settings](configuration.md#runtime-settings) explains
-precedence and provisioning-managed values.
+overrides. [Application settings](application-settings.md#overrides-and-effective-values)
+explains precedence. Preserve the platform's
+[configuration ownership](configuration.md#configuration-ownership-and-declarations).
 
 **Check:** The two secrets are Key Vault references, nonsecret keys have the
 intended values and the actual frontend identity can resolve the references.
@@ -246,6 +247,10 @@ That provides shared-source access, not per-user filtering.
 describe source-specific requirements.
 
 ## Protected citation downloads
+
+Downloads reuse the configured storage and Search bindings,
+`SEARCH_SERVICE_QUERY_ENDPOINT`, `SEARCH_RAG_INDEX_NAME` and
+`SEARCH_API_VERSION`. There is no separate permission-bypass switch.
 
 Native hosted citations use `/api/download/{grant_token}` on the authenticated
 UI rather than public Blob links or Blob SAS. The signed selector is bound to

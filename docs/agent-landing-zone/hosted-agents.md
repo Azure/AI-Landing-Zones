@@ -1,8 +1,10 @@
 # Hosted agents
 
-Agent App Orchestrator runs as a container in Foundry Agent Service. The fresh
-default is `DEPLOYMENT_TOPOLOGY=hosted-no-panel` with `maf_lite` orchestration.
-The UI remains in Azure Container Apps. This page explains the hosting contract;
+Agent App Orchestrator runs as a container in Foundry Agent Service.
+The default deployment has a web UI in Container Apps and no administrative
+panel or application-owned Cosmos DB. Its setting is
+`DEPLOYMENT_TOPOLOGY=hosted-no-panel`, with `maf_lite` orchestration.
+This page explains the hosting contract;
 the [full-stack deployment guide](deploy-full-stack.md) contains the ordered
 deployment and recovery procedures.
 
@@ -68,6 +70,7 @@ App Configuration keys and hosted process environment.
 <dd markdown="span">Stream idle timeout, default `60`.</dd>
 </dl>
 
+The default Responses protocol is `2.0.0` and Invocations is `1.0.0`.
 The supplied `hosted-agent/azure.yaml` declares the agent name, CPU, memory,
 protocols and startup command as literal fields. Its image and environment
 fields use azd interpolation. A custom application's `source.imageDigest`

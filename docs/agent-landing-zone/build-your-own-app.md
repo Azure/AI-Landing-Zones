@@ -270,9 +270,9 @@ Review the exact source's fixed downloads and configured integrations when
 editing these declarations. The bundled UI declares `[]`; both orchestrator
 and ingestion declare the tiktoken asset host over HTTPS/443. A custom
 definition is additive, so its plan can also include bundled workloads.
-Follow [runtime egress review and reconciliation](network-isolation.md#component-runtime-egress)
+Follow [runtime egress review and reconciliation](configuration.md#outbound-access)
 before provisioning. Build registries and package feeds are configured
-[separately](network-isolation.md#application-specific-package-feeds).
+[separately](configuration.md#application-specific-package-feeds).
 
 #### What a definition cannot contain
 
