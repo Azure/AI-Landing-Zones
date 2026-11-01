@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="850" viewBox="0 0 1000 850" role="img" aria-labelledby="overview-title overview-description">
+  <title id="overview-title">Agent Application overview</title>
+  <desc id="overview-description">The bundled Chainlit UI and backend for frontend run in Azure Container Apps. They support conversation, private file inputs and human workflow decisions. The orchestrator runs native Microsoft Agent Framework conversational agents, workflows or both, on one selected host: Microsoft Foundry Hosted Agents with the Responses integration, or Azure Container Apps with the Durable Extension and Durable Task Scheduler. The selected host owns native execution state. Conditional Azure Cosmos DB storage contains UI ownership and action metadata, history and feedback, not native checkpoints. The orchestrator calls model deployments in Microsoft Foundry. Search, Foundry IQ, MCP and NL2SQL tools are explicitly enabled optional integrations. Agent App Ingestion is optional source processing and indexing, separate from private conversation attachments. The defaults are hosted and conversational, with optional features disabled.</desc>
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".55" stop-color="#f3f7fc"/>
+      <stop offset="1" stop-color="#eef0fa"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0078d4"/>
+      <stop offset=".55" stop-color="#4051b5"/>
+      <stop offset="1" stop-color="#5867c6"/>
+    </linearGradient>
+    <linearGradient id="host" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eaf4ff"/>
+      <stop offset="1" stop-color="#f0f0fc"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0078d4"/>
+      <stop offset="1" stop-color="#4051b5"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-10%" width="130%" height="125%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#172b43" flood-opacity=".07"/>
+    </filter>
+    <clipPath id="runtime-header">
+      <rect x="324" y="174" width="352" height="410" rx="18"/>
+    </clipPath>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#4051b5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <symbol id="chat" viewBox="0 0 32 32">
+      <path d="M 7 5 H 25 A 3 3 0 0 1 28 8 V 21 A 3 3 0 0 1 25 24 H 13 L 6 29 V 24 A 3 3 0 0 1 4 21 V 8 A 3 3 0 0 1 7 5 Z M 10 12 H 22 M 10 17 H 18"/>
+    </symbol>
+    <symbol id="review" viewBox="0 0 32 32">
+      <path d="M 9 5 H 25 A 2 2 0 0 1 27 7 V 27 A 2 2 0 0 1 25 29 H 9 A 2 2 0 0 1 7 27 V 7 A 2 2 0 0 1 9 5 Z M 12 3 H 22 V 9 H 12 Z M 12 19 L 16 23 L 23 15"/>
+    </symbol>
+    <symbol id="cloud" viewBox="0 0 32 32">
+      <path d="M 8 25 A 6 6 0 0 1 7 13 A 9 9 0 0 1 24 10 A 8 8 0 0 1 25 25 Z M 12 18 L 16 14 L 20 18 M 16 14 V 25"/>
+    </symbol>
+    <symbol id="containers" viewBox="0 0 32 32">
+      <path d="M 16 3 L 28 10 V 23 L 16 30 L 4 23 V 10 Z M 4 10 L 16 17 L 28 10 M 16 17 V 30 M 10 6 L 22 13"/>
+    </symbol>
+    <symbol id="model" viewBox="0 0 32 32">
+      <path d="M 17 3 L 20 12 L 29 15 L 20 18 L 17 27 L 14 18 L 5 15 L 14 12 Z M 6 3 V 8 M 3.5 5.5 H 8.5 M 27 24 V 29 M 24.5 26.5 H 29.5"/>
+    </symbol>
+    <symbol id="search" viewBox="0 0 32 32">
+      <circle cx="13" cy="13" r="8"/>
+      <path d="M 19 19 L 28 28 M 9 13 H 17 M 13 9 V 17"/>
+    </symbol>
+    <symbol id="database" viewBox="0 0 32 32">
+      <ellipse cx="16" cy="7" rx="11" ry="4"/>
+      <path d="M 5 7 V 25 A 11 4 0 0 0 27 25 V 7 M 5 16 A 11 4 0 0 0 27 16"/>
+    </symbol>
+    <symbol id="ingestion" viewBox="0 0 32 32">
+      <path d="M 9 3 H 22 L 28 9 V 26 A 2 2 0 0 1 26 28 H 9 A 2 2 0 0 1 7 26 V 5 A 2 2 0 0 1 9 3 Z M 22 3 V 10 H 28 M 12 16 H 23 M 12 21 H 20 M 3 12 V 28"/>
+    </symbol>
+  </defs>
+
+  <rect x="1" y="1" width="998" height="848" rx="24" fill="url(#canvas)" stroke="#dce4ed"/>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#172b43">
+    <text x="32" y="65" font-size="30" font-weight="650" letter-spacing="-.5">From conversation to execution</text>
+    <text x="32" y="98" font-size="21" fill="#526579">The reference application, with one execution host.</text>
+    <rect x="794" y="32" width="174" height="38" rx="19" fill="url(#host)" stroke="#dce4ed"/>
+    <text x="881" y="57" text-anchor="middle" font-size="16" font-weight="650" fill="#4051b5" letter-spacing="1">NATIVE MAF</text>
+
+    <g font-size="17" font-weight="650" fill="#526579" letter-spacing="1">
+      <text x="32" y="153">01 / EXPERIENCE</text>
+      <text x="324" y="153">02 / EXECUTION</text>
+      <text x="724" y="153">03 / CAPABILITIES</text>
+    </g>
+
+    <g fill="none" stroke="#4051b5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path id="ui-runtime" d="M 282 352 H 318" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path id="runtime-models" d="M 682 237 H 718" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path id="runtime-tools" d="M 682 433 H 718" stroke-dasharray="5 6" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path id="ui-metadata" d="M 154 543 V 578" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+      <path id="ingestion-index" d="M 846 578 V 544" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+    </g>
+
+    <rect x="32" y="174" width="244" height="363" rx="18" fill="#ffffff" stroke="#dce4ed" filter="url(#shadow)"/>
+    <rect x="56" y="196" width="40" height="5" rx="2.5" fill="url(#accent)"/>
+    <text x="56" y="237" font-size="27" font-weight="650">Agent App UI</text>
+    <text x="56" y="268" font-size="22" fill="#526579">Chainlit + BFF</text>
+    <rect x="56" y="287" width="196" height="34" rx="9" fill="#f3f7fc"/>
+    <text x="154" y="310" font-size="18" text-anchor="middle" fill="#4051b5">Azure Container Apps</text>
+    <path d="M 56 339 H 252" stroke="#dce4ed"/>
+    <g fill="none" stroke="#0078d4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <use href="#chat" x="56" y="356" width="28" height="28"/>
+      <use href="#review" x="56" y="423" width="28" height="28"/>
+    </g>
+    <text x="96" y="377" font-size="24" font-weight="600">Chat</text>
+    <text x="96" y="400" font-size="18" fill="#526579">Optional private files</text>
+    <text x="96" y="443" font-size="22" font-weight="600">Workflow review</text>
+    <text x="96" y="466" font-size="18" fill="#526579">Human decisions</text>
+    <rect x="56" y="487" width="196" height="30" rx="9" fill="url(#host)"/>
+    <text x="154" y="508" font-size="18" text-anchor="middle" fill="#4051b5">Sign-in &amp; ownership</text>
+
+    <rect x="324" y="174" width="352" height="410" rx="18" fill="#ffffff" stroke="#c6d0ec" filter="url(#shadow)"/>
+    <rect x="324" y="174" width="352" height="96" fill="url(#brand)" clip-path="url(#runtime-header)"/>
+    <text x="348" y="214" font-size="27" font-weight="650" fill="#ffffff">Native execution</text>
+    <text x="348" y="247" font-size="21" fill="#ffffff">Microsoft Agent Framework</text>
+    <rect x="348" y="291" width="140" height="66" rx="11" fill="#f3f7fc" stroke="#dce4ed"/>
+    <rect x="512" y="291" width="140" height="66" rx="11" fill="#f3f7fc" stroke="#dce4ed"/>
+    <text x="418" y="318" font-size="23" font-weight="650" text-anchor="middle">Agents</text>
+    <text x="418" y="342" font-size="18" text-anchor="middle" fill="#526579">conversation</text>
+    <text x="582" y="318" font-size="23" font-weight="650" text-anchor="middle">Workflows</text>
+    <text x="582" y="342" font-size="18" text-anchor="middle" fill="#526579">human input</text>
+    <text x="500" y="331" font-size="22" text-anchor="middle" fill="#4051b5">+</text>
+    <text x="348" y="396" font-size="22" font-weight="600">Choose one host</text>
+    <text x="651" y="396" font-size="17" text-anchor="end" fill="#526579">not both</text>
+    <rect x="348" y="413" width="304" height="68" rx="12" fill="url(#host)" stroke="#d3dff0"/>
+    <rect x="348" y="497" width="304" height="68" rx="12" fill="url(#host)" stroke="#d3dff0"/>
+    <g fill="none" stroke="#4051b5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <use href="#cloud" x="364" y="432" width="30" height="30"/>
+      <use href="#containers" x="364" y="515" width="30" height="30"/>
+    </g>
+    <text x="408" y="442" font-size="23" font-weight="650">Foundry Hosted</text>
+    <text x="408" y="465" font-size="18" fill="#526579">Responses integration</text>
+    <text x="408" y="526" font-size="23" font-weight="650">Container Apps</text>
+    <text x="408" y="549" font-size="18" fill="#526579">Durable Extension + DTS</text>
+    <text x="500" y="619" font-size="20" font-weight="600" text-anchor="middle" fill="#4051b5">Selected host owns execution state</text>
+    <text x="500" y="648" font-size="19" text-anchor="middle" fill="#526579">Separate from UI product metadata</text>
+    <text x="500" y="690" font-size="19" text-anchor="middle" fill="#526579">Run agents, workflows or both.</text>
+    <text x="500" y="715" font-size="17" text-anchor="middle" fill="#526579">DTS = Durable Task Scheduler</text>
+
+    <rect x="724" y="174" width="244" height="129" rx="18" fill="#ffffff" stroke="#dce4ed" filter="url(#shadow)"/>
+    <rect x="748" y="195" width="40" height="5" rx="2.5" fill="url(#accent)"/>
+    <use href="#model" x="748" y="212" width="32" height="32" fill="none" stroke="#0078d4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="792" y="237" font-size="26" font-weight="650">Models</text>
+    <text x="748" y="267" font-size="21" fill="#526579">Microsoft Foundry</text>
+    <text x="748" y="291" font-size="18" fill="#526579">Model deployments</text>
+
+    <rect x="724" y="334" width="244" height="204" rx="18" fill="#ffffff" stroke="#dce4ed" filter="url(#shadow)"/>
+    <text x="748" y="373" font-size="24" font-weight="650">Optional tools</text>
+    <use href="#search" x="748" y="394" width="28" height="28" fill="none" stroke="#0078d4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="786" y="416" font-size="20">Azure AI Search</text>
+    <text x="786" y="444" font-size="20">Foundry IQ</text>
+    <path d="M 748 462 H 944" stroke="#dce4ed"/>
+    <text x="748" y="492" font-size="21">MCP / NL2SQL</text>
+    <text x="748" y="518" font-size="18" fill="#526579">Enabled explicitly</text>
+
+    <rect x="32" y="584" width="244" height="148" rx="18" fill="url(#host)" stroke="#d3dff0"/>
+    <use href="#database" x="56" y="606" width="28" height="28" fill="none" stroke="#4051b5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="96" y="628" font-size="21" font-weight="650">UI metadata</text>
+    <text x="56" y="660" font-size="22" font-weight="600">Azure Cosmos DB</text>
+    <text x="56" y="687" font-size="18" fill="#526579">Owners &amp; action receipts</text>
+    <text x="56" y="713" font-size="18" fill="#526579">History / feedback</text>
+
+    <rect x="724" y="584" width="244" height="148" rx="18" fill="url(#host)" stroke="#d3dff0"/>
+    <use href="#ingestion" x="748" y="606" width="28" height="28" fill="none" stroke="#4051b5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="788" y="628" font-size="19" font-weight="650">Optional ingestion</text>
+    <text x="748" y="660" font-size="21" font-weight="600">Agent App Ingestion</text>
+    <text x="748" y="687" font-size="19" fill="#526579">Process &amp; index sources</text>
+    <text x="748" y="713" font-size="18" fill="#526579">Separate from chat files</text>
+
+    <path d="M 32 762 H 968" stroke="#dce4ed"/>
+    <g fill="none" stroke="#4051b5" stroke-width="2" stroke-linecap="round">
+      <path d="M 34 790 H 76" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <path d="M 358 790 H 400" stroke-dasharray="5 6" marker-end="url(#arrow)"/>
+    </g>
+    <text x="92" y="796" font-size="18" fill="#526579">Request / response</text>
+    <text x="416" y="796" font-size="18" fill="#526579">Conditional integration / storage</text>
+    <text x="32" y="829" font-size="18" fill="#526579">Defaults: hosted + conversational. Optional features are enabled explicitly.</text>
+  </g>
+</svg>
