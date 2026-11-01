@@ -191,12 +191,20 @@ Small catalogs can use a Cosmos vector full scan below the quantization
 threshold of 1,000 vectors. Measure RU consumption and latency rather than
 assuming index savings.
 
-Setting `DEPLOY_AGENT_APP_MCP=false` disables the runtime tools; the catalog
-account, container declarations and vector policies are retained
-for safe cleanup rather than automatically destroyed. Sources, data and grants
-also need explicit owner review. Recovery uses a
-compatible image/configuration or controlled deactivation, never direct SQL
-inside the orchestrator as a fallback.
+When `DEPLOY_AGENT_APP_MCP=false` is applied through the platform lifecycle,
+both providers preserve application Cosmos, catalog-container declarations and
+vector policies. These resources are retained for safe cleanup rather than
+automatically destroyed.
+The parent publishes `MCP_ENABLED=false` and an empty caller allowlist;
+the shared helper restarts any remaining MCP serving revisions to revoke
+callers. Terraform removes deselected MCP compute from its managed state,
+whereas Bicep incremental deployments can leave the Container App resource
+present. Do not assume Bicep automatically deletes that compute. After
+confirming disablement has taken effect, the operator may explicitly remove
+an unused MCP Container App if desired, but must not delete the Cosmos account
+or catalog as part of that compute cleanup. Sources, data and other grants
+still need explicit owner review. Recovery uses a compatible image/configuration
+or controlled deactivation, never direct SQL inside the orchestrator as a fallback.
 
 The server's transport, authentication, configuration and observability can
 support future reviewed tool modules. Adding a tool is development work with
