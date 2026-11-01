@@ -510,8 +510,13 @@ Tasks. Setting `BUILD_MODE=local` does not replace that hosted image workflow.
 Component scripts prefer a nonempty shell `APP_CONFIG_ENDPOINT` over the azd
 environment value. Confirm the endpoint before invoking them. They read the
 application destination from `AZURE_APP_RESOURCE_GROUP` under `agent-lz`.
-Only a successful missing or empty read falls back to `AZURE_RESOURCE_GROUP`.
+For UI and ingestion scripts, only a successful missing or empty read falls
+back to `AZURE_RESOURCE_GROUP`.
 An inaccessible store or conflicting destinations stops deployment.
+Agent App MCP Server requires `AZURE_APP_RESOURCE_GROUP`; it does not fall
+back to the Foundry/root `AZURE_RESOURCE_GROUP`. The platform automatically
+publishes its application target and matching registry outputs under `agent-lz`;
+operators do not need to hand-configure them for normal deployment.
 Do not treat deployment hooks as offline checks or run them from a test suite.
 
 ### Change a runtime setting
