@@ -106,6 +106,21 @@ a 30-second timeout and 1,000 rows. DAX calls fail closed when the native host
 does not supply the required delegated token binding; registration alone is
 not evidence of working end-to-end Fabric delegation.
 
+### Failures, cancellation and cleanup
+
+SQL result translation handles the actual Azure SDK, ODBC and Pydantic
+failure families through its existing error-result contract. Read-only guards,
+datasource authorization, the 1,000-row/30-second bounds and resource cleanup
+remain in effect. Unexpected implementation failures propagate unchanged from
+the helper; they are not converted into a success-shaped, disabled or
+error-result fallback.
+
+Cancellation preserves the original caller cancellation whether the worker
+completes, the driver fails, the worker unexpectedly fails or the worker itself
+cancels. The cursor and connection are not closed while that worker is still
+running. Cleanup waits for the worker to finish; cancelling the caller does
+not guarantee instant SQL-server cancellation.
+
 ### Database identity and limits
 
 For `sql_database`, omitting `uid` uses managed identity with Azure CLI as the

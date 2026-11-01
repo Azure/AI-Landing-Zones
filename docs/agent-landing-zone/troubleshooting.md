@@ -467,6 +467,10 @@ Vault references.
 **Diagnose:** Distinguish name resolution, routing, TLS and HTTP authorization
 errors at both endpoints. Confirm the actual runtime identity and identify
 which connection stage stalls before choosing a recovery action.
+Runtime availability handling catches Azure SDK and Requests transport
+failures, not arbitrary provider exceptions. An unexpected provider failure
+propagates unchanged; do not diagnose it as disabled configuration or successful
+empty settings. Distinguish the failure family before applying transport recovery.
 
 **Correct:** Only for the confirmed transport compatibility case, use the
 [transport and TLS guidance](application-settings.md#orchestrator-tls-compatibility).
@@ -767,6 +771,25 @@ for startup settings, as specified in those workflows.
 
 **Verify:** Repeat the same authenticated task and test document authorization
 when retrieval is involved. Keep credentials and content out of diagnostics.
+
+#### A SQL query fails or its caller is cancelled
+
+**Diagnose:** SQL result translation retains error-result behavior for actual
+Azure SDK, ODBC and Pydantic failures. Unexpected implementation failures
+propagate unchanged instead of being converted into disabled, success-shaped
+or generic error-result fallbacks. Distinguish a known dependency/data failure
+from an implementation defect; do not retry under broader datasource access.
+
+**Correct:** Preserve read-only guards, datasource authorization and the
+1,000-row/30-second bounds. After caller cancellation, retain that original
+cancellation even if the worker completes, the driver or worker fails, or
+the worker cancels. Cursor/connection cleanup must wait until the worker
+finishes; do not close resources beneath a running worker.
+
+**Verify:** Check the failure/cancellation outcome and cleanup using the
+owning component's regression tests. Caller cancellation is not evidence
+of instant SQL-server cancellation.
+See [SQL failure handling](nl2sql.md#failures-cancellation-and-cleanup).
 
 #### Access denied between services
 

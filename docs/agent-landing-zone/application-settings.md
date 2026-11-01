@@ -44,6 +44,11 @@ permissions only to actual consumers at the required scope.
 A missing required setting or authorization context must be reported, not
 converted into an insecure fallback or a successful empty result.
 
+The runtime's App Configuration availability handling catches actual Azure SDK
+and Requests transport failures only. Unexpected provider failures propagate
+unchanged rather than silently disabling configuration, being relabelled as
+ordinary unavailability or becoming a success-shaped result.
+
 ## Functional parameters and deployment choices
 
 | Kind | How it takes effect |
