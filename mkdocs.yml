@@ -69,7 +69,8 @@ nav:
           - "Overview": agent-landing-zone/application.md
           - Agents:
               - "Hosting": agent-landing-zone/hosted-agents.md
-              - "Strategies & prompts": agent-landing-zone/agent-strategies.md
+              - "Agents & prompts": agent-landing-zone/agent-strategies.md
+              - "Workflows & human input": agent-landing-zone/workflows.md
               - "Tools & MCP": agent-landing-zone/agent-tools.md
           - "Chat & channels":
               - "Sign-in & access": agent-landing-zone/application-auth.md

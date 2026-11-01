@@ -5,7 +5,9 @@
 Provision the Azure foundation with Terraform and deploy the Agent Application
 through the shared azd lifecycle. The default `hosted-no-panel` layout uses a
 Foundry-hosted orchestrator, a Container Apps UI and native Foundry IQ ingestion
-and retrieval, without an administrative panel or Agent Application Cosmos DB.
+and retrieval, without an administrative panel. Native Hosted execution does
+not require application Cosmos DB; enabled UI product metadata declares its
+own dependencies.
 
 Terraform owns the foundation, not a second application deployment mechanism.
 `azd provision` creates and configures the foundation, `azd deploy` builds and
@@ -85,6 +87,14 @@ repositories and commits. Hooks validate the definition against those pins,
 fetch the selected sources, prepare the hosted image and coordinate deployment.
 Foundation outputs pass automatically to the component projects.
 
+Confirm `APPLICATION_MODE` and `ORCHESTRATION_HOST` through the canonical
+[native execution selection](configuration.md#native-execution-selection).
+Conversation is the default experience. Hosted conversation and workflow
+require separate publications when both are selected; pass their actual
+distinct endpoints to the UI. The Container Apps alternative uses the
+official Durable Extension worker/client and provisioned DTS binding.
+Do not treat every canonical runtime key as an implied `azd env` input.
+
 ### Step 3: Provision the foundation
 
 Complete the [Terraform infrastructure review](deploy-terraform-infra-only.md#step-5-review-and-provision)
@@ -144,6 +154,13 @@ Then follow the shared [application validation](deploy-full-stack.md#validation)
    resolving the protected-retrieval gate, prove both permitted document
    retrieval and denial for an unauthorized user.
 5. Correlate requests with telemetry and record unmet capabilities as blocked.
+
+For native execution, verify session continuity from a fresh client.
+For a selected workflow, test pending review, approval/rejection and
+stale/duplicate/wrong-owner replies. Container Apps also needs evidence that
+the pending run survives an owned worker restart. Use the same exact product
+entrypoints/images on both providers; mocks do not establish deployed parity.
+See [Workflows & human input](workflows.md#acceptance-checks).
 
 Record source, manifest, inputs, backend identity/key, provider lock and image
 digests without exposing state or secrets. In an authorized test environment,

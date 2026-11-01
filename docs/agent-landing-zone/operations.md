@@ -2,113 +2,98 @@
 
 # Administration
 
-The application has separate administrative surfaces for conversations,
-configuration and document processing. Deploy and authorize only the ones
-your operators need. An administrative role does not grant access to every
-source document.
+Native execution, UI product metadata and optional document processing have
+separate operational owners. Deploy and authorize only the surfaces needed
+by the installation. An operator role is not blanket permission to read
+every user's transcript, private attachment or source document.
 
-## Choose the administrative surface
+## Choose the operational surface
 
-| Surface | Purpose | Prerequisite |
-| --- | --- | --- |
-| Classic orchestrator dashboard | Inspect classic conversations and change allowlisted settings. | `ENABLE_DASHBOARD=true`, built dashboard assets and configured Entra access. |
-| Ingestion dashboard | Inspect files, jobs, schedules and allowlisted ingestion settings. | Selected ingestion service and its administrative surface. |
-| Hosted user panel | Owner-scoped conversation and feedback APIs in the UI service. | Panel deployment, active continuity and user-history gates. |
-| Operator overview and curation | Aggregate metrics and blocked-file curation. | Panel deployment and separately validated operator authorization. |
+| Area | Responsibility |
+| --- | --- |
+| Foundry Hosted | Native application publications, session/workflow state and host telemetry |
+| Container Apps and Durable Task Scheduler | Durable worker lifecycle, scheduler connectivity and native run state |
+| UI/BFF | Owner mappings, history discovery, feedback and enabled product administration |
+| Optional ingestion service | Files, indexing/purge jobs, schedules and allowlisted processing settings |
+| App Configuration and Key Vault | Declared settings, supported refresh, scoped access and secret rotation |
 
-The default `hosted-no-panel` topology does not deploy the hosted administrative
-panel or its application Cosmos resources. Selecting a panel topology does
-not automatically enable history, feedback or operator access.
+An administrative panel is not required for native persistence.
+Do not deploy a classic orchestrator or ingestion service to act as a second
+workflow-state store. If an enabled UI feature requires a metadata store,
+provision that dependency directly and grant access to its actual consumer.
 
-## Classic orchestrator dashboard
+## Conversations, workflows and feedback
 
-Set `ENABLE_DASHBOARD=true` and deploy the built dashboard assets to serve
-`/dashboard/`. Use one Entra app registration for both the dashboard SPA and API.
-Its client ID is the backend token audience.
+Use the selected host's official client and service operations to inspect
+native execution. Product-facing reads and actions must pass through the
+authenticated BFF owner checks; arbitrary run/session IDs are not permission.
 
-1. Add the **Single-page application** platform with the redirect
-   `https://<orchestrator-host>/dashboard/`, including its trailing slash.
-   Add local redirects only for development.
-2. Expose the delegated API scope `api://<client-id>/access_as_user` and
-   complete the required consent.
-3. Define an enabled **Users/Groups** app role with exact value `Admin` and
-   assign approved operators through the enterprise application.
-4. Publish `OAUTH_AZURE_AD_TENANT_ID` and `OAUTH_AZURE_AD_CLIENT_ID`.
-   `OAUTH_AZURE_AD_API_SCOPE` can override the requested scope on that API.
-5. Restart the backend and sign in again after role changes.
+Pending human input belongs to the native workflow. An operator UI must not
+silently convert a pending request into an approval or manufacture a new run
+after a browser disconnect.
+See [Workflows & human input](workflows.md).
 
-Use the dashboard API's access token, not a Graph token. An invalid bearer
-returns `401`, and a valid token without `Admin` returns `403`.
-A configured tenant without a client ID is a configuration error.
-The SPA needs no client secret. Backend OBO secrets remain server-side.
-
-!!! warning "Configure identity before exposing a dashboard"
-    The classic dashboard's development gate is open when the tenant is absent.
-    The dashboard can write allowlisted settings, it is not read-only.
-    Do not expose this development configuration as a production endpoint.
-
-Your tenant's **Assignment required** policy can reject an unassigned user
-before the API is reached. Preserve the approved production policy rather
-than weakening it just to observe an API denial.
+Metadata and native state have distinct lifecycle operations. Define retention,
+deletion and partial-failure handling for both, including attachments,
+feedback, audit data and backups.
+[Conversations & files](conversations.md) and
+[User feedback](user-feedback.md) explain the product boundaries.
+Do not assume the ingestion dashboard is a consolidated native history or
+feedback administration surface.
 
 ## Ingestion dashboard
 
-The ingestion dashboard manages document processing, not conversational agents.
-Review [Jobs & schedules](ingestion-jobs.md) before starting or changing a job.
-Startup and cron runs can write or delete indexed content.
+The optional ingestion service manages source processing, not agent/workflow
+execution. Review [Jobs & schedules](ingestion-jobs.md) before starting or
+changing jobs: startup and scheduled runs can index and delete content.
 
-With `DEPLOY_HOSTED_AGENT_ORCHESTRATION=false`, the classic ingestion admin
+With `DEPLOY_HOSTED_AGENT_ORCHESTRATION=false`, its ordinary ingestion admin
 routes mount. In hosted mode, `DEPLOY_ADMINISTRATIVE_PANEL=true` is also
 required to mount the hosted admin surface. A built frontend bundle is needed
-for its dashboard UI.
+for the dashboard UI. Hiding the panel does not disable document APIs or jobs.
 
-Classic manual job runs and configuration mutations use the `Admin` gate when
-Entra is configured. Administrative reads and file unblocking do not share
-that unconditional gate. Protect the whole service boundary deliberately,
-including the tenant-free development configuration.
-Hosted `/api/panel/*` instead requires a validated `Admin` bearer with no
-tenant-free bypass.
+Manual job runs and configuration mutations use the `Admin` gate when Entra
+is configured. Administrative reads and file unblocking do not all share that
+unconditional gate. Protect the whole service boundary deliberately, including
+the tenant-free development configuration.
+Hosted ingestion `/api/panel/*` instead requires a validated `Admin` bearer
+with no tenant-free bypass. These gates are separate from UI user history.
 
 The ingestion panel exposes its own feedback schema and an ingestion overview.
-Its conversation-history endpoint returns `501`, it does not retrieve managed
-Foundry transcripts. Do not assume it shares the UI panel's feedback schema.
+Its conversation-history endpoint returns `501`; it does not retrieve managed
+native transcripts. Do not assume it shares the UI's metadata or feedback
+schema. See the [ingestion API contracts](application-api.md#ingestion-administration).
 
-## Hosted conversation and feedback panel
-
-User-facing UI routes require `DEPLOY_ADMINISTRATIVE_PANEL`, active hosted
-continuity and `PANEL_HISTORY_ENABLED`. Configure the token audience through
-`PANEL_CONVERSATIONS_TOKEN_AUDIENCE`, the tenant through
-`PANEL_CONVERSATIONS_TENANT_ID` or the OAuth tenant, and the required Cosmos
-metadata access.
-
-`PANEL_CONVERSATION_ENUMERATION_MODE=owner_index` is the default.
-Delegated enumeration requires separate evidence through
-`PANEL_HISTORY_OWNER_BINDING_VALIDATED`. These gates do not grant Azure
-permissions. Missing active gates return `503`.
-
-The default owner-index and feedback containers are
-`panel-conversation-owner-index` and `panel-feedback`. Cosmos holds metadata,
-not the managed transcript. Follow [Conversations & files](conversations.md)
-and [User feedback](user-feedback.md) for their setup and limitations.
-
-## Operator overview and curation
+### Operator overview and curation
 
 Enable `PANEL_OPERATOR_SURFACES_ENABLED` only after validating the approved
 operator role or group. Set an explicit `PANEL_OPERATOR_APP_ROLE` or
-`PANEL_OPERATOR_GROUP_ID`. These are separate from user-history access.
+`PANEL_OPERATOR_GROUP_ID`. A UI user-history permission does not imply this
+aggregate/operator access.
 
-The ingestion operator routes additionally require the
-`DATA_INGEST_APP_APIKEY` cursor-signing secret and panel deployment.
-They accept delegated user tokens, not app-only tokens. Aggregate metrics
-suppress groups smaller than `PANEL_OVERVIEW_MIN_CARDINALITY`, default `5`.
+The ingestion operator routes also require the `DATA_INGEST_APP_APIKEY`
+cursor-signing secret and panel deployment. They accept delegated user tokens,
+not app-only tokens. Aggregate metrics suppress groups smaller than
+`PANEL_OVERVIEW_MIN_CARDINALITY`, default `5`.
 Blocked-file curation operates on Blob logs, not conversation messages.
-Its caller-bound signed cursor expires after `PANEL_CURSOR_TTL_SECONDS`,
-default `600`.
+The caller-bound signed cursor expires after `PANEL_CURSOR_TTL_SECONDS`,
+default `600`. See [operator API contracts](application-api.md#operator-metrics-and-corpus-curation).
 
 Configuration writes can partially succeed. A saved value is not undone by a
 failed local refresh or later schedule-application error. Verify effective
-settings before retrying. Use [Application settings](application-settings.md)
-and the [API reference](application-api.md) for the corresponding boundaries.
+settings before retrying.
+
+## Configuration changes
+
+Use the [ownership inventory](configuration.md#configuration-ownership-and-declarations)
+and [Application settings](application-settings.md) before editing a key.
+Supported functional parameters refresh through the official provider.
+Running workflows retain their functional snapshots; current authorization
+is rechecked separately.
+
+Structural changes to host, graph, identity, persistence, registration names
+or process bootstrap require compatible deployment. An accepted write is
+not proof that every affected process loaded it.
 
 <span id="lifecycle-guidance-has-moved"></span>
 
@@ -123,9 +108,12 @@ and the [API reference](application-api.md) for the corresponding boundaries.
   resource-group mapping. Follow [Bicep maintenance](deploy-infra-only.md)
   or [Terraform maintenance](deploy-terraform-infra-only.md).
 
+Native session/checkpoint state is not automatically portable across hosts or
+incompatible graph publications. Retain the previous deployment's state for
+rollback; do not delete, merge or convert it as part of application recovery.
+
 <span id="upgrade-ingestion-selection-to-v430"></span>
 <span id="change-ingestion-selection-safely"></span>
 
 Changing [ingestion selection](ingestion.md) does not remove existing resources
-or permissions. Environment destruction is a separate authorized operation,
-not an application rollback.
+or permissions. Environment destruction is a separate authorized operation.

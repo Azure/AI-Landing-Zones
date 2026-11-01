@@ -6,6 +6,10 @@ This reference describes the **default Agent Application layout**:
 application panel or application Cosmos DB in this layout. Native Foundry IQ
 ingestion is selected by default; Agent App Ingestion is optional.
 Foundry's own backing resources are separate from application data stores.
+`ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`.
+Workflow mode, `both`, enabled history, feedback or attachments adds UI product metadata,
+not an execution checkpoint database. Durable Container Apps is a separate
+native execution choice with DTS.
 
 The [full-stack deployment guide](../agent-landing-zone/deploy-full-stack.md) provisions
 the composed layout, not the raw root parameters alone. Custom definitions,
@@ -33,27 +37,37 @@ principal ID, whether system-assigned or an approved user-assigned identity.
 
 | Role | Scope | Purpose |
 | --- | --- | --- |
-| App Configuration Data Reader | Application configuration store | Read runtime keys and Key Vault references. |
+| App Configuration Data Reader | Application configuration store | Read relevant runtime keys; this does not grant Key Vault access. |
 | AcrPull | Application container registry | Pull the UI image. |
-| Key Vault Secrets User | Application Key Vault | Resolve UI credentials and other configured secret references. |
-| Storage Blob Data Reader | Application Blob storage account | Read referenced document blobs. |
-| Storage Blob Delegator | Application Blob storage account | Obtain delegation keys for supported Blob links. |
+| Key Vault Secrets User | Required UI authentication secret references | Only for the declared UI authentication secret consumer, not implicit base access. |
+| Search Index Data Reader | Selected Search resource | When the UI's declared retrieval-reader capability needs protected citation authorization. |
+| Storage Blob Delegator | Declared existing Storage resource | UI's declared Blob-delegation capability; delegation-key access is not user/source authorization. |
+| Scoped Cosmos metadata access | `native-ui-metadata`, `/principal_id` owner `tid:oid` | Frontend-only when workflow mode, `both`, history, feedback or attachments selects product metadata. |
 
-The default frontend role list does **not** include Search index access, model
-inference or application Cosmos DB access. Its delegated Foundry calls use
-the signed-in user's token; granting these services to the UI identity does
-not fix a denied user call.
+The implicit base grants are configuration read and image pull.
+Other assignments follow actual declared consumers; do not add model access,
+arbitrary secrets or Cosmos checkpoints to the UI.
+Delegated Foundry and shared-source Storage calls use the signed-in user's
+token. Broader UI workload grants do not fix a denied user call or authorize
+another user's native session.
+A Blob Delegator grant does not permit bypassing current user/source
+authorization when issuing or consuming a protected file reference.
+UI authentication secrets remain secret-scoped; there is no default
+vault-wide UI grant.
 
 ## Hosted agent runtime
 
 After agent deployment, the hosted access reconciliation discovers the
-**actual runtime principal**, then applies this closed grant set:
+**actual runtime principal**, then applies the selected runtime/capability grants:
 
 | Role | Scope | Condition |
 | --- | --- | --- |
 | App Configuration Data Reader | Selected application configuration store | Runtime configuration. |
 | Cognitive Services OpenAI User | Selected Foundry account | Direct model calls from the supplied runtime. |
 | Key Vault Secrets User | Exact secret referenced by `AUDIT_HMAC_KEY` | Only when the audit key is configured as a Key Vault reference. |
+| Key Vault Secrets User | Exact declared MCP/tool secret | Only for the enabled consumer and named secret. |
+| Declared retrieval/tool access | Exact selected source/resource | Only for enabled registered capabilities. |
+| Scoped datasource-catalog reader | Exact direct NL2SQL container, default `datasources` | Only when `NL2SQL_ENABLED=true` and explicit `NL2SQL_SOURCE_REGISTRY=cosmos`; no account-wide catalog grant. This is not execution state. |
 
 These are not a blanket grant to every secret, source or tool. Reconciliation
 does not automatically grant arbitrary source access or authorize application
@@ -68,6 +82,21 @@ intended azd environment selected. Use the
 [hosted access bootstrap/recovery procedure](../agent-landing-zone/hosted-agents.md#bootstrap-the-agents-runtime-access)
 for approved reconciliation. Do not substitute the UI or project identity
 when the runtime principal cannot be discovered.
+
+Tool secret declarations use `NATIVE_TOOL_SECRET_NAMES` (default `[]`), a JSON
+array of actual secret names, never values. This is a platform scoped-grant
+declaration; the native runtime does not consume it to load secrets.
+App Configuration reader permission does not
+resolve Key Vault references without the consumer's separate secret grant.
+
+For Container Apps, the native durable worker and UI client need the scheduler's
+native data-plane access on the actual configured backend/task hub.
+Use its provisioned nonsecret managed-identity binding:
+`Endpoint=<actual output>;TaskHub=agent-lz;Authentication=ManagedIdentity`.
+Keep it compatible with both the native worker and UI client.
+Scheduler service permission is not product-user ownership, and the worker
+does not require public HTTP ingress, Dapr or an Azure Functions app.
+Hosted and DTS execution do not use application Cosmos checkpoints.
 
 <span id="microsoft-foundry-and-ai-search-assignments"></span>
 
@@ -88,7 +117,7 @@ The registry grant allows Foundry to pull the hosted image; it does not
 authorize the running agent to read application data. Likewise, ingestion
 or project connection access does not prove per-user retrieval filtering.
 [Sign-in and document access](../agent-landing-zone/application-auth.md)
-describes the missing hosted retrieval identity integration.
+describes the separate hosted retrieval identity integration.
 
 <span id="executor-role-assignments"></span>
 
@@ -132,7 +161,10 @@ Foundry Agent Consumer is the least-privilege built-in role for endpoint-only
 callers; use the intended agent or project scope.
 
 Optional ingestion, administrative panel, custom tools and protected sources
-need their own reviewed grants and integration. Do not add Cosmos or tool
-permissions to the default UI merely because another topology uses them.
+need their own reviewed grants and integration. Select UI metadata when the
+mode/history/feedback/attachment contract requires it, and grant only its frontend
+consumer. Private inline attachments require no additional Blob/SAS or
+ingestion grant. Do not add runtime checkpoint Cosmos or arbitrary tool access merely because
+another topology uses it.
 See the [capability readiness matrix](../agent-landing-zone/application.md#capability-readiness)
 and [capability profiles](../agent-landing-zone/build-your-own-app.md#capability-profiles).

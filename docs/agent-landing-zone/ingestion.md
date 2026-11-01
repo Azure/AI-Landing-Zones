@@ -1,8 +1,9 @@
-# Ingestion and conversation uploads
+# Ingestion and private-input boundaries
 
-Foundry IQ provides the standard source-ingestion path. Conversation attachments
-and custom processing are separate capabilities that can require optional
-**Agent App Ingestion**.
+Foundry IQ provides the standard shared-source ingestion path.
+Private attachments and custom processing are separate capabilities.
+**Agent App Ingestion** is optional and disabled by default; it is not the
+store for native execution state or UI/BFF product metadata.
 
 This page explains those boundaries. Deployment steps are in the
 [full-stack deployment guide](deploy-full-stack.md). Source and index inputs are
@@ -65,46 +66,27 @@ selections in the accelerator.
 
 <span id="conversation-uploads-are-not-native-source-ingestion"></span>
 
-## 2. Conversation file uploads
+<span id="2-private-conversation-and-process-attachments"></span>
 
-A chat attachment is processed for one conversation, not added to the shared
-native Blob corpus. This path **requires Agent App Ingestion**, its reachable
-endpoint and a compatible Search index. Alongside the default native Blob
-source, the additional conversation `searchIndex` source needs
-`FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true`.
-The flag is invalid without the ingestion app.
+## 2. Private conversational attachments
 
-With `DEPLOY_INGESTION_CONTAINER_APP=false`, Agent App UI hides attachment
-controls and rejects server uploads and client preflight before resolving an
-ingestion endpoint or Dapr fallback. Setting it to `true` permits the upload
-path. Retrieval uses the built-in delegated Search route and native index
-permissions. Enabling processing does not grant access to uploaded content.
+`ENABLE_PRIVATE_ATTACHMENTS` selects validated inline conversational input
+in `conversational` or `both`. Workflow attachments are unsupported.
+Hosted uses official file/image inputs; DTS uses native context messages/IDs.
+The path does **not** call Agent App Ingestion, mint Blob SAS, accept input
+URLs or publish the file into a corporate knowledge corpus.
+It selects UI owner mappings and descriptors, not storage of file bytes.
+See [Private attachments](conversations.md#private-attachments) for exact limits.
 
-The UI's attachment controls require authenticated access. Anonymous Copilot
-sessions cannot upload. The chat handler accepts PDFs, up to five files,
-15 MiB per file and 25 MiB total. Hosted uploads require the UI's existing hosted
-conversation identifier. A text turn establishes it in the non-continuity hosted
-path. Continuity-enabled chat does not populate that upload identifier.
+Do not enable the custom ingestion service simply to retain owner mappings,
+history discovery or feedback. Selecting ingestion is a processing decision,
+not a way to make native Agent or Workflow persistence work.
+The supplied private attachment path has no custom-ingestion fallback.
 
-The UI requires a valid object ID from its authenticated uploader context before
-calling ingestion. Ingestion stamps every chunk with that uploader in
-`metadata_security_user_ids`, an empty `metadata_security_group_ids` array,
-an empty `metadata_security_rbac_scope` and the conversation ID. The platform
-enables native permission filtering over these fields.
-
-**Conversation scope** uses the hosted backend's conversation namespace,
-not the local UI thread ID. The same identifier must reach the indexed upload
-and retrieval filter. Native Search authorizes the uploader from the delegated
-Search token and the ingested user ACL. The additional filter restricts results
-to the current `conversationId`. Neither a conversation ID nor an opaque hosted
-user/partition identifier grants document access.
-
-Missing required delegation or conversation scope stops retrieval. A configured
-upload source cannot be silently skipped to return only shared-corpus results,
-and a failed source cannot be retried without the user's credential.
-The [conversation PDF reference](multimodality.md#attach-a-pdf-to-a-conversation)
-describes source bindings. [Application access](application-auth.md)
-describes the integrated identity path and consent requirements.
+See [Conversations & files](conversations.md) and
+[Application access](application-auth.md) for user and source boundaries.
+Shared corpus formats and image extraction are covered in
+[Document formats & images](multimodality.md).
 
 <span id="select-the-optional-application"></span>
 <span id="select-agent-app-ingestion"></span>
@@ -113,8 +95,8 @@ describes the integrated identity path and consent requirements.
 ## 3. Custom ingestion only when needed
 
 Agent App Ingestion is useful when the managed source does not meet processing
-requirements, or when conversation uploads or the application's custom
-SharePoint jobs are required. Its format-specific processing performs chunking
+requirements, or when the application's custom SharePoint jobs are required.
+Its format-specific processing performs chunking
 and embedding generation and writes content to Search. An independent pipeline
 can instead populate a compatible index exposed through a Foundry IQ
 `searchIndex` source.
@@ -138,7 +120,7 @@ native Foundry tool. Its `SHAREPOINT_*` credentials are not the
 For the bundled Agent Application, `DEPLOY_INGESTION_CONTAINER_APP` selects
 the optional component through the [full-stack deployment guide](deploy-full-stack.md),
 not a runtime-only edit. Existing environments retain their recorded selection.
-custom application definitions retain their declared components. Selection does
+Custom application definitions retain their declared components. Selection does
 not change retrieval bindings or document authorization.
 Omitting the application does not delete deployed resources, indexed documents
 or identity grants. Retirement needs separate authorization.
@@ -173,7 +155,7 @@ or identity grants. Retirement needs separate authorization.
 
 `USE_DOCUMENT_INTELLIGENCE=false` selects Content Understanding by default.
 `MULTIMODAL=false` keeps the additional figure extraction and captioning path
-off. Neither setting chooses the orchestrator's strategy or changes the native
+off. Neither setting chooses an application mode or changes the native
 Foundry IQ source's processing configuration.
 
 An ingestion-maintained index can be attached to Foundry IQ as a `searchIndex`

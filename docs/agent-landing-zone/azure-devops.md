@@ -77,7 +77,7 @@ and generated provider files.
 | --- | --- |
 | `DEPLOYMENT_TOPOLOGY` | Keep `hosted-no-panel` for this default deployment. |
 | `HOSTED_AGENT_RESOURCE_SCOPE` | Required **before first provision** for hosted modes: the deployed Foundry delegated-user audience followed by `/.default`. It has no implicit runtime default. |
-| `DEPLOY_INGESTION_CONTAINER_APP` | Keep `'false'` for native Foundry IQ source ingestion. Additional ingestion and upload capabilities require their own acceptance checks. Preserve existing selections during recovery. |
+| `DEPLOY_INGESTION_CONTAINER_APP` | Keep `'false'` for native Foundry IQ source ingestion. Custom ingestion requires separate acceptance; selecting it does not enable native private uploads. Preserve existing selections during recovery. |
 | `NETWORK_ISOLATION` | Explicit `'true'`. Do not change it merely to make a pipeline pass. |
 | `BUILD_MODE` | `acr-task`; private image builds use the foundation's ACR Tasks pool. Local Docker is not required. |
 
@@ -87,7 +87,8 @@ Preserve an existing environment's recorded layout. This example is not a
 procedure for changing runtime layouts.
 
 !!! warning "Automation does not close runtime capability gaps"
-    Keep `maf_lite` and Foundry IQ as the default runtime choices. The
+    Keep the default conversational MAF Agent with its configured Foundry IQ
+    capability. The
     source-permission acceptance in the full-stack deployment guide applies to
     CI/CD. The integrated native path still needs downstream consent and
     real-user allow/deny evidence before promotion. Pipeline settings, weaker
@@ -489,10 +490,12 @@ Before promotion, record release evidence for the preceding environment:
    that document's permission, verify the content is not returned. Also verify
    unauthenticated requests are rejected where required. Check that logs do not
    contain tokens or protected document bodies.
-4. Exercise selected ingestion/upload, history, panel and continuity features;
-   check disabled surfaces are unavailable. Conversation uploads require
-   Agent App Ingestion and upload eligibility; native Blob ingestion handles
-   the configured source separately.
+4. Exercise selected workflow, history, feedback and ingestion features;
+   check disabled surfaces are unavailable. If private attachments are selected,
+   verify supported inline input, owner-scoped native transport and denied
+   cross-user access; disabled attachments must reject direct uploads.
+   Do not report transport checks as verified model PDF/image understanding.
+   Native Blob ingestion handles the configured shared source separately.
 5. Inspect service health, RBAC and private endpoint resolution, and attach
    sanitized evidence to the run/change record. See
    [application health and diagnostics](troubleshooting.md) and
@@ -527,7 +530,7 @@ tenant consent. Perform those acceptance checks separately.
 | Private DNS/connectivity check fails | Verify the Azure Pipelines runner's network/DNS/firewall path. An ACR Tasks pool does not connect the pipeline agent. Keep post-provision nondeferred. |
 | Refresh fails | Check the azd environment name, subscription, prior deployment and read permission. Stop; do not swallow the error or silently provision another group. |
 | Stale sibling checkout / source mismatch | Use the clean workspace and exact manifest/local source commits. Do not remove commit validation or update pins only in PROD. |
-| Hosted image preparation fails | Verify the provisioned foundation, manifest pin, ACR build/pull access and private build pool, then retry `azd deploy`; see [hosted redeployment](hosted-agents.md#redeploy-the-same-image-or-prepare-a-new-one). No separate preparation or second provision is required. |
+| Hosted image preparation fails | Verify the provisioned foundation, manifest pin, ACR build/pull access and private build pool, then retry `azd deploy`; see [application redeployment](deploy-full-stack.md#redeploy-applications-only). No separate preparation or second provision is required. |
 | Green deploy but UI login/retrieval fails | Complete registration/consent/runtime settings, inspect sanitized hook/service logs and run the real-user positive/negative checks. See [Troubleshooting](troubleshooting.md). |
 | TEST or PROD starts without the expected approval | Stop the run and fix Environment checks/permissions outside YAML before restarting. |
 

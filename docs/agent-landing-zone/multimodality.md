@@ -4,7 +4,9 @@
 
 Agent Application can ground text answers in image descriptions extracted
 from documents. This differs from passing an image or audio directly to a
-model. The default hosted `maf_lite` path uses text input and retrieved text.
+model. The conversational interface and registered retrieval capability have
+their own input/output contracts; a host choice does not enable image or audio
+input.
 This page explains capability boundaries. The
 [full-stack deployment guide](deploy-full-stack.md) contains deployment procedures.
 
@@ -12,11 +14,11 @@ This page explains capability boundaries. The
 
 ## Supported content
 
-| Content | Hosted application behavior |
+| Content | Application boundary |
 | --- | --- |
 | Diagrams in a shared collection | Native Foundry IQ Blob ingestion can produce image descriptions when its model and extraction requirements are met. |
-| Conversation PDF | Optional Agent App Ingestion processes uploads. Native Search permissions and a conversation filter authorize hosted retrieval. |
-| Screenshot or standalone image | Not accepted by the supplied hosted input adapter or PDF upload handler. |
+| Private conversational file | Optional inline TXT/Markdown, PDF, PNG or JPEG; at most three files, 64 KiB each and 256 KiB per serialized inline turn. No workflow attachments. |
+| Screenshot or standalone image in chat | PNG/JPEG attachment transport is implemented; model image understanding is not verified. |
 | Voice | No supplied capture, transcription, realtime audio or playback integration. |
 
 <span id="ground-answers-in-document-images"></span>
@@ -77,7 +79,8 @@ supported. The factory also routes `.xls` to the spreadsheet chunker, but its
 OpenPyXL parser expects an Open XML workbook, not a legacy binary Excel file.
 Convert legacy workbooks to `.xlsx` before ingestion.
 A source connector can impose a narrower allowlist, such as
-SharePoint's default `pdf,docx,pptx`. The supplied chat handler accepts only PDFs.
+SharePoint's default `pdf,docx,pptx`. This custom processing table is not a
+native chat upload allowlist.
 
 ### Select analysis and chunking
 
@@ -121,11 +124,11 @@ A text-only model is not made image-capable by that fallback.
 excluded. Missing or failed caption generation can leave `No caption available.`
 rather than a useful description.
 
-The classic `multimodal` strategy with `RETRIEVAL_BACKEND=ai_search` uses the
-image-aware Search context provider. With `foundry_iq`, that strategy's provider
-supplies text grounding instead. `multimodal` is not an eligible hosted strategy.
-Enabling custom figure extraction does not change the default hosted `maf_lite`
-input contract or make it receive original images.
+The registered retrieval tool determines which indexed text and image fields
+reach an Agent or Workflow. Extracting figures in ingestion does not register
+an image tool, change the chat input contract or automatically pass original
+images to a model. Check actual tool output and model inputs instead of
+selecting a legacy multimodal strategy.
 
 Review the separate image cleanup configuration in
 [Jobs & schedules](ingestion-jobs.md#index-purge-and-cleanup-effects).
@@ -134,65 +137,56 @@ chunker setting.
 
 <span id="attach-a-pdf-to-a-conversation"></span>
 
-## Conversation PDFs
+## Private attachment boundary
 
-`DEPLOY_INGESTION_CONTAINER_APP` defaults to `false`, so fresh deployments hide
-and reject uploads. Optional Agent App Ingestion is required for eligible PDF
-attachments, as described in [Ingestion and conversation uploads](ingestion.md).
+`ENABLE_PRIVATE_ATTACHMENTS` enables conversational attachments in
+`conversational` or `both`, not workflow input. Accepted files are UTF-8
+TXT/Markdown, PDF, PNG and JPEG, at most three files and 64 KiB per file.
+Both native envelopes must fit a 256 KiB serialized inline turn, including
+text, encoding/escaping and metadata overhead.
+Entries use `name`, `content_type` and `data_base64`, with strict Base64,
+format/signature and owner validation.
 
-With a native Blob primary source, conversation retrieval requires
-`FOUNDRY_IQ_CONVERSATION_UPLOAD_ENABLED=true` and provisioned
-`FOUNDRY_IQ_CONVERSATION_KNOWLEDGE_SOURCE_NAME`. The name identifies a Search
-knowledge source, not a URL or conversation ID. Keep the source and retrieval
-API settings compatible with the configured knowledge base. A missing or failed
-configured upload source stops required retrieval rather than silently returning
-only shared-corpus results.
-
-The UI needs an established hosted conversation ID and an eligible signed-in
-session. It accepts at most five PDFs, 15 MiB each and 25 MiB combined.
-Anonymous embedded sessions cannot upload.
-
-The UI validates the authenticated uploader's object ID before ingestion.
-Every uploaded chunk receives that user's ACL and the hosted conversation ID.
-group and RBAC grants remain empty. Native Search evaluates that ACL using the
-delegated Search token, while an additional conversation filter prevents results
-from other conversations. The runtime does not treat an opaque hosted partition
-key as an uploader identity or decode the forwarded token to invent one.
-Processing confirmation alone is not retrieval-isolation evidence: test both
-the uploader and a different user, including citations and download attempts.
-
-Agent App Ingestion's separate `MULTIMODAL` setting controls figure extraction
-and captioning in its custom pipeline. It does not enable direct screenshot
-input. Scanned or diagram-only PDFs depend on the extracted content.
+Hosted uses official `input_file`/image input; DTS uses native
+`context_messages` and IDs. There is no Blob URL, SAS, ingestion dispatch
+or corporate publication. UI metadata retains descriptors only, not bytes,
+transcripts or tokens. Do not infer this allowlist from shared ingestion.
+Selecting `DEPLOY_INGESTION_CONTAINER_APP=true` only deploys that separate
+processing service. Transport tests do not verify model PDF/image understanding.
+See [Conversations & files](conversations.md#private-attachments).
 
 <span id="diagnose-a-missing-image-answer"></span>
 
 ## Evidence and configuration lifecycle
 
 Grounded image answers depend on completed ingestion, extracted content, a
-compatible model binding and the intended source reference. A processed PDF
-can still be absent from retrieval. Shared-source answers alone do not prove
-conversation-upload retrieval works.
+compatible model binding and the intended source reference. A processed shared
+PDF can still be absent from retrieval. Successful shared-source processing
+does not establish a private attachment feature.
 
-Runtime configuration is cached. A changed hosted setting needs a new agent
-version. Affected UI and ingestion processes also need to reload. Source/model
-changes follow the [full-stack deployment guide](deploy-full-stack.md).
+Supported functional parameters use scoped App Configuration refresh; existing
+workflows retain their functional snapshot. Structural source/model bindings,
+tool registration and host/publication changes need compatible deployment.
+UI and ingestion have their own reload rules. Follow
+[Application settings](application-settings.md) and the
+[full-stack deployment guide](deploy-full-stack.md).
 The pinned API remains part of the application contract rather than an
 independent setting to change without compatibility validation.
 
 <span id="direct-images-or-voice-need-an-application-extension"></span>
 <span id="direct-images-or-voice-need-an-agent-application-extension"></span>
 
-## Direct image and voice extensions
+## Direct images and voice
 
-Screenshot input requires caller and adapter development to validate and
-forward image content to a compatible model. Microsoft's
+PNG/JPEG can use the optional inline conversational attachment path.
+Verify the selected model's actual interpretation separately. Microsoft's
 [vision input guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision)
-describes model APIs, not an enabled Agent Application feature.
+describes model APIs, not proof that this application's model understands
+every accepted image.
 
 Voice requires client/service integration for capture, transcription or
 realtime audio, and playback. The
 [Realtime audio guide](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/realtime-audio)
 describes those APIs. [Bring your own app](build-your-own-app.md) covers the
-application boundary. Both extensions need authentication, input limits and
+application boundary. Voice integration needs authentication, input limits and
 source authorization when connected to retrieval.

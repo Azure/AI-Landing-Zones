@@ -11,8 +11,10 @@
 Deploy the Azure infrastructure and the Agent Application with its default
 layout: Foundry hosts the orchestrator, Agent App UI runs in Container Apps,
 and Foundry IQ manages source ingestion and retrieval. The default
-`hosted-no-panel` layout omits the administrative panel and Agent Application
-Cosmos DB. Foundry can require separate backing resources.
+`hosted-no-panel` layout omits the administrative panel. Native Hosted
+execution does not require application Cosmos DB; selected UI product metadata
+and Foundry backing resources have their own storage requirements.
+`APPLICATION_MODE` defaults to `conversational`.
 This procedure uses the default Bicep provider. For Terraform, use
 [Deploy full stack with Terraform](deploy-terraform-full-stack.md); application
 configuration and deployment are shared.
@@ -99,7 +101,7 @@ and protected retrieval do not have the same integration requirements.
   Deployment does not perform tenant consent.
 
 !!! important "Protected retrieval keeps the signed-in user's permissions"
-    The UI and hosted `maf_lite` strategy integrate delegated Search
+    The UI and native agent's retrieval capability require delegated Search
     authorization with `RETRIEVAL_AUTH_MODE=native_search`. The UI performs
     the downstream OBO exchange; the hosted connector supplies that credential
     to Search separately from its workload transport identity. A custom
@@ -238,17 +240,29 @@ azd env set DEPLOY_INGESTION_CONTAINER_APP false
 Expect no administrative panel or Agent Application Cosmos DB. Preserve the
 recorded layout when recovering an existing environment. See
 [Hosted agents](hosted-agents.md) for separately configured capabilities.
-Keep the runtime strategy `AGENT_STRATEGY=maf_lite` and retrieval backend
-`RETRIEVAL_BACKEND=foundry_iq`; inspect their effective `agent-lz` settings
-after service configuration. Runtime keys are not all `azd env` inputs.
+Confirm the canonical selection `APPLICATION_MODE=conversational` and
+`ORCHESTRATION_HOST=hosted` through the declared composition, with the selected
+Foundry IQ capability. Inspect effective relevant `agent-lz` settings after
+service configuration. Canonical runtime keys are not all independent
+`azd env` inputs.
+
+To select a workflow or both experiences, use the compatible application
+definition and [native execution contract](configuration.md#native-execution-selection).
+Hosted `both` requires a conversational publication and a separate workflow
+publication, each with a single mode. Hand their actual endpoints to the UI.
+The Container Apps alternative requires the official Durable Extension worker
+and DTS, not the Hosted HTTP entrypoint or a custom queue.
+Review [Agent hosting](hosted-agents.md) before changing an existing layout.
 
 #### Ingestion and custom applications
 
 Use native Foundry IQ ingestion for the configured Blob source. Keep its
 protected source policy; source ingestion does not prove user-authorized
-retrieval works. Review [Ingestion](ingestion.md) if conversation uploads or
-custom processing are required. They are additional capabilities, not default
-deployment steps.
+retrieval works. Review [Ingestion](ingestion.md) if custom source processing is required.
+Private attachments have their own feature gate and file path; enabling
+ingestion does not add that capability. Product metadata does not require the
+ingestion service. These are separate capabilities, not default deployment
+steps.
 
 For a different application, stop here and follow the
 [Bring your own app guide](build-your-own-app.md) before first provision.
@@ -474,18 +488,24 @@ az appconfig kv set --endpoint <app-config-endpoint> --auth-mode login \
   --key <KEY> --value <value> --label agent-lz --yes
 ```
 
-Restart each affected Container App revision to reload configuration:
+For supported dynamic functional parameters, allow official provider refresh
+and verify a new interaction without rebuilding. Existing workflow runs retain
+their functional snapshot; current authorization is rechecked separately.
+
+Structural settings, process bootstrap and components without a supported
+dynamic loader require reload/redeployment. Where a Container App restart is
+the documented reload operation:
 
 ```bash
 az containerapp revision restart -g <resource-group> -n <container-app-name> \
   --revision <revision-name>
 ```
 
-For a hosted version, run root `azd deploy` with the compatible handoff.
-Process environment inputs declared in `hosted-agent/azure.yaml` are immutable
-version inputs and require a new agent version. An App Configuration edit
-cannot replace a process-only setting such as `APP_CONFIG_TLS_COMPATIBILITY`.
-Use `agent-lz` within each environment's separate configuration store.
+For a structural Hosted change, run root `azd deploy` with the compatible
+handoff and publish each affected application. Process environment inputs are
+immutable publication inputs; an App Configuration edit cannot replace them.
+Host, graph, identity, persistence and registration changes are not dynamic
+functional updates. Use `agent-lz` within each environment's separate store.
 
 ### Rotate a secret
 
@@ -628,13 +648,20 @@ do not delete shared hub, DNS or monitoring resources.
    For documents, ingest a harmless test document through the configured source.
    With the integrated delegated retrieval path and downstream consent, test
    both permitted retrieval and denial to a user without that document's permission.
-   Test uploads only when their additional capabilities are selected.
+   For selected private attachments, verify supported input, owner-scoped
+   inline native transport and cross-owner denial. This is not a Blob download
+   or ingestion test. Verify model PDF/image understanding separately.
+   With attachments disabled, confirm controls are
+   unavailable and direct uploads are rejected.
 5. Correlate the task with runtime telemetry. The deployment's greeting checks
    basic response only; test actual UI login, OBO and source authorization.
 
-Record unmet capability gates as **blocked**, not passed. Without validated
-continuity, chat context lasts only for the active UI session. Default deployment
-does not promise persistent history, feedback integration or uploads.
+Record unmet capability gates as **blocked**, not passed. Native execution
+continuity belongs to the selected host; saved-history discovery and feedback
+have separate UI feature gates and metadata dependencies.
+A greeting does not verify any of them. For a selected workflow, also verify
+pending human input, fresh-client resume, approval/rejection and denied
+stale/duplicate/wrong-owner replies through the actual application.
 Use [Troubleshooting](troubleshooting.md) for failures.
 
 For optional channel distribution after acceptance, use the

@@ -13,9 +13,9 @@ Deployment procedures are in the
 [full-stack deployment guide](deploy-full-stack.md).
 
 For direct database connections, use the separate
-[NL2SQL strategy](nl2sql.md#direct-nl2sql-strategy). A Fabric SQL endpoint
-configured for that strategy is not a `fabricDataAgent` source, and enabling
-the strategy does not publish a Fabric data agent.
+[NL2SQL tool](nl2sql.md#direct-nl2sql-tool). A Fabric SQL endpoint configured
+for that connector is not a `fabricDataAgent` source, and enabling the tool
+does not publish a Fabric data agent.
 
 <span id="choose-the-connection"></span>
 
@@ -80,8 +80,8 @@ platform-owned objects.
 
 ## Integrated hosted retrieval
 
-The built-in hosted `maf_lite` path supports native Fabric sources without
-customer-written identity or response-parsing code. Configure the source and
+The registered Foundry IQ retrieval capability supports native Fabric sources
+without customer-written identity or response-parsing code. Configure the source and
 its administrator prerequisites, including `FOUNDRY_IQ_API_VERSION=2026-08-01-preview`:
 
 | Boundary | Integrated behavior |

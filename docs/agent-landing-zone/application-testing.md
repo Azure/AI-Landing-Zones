@@ -51,15 +51,17 @@ wheel paths exposed without executing `.pth` startup hooks.
 Candidate packages are analyzed, not imported. This is not an OS sandbox.
 Executable mypy plugins and custom Import Linter contracts are rejected.
 
-Useful focused behavioral checks include:
+Choose focused tests for the changed native definitions, installed SDK call
+shapes, scoped configuration and workflow snapshots. Include owner denial,
+pending-request mismatch, rejection and duplicate/stale human replies.
+Run the maintained quality-policy check separately when its policy changes:
 
 ```text
-python -m pytest -q tests/test_conversation_ownership.py tests/test_conversation_persistence_boundaries.py
-python -m pytest -q tests/test_hosted_responses.py tests/test_hosted_strategies.py
 python -m pytest -q tests/test_quality_policy.py
 ```
 
-Use Node 20 for the dashboard. From `frontend/`, matching current CI:
+If validating the retained source frontend CI job, use Node 20 from
+`frontend/`:
 
 ```text
 npm install --no-audit --no-fund
@@ -67,7 +69,19 @@ npm run build
 ```
 
 `npm run lint` is also available locally. There is no `npm test` script in
-this dashboard. Do not invent a frontend test gate.
+that source frontend. Native orchestrator entrypoints do not serve its
+dashboard/admin APIs. Do not invent an active native dashboard or test gate.
+
+Native local SDK/contract checks must exercise the actual product entrypoints
+and published installed types. They do not establish deployed checkpoint
+durability, platform cross-user isolation, private-network reachability or
+exactly-once external writes. Record supplemental live evidence separately
+and never deploy a full landing zone merely to run a unit or SDK proof.
+For attachments, test exact MIME/name/Base64/signature admission, the 64 KiB
+file and 256 KiB serialized-turn budgets, both native input envelopes and
+owner denial before backend access. These are transport/contract tests, not
+proof of model PDF/image understanding. DAX/delegated multimodal host-token
+binding must be exercised separately and fails closed when unavailable.
 
 The PR workflow's `tests` job produces same-run JUnit evidence.
 Its quality matrix uses the protected target's evaluator, configuration, and

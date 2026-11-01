@@ -1,120 +1,153 @@
 # Conversations & files
 
-Conversation context, saved history and file uploads are separate capabilities.
-Choose the behavior you need before enabling storage or administrative panels.
+Native execution state and user-facing saved history have separate owners.
+`ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`.
+Private attachments are an independently selected optional capability.
+`ENABLE_PRIVATE_ATTACHMENTS` defaults to `false`.
 
 ## Context during a chat
 
-The default hosted orchestrator is stateless. The UI sends the available
-conversation transcript with each turn. The hosted container does not load
-managed conversation history on its own.
+A conversational MAF Agent uses the selected host's native session state:
+Foundry persistence on Hosted or Durable Task Scheduler (DTS) through the
+official Durable Extension on Container Apps.
+The UI does not make a stateless adapter stateful by replaying its transcript.
 
-Without optional continuity, context lasts for the active UI session. Reloading
-the browser, restarting it or starting a new chat does not provide durable
-history. A conversation identifier scopes a request. Knowing that identifier
-does not grant access to another person's messages or uploaded documents.
+The UI/BFF binds the authenticated owner to native session IDs. Knowing an ID
+or calling through a shared service identity does not authorize another
+person's messages, pending actions or files.
+See [Agent hosting](hosted-agents.md) for the distinct clients.
 
 ## Resume a saved conversation
 
-Hosted continuity lets the UI read and append messages in a managed Conversations
-store. It is disabled by default through `HOSTED_CONTINUITY_ENABLED=false`.
-The UI still sends the resulting transcript to the stateless orchestrator.
+When saved history is enabled, reopen a conversation through the authenticated
+UI. The BFF checks its owner
+mapping before using the host client to read or continue the native session.
+Native state and UI discoverability are different: a persisted session does
+not by itself supply a list of the current user's conversations.
 
-Before enabling it, configure the store and validate user isolation. In the
-default `delegated` ownership mode, the UI's middle-tier identity requires a
-reviewed agent-scoped `UserIdentityImpersonation` grant and a deployed Responses
-protocol version of at least `2.0.0`. Set
-`HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED=true` only after that authorization
-has been verified. This setting records evidence, it does not grant permission.
+The UI/BFF owns titles, owner mappings and other product metadata in its
+declared store. That store is not a transcript replay service or a workflow
+checkpoint engine. Missing metadata, failed state reads and denied ownership
+must not be treated as an empty successful conversation.
 
-An explicit `capability` ownership mode instead uses signed owner handles and
-user OBO for store calls. It requires its own signing-key setup. Do not select
-it as a fallback after delegated authorization fails.
+<span id="continuity-settings"></span>
 
-### Continuity settings
+### State and metadata dependencies
 
-These settings are ignored while continuity is disabled. Nonblank environment
-values override remote settings when the continuity loader reads them.
-Invalid required settings fail startup.
-
-| Setting | Default or requirement |
+| Feature | Owner |
 | --- | --- |
-| `HOSTED_CONTINUITY_ENABLED` | `false` |
-| `HOSTED_CONVERSATION_OWNER_BINDING` | `delegated`. Explicit alternative: `capability`. |
-| `HOSTED_CONVERSATION_STORE_BASE_URL` | Required HTTPS Conversations-store URL. HTTP is accepted only for local loopback development. There is no hosted-endpoint fallback. |
-| `HOSTED_CONVERSATION_STORE_RESOURCE_SCOPE` | Required data-plane scope ending in `/.default`. Falls back to `HOSTED_AGENT_RESOURCE_SCOPE`, not an ARM management scope. |
-| `HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED` | `false`. Required as `true` for validated delegated ownership. |
-| `HOSTED_AGENT_PROTOCOL_VERSION` | Required in delegated mode, at least `2.0.0`. |
-| `HOSTED_CONVERSATION_CAPABILITY_KEY` | Capability mode only. At least 32 characters after trimming, supplied through a Key Vault reference. |
-| `HOSTED_CONVERSATION_CAPABILITY_KEY_ID` | Required with the capability signing key. |
-| `HOSTED_CONVERSATION_CAPABILITY_TTL_SECONDS` | `900`, valid range `60` to `86400`. |
+| Agent conversation/session execution | Selected native host |
+| Workflow graph state and pending human input | Selected native host |
+| User-to-session/run mapping, titles and discovery | UI/BFF product metadata |
+| Message/run feedback | UI/BFF feedback store |
+| Private file input and access metadata | Explicit attachment capability; authenticated UI/file boundary and selected native input or authorized tool path |
 
-The standalone UI loader defaults history limits to `HOSTED_HISTORY_MAX_ITEMS=40`
-and `HOSTED_HISTORY_MAX_TOKENS=8000`. Platform composition can publish different
-values: its continuity defaults are `100` items and `32000` estimated tokens,
-with capability key ID `v1`. These values do not activate continuity.
-Valid ranges are `1` to `500` items and `256` to `200000` estimated tokens.
-
-The store client reads one ascending page of at most 100 items and does not
-follow pagination. Larger item settings do not extend that read. It trims the
-oldest items in the returned page using an approximate character-based token
-budget. The last remaining item is retained and the new question is added
-afterward. These settings are not hard model-input limits or a guarantee of
-the latest complete transcript in a long conversation.
-
-Store read and append failures are reported, not converted into an empty or
-successfully saved conversation. A rejected owner handle does not silently
-create a replacement conversation. Locks and idempotency tracking are local
-to a process, not distributed coordination.
+Hosted execution does not require application Cosmos DB.
+Workflow mode or `both` selects UI metadata even with product flags off;
+enabled history, feedback or attachments also selects it. The UI reads
+`DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and `NATIVE_UI_METADATA_CONTAINER`
+(default `native-ui-metadata`, partition key `/principal_id`, owner value
+`tid:oid`).
+Only the frontend receives its metadata grant. The container holds owner/run
+mappings, references, feedback and attachment descriptors, not bytes,
+transcripts, tokens or Foundry/DTS execution checkpoints.
+In conversational mode with every product flag off, the UI uses bounded
+volatile owner maps. They are lost on UI restart; native host persistence alone
+cannot restore the UI mapping or provide saved discovery.
+Do not deploy ingestion or a classic orchestrator merely to support metadata.
+Saved listing and history reads require `ENABLE_CHAT_HISTORY=true`.
+A known owner-bound workflow can resume with history off through
+`/api/native/sessions/{id}/resume`; workflow mode already selects metadata.
 
 ## History and administration
 
-An administrative panel is not required merely to retain active-session context.
-User-facing panel history additionally requires actual panel deployment,
-active continuity and `PANEL_HISTORY_ENABLED=true`. Delegated enumeration and
-operator access have independent authorization gates.
+An administrative panel is not required for native session persistence.
+User history and operator access are separately authorized product surfaces;
+an operator role does not automatically grant access to every transcript.
 
-See [Administration](operations.md) for panel setup and
-[User feedback](user-feedback.md) for owner-scoped feedback.
+Define retention and deletion for native state, owner mappings, feedback,
+attachments, audit data and backups separately. A metadata cleanup is not proof
+that all downstream artifacts were erased. Confirm partial failures and follow
+the installation's retention policy.
 
-The Container Apps orchestrator uses a different path: its classic conversation
-API persists messages and feedback in Cosmos DB with authenticated ownership
-checks. Some writes run in background tasks. Receiving a streamed answer is
-not an acknowledgement that all writes completed. Classic history also does
-not enable cross-conversation profile personalization.
+Native state is not automatically transferable between hosts or incompatible
+workflow publications. Retain the previous deployment and its state for
+rollback; do not merge or delete those stores during adoption.
+See [Administration](operations.md) and [User feedback](user-feedback.md).
 
-## Upload files to a conversation
+## Private attachments
 
-Conversation uploads require the optional ingestion service.
-`DEPLOY_INGESTION_CONTAINER_APP=false` hides controls and rejects attachments
-before files are dispatched. `true` retains authentication, validation and
-conversation checks. A missing value preserves legacy eligibility, while an
-invalid boolean fails configuration loading.
+Enable `ENABLE_PRIVATE_ATTACHMENTS` for conversational operation in
+`conversational` or `both`. Workflow attachments are not supported.
+The native turn accepts at most **three files**, each at most **64 KiB**:
+UTF-8 TXT/Markdown, PDF, PNG or JPEG.
 
-Hosted uploads need a valid issued conversation ID and the authenticated
-uploader's object ID before file reads or ingestion dispatch. Uploaded files
-remain scoped to that user and conversation. Native Foundry IQ source ingestion
-does not replace this conversation-upload path.
+```json
+{
+  "text": "Use this note in your answer.",
+  "attachments": [{
+    "name": "note.txt",
+    "content_type": "text/plain",
+    "data_base64": "SGVsbG8="
+  }]
+}
+```
 
-Anonymous embedded sessions cannot upload files. Follow
-[Ingestion](ingestion.md) to enable the required processing and
-[document formats](multimodality.md) to check supported inputs.
+Send this body to `POST /api/native/sessions/{id}/turns` for an owner-bound
+UI session. Strict Base64, content/format signatures and owner checks reject
+malformed or mismatched input. Unknown or nonowned session IDs return `404`
+before native backend access.
+
+The maximum serialized inline turn is **256 KiB**, checked against both
+Hosted and DTS content envelopes. Text, filenames, MIME metadata, data URIs,
+Base64 expansion and JSON escaping count toward this budget. Three files
+that individually meet their byte limit can still exceed it.
+Each name is a basename of `1..128` characters (no path separators, leading
+dot or control characters); content type is at most 64 characters.
+Base64 text is bounded to 87,384 characters, and decoded input must be
+nonempty. Extension and MIME must match:
+
+| Extension | Content type |
+| --- | --- |
+| `.txt` | `text/plain` |
+| `.md` | `text/markdown` |
+| `.pdf` | `application/pdf` |
+| `.png` | `image/png` |
+| `.jpg`, `.jpeg` | `image/jpeg` |
+
+PDF, PNG and JPEG signature checks are input admission checks, not malware
+scanning or proof that a model understands the content. Native state capacity
+and retention limits remain independent of this UI input budget.
+
+Hosted forwards official `input_file`/image input. DTS carries native
+`context_messages` and IDs. This inline path does not use Blob URLs, SAS,
+Agent App Ingestion or corporate knowledge publication. UI Cosmos stores
+descriptors, not file bytes; review native host input retention separately.
+There is no native private-attachment Blob download/reindexing workflow.
+
+Transport tests verify the input path, not model PDF/image understanding.
+Use a compatible model and verify its actual output before promising those
+capabilities to users.
+
+A model citation, Blob URL or opaque session ID is not a grant.
+Shared managed identity does not by itself enforce user isolation.
+
+Custom ingestion remains a separate optional feature, disabled by default.
+Select it only when its processing path is actually needed.
+[Ingestion](ingestion.md) explains shared-source indexing and
+[Document formats & images](multimodality.md) explains processing boundaries.
 
 ## Open citations and downloads
 
-Native hosted citations use a signed, short-lived UI download link. The UI
-rechecks the current identity and source authorization when the link is opened.
-Shared Blob/ADLS documents use the user's Storage OBO permission.
-Conversation uploads require a fresh native Search match for the exact document,
-conversation and uploader before a workload Blob read is allowed.
+Recheck the current identity and source authorization when a protected
+citation is opened. Do not trust a browser-supplied object ID,
+session ID or document URL as proof of ownership.
 
-The native route limits streamed documents to 100 MiB and 120 seconds and does
-not retry a response after streaming has started. Search ownership checks are
-bounded and deny access when the exact authorized document is not found.
-Classical standalone citations can retain their separate SAS/direct-link path.
-See [Protected citation downloads](application-auth.md#protected-citation-downloads)
-for the consent, storage permissions and verification steps.
+Source-delegated access and workload transport credentials are independent.
+A source denial cannot be repaired by retrying with the application's broader
+identity. Signed selectors and short-lived links do not replace the current
+owner/source check.
+See [Protected citation downloads](application-auth.md#protected-citation-downloads).
 
-Restarting the UI invalidates process-local embedded sessions and download
-grants. A saved citation or conversation ID alone is never permission to
-download a document.
+For a process waiting on a person, use
+[Workflows & human input](workflows.md). A chat reconnect is not approval.

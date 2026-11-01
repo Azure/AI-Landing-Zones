@@ -39,7 +39,7 @@ failure. Diagnose the failing stage before retrying or changing inputs.
    investigating. Use the recovery steps below for the failed stage.
 
 The default `hosted-no-panel` layout runs the orchestrator in Foundry, with
-`maf_lite` and Foundry IQ. Confirm the recorded layout before recovery.
+a conversational MAF Agent and Foundry IQ. Confirm the recorded layout before recovery.
 Do not switch runtimes or weaken authentication to diagnose a failure.
 
 !!! tip "Share useful, redacted diagnostics"
@@ -396,8 +396,10 @@ combination fails validation, or attachment behavior differs from expectations.
 
 **Diagnose:** Fresh Agent Application deployments default to
 `DEPLOY_INGESTION_CONTAINER_APP=false`, independently of orchestrator hosting.
-Native source ingestion uses Search's service-managed pipeline. Conversation
-uploads and Agent App Ingestion features require separate selection.
+Native source ingestion uses Search's service-managed pipeline.
+Agent App Ingestion features require explicit selection.
+Private attachments have a separate feature gate and file-processing path;
+ingestion selection does not enable them.
 Existing environments and custom definitions retain their component selections.
 
 **Correct:** Check the resolved component selection, retrieval backend, source
@@ -407,14 +409,16 @@ Agent App Ingestion, select it explicitly and run the
 An externally populated index must be named explicitly where required.
 
 **Verify:** Confirm the effective `agent-lz` key and intended UI revision.
-With ingestion disabled, attachment controls must be hidden and direct/stale
-uploads rejected. Verify text chat and retrieval separately, including the
+With attachments disabled, controls must be unavailable and direct/stale
+uploads rejected. With attachments enabled, verify the supported file path,
+owner-bound reads/downloads and denied cross-user access. Verify chat and retrieval
+separately, including the
 [delegated retrieval checks](#protected-retrieval-fails-after-hosted-sign-in).
 Ingestion selection is not a source of delegated user or owner context.
 
-If ingestion is selected, confirm the selection is `true` and test only
-eligible authenticated uploads. Processing success does not prove authorized
-conversation retrieval.
+If ingestion is selected, confirm the selection is `true` and test its actual
+document-processing APIs. Processing success does not prove authorized
+retrieval or enable a native attachment path.
 Retire existing apps and permissions only as a
 separate authorized task, preserving documents and indexes.
 
@@ -465,7 +469,7 @@ errors at both endpoints. Confirm the actual runtime identity and identify
 which connection stage stalls before choosing a recovery action.
 
 **Correct:** Only for the confirmed transport compatibility case, use the
-[endpoint-scoped TLS profile](hosted-agents.md#configuration-tls-compatibility).
+[transport and TLS guidance](application-settings.md#orchestrator-tls-compatibility).
 Supply the actual `KEY_VAULT_URI`, deliberately select
 `APP_CONFIG_TLS_COMPATIBILITY=true` and deploy a new agent version.
 To restore SDK defaults, use `false` and
@@ -680,56 +684,64 @@ authorization evidence for a deployed source.
 
 #### A protected citation download is denied
 
-**Diagnose:** Distinguish shared-source Storage authorization from upload
-authorization. Shared Blob/ADLS reads require the current user's Storage OBO,
-delegated `user_impersonation` consent and source RBAC/ACLs. Uploads require a
-fresh Search-authorized match for the exact document, conversation and uploader,
-plus the UI's Search transport role. Knowing the URL or possessing an old
-signed selector is not sufficient.
+**Diagnose:** Shared Blob/ADLS citation reads require the current user's
+Storage OBO, delegated `user_impersonation` consent and source RBAC/ACLs.
+Knowing the URL or possessing an old signed selector is not sufficient.
+Native private attachments are inline inputs, not Blob/SAS downloads or
+Search-indexed conversation uploads.
 
 **Correct:** Sign in again after session expiry and resolve consent or source
 permissions at their own boundary. Confirm the configured storage locations,
 Search index and bundled UI `retrieval-reader` profile. The native route
-limits a download to 100 MiB and 120 seconds; upload authorization examines
-at most 1,000 Search rows within 4 MiB and 30 seconds. An unverified target
-beyond those bounds is denied, not read with elevated access.
+limits a download to 100 MiB and 120 seconds. An unverified target beyond
+those bounds is denied, not read with elevated access.
 Do not re-enable the legacy reader, mint SAS or replace user Storage access
 with workload access to make the download succeed.
 
 **Verify:** Repeat allowed/denied-user, expiry and permission-revocation checks
-through the authenticated UI route, including an uploaded document.
+through the authenticated citation route. Test private attachments separately
+using their supported inline formats and denied cross-owner session.
 See [protected citation downloads](application-auth.md#protected-citation-downloads).
 
 #### The orchestrator returns HTTP 422
 
 **Symptom:** The agent rejects a request with validation details.
 
-**Diagnose:** The stateless **Responses 2.0.0** adapter rejects non-null
-`previous_response_id`, empty asks and message arrays not ending with a user
-message. The adapter ignores top-level `conversation`.
-The UI's `/invocations?api-version=v1` uses another request shape.
+**Diagnose:** Check the selected native client, application kind and typed
+input. Hosted Responses and the durable client have different contracts.
+A workflow's initial input and its pending human reply are also different
+operations. A native session/run ID selects execution; it does not establish
+ownership or replace the pending request ID.
 
 **Correct:** Use the returned validation detail and the correct
-[request format](hosted-agents.md#calling-the-agent). For stateless Responses,
-remove state selectors and supply complete, ordered context.
+[native client contract](application-api.md). Do not send the obsolete classic
+ask envelope to a native entrypoint, strip native state selectors to force
+stateless execution, or manufacture a human reply for a different request.
 
 **Verify:** A request in the intended endpoint's format succeeds through that endpoint.
 
 #### Hosted chat works but history is unavailable
 
-**Symptom:** A greeting works, but history is unavailable or panel history
-returns 503.
+**Symptom:** A greeting works, but saved history is unavailable.
 
-**Diagnose:** Hosted runtime is stateless. Without separately activated
-continuity, context is limited to the active UI session. Agent Application Cosmos DB
-in `hosted-panel` stores owner/index and feedback metadata, not transcripts.
-UI history requires continuity and the separately documented panel gates.
+**Diagnose:** Separate native execution continuity from saved-history discovery.
+Foundry owns Hosted state; DTS owns Container Apps durable state.
+The UI/BFF owns the authenticated owner map and display metadata.
+A successful greeting does not prove that the metadata store, native state
+read and owner-bound resume path are ready. An administrative panel is not
+required to obtain native persistence.
 
-**Correct:** Review continuity activation, panel gates, owner binding and
-agent-scoped permissions in [Hosted agents](hosted-agents.md#calling-the-agent).
-Apply configuration changes through the full workflow using hosted continuity
-and owner-scoped permissions. Keep the hosted container's conversation access
-restricted; do not enable the panel merely to obtain persistence.
+**Correct:** Check the selected publication or durable registration, current
+identity, owner mapping, metadata dependency and native client permissions.
+Saved listing/history requires `ENABLE_CHAT_HISTORY=true`; known workflow
+resume does not. With conversational mode and all product flags off, bounded
+volatile UI owner maps are lost on restart. Native state does not reconstruct
+them, and a classic panel is not a remedy.
+Follow [Conversations & files](conversations.md) and
+[Agent hosting](hosted-agents.md#calling-the-agent).
+Report a failed state read rather than presenting empty history or replaying
+a UI transcript as a replacement execution store. Switching hosts does not
+import a session from the previous backend.
 
 **Verify:** Open a saved conversation in a new session as its owner and confirm
 the transcript is available. Repeat as another user and confirm access is denied.
@@ -778,10 +790,11 @@ capability permissions:
 | --- | --- | --- |
 | App Configuration Data Reader | Selected App Configuration store | Read runtime settings |
 | AcrPull | Selected container registry | Pull images |
-| Key Vault Secrets User | Selected Key Vault | Resolve secret references |
+| Key Vault Secrets User | Required secrets or selected Key Vault | Resolve references only for components that actually consume those secrets |
 
 Additional grants depend on declared profiles, selected resources and topology.
-Hosted bootstrap, continuity and panel permissions are reconciled separately.
+Hosted bootstrap, native invocation, product metadata and panel permissions are
+reconciled separately.
 Use the relevant workflow to grant only the roles required by the actual caller.
 
 **Verify:** The same intended identity can perform the required operation while

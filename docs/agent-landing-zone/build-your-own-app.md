@@ -19,15 +19,17 @@ different application. Choose the branch that matches your change:
 | Deploy a different application | The custom hosted example and its application definition below |
 
 For the Agent Application orchestrator hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
-knowledge base retrieval. Custom strategies and tools must implement and test
-the hosted entrypoint and authorization path before deployment to Foundry.
-The default remains `maf_lite` with Foundry IQ.
+knowledge base retrieval. Custom agent/workflow definitions and tools must use
+and test the selected native host integration and authorization path before
+deployment. The default is a conversational MAF Agent with Foundry IQ.
+Hosted conversation and workflow are separate publications when both are selected;
+the Container Apps alternative uses the official Durable Extension and DTS.
 
 The supplied UI/hosted native path integrates delegated Search authorization.
 A source fork or capability profile does not automatically preserve it.
 Custom applications must implement and test the same identity and source
 permission boundaries before using protected documents; do not substitute a
-strategy flag.
+tool flag or prompt.
 
 <span id="before-you-start"></span>
 
@@ -138,7 +140,9 @@ Agent Application Container App placeholders can remain alongside custom resourc
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
 If reusing Agent App UI, preserve its
-[upload-gate contract](ingestion.md).
+[inline attachment contract](conversations.md#private-attachments), including
+owner mappings, exact byte/serialized limits and no corporate ingestion
+fallback. Workflow attachments are not supported by that native UI path.
 
 </details>
 

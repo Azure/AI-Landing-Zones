@@ -19,25 +19,21 @@ Process health probes confirm that a process is running. They do not establish
 successful indexing, correct source access or production readiness.
 Use [Troubleshooting](troubleshooting.md) for boundary-specific diagnosis.
 
-## Orchestrator audit
+## Native runtime audit scope
 
-Orchestrator audit is off by default. To enable it:
+Native entrypoints retain in-process tool/datasource audit hooks. They do
+not mount classic request APIs or provide the complete classic request-lifecycle
+and remote-tool audit stream. A historical schema or
+`AUDIT_EVENTS_ENABLED=true` is not evidence that those paths emit events.
+Verify the actual hook and telemetry exporter used by the selected runtime.
 
-1. Generate a 256-bit secret and store it in Key Vault.
-2. Publish it as the `AUDIT_HMAC_KEY` Key Vault reference. The value must
-   encode exactly 32 random bytes as Base64, Base64URL or hexadecimal.
-3. Set `AUDIT_HMAC_KEY_ID` to the approved key identifier, default `v1`,
-   and `AUDIT_EVENTS_ENABLED=true`.
-4. Restart the affected Container Apps orchestrator or deploy a new hosted
-   agent version, then verify export through the existing telemetry pipeline.
-
-Events use the `gptrag.audit` logger and `agentlz.audit.*` custom-event names.
-Delivery is best-effort, not an immutable ledger or a compliance certification.
-Keep the HMAC secret out of the dashboard and diagnostic output.
-
-Rotate the key and its identifier together. Pseudonyms produced under different
-keys cannot be directly correlated. Set `AUDIT_EVENTS_ENABLED=false` and reload
-to stop new orchestrator audit emission. This does not delete exported events.
+If the consumer requires `AUDIT_HMAC_KEY`, keep its actual Key Vault reference
+and secret-scoped grant with that consumer. A bootstrap grant does not prove
+event export. Never expose the secret in diagnostics.
+Audit delivery is best-effort, not an immutable ledger or a compliance
+certification. Disabling emission does not delete exported events.
+Correlate native UI actions, provider outcomes and in-process tool events
+without claiming complete remote-call coverage.
 
 ## Ingestion audit and provenance
 
@@ -81,10 +77,10 @@ For hosted orchestration, the deployment input
 `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`. A change requires a
 new hosted version.
 
-Sensitive orchestrator audit capture additionally requires
-`AUDIT_SENSITIVE_CONTENT_ENABLED` and the explicit
-`AUDIT_SENSITIVE_CONTENT_FIELDS` allowlist. Redaction reduces risk but cannot
-guarantee that arbitrary user-authored content is safe to export.
+An audit-content allowlist does not establish that every native path has
+capture wired, nor guarantee that user-authored content is safe to export.
+UI metadata deliberately contains no transcripts, tokens or attachment bytes;
+native input and telemetry retention remain separate concerns.
 Never log tokens, client credentials or authentication claims.
 
 ## Event schemas and investigation

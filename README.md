@@ -16,11 +16,10 @@ The AI Landing Zone provides an enterprise-scale production ready reference arch
 ### Agent Landing Zone
 
 Agent Landing Zone combines an Azure infrastructure foundation with an agent
-application built on Microsoft Foundry. The default application has a chat UI
-and an orchestrator agent hosted in Foundry, with Container Apps hosting as an
-alternative. Its ingestion Container App is optional. Fresh environments use
-native Foundry IQ Blob ingestion instead, which does not provide chat
-attachment uploads. See the [Agent Landing Zone guide](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/)
+application using native Microsoft Agent Framework Agents and Workflows.
+Foundry Hosted and durable Container Apps execution have separate integrations;
+custom ingestion is optional and UI product metadata has separate storage.
+See the [Agent Landing Zone guide](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/)
 for deployment options and configuration.
 
 #### Standalone
@@ -53,11 +52,12 @@ The table represents the various reference implementations of the AI Landing Zon
 | Infrastructure with Terraform | [Repo](https://aka.ms/ailz/terraform) |
 | Infrastructure with Bicep | [Repo](https://aka.ms/ailz/bicep) |
 | Infrastructure and agent application with azd and Bicep | [Docs](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/) |
+| Infrastructure and agent application with azd and Terraform | [Docs](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/deploy-terraform-full-stack/) |
 | Infrastructure through the portal | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
 
 The infrastructure implementations do not deploy the default agent application.
-Use the azd and Bicep guide for that complete flow. Terraform application
-integration is [not yet validated](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/deploy-terraform/).
+Use the azd full-stack guides for application integration; Bicep remains the
+default provider.
 
 > **Note:** The previous Bicep implementation is still available in the [`legacy-bicep`](https://github.com/Azure/AI-Landing-Zones/tree/legacy-bicep) branch for users who need the legacy codebase.
 

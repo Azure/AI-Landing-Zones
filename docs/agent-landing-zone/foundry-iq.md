@@ -10,20 +10,20 @@ Deployment follows the [full-stack deployment guide](deploy-full-stack.md).
 
 ## Choose the retrieval backend
 
-The orchestrator's runtime default for `RETRIEVAL_BACKEND` is `ai_search`.
-The platform can supply `foundry_iq` for a native knowledge-base topology.
-Empty or unknown runtime values fall back to `ai_search`, so read back the
-effective setting rather than relying on a misspelled value. Restart after
-changing this cached selection.
+Select the registered retrieval capability and its resource bindings.
+The default platform topology supplies `RETRIEVAL_BACKEND=foundry_iq`.
+Read back the effective relevant settings; do not rely on an unknown value
+falling back to another backend or silently changing source authorization.
 
 `ai_search` queries the configured index directly. `foundry_iq` calls a
 knowledge base and combines its configured sources. The selector applies to
-the shared knowledge-search connector and the MAF Lite, MAF Agent Service and
-multimodal context providers. It does not reroute the
-[NL2SQL strategy](nl2sql.md#direct-nl2sql-strategy) or replace callable
+the application's registered knowledge-search capability, usable by an Agent
+or Workflow. It does not reroute the
+[NL2SQL tool](nl2sql.md#direct-nl2sql-tool) or replace callable
 [MCP tools](agent-tools.md).
 [Application settings](application-settings.md) describes how to change runtime
-values. [Strategies & prompts](agent-strategies.md) describes hosting eligibility.
+values. [Agents & prompts](agent-strategies.md) describes application selection
+independently of the host and its tools.
 
 <span id="before-you-start"></span>
 <span id="1-choose-who-manages-the-source"></span>
@@ -40,7 +40,7 @@ The accelerator defaults to a native Blob source, container `documents`,
 standard content extraction and ingestion permission options `["rbacScope"]`.
 Search manages the generated indexing assets. Optional Agent App Ingestion is
 disabled by default for new environments and is not needed for this source.
-[Ingestion](ingestion.md) explains native source ingestion, conversation uploads
+[Ingestion](ingestion.md) explains native source ingestion, private-input boundaries
 and custom processing.
 
 An existing Search index can be registered as a `searchIndex` knowledge source.
@@ -92,7 +92,7 @@ retrieve requests and response parsing, not an API-version edit alone.
 
 ## Delegated native retrieval
 
-The supplied UI and hosted strategy integrate the user authorization path.
+The UI and native retrieval capability have a separate user authorization path.
 The UI obtains a delegated Search token through OBO and forwards it with
 `x-client-search-token`. The hosted connector passes the raw token in
 `x-ms-query-source-authorization`. The connector's workload credential

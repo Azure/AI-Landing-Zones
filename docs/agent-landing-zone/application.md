@@ -3,9 +3,9 @@
 # Agent Application
 
 Agent Application is the reference application included with Agent Landing Zone.
-It brings together a chat interface, an agent orchestration service and optional
-document processing. You can configure the supplied application or adapt its
-components to your own requirements.
+It brings together a Chainlit chat/process interface, native Microsoft Agent
+Framework (MAF) execution and optional document processing. Use an Agent for
+conversation or a Workflow for a published process with human input.
 
 Start with [Deploy full stack](deploy-full-stack.md) to deploy the application.
 The guides below explain how to configure, operate and extend it.
@@ -14,22 +14,42 @@ The guides below explain how to configure, operate and extend it.
 
 | Component | What it does |
 | --- | --- |
-| Agent App UI | Provides the web chat, sign-in, citations and conversation controls. |
-| Agent App Orchestrator | Runs the selected agent strategy, calls the model and connects retrieval and tools. |
+| Agent App UI/BFF | Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback. |
+| Agent App Orchestrator | Runs native MAF Agents and Workflows, using the explicit integration for the selected host. |
 | Agent App Ingestion | Provides optional application-managed document processing and indexing. |
 
 ## Default deployment
 
 The default deployment has web chat in Azure Container Apps and an
-orchestrator hosted in Microsoft Foundry, without an administrative panel
-or application-owned Cosmos DB. The deployment setting calls this layout
-`hosted-no-panel`. It does not mean Foundry has no backing resources of its own.
+orchestrator hosted in Microsoft Foundry, without an administrative panel.
+The deployment setting calls this layout `hosted-no-panel`.
+`APPLICATION_MODE` defaults to `conversational`. Native Hosted execution does
+not require application-owned Cosmos DB; Foundry backing resources and
+optional UI product storage are separate concerns.
+Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags default to off.
+Preparing a source does not register a tool. History, feedback and private
+attachments also default to off; conversational UI owner maps are then bounded
+and volatile, not a restart-safe saved-session store.
 
 Foundry IQ manages
 ingestion for the configured native Blob source. Deploy Agent App Ingestion
-only when your chosen processing or conversation-upload workflow needs it.
-Hosting does not enable durable history, continuity, feedback or document
-authorization by itself. Those have independent requirements in their guides.
+only when a selected custom processing path needs it; it is disabled by
+default. A private conversation attachment is not a shared source-ingestion
+request. Hosting owns native execution state, not the UI's history discovery,
+feedback or per-user document authorization.
+
+## Application mode and host
+
+`APPLICATION_MODE` selects `conversational`, `workflow` or `both`.
+`ORCHESTRATION_HOST` selects `hosted` or `container_apps`.
+These are deployment choices, not a user-facing strategy selector.
+
+Hosted uses the official Responses integration and native persistence.
+Container Apps uses the official Durable Extension worker/client and
+Durable Task Scheduler. When both experiences use Hosted, conversation and
+workflow are published as separate applications with separate endpoints.
+See [Agent hosting](hosted-agents.md) and
+[Workflows & human input](workflows.md).
 
 The application repositories contain the code. These guides are the shared
 documentation for all three components. The
@@ -45,10 +65,13 @@ in do not by themselves prove that every user has the right document access.
 Complete the [sign-in and access setup](application-auth.md), configure the
 sources you need and check both allowed and denied access.
 
-Optional capabilities have their own prerequisites. Conversation history,
-file uploads, additional channels and external tools are not all enabled by
-the default deployment. Each guide explains what is supplied, what to configure
-and where application development is needed.
+Optional capabilities have their own prerequisites. Saved history and feedback
+default to off; a selected workflow declares UI metadata storage independently
+of native execution state. Private attachments have an explicit feature gate,
+an owner-bound inline native input path and their own retention requirements.
+They are conversational only; transport support is not proof of model
+PDF/image understanding.
+Additional channels and external tools have separate integration requirements.
 
 <span id="choose-a-task"></span>
 <span id="application-components"></span>
@@ -60,8 +83,9 @@ and where application development is needed.
 
 ### Agents
 
-Choose [where the agent runs](hosted-agents.md), select its
-[strategy and prompts](agent-strategies.md), or connect
+Choose [where execution runs](hosted-agents.md), configure
+[agents and prompts](agent-strategies.md), operate
+[workflows and human input](workflows.md), or connect
 [tools and MCP servers](agent-tools.md). A tool lets an agent perform an
 operation. Retrieval supplies information for its answer.
 
@@ -95,9 +119,9 @@ These guides explain the available integration paths and their prerequisites.
 Decide [when you need the ingestion service](ingestion.md), check
 [document formats and image processing](multimodality.md), and configure
 [jobs and schedules](ingestion-jobs.md).
-Preparing a shared document collection is different from uploading a file
-to a conversation. Processing images inside a document also does not imply
-support for direct image or voice input in chat.
+Preparing a shared document collection is not private conversation input.
+Shared ingestion does not enable private uploads. Processing images inside a
+shared document also does not imply direct image or voice chat input.
 
 ### Operations
 

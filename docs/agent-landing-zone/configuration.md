@@ -274,12 +274,26 @@ resource creation.
 
 The default [application layout](application.md#default-deployment)
 does not create application Cosmos DB resources or their dedicated identity.
-Foundry backing storage is independent. Application composition enables Cosmos DB
-for classic orchestration, administrative-panel metadata, a preserved classic
-runtime, or a custom component declaring the `conversation-store` capability.
-Setting `DEPLOY_COSMOS_DB=false` explicitly conflicts with those consumers and
-stops provisioning with an explanation. Otherwise, leave the input unset to
-follow the selected application's requirements.
+Foundry backing storage is independent. Native Hosted execution uses Foundry
+persistence; durable Container Apps execution uses Durable Task Scheduler
+(DTS). Neither uses application Cosmos as a duplicate execution checkpoint
+store. Workflow mode or `both` selects UI metadata even when
+`ENABLE_CHAT_HISTORY=false` and `ENABLE_USER_FEEDBACK=false`, their defaults.
+Enabled history, feedback or private attachments also selects this dependency.
+The UI consumes
+`DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and `NATIVE_UI_METADATA_CONTAINER`
+(default `native-ui-metadata`, partition key `/principal_id`, owner `tid:oid`), with its grant
+assigned only to the frontend. Existing `COSMOS_DB_ENDPOINT` and
+`COSMOS_DB_ACCOUNT_RESOURCE_ID` outputs remain conditional; no separate native
+endpoint key is introduced. Enabled direct NL2SQL instead needs its own
+datasource catalog. A custom component may declare another application storage
+requirement. UI metadata contains descriptors and references, not bytes,
+transcripts or tokens. With conversational mode and every product flag off,
+bounded volatile UI owner maps are lost on restart.
+
+Do not omit a store required by a selected consumer, or enable ingestion just
+to supply metadata storage. Leave deployment selection consistent with the
+application definition and review all consumers before changing it.
 
 For an additional application storage requirement, opt in before provisioning:
 
@@ -311,7 +325,7 @@ infrastructure composition.
 | `true` | Selects the component and its infrastructure requirements. It does not grant users upload permission. |
 
 The source/index arrangement must support omission. See [Ingestion](ingestion.md)
-for supported combinations, conversation-upload gates and UI behavior.
+for supported source combinations and the native private-input boundary.
 
 ### Search region and quota
 
@@ -925,7 +939,77 @@ plans or outputs between environments. Use the
 resolved read-only reports, and [rollback](deploy-full-stack.md#outbound-rule-recovery)
 for rule removal before reverting hooks.
 
-## Hosted agent
+<span id="hosted-agent"></span>
+
+## Native execution selection
+
+The application separates behavior from hosting and retrieval:
+
+| Canonical setting | Values or requirement |
+| --- | --- |
+| `APPLICATION_MODE` | `conversational` (default), `workflow` or `both` |
+| `ORCHESTRATION_HOST` | `hosted` (default) or `container_apps`; must agree with topology composition |
+| `HOSTED_AGENT_BASE_URL` | Actual Hosted conversational publication endpoint, when selected |
+| `HOSTED_WORKFLOW_BASE_URL` | Actual separate Hosted workflow publication endpoint, when selected |
+| `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Official nonsecret managed-identity backend binding for the durable client/worker |
+
+These are canonical application contracts, not an assertion that every key is
+an independent `azd env` input. Use the platform's declared mappings and actual
+outputs. Do not construct scheduler endpoints or override topology with an
+inconsistent runtime key.
+Native feature keys are shared `additionalAppConfigurationSettings` entries
+under `agent-lz`, not new same-named Bicep or Terraform parameters.
+See [Application settings](application-settings.md#native-application-contract)
+for exact feature and consumer keys.
+
+On Hosted, `both` is a composition choice: create a conversational publication
+with `APPLICATION_MODE=conversational` and a separate workflow publication with
+`APPLICATION_MODE=workflow`. Pass both endpoints to the UI.
+Each publication's single-mode process input must take precedence over the
+shared composition value. A common App Configuration store does not turn
+Hosted `both` into a single publication.
+If attachments are enabled, retain the shared/UI and conversational
+`ENABLE_PRIVATE_ATTACHMENTS=true`; only the workflow publication gets `false`.
+Workflow-only composition rejects an enabled attachment flag.
+On Container Apps, use the official standalone Durable Extension worker and
+DTS with stable native registration names `agent-lz-conversation` and
+`agent-lz-research-review`. Azure Functions, Dapr and public worker HTTP ingress
+are not required. Use the actual provisioned nonsecret managed-identity
+scheduler binding:
+`Endpoint=<actual provisioned output>;TaskHub=agent-lz;Authentication=ManagedIdentity`.
+Keep the same binding compatible with the native worker and UI client. Do not
+construct the endpoint from a guessed hostname or change authentication on
+one side only.
+
+MCP, Foundry IQ and Search are tools/capabilities, not application modes or
+competing strategy names. Graph, host, identity, persistence and publication
+changes require compatible deployment; functional parameters follow scoped
+App Configuration refresh and per-run snapshots.
+See [Agent hosting](hosted-agents.md),
+[Workflows & human input](workflows.md) and
+[Application settings](application-settings.md).
+
+`ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`;
+workflow mode, `both` or enabled history, feedback or attachments declares UI metadata
+storage directly. `NL2SQL_ENABLED=false` keeps
+the direct SQL catalog/connector dependencies unselected.
+`NL2SQL_SOURCE_REGISTRY` defaults to an empty string. When direct SQL is enabled,
+explicit `cosmos` selects the datasource catalog and publishes
+`DATASOURCES_CONTAINER=datasources`, with reader access to that exact container.
+Declare actual tool secret names through `NATIVE_TOOL_SECRET_NAMES` (default
+`[]`), a JSON array of names rather than values, and grant only the consuming
+component. This is a platform grant declaration; the native runtime does not
+consume `NATIVE_TOOL_SECRET_NAMES` as a secret-loading or tool-enabling setting.
+`ENABLE_PRIVATE_ATTACHMENTS=false` is the default. Enabling it selects
+owner-bound inline conversational input and UI metadata, not ingestion or
+corporate publication. Workflow attachments are unsupported.
+Admission allows at most three files, 64 KiB per file and 256 KiB for the
+serialized inline turn. See [Private attachments](conversations.md#private-attachments)
+for the MIME, encoding and owner contract.
+Native Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags also default
+to off; configured infrastructure alone does not register those tools.
+
+### Hosted foundation and publication inputs
 
 These inputs prepare hosting resources and metadata.
 The [default application layout](application.md#default-deployment)
@@ -940,20 +1024,18 @@ and [Hosted agents](hosted-agents.md) explain the application capabilities.
 | `HOSTED_AGENT_CONTAINER_CPU` | `2` | CPU recorded in provisioning metadata. See the literal-definition constraint below. |
 | `HOSTED_AGENT_CONTAINER_MEMORY` | `4Gi` | Memory recorded in provisioning metadata. See the same constraint. |
 
-The supplied child `hosted-agent/azure.yaml` declares agent name, CPU, memory,
-startup command and protocols as **literal fields**. Provisioning variables
-alone do not override them or resize the running agent. A change requires
-a reviewed compatible child definition and a new version. See
+Use the generated compatible host-specific application definitions for
+registration names, CPU, memory, entrypoints and protocols. Provisioning
+metadata alone does not resize or republish a running application. A change
+requires a reviewed definition and compatible publication. See
 [host capacity requirements](sizing-cost-planner.md#application-hosting).
 
-Hosted process settings, including `HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS`,
-belong in [Hosted agents](hosted-agents.md#validation-rules).
-Continuity controls `HOSTED_CONVERSATION_OWNER_BINDING` and
-`HOSTED_CONTINUITY_ENABLED` belong in
+Native package/publication constraints belong in
+[Agent hosting](hosted-agents.md#validation-rules).
+Owner-bound discovery and product metadata belong in
 [Conversations & files](conversations.md#continuity-settings).
-The bootstrap input `APP_CONFIG_TLS_COMPATIBILITY` belongs in
-[Application settings](application-settings.md#orchestrator-tls-compatibility),
-not in App Configuration.
+Process bootstrap values are distinct from dynamically refreshed functional
+parameters in [Application settings](application-settings.md).
 
 ## Deployment controls
 
@@ -1083,7 +1165,7 @@ for pending approval, propagation, timeouts and retry.
 
 Use [Application settings](application-settings.md) for runtime configuration
 tasks and effective-value checks. [Conversations & files](conversations.md)
-covers continuity settings. The declarations below describe how deployment
+covers native-state and product-metadata ownership. The declarations below describe how deployment
 publishes and owns those values.
 
 Post-provision publishes runtime settings to Azure App Configuration with
@@ -1112,7 +1194,7 @@ exact parameter document. Do not create per-key azd variables to transport it.
 
 Routing, identity and other authority-controlled conflicts are rejected.
 Unsupported runtime Key Vault-reference overrides fail explicitly; use the
-existing governance or continuity owner for those references.
+declared secret consumer and provisioning owner for those references.
 
 ### Effective settings
 

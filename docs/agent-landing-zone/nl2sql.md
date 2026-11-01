@@ -2,7 +2,10 @@
 
 **Structured Query Language (SQL)** queries and changes database tables.
 Natural-language-to-SQL (NL2SQL) turns a question into a query and summarizes
-the result. Agent Application offers two distinct routes. Choose the route
+the result. It is an **optional registered tool**, usable by an Agent or a
+Workflow independently of the execution host. It is not an application mode
+or a requirement to connect every deployment to SQL or Cosmos DB.
+Agent Application offers two distinct structured-data routes. Choose the route
 before configuring its metadata, identity and permissions.
 
 Deployment follows the
@@ -12,37 +15,43 @@ Deployment follows the
 
 ## Structured-data grounding
 
-| Route | Query execution | Supported hosting |
+| Route | Query execution | Dependencies |
 | --- | --- | --- |
-| `AGENT_STRATEGY=nl2sql` | The orchestrator selects a configured datasource, generates and validates SQL, executes it through the database connector, then summarizes rows. | Classic Container Apps execution |
-| Foundry IQ `fabricDataAgent` source | The published Fabric data agent owns query generation and execution. The orchestrator consumes its retrieved answer. | Foundry IQ retrieval, including the built-in hosted `maf_lite` path |
+| Direct NL2SQL tool | The application uses approved datasource metadata to generate and validate SQL, then executes it through the database connector. | Explicit tool registration, metadata, Search indexes, database connectivity and the selected database credential. |
+| Foundry IQ `fabricDataAgent` source | The published Fabric data agent owns query generation and execution. The application consumes its retrieved answer. | Published Fabric agent, knowledge-source binding and delegated source access. |
 
 These are not equivalent settings for one implementation. Changing
-`RETRIEVAL_BACKEND` does not redirect the direct SQL strategy to a Fabric agent.
-The hosted strategy allowlist excludes `nl2sql`, but that does not make direct
-NL2SQL an unimplemented feature in classic execution.
-[Strategies & prompts](agent-strategies.md) describes the supported choices.
+`RETRIEVAL_BACKEND` does not redirect a direct SQL connection to a Fabric agent.
+Selecting Hosted or Container Apps does not by itself enable either capability.
+[Tools & MCP](agent-tools.md) describes registration and authorization;
+[Agents & prompts](agent-strategies.md) describes application selection.
 
-## Direct NL2SQL strategy
+<span id="direct-nl2sql-strategy"></span>
+
+## Direct NL2SQL tool
 
 Use this route for an approved SQL database or Fabric SQL endpoint whose
 schema and example queries you manage. It does not crawl a database to discover
 an unrestricted schema on every question.
 
-The flow first retrieves datasource descriptions and relevant table metadata.
-A triage step selects a datasource or answers without a query. For a selected
-SQL source, the flow gathers schemas and similar queries, generates SQL,
-validates it, executes it, and streams a summary. Failed validation or execution
-returns an explanation instead of fabricated rows.
+The capability needs datasource descriptions, relevant table schemas and
+example queries. Generated SQL must pass validation before database execution.
+A failed lookup, validation or execution must not be presented as fabricated
+rows. An Agent decides when to call the registered tool; a Workflow can use it
+in its research step. Neither requires a global SQL strategy switch.
 
 ### Prepare datasources and metadata
 
-1. Provide the classic orchestrator's model, Cosmos DB, Search and Key Vault
-   dependencies through [Application settings](application-settings.md).
+1. Provide the enabled direct tool's model, datasource metadata store and
+   Search dependencies through [Application settings](application-settings.md).
    SQL execution needs ODBC Driver 18 for SQL Server and network access to the
-   selected database. The component image includes the ODBC dependencies.
+   selected database. These are capability dependencies, not requirements for
+   an application that does not enable direct NL2SQL. Key Vault access is
+   required only when the chosen connector actually consumes a secret.
 2. Add datasource definitions to the Cosmos container selected by
-   `DATASOURCES_CONTAINER`, default `datasources`.
+   `DATASOURCES_CONTAINER`, default `datasources`. Selecting the enabled
+   `cosmos` registry publishes that binding and grants catalog read access
+   at the exact container scope, not across the account.
    A `sql_database` definition identifies `id`, `description`, `server` and
    `database`, with optional `uid`. A Fabric `sql_endpoint` also supplies
    `tenant_id` and `client_id`.
@@ -63,15 +72,39 @@ returns an explanation instead of fabricated rows.
    [Jobs & schedules](ingestion-jobs.md). This indexes schema descriptions and
    examples, not copies of all database rows. Another approved pipeline can
    populate compatible metadata indexes instead.
-6. Select `AGENT_STRATEGY=nl2sql`, restart the classic orchestrator and ask a
-   question with a known result from an approved table.
+6. Set `NL2SQL_ENABLED=true` and `NL2SQL_SOURCE_REGISTRY=cosmos` for the intended
+   Agent or Workflow. Deploy its required resources and grants, and ask a question with
+   a known result from an approved table. Tool registration is application
+   configuration, not a per-user host or strategy picker.
+
+The disabled defaults are `NL2SQL_ENABLED=false` and an empty
+`NL2SQL_SOURCE_REGISTRY`. These feature keys are shared
+`additionalAppConfigurationSettings` entries under `agent-lz`, not new
+same-named infrastructure parameters. Do not select the catalog, connector
+or its secrets for an application that does not enable direct SQL.
 
 The metadata search defaults to `SEARCH_APPROACH=hybrid`, with semantic search
 off. `SEARCH_TABLES_INDEX_TOP_K` defaults to `10` and
 `SEARCH_QUERIES_INDEX_TOP_K` to `3`. Review these alongside the metadata corpus,
-not as a way to grant table access. The three NL2SQL prompts cover triage,
-SQL generation and synthesis as described in
-[Strategies & prompts](agent-strategies.md#configure-prompts).
+not as a way to grant table access. Datasource selection, SQL generation and
+synthesis belong to the reviewed application instructions and tool implementation.
+See [Agents & prompts](agent-strategies.md#configure-instructions).
+
+### Registered native helpers
+
+The native capability reuses nine datasource, metadata, validation and execution
+functions rather than introducing a global SQL agent strategy. These include:
+
+| Callable | Boundary |
+| --- | --- |
+| `validate_sql_query(query)` | Validate generated SQL before execution |
+| `execute_sql_query(datasource,query)` | Query the approved datasource through its configured database principal |
+| `execute_dax_query(datasource,query)` | DAX helper requiring trusted server-side token context |
+
+Token material is **not** a model-callable argument. Execution is bounded to
+a 30-second timeout and 1,000 rows. DAX calls fail closed when the native host
+does not supply the required delegated token binding; registration alone is
+not evidence of working end-to-end Fabric delegation.
 
 ### Database identity and limits
 
@@ -81,6 +114,12 @@ password read from Key Vault under the normalized `<datasource-id>-secret`
 name. Fabric `sql_endpoint` uses the configured service principal and the same
 datasource-based secret naming. Grant only read access to approved data.
 Do not store passwords or client secrets in datasource JSON.
+Declare the actual consumed secret names in `NATIVE_TOOL_SECRET_NAMES`
+(default `[]`), a JSON array of names, so scoped grants can be provisioned.
+This is a platform grant declaration, not a key consumed by the native runtime
+to load secrets. Do not put secret values into it.
+Managed-identity database access does not justify granting
+unrelated Key Vault access.
 
 The direct SQL path runs as that configured database principal. It does not
 automatically delegate each chat user's identity to the database or inherit
@@ -93,10 +132,10 @@ pass-through functions such as `OPENQUERY`. This is defense in depth, not a
 replacement for a read-only database principal, bounded database resources or
 reviewed data exposure.
 
-The plugin contains semantic-model and DAX helpers, and samples include
-`semantic_model` definitions. **The current `nl2sql` strategy flow rejects a
-selected semantic-model datasource.** Do not advertise those lower-level
-helpers as an enabled end-to-end semantic-model strategy. Use the Fabric
+Samples also include semantic-model and DAX helpers. A lower-level helper is
+not evidence that an end-to-end semantic-model capability is registered.
+The direct SQL capability is for `sql_database` and Fabric `sql_endpoint`
+datasources; do not advertise DAX as an enabled direct SQL tool. Use the Fabric
 data-agent route below when appropriate, or treat a custom DAX flow as
 application development.
 
@@ -105,10 +144,10 @@ application development.
 Fabric warehouses and lakehouses store analytical data. A Fabric data agent
 generates and executes read-only SQL over their tables.
 A Power BI semantic model uses Data Analysis Expressions (DAX).
-Fabric owns schema context and query execution. The hosted orchestrator consumes
+Fabric owns schema context and query execution. The application consumes
 results from the knowledge base.
 
-This route does not require the direct strategy's Cosmos datasource records,
+This route does not require the direct tool's Cosmos datasource records,
 ODBC connection or NL2SQL metadata ingestion jobs.
 
 <span id="prerequisites"></span>
@@ -184,13 +223,14 @@ A Fabric answer missing from chat can indicate denied consent or source access,
 an incorrect binding or incompatible API settings. An incorrect aggregate
 can instead reflect source schema or business definitions.
 Knowledge-base source references and provisioning inputs share a lifecycle.
-removing a pilot binding does not require deleting tables or other knowledge sources.
+Removing a pilot binding does not require deleting tables or other knowledge sources.
 
 ## Need a direct SQL connection?
 
-Use the [classic NL2SQL strategy](#direct-nl2sql-strategy) when its execution and
-identity boundaries meet the requirement. Direct SQL in hosted `maf_lite`
-would instead need an explicit [tool integration](agent-tools.md) with caller
-authorization, read-only database permissions, reviewed data access and bounded
-execution. A portal tool attachment does not add that service to the container.
+Use the [direct NL2SQL tool](#direct-nl2sql-tool) when its execution and identity
+boundaries meet the requirement. Register it explicitly and provision its
+metadata, connector and credential dependencies on the selected host.
+Keep caller authorization, read-only database permissions, reviewed data access
+and bounded execution independent of model instructions.
+A portal tool attachment does not add that service to a running application.
 Request payloads belong in the [API reference](application-api.md).

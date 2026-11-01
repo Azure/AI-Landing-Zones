@@ -2,17 +2,17 @@
 
 Change application source when a documented setting is insufficient.
 Prefer [Application settings](application-settings.md) and
-[Strategies & prompts](agent-strategies.md) before creating a fork.
+[Agents & prompts](agent-strategies.md) before creating a fork.
 Use [Run locally](local-development.md) to prepare a development environment.
 
 ## Choose the owner
 
 | Change | Repository and starting point |
 | --- | --- |
-| Agent reasoning flow, prompts, model/tool composition | [Orchestrator](https://github.com/Azure/agent-app-orchestrator), `src/strategies/`, `src/prompts/`, and `src/plugins/` |
+| Agent definitions, workflow graphs, prompts and registered tools | [Orchestrator](https://github.com/Azure/agent-app-orchestrator), application definitions and tool/connector owners under `src/` |
 | File parsing, chunking, source jobs, indexing | [Ingestion](https://github.com/Azure/agent-app-ingestion), `chunking/`, `jobs/`, and `tools/` |
 | Chat presentation, identity/session handling, backend client | [UI](https://github.com/Azure/agent-app-ui), `src/gpt_rag_ui/`, `public/`, and `.chainlit/` |
-| Operator dashboard | The relevant service's `frontend/`, not the chat UI |
+| Ingestion operator dashboard | Ingestion `frontend/`, not the chat UI or native runtime |
 | Platform resources, component selection, immutable source pins | [Agent Landing Zone](https://github.com/Azure/agent-landing-zone), not component `infra/` placeholders |
 
 Make the smallest change in its owning repository. Keep executable examples,
@@ -20,45 +20,43 @@ sample documents, schemas, and regression tests with the code. User, operator,
 and developer guides belong on this central site. Local engineering contracts,
 ADRs, policies, and changelogs retain their own repository purpose.
 
-## Strategies and prompts
+<span id="strategies-and-prompts"></span>
 
-A strategy is the orchestrator's implementation of how a turn uses models,
-retrieval, and tools. To add or extend one:
+## Agents, workflows and prompts
 
-1. Inspect a nearby implementation in `src/strategies/` and the shared
-   `base_agent_strategy.py`. Preserve its async construction and streaming
-   behavior rather than adding a second execution loop to the HTTP handler.
-2. Register a new key in `agent_strategies.py` and
-   `agent_strategy_factory.py`. The factory handles synchronous and awaitable
-   constructors. An enum member alone does not enable a strategy.
-3. Keep prompts in the appropriate directory under `src/prompts/`. The loader
-   supports `.jinja2` templates and `.txt` prompts. Preserve the variables
-   expected by the selected strategy and test missing/invalid templates.
-   The classic path can use configured Cosmos-backed prompts.
-   The hosted path requires file-backed prompts.
-4. Preserve typed turn events and protocol adapters in `src/orchestration/`
-   and `src/api/`. Test cancellation and failures as well as a successful answer.
-5. Test classic and hosted paths separately if both are intended. Hosted
-   eligibility is enforced by `hosted_strategies.py`, not inferred from the
-   classic registry. Do not add a hosted strategy merely by relaxing its guard.
+A MAF Agent handles conversation; a MAF Workflow defines a published process.
+Hosting and tools are separate choices. To extend the application:
 
-The registered classic keys are `maf_lite`, `maf_agent_service`,
-`single_agent_rag`, `mcp`, `multimodal`, and `nl2sql`. `multiagent` is not
-registered. `rag` and `multimodal_rag` are not keys. Hosted execution admits
-only the first four, requires caller-supplied history, and does not use classic
-Cosmos conversation state or profile memory.
+1. Extend the owning agent definition or workflow graph. Use the official MAF
+   execution and human-input APIs, not a second execution loop, polling queue
+   or application-owned checkpoint engine.
+2. Register the intended capabilities explicitly. Foundry IQ, Search, MCP and
+   optional [NL2SQL](nl2sql.md#direct-nl2sql-tool) are tools/capabilities, not a
+   mixed strategy registry or a user-facing host picker.
+3. Keep packaged instructions and typed tool inputs with the reviewed source.
+   Test missing/invalid configuration and prompts. Functional App Configuration
+   values refresh through the supported provider; an existing workflow retains
+   its run snapshot without freezing authorization.
+4. Use the explicit host integration: request-aware Hosted agent/workflow
+   factories and native Responses persistence, or the official Durable
+   Extension worker/client with DTS. Do not build a universal protocol or
+   state SDK to hide these differences.
+5. Keep workflow/executor and native registration names stable within a
+   compatible publication. Test reconnect, rejection, stale/duplicate human
+   replies, ownership denial and required-tool failure on each supported host.
 
 Prompt variants and settings do not grant source permissions. Preserve denied
 retrieval as an error where strict authorization requires it.
-See [API reference](application-api.md) for protocol boundaries.
+See [Workflows & human input](workflows.md) for state and recovery, and the
+[API reference](application-api.md) for host-specific client boundaries.
 
 ## Tools and retrieval
 
 A tool is an operation the agent can call. Model Context Protocol, or MCP,
-is a protocol for exposing tools. An MCP tool called by a strategy is distinct
+is a protocol for exposing tools. A registered MCP operation is distinct
 from an MCP knowledge source consulted by Foundry IQ.
 
-- Extend the existing plugin/connector used by the strategy. Keep argument
+- Extend the existing tool/connector used by the application. Keep argument
   validation, timeout, cancellation, and result shaping at that boundary.
 - Follow [Tools & MCP](agent-tools.md) for supported integrations rather than
   embedding endpoint URLs or credentials in a prompt.
@@ -106,16 +104,15 @@ document bodies to a guide or a telemetry fixture.
 ## Chat UI ownership and imports
 
 The distribution installs the **`gpt_rag_ui`** package from `src/gpt_rag_ui/`.
-Use imports such as `from gpt_rag_ui.services.history import HistoryService`,
-not filesystem-path manipulation.
+Import the installed package rather than using filesystem-path manipulation.
 
 | Canonical area | Owns |
 | --- | --- |
 | `bootstrap.py` | ASGI composition and auth-before-Chainlit mount order |
-| `api/` | Routes, callbacks, history adapter, and session bridge |
-| `services/` | Chat, citations, history, continuity, conversation/download policy, and panel metadata |
+| `api/` | Authenticated `/api/native` routes, callbacks and session bridge |
+| `services/` | Native application operations, owner metadata, feedback, citations and download policy |
 | `auth/` | Identity, OAuth, session, and transport security |
-| `clients/` | Orchestrator, ingestion, hosted runtime, Conversations, Blob, and Cosmos transports |
+| `clients/` | Explicit Hosted and DTS clients, plus separately required ingestion, Blob and Cosmos transports |
 | `config/` | Provider/cache, typed settings, and staged asset-root resolution |
 | `telemetry/` and `util/` | Instrumentation and pure constants |
 
@@ -125,13 +122,14 @@ tests, not private adapter globals. `.quality/migration.json` freezes the
 legacy export inventory and `.quality/policy.json` tracks the current scope.
 Do not add `sys.path` or `sys.modules` workarounds.
 
-`api.history.OrchestratorDataLayer` adapts Chainlit callbacks and
-`get_data_layer()` creates a fresh adapter.
-`services.history.HistoryService` owns history/user operations and the shared
-user cache. Keep ambient session selection and consume-once request metadata
-in the API. Services receive an explicit `HistoryOperationContext`.
+Keep native session selection and consume-once request metadata at the
+authenticated API boundary. The native application service owns UI UUID
+mapping and product metadata; explicit host clients own execution calls.
+Do not route native operations through an old orchestrator data-layer adapter.
 Callback, history, and OAuth registration must remain idempotent.
-Classic history registration is specific to `CHAT_BACKEND=orchestrator`.
+Native history uses the selected host client plus UI-owned metadata, not a
+classic orchestrator conversation API. Keep session/run owner checks explicit
+before native reads, continuation and pending human replies.
 
 For presentation, start with `public/theme.json`, `public/custom.css`, and
 `.chainlit/config.toml`. Preserve light/dark themes, keyboard focus, readable
@@ -142,11 +140,11 @@ browser-stored credentials or weakened origin checks.
 
 ## Operator dashboard changes
 
-Edit React/TypeScript under the owning service's `frontend/`.
+Edit React/TypeScript under ingestion's `frontend/`.
 Use its [local proxy and Node setup](local-development.md#operator-dashboard-frontend),
 start the backend separately, and keep typed frontend payloads aligned with
-the [API reference](application-api.md). Do not copy the ingestion configuration
-payload into the orchestrator dashboard. They are different contracts.
+the [API reference](application-api.md). Native orchestrator entrypoints do
+not mount the classic dashboard/admin APIs.
 
 Test read-only, administrator, unauthenticated, denied, empty, loading, and
 failure states. A local development admin bypass is not production

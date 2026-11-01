@@ -34,8 +34,8 @@ The source must belong to the selected knowledge base. These runtime settings
 do not register it or grant Microsoft 365 access.
 `FOUNDRY_IQ_MAX_RUNTIME_SECONDS` defaults to `120` and provides the retrieve
 runtime ceiling when remote sources are enabled.
-[Application settings](application-settings.md) explains effective values and
-the restart or new hosted version needed after a change.
+[Application settings](application-settings.md) explains effective values,
+supported functional refresh and structural redeployment.
 
 <span id="prepare-the-tenant"></span>
 
@@ -108,7 +108,7 @@ Bearer tokens must stay out of prompts, history and logs.
 <span id="verify-before-connecting-users"></span>
 <span id="diagnose-or-back-out"></span>
 
-The backend's classic OBO helper also needs
+The UI's confidential OBO client needs
 `OAUTH_AZURE_AD_TENANT_ID`, `OAUTH_AZURE_AD_CLIENT_ID` and
 `OAUTH_AZURE_AD_CLIENT_SECRET` for exchanges where applicable. Keep the secret
 server-side as a Key Vault reference. It is not a credential embedded in the
@@ -116,12 +116,10 @@ Work IQ knowledge-source definition. Follow
 [Application authentication](application-auth.md) for the complete login and
 delegation setup.
 
-Do not treat connector-level source omission as successful Work IQ grounding.
-The source builder can skip an empty name or missing OBO token with a warning.
-The context provider requires user delegation for enabled remote sources, and
-the native protected path additionally requires the Work IQ assertion and
-compatible API. A Toolbox call ID is not a substitute for either token.
-`FOUNDRY_IQ_FORWARD_SOURCE_AUTH` is deprecated and ignored.
+Do not treat source omission as successful Work IQ grounding.
+Required Work IQ retrieval needs user delegation, the distinct Work IQ
+assertion and a compatible API. A Toolbox call ID is not a substitute for
+either credential, and workload identity must not replace a missing user.
 
 ## Acceptance and recovery
 

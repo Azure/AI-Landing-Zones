@@ -1,97 +1,163 @@
 # Application settings
 
-Application settings control how the UI, orchestrator and ingestion service
-behave after deployment. They normally live in Azure App Configuration under
-the `agent-lz` label. Deployment inputs, such as resource selection and networking,
-are covered separately in [Deployment settings](configuration.md).
+Application settings control the UI, native agent/workflow and optional
+ingestion service. Azure App Configuration remains an intentional dependency.
+Components read the `agent-lz` label; a label is not an environment-isolation
+boundary. Keep stores, identities and secrets separate between environments.
+
+[Deployment settings](configuration.md) covers resource selection, provisioning
+ownership and generated outputs. Read individual nonsecret keys rather than
+dumping a store or environment.
 
 ## Change a setting
 
-1. Select the App Configuration store for the intended environment.
-2. Check [configuration ownership](configuration.md#configuration-ownership-and-declarations).
-   Change provisioning-managed values through their declared inputs, not an
-   independent edit that the next deployment could replace.
-3. For an operator-managed value, update the exact key under `agent-lz`.
-   Store credentials as Key Vault references, never literal strings.
-4. Reload the affected process. Restart the UI or ingestion Container App.
-   For hosted orchestrator settings, deploy a new agent version.
-5. Check the effective nonsecret value and exercise the affected feature.
-   An accepted write alone does not confirm that a running process loaded it.
+1. Select the intended environment and check
+   [configuration ownership](configuration.md#configuration-ownership-and-declarations).
+   Change provisioning-managed values through their declared inputs.
+2. Identify whether the setting is functional or structural using the table
+   below. An accepted key write does not prove a running process loaded it.
+3. Update an operator-managed key under `agent-lz`. Keep credentials as Key
+   Vault references, never literal strings.
+4. For a supported dynamic parameter, allow the official provider's
+   refresh/cache cycle and check a new interaction. For a structural change,
+   publish/redeploy the affected application with compatible configuration.
+5. Verify the effective nonsecret value, a successful operation and its
+   failure/denied-user behavior.
 
 Use the [runtime-setting procedure](deploy-full-stack.md#change-a-runtime-setting)
-for commands and the [secret-rotation procedure](deploy-full-stack.md#rotate-a-secret)
-for versioned and unversioned Key Vault references.
+and [secret rotation](deploy-full-stack.md#rotate-a-secret) for operational
+steps. Not every component or setting shares the runtime's refresh behavior.
 
 ## Configuration access
 
-Set `APP_CONFIG_ENDPOINT` in each process environment before startup. The
-application uses managed identity in Azure and can use the Azure CLI credential
-for local development. `AZURE_CLIENT_ID` selects a user-assigned managed identity.
-The identity still needs App Configuration Data Reader, access to referenced
-Key Vault secrets and network connectivity.
+Supply `APP_CONFIG_ENDPOINT` as a process bootstrap input. Managed identity
+is preferred in Azure; local Azure credentials still require the appropriate
+data-plane permissions and network connectivity.
 
-Use separate stores and identities for separate environments. The label is not
-an environment-isolation boundary.
+Load only keys needed by the selected component, host, application mode and
+capabilities. Use official provider caching and refresh, not a bespoke
+configuration polling/state engine. Do not eagerly resolve unrelated Key Vault
+references or require optional source credentials to start a different feature.
+
+App Configuration Data Reader is not Key Vault secret access. Grant secret
+permissions only to actual consumers at the required scope.
+A missing required setting or authorization context must be reported, not
+converted into an insecure fallback or a successful empty result.
+
+## Functional parameters and deployment choices
+
+| Kind | How it takes effect |
+| --- | --- |
+| Supported functional parameter | Refresh through the official provider; applies to new work after refresh |
+| Workflow functional snapshot | Captured for that run; retained across pending human input and resume |
+| Current user/source/tool authorization | Rechecked at each interaction; never frozen by a functional snapshot |
+| Host or application mode | Deployment composition; not a per-message or UI strategy switch |
+| Workflow graph/executor identifiers, native registration names | Reviewed application definition and compatible publication |
+| Identity, persistence backend, endpoints or process bootstrap | Matching resources, permissions and deployment/restart |
+
+Do not assume arbitrary configuration changes can safely mutate an in-flight
+workflow. A run uses the functional values captured when it started, while a
+revoked user permission must still prevent a later interaction.
 
 ### Overrides and effective values
 
-The components also read compatibility labels. Conflicting values under those
-labels or without a label can replace the intended `agent-lz` value. Avoid
-duplicate keys with different values rather than using label ordering as an
-override mechanism.
+Use the exact bootstrap/configuration contract of the selected component.
+A process variable, sample `.env` file or key under another label is not an
+implied universal override. Remove stale conflicting declarations rather than
+relying on accidental label ordering.
 
-The orchestrator's final selection reads unlabelled keys. UI and ingestion
-endpoint loaders finish with an unfiltered selection, which can read keys from
-other labels too. A successful write therefore needs an effective-value check.
-The orchestrator dashboard writes to `agent-app-orchestrator`. Ingestion writes
-to `agent-lz` unless its process variable `APP_CONFIG_LABEL` selects another label.
-
-Direct environment overrides differ by component:
-
-| Component | How overrides work |
-| --- | --- |
-| Orchestrator | `allow_environment_variables=true` enables runtime environment overrides. `1` and `yes` are also accepted. Leave it unset for normal remote configuration. |
-| Ingestion | Any nonempty `allow_environment_variables` value enables overrides, including the text `false`. Leave it unset or empty to disable them. |
-| UI | Overrides are supported by specific feature loaders, including embedding and continuity. There is no universal environment override for every key. |
-
-Bootstrap inputs, such as `APP_CONFIG_ENDPOINT`, are process values regardless
-of these switches. An unavailable store is not a supported offline mode.
-UI returns a not-ready application when it cannot connect. Other components
-have loader-specific fallback behavior, so a running process is not proof that
-all required values are available.
+Verify the selected App Configuration endpoint, label, relevant nonsecret
+settings and publication/revision. Do not log resolved secrets to prove access.
+An unavailable required store is a readiness failure, not an offline mode.
 
 ## Find the settings for your task
 
 | Task | Guide |
 | --- | --- |
-| Choose agent execution and prompts | [Strategies & prompts](agent-strategies.md) |
-| Set up user login, consent and document access | [Sign-in & access](application-auth.md) |
-| Configure conversation history and uploads | [Conversations & files](conversations.md) |
-| Embed the chat in a portal | [Embed chat](embed-chat.md) |
-| Connect a knowledge source | [Foundry IQ](foundry-iq.md), [Work IQ](work-iq.md), [Fabric IQ](fabric-iq.md), [SharePoint](sharepoint.md) |
-| Schedule ingestion and maintenance | [Jobs & schedules](ingestion-jobs.md) |
-| Enable administrative access | [Administration](operations.md) |
-| Configure audit and content capture | [Monitoring & audit](application-monitoring.md) |
+| Select application mode and host | [Native execution selection](configuration.md#native-execution-selection) |
+| Configure agent instructions and capabilities | [Agents & prompts](agent-strategies.md), [Tools & MCP](agent-tools.md) |
+| Operate a human-reviewed process | [Workflows & human input](workflows.md) |
+| Set up login, consent and document access | [Sign-in & access](application-auth.md) |
+| Configure saved history and understand private-input limits | [Conversations & files](conversations.md) |
+| Enable owner-scoped feedback | [User feedback](user-feedback.md) |
+| Connect a knowledge source | [Foundry IQ](foundry-iq.md), [SharePoint](sharepoint.md) |
+| Schedule custom ingestion | [Jobs & schedules](ingestion-jobs.md) |
+| Configure administration and audit | [Administration](operations.md), [Monitoring & audit](application-monitoring.md) |
 
-The runtime default of a component can differ from the value selected by the
-platform. For example, the orchestrator's standalone retrieval default is
-`ai_search`, while a fresh Agent Landing Zone deployment selects `foundry_iq`.
-Use the selected deployment's effective configuration, not a local sample file.
+## Native application contract
 
-## Orchestrator TLS compatibility
+| Setting | Default or requirement |
+| --- | --- |
+| `APPLICATION_MODE` | `conversational`; also accepts `workflow` and `both` |
+| `ORCHESTRATION_HOST` | `hosted`; also accepts `container_apps` |
+| `HOSTED_AGENT_BASE_URL` | Actual conversational Hosted publication endpoint |
+| `HOSTED_WORKFLOW_BASE_URL` | Actual separate workflow Hosted publication endpoint |
+| `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Native managed-identity binding using the actual scheduler output and configured task hub |
+| `SEARCH_RETRIEVAL_ENABLED` | `false`; native Search tool capability |
+| `FOUNDRY_IQ_ENABLED` | `false`; native Foundry IQ capability |
+| `MCP_ENABLED` | `false`; native MCP tool registration |
+| `MULTIMODAL_ENABLED` | `false`; native multimodal tool capability, separate from ingestion `MULTIMODAL` and private attachments |
+| `ENABLE_CHAT_HISTORY` | `false`; explicitly selects saved-history discovery |
+| `ENABLE_USER_FEEDBACK` | `false`; explicitly selects user feedback |
+| `DATABASE_ACCOUNT_NAME` | Selected application Cosmos account for UI metadata |
+| `DATABASE_NAME` | Selected application Cosmos database for UI metadata |
+| `NATIVE_UI_METADATA_CONTAINER` | `native-ui-metadata`, with partition key `/principal_id` |
+| `NL2SQL_ENABLED` | `false`; explicitly enables the optional direct SQL capability |
+| `NL2SQL_SOURCE_REGISTRY` | Empty string by default; enabled direct NL2SQL requires explicit `cosmos` |
+| `DATASOURCES_CONTAINER` | `datasources`, published for the selected direct NL2SQL Cosmos catalog |
+| `NATIVE_TOOL_SECRET_NAMES` | `[]`; platform scoped-grant declaration of secret **names**, not values; not consumed by the native runtime |
+| `ENABLE_PRIVATE_ATTACHMENTS` | `false`; conversational inline attachments, independent of corporate ingestion; no workflow attachments |
 
-Use `APP_CONFIG_TLS_COMPATIBILITY=true` only when the orchestrator needs the
-documented App Configuration transport workaround. It is a process-environment
-input, default `false`, and cannot be enabled by an App Configuration key.
-When enabled, also supply `KEY_VAULT_URI` in the process environment.
-Both endpoints must be plain HTTPS origins without credentials, query strings,
-fragments or additional paths.
+Feature keys are shared `additionalAppConfigurationSettings` entries under
+label `agent-lz`, not additional same-named Bicep or Terraform parameters.
+Resource selection must follow their declared dependencies before application
+startup.
 
-The compatibility transport retains certificate and hostname verification,
-custom certificate authorities and TLS 1.2 or later. It affects App Configuration
-and references to that configured vault, not every outbound connection.
-UI and ingestion do not implement this orchestrator switch.
+Workflow mode or `both` selects UI metadata even when both history and feedback
+flags are `false`. Enabled history, feedback or attachments also selects that
+dependency.
+The UI reads `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and
+`NATIVE_UI_METADATA_CONTAINER`; only the frontend receives the metadata grant.
+Existing foundation outputs `COSMOS_DB_ENDPOINT` and
+`COSMOS_DB_ACCOUNT_RESOURCE_ID` remain conditional. There is no separate
+native Cosmos endpoint key. `/principal_id` is the authenticated `tid:oid`.
+Metadata contains owner mappings, references, feedback and descriptors, not
+file bytes, transcripts, tokens or native checkpoints.
+Conversational mode with all product flags off uses bounded volatile owner
+maps that are lost on UI restart. Native persistence does not restore them.
 
-Invalid input fails startup. A hosted change requires a new agent version.
-Use [TLS troubleshooting](troubleshooting.md#hosted-configuration-tls-handshake-stalls)
-instead of disabling certificate verification.
+Private attachments allow at most three UTF-8 TXT/Markdown, PDF, PNG or JPEG
+files, each at most 64 KiB, using validated inline Base64 native inputs.
+The serialized inline turn budget is 256 KiB across the Hosted/DTS envelopes,
+including text, escaping and encoding overhead.
+Transport is implemented; model PDF/image understanding remains unverified.
+See [Conversations & files](conversations.md#private-attachments).
+
+Native Hosted and DTS execution do not require application Cosmos.
+Enabled direct NL2SQL has a separate Cosmos datasource catalog dependency;
+the default catalog container is `datasources`, with read access scoped to
+that exact container. Its database connection,
+schema/example indexes and any actual secret consumer remain conditional.
+
+For Hosted `both`, the shared configuration can describe the composition,
+but each publication must receive an explicit single-mode process input.
+Conversation uses `conversational`; the process publication uses `workflow`.
+Do not let the shared composition value start a single Hosted process in
+`both` mode. See [Agent hosting](hosted-agents.md).
+When private attachments are enabled in Hosted `both`, keep the shared/UI and
+conversational publication flag enabled. Only the workflow publication
+receives `ENABLE_PRIVATE_ATTACHMENTS=false`; it does not support attachments.
+
+<span id="orchestrator-tls-compatibility"></span>
+
+## Transport and secret changes
+
+Keep certificate and hostname verification enabled. A private endpoint needs
+working DNS, network access and a trusted certificate chain; changing an
+application parameter does not repair connectivity.
+
+Secret rotation and transport/bootstrap changes have their own reload rules.
+Do not infer that functional parameter refresh also rotates every cached
+credential. Follow the selected component's verified deployment contract and
+[TLS diagnosis](troubleshooting.md#hosted-configuration-tls-handshake-stalls)
+without disabling TLS verification.

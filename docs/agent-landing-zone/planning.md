@@ -76,6 +76,35 @@ must not create them. A single platform workflow coordinates the destinations.
 See [resource group inputs](configuration.md#resource-group-destinations)
 for defaults, permissions and provider-specific removal rules.
 
+## Choose application behavior and execution host
+
+For the reference application, choose conversation, a published workflow or
+both with `APPLICATION_MODE`. Select `ORCHESTRATION_HOST` independently:
+
+| Host | Plan its dependencies |
+| --- | --- |
+| `hosted` | Official Responses hosting and native Foundry persistence; separate conversational/workflow publications when both are selected |
+| `container_apps` | Official Durable Extension worker/client, Durable Task Scheduler, worker availability and scheduler connectivity |
+
+Keep UI/BFF owner mappings, history discovery and feedback separate from native
+execution state. Optional product storage is not a second checkpoint engine.
+Custom ingestion is disabled by default and is not required merely to retain
+metadata or to select a workflow. Workflow mode, `both`, enabled history,
+feedback or private attachments selects UI metadata storage directly.
+Product flags default to off; conversational mode then uses bounded volatile
+owner maps lost on UI restart.
+Private attachments use validated inline native input, not Blob/SAS or
+ingestion. They are conversational only; verify model PDF/image understanding
+separately from transport.
+
+Confirm compatible published SDK packages, the actual product's native
+SDK/contract checks, service availability and trusted user context.
+Record supplemental live checks separately. A service identity is not per-user
+authorization; local mocks or a public sandbox do not establish deployed
+checkpoint durability, user isolation or private-network parity.
+See [Agent Application](application.md) and
+[native execution selection](configuration.md#native-execution-selection).
+
 ## Consider optional gateway integration
 
 AI Gateway governs model access and can accompany either standalone or

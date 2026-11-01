@@ -317,8 +317,9 @@ For general application failures, use [Troubleshooting](troubleshooting.md).
 - Anonymous embedding supplies no user token and cannot call the default
   user-delegated hosted path. It disables durable threads, uploads and private
   citation downloads; its endpoint is independent of portal login.
-- Upload controls require the separately deployed ingestion capability.
-  Embedding does not add native hosted-agent uploads.
+- Embedding the UI or deploying ingestion does not enable private attachments.
+  Authenticated attachments require the selected application's explicit
+  feature gate, supported file path and owner checks.
 
 A separately authenticated client is an application extension under
 [Bring your own app](build-your-own-app.md).

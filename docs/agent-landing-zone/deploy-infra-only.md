@@ -242,9 +242,9 @@ Otherwise use the Agent Application definition. The first provision binds the en
 to its application ID; a different ID requires a new environment.
 Preserve the existing layout and ingestion selection during recovery.
 
-The default Agent layout is `hosted-no-panel`, using `maf_lite` and Foundry IQ
-without Agent App Ingestion. Set `HOSTED_AGENT_RESOURCE_SCOPE` to the approved
-delegated Foundry audience followed by `/.default` before provisioning, even
+The default Agent layout is `hosted-no-panel`, using a conversational MAF Agent
+and Foundry IQ without Agent App Ingestion. Set `HOSTED_AGENT_RESOURCE_SCOPE`
+to the approved delegated Foundry audience followed by `/.default` before provisioning, even
 when application deployment will happen later. See the linked full-stack
 guide for identity inputs, downstream consent and protected-retrieval acceptance.
 

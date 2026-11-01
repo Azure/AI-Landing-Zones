@@ -2,15 +2,23 @@
 
 # Tools & MCP
 
-Foundry tools let an agent call approved operations. A Toolbox groups configured
-tools and their connections. An MCP server exposes operations through Model
-Context Protocol. A Foundry IQ knowledge base instead supplies retrieved
-grounding. These are different integration boundaries.
+Tools are approved operations that a MAF Agent or Workflow can call.
+Model Context Protocol (MCP) exposes operations through a tool server.
+Foundry IQ and Azure AI Search provide knowledge/retrieval capabilities.
+These are not competing orchestration strategies.
 
-The supplied `mcp` strategy can consume an MCP server. Other strategies do not
-automatically load a portal-managed tool list. This page explains that choice
-and the separate hosted authorization contract. Deployment and redeployment
-follow the [full-stack deployment guide](deploy-full-stack.md).
+Select the application experience and host through
+[Agents & prompts](agent-strategies.md) and
+[Agent hosting](hosted-agents.md), then register the required capabilities.
+A portal connection or endpoint string alone does not attach a tool to
+the running application.
+
+Native capabilities are **off by default**: `SEARCH_RETRIEVAL_ENABLED`,
+`FOUNDRY_IQ_ENABLED`, `MCP_ENABLED`, `NL2SQL_ENABLED` and
+`MULTIMODAL_ENABLED`. Select only the capabilities whose source, identity,
+network and tool contracts are configured. The multimodal tool flag is
+different from custom ingestion `MULTIMODAL` and inline private attachments.
+See [Application settings](application-settings.md#native-application-contract).
 
 <span id="choose-the-extension-point"></span>
 
@@ -18,163 +26,131 @@ follow the [full-stack deployment guide](deploy-full-stack.md).
 
 | Need | Integration boundary |
 | --- | --- |
-| Call a service operation | A reviewed Foundry tool or Toolbox connection, consumed by the application. |
-| Ground answers in documents | A Foundry IQ knowledge source bound to the knowledge base. |
-| Change instructions or orchestration | Hosted orchestrator source and its configured prompts. |
+| Call an operation | A reviewed tool with a narrow schema and explicit authorization |
+| Connect an MCP server | Registered MCP tools, authenticated transport and approved destination |
+| Ground an answer | A configured Foundry IQ source or Search capability |
+| Query approved SQL or Fabric SQL data | Optional registered NL2SQL tool with its own metadata, connector and read-only database principal |
+| Wait for a person's decision | Native workflow human input, not a blocking tool socket |
+| Change a process graph | Reviewed workflow definition and compatible publication |
 
-Select a supported [strategy and prompt source](agent-strategies.md) before
-configuring tools. A Foundry IQ `mcpServer` source is retrieval configuration,
-not `AGENT_STRATEGY=mcp`. Its separate
-[MCP knowledge-source settings](foundry-iq.md#generic-mcp-knowledge-sources)
+A Foundry IQ `mcpServer` source is retrieval configuration, not automatically
+a model-callable MCP tool. Its
+[knowledge-source settings](foundry-iq.md#generic-mcp-knowledge-sources)
 control source planning, output parsing and query credentials.
 
-Foundry supports [MCP tools](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol?view=foundry)
-and [Toolbox connections](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox).
-Creating either in the portal does not make the default Agent Application
-consume it.
+### Optional direct NL2SQL
+
+An Agent or Workflow can use the registered direct SQL tool without changing
+its application mode or host. Enable it only for approved SQL or Fabric SQL
+datasources. Its metadata store, schema/example indexes, ODBC driver, network
+access and chosen database credential are conditional dependencies.
+Applications without the tool do not need those SQL resources.
+
+The configured database principal performs direct queries; no automatic
+end-user SQL delegation is supplied. Read-only grants are the primary data
+boundary, with generated-query validation as defense in depth.
+This is separate from a Foundry IQ `fabricDataAgent` source, where Fabric owns
+query generation and execution.
+See [Ask questions about SQL data](nl2sql.md) for setup and denial checks.
+The reused helper suite includes `validate_sql_query(query)`,
+`execute_sql_query(datasource,query)` and `execute_dax_query(datasource,query)`.
+Tokens are trusted server context, never model-callable arguments.
+Execution is bounded to 30 seconds and 1,000 rows.
+DAX and delegated multimodal calls fail closed when native host token
+binding is unavailable; end-to-end delegation is not established by the
+registered function or local transport tests.
 
 <span id="before-you-start"></span>
 <span id="1-check-what-the-hosted-strategy-loads"></span>
+<span id="supplied-hosted-execution"></span>
 
-## Supplied hosted execution
+## Application-owned registration
 
-The default `maf_lite` orchestrator constructs a Microsoft Agent Framework
-agent inside the hosted container. It calls the configured model deployment
-directly and uses a Foundry IQ context provider for knowledge-base retrieval.
-It does not read a portal-managed prompt agent's tool list or automatically
-instantiate `FoundryToolbox`.
+Native host integrations run the application's agent/workflow definitions.
+Code defines the model, instructions, tools and retrieval behavior. Foundry
+hosting does not automatically consume a portal-managed prompt agent's tool
+list, and a durable worker does not infer a process from App Configuration.
 
-[Hosted agents run containerized application code](https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry).
-Foundry hosts that code and authenticates invocation, but code defines its
-model, instructions, tool registration and retrieval behavior.
-A portal tool attachment alone therefore does not change the running
-`maf_lite` orchestration.
+Use the registered capabilities for the selected application. Keep naturally
+shared agent definitions and tools common where appropriate, but use explicit
+Hosted and durable integrations rather than a universal host/state wrapper.
 
 <span id="2-configure-the-mcp-connection"></span>
 <span id="3-authorize-and-connect-safely"></span>
+<span id="configure-the-mcp-strategy"></span>
 
-## Configure the MCP strategy
+## Authorize and connect MCP safely
 
-Select `AGENT_STRATEGY=mcp` and configure the following through
-[Application settings](application-settings.md). The strategy creates its agent
-and MCP connection for the request rather than sharing a tool session between
-users.
+Review the destination, transport, timeout, data handling and permissions
+before enabling an MCP connection. Use HTTPS outside controlled local
+development and approved egress from the actual application host.
+Credentials belong in Key Vault only when the selected tool really needs
+a secret; prefer managed identity where supported.
 
-| Setting | Default | Purpose |
-| --- | --- | --- |
-| `MCP_APP_ENDPOINT` | `http://localhost:80` in detected Azure execution | Trusted server base URL. Outside detected Azure execution, the runtime overrides it with `http://localhost:5000`. |
-| `MCP_SERVER_TRANSPORT` | `sse` | `sse` or `streamable_http`. |
-| `MCP_CLIENT_TIMEOUT` | `600` seconds | Positive integer connection/read timeout. |
-| `MCP_APP_APIKEY` | Unset | Optional `X-API-KEY`, stored as a Key Vault reference. |
-| `AGENT_ID` | Unset | Optional agent ID passed when constructing the request-scoped agent. |
+Authenticate the tool client and preserve the tool's verified end-user
+context when user authorization is required. User-context JSON, caller-supplied
+groups, an opaque call ID or a shared managed identity is not proof of the
+user's entitlement. Keep credentials request-local and out of prompts,
+history, functional snapshots and telemetry.
 
-Azure detection checks for `CONTAINER_APP_NAME` or `WEBSITE_INSTANCE_ID` in the
-process environment. For local work, run the MCP server on port `5000`.
-In Azure, configure the actual trusted destination and confirm the execution
-environment is detected as intended. Use HTTPS outside controlled local work.
+### Authenticated Toolbox contract
 
-The client appends `/sse` for SSE or `/mcp` for Streamable HTTP exactly once.
-An endpoint ending in the conflicting transport suffix is rejected.
-For example, `https://mcp.contoso.com` resolves to
-`https://mcp.contoso.com/sse` with the default transport.
+Foundry's [hosted Toolbox integration](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent)
+uses an authenticated SDK client and trusted platform invocation context.
+The application must actually invoke that supported integration.
+Do not fabricate platform context or assume the browser's Authorization
+header arrives unchanged inside a Hosted container.
 
-The client sends a serialized `user-context` header and the optional API key.
-The receiving service must authenticate the request and authorize its
-operations. User-context fields alone are not verified downstream identity.
-This client does not apply the trusted-host allowlist used by generic Foundry
-IQ MCP sources. Review the destination, egress, data handling and permissions
-before enabling it.
-
-### Hosted MCP call context
-
-Hosted `mcp` additionally requires the platform's valid
-`x-agent-foundry-call-id`, including on response-management routes. Missing or
-malformed context is rejected with `401`. The runtime forwards the validated
-opaque call ID to the tool server. It does not turn that ID into a user token
-or grant downstream consent.
-
-The hosted Toolbox integration resolves the caller through that platform
-context. Do not fabricate a call ID, substitute caller-supplied group IDs, or
-fall back to the workload identity when caller authorization is required.
-See [Application authentication](application-auth.md) and the
-[API reference](application-api.md) for the invocation boundary.
-
-## Authenticated Toolbox contract
-
-Microsoft's [hosted Toolbox integration](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent)
-uses an authenticated `FoundryToolbox` software development kit (SDK) client
-with platform-provided hosted call context. The application must actually invoke that client, with
-the appropriate connection, tool authorization and source permissions.
-An endpoint string or a forwarded call ID without client authentication is
-not a complete integration.
-
-The supplied `maf_lite` knowledge-base path uses integrated UI OBO and native
-Search permission enforcement instead of this Toolbox client. It forwards a
-Search-audience delegated token through Foundry's supported custom-header
-contract. No customer-written Toolbox integration is needed for that path.
-[Agent Application access](application-auth.md#3-verify-the-retrieval-identity-boundary)
-describes the separate invocation and retrieval credentials.
-
-Arbitrary tools still require their own authenticated integration. A Search
-token cannot be reused as a generic MCP user assertion. Caller-supplied group
-IDs, fabricated platform call IDs and a prompt instruction do not authorize a
-tool or its source data.
-
-Knowledge-base MCP source configuration is separate from callable agent tools.
-`FOUNDRY_IQ_MCP_SOURCES_JSON` describes sources consumed by the knowledge-base
-connector. It does not register a model-callable Toolbox in `maf_lite`.
-[Foundry IQ](foundry-iq.md) describes retrieval configuration.
+The durable host uses its own explicit authenticated client/tool boundary.
+Foundry invocation context must not be simulated on Container Apps.
+Source-specific OBO and document permissions remain independently required;
+a Search token is not a generic MCP user assertion.
+See [Sign-in & access](application-auth.md).
 
 <span id="4-add-code-when-configuration-is-not-enough"></span>
 
 ## Application extension boundary
 
-A custom integration belongs in the orchestrator's existing strategy and
-connector modules, with a narrow tool schema, explicit caller authorization,
-bounded results, timeout/cancellation handling and safe failures. Write actions
-also need an explicit approval policy. A prompt instruction is not an
-authorization or approval control.
+Keep integrations in the owning application's tool/connector modules:
 
-The runtime principal needs narrowly scoped dependency grants. Secrets remain
-in Key Vault, not tool definitions or ordinary App Configuration values.
-The standard bootstrap covers its declared configuration/model/audit access
-and scoped Search transport access for native retrieval. That transport role
-does not replace end-user source authorization. Extra tool access needs its
-own narrowly scoped grants.
-[Agent hosting](hosted-agents.md) explains the identities.
-Private tools also depend on DNS, TLS and authorized egress from the actual
-hosted network path. Tool destinations receive application data and require
-data-handling approval.
+- Validate typed inputs and bound results, timeouts and cancellation.
+- Preserve source denial as denial; do not retry under a broader identity.
+- Register a capability explicitly for the agent and/or workflow using it.
+- Require tool authorization and a native human decision where the process
+  calls for approval. A prompt instruction is not an approval control.
+- For external writes, implement the target system's idempotency and recovery
+  contract. Native durable execution does not guarantee exactly-once writes.
 
-[Bring your own app](build-your-own-app.md) describes source pins and capability
-profiles for custom code. New runtime settings are cross-component contracts
-with the platform that publishes them and every consuming component.
+Grant only the required model, source, scheduler and secret access.
+App Configuration Reader does not grant Key Vault secret access.
+`NATIVE_TOOL_SECRET_NAMES` (default `[]`) is the platform's scoped-grant
+declaration of actual names, not values. The native runtime does not consume
+that setting to load secrets or enable tools.
+Provision resources and grants before activation; startup must not repair
+infrastructure. [Customize components](customize-components.md) and
+[Bring your own app](build-your-own-app.md) describe ownership and adoption.
 
 <span id="5-deploy-and-verify"></span>
 
 ## Deployment and evidence
 
-Changed orchestrator source requires a new image from the reviewed source pin,
-an immutable-digest handoff and a new agent version. Runtime settings are
-cached at startup, so settings-only changes also require a new hosted version,
-potentially reusing the compatible digest.
-[Application settings](application-settings.md) explains runtime values and
-[Deployment settings](configuration.md) explains deployment inputs.
+Changes to code, graph, tool registration or identity require a reviewed image
+and compatible publication. Supported functional parameters refresh through
+the official provider; workflow runs keep their functional snapshot.
+Current source/tool authorization is rechecked rather than frozen in that
+snapshot. See [Application settings](application-settings.md).
 
-Evidence includes an actual tool call and result, denied-user isolation,
-timeout/outage behavior and no invented result when a required tool fails.
-Logs and traces can identify calls without retaining credentials, sensitive
-arguments or full caller-context headers. Portal registration or successful
-deployment alone does not establish this behavior.
-[Monitoring & audit](application-monitoring.md) covers operational evidence.
+Verify actual tool calls, denied-user isolation, timeout/outage handling and
+the absence of invented results when a required tool fails. A successful
+deployment or portal registration is not this evidence.
+Correlate operations without retaining secrets or sensitive tool arguments.
+See [Monitoring & audit](application-monitoring.md).
 
 <span id="recover-or-undo"></span>
 
 ## Failure boundaries
 
-Missing tools can indicate that the code never registered or invoked them,
-not just a connection failure. Authentication failures concern the client,
-connection and downstream permissions separately. Stale behavior can indicate
-a cached process or the wrong deployed version. Recovery retains the
-authenticated caller boundary and the previous compatible source/image
-combination rather than bypassing authorization.
+Missing tools can mean the application never registered them.
+Authentication failures concern the client, connection and source separately.
+Retain the authenticated caller boundary during recovery rather than
+substituting service identity or silently dropping a required capability.
