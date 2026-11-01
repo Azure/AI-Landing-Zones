@@ -9,7 +9,7 @@ retention policies or service backups.
 
 1. Record the deployed application revision and the time of the request.
 2. Follow its correlation information through the UI, orchestrator and the
-   selected retrieval or ingestion path.
+   selected retrieval, MCP or ingestion path.
 3. Check both the HTTP outcome and the operation result. An ingestion envelope
    can return HTTP success while individual records failed.
 4. For denied access, inspect safe status and correlation fields. Do not
@@ -21,7 +21,7 @@ Use [Troubleshooting](troubleshooting.md) for boundary-specific diagnosis.
 
 ## Native runtime audit scope
 
-Native entrypoints retain in-process tool/datasource audit hooks. They do
+Native entrypoints retain in-process tool audit hooks. They do
 not mount retired request APIs or provide their complete request-lifecycle
 and remote-tool audit stream. A historical schema or
 `AUDIT_EVENTS_ENABLED=true` is not evidence that those paths emit events.
@@ -34,6 +34,21 @@ Audit delivery is best-effort, not an immutable ledger or a compliance
 certification. Disabling emission does not delete exported events.
 Correlate native UI actions, provider outcomes and in-process tool events
 without claiming complete remote-call coverage.
+
+## MCP query correlation
+
+SQL generation, catalog retrieval and execution occur in the separate
+Agent App MCP Server, not as local orchestrator SQL helpers. Correlate the
+application request with the returned `query_id`, `source_id` and
+`metadata_version`, then inspect safe status/limit information at the server.
+Do not infer a complete server audit stream from an orchestrator tool event.
+
+Tokens, generated SQL, returned rows and internal reasoning are not logged
+by default. A successful zero-row query is distinct from an authorization,
+validation, dependency or limit failure. `/healthz` establishes liveness, not
+authenticated discovery or SQL readiness.
+See [NL2SQL evidence](nl2sql.md#check-before-admitting-users) and
+[MCP troubleshooting](troubleshooting.md#agent-app-mcp-failures).
 
 ## Ingestion audit and provenance
 

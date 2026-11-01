@@ -137,12 +137,11 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 | `deployAiFoundrySubnet` | `true` | Foundry Agent Service subnet association; `deployAgentSubnet` independently controls subnet creation |
 | `deployAppConfig` | `true` | Azure App Configuration store |
 | `deployAppInsights` | `true` | Application Insights instance |
-| `deployCosmosDb` | `true` | Azure Cosmos DB account and database |
+| `deployCosmosDb` | `false` | Generic application Cosmos account/database; Agent azd composition selects it automatically for required consumers |
 | `deployContainerApps` | `true` | Container Apps (based on `containerAppsList`) |
 | `deployContainerRegistry` | `true` | Azure Container Registry |
 | `deployContainerEnv` | `true` | Container Apps Environment |
 | `deployNsgs` | `true` | Network Security Groups |
-| `deployMcp` | `true` | MCP (Model Context Protocol) server |
 | `deployGroundingWithBing` | `false` | Bing Grounding service |
 | `deployKeyVault` | `true` | Azure Key Vault |
 | `deployVmKeyVault` | — | Separate Key Vault for VM secrets (`DEPLOY_VM_KEY_VAULT`) |
@@ -153,6 +152,15 @@ Each toggle controls whether a specific service is provisioned. Set to `true` to
 | `deployBastion` | `null` (inherits from preset) | Azure Bastion host |
 | `deployNatGateway` | `null` (inherits from preset) | NAT Gateway for outbound traffic |
 | `deploySoftware` | `true` | Pre-install development tools on the Jumpbox VM |
+
+Agent Application selects its optional server through
+`DEPLOY_AGENT_APP_MCP=false` (default) in the azd environment. Selecting `true`
+requires application Cosmos automatically; it does not enable Search or require
+a second NL2SQL flag. See the
+[MCP selector reference](../agent-landing-zone/configuration.md#agent-app-mcp-server-selection).
+An explicit conflicting `DEPLOY_COSMOS_DB=false` must be unset for automatic
+selection. Generic Cosmos can be selected independently without MCP or the
+bundled orchestrator, including in a custom application.
 
 !!! note "Jumpbox, Bastion, and NAT Gateway"
     These components are controlled independently with `deployJumpbox`, `deployBastion`, and `deployNatGateway`, so each topology can choose only the pieces it needs.
@@ -202,7 +210,6 @@ By default, resource names are generated using the [CAF naming pattern](#resourc
 | `containerRegistryName` | `null` | Container Registry name |
 | `conversationContainerName` | `null` | Cosmos DB container for conversations |
 | `dataIngestContainerAppName` | `null` | Data ingestion Container App name |
-| `datasourcesContainerName` | `null` | Cosmos DB container for datasources |
 | `dbAccountName` | `null` | Cosmos DB account name |
 | `dbDatabaseName` | `null` | Cosmos DB database name |
 | `frontEndContainerAppName` | `null` | Front-end Container App name |
@@ -476,6 +483,12 @@ The `storageAccountContainersList` parameter defines blob containers to create i
 
 The `databaseContainersList` parameter defines containers to create in the Cosmos DB database.
 
+The Agent Application composition owns its UI and MCP catalog-container
+contracts. Selecting MCP automatically creates its source and vector-metadata
+containers/policies; do not manually duplicate those entries here.
+Generic serverless Cosmos without MCP does not require vector policies.
+See [application Cosmos ownership](../agent-landing-zone/configuration.md#application-cosmos-db).
+
 ```json
 "databaseContainersList": {
   "value": [
@@ -490,6 +503,12 @@ The `databaseContainersList` parameter defines containers to create in the Cosmo
 ### Container apps
 
 The `containerAppsList` parameter defines the container apps to deploy and their RBAC roles.
+
+The fragment below illustrates a custom foundation workload, not the bundled
+native orchestrator or MCP security profile. Do not copy its broad roles to
+Agent App MCP Server. The orchestrator consumes MCP without SQL/catalog grants;
+MCP has read-only catalog access and only required models/secrets.
+Use [component permissions](permissions.md#agent-app-mcp-server).
 
 ```json
 "containerAppsList": {

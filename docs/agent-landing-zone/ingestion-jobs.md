@@ -25,8 +25,8 @@ They are not six-field Azure Functions timers.
 | `blob_purge` | `CRON_RUN_BLOB_PURGE` | `10 * * * *`, hourly at minute 10 |
 | `sharepoint_index` | `CRON_RUN_SHAREPOINT_INDEX` | No schedule |
 | `sharepoint_purge` | `CRON_RUN_SHAREPOINT_PURGE` | No schedule |
-| `nl2sql_index` | `CRON_RUN_NL2SQL_INDEX` | No schedule |
-| `nl2sql_purge` | `CRON_RUN_NL2SQL_PURGE` | No schedule |
+| `nl2sql_index` | `CRON_RUN_NL2SQL_INDEX` | No schedule; optional metadata pipeline, not required for MCP |
+| `nl2sql_purge` | `CRON_RUN_NL2SQL_PURGE` | No schedule; optional metadata maintenance, not required for MCP |
 | `multimodality_images_purge` | `CRON_RUN_IMAGES_PURGE` | No schedule, and the worker skips unless `MULTIMODAL=true` |
 | Log cleanup, not a manual job type | `CRON_RUN_LOG_CLEANUP` | `0 * * * *`, plus immediate startup cleanup |
 
@@ -112,8 +112,8 @@ availability. [Application authentication](application-auth.md) covers access.
 | Blob purge | Intended to remove indexed Blob documents missing from the selected container/prefix. The initialization limitation below currently prevents this cleanup. |
 | SharePoint index | Processes configured lists/libraries and reconciles supported ACLs even for unchanged content. See [permission synchronization](sharepoint.md#permission-synchronization). |
 | SharePoint purge | Deletes indexed copies of missing items in enumerated collections. It is not complete source retirement or filter reconciliation. Empty or unavailable collections are skipped. |
-| NL2SQL index | Indexes JSON metadata from `queries/`, `tables/` and `measures/`, including embeddings. It does not copy database rows. |
-| NL2SQL purge | Deletes metadata index documents whose corresponding metadata blobs no longer exist. It does not delete database tables or rows. |
+| NL2SQL index | Optional SQL-metadata pipeline. For MCP, its destination must honor the approved Cosmos catalog, embedding dimensions and complete-version activation contract. It does not copy business rows. |
+| NL2SQL purge | Metadata maintenance, not SQL table/row deletion. Review the target and active-version retention before authorizing cleanup; do not apply document Search cleanup to the MCP catalog. |
 | Image purge | Deletes image blobs not referenced by `relatedImages` in its configured Search index. A wrong index/container pair can make live images look unreferenced. |
 | Log cleanup | Keeps at most `MAX_LOG_RUN_FILES` run-summary blobs, default `500`, deleting the oldest excess summaries. It is not a retained audit archive. |
 
@@ -137,6 +137,16 @@ for the custom indexer's `SEARCH_RAG_INDEX_NAME` and
 `DOCUMENTS_IMAGES_STORAGE_CONTAINER`. Align them deliberately before scheduling
 image cleanup. A failed or invalid reference scan stops the purger rather than
 treating unknown state as an empty reference set.
+
+## SQL metadata onboarding
+
+SQL metadata onboarding is not a document indexing or purge job.
+Use the MCP repository's administrative Python importer for approved metadata:
+it generates embeddings into the application Cosmos catalog and activates
+only a complete version. No ingestion Container App or recurring schedule is
+required. An optional metadata pipeline must honor that same contract; document
+Search-index jobs must not manage MCP catalog data.
+See [SQL metadata boundaries](ingestion.md#sql-metadata-is-separate-from-document-ingestion).
 
 ## Inspect results and recover
 

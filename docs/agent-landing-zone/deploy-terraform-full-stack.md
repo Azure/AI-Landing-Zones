@@ -98,6 +98,15 @@ distinct endpoints to the UI. The Container Apps alternative uses the
 official Durable Extension worker/client and provisioned DTS binding.
 Do not treat every canonical runtime key as an implied `azd env` input.
 
+For optional SQL tools, set `DEPLOY_AGENT_APP_MCP=true` before provision.
+The default is `false`. Terraform provisions the separate MCP Container App,
+its identity and application Cosmos dependency with the same policies and
+scoped access contract as Bicep. The shared lifecycle generates the consuming
+MCP connection and authorization; no second NL2SQL enable flag is required.
+Search and document ingestion remain independent.
+See [Agent App MCP Server](agent-app-mcp.md) for what is automatic and for
+operator-owned SQL permissions and approved metadata import.
+
 ### Step 3: Provision the foundation
 
 Complete the [Terraform infrastructure review](deploy-terraform-infra-only.md#step-5-review-and-provision)
@@ -108,8 +117,10 @@ environment selected:
 azd provision
 ```
 
-Skip this step if you have already completed and validated the
-infrastructure-only deployment guide for this environment.
+Skip this step only if you have already completed and validated the
+infrastructure-only guide with the same component selection and requirements.
+Adding MCP to an existing compatible installation requires a reviewed
+`azd provision` followed by `azd deploy`.
 
 <a id="deploy-the-application"></a>
 
@@ -128,6 +139,13 @@ Provisioning does not build application images or create the running hosted
 agent version. Deploy fetches manifest-pinned sources, prepares the immutable
 hosted image when needed, binds it to the provisioned Foundry project and
 registry, then publishes the hosted version and selected Container Apps.
+When MCP is selected, its image deploys before the consuming application is
+activated; the lifecycle obtains actual caller identities and checks
+their authorization, publishes the allowlist/connection settings and
+automatically restarts every active MCP revision to load startup-only auth.
+Authenticated discovery precedes consumer activation; no manual MCP restart
+is required during normal deploy.
+Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.
 
 azd imports all flat Terraform outputs for the shared hooks automatically. Service

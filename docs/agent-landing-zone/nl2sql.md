@@ -1,251 +1,263 @@
 # Ask questions about SQL data
 
-**Structured Query Language (SQL)** queries and changes database tables.
-Natural-language-to-SQL (NL2SQL) turns a question into a query and summarizes
-the result. It is an **optional registered tool**, usable by an Agent or a
-Workflow independently of the execution host. It is not an application mode
-or a requirement to connect every deployment to SQL or Cosmos DB.
-Agent Application offers two distinct structured-data routes. Choose the route
-before configuring its metadata, identity and permissions.
+Natural-language-to-SQL (NL2SQL) turns a question into a validated, read-only
+database query. In Agent Application, an Agent or Workflow calls
+**[Agent App MCP Server](agent-app-mcp.md)** to query an approved Azure SQL or
+SQL Server source. The orchestrator does not connect directly to SQL.
 
-Deployment follows the
-[full-stack deployment guide](deploy-full-stack.md).
+NL2SQL is optional. It does not change `APPLICATION_MODE` or
+`ORCHESTRATION_HOST`, and applications without it do not need its SQL
+connectivity or metadata catalog.
 
-<span id="choose-the-supported-route"></span>
+## Choose the structured-data route
 
-## Structured-data grounding
-
-| Route | Query execution | Dependencies |
+| Route | Who executes the query | What you prepare |
 | --- | --- | --- |
-| Direct NL2SQL tool | The application uses approved datasource metadata to generate and validate SQL, then executes it through the database connector. | Explicit tool registration, metadata, Search indexes, database connectivity and the selected database credential. |
-| Foundry IQ `fabricDataAgent` source | The published Fabric data agent owns query generation and execution. The application consumes its retrieved answer. | Published Fabric agent, knowledge-source binding and delegated source access. |
+| Agent App MCP Server | A separate Container App generates, validates and executes SQL as the application's read-only principal | Approved SQL source, Cosmos schemas/examples and embeddings, model selection and network access |
+| Foundry IQ `fabricDataAgent` source | The published Fabric data agent owns query generation and execution; the application consumes its answer | Published Fabric agent, knowledge-source binding and delegated source access |
 
-These are not equivalent settings for one implementation. Changing
-`RETRIEVAL_BACKEND` does not redirect a direct SQL connection to a Fabric agent.
-Selecting Hosted or Container Apps does not by itself enable either capability.
-[Tools & MCP](agent-tools.md) describes registration and authorization;
-[Agents & prompts](agent-strategies.md) describes application selection.
+The MCP component supports Azure SQL and SQL Server, not Fabric SQL endpoints,
+semantic models or DAX. Use the Fabric route for its supported analytical
+sources. Changing a retrieval-backend setting does not redirect MCP queries.
+Search remains a dependency of Foundry IQ, not of the MCP metadata catalog.
 
-<span id="direct-nl2sql-strategy"></span>
+## How an MCP question is answered
 
-## Direct NL2SQL tool
+1. The Agent or Workflow lists the approved sources using
+   `nl2sql.list_sources()`.
+2. It calls `nl2sql.query(source_id, question)` with an approved source ID.
+3. The server embeds the question and searches the source's **active metadata
+   version** in Cosmos. Retrieval is source-filtered and bounded (default
+   `MCP_METADATA_TOP_K=8`), with limited reads for required relationships.
+4. The selected generation model produces SQL from that approved context.
+5. The server validates the statement and allowed objects, then executes it
+   with the configured read-only database principal.
+6. Typed rows return to the calling application for presentation.
 
-Use this route for an approved SQL database or Fabric SQL endpoint whose
-schema and example queries you manage. It does not crawl a database to discover
-an unrestricted schema on every question.
+The server does not copy the business dataset into Cosmos or discover
+unapproved objects during a question. Missing or incomplete required metadata
+is an explicit failure, not permission to query a broader source.
 
-The capability needs datasource descriptions, relevant table schemas and
-example queries. Generated SQL must pass validation before database execution.
-A failed lookup, validation or execution must not be presented as fabricated
-rows. An Agent decides when to call the registered tool; a Workflow can use it
-in its research step. Neither requires a global SQL strategy switch.
+For example, after a sales view and its metadata are approved, a user can ask
+“What were total sales last month?” The source's descriptions and examples
+must define the sales measure and date boundaries. The returned aggregate
+comes from SQL under the application's read principal, not from copied rows
+in the catalog.
 
-### Prepare datasources and metadata
+## Prepare an approved source
 
-1. Provide the enabled direct tool's model, datasource metadata store and
-   Search dependencies through [Application settings](application-settings.md).
-   SQL execution needs ODBC Driver 18 for SQL Server and network access to the
-   selected database. These are capability dependencies, not requirements for
-   an application that does not enable direct NL2SQL. Key Vault access is
-   required only when the chosen connector actually consumes a secret.
-2. Add datasource definitions to the Cosmos container selected by
-   `DATASOURCES_CONTAINER`, default `datasources`. Selecting the enabled
-   `cosmos` registry publishes that binding and grants catalog read access
-   at the exact container scope, not across the account.
-   A `sql_database` definition identifies `id`, `description`, `server` and
-   `database`, with optional `uid`. A Fabric `sql_endpoint` also supplies
-   `tenant_id` and `client_id`.
-3. Prepare JSON table definitions and example queries with matching
-   `datasource` identifiers. The orchestrator's
-   [SQL examples](https://github.com/Azure/agent-app-orchestrator/tree/main/samples/sql_database)
-   and [Fabric examples](https://github.com/Azure/agent-app-orchestrator/tree/main/samples/fabric)
-   show the metadata structure. They are illustrative data, not automatically
-   provisioned connections.
-4. Put metadata JSON in `queries/`, `tables/` and, where needed, `measures/`
-   under `NL2SQL_STORAGE_CONTAINER`, default `nl2sql`. Agent App Ingestion's
-   `nl2sql_index` job indexes those files and generates metadata embeddings.
-   Configure `SEARCH_QUERIES_INDEX_NAME`, `SEARCH_TABLES_INDEX_NAME` and
-   `SEARCH_MEASURES_INDEX_NAME` consistently in both services. The orchestrator
-   defaults are `nl2sql-queries`, `nl2sql-tables` and `nl2sql-measures`.
-   Ingestion needs explicit target names for the content it processes.
-5. Run indexing and inspect confirmed results using
-   [Jobs & schedules](ingestion-jobs.md). This indexes schema descriptions and
-   examples, not copies of all database rows. Another approved pipeline can
-   populate compatible metadata indexes instead.
-6. Set `NL2SQL_ENABLED=true` and `NL2SQL_SOURCE_REGISTRY=cosmos` for the intended
-   Agent or Workflow. Deploy its required resources and grants, and ask a question with
-   a known result from an approved table. Tool registration is application
-   configuration, not a per-user host or strategy picker.
+Start with the [MCP deployment and onboarding steps](agent-app-mcp.md#onboard-sql-before-inviting-users).
+The operator approves the datasource and metadata; the platform supplies the
+Container App, identity, Cosmos policies, scoped grants and connection settings.
+Provisioning alone does not make a datasource ready.
 
-The disabled defaults are `NL2SQL_ENABLED=false` and an empty
-`NL2SQL_SOURCE_REGISTRY`. These feature keys are shared
-`additionalAppConfigurationSettings` entries under `agent-lz`, not new
-same-named infrastructure parameters. Do not select the catalog, connector
-or its secrets for an application that does not enable direct SQL.
+### Database identity
 
-The metadata search defaults to `SEARCH_APPROACH=hybrid`, with semantic search
-off. `SEARCH_TABLES_INDEX_TOP_K` defaults to `10` and
-`SEARCH_QUERIES_INDEX_TOP_K` to `3`. Review these alongside the metadata corpus,
-not as a way to grant table access. Datasource selection, SQL generation and
-synthesis belong to the reviewed application instructions and tool implementation.
-See [Agents & prompts](agent-strategies.md#configure-instructions).
+For Azure SQL, prefer the MCP Container App's managed identity. The SQL owner
+creates or authorizes the database principal and grants only read access to
+approved views/tables. Startup and deployment hooks do not execute database
+administration or grant SQL permissions.
 
-### Registered native helpers
+For SQL Server without managed-identity support, use a dedicated SQL read
+principal. Store its password in Key Vault and put only the reference name in
+the source record. Grant the server access to that exact secret.
+Declare its name in `MCP_SQL_SECRET_NAMES` (default `[]`) so the platform
+can apply the scoped grant. The list contains names, not passwords.
+Do not send credentials, user identities or arbitrary SQL as tool arguments.
 
-The native capability reuses nine datasource, metadata, validation and execution
-functions rather than introducing a global SQL agent strategy. These include:
+All authorized users of the application share this approved dataset.
+Application admission, MCP caller authorization and SQL read permissions are
+separate checks. There is no automatic per-user SQL delegation or database-row
+isolation from Foundry IQ document permissions.
 
-| Callable | Boundary |
+### Approved source and metadata contract
+
+| Source field | Meaning |
 | --- | --- |
-| `validate_sql_query(query)` | Validate generated SQL before execution |
-| `execute_sql_query(datasource,query)` | Query the approved datasource through its configured database principal |
-| `execute_dax_query(datasource,query)` | DAX helper requiring trusted server-side token context |
+| `id`, `source_id` | The same approved source identifier; `source_id` is the partition key |
+| `name`, `description`, `enabled` | Operator-reviewed display information and source availability |
+| `metadata_version` | Active, completely imported catalog version |
+| `sql_server`, `sql_database` | Approved SQL hostname and database |
+| `allowed_objects` | Approved qualified tables/views, for example `dbo.ApprovedView` |
+| `authentication` | `managed_identity` or `sql_password` |
+| `sql_username`, `password_secret_name` | Required only for password authentication; the password itself is never stored here |
 
-Token material is **not** a model-callable argument. Execution is bounded to
-a 30-second timeout and 1,000 rows. DAX calls fail closed when the native host
-does not supply the required delegated token binding; registration alone is
-not evidence of working end-to-end Fabric delegation.
+Metadata records contain `id`, `source_id`, `metadata_version`, `kind`
+(`schema` or `example`), approved `content` and an `embedding` vector.
+`object_name` and `related_objects` identify approved objects where needed.
+Descriptions should explain relationships, business terms and the meaning of
+example queries without including copied business rows.
+
+The embedding deployment and dimensions must match provisioning, import and
+query execution. The default is `3072` dimensions. Cosmos vector-search
+enablement does not generate embeddings by itself. Model/dimension or policy
+changes require explicit reindexing. Existing catalog name/dimension changes
+are rejected in place and require an explicit migration plan.
+
+### Import the approved file
+
+Use the MCP repository's administrative Python importer, not a tool call or
+document-ingestion job. Run it from the **MCP repository root** on an authorized
+managed-identity runner with Python 3.12 and the repository's `uv` tooling.
+Supply `APP_CONFIG_ENDPOINT` for the application's store and, when using an
+assigned identity, `AZURE_CLIENT_ID`. The identity needs configuration read,
+write access to both catalog containers and embedding-model inference access.
+Azure CLI login is not an importer credential fallback.
+
+The UTF-8 JSON file contains a `source` object and a `records` array using the
+fields above. Every approved object needs schema context; record source IDs
+and metadata versions must match the source. Do not supply precomputed
+embeddings or business rows: the importer generates the vectors.
+
+Install from the frozen lock:
+
+```text
+uv sync --frozen
+```
+
+The repository supplies `samples/approved-synthetic.json` for an authorized
+development test. Its illustrative source is not an automatically provisioned
+SQL connection. For your application, replace the sample path with your
+operator-approved JSON file.
+
+In Bash:
+
+```bash
+PYTHONPATH=src uv run --frozen python -m tools.nl2sql.importer --file samples/approved-synthetic.json
+```
+
+In PowerShell:
+
+```powershell
+$env:PYTHONPATH = 'src'
+uv run --frozen python -m tools.nl2sql.importer --file samples\approved-synthetic.json
+```
+
+The importer validates the file, generates embeddings, stages a unique catalog
+version and activates it only after every metadata write completes. It prints
+`Activated metadata_version:` with the resulting active version on success.
+Confirm the source's active version and an approved query before admitting
+users. Partial staging leaves the previous active version in use.
+A failed import does not confirm activation; inspect the source's
+active version before retrying. Staged inactive records need separately
+approved retention/cleanup, not automatic container deletion.
+
+The import operator needs explicit write access scoped to both catalog
+containers and model inference permission. The MCP runtime's catalog reader
+identity cannot perform imports.
+Import does not create Azure resources or database grants, and requires no
+ingestion service, MCP write tool or Search metadata indexes.
+
+## Results and execution limits
+
+The result uses `structuredContent` and a typed `outputSchema`, with a
+consistent JSON text representation for supported clients that require it.
+Schema version `1` includes:
+
+| Field | Meaning |
+| --- | --- |
+| `schema_version`, `source_id` | Result contract version and approved source |
+| `query_id`, `metadata_version` | Correlation ID and catalog version used |
+| `columns` | Column names and explicit logical types |
+| `rows`, `row_count` | Ordered row values and returned count; nulls remain null |
+
+Decimal, date and binary encodings are identified by column type, preserving
+decimal precision. A successful zero-row query is distinct from an error.
+
+| Boundary | Limit |
+| --- | --- |
+| SQL execution | 30 seconds |
+| Rows | 1,000 |
+| Serialized result | 256 KiB (`262144` bytes) |
+| Complete server query | `MCP_QUERY_TIMEOUT_SECONDS=75` by default |
+| Consuming MCP client | `MCP_CLIENT_TIMEOUT=90` by default; must exceed the server deadline |
+
+The complete deadline covers connection, metadata retrieval, model generation
+and SQL. Limits produce explicit errors, not silently truncated results.
+Validation allows a single read-only `SELECT`, including supported `WITH`
+queries, and rejects mutations, multiple statements, `SELECT INTO` and
+pass-through functions such as `OPENQUERY`. Database grants remain the primary
+security boundary; model instructions and validation are defense in depth.
 
 ### Failures, cancellation and cleanup
 
-SQL result translation handles the actual Azure SDK, ODBC and Pydantic
-failure families through its existing error-result contract. Read-only guards,
-datasource authorization, the 1,000-row/30-second bounds and resource cleanup
-remain in effect. Unexpected implementation failures propagate unchanged from
-the helper; they are not converted into a success-shaped, disabled or
-error-result fallback.
+Authorization, invalid SQL, unavailable dependencies and exceeded limits must
+remain explicit failures. Do not invent rows, report an empty success, switch
+source/identity after denial, or fall back to SQL inside the orchestrator.
+Cancellation does not guarantee instant SQL-server cancellation. Cursor and
+connection cleanup must not close resources beneath a running ODBC worker.
 
-Cancellation preserves the original caller cancellation whether the worker
-completes, the driver fails, the worker unexpectedly fails or the worker itself
-cancels. The cursor and connection are not closed while that worker is still
-running. Cleanup waits for the worker to finish; cancelling the caller does
-not guarantee instant SQL-server cancellation.
+## Check before admitting users
 
-### Database identity and limits
+In an authorized test environment, compare a known aggregate with a reviewed
+SQL query under the same read-only principal. Check:
 
-For `sql_database`, omitting `uid` uses managed identity with Azure CLI as the
-local credential fallback. Supplying `uid` uses SQL authentication with the
-password read from Key Vault under the normalized `<datasource-id>-secret`
-name. Fabric `sql_endpoint` uses the configured service principal and the same
-datasource-based secret naming. Grant only read access to approved data.
-Do not store passwords or client secrets in datasource JSON.
-Declare the actual consumed secret names in `NATIVE_TOOL_SECRET_NAMES`
-(default `[]`), a JSON array of names, so scoped grants can be provisioned.
-This is a platform grant declaration, not a key consumed by the native runtime
-to load secrets. Do not put secret values into it.
-Managed-identity database access does not justify granting
-unrelated Key Vault access.
+- Only the two documented tools are discovered by an authorized application.
+- Missing/expired tokens, wrong tenant/audience, disallowed clients and missing
+  `MCP.Invoke` role are denied before catalog or SQL access.
+- Unapproved sources/objects and writes are denied.
+- Nulls, decimals and zero rows have the expected typed result.
+- Outages, cancellation and row/byte/time limits are explicit.
+- Query ID and metadata version provide correlation without logging sensitive
+  SQL, tokens or returned rows.
 
-The direct SQL path runs as that configured database principal. It does not
-automatically delegate each chat user's identity to the database or inherit
-Foundry IQ's document permission enforcement. Restrict application access,
-database grants and any required tenant/data partitioning accordingly.
-
-Validation permits a single read-only `SELECT`, including supported
-`WITH` queries, and rejects mutations, `SELECT INTO`, multiple statements and
-pass-through functions such as `OPENQUERY`. This is defense in depth, not a
-replacement for a read-only database principal, bounded database resources or
-reviewed data exposure.
-
-Samples also include semantic-model and DAX helpers. A lower-level helper is
-not evidence that an end-to-end semantic-model capability is registered.
-The direct SQL capability is for `sql_database` and Fabric `sql_endpoint`
-datasources; do not advertise DAX as an enabled direct SQL tool. Use the Fabric
-data-agent route below when appropriate, or treat a custom DAX flow as
-application development.
+Use [Troubleshooting](troubleshooting.md#agent-app-mcp-failures) and
+[Monitoring & audit](application-monitoring.md). A healthy container or
+successful provision does not establish functional SQL readiness.
 
 ## Fabric data-agent route
 
 Fabric warehouses and lakehouses store analytical data. A Fabric data agent
 generates and executes read-only SQL over their tables.
 A Power BI semantic model uses Data Analysis Expressions (DAX).
-Fabric owns schema context and query execution. The application consumes
-results from the knowledge base.
+Fabric owns schema context and execution; the application consumes results
+from the knowledge base, without the MCP catalog or SQL connection.
 
-This route does not require the direct tool's Cosmos datasource records,
-ODBC connection or NL2SQL metadata ingestion jobs.
+### Fabric source contract
 
-<span id="prerequisites"></span>
-
-## Fabric source contract
-
-The Fabric data agent must be published and shared with the intended users,
-who also need permission to its underlying data. The Search service and Fabric
-workspace use the same Entra tenant. Supported capacity, tenant settings and
-network reachability are source requirements.
+The data agent must be published and shared with the intended users, who also
+need permission to its underlying data. Search and the Fabric workspace use
+the same Entra tenant. Supported capacity, tenant settings and network
+reachability are source requirements. See
 [Fabric data agent requirements](https://learn.microsoft.com/fabric/data-science/concept-data-agent)
-and the [knowledge-source contract](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent)
-describe service limits.
+and the [knowledge-source contract](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent).
 
-The Foundry IQ Fabric Data Agent source is a preview integration.
-Its binding is a `fabricDataAgent` knowledge source with workspace and
+This is a preview `fabricDataAgent` knowledge source with workspace and
 data-agent item IDs. `FABRIC_DATA_AGENT_ENABLED` and
-`FABRIC_DATA_AGENT_KNOWLEDGE_SOURCE_NAME` identify this route.
-`FABRIC_IQ_ENABLED` identifies the separate ontology route.
-The source supports `low` or `medium` retrieval reasoning effort, not `minimal`.
-[Fabric integration](fabric-iq.md) describes the bindings and
-[Application settings](application-settings.md) identifies runtime values.
+`FABRIC_DATA_AGENT_KNOWLEDGE_SOURCE_NAME` identify it;
+`FABRIC_IQ_ENABLED` selects the separate ontology route.
+It supports `low` or `medium` retrieval reasoning effort, not `minimal`.
+See [Fabric integration](fabric-iq.md).
 
 ### Identity and API boundaries
 
 The connector uses workload authentication for Search transport and a separate
-Search-audience delegated token for the user's source authorization. The UI
-obtains that token from the authenticated user's current assertion. Foundry
-forwards it to the hosted runtime, which sends the raw token in
-`x-ms-query-source-authorization`. It is not exchanged again in the container.
+Search-audience delegated token for source authorization. The UI obtains that
+token from the authenticated user's current assertion. Foundry forwards it to
+the hosted runtime, which sends the raw token in
+`x-ms-query-source-authorization`; it is not exchanged again in the container.
 
 Missing delegation or a failed required source stops retrieval. The source is
 not skipped and the connector does not retry as an application identity.
-[Agent Application access](application-auth.md) explains the required
-sign-in and consent.
+Complete [sign-in and consent](application-auth.md).
 
-Fabric requires the explicit `FOUNDRY_IQ_API_VERSION=2026-08-01-preview` contract.
-Provisioning binds the configured planning model and selects `low` retrieval
-reasoning for a bound Fabric source. The connector parses `fabricAnswer` and
-textual `fabricEmbeddedResources` as data-agent results, retaining the source
-identity in citations. This provides textual grounding, not an interactive
-table/chart viewer or direct SQL execution in the hosted container.
+Fabric requires `FOUNDRY_IQ_API_VERSION=2026-08-01-preview`.
+Provisioning binds the planning model and selects `low` retrieval reasoning
+for a bound Fabric source. The connector parses `fabricAnswer` and textual
+`fabricEmbeddedResources`, retaining source identity in citations.
+This is textual grounding, not an interactive table/chart viewer or SQL
+execution in the hosted container.
 
-<span id="run-a-read-only-pilot"></span>
+### Validate and recover
 
-## Validation boundary
-
-A meaningful pilot compares a fixed, known aggregate from an approved table
-with the same question in Fabric and in the hosted application. The published
-agent's selected tables, business definition, date boundaries and permissions
-all affect the result.
+Compare a fixed known aggregate from an approved table in Fabric and in the
+application. Selected tables, business definitions, date boundaries and
+permissions affect the result. Verify activity from the intended source,
+parsed results and denial for a user without access.
 [Creating a Fabric data agent](https://learn.microsoft.com/fabric/data-science/how-to-create-data-agent)
-is a separate service procedure, not evidence that application integration works.
+is a separate service procedure, not evidence of application integration.
 
-Required evidence includes activity from the intended knowledge source,
-correctly parsed results and denial for a user without source access.
-Use the integrated identity and API settings for that validation.
-Read-only execution prevents writes. It does not itself authorize a caller
-or guarantee a correct answer.
-
-For direct NL2SQL, compare the generated SQL and returned aggregate with a
-reviewed query run under the configured read-only principal. Also verify that
-the principal cannot write or read unapproved tables and that unauthorized
-users cannot invoke the application. Do not infer per-user database isolation
-from a successful question.
-[Monitoring & audit](application-monitoring.md) covers correlated evidence.
-
-<span id="diagnose-or-undo"></span>
-
-## Failure boundaries
-
-A Fabric answer missing from chat can indicate denied consent or source access,
-an incorrect binding or incompatible API settings. An incorrect aggregate
-can instead reflect source schema or business definitions.
-Knowledge-base source references and provisioning inputs share a lifecycle.
-Removing a pilot binding does not require deleting tables or other knowledge sources.
-
-## Need a direct SQL connection?
-
-Use the [direct NL2SQL tool](#direct-nl2sql-tool) when its execution and identity
-boundaries meet the requirement. Register it explicitly and provision its
-metadata, connector and credential dependencies on the selected host.
-Keep caller authorization, read-only database permissions, reviewed data access
-and bounded execution independent of model instructions.
-A portal tool attachment does not add that service to a running application.
-Request payloads belong in the [API reference](application-api.md).
+Missing answers can indicate denied consent/access, an incorrect binding or
+incompatible API settings. Incorrect aggregates can reflect schema or business
+definitions. Removing a source binding does not require deleting tables or
+other knowledge sources. Retain permission boundaries during recovery.

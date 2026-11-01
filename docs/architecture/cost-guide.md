@@ -56,8 +56,15 @@ parameters.
 - **Agent backing resources are separate.** Standard Agent Service setup can
   create its own Search, Storage and Cosmos DB resources in addition to workload
   resources. Count what is actually created or reused.
-- **Application Cosmos DB depends on topology.** Omitting the application's
-  database does not imply that Agent Service has no backing database.
+- **Application Cosmos DB follows consumers.** Workflow/`both` UI metadata,
+  selected history/feedback/attachments, MCP and custom Cosmos capabilities
+  require it. Generic storage can also be selected separately. The normal
+  application account is serverless; Foundry backing Cosmos is separate.
+- **MCP has its own costs.** Budget the separate Container App, SQL query load,
+  model calls, catalog embeddings/import, Cosmos RUs/vector storage and any
+  additional network resources. Reuse does not make usage free. MCP does not
+  require Search, though independent retrieval can still incur Search costs.
+  See [MCP operation](../agent-landing-zone/agent-app-mcp.md#operate-and-extend-safely).
 - **Ingestion is a separate choice.** Omitting the optional ingestion app does
   not remove Search, source-processing, embedding or indexing charges.
 - **Private networking is not a fixed package.** Endpoint count and services

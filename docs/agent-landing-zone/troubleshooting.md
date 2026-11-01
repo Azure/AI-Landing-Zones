@@ -771,23 +771,30 @@ for startup settings, as specified in those workflows.
 **Verify:** Repeat the same authenticated task and test document authorization
 when retrieval is involved. Keep credentials and content out of diagnostics.
 
-#### A SQL query fails or its caller is cancelled
+#### Agent App MCP failures
 
-**Diagnose:** SQL result translation retains error-result behavior for actual
-Azure SDK, ODBC and Pydantic failures. Unexpected implementation failures
-propagate unchanged instead of being converted into disabled, success-shaped
-or generic error-result fallbacks. Distinguish a known dependency/data failure
-from an implementation defect; do not retry under broader datasource access.
+Start at the first failed boundary, not the UI symptom. A successful
+`/healthz` probe establishes liveness only.
 
-**Correct:** Preserve read-only guards, datasource authorization and the
-1,000-row/30-second bounds. After caller cancellation, retain that original
-cancellation even if the worker completes, the driver or worker fails, or
-the worker cancels. Cursor/connection cleanup must wait until the worker
-finishes; do not close resources beneath a running worker.
+| Symptom | Check | Correct safely |
+| --- | --- | --- |
+| Entra setup fails during deploy | Deployer's directory rights for API registration/service principal and app-role assignment | Arrange required directory permissions; ARM Contributor alone is insufficient |
+| MCP discovery returns 401/403 | Actual caller, tenant, v2 audience, allowed client ID and `MCP.Invoke` role | Repair the generated identity/assignment through the platform lifecycle; do not accept an ARM token, API key or user-context JSON |
+| Cosmos selection conflicts | Deliberately set or persisted `DEPLOY_COSMOS_DB=false` | Unset the declaration for automatic selection or set it to `true`; it is not silently overridden |
+| Vector provisioning fails | Throughput compatibility, preserved capabilities, model dimensions and new-container policies | Review compatibility; do not recreate accounts/containers or convert throughput as a retry |
+| Catalog name/dimension change is rejected | Existing catalog declarations and selected embedding model | Arrange explicit migration/reindexing; in-place name/dimension changes are not a supported retry |
+| Sources are absent or metadata is incomplete | Enabled approved source and active, completely imported metadata version | Complete the administrative import; provisioning does not discover SQL schemas |
+| SQL connection or authorization fails | MCP identity/secret, SQL read principal, approved objects, DNS, routes and TLS | Obtain SQL-owner-approved read access or fix the declared network/secret; do not grant SQL access to the orchestrator |
+| Query exceeds a limit | 30-second SQL, 1,000-row and 256-KiB result limits; 75-second default complete deadline | Ask a narrower question or repair the dependency; never silently truncate or fabricate rows |
 
-**Verify:** Check the failure/cancellation outcome and cleanup using the
-owning component's regression tests. Caller cancellation is not evidence
-of instant SQL-server cancellation.
+Preserve source and object denial. There is no direct SQL fallback inside the
+orchestrator. Cancellation must not close cursor/connection resources while
+an ODBC worker is still running and does not guarantee instant SQL-server
+cancellation.
+
+Verify authenticated discovery, a known approved result, denied callers/objects
+and explicit limit/error behavior after repair. Use query IDs and metadata
+versions without logging tokens, SQL or business rows.
 See [SQL failure handling](nl2sql.md#failures-cancellation-and-cleanup).
 
 #### Access denied between services

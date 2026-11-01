@@ -254,7 +254,7 @@ When unset, they use the template defaults shown below.
 | `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
 | `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
 | `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | The Agent Application reads runtime settings from App Configuration. |
-| `DEPLOY_COSMOS_DB` | Not selected for default conversational execution without a storage consumer; selected when required | Application Cosmos resource selection follows actual consumers. Foundry backing storage is separate. |
+| `DEPLOY_COSMOS_DB` | `false` without a required consumer; selected automatically when required | Generic application Cosmos can also be explicitly selected without MCP or the orchestrator. Foundry backing storage is separate. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
@@ -284,8 +284,10 @@ The UI consumes
 (default `native-ui-metadata`, partition key `/principal_id`, owner `tid:oid`), with its grant
 assigned only to the frontend. Existing `COSMOS_DB_ENDPOINT` and
 `COSMOS_DB_ACCOUNT_RESOURCE_ID` outputs remain conditional; no separate native
-endpoint key is introduced. Enabled direct NL2SQL instead needs its own
-datasource catalog. A custom component may declare another application storage
+endpoint key is introduced. Agent App MCP Server selects the same application
+account for its separate approved-source and vector-metadata containers,
+with grants assigned to the MCP identity, not the orchestrator.
+A custom component may declare another application storage
 requirement. UI metadata contains descriptors and references, not bytes,
 transcripts or tokens. With conversational mode and every product flag off,
 bounded volatile UI owner maps are lost on restart.
@@ -293,6 +295,10 @@ bounded volatile UI owner maps are lost on restart.
 Do not omit a store required by a selected consumer, or enable ingestion just
 to supply metadata storage. Leave deployment selection consistent with the
 application definition and review all consumers before changing it.
+An explicit Cosmos exclusion that conflicts with a required consumer fails
+with guidance to unset `DEPLOY_COSMOS_DB=false` for automatic selection or set
+it explicitly to `true`. Deliberately set or persisted `false` is not silently
+overridden.
 
 For an additional application storage requirement, opt in before provisioning:
 
@@ -300,10 +306,63 @@ For an additional application storage requirement, opt in before provisioning:
 azd env set DEPLOY_COSMOS_DB true
 ```
 
+This selection also works for generic storage without MCP or the reference
+orchestrator, including a custom `AGENTLZ_APP_DEFINITION`.
+Custom Cosmos capabilities can declare the dependency directly.
+Enabling Cosmos alone does not deploy MCP or enable vector search.
+Normal application Cosmos is serverless. Vector policies are selected only
+for MCP or a retained MCP catalog, not for generic Cosmos by itself.
+
 Direct foundation-template deployments also default `deployCosmosDb` to `false`;
 set it to `true` when application storage is needed. For an existing deployment,
 review the provision preview and retain the account until its consumers and
 data-retention requirements have been reviewed.
+
+### Agent App MCP Server selection
+
+| Variable | Default | Effect |
+| --- | --- | --- |
+| `DEPLOY_AGENT_APP_MCP` | `false` | Adds the optional Agent App MCP Server Container App and requires application Cosmos for its NL2SQL catalog. |
+
+Set this selector before provision. It is independent of
+`ORCHESTRATION_HOST=hosted|container_apps` and
+`APPLICATION_MODE=conversational|workflow|both`. Do not add a second NL2SQL
+enable flag or manually copy generated endpoint/authentication settings.
+
+Both Bicep and Terraform create the dependency when absent or reuse the
+compatible application account managed by this deployment. Provision captures
+and preserves the exact existing capability set and data, adds
+`EnableNoSQLVectorSearch` and provisions
+`mcp-sources` and `mcp-nl2sql-metadata`, partitioned by `/source_id`.
+The metadata vector policy uses `/embedding`, `float32`, cosine,
+`quantizedFlat` and the selected model dimensions (default `3072`).
+Model selection and dimensions must resolve before policies are provisioned.
+Existing catalog name/dimension changes are rejected in place; use an explicit
+migration/reindexing plan instead of changing settings on the existing catalog.
+
+Incompatible throughput or policies fail explicitly. The lifecycle does not
+recreate accounts/containers, convert shared throughput or choose an unrelated
+external or Foundry backing account. The MCP receives catalog read, model
+access and only required secret grants; the importer has separately authorized
+catalog write access. SQL users and grants remain the SQL owner's responsibility.
+`MCP_SQL_SECRET_NAMES=[]` declares optional SQL password-secret names for
+secret-scoped MCP vault grants; do not place passwords in that list.
+The deployment helper configures the Entra API registration/service principal
+and `MCP.Invoke` app role automatically, creating or reusing the registration
+by the exact application object ID recorded in App Configuration.
+The deployer must have directory
+rights for registration and application-role assignments, separate from ARM
+permissions; there is no broad ARM-token authentication fallback.
+
+Selection does not enable `DEPLOY_SEARCH_SERVICE`, create Search indexes or
+grant Search access. Other retrieval consumers keep their independent Search
+requirements. Generated settings are published under `agent-lz`; see the
+[MCP contract](application-settings.md#agent-app-mcp-contract).
+Use the [MCP component guide](agent-app-mcp.md#select-and-deploy) for fresh and
+existing-installation steps. Setting the selector to `false` disables the
+runtime tools and does not delete metadata or grants. The catalog account,
+container declarations and vector policies are retained for owner-reviewed
+safe cleanup.
 
 <span id="ingestion-application-selection"></span>
 
@@ -995,11 +1054,10 @@ See [Agent hosting](hosted-agents.md),
 
 `ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`;
 workflow mode, `both` or enabled history, feedback or attachments declares UI metadata
-storage directly. `NL2SQL_ENABLED=false` keeps
-the direct SQL catalog/connector dependencies unselected.
-`NL2SQL_SOURCE_REGISTRY` defaults to an empty string. When direct SQL is enabled,
-explicit `cosmos` selects the datasource catalog and publishes
-`DATASOURCES_CONTAINER=datasources`, with reader access to that exact container.
+storage directly. `DEPLOY_AGENT_APP_MCP=false` keeps the optional MCP server
+unselected. Selecting it requires application Cosmos and derives the consuming
+MCP connection and registration. Catalog and SQL access belong to the MCP
+identity, not the native execution host.
 Declare actual tool secret names through `NATIVE_TOOL_SECRET_NAMES` (default
 `[]`), a JSON array of names rather than values, and grant only the consuming
 component. This is a platform grant declaration; the native runtime does not
@@ -1010,8 +1068,9 @@ corporate publication. Workflow attachments are unsupported.
 Admission allows at most three files, 64 KiB per file and 256 KiB for the
 serialized inline turn. See [Private attachments](conversations.md#private-attachments)
 for the MIME, encoding and owner contract.
-Native Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags also default
-to off; configured infrastructure alone does not register those tools.
+Native Search, Foundry IQ, MCP and multimodal registration default to off;
+the integrated MCP lifecycle coordinates registration when selected.
+Configured infrastructure alone does not onboard SQL or populate its catalog.
 
 ### Hosted foundation and publication inputs
 
@@ -1131,6 +1190,7 @@ These are not freely editable provisioning controls.
 | `RETRIEVAL_AUTH_MODE` | Platform-published `native_search` authorization contract, not an operator permission bypass. See [delegated retrieval](foundry-iq.md#delegated-native-retrieval). |
 | `KEY_VAULT_URI` | Infrastructure output for the deployed vault, empty when absent. Use the actual URI for bootstrap rather than constructing a cloud DNS suffix. |
 | Local binding records | Preserve the original application, provider, group and backend bindings for updates, recovery and removal. Refreshing outputs does not recreate immutable bindings. |
+| `COSMOS_VECTOR_SEARCH_ENABLED` | Internal azd-only marker for selected or retained MCP vector resources, not a new foundation output or operator enable flag. Preserve the owning lifecycle's state rather than editing it to force compatibility. |
 
 ### Search shared private links
 

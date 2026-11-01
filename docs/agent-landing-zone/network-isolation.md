@@ -145,6 +145,16 @@ from a connected host before deploying applications.
 
 ## Account for integration-specific paths
 
+Agent App MCP Server needs HTTPS from the actual Hosted or Container Apps
+consumer to its separate Container App, and outbound access from the MCP app
+to App Configuration, application Cosmos, selected models and the approved SQL
+destination. SQL-password sources also need the selected Key Vault.
+The administrative metadata importer needs its own catalog/model path.
+Plan routes, DNS and TLS with the SQL and network owners; provisioning does
+not authorize an external database or make its network reachable.
+MCP does not add a Search path or Search grant. Other retrieval consumers keep
+their independent requirements. See [MCP onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users).
+
 For private native Blob ingestion, plan Search-to-source/model links and
 approval by the authorized target owners. Pending approval is not fixed by
 public access or weaker permissions. See

@@ -102,6 +102,9 @@ For an orchestrator customization:
 
 Keep manifest names `agent-app-ui`, `agent-app-orchestrator`,
 `agent-app-ingestion` and definition names `ui`, `orchestrator`, `ingestion`.
+When MCP is selected, retain its component/service names as declared in the
+compatible manifest and application definition; pin changes with the same
+source/definition discipline.
 Hooks use these to map sibling folders. Existing checkouts are verified, not
 advanced automatically: preserve local work before relocating stale checkouts.
 Matching HEAD does not detect uncommitted source changes. Run
@@ -125,6 +128,12 @@ that environment with `azd env set` to select a definition file or containing
 folder; omission selects the Agent Application.
 Select it **before first provision**.
 
+Custom-only applications remain supported without forcing bundled tools.
+Generic Cosmos can be selected with `DEPLOY_COSMOS_DB=true` or a declared Cosmos
+capability without the bundled orchestrator or MCP. That storage selection
+does not require vector policies; MCP or a retained MCP catalog does.
+See [Application Cosmos DB](configuration.md#application-cosmos-db).
+
 The `preup` lifecycle hook rejects invalid definitions and changed application IDs
 before Azure resource creation. The `preprovision` hook repeats validation for standalone
 `azd provision`, but cannot guarantee rejection before azd initializes its
@@ -132,13 +141,16 @@ resource group. Run `azd hooks run preup` first for that safeguard.
 Do not edit a binding to force another application into an existing environment.
 
 <details markdown="1">
-<summary>Ingestion and additive composition</summary>
+<summary>Optional components and additive composition</summary>
 
 `DEPLOY_INGESTION_CONTAINER_APP` selects Agent Application composition, not components in
 an explicit custom definition. Foundation composition remains additive:
 Agent Application Container App placeholders can remain alongside custom resources.
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
+`DEPLOY_AGENT_APP_MCP` likewise selects the reference application's optional
+server, not implicit tools in a custom-only definition. Declare and test the
+components and access your custom application actually consumes.
 If reusing Agent App UI, preserve its
 [inline attachment contract](conversations.md#private-attachments), including
 owner mappings, exact byte/serialized limits and no corporate ingestion

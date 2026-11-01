@@ -32,7 +32,7 @@ By default the landing zone deploys **AI Foundry with the Standard Agent Setup**
 |---|---|---|
 | Azure AI Search | **2** — one for Foundry agents, one for the workload | Agent Service stores agent state, thread embeddings, and tool indices in its own Search service so workload index churn never affects agents |
 | Storage account | **2** — one for Foundry artifacts, one for workload blobs | Agent files, run outputs, and Foundry connections live in the Foundry-owned account |
-| Cosmos DB account | **2** — one for Foundry agent threads/state, one for workload documents | Foundry-owned account holds thread/run/message documents |
+| Cosmos DB account | **1 Foundry backing account**, plus application Cosmos when selected or required | Foundry owns its thread/run/message store; UI metadata and MCP catalogs belong to the conditional application account |
 | Key Vault | **1 workload vault**, plus an optional VM vault | `deployVmKeyVault=false` by default; a VM vault requires explicit selection and applicable resource conditions |
 
 !!! tip "How to opt out of the duplicate Foundry data plane"
@@ -53,7 +53,7 @@ can also differ from native Bicep defaults.
 |---|---|---|
 | **Runtime apps** | Placeholder Container Apps, or separately deployed workload images | Conditional on runtime deploy flags and `containerAppsList` |
 | **AI Foundry & agent data plane** | Foundry account/project, model deployments, Foundry-owned Search/Storage/Cosmos when Agent Service is on | Yes by default; the agent data plane appears only when `deployAAfAgentSvc=true` |
-| **Workload data path** | Workload-owned AI Search, Storage, Cosmos, Key Vault | Yes by default, each individually toggleable / BYO-capable |
+| **Workload data path** | Workload-owned AI Search, Storage, Cosmos, Key Vault | Service-specific selection; application Cosmos is conditional |
 | **Common platform** | App Configuration, Container Registry, Container Apps Environment, managed identity / RBAC, Log Analytics, App Insights | Yes by default, each individually toggleable |
 | **Zero Trust networking** | VNet/subnets, NSGs, private endpoints, private DNS, Azure Firewall, Jumpbox VM, VM Key Vault, Bastion, NAT Gateway | Opt-in via `networkIsolation=true` |
 | **Scenario add-ons** | Application Gateway WAF v2, Azure Speech, Bing grounding, ACR build-agent pool | Explicit selections in the platform's root parameters and application composition |
@@ -106,11 +106,20 @@ If regional processing is required, explicitly set the embedding entry's
 |---|---|---|---|
 | Workload AI Search | ✅ | `deploySearchService` | Standard SKU, **1 partition × 1 replica**; `aiSearchResourceId` belongs to the separate Foundry backing path |
 | Workload Storage | ✅ | `deployStorageAccount` | Standard_LRS, Hot |
-| Workload Cosmos DB | ✅ | `deployCosmosDb` | NoSQL, **serverless** (`EnableServerless`) |
+| Workload Cosmos DB | 🟧 | `deployCosmosDb`; Agent azd requires it for selected consumers | NoSQL, **serverless** (`EnableServerless`); MCP adds vector capability/policies to its separate catalog |
 | Workload Key Vault | ✅ 🔧 | `deployKeyVault` / `keyVaultResourceId` | Standard tier |
 | Azure Speech | 🟧 | `deploySpeechService` | S0 (off by default) |
 
 ### Common platform services
+
+For Agent Application, `DEPLOY_AGENT_APP_MCP=true` adds a separate Container App
+with its own identity and the application Cosmos catalog, on either consuming
+host. It reuses compatible selected infrastructure; it does not create another
+Search service or use Foundry backing Cosmos. Provisioning creates dependencies;
+application deployment supplies the image. SQL databases, read principals and
+approved metadata remain operator-owned onboarding.
+Generic Cosmos can be selected without MCP or the reference orchestrator.
+See [Agent App MCP Server](../agent-landing-zone/agent-app-mcp.md).
 
 | Resource | Marker | Flag / parameter | Default config |
 |---|---|---|---|

@@ -14,11 +14,14 @@ A portal connection or endpoint string alone does not attach a tool to
 the running application.
 
 Native capabilities are **off by default**: `SEARCH_RETRIEVAL_ENABLED`,
-`FOUNDRY_IQ_ENABLED`, `MCP_ENABLED`, `NL2SQL_ENABLED` and
+`FOUNDRY_IQ_ENABLED`, `MCP_ENABLED` and
 `MULTIMODAL_ENABLED`. Select only the capabilities whose source, identity,
 network and tool contracts are configured. The multimodal tool flag is
 different from custom ingestion `MULTIMODAL` and inline private attachments.
 See [Application settings](application-settings.md#native-application-contract).
+For the integrated server, select `DEPLOY_AGENT_APP_MCP=true` before provision.
+The lifecycle derives MCP registration and connection settings; do not enable
+NL2SQL with a second runtime flag.
 
 <span id="choose-the-extension-point"></span>
 
@@ -29,7 +32,7 @@ See [Application settings](application-settings.md#native-application-contract).
 | Call an operation | A reviewed tool with a narrow schema and explicit authorization |
 | Connect an MCP server | Registered MCP tools, authenticated transport and approved destination |
 | Ground an answer | A configured Foundry IQ source or Search capability |
-| Query approved SQL or Fabric SQL data | Optional registered NL2SQL tool with its own metadata, connector and read-only database principal |
+| Query approved Azure SQL or SQL Server data | Agent App MCP Server, with a Cosmos metadata catalog and read-only SQL principal |
 | Wait for a person's decision | Native workflow human input, not a blocking tool socket |
 | Change a process graph | Reviewed workflow definition and compatible publication |
 
@@ -38,27 +41,25 @@ a model-callable MCP tool. Its
 [knowledge-source settings](foundry-iq.md#generic-mcp-knowledge-sources)
 control source planning, output parsing and query credentials.
 
-### Optional direct NL2SQL
+### Optional Agent App MCP Server
 
-An Agent or Workflow can use the registered direct SQL tool without changing
-its application mode or host. Enable it only for approved SQL or Fabric SQL
-datasources. Its metadata store, schema/example indexes, ODBC driver, network
-access and chosen database credential are conditional dependencies.
-Applications without the tool do not need those SQL resources.
+The separate MCP Container App works with either consuming host and any
+application mode. It exposes only `nl2sql.list_sources()` and
+`nl2sql.query(source_id, question)`. The official Python MCP SDK hosts the
+server; MAF remains in the consuming orchestrator.
 
-The configured database principal performs direct queries; no automatic
-end-user SQL delegation is supplied. Read-only grants are the primary data
-boundary, with generated-query validation as defense in depth.
-This is separate from a Foundry IQ `fabricDataAgent` source, where Fabric owns
-query generation and execution.
-See [Ask questions about SQL data](nl2sql.md) for setup and denial checks.
-The reused helper suite includes `validate_sql_query(query)`,
-`execute_sql_query(datasource,query)` and `execute_dax_query(datasource,query)`.
-Tokens are trusted server context, never model-callable arguments.
-Execution is bounded to 30 seconds and 1,000 rows.
-DAX and delegated multimodal calls fail closed when native host token
-binding is unavailable; end-to-end delegation is not established by the
-registered function or local transport tests.
+Selecting `DEPLOY_AGENT_APP_MCP=true` adds its application Cosmos catalog,
+identity and deployment. It does not enable Search or require ingestion.
+The operator still approves SQL destinations, read permissions and metadata.
+The server—not the orchestrator—owns SQL connectivity, metadata retrieval and
+generated-query validation. There are no individually registered SQL helpers,
+arbitrary-SQL arguments, catalog write tools or DAX operations.
+
+The configured read-only principal queries the application's approved dataset,
+without automatic per-user SQL delegation. This differs from a Foundry IQ
+`fabricDataAgent` source, where Fabric owns execution.
+Follow [Agent App MCP Server](agent-app-mcp.md) for deployment and
+[NL2SQL](nl2sql.md) for source contracts, result limits and denial checks.
 
 <span id="before-you-start"></span>
 <span id="1-check-what-the-hosted-strategy-loads"></span>
@@ -80,6 +81,17 @@ Hosted and durable integrations rather than a universal host/state wrapper.
 <span id="configure-the-mcp-strategy"></span>
 
 ## Authorize and connect MCP safely
+
+Agent App MCP Server uses a dedicated Entra API audience. The actual Hosted
+or Container Apps caller must have the `MCP.Invoke` application role and an
+allowed client ID. The platform coordinates that connection and authorization.
+An API key, Foundry call ID, Cosmos/SQL token or browser user-context JSON does
+not authenticate this server. SQL access is application-level, not delegated
+end-user access.
+
+For other reviewed MCP integrations, use their own supported authentication
+and source-authorization contracts. A Foundry Toolbox connection and a
+Foundry IQ MCP knowledge source do not replace the integrated server's contract.
 
 Review the destination, transport, timeout, data handling and permissions
 before enabling an MCP connection. Use HTTPS outside controlled local

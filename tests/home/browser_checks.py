@@ -86,6 +86,7 @@ def check_lifecycle_navigation(page, base, screenshots):
         ("agent-landing-zone/deployment-operations/", ("Agent Landing Zone", "Operate")),
         ("agent-landing-zone/troubleshooting/", ("Agent Landing Zone", "Operate")),
         ("agent-landing-zone/application/", ("Agent Landing Zone", "Agent Application")),
+        ("agent-landing-zone/agent-app-mcp/", ("Agent Landing Zone", "Agent Application", "Agents")),
         ("agent-landing-zone/agentops/", ("Agent Landing Zone", "Agent Application")),
         ("agent-landing-zone/operations/", ("Agent Landing Zone", "Agent Application", "Operations")),
         ("ai-gateway-landing-zone/deploy/bicep-quick-deployment/",
@@ -200,6 +201,93 @@ def check_application_navigation(page, base, screenshots):
             if screenshots and width == 1280:
                 name = "navigation-application-desktop.png" if path else "navigation-home-desktop.png"
                 page.screenshot(path=str(screenshots / name))
+
+
+def check_application_mcp_documentation(page, base):
+    """Check the operator path and rendered contracts, not live service readiness."""
+    for width in (1440, 390, 320):
+        page.set_viewport_size({"width": width, "height": 1000})
+        for path, heading in (
+            ("application/", "Agent Application"),
+            ("agent-app-mcp/", "Agent App MCP Server"),
+            ("nl2sql/", "Ask questions about SQL data"),
+            ("application-settings/", "Application settings"),
+        ):
+            response = page.goto(base + "agent-landing-zone/" + path)
+            assert response.status == 200, path
+            content = page.locator(".md-content__inner")
+            expect(content.locator("h1")).to_have_text(heading)
+            for retired in (
+                "NL2SQL_ENABLED", "NL2SQL_SOURCE_REGISTRY",
+                "execute_sql_query(", "execute_dax_query(",
+            ):
+                assert retired not in content.inner_text(), (path, retired)
+            assert page.evaluate(
+                "document.documentElement.scrollWidth <= document.documentElement.clientWidth"
+            ), (width, path)
+
+    page.goto(base + "agent-landing-zone/application/")
+    content = page.locator(".md-content__inner")
+    expect(content.get_by_role("heading", name="What Cosmos means in this application")).to_have_count(1)
+    expect(content.locator('a[href*="agent-app-mcp/"]')).not_to_have_count(0)
+    diagram = page.request.get(base + "media/agent-application-overview.svg")
+    assert diagram.ok
+    assert 'width="1000" height="850" viewBox="0 0 1000 850"' in diagram.text()
+    assert "Agent App MCP" in diagram.text()
+
+    page.goto(base + "agent-landing-zone/agent-app-mcp/")
+    content = page.locator(".md-content__inner")
+    for heading in (
+        "What you choose and what is automatic", "Fresh application",
+        "Add to an existing installation", "Why application Cosmos DB is required",
+        "Onboard SQL before inviting users",
+    ):
+        expect(content.get_by_role("heading", name=heading, exact=True)).to_have_count(1)
+    blocks = content.locator("pre").all_text_contents()
+    assert any("azd env set DEPLOY_AGENT_APP_MCP true" in block and "azd up" in block for block in blocks)
+    assert any(block.index("azd provision") < block.index("azd deploy") for block in blocks if "azd provision" in block)
+    assert "MCP.Invoke" in content.inner_text()
+    assert "rather than automatically destroyed" in content.inner_text()
+    assert "restarts every active MCP revision" in content.inner_text()
+    assert "startup-only" in content.inner_text()
+
+    page.goto(base + "agent-landing-zone/application-settings/")
+    content = page.locator(".md-content__inner")
+    mcp_table = content.locator("#agent-app-mcp-contract").locator("xpath=following::table[1]")
+    for key in (
+        "MCP_AUTH_TENANT_ID", "MCP_AUTH_AUDIENCE", "MCP_AUTH_RESOURCE_SCOPE",
+        "MCP_ALLOWED_CLIENT_IDS", "MCP_COSMOS_ENDPOINT", "MCP_COSMOS_DATABASE",
+        "MCP_SOURCES_CONTAINER", "MCP_METADATA_CONTAINER", "MCP_EMBEDDING_DIMENSIONS",
+        "MCP_QUERY_TIMEOUT_SECONDS", "MCP_CLIENT_TIMEOUT", "MCP_METADATA_TOP_K",
+        "AI_FOUNDRY_OPENAI_ENDPOINT", "CHAT_DEPLOYMENT_NAME", "EMBEDDING_DEPLOYMENT_NAME",
+        "KEY_VAULT_ENDPOINT", "MCP_SQL_SECRET_NAMES",
+    ):
+        assert key in mcp_table.inner_text(), key
+
+    page.goto(base + "agent-landing-zone/nl2sql/")
+    text = content.inner_text()
+    for value in (
+        "nl2sql.list_sources()", "nl2sql.query(source_id, question)",
+        "metadata_version", "row_count", "1,000", "262144", "3072",
+        "MCP_QUERY_TIMEOUT_SECONDS=75", "MCP_CLIENT_TIMEOUT=90",
+    ):
+        assert value in text, value
+    expect(content.get_by_role("heading", name="Import the approved file", exact=True)).to_have_count(1)
+    imports = content.locator("pre").all_text_contents()
+    assert any(
+        'PYTHONPATH=src uv run --frozen python -m tools.nl2sql.importer --file' in block
+        for block in imports
+    )
+    assert any(
+        "$env:PYTHONPATH = 'src'" in block
+        and "samples\\approved-synthetic.json" in block for block in imports
+    )
+    assert any("samples/approved-synthetic.json" in block for block in imports)
+    assert "Azure CLI login is not an importer credential fallback" in text
+
+    page.goto(base + "agent-landing-zone/configuration/")
+    assert "Internal azd-only marker" in content.inner_text()
+    assert "not a new foundation output" in content.inner_text()
 
 
 def check_prose_wrapping(page, base, screenshots):
@@ -467,6 +555,7 @@ def run(base, screenshots):
         check_lifecycle_navigation(page, base, screenshots)
         check_documentation_roles(page, base)
         check_application_navigation(page, base, screenshots)
+        check_application_mcp_documentation(page, base)
         check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
         for path in ("", "agent-landing-zone/application/"):
@@ -541,7 +630,7 @@ def run(base, screenshots):
         assert fallback.locator(".architecture-workbench .home-tabs").is_hidden()
         context.close()
         browser.close()
-    print("PASS: homepage layout, full-width diagrams, accessible zoom viewer, tabs, lifecycle navigation, native navigation/search, legacy anchors, no-JS fallback and page isolation")
+    print("PASS: homepage layout, full-width diagrams, accessible zoom viewer, tabs, lifecycle navigation, native navigation/search, MCP operator path and rendered contracts, legacy anchors, no-JS fallback and page isolation")
 
 
 def main():

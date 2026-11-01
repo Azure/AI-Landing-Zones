@@ -71,7 +71,11 @@ Foundry IQ Blob source's format contract and not the chat upload allowlist.
 | JSON | Dedicated JSON chunking. | Embedding deployment for indexed content. |
 | VTT | Transcript processing. | Transcript text and model/embedding services used by that chunker. This is not audio transcription. |
 | TXT, Markdown, HTML/HTM/SHTML, Python, CSV, XML | Format-aware text splitting. | Readable source text and embedding deployment for indexing. |
-| NL2SQL metadata | Dedicated metadata processing and jobs. | The schema/example indexes described in [NL2SQL](nl2sql.md), not document OCR. |
+
+Approved SQL schemas and examples follow the
+[MCP metadata import contract](nl2sql.md#approved-source-and-metadata-contract),
+not document OCR or a schema/example Search index. Their embeddings are stored
+in application Cosmos; no document ingestion service is required.
 
 An unrecognized extension falls to the text chunker, which still rejects formats
 outside its supported set. That fallback does not mean every file type is

@@ -104,6 +104,11 @@ and protected retrieval do not have the same integration requirements.
   Complete its registration/consent steps before provision, then its
   callback/settings steps once the frontend URL is available.
   Deployment does not perform tenant consent.
+- **Optional MCP deployment:** the helper automatically configures the
+  dedicated Entra API registration/service principal and `MCP.Invoke` app role.
+  The deployer needs directory rights for app registration and application-role
+  assignments, separately from Azure resource/RBAC rights. The SQL owner must
+  approve the server's read access; deployment does not create database grants.
 
 !!! important "Protected retrieval keeps the signed-in user's permissions"
     The UI and native agent's retrieval capability require delegated Search
@@ -179,7 +184,7 @@ Keep this environment active for the lifecycle commands.
 #### Working from your own repository
 
 An unmodified deployment needs only the platform checkout. Hooks fetch selected
-runtime components automatically; four forks are not required. Fork or mirror
+runtime components automatically; separate forks are not required. Fork or mirror
 the platform when you maintain deployment inputs or automation, and fork only
 the runtime components whose source you change.
 
@@ -275,6 +280,29 @@ steps.
 For a different application, stop here and follow the
 [Bring your own app guide](build-your-own-app.md) before first provision.
 One environment binds to one application ID.
+
+#### Optional SQL tools through MCP
+
+To query approved Azure SQL or SQL Server data, select
+**[Agent App MCP Server](agent-app-mcp.md)** before provision:
+
+```bash
+azd env set DEPLOY_AGENT_APP_MCP true
+```
+
+It defaults to `false` and adds a separate Container App with either
+orchestration host. The platform requires application Cosmos automatically,
+reusing a compatible account or creating it when absent. Catalog containers,
+vector policies, managed identities, scoped grants and App Configuration outputs
+are coordinated; do not add Cosmos or NL2SQL enable flags for this dependency.
+Search and document ingestion are not required by MCP.
+
+This does not create SQL databases, users or grants, nor import source metadata.
+Approve the datasource and read access with its owner, then complete
+[SQL onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users).
+For an existing compatible installation, use the
+[add-component procedure](agent-app-mcp.md#add-to-an-existing-installation)
+with provision followed by deploy, not deploy alone.
 
 #### Network and build mode
 
@@ -379,7 +407,9 @@ its configuration checks automatically; no manual preparation command is needed.
 | --- | --- |
 | Provision | Creates the foundation and configures its services; no running hosted agent or placeholder image is created |
 | Deploy: image | Automatically fetches the pinned orchestrator source, builds its hosted image when needed, records an immutable digest and binds it to the existing foundation |
+| Deploy: optional MCP | Deploys the MCP image to its provisioned Container App before consuming application activation |
 | Deploy: applications | Creates the hosted version, bootstraps its limited runtime grants, tests a greeting and deploys selected apps |
+| Deploy: MCP integration | Resolves actual callers, grants `MCP.Invoke`, publishes allowlist/connection settings, restarts every active MCP revision to load startup-only authentication, checks discovery and activates consumers |
 
 Image preparation is part of `azd deploy`; no separate preparation command or
 second provision is required. If provisioning deferred configuration, complete
@@ -388,6 +418,12 @@ with an image tag or bypass permission, network or configuration failures.
 
 For an already configured infrastructure-only environment, reuse the same
 checkout, inputs and bound application, then run `azd deploy`.
+This applies only when the provisioned component selection is unchanged;
+adding MCP requires provision first. A deployed MCP image can deny callers
+until authorization is complete. Liveness is not authenticated integration
+readiness, and SQL source readiness still requires approved metadata import.
+Normal `azd deploy` coordinates the MCP restarts; do not add a manual restart
+step to load the generated allowlist.
 Review hook logs even after success: some configuration sections can log
 failures and continue. Resolve those failures before validation.
 

@@ -51,6 +51,10 @@ enabled history, feedback or attachments also selects it. The UI reads
 Only the frontend receives its metadata grant. The container holds owner/run
 mappings, references, feedback and attachment descriptors, not bytes,
 transcripts, tokens or Foundry/DTS execution checkpoints.
+Optional Agent App MCP Server can reuse the same application Cosmos account
+with separate source/vector-metadata containers and grants. Selecting MCP does
+not enable history, feedback or attachments, and its catalog is not a UI
+session store. See [Cosmos ownership](application.md#what-cosmos-means-in-this-application).
 In conversational mode with every product flag off, the UI uses bounded
 volatile owner maps. They are lost on UI restart; native host persistence alone
 cannot restore the UI mapping or provide saved discovery.

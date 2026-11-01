@@ -180,8 +180,13 @@ partition key `/principal_id` with owner `tid:oid`; only the frontend receives
 its metadata grant. Records contain descriptors/references, not bytes,
 transcripts or tokens. With conversational mode and all product flags off,
 bounded volatile owner maps are lost on UI restart.
-An enabled direct NL2SQL tool can separately require a Cosmos datasource
-catalog, without making Cosmos the native execution backend.
+Selecting Agent App MCP Server requires a separate source/vector-metadata
+catalog in application Cosmos, without making Cosmos the native execution
+backend. The MCP server always runs in a separate Container App, including
+when its consumers use Hosted. The lifecycle authorizes the actual consuming
+identities; Hosted `both` has separate conversation and workflow callers.
+Catalog and SQL grants belong to the MCP identity, not the Hosted runtime.
+See [Agent App MCP Server](agent-app-mcp.md).
 Private attachments use owner-bound conversational inline native file/image
 input, not Blob, SAS or corporate ingestion. They are not workflow inputs;
 transport tests do not verify model PDF/image understanding.

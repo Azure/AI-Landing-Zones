@@ -1,7 +1,7 @@
 # Application settings
 
 Application settings control the UI, native agent/workflow and optional
-ingestion service. Azure App Configuration remains an intentional dependency.
+ingestion and MCP services. Azure App Configuration remains an intentional dependency.
 Components read the `agent-lz` label; a label is not an environment-isolation
 boundary. Keep stores, identities and secrets separate between environments.
 
@@ -100,16 +100,13 @@ An unavailable required store is a readiness failure, not an offline mode.
 | `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Native managed-identity binding using the actual scheduler output and configured task hub |
 | `SEARCH_RETRIEVAL_ENABLED` | `false`; native Search tool capability |
 | `FOUNDRY_IQ_ENABLED` | `false`; native Foundry IQ capability |
-| `MCP_ENABLED` | `false`; native MCP tool registration |
+| `MCP_ENABLED` | `false`; native MCP registration, derived automatically when the integrated MCP component is selected |
 | `MULTIMODAL_ENABLED` | `false`; native multimodal tool capability, separate from ingestion `MULTIMODAL` and private attachments |
 | `ENABLE_CHAT_HISTORY` | `false`; explicitly selects saved-history discovery |
 | `ENABLE_USER_FEEDBACK` | `false`; explicitly selects user feedback |
 | `DATABASE_ACCOUNT_NAME` | Selected application Cosmos account for UI metadata |
 | `DATABASE_NAME` | Selected application Cosmos database for UI metadata |
 | `NATIVE_UI_METADATA_CONTAINER` | `native-ui-metadata`, with partition key `/principal_id` |
-| `NL2SQL_ENABLED` | `false`; explicitly enables the optional direct SQL capability |
-| `NL2SQL_SOURCE_REGISTRY` | Empty string by default; enabled direct NL2SQL requires explicit `cosmos` |
-| `DATASOURCES_CONTAINER` | `datasources`, published for the selected direct NL2SQL Cosmos catalog |
 | `NATIVE_TOOL_SECRET_NAMES` | `[]`; platform scoped-grant declaration of secret **names**, not values; not consumed by the native runtime |
 | `ENABLE_PRIVATE_ATTACHMENTS` | `false`; conversational inline attachments, independent of corporate ingestion; no workflow attachments |
 
@@ -139,10 +136,11 @@ Transport is implemented; model PDF/image understanding remains unverified.
 See [Conversations & files](conversations.md#private-attachments).
 
 Native Hosted and DTS execution do not require application Cosmos.
-Enabled direct NL2SQL has a separate Cosmos datasource catalog dependency;
-the default catalog container is `datasources`, with read access scoped to
-that exact container. Its database connection,
-schema/example indexes and any actual secret consumer remain conditional.
+Selecting Agent App MCP Server automatically requires application Cosmos for
+its separate source and vector-metadata containers. The MCP identity receives
+catalog and SQL access; the orchestrator receives MCP invocation access only.
+Generic application Cosmos and custom Cosmos capabilities remain independent
+of MCP selection. See [Application Cosmos DB](configuration.md#application-cosmos-db).
 
 For Hosted `both`, the shared configuration can describe the composition,
 but each publication must receive an explicit single-mode process input.
@@ -152,6 +150,73 @@ Do not let the shared composition value start a single Hosted process in
 When private attachments are enabled in Hosted `both`, keep the shared/UI and
 conversational publication flag enabled. Only the workflow publication
 receives `ENABLE_PRIVATE_ATTACHMENTS=false`; it does not support attachments.
+
+## Agent App MCP contract
+
+Select the component with `DEPLOY_AGENT_APP_MCP=true` in the azd environment
+before provisioning; the default is `false`.
+This is a deployment selector, not another native runtime feature key.
+There is no second NL2SQL enable flag.
+
+The platform publishes the following values under `agent-lz` from the selected
+resources, models and identities. Do not copy endpoints between components,
+manually edit generated client authorization, or supply Cosmos keys.
+After MCP and the actual native consumers deploy, the lifecycle grants
+`MCP.Invoke`, publishes the allowlist and `MCP_ENABLED`, and verifies the
+effective authenticated connection. An accepted key write alone does not prove
+that the MCP process loaded new authorization settings.
+Server authentication settings are **startup-only**, not dynamically refreshed.
+The platform automatically restarts every active MCP revision after allowlist
+publication and before consumer activation. Use the normal `azd deploy`
+lifecycle; a manual operator restart is not part of that procedure.
+
+| Setting | Value or requirement | Ownership |
+| --- | --- | --- |
+| `MCP_AUTH_TENANT_ID` | Entra tenant GUID | Generated identity configuration |
+| `MCP_AUTH_AUDIENCE` | Dedicated MCP API application client ID; JWT v2 audience | Generated identity configuration |
+| `MCP_AUTH_RESOURCE_SCOPE` | `api://<MCP API client ID>/.default` | Generated client token scope |
+| `MCP_ALLOWED_CLIENT_IDS` | JSON array of permitted application client IDs | Lifecycle resolves actual callers, including both Hosted publications when selected |
+| `MCP_COSMOS_ENDPOINT` | Application Cosmos endpoint | Provisioning output |
+| `MCP_COSMOS_DATABASE` | Application Cosmos database | Provisioning output |
+| `MCP_SOURCES_CONTAINER` | `mcp-sources` | Provisioned source catalog |
+| `MCP_METADATA_CONTAINER` | `mcp-nl2sql-metadata` | Provisioned vector-metadata catalog |
+| `MCP_EMBEDDING_DIMENSIONS` | `3072` by default; must match model, import and vector policy | Reviewed model selection, resolved before provision |
+| `MCP_METADATA_TOP_K` | `8` by default | Bounded metadata retrieval |
+| `MCP_QUERY_TIMEOUT_SECONDS` | `75` by default | Complete server-query deadline |
+| `MCP_CLIENT_TIMEOUT` | `90` by default; greater than the server deadline | Consuming orchestrator |
+| `AI_FOUNDRY_OPENAI_ENDPOINT` | Existing selected platform model endpoint | Provisioning output |
+| `CHAT_DEPLOYMENT_NAME` | Selected generation deployment | Reviewed model selection |
+| `EMBEDDING_DEPLOYMENT_NAME` | Selected embedding deployment | Reviewed model selection |
+| `KEY_VAULT_ENDPOINT` | Selected vault endpoint when a SQL-password source needs it | Conditional output and secret-scoped grant |
+| `MCP_SQL_SECRET_NAMES` | `[]` by default; optional JSON array of SQL password-secret **names**, never values | Operator declaration for scoped MCP vault grants |
+
+Declare password-secret names through the reviewed deployment inputs before
+provisioning their scoped grants. This is a grant declaration, not a tool
+enable switch or a replacement for a source's `password_secret_name`.
+Adding a secret consumer later requires matching provision/deploy steps.
+
+`APP_CONFIG_ENDPOINT` is the process bootstrap environment variable.
+`AZURE_CLIENT_ID` is optional when selecting an assigned managed identity;
+neither belongs in tool arguments. The endpoint uses HTTPS `/mcp` in Azure.
+Identity, endpoint, timeout or model/policy changes require the owning lifecycle
+and compatible processes; do not assume UI or native functional refresh changes
+the server or reindexes metadata.
+
+The server validates signature, the tenant's v2 issuer
+(`https://login.microsoftonline.com/<tenant>/v2.0`), audience and token validity,
+plus allowed `azp` and the `MCP.Invoke` application role.
+There is no API-key fallback or raw user-context authorization.
+The deployment helper configures the API registration/service principal,
+`MCP.Invoke` role and client assignments automatically. It requires the
+deployer's appropriate Entra directory permissions; Azure Contributor or ARM
+RBAC administration alone is insufficient. There is no broad ARM-token
+authentication fallback.
+Registration reuse uses the exact application object ID recorded in App
+Configuration, not an application name or subscription RBAC inference.
+SQL's 30-second execution timeout, 1,000-row limit and 256-KiB result ceiling
+are separate from the complete query deadline.
+See [Agent App MCP Server](agent-app-mcp.md) for the lifecycle and
+[NL2SQL](nl2sql.md#results-and-execution-limits) for results.
 
 <span id="orchestrator-tls-compatibility"></span>
 

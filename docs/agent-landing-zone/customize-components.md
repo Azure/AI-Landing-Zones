@@ -10,6 +10,7 @@ Use [Run locally](local-development.md) to prepare a development environment.
 | Change | Repository and starting point |
 | --- | --- |
 | Agent definitions, workflow graphs, prompts and registered tools | [Orchestrator](https://github.com/Azure/agent-app-orchestrator), application definitions and tool/connector owners under `src/` |
+| NL2SQL generation, validation, execution, catalog import and MCP tool modules | [Agent App MCP Server](https://github.com/Azure/agent-app-mcp), separate from orchestrator definitions |
 | File parsing, chunking, source jobs, indexing | [Ingestion](https://github.com/Azure/agent-app-ingestion), `chunking/`, `jobs/`, and `tools/` |
 | Chat presentation, identity/session handling, backend client | [UI](https://github.com/Azure/agent-app-ui), `src/gpt_rag_ui/`, `public/`, and `.chainlit/` |
 | Ingestion operator dashboard | Ingestion `frontend/`, not the chat UI or native runtime |
@@ -31,7 +32,7 @@ Hosting and tools are separate choices. To extend the application:
    execution and human-input APIs, not a second execution loop, polling queue
    or application-owned checkpoint engine.
 2. Register the intended capabilities explicitly. Foundry IQ, Search, MCP and
-   optional [NL2SQL](nl2sql.md#direct-nl2sql-tool) are tools/capabilities, not a
+   optional [MCP NL2SQL](nl2sql.md) are tools/capabilities, not a
    mixed strategy registry or a user-facing host picker.
 3. Keep packaged instructions and typed tool inputs with the reviewed source.
    Test missing/invalid configuration and prompts. Functional App Configuration
@@ -67,6 +68,10 @@ from an MCP knowledge source consulted by Foundry IQ.
   proof of access. Add negative tests for cross-user and source-denied requests.
 - For SQL, keep a read-only database principal as the primary security boundary.
   Generated-SQL validation is not a substitute for database permissions.
+  SQL generation, catalog retrieval and execution belong in Agent App MCP
+  Server, not the orchestrator. Extend its reviewed tool modules with typed
+  schemas, scoped permissions and tests. Only the two documented NL2SQL tools
+  are supplied; future capabilities require implementation.
 
 Retrieval backend selection does not switch every datasource or tool.
 Use [Foundry IQ](foundry-iq.md) and the relevant source guide for source

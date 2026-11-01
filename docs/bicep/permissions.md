@@ -27,6 +27,8 @@ granting access.
 | Frontend managed identity | Reads UI settings/secrets, pulls its image and accesses Blob references. It is not the signed-in user. |
 | Foundry project managed identity | Pulls the hosted image and uses configured project connections. It is not the running agent's identity. |
 | Hosted agent runtime principal | The actual principal discovered for the deployed agent; receives the runtime grants below. |
+| MCP Container App managed identity | Reads approved SQL metadata and models and queries SQL when the component is selected; it is not the orchestrator identity. |
+| Administrative metadata importer | Writes approved source/schema/example versions and generates embeddings; separate from the read-only MCP runtime. |
 | Signed-in application user | Invokes Foundry through UI OBO and separately needs source/document authorization. |
 
 <span id="container-app-role-assignments"></span>
@@ -69,7 +71,7 @@ After agent deployment, the hosted access reconciliation discovers the
 | Key Vault Secrets User | Exact secret referenced by `AUDIT_HMAC_KEY` | Only when the audit key is configured as a Key Vault reference. |
 | Key Vault Secrets User | Exact declared MCP/tool secret | Only for the enabled consumer and named secret. |
 | Declared retrieval/tool access | Exact selected source/resource | Only for enabled registered capabilities. |
-| Scoped datasource-catalog reader | Exact direct NL2SQL container, default `datasources` | Only when `NL2SQL_ENABLED=true` and explicit `NL2SQL_SOURCE_REGISTRY=cosmos`; no account-wide catalog grant. This is not execution state. |
+| MCP invocation authorization | Dedicated MCP API application role `MCP.Invoke` and allowed client ID | Only for the selected MCP caller; catalog and SQL grants belong to the MCP identity, not this runtime. |
 
 These are not a blanket grant to every secret, source or tool. Reconciliation
 does not automatically grant arbitrary source access or authorize application
@@ -99,6 +101,30 @@ Keep it compatible with both the native worker and UI client.
 Scheduler service permission is not product-user ownership, and the worker
 does not require public HTTP ingress, Dapr or an Azure Functions app.
 Hosted and DTS execution do not use application Cosmos checkpoints.
+
+## Agent App MCP Server
+
+The platform helper configures the dedicated Entra API registration/service
+principal, `MCP.Invoke` app role and actual caller assignments automatically.
+The deployer needs directory rights for those operations in addition to Azure
+resource and scoped role-assignment permissions. Azure Contributor does not
+grant directory administration. There is no broad ARM-token or API-key
+authentication fallback.
+
+| Principal | Required access | Boundary |
+| --- | --- | --- |
+| MCP Container App identity | Configuration read and image pull | Base application resources |
+| MCP Container App identity | Selected generation and embedding models | Only the models it consumes |
+| MCP Container App identity | Catalog read | Exact `mcp-sources` and `mcp-nl2sql-metadata` containers in application Cosmos |
+| MCP Container App identity | SQL read | SQL owner approves/grants permitted views/tables; platform startup does not create database grants |
+| MCP Container App identity | SQL password secret, when required | Exact names declared in `MCP_SQL_SECRET_NAMES` (default `[]`), not vault-wide access |
+| Administrative importer | Catalog write and embedding model access | Complete approved-version import, not runtime catalog administration |
+| Hosted/Container Apps consumer | `MCP.Invoke`, allowed client ID and MCP-audience token | Invocation only; no MCP catalog or SQL grant |
+
+Normal application Cosmos is serverless and separate from Foundry backing
+Cosmos. MCP adds vector policies to its catalog, not UI containers or native
+execution state. No Search grants are added by MCP selection.
+See [MCP deployment and onboarding](../agent-landing-zone/agent-app-mcp.md).
 
 <span id="microsoft-foundry-and-ai-search-assignments"></span>
 

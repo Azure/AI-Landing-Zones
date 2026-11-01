@@ -12,10 +12,11 @@ authorization requirements.
 Deployment procedures are in the
 [full-stack deployment guide](deploy-full-stack.md).
 
-For direct database connections, use the separate
-[NL2SQL tool](nl2sql.md#direct-nl2sql-tool). A Fabric SQL endpoint configured
-for that connector is not a `fabricDataAgent` source, and enabling the tool
-does not publish a Fabric data agent.
+For approved Azure SQL or SQL Server connections, use the separate
+[MCP NL2SQL tools](nl2sql.md). Agent App MCP Server does not support Fabric
+SQL endpoints, semantic models or DAX. Its application Cosmos catalog is
+independent of Fabric's schema context; enabling MCP does not publish a
+Fabric data agent.
 
 <span id="choose-the-connection"></span>
 

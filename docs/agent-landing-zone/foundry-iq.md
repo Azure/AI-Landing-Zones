@@ -19,11 +19,14 @@ falling back to another backend or silently changing source authorization.
 knowledge base and combines its configured sources. The selector applies to
 the application's registered knowledge-search capability, usable by an Agent
 or Workflow. It does not reroute the
-[NL2SQL tool](nl2sql.md#direct-nl2sql-tool) or replace callable
+[MCP NL2SQL tools](nl2sql.md) or replace callable
 [MCP tools](agent-tools.md).
 [Application settings](application-settings.md) describes how to change runtime
 values. [Agents & prompts](agent-strategies.md) describes application selection
 independently of the host and its tools.
+Agent App MCP Server stores approved SQL metadata and vectors in application
+Cosmos. It does not require Search; enabling it does not enable Foundry IQ
+or alter this knowledge base's sources.
 
 <span id="before-you-start"></span>
 <span id="1-choose-who-manages-the-source"></span>
@@ -169,8 +172,9 @@ See also
 ## Generic MCP knowledge sources
 
 Use this default-off preview to retrieve grounding from registered
-`mcpServer` knowledge sources. It is not the callable `mcp` agent strategy and
-does not create sources. Register each source on the selected knowledge base
+`mcpServer` knowledge sources. This is distinct from callable MCP tools and
+from deploying Agent App MCP Server. It does not create sources.
+Register each source on the selected knowledge base
 first, with the same name, server and tools as the runtime metadata.
 
 | Runtime setting | Default | Required choice |

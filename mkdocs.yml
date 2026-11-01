@@ -72,6 +72,7 @@ nav:
               - "Agents & prompts": agent-landing-zone/agent-strategies.md
               - "Workflows & human input": agent-landing-zone/workflows.md
               - "Tools & MCP": agent-landing-zone/agent-tools.md
+              - "Agent App MCP Server": agent-landing-zone/agent-app-mcp.md
           - "Chat & channels":
               - "Sign-in & access": agent-landing-zone/application-auth.md
               - "Conversations & files": agent-landing-zone/conversations.md

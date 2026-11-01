@@ -145,7 +145,8 @@ or identity grants. Retirement needs separate authorization.
    Text, JSON, spreadsheets and transcripts have dedicated paths.
    See [Document formats & images](multimodality.md#custom-document-formats).
    SharePoint additionally needs Graph credentials and source definitions.
-   [NL2SQL](nl2sql.md) needs metadata jobs and separate database configuration.
+   [NL2SQL](nl2sql.md) uses a separate administrative Cosmos metadata import;
+   it does not require this document pipeline or Search metadata indexes.
 5. Grant the ingestion workload only the required source read, target Search
    write, storage, model and secret access. Verify connectivity from the actual
    service, including private endpoints where configured.
@@ -161,6 +162,21 @@ An ingestion-maintained index can be attached to Foundry IQ as a `searchIndex`
 source on the same Search service. Registration does not populate it, repair
 its schema or reconstruct missing ACLs. Keep the index and embedding dimensions
 aligned with the source binding.
+
+## SQL metadata is separate from document ingestion
+
+Agent App MCP Server uses approved source bindings, schemas and examples with
+vectors in application Cosmos, not the document Search index.
+The operator supplies approved metadata to the MCP repository's administrative
+Python importer, which generates embeddings and activates only a complete
+catalog version. No persistent ingestion Container App is required.
+
+If an optional NL2SQL metadata pipeline is selected, its destination must use
+the same Cosmos catalog, model dimensions and complete-version contract.
+Do not point document indexing or purge work at the MCP containers or assume
+Search schemas are compatible. SQL read access belongs to the MCP identity;
+metadata import needs its own scoped writer. See
+[SQL onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users).
 
 ## Ingestion APIs and retrieval boundaries
 

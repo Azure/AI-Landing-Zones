@@ -9,6 +9,7 @@ prerequisites, validation and recovery guidance.
 | Review infrastructure changes | [Review changes](deploy-infra-only.md#review-infrastructure-changes) | [Review or recover](deploy-terraform-infra-only.md#reconfigure-or-recover-the-foundation) |
 | Retry a full-stack installation | [Retry the same installation](deploy-full-stack.md#retry-the-same-installation) | [Retry and recover](deploy-terraform-full-stack.md#update-and-recover) |
 | Redeploy applications only | [Redeploy applications](deploy-full-stack.md#redeploy-applications-only) | [Application-only changes](deploy-terraform-full-stack.md#update-and-recover) |
+| Add Agent App MCP Server | [Select, provision and deploy](agent-app-mcp.md#add-to-an-existing-installation) | [Select, provision and deploy](agent-app-mcp.md#add-to-an-existing-installation) |
 | Review component outbound access | [Read-only review](deploy-infra-only.md#review-component-egress) | [Provisioning review](deploy-terraform-infra-only.md#step-5-review-and-provision) |
 | Review recovery and rollback | [Rollback](deploy-full-stack.md#rollback) | [Update and recover](deploy-terraform-full-stack.md#update-and-recover) |
 | Remove the foundation | [Remove the foundation](deploy-infra-only.md#remove-the-foundation) | [Remove the foundation](deploy-terraform-infra-only.md#remove-the-foundation) |
@@ -22,3 +23,9 @@ For outbound-access changes, retain the
 [policy ownership and subnet boundaries](configuration.md#outbound-access).
 Remove owned rules with the current reconciliation workflow
 [before reverting hooks](deploy-full-stack.md#outbound-rule-recovery).
+
+For MCP, retain the compatible image/configuration, SQL-owner approvals and
+active metadata version. Disabling component selection does not delete catalog
+data or grants. Review retirement explicitly; recovery does not run direct SQL
+inside the orchestrator. Embedding model/dimension changes need reindexing,
+not just a runtime-setting refresh.

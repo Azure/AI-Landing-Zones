@@ -4,7 +4,7 @@
 
 Agent Application is the reference application included with Agent Landing Zone.
 It brings together a Chainlit chat/process interface, native Microsoft Agent
-Framework (MAF) execution and optional document processing. Use an Agent for
+Framework (MAF) execution, optional document processing and optional MCP tools. Use an Agent for
 conversation or a Workflow for a published process with human input.
 
 Start with [Deploy full stack](deploy-full-stack.md) to deploy the application.
@@ -21,6 +21,7 @@ The guides below explain how to configure, operate and extend it.
 | Agent App UI/BFF | Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback. |
 | Agent App Orchestrator | Runs native MAF Agents and Workflows, using the explicit integration for the selected host. |
 | Agent App Ingestion | Provides optional application-managed document processing and indexing. |
+| [Agent App MCP Server](agent-app-mcp.md) | Runs in a separate Container App and queries approved Azure SQL/SQL Server data through two NL2SQL tools. |
 
 ## Default deployment
 
@@ -30,7 +31,8 @@ orchestrator hosted in Microsoft Foundry. The public native selectors are
 The UI is included automatically. Native Hosted execution does
 not require application-owned Cosmos DB; Foundry backing resources and
 optional UI product storage are separate concerns.
-Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags default to off.
+Search, Foundry IQ and multimodal tool flags default to off.
+Agent App MCP Server is also omitted by default (`DEPLOY_AGENT_APP_MCP=false`).
 Preparing a source does not register a tool. History, feedback and private
 attachments also default to off; conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.
@@ -41,6 +43,42 @@ only when a selected custom processing path needs it; it is disabled by
 default. A private conversation attachment is not a shared source-ingestion
 request. Hosting owns native execution state, not the UI's history discovery,
 feedback or per-user document authorization.
+
+## Choose only the capabilities you need
+
+| Your requirement | What to select | What is deployed or required |
+| --- | --- | --- |
+| Web conversation | Default `conversational` mode and `hosted` host | UI in Container Apps and a Foundry-hosted orchestrator; no application Cosmos without a storage consumer |
+| A process with human review | `workflow` or `both` | Native workflow execution plus Cosmos UI ownership/action metadata |
+| Durable Container Apps execution | `ORCHESTRATION_HOST=container_apps` | Native worker/client and Durable Task Scheduler instead of Hosted execution |
+| Saved history, feedback or private chat files | The corresponding application feature | Application Cosmos for product metadata; private file bytes are not stored there |
+| Questions over approved SQL data | `DEPLOY_AGENT_APP_MCP=true` | Separate MCP Container App, application Cosmos catalog and model access; operator-approved SQL access and metadata import |
+| Custom shared-document processing | `DEPLOY_INGESTION_CONTAINER_APP=true` | Optional ingestion component and its selected source/index dependencies |
+
+The platform handles resource dependencies and generated connections.
+You still choose the data sources, arrange authorization and provide approved
+content. MCP selection does not create SQL databases or database grants,
+enable Search, or require the ingestion application.
+
+### What Cosmos means in this application
+
+There are separate storage responsibilities:
+
+- **Application Cosmos** is conditional. It is required automatically for
+  workflow/`both` UI metadata, enabled history, feedback or private attachments,
+  Agent App MCP Server, and declared custom Cosmos capabilities.
+  A compatible existing application account is reused, with separate containers
+  and scoped grants for each consumer.
+- **Foundry backing Cosmos** belongs to Foundry's service infrastructure.
+  It is not the application catalog or UI database.
+- **Native execution state** belongs to the selected host: Foundry persistence
+  for Hosted, or Durable Task Scheduler for Container Apps. UI Cosmos is not a
+  workflow checkpoint store.
+
+You may also select generic application Cosmos with `DEPLOY_COSMOS_DB=true`
+without MCP or the reference orchestrator, including for a custom application.
+See [Application Cosmos DB](configuration.md#application-cosmos-db).
+The normal standalone and customer-owned application paths remain available.
 
 ## Application mode and host
 
@@ -60,7 +98,7 @@ See [Agent hosting](hosted-agents.md) and
 [Workflows & human input](workflows.md).
 
 The application repositories contain the code. These guides are the shared
-documentation for all three components. The
+documentation for the application components. The
 [release manifest](https://github.com/Azure/agent-landing-zone/blob/main/manifest.json)
 records their compatible versions.
 
@@ -80,6 +118,9 @@ an owner-bound inline native input path and their own retention requirements.
 They are conversational only; transport support is not proof of model
 PDF/image understanding.
 Additional channels and external tools have separate integration requirements.
+For SQL, complete [MCP source onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users):
+authorize a read-only database principal, import approved metadata and verify
+known results and denials. A deployed MCP container is not a populated catalog.
 
 <span id="choose-a-task"></span>
 <span id="application-components"></span>
@@ -96,6 +137,8 @@ Choose [where execution runs](hosted-agents.md), configure
 [workflows and human input](workflows.md), or connect
 [tools and MCP servers](agent-tools.md). A tool lets an agent perform an
 operation. Retrieval supplies information for its answer.
+For the optional SQL component, start with [Agent App MCP Server](agent-app-mcp.md)
+to understand deployment, automatic configuration and operator responsibilities.
 
 <span id="frontend"></span>
 
