@@ -117,17 +117,7 @@ are off. It is not a second copy of execution checkpoints. Redis is not required
 Hosted streaming. No ALZ queue, scheduler or custom workflow-state engine is
 introduced.
 
-## Change or recover a process
-
-Keep native registration, workflow and executor identifiers stable within a
-compatible publication. For an incompatible graph change, publish a new
-compatible application rather than assuming old checkpoints can be resumed
-by different code.
-
-Retain the prior deployment and state for rollback. Switching hosts does not
-import sessions or DTS checkpoints, and rolling back code does not merge
-new-host data into the previous deployment. Follow the
-[recovery procedure](deploy-full-stack.md#roll-back-to-a-previous-release).
+For operational failures, follow [Troubleshooting](troubleshooting.md).
 
 ## Acceptance checks
 

@@ -201,7 +201,7 @@ credentials in shell history or adding a public VM IP.
 
 Retry with the same approved revision, parameters and environment after repair;
 do not disable Search, open endpoints or skip checks for a green result.
-Use [foundation reconfiguration](../agent-landing-zone/deploy-infra-only.md#reconfigure-or-upgrade-the-foundation).
+Use [infrastructure change review](../agent-landing-zone/deploy-infra-only.md#review-infrastructure-changes).
 
 For [safe removal](../agent-landing-zone/deploy-full-stack.md#remove-an-environment),
 obtain workload/data-retention approval and inventory dependencies first.

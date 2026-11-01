@@ -103,7 +103,6 @@ a universal state envelope.
 UI display metadata and feedback are separate from native session/checkpoint
 state. A failed native read must not become a successful empty history.
 Do not manually append a UI transcript to a second conversation store.
-Host changes and incompatible workflow publications do not transfer state.
 See [Conversations & files](conversations.md) and
 [Workflows & human input](workflows.md).
 

@@ -635,7 +635,7 @@ resource-name error.
 
 **Correct:** Resolve that specific cause. Region/name changes can replace
 stateful resources, so review their impact before retrying the
-[foundation workflow](deploy-infra-only.md#reconfigure-or-upgrade-the-foundation).
+[foundation workflow](deploy-infra-only.md#review-infrastructure-changes).
 For a name conflict, identify the existing resource and its owner before
 deciding whether to reuse it or choose another name.
 

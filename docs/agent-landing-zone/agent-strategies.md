@@ -55,19 +55,17 @@ A running workflow retains its functional configuration snapshot; a new
 configuration value does not rewrite a process that is already waiting.
 Current authorization is checked separately on every interaction.
 
-## Change behavior safely
+## Configure and test behavior
 
 1. Select the application mode and host, then verify the required dependencies.
 2. Keep instructions focused on task, grounding, citations and tool use.
    Never include user tokens, credentials or private configuration in prompts.
-3. Use a new publication for an incompatible workflow graph. Native run state
-   is not automatically portable across changed graphs, versions or hosts.
-4. Test a representative answer, required-source failure, denied user and
+3. Test a representative answer, required-source failure, denied user and
    cancellation. For workflows, also test pending human input, reconnect,
    rejection and a stale or duplicate reply.
-5. Follow [Customize components](customize-components.md) and the
+4. Follow [Customize components](customize-components.md) and the
    [deployment guide](deploy-full-stack.md) for reviewed source and image
-   adoption. Retain the previous deployment's state for an explicit rollback.
+   deployment.
 
 For process operation, see [Workflows & human input](workflows.md).
 For caller boundaries, see [Sign-in & access](application-auth.md) and

@@ -16,6 +16,10 @@ execution does not require application Cosmos DB; selected UI product metadata
 and Foundry backing resources have their own storage requirements.
 History, feedback and private attachments default to off independently.
 Workflow or `both` requires UI metadata even when those flags remain off.
+
+This guide covers a fresh native installation with new execution contracts;
+existing execution state is not automatically converted.
+
 This procedure uses the default Bicep provider. For Terraform, use
 [Deploy full stack with Terraform](deploy-terraform-full-stack.md); application
 configuration and deployment are shared.
@@ -412,24 +416,18 @@ hosted digest before a change. Back up configuration and relevant data using
 service-specific procedures.
 
 <span id="lifecycle"></span>
-<span id="upgrade-to-a-new-release"></span>
 
-### Reapply a reviewed deployment
+### Retry the same installation
 
-1. Select the reviewed compatible source and pin files. Keep the platform's
-   `infra/` with that source, rather than replacing only that directory.
-2. Preserve the environment's layout, component selection, names and source
-   bindings. Back up affected data and separately managed configuration.
-3. If previewing, follow the [selected-environment preparation](deploy-infra-only.md#optional-preview-agent-source),
-   then review infrastructure changes with `azd provision --preview`.
-4. Run [Step 4](#step-4-deploy). Deployment prepares the image automatically,
-   including when its recorded generated-source provenance is stale.
-5. Repeat [Validation](#validation) before promotion.
+After correcting the specific failure, retry [Step 4](#step-4-deploy) with
+the same approved source, application definition, environment and inputs.
+Review any resource changes before applying them and repeat
+[Validation](#validation). A retry is not permission to delete existing
+resources or user data.
 
 ### Redeploy applications only
 
-When foundation outputs, application binding and component selection remain
-compatible:
+When foundation outputs, application binding and component selection are unchanged:
 
 ```bash
 azd deploy
@@ -671,24 +669,13 @@ For optional channel distribution after acceptance, use the
 [Teams and Microsoft 365 guide](publish-to-teams.md). Publication is not
 part of this deployment.
 
-<span id="roll-back-to-a-previous-release"></span>
-
 ## Rollback
 
-1. Stop promotion and record the failed revision, inputs and deployed state.
-   Select the previous tested **complete compatible combination**, not an
-   independent component tip. Check compatibility with current data and settings.
-2. Restore the recorded platform commit, manifest, definition and reviewed
-   parameters without overwriting uncommitted work. Align existing sibling
-   checkouts with the restored manifest after preserving their local work.
-3. Preview infrastructure or configuration reversals before applying them.
-   Keep the approved authentication and network posture.
-4. Follow [Step 4](#step-4-deploy) with the previous compatible source and inputs:
-   provision, then deploy; deployment prepares the pinned image automatically.
-   If retaining an operator-managed digest, verify its availability and
-   compatibility; deployment does not rebuild it.
-5. Restore directly managed runtime keys separately from the source checkout,
-   reload affected components and repeat [Validation](#validation) before routing traffic.
+Stop promotion and retain the failed deployment's records and backups.
+Use only recorded, approved artifacts and settings for a reversal; preview
+resource changes and keep the approved authentication and network posture.
+Do not delete existing resources or user data during recovery.
+Repeat [Validation](#validation) before routing traffic.
 
 ### Outbound rule recovery
 

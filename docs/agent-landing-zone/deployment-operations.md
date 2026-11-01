@@ -6,8 +6,8 @@ prerequisites, validation and recovery guidance.
 
 | Task | Bicep | Terraform |
 | --- | --- | --- |
-| Reconfigure the foundation | [Reconfigure](deploy-infra-only.md#reconfigure-the-foundation) | [Reconfigure or recover](deploy-terraform-infra-only.md#reconfigure-or-recover-the-foundation) |
-| Reapply a full-stack deployment | [Reapply a reviewed deployment](deploy-full-stack.md#reapply-a-reviewed-deployment) | [Update and recover](deploy-terraform-full-stack.md#update-and-recover) |
+| Review infrastructure changes | [Review changes](deploy-infra-only.md#review-infrastructure-changes) | [Review or recover](deploy-terraform-infra-only.md#reconfigure-or-recover-the-foundation) |
+| Retry a full-stack installation | [Retry the same installation](deploy-full-stack.md#retry-the-same-installation) | [Retry and recover](deploy-terraform-full-stack.md#update-and-recover) |
 | Redeploy applications only | [Redeploy applications](deploy-full-stack.md#redeploy-applications-only) | [Application-only changes](deploy-terraform-full-stack.md#update-and-recover) |
 | Review component outbound access | [Read-only review](deploy-infra-only.md#review-component-egress) | [Provisioning review](deploy-terraform-infra-only.md#step-5-review-and-provision) |
 | Review recovery and rollback | [Rollback](deploy-full-stack.md#rollback) | [Update and recover](deploy-terraform-full-stack.md#update-and-recover) |

@@ -96,5 +96,5 @@ no parent. Historical schema files remain available for older exported events.
 
 Reverting an image does not restore deleted documents, undo configuration
 writes or remove telemetry. Follow separately approved data restoration,
-reingestion and [configuration recovery](deploy-full-stack.md#roll-back-to-a-previous-release).
+reingestion and [configuration recovery](deploy-full-stack.md#rollback).
 For a workload evaluation and release workflow, see [AgentOps](agentops.md).

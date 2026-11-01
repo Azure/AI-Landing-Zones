@@ -555,7 +555,7 @@ an image-digest rollback.
    environments changed from their recorded target, source and image evidence.
 2. Select the last accepted **complete pinned combination**. Review its
    compatibility with current configuration, data and application binding using
-   [deployment rollback](deploy-full-stack.md#roll-back-to-a-previous-release).
+   [deployment rollback](deploy-full-stack.md#rollback).
    A source-promotion rerun may rebuild images; it does not guarantee the previous
    image digest.
 3. For affected environments, restore reviewed stage inputs and rerun the

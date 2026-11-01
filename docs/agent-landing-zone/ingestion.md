@@ -90,7 +90,6 @@ Shared corpus formats and image extraction are covered in
 
 <span id="select-the-optional-application"></span>
 <span id="select-agent-app-ingestion"></span>
-<span id="upgrade-and-retirement-safety"></span>
 
 ## 3. Custom ingestion only when needed
 

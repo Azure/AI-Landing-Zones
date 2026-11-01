@@ -460,26 +460,17 @@ Private native Blob sources can require an administrator to approve the
 exact Search shared private-link request reported by the readiness gate.
 Do not approve every pending connection or bypass the gate.
 
-<span id="reconfigure-or-upgrade-the-foundation"></span>
+### Review infrastructure changes
 
-### Reconfigure the foundation
+Record the approved inputs, outputs and resource ownership, and back up
+required data and configuration. Before applying resource changes, follow
+[selected-environment preparation](#optional-preview-agent-source) and review
+the provisioning preview.
 
-Record the deployed source revision, approved parameters, outputs and dependent
-applications. Back up required data and configuration, check compatibility and
-retain existing names, locations, layout and ingestion intent.
-If previewing changes, repeat the
-[selected-environment preparation](#optional-preview-agent-source) before
-reviewing the preview. Apply approved root parameter changes with the provisioning step above.
-
-Update the coordinated platform and its `infra/` tree together.
-Use the [reapply procedure](deploy-full-stack.md#upgrade-to-a-new-release)
-and [rollback](deploy-full-stack.md#rollback) in the full-stack deployment guide.
-
-Retry a partial deployment with the same approved revision and environment after
-repairing the specific failure. Review resource and data changes separately
-when reverting code. Do not delete data, rename subnets, move existing
-resources to another region, weaken isolation or bypass preflight to recover.
-Turning a deploy flag off is not deletion or permission cleanup.
+Retry a failed installation with the same approved revision and environment
+after repairing the specific failure. Do not delete data, rename subnets,
+move resources to another region, weaken isolation or bypass preflight to
+recover. Resource deletion and permission cleanup require separate approval.
 
 ### Add an application later
 

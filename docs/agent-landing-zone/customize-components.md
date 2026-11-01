@@ -41,8 +41,8 @@ Hosting and tools are separate choices. To extend the application:
    factories and native Responses persistence, or the official Durable
    Extension worker/client with DTS. Do not build a universal protocol or
    state SDK to hide these differences.
-5. Keep workflow/executor and native registration names stable within a
-   compatible publication. Test reconnect, rejection, stale/duplicate human
+5. Keep workflow/executor and native registration names aligned between the
+   published worker and client. Test reconnect, rejection, stale/duplicate human
    replies, ownership denial and required-tool failure on each supported host.
 
 Prompt variants and settings do not grant source permissions. Preserve denied

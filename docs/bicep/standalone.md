@@ -185,7 +185,7 @@ the specific quota, Policy, DNS, route, egress or role failure; preserve the sam
 approved inputs on retry. Do not disable isolation, purge a partially deployed
 group or move existing resources to another region as generic recovery.
 
-Use [foundation reconfiguration](../agent-landing-zone/deploy-infra-only.md#reconfigure-or-upgrade-the-foundation)
+Use [infrastructure change review](../agent-landing-zone/deploy-infra-only.md#review-infrastructure-changes)
 and [safe removal](../agent-landing-zone/deploy-full-stack.md#remove-an-environment).
 If this environment later adopted a hub, preserve shared services and retire
 only its own attachments with their owners.

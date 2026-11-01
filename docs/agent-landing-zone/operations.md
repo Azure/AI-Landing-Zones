@@ -103,17 +103,14 @@ not proof that every affected process loaded it.
 - [Monitor requests and audit events](application-monitoring.md).
 - [Redeploy applications](deploy-full-stack.md#redeploy-applications-only),
   [rotate secrets](deploy-full-stack.md#rotate-a-secret) or
-  [restore a reviewed deployment](deploy-full-stack.md#roll-back-to-a-previous-release).
+  [review recovery safeguards](deploy-full-stack.md#rollback).
 - Diagnose failures with [Troubleshooting](troubleshooting.md).
 - For infrastructure changes, retain the provider, backend and approved
   resource-group mapping. Follow [Bicep maintenance](deploy-infra-only.md)
   or [Terraform maintenance](deploy-terraform-infra-only.md).
 
-Native session/checkpoint state is not automatically portable across hosts or
-incompatible graph publications. Retain the previous deployment's state for
-rollback; do not delete, merge or convert it as part of application recovery.
+Retries and redeployments must not delete existing user data or resources.
 
-<span id="upgrade-ingestion-selection-to-v430"></span>
 <span id="change-ingestion-selection-safely"></span>
 
 Changing [ingestion selection](ingestion.md) does not remove existing resources

@@ -70,9 +70,6 @@ attachments, audit data and backups separately. A metadata cleanup is not proof
 that all downstream artifacts were erased. Confirm partial failures and follow
 the installation's retention policy.
 
-Native state is not automatically transferable between hosts or incompatible
-workflow publications. Retain the previous deployment and its state for
-rollback; do not merge or delete those stores during adoption.
 See [Administration](operations.md) and [User feedback](user-feedback.md).
 
 ## Private attachments
