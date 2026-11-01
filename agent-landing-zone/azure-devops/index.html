@@ -1595,7 +1595,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5783,8 +5811,9 @@ Lifecycle hooks stay in root <code>scripts/</code>, with infrastructure helpers 
 Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.</p>
 <p>The downloadable example initially deploys the <strong>Agent Application</strong> with
-<code>hosted-no-panel</code>, native Blob ingestion and private endpoints. Set the same
-reviewed topology and ingestion selection across the three environments.
+<code>ORCHESTRATION_HOST=hosted</code>, <code>APPLICATION_MODE=conversational</code>, native Blob
+ingestion and private endpoints. Set the same reviewed host, mode and ingestion
+selection across the three environments.
 The table lists deployment inputs placed in each stage's YAML <code>settings</code> map
 in Step 3; the task applies them to its selected azd environment.
 <a href="../configuration/#deployment-inputs">Deployment inputs</a> explains their formats
@@ -5798,16 +5827,20 @@ and generated provider files.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>DEPLOYMENT_TOPOLOGY</code></td>
-<td>Keep <code>hosted-no-panel</code> for this default deployment.</td>
+<td><code>ORCHESTRATION_HOST</code></td>
+<td><code>hosted</code> (default) or <code>container_apps</code>; selects native execution, not product features.</td>
+</tr>
+<tr>
+<td><code>APPLICATION_MODE</code></td>
+<td><code>conversational</code> (default), <code>workflow</code> or <code>both</code>; the latter two require UI metadata even with history/feedback off.</td>
 </tr>
 <tr>
 <td><code>HOSTED_AGENT_RESOURCE_SCOPE</code></td>
-<td>Required <strong>before first provision</strong> for hosted modes: the deployed Foundry delegated-user audience followed by <code>/.default</code>. It has no implicit runtime default.</td>
+<td>Required <strong>before first provision</strong> when host is <code>hosted</code>: the deployed Foundry delegated-user audience followed by <code>/.default</code>. It has no implicit runtime default.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_INGESTION_CONTAINER_APP</code></td>
-<td>Keep <code>'false'</code> for native Foundry IQ source ingestion. Additional ingestion and upload capabilities require their own acceptance checks. Preserve existing selections during recovery.</td>
+<td>Keep <code>'false'</code> for native Foundry IQ source ingestion. Custom ingestion requires separate acceptance; selecting it does not enable native private uploads. Preserve existing selections during recovery.</td>
 </tr>
 <tr>
 <td><code>NETWORK_ISOLATION</code></td>
@@ -5822,10 +5855,13 @@ and generated provider files.</p>
 <p>See <a href="../configuration/">Deployment settings</a>, <a href="../hosted-agents/">Hosted agents</a> and
 <a href="../configuration/#ingestion-application-selection">ingestion compatibility</a>.
 Preserve an existing environment's recorded layout. This example is not a
-procedure for changing runtime layouts.</p>
+procedure for changing runtime layouts.
+The UI is included automatically. History, feedback and private attachments
+remain independently default-off; selecting Hosted does not enable history.</p>
 <div class="admonition warning">
 <p class="admonition-title">Automation does not close runtime capability gaps</p>
-<p>Keep <code>maf_lite</code> and Foundry IQ as the default runtime choices. The
+<p>Keep the default conversational MAF Agent with its configured Foundry IQ
+capability. The
 source-permission acceptance in the full-stack deployment guide applies to
 CI/CD. The integrated native path still needs downstream consent and
 real-user allow/deny evidence before promotion. Pipeline settings, weaker
@@ -6202,10 +6238,12 @@ the run being approved.</p>
    that document's permission, verify the content is not returned. Also verify
    unauthenticated requests are rejected where required. Check that logs do not
    contain tokens or protected document bodies.</li>
-<li>Exercise selected ingestion/upload, history, panel and continuity features;
-   check disabled surfaces are unavailable. Conversation uploads require
-   Agent App Ingestion and upload eligibility; native Blob ingestion handles
-   the configured source separately.</li>
+<li>Exercise selected workflow, history, feedback and ingestion features;
+   check disabled surfaces are unavailable. If private attachments are selected,
+   verify supported inline input, owner-scoped native transport and denied
+   cross-user access; disabled attachments must reject direct uploads.
+   Do not report transport checks as verified model PDF/image understanding.
+   Native Blob ingestion handles the configured shared source separately.</li>
 <li>Inspect service health, RBAC and private endpoint resolution, and attach
    sanitized evidence to the run/change record. See
    <a href="../troubleshooting/">application health and diagnostics</a> and
@@ -6256,7 +6294,7 @@ tenant consent. Perform those acceptance checks separately.</p>
 </tr>
 <tr>
 <td>Hosted image preparation fails</td>
-<td>Verify the provisioned foundation, manifest pin, ACR build/pull access and private build pool, then retry <code>azd deploy</code>; see <a href="../hosted-agents/#redeploy-the-same-image-or-prepare-a-new-one">hosted redeployment</a>. No separate preparation or second provision is required.</td>
+<td>Verify the provisioned foundation, manifest pin, ACR build/pull access and private build pool, then retry <code>azd deploy</code>; see <a href="../deploy-full-stack/#redeploy-applications-only">application redeployment</a>. No separate preparation or second provision is required.</td>
 </tr>
 <tr>
 <td>Green deploy but UI login/retrieval fails</td>
@@ -6283,7 +6321,7 @@ an image-digest rollback.</p>
    environments changed from their recorded target, source and image evidence.</li>
 <li>Select the last accepted <strong>complete pinned combination</strong>. Review its
    compatibility with current configuration, data and application binding using
-   <a href="../deploy-full-stack/#roll-back-to-a-previous-release">deployment rollback</a>.
+   <a href="../deploy-full-stack/#rollback">deployment rollback</a>.
    A source-promotion rerun may rebuild images; it does not guarantee the previous
    image digest.</li>
 <li>For affected environments, restore reviewed stage inputs and rerun the

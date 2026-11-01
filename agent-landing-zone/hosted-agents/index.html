@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#hosted-agents" class="md-skip">
+        <a href="#agent-hosting" class="md-skip">
           Skip to content
         </a>
       
@@ -1358,10 +1358,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#topologies" class="md-nav__link">
+  <a href="#native-host-integrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Topologies
+        Native host integrations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-execution-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public execution selection
       
     </span>
   </a>
@@ -1381,10 +1392,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#redeploy-the-same-image-or-prepare-a-new-one" class="md-nav__link">
+  <a href="#endpoint-and-client-bindings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redeploy the same image or prepare a new one
+        Endpoint and client bindings
       
     </span>
   </a>
@@ -1431,10 +1442,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#delegated-ui-invocation" class="md-nav__link">
+  <a href="#trusted-caller-context" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Delegated UI invocation
+        Trusted caller context
       
     </span>
   </a>
@@ -1442,10 +1453,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#protocol-and-caller-access" class="md-nav__link">
+  <a href="#persistence-and-progress" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol and caller access
+        Persistence and progress
       
     </span>
   </a>
@@ -1469,21 +1480,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration-tls-compatibility" class="md-nav__link">
+  <a href="#configuration-and-telemetry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration TLS compatibility
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#telemetry" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Telemetry
+        Configuration and telemetry
       
     </span>
   </a>
@@ -1513,7 +1513,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5412,10 +5440,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#topologies" class="md-nav__link">
+  <a href="#native-host-integrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Topologies
+        Native host integrations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-execution-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Public execution selection
       
     </span>
   </a>
@@ -5435,10 +5474,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#redeploy-the-same-image-or-prepare-a-new-one" class="md-nav__link">
+  <a href="#endpoint-and-client-bindings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Redeploy the same image or prepare a new one
+        Endpoint and client bindings
       
     </span>
   </a>
@@ -5485,10 +5524,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#delegated-ui-invocation" class="md-nav__link">
+  <a href="#trusted-caller-context" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Delegated UI invocation
+        Trusted caller context
       
     </span>
   </a>
@@ -5496,10 +5535,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#protocol-and-caller-access" class="md-nav__link">
+  <a href="#persistence-and-progress" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Protocol and caller access
+        Persistence and progress
       
     </span>
   </a>
@@ -5523,21 +5562,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration-tls-compatibility" class="md-nav__link">
+  <a href="#configuration-and-telemetry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration TLS compatibility
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#telemetry" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Telemetry
+        Configuration and telemetry
       
     </span>
   </a>
@@ -5564,102 +5592,164 @@
   
 
 
-<h1 id="hosted-agents">Hosted agents</h1>
-<p>Agent App Orchestrator runs as a container in Foundry Agent Service.
-The default deployment has a web UI in Container Apps and no administrative
-panel or application-owned Cosmos DB. Its setting is
-<code>DEPLOYMENT_TOPOLOGY=hosted-no-panel</code>, with <code>maf_lite</code> orchestration.
-This page explains the hosting contract;
-the <a href="../deploy-full-stack/">full-stack deployment guide</a> contains the ordered
-deployment and recovery procedures.</p>
-<h2 id="topologies">Topologies</h2>
+<h1 id="agent-hosting">Agent hosting</h1>
+<p>Agent App Orchestrator uses native Microsoft Agent Framework (MAF) execution.
+Choose the application experience with <code>APPLICATION_MODE</code> and the host with
+<code>ORCHESTRATION_HOST</code>. <a href="../agent-strategies/">Agents &amp; prompts</a> explains the
+experience; the <a href="../deploy-full-stack/">full-stack guide</a> owns deployment order.</p>
+<h2 id="native-host-integrations">Native host integrations</h2>
 <table>
 <thead>
 <tr>
-<th>Hosted topology</th>
-<th>Orchestrator</th>
-<th>Administrative panel</th>
-<th>Agent Application Cosmos DB</th>
+<th>Concern</th>
+<th>Foundry Hosted</th>
+<th>Azure Container Apps</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>hosted-no-panel</code> (default)</td>
-<td>Foundry hosted container</td>
-<td>Not deployed</td>
-<td>Not deployed</td>
+<td>Host selection</td>
+<td><code>hosted</code></td>
+<td><code>container_apps</code></td>
+</tr>
+<tr>
+<td>Application integration</td>
+<td>Official Responses hosting with request-aware agent or workflow factories</td>
+<td>Official standalone Durable Extension worker and client</td>
+</tr>
+<tr>
+<td>Execution state</td>
+<td>Native Foundry persistence</td>
+<td>Durable Task Scheduler (DTS)</td>
+</tr>
+<tr>
+<td>Human wait</td>
+<td>Native workflow pending input</td>
+<td>Native durable workflow pending input</td>
+</tr>
+<tr>
+<td>When both experiences are selected</td>
+<td>Separate conversational and workflow publications, each with a single application mode</td>
+<td>The durable worker registers the selected agent and workflow</td>
+</tr>
+<tr>
+<td>UI integration</td>
+<td>Explicit Hosted client and publication endpoints</td>
+<td>Explicit durable client and scheduler binding</td>
 </tr>
 </tbody>
 </table>
-<p>The table describes default application resources, not Foundry Agent Service's
-own backing resources. This layout does not activate history, feedback or
-operator access. Those capabilities have independent integration and validation gates.
-Agent App Ingestion is selected separately, as described in
-<a href="../ingestion/">Ingestion and conversation uploads</a>.</p>
+<p>The Container Apps worker does not need an Azure Functions application or
+public worker HTTP ingress. Its availability, scheduler connectivity and
+scaling need operational planning. Do not assume scale-from-zero or Hosted
+token-streaming parity for durable workflow progress.</p>
+<p>The UI/BFF is the authenticated presentation boundary on both paths. It owns
+product metadata and owner mappings, not workflow execution. No application
+workflow engine, generalized state SDK or duplicate checkpoint database is
+required. See <a href="../conversations/">Conversations &amp; files</a> and
+<a href="../workflows/">Workflows &amp; human input</a>.</p>
+<h2 id="public-execution-selection">Public execution selection</h2>
+<p>Select only <code>ORCHESTRATION_HOST=hosted|container_apps</code> and
+<code>APPLICATION_MODE=conversational|workflow|both</code>. Defaults are <code>hosted</code> and
+<code>conversational</code>, with the UI included automatically. Network design remains
+independent. History, feedback and private attachments are separate default-off
+features; Hosted does not automatically enable history.
+Workflow or <code>both</code> always requires UI metadata.</p>
+<p>Foundry backing resources are not application-owned Cosmos DB. Native Hosted
+execution does not require application Cosmos. Product metadata, history
+discovery or feedback may have separately declared UI storage dependencies.
+Custom ingestion is optional and disabled by default; it is not required
+merely to keep owner mappings or feedback.</p>
 <h2 id="image-and-deployment-handoff">Image and deployment handoff</h2>
-<p>Hosted deployment separates foundation provisioning from application deployment.
-<code>azd provision</code> creates the project, registry, network and access prerequisites,
-not a running agent or a placeholder. <code>azd deploy</code> automatically builds the
-manifest-pinned orchestrator with the supported hosted startup command when
-needed, records an immutable digest, binds the image to the provisioned
-foundation and creates the agent version. No separate preparation command or
-second provision is needed; <code>azd up</code> performs the full workflow.
-Private builds still use the VNet's ACR Tasks agent pool.</p>
-<h3 id="redeploy-the-same-image-or-prepare-a-new-one">Redeploy the same image or prepare a new one</h3>
+<p>Foundation provisioning creates the selected resources, network paths and
+scoped access before application activation. Application publishing remains
+in the application lifecycle, not inside the infrastructure templates.</p>
+<p>Record the reviewed source, exact package versions, immutable image digest,
+application mode, entrypoint and native registration/publication names.
+Use the compatible manifest and generated host-specific definitions. A Hosted
+HTTP entrypoint and a durable worker entrypoint are not interchangeable.
+Do not substitute a generic ASGI command for the native host integration.</p>
+<p>From the orchestrator repository root, the native entrypoints are:</p>
 <table>
 <thead>
 <tr>
-<th>Change</th>
-<th>Deployment contract</th>
+<th>Host</th>
+<th>Command</th>
+<th>Listener</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Same generated digest, matching source and startup provenance</td>
-<td>Deployment reuses the image.</td>
+<td>Hosted</td>
+<td><code>python -m native.hosted</code></td>
+<td>Official hosting integration on port <code>8080</code></td>
 </tr>
 <tr>
-<td>Missing image or changed generated source/startup provenance</td>
-<td>Deployment builds the manifest-pinned image and updates the handoff without reprovisioning.</td>
-</tr>
-<tr>
-<td>Changed hosted process environment or cached runtime settings</td>
-<td>A new agent version is required, potentially with the same compatible digest.</td>
-</tr>
-<tr>
-<td>Explicit digest without generated-source provenance</td>
-<td>Compatibility and registry availability are operator-owned. Deployment does not replace it automatically.</td>
+<td>Container Apps</td>
+<td><code>python -m native.durable</code></td>
+<td>Standalone worker; no public worker HTTP ingress or Dapr</td>
 </tr>
 </tbody>
 </table>
-<p>Generated images are reused only when the recorded source revision and startup
-command match. To supply an independently built image, set
-<code>HOSTED_AGENT_IMAGE_VERSION</code> to its canonical digest and clear
-<code>HOSTED_AGENT_IMAGE_SOURCE_COMMIT</code> and <code>HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256</code>.
-The image must be available in the selected registry and repository and already
-use the hosted entrypoint. Independent builds of the same source need not
-produce the same digest. The standalone preparation scripts remain optional
-compatibility commands; they are not required deployment steps.</p>
-<p>The procedure is in <a href="../deploy-full-stack/#redeploy-applications-only">application redeployment</a>.</p>
+<p>Supply the matching process mode, configuration endpoint and native binding.
+A local Hosted listener does not reproduce Foundry's trusted ingress context.</p>
+<p>When <code>APPLICATION_MODE=both</code> is selected on Hosted, publish <strong>two applications</strong>:
+one with <code>APPLICATION_MODE=conversational</code>, another with
+<code>APPLICATION_MODE=workflow</code>. Hand both endpoints to the UI. Do not publish a
+single Hosted application with <code>both</code> and assume it exposes both protocols.
+Each publication's single-mode process input must override the shared
+<code>APPLICATION_MODE=both</code> composition value. Retain the common App Configuration
+store while loading only relevant settings for each publication.</p>
+<h3 id="endpoint-and-client-bindings">Endpoint and client bindings</h3>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Consumer and meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HOSTED_AGENT_BASE_URL</code></td>
+<td>UI Hosted conversational client; actual conversational publication endpoint</td>
+</tr>
+<tr>
+<td><code>HOSTED_WORKFLOW_BASE_URL</code></td>
+<td>UI Hosted workflow client; actual separate workflow publication endpoint</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_RESOURCE_SCOPE</code></td>
+<td>Explicit Foundry audience ending in <code>/.default</code>, not the UI API scope</td>
+</tr>
+<tr>
+<td><code>DURABLE_TASK_SCHEDULER_CONNECTION_STRING</code></td>
+<td>Official nonsecret managed-identity scheduler binding for durable client and worker</td>
+</tr>
+</tbody>
+</table>
+<p>Use actual provisioned outputs and publication results. Do not construct a DTS
+endpoint from a resource name or reuse a conversational endpoint as a workflow
+endpoint. Keep registration names stable and align the durable client with
+the worker's registered names: <code>agent-lz-conversation</code> and
+<code>agent-lz-research-review</code>.
+These native registration names are distinct from Azure resource names and
+the Hosted publication's deployment name. Use the provisioned nonsecret
+managed-identity scheduler binding:
+<code>Endpoint=&lt;actual output&gt;;TaskHub=agent-lz;Authentication=ManagedIdentity</code>.
+Keep the native worker and UI client aligned; do not change either component's
+binding independently.</p>
 <h2 id="validation-rules">Validation rules</h2>
-<p><a href="../configuration/">Deployment settings</a> distinguishes deployment inputs from
-App Configuration keys and hosted process environment.</p>
-<dl>
-<dt><code>HOSTED_AGENT_IMAGE_VERSION</code></dt>
-<dd>Immutable <code>sha256:</code> digest with 64 hexadecimal characters; tags are rejected.</dd>
-<dt><code>HOSTED_AGENT_RESOURCE_SCOPE</code></dt>
-<dd>Explicit delegated-user audience ending in <code>/.default</code>; not the UI API scope.</dd>
-<dt><code>HOSTED_AGENT_STARTUP_COMMAND</code></dt>
-<dd>Fixed to <code>uvicorn src.api.hosted_entrypoint:app --host 0.0.0.0 --port 8088</code>.</dd>
-<dt><code>HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS</code></dt>
-<dd>Stream idle timeout, default <code>60</code>.</dd>
-</dl>
-<p>The default Responses protocol is <code>2.0.0</code> and Invocations is <code>1.0.0</code>.
-The supplied <code>hosted-agent/azure.yaml</code> declares the agent name, CPU, memory,
-protocols and startup command as literal fields. Its image and environment
-fields use azd interpolation. A custom application's <code>source.imageDigest</code>
-instead becomes <code>AGENTLZ_IMAGE_DIGEST</code>; it is not interchangeable with
-<code>HOSTED_AGENT_IMAGE_VERSION</code>. See <a href="../build-your-own-app/#source-pinning">source pinning</a>.</p>
+<p>Check a compatible <strong>published</strong> package set for the selected Python
+integrations, including explicit prereleases where needed. A source sample
+that imports an editable development SDK is not a supported package contract.
+Service availability alone does not establish Python integration support.</p>
+<p>Publish only when the exact product entrypoint/image has passed its native
+execution checks. Compilation, configuration mocks and a separately working
+sample do not establish deployment readiness.
+Tests against installed native SDK types establish the exercised local client
+contract, not deployed checkpoint durability, cross-user platform isolation or
+private-network reachability. Record those live scenarios separately; do not
+infer that every capability passed from local mocks.</p>
 <p><span id="bootstrap-the-agents-runtime-access"></span></p>
 <h2 id="runtime-identities-and-access">Runtime identities and access</h2>
 <table>
@@ -5672,115 +5762,90 @@ instead becomes <code>AGENTLZ_IMAGE_DIGEST</code>; it is not interchangeable wit
 <tbody>
 <tr>
 <td>Deployment principal</td>
-<td>Provisions resources, creates agent versions and reconciles authorized scoped grants.</td>
+<td>Provision resources, publish applications and reconcile reviewed scoped grants</td>
 </tr>
 <tr>
-<td>Foundry project managed identity</td>
-<td>Pulls the image through the registry grant.</td>
+<td>Runtime/worker principal</td>
+<td>Read relevant configuration and call declared dependencies</td>
 </tr>
 <tr>
-<td>Actual deployed agent runtime principal</td>
-<td>Reads configuration and calls authorized dependencies.</td>
+<td>UI/BFF principal</td>
+<td>Use host clients and required product-metadata services</td>
 </tr>
 <tr>
-<td>Delegated user</td>
-<td>Needs Foundry project/agent access and permission to requested data.</td>
+<td>Authenticated user</td>
+<td>Own conversations/runs and hold required source/tool permissions</td>
 </tr>
 </tbody>
 </table>
-<p>The post-deploy hook discovers the runtime principal and grants App Configuration
-Data Reader on the store and Cognitive Services OpenAI User on the Foundry
-account. If <code>AUDIT_HMAC_KEY</code> is a Key Vault reference, the bootstrap plan also
-includes Key Vault Secrets User on that individual secret. Native retrieval
-also uses Search Index Data Reader scoped to the configured Search resource
-for transport; native user/source authorization remains separate.</p>
-<p>End-user source permissions, other secrets and caller permissions are outside
-this closed bootstrap set.
-Role reconciliation needs scoped role-assignment authority or an authorized
-administrator applying the reviewed plan.
-<a href="../deploy-full-stack/#recover-hosted-runtime-access">Hosted access recovery</a>
-contains the operational checks.</p>
-<p>Custom services reconcile declared <a href="../build-your-own-app/#capability-profiles">capability profiles</a>
-against the discovered runtime principal.</p>
+<p>Grant App Configuration Data Reader to actual readers. Grant Key Vault secret
+access only to components that consume the corresponding secrets. Reading
+App Configuration does not grant access to Key Vault references.
+The implicit base grants are configuration read and image pull, not blanket
+secret access. UI authentication, enabled audit and MCP/tool secrets require
+their declared grants; <code>NATIVE_TOOL_SECRET_NAMES</code> is the platform's actual
+name-only grant declaration, not a key consumed by the native runtime to load
+secrets.
+Grant scheduler access to durable worker/client identities at the required
+scope. These service permissions are not end-user authorization.</p>
+<p>If publication creates a runtime identity, reconcile its grants as an explicit
+deployment step before admitting traffic. Runtime startup does not create
+resources, grant roles or repair missing foundation configuration.
+See <a href="../deploy-full-stack/#recover-hosted-runtime-access">hosted access recovery</a>.</p>
 <h2 id="calling-the-agent">Calling the agent</h2>
 <p><span id="configure-the-uis-delegated-authentication"></span></p>
-<h3 id="delegated-ui-invocation">Delegated UI invocation</h3>
-<p>Hosted composition routes the UI with <code>CHAT_BACKEND=hosted_agent</code>. The UI
-defaults to <code>HOSTED_AGENT_AUTH_MODE=user_delegated</code>. It exchanges the signed-in
-user's UI API token for the Foundry audience through OAuth on-behalf-of (OBO),
-without fallback to the UI managed identity.
-<a href="../application-auth/">Agent Application access</a> explains sign-in and consent.
-Successful invocation is not evidence of document-level authorization.</p>
-<p>Foundry does not forward the invocation Authorization header unchanged.
-For native protected retrieval, the UI separately acquires a delegated Search
-token and forwards it in <code>x-client-search-token</code>. Both hosted adapters keep it
-request-local and the connector passes it to native Search permission
-enforcement. Missing required credentials fail before retrieval; they never
-trigger a service-identity retry.</p>
-<p>Downstream Search authentication challenges terminate the current turn with a
-safe typed failure. The UI can request explicit interactive verification using
-the bounded claims; it does not replay the failed or partially streamed turn.
-A source denial without usable claims remains denied.
-See <a href="../application-auth/#recover-safely">authentication recovery</a>.</p>
-<p>Native citation downloads stay on the authenticated UI and recheck source
-authorization at redemption. Shared Blob/ADLS reads use Storage OBO;
-conversation uploads require a fresh native Search ownership check before
-workload Blob transport. The bundled UI's <code>retrieval-reader</code> profile supplies
-the Search transport role, not the user's entitlement.
-See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>
-for consent and source-access requirements.</p>
-<p>The container's code still controls model calls, retrieval and tools. Portal
-instructions or tool attachments do not automatically reconfigure <code>maf_lite</code>;
-<a href="../agent-tools/">Agent tools</a> describes the separate Toolbox extension boundary.</p>
-<h3 id="protocol-and-caller-access">Protocol and caller access</h3>
-<ul>
-<li><strong>Responses 2.0.0 is stateless.</strong> Non-null <code>previous_response_id</code> returns
-  HTTP 422. Top-level <code>conversation</code> does not load managed history. Input
-  contains bounded, ordered prior messages ending in the current user message.</li>
-<li>Agent App UI uses <strong><code>/invocations?api-version=v1</code></strong>. Its <code>conversation_id</code>
-  labels conversation-scoped retrieval; it is not permission to load history.
-  The UI accepts <code>response.conversation.id</code> and <code>response.conversation_id</code>,
-  and rejects malformed or conflicting IDs.</li>
-<li>A delegated caller needs the endpoint interaction permission at the intended
-  project or agent scope. <strong>Foundry Agent Consumer</strong> supplies least-privilege
-  endpoint access; authoring roles are separate. Complete the
-  <a href="../application-auth/#configure-login-in-order">login and caller-access setup</a>.
-  Deployment permission alone is insufficient.</li>
-</ul>
-<p><a href="../publish-to-teams/">Publish to Teams and M365</a> uses Bot Service authorization
-and the Activity endpoint. <a href="../connect-copilot-studio/">Connect Copilot Studio</a>
-uses an authenticated Power Automate flow and VNet delegation, not the
-<a href="https://learn.microsoft.com/microsoft-copilot-studio/add-agent-foundry-agent">native connected-agent tool</a>.
-These have different caller-identity contracts from the UI.</p>
+<h3 id="trusted-caller-context">Trusted caller context</h3>
+<p>Use the authenticated BFF boundary or trusted Foundry invocation context
+supported by the deployed integration. Delegated Hosted invocation and
+source/tool authorization remain separate checks. A shared managed identity,
+caller-provided metadata or a known session ID is not a verified user.
+Missing required trusted context fails closed.</p>
+<p>The BFF binds the authenticated owner to native session/run IDs. It checks
+ownership on reads, feedback and human replies.
+A native ID selects state; it does not authorize access.
+<a href="../application-auth/">Sign-in &amp; access</a> explains consent and retrieval.</p>
+<h3 id="persistence-and-progress">Persistence and progress</h3>
+<p>Hosted uses the official Responses integration and native persistence.
+The application does not force stateless execution or manually replay a UI
+transcript as a substitute for native state. Container Apps uses the official
+durable client rather than emulating Responses over a custom queue.</p>
+<p>Workflow pending input survives a browser disconnect in the native execution
+backend. Reconnect and resume through the selected host's official client.
+Do not equate an open Chainlit socket, waiting coroutine or displayed progress
+message with persisted execution.</p>
+<p>Token streaming and durable process progress have different contracts.
+Do not add Redis solely to make the hosts appear identical.</p>
 <h3 id="continuity-history-and-the-administrative-panel">Continuity, history and the administrative panel</h3>
-<p>The hosted container does not read or write managed Conversations. Without
-optional UI-owned continuity, multi-turn context lasts only for the active UI
-session. Reloading the browser or starting a new chat loses that context.</p>
-<p>Continuity is disabled by default and requires validated user isolation,
-not just a deployment flag. Follow <a href="../conversations/">Conversations &amp; files</a>
-for ownership modes, required grants, settings and history limits.
-Administrative access has separate deployment and authorization gates, covered
-in <a href="../operations/">Administration</a>. <a href="../user-feedback/">User feedback</a> explains
-the additional feedback integration.</p>
-<h2 id="configuration-tls-compatibility">Configuration TLS compatibility</h2>
-<p><code>APP_CONFIG_TLS_COMPATIBILITY</code> is an opt-in process environment variable,
-default <code>false</code>, read before remote configuration. It applies only to the
-orchestrator loader's configured App Configuration and Key Vault endpoints.
-The profile uses P-256 and TCP MSS 1200 while retaining certificate/hostname
-verification, custom CAs, TLS 1.2 or later, credentials and retries.
-It requires the actual HTTPS <code>KEY_VAULT_URI</code>; invalid input fails startup.</p>
-<p>An App Configuration key cannot replace this bootstrap input. A changed value
-requires a new hosted version. The <a href="../troubleshooting/#hosted-configuration-tls-handshake-stalls">TLS diagnosis reference</a>
-covers transport diagnosis without disabling certificate validation.</p>
+<p>Native session state supplies execution continuity. User-facing saved-history
+discovery, titles, owner maps and feedback belong to the UI/BFF and its selected
+metadata store. An administrative panel is not a prerequisite for native
+conversation or workflow persistence.</p>
+<p>History, feedback and private attachments default to off. Workflow mode,
+<code>both</code> or any enabled product flag selects UI metadata in <code>native-ui-metadata</code>,
+partition key <code>/principal_id</code> with owner <code>tid:oid</code>; only the frontend receives
+its metadata grant. Records contain descriptors/references, not bytes,
+transcripts or tokens. With conversational mode and all product flags off,
+bounded volatile owner maps are lost on UI restart.
+An enabled direct NL2SQL tool can separately require a Cosmos datasource
+catalog, without making Cosmos the native execution backend.
+Private attachments use owner-bound conversational inline native file/image
+input, not Blob, SAS or corporate ingestion. They are not workflow inputs;
+transport tests do not verify model PDF/image understanding.</p>
+<p>Retention, deletion and recovery must cover each store explicitly.
+Do not copy Foundry or DTS checkpoints into Cosmos for product history.
+Known workflow resume does not require saved-history listing to be enabled.
+See <a href="../conversations/">Conversations &amp; files</a>, <a href="../user-feedback/">User feedback</a>
+and <a href="../operations/">Administration</a>.</p>
+<h2 id="configuration-and-telemetry">Configuration and telemetry</h2>
+<p>Use <a href="../application-settings/">Application settings</a> for scoped provider
+loading, refresh and workflow snapshots. Host, graph, identity, persistence
+and entrypoint changes require deployment; supported functional parameters can
+refresh without rebuilding.</p>
 <p><span id="telemetry-and-topology-changes"></span></p>
-<h2 id="telemetry">Telemetry</h2>
-<p>Use <a href="../application-monitoring/">Monitoring &amp; audit</a> for component audit events,
-privacy settings and operational investigation.</p>
-<p>Prompt/completion capture is off by default. The deployment input
-<code>HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT</code> maps to the hosted process variable
-<code>OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT</code>. A changed value requires
-a new agent version. Capture into Application Insights is a data-retention
-and privacy decision, not a prerequisite for chat.</p>
+<p>Native persistence does not authorize prompt/completion capture.
+Keep sensitive content and credentials out of telemetry. Correlate owner-bound
+UI operations with native session/run and deployment identifiers under the
+approved logging policy. See <a href="../application-monitoring/">Monitoring &amp; audit</a>.</p>
 
 
 

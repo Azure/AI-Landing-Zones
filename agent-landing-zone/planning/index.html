@@ -536,6 +536,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#choose-application-behavior-and-execution-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose application behavior and execution host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#consider-optional-gateway-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1461,7 +1472,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5421,6 +5460,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#choose-application-behavior-and-execution-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose application behavior and execution host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#consider-optional-gateway-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5573,6 +5623,44 @@ before first provision. Prefer pre-created groups when the deploying identity
 must not create them. A single platform workflow coordinates the destinations.
 See <a href="../configuration/#resource-group-destinations">resource group inputs</a>
 for defaults, permissions and provider-specific removal rules.</p>
+<h2 id="choose-application-behavior-and-execution-host">Choose application behavior and execution host</h2>
+<p>For the reference application, choose conversation, a published workflow or
+both with <code>APPLICATION_MODE</code>. Select <code>ORCHESTRATION_HOST</code> independently:</p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>Plan its dependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hosted</code></td>
+<td>Official Responses hosting and native Foundry persistence; separate conversational/workflow publications when both are selected</td>
+</tr>
+<tr>
+<td><code>container_apps</code></td>
+<td>Official Durable Extension worker/client, Durable Task Scheduler, worker availability and scheduler connectivity</td>
+</tr>
+</tbody>
+</table>
+<p>Keep UI/BFF owner mappings, history discovery and feedback separate from native
+execution state. Optional product storage is not a second checkpoint engine.
+Custom ingestion is disabled by default and is not required merely to retain
+metadata or to select a workflow. Workflow mode, <code>both</code>, enabled history,
+feedback or private attachments selects UI metadata storage directly.
+Product flags default to off; conversational mode then uses bounded volatile
+owner maps lost on UI restart.
+Private attachments use validated inline native input, not Blob/SAS or
+ingestion. They are conversational only; verify model PDF/image understanding
+separately from transport.</p>
+<p>Confirm compatible published SDK packages, the actual product's native
+SDK/contract checks, service availability and trusted user context.
+Record supplemental live checks separately. A service identity is not per-user
+authorization; local mocks or a public sandbox do not establish deployed
+checkpoint durability, user isolation or private-network parity.
+See <a href="../application/">Agent Application</a> and
+<a href="../configuration/#native-execution-selection">native execution selection</a>.</p>
 <h2 id="consider-optional-gateway-integration">Consider optional gateway integration</h2>
 <p>AI Gateway governs model access and can accompany either standalone or
 hub-integrated networking. It is not a third network topology and is not

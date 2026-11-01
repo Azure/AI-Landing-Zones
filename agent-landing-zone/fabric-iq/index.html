@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5419,9 +5447,9 @@ authorization requirements.
 Deployment procedures are in the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
 <p>For direct database connections, use the separate
-<a href="../nl2sql/#direct-nl2sql-strategy">NL2SQL strategy</a>. A Fabric SQL endpoint
-configured for that strategy is not a <code>fabricDataAgent</code> source, and enabling
-the strategy does not publish a Fabric data agent.</p>
+<a href="../nl2sql/#direct-nl2sql-tool">NL2SQL tool</a>. A Fabric SQL endpoint configured
+for that connector is not a <code>fabricDataAgent</code> source, and enabling the tool
+does not publish a Fabric data agent.</p>
 <p><span id="choose-the-connection"></span></p>
 <h2 id="data-agents-and-ontologies-are-different-sources">Data agents and ontologies are different sources</h2>
 <table>
@@ -5484,8 +5512,8 @@ platform-owned objects.</p>
 <p><span id="3-plan-the-hosted-extension"></span>
 <span id="integration-work-still-required"></span></p>
 <h2 id="integrated-hosted-retrieval">Integrated hosted retrieval</h2>
-<p>The built-in hosted <code>maf_lite</code> path supports native Fabric sources without
-customer-written identity or response-parsing code. Configure the source and
+<p>The registered Foundry IQ retrieval capability supports native Fabric sources
+without customer-written identity or response-parsing code. Configure the source and
 its administrator prerequisites, including <code>FOUNDRY_IQ_API_VERSION=2026-08-01-preview</code>:</p>
 <table>
 <thead>

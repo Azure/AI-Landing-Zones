@@ -837,10 +837,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#orchestrator-topology" class="md-nav__link">
+  <a href="#native-application-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchestrator topology
+        Native application selection
       
     </span>
   </a>
@@ -898,10 +898,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#default-foundry-orchestrator-hosted-no-panel" class="md-nav__link">
+  <a href="#provision-and-deploy-the-selected-native-application" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default Foundry orchestrator (hosted-no-panel)
+        Provision and deploy the selected native application
       
     </span>
   </a>
@@ -925,10 +925,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reapply-a-reviewed-deployment" class="md-nav__link">
+  <a href="#retry-the-same-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reapply a reviewed deployment
+        Retry the same installation
       
     </span>
   </a>
@@ -1724,7 +1724,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5741,10 +5769,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#orchestrator-topology" class="md-nav__link">
+  <a href="#native-application-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchestrator topology
+        Native application selection
       
     </span>
   </a>
@@ -5802,10 +5830,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#default-foundry-orchestrator-hosted-no-panel" class="md-nav__link">
+  <a href="#provision-and-deploy-the-selected-native-application" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Default Foundry orchestrator (hosted-no-panel)
+        Provision and deploy the selected native application
       
     </span>
   </a>
@@ -5829,10 +5857,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reapply-a-reviewed-deployment" class="md-nav__link">
+  <a href="#retry-the-same-installation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reapply a reviewed deployment
+        Retry the same installation
       
     </span>
   </a>
@@ -5992,11 +6020,16 @@
 <h1 id="deploy-full-stack-with-bicep">Deploy full stack with Bicep</h1>
 <h2 id="objective">Objective</h2>
 <p>Deploy the Azure infrastructure and the Agent Application with its default
-layout: Foundry hosts the orchestrator, Agent App UI runs in Container Apps,
-and Foundry IQ manages source ingestion and retrieval. The default
-<code>hosted-no-panel</code> layout omits the administrative panel and Agent Application
-Cosmos DB. Foundry can require separate backing resources.
-This procedure uses the default Bicep provider. For Terraform, use
+selection: <code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>.
+Foundry hosts execution, Agent App UI is included in Container Apps, and
+Foundry IQ prepares the selected native source. Native Hosted
+execution does not require application Cosmos DB; selected UI product metadata
+and Foundry backing resources have their own storage requirements.
+History, feedback and private attachments default to off independently.
+Workflow or <code>both</code> requires UI metadata even when those flags remain off.</p>
+<p>This guide covers a fresh native installation with new execution contracts;
+existing execution state is not automatically converted.</p>
+<p>This procedure uses the default Bicep provider. For Terraform, use
 <a href="../deploy-terraform-full-stack/">Deploy full stack with Terraform</a>; application
 configuration and deployment are shared.</p>
 <p><span id="what-youll-have-after-this-runbook"></span></p>
@@ -6070,7 +6103,7 @@ and protected retrieval do not have the same integration requirements.</p>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Protected retrieval keeps the signed-in user's permissions</p>
-<p>The UI and hosted <code>maf_lite</code> strategy integrate delegated Search
+<p>The UI and native agent's retrieval capability require delegated Search
 authorization with <code>RETRIEVAL_AUTH_MODE=native_search</code>. The UI performs
 the downstream OBO exchange; the hosted connector supplies that credential
 to Search separately from its workload transport identity. A custom
@@ -6191,25 +6224,39 @@ fields go in the root <code>main.parameters.json</code> file, as described in th
 infrastructure choices.
 <a href="../configuration/#deployment-inputs">Deployment inputs</a> explains input formats,
 ownership and generated provider files.</p>
-<h4 id="orchestrator-topology">Orchestrator topology</h4>
-<p>Set the default layout explicitly for this new environment.
-<code>DEPLOYMENT_TOPOLOGY</code> chooses the runtime layout, not the VNet design:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>hosted-no-panel
+<h4 id="native-application-selection">Native application selection</h4>
+<p>Choose execution host and application mode for this new environment.
+These are the only public native execution selectors, separate from VNet
+design and independently optional product features:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ORCHESTRATION_HOST<span class="w"> </span>hosted
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>APPLICATION_MODE<span class="w"> </span>conversational
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_RESOURCE_SCOPE<span class="w"> </span>&lt;approved-foundry-audience&gt;/.default
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
 </code></pre></div>
-<p>Expect no administrative panel or Agent Application Cosmos DB. Preserve the
-recorded layout when recovering an existing environment. See
-<a href="../hosted-agents/">Hosted agents</a> for separately configured capabilities.
-Keep the runtime strategy <code>AGENT_STRATEGY=maf_lite</code> and retrieval backend
-<code>RETRIEVAL_BACKEND=foundry_iq</code>; inspect their effective <code>agent-lz</code> settings
-after service configuration. Runtime keys are not all <code>azd env</code> inputs.</p>
+<p>The UI is included automatically for either host. History, feedback and private
+attachments default to off; Hosted does not turn them on. The default
+conversational selection with no declared storage consumer does not require
+application Cosmos. Workflow or <code>both</code> always selects UI metadata; enabling
+history, feedback or attachments also selects it.
+See <a href="../application-settings/">Application settings</a> for the separate feature
+keys and inspect effective relevant <code>agent-lz</code> settings after configuration.
+Preserve the recorded host, mode and application binding during recovery.</p>
+<p>To select a workflow or both experiences, use the compatible application
+mode and <a href="../configuration/#native-execution-selection">native execution contract</a>.
+For Hosted <code>both</code>, the root lifecycle prepares a conversational publication
+and a separate workflow publication, each with its derived single mode, and
+passes their actual endpoints to the UI. Do not select extra host booleans.
+The Container Apps alternative requires the official Durable Extension worker
+and DTS, not the Hosted HTTP entrypoint or a custom queue.
+Review <a href="../hosted-agents/">Agent hosting</a> before changing an existing layout.</p>
 <h4 id="ingestion-and-custom-applications">Ingestion and custom applications</h4>
 <p>Use native Foundry IQ ingestion for the configured Blob source. Keep its
 protected source policy; source ingestion does not prove user-authorized
-retrieval works. Review <a href="../ingestion/">Ingestion</a> if conversation uploads or
-custom processing are required. They are additional capabilities, not default
-deployment steps.</p>
+retrieval works. Review <a href="../ingestion/">Ingestion</a> if custom source processing is required.
+Private attachments have their own feature gate and file path; enabling
+ingestion does not add that capability. Product metadata does not require the
+ingestion service. These are separate capabilities, not default deployment
+steps.</p>
 <p>For a different application, stop here and follow the
 <a href="../build-your-own-app/">Bring your own app guide</a> before first provision.
 One environment binds to one application ID.</p>
@@ -6297,9 +6344,8 @@ approving provisioning. Also review the application's
 with <code>python -m config.deployment.egress --plan --environment &lt;environment-name&gt;</code>.
 Deployment applies managed firewall rules automatically. If you use an external
 firewall, give the generated report to its owner to arrange the required access.</p>
-<p><span id="container-apps-orchestrator-classic"></span>
-<span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span></p>
-<h4 id="default-foundry-orchestrator-hosted-no-panel">Default Foundry orchestrator (<code>hosted-no-panel</code>)</h4>
+<p><span id="native-application-provisioning"></span></p>
+<h4 id="provision-and-deploy-the-selected-native-application">Provision and deploy the selected native application</h4>
 <p>For a new environment, run these commands in order:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
 azd<span class="w"> </span>deploy
@@ -6369,23 +6415,15 @@ Python active, both CLIs authenticated and private connectivity available when
 required. Record the source revision, manifest, definition, approved inputs and
 hosted digest before a change. Back up configuration and relevant data using
 service-specific procedures.</p>
-<p><span id="lifecycle"></span>
-<span id="upgrade-to-a-new-release"></span></p>
-<h3 id="reapply-a-reviewed-deployment">Reapply a reviewed deployment</h3>
-<ol>
-<li>Select the reviewed compatible source and pin files. Keep the platform's
-   <code>infra/</code> with that source, rather than replacing only that directory.</li>
-<li>Preserve the environment's layout, component selection, names and source
-   bindings. Back up affected data and separately managed configuration.</li>
-<li>If previewing, follow the <a href="../deploy-infra-only/#optional-preview-agent-source">selected-environment preparation</a>,
-   then review infrastructure changes with <code>azd provision --preview</code>.</li>
-<li>Run <a href="#step-4-deploy">Step 4</a>. Deployment prepares the image automatically,
-   including when its recorded generated-source provenance is stale.</li>
-<li>Repeat <a href="#validation">Validation</a> before promotion.</li>
-</ol>
+<p><span id="lifecycle"></span></p>
+<h3 id="retry-the-same-installation">Retry the same installation</h3>
+<p>After correcting the specific failure, retry <a href="#step-4-deploy">Step 4</a> with
+the same approved source, application definition, environment and inputs.
+Review any resource changes before applying them and repeat
+<a href="#validation">Validation</a>. A retry is not permission to delete existing
+resources or user data.</p>
 <h3 id="redeploy-applications-only">Redeploy applications only</h3>
-<p>When foundation outputs, application binding and component selection remain
-compatible:</p>
+<p>When foundation outputs, application binding and component selection are unchanged:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
 <p>Agent Application Container Apps use the manifest's verified sibling checkouts. Preserve
@@ -6433,15 +6471,20 @@ the full workflow. For a directly managed, nonsecret runtime key:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--endpoint<span class="w"> </span>&lt;app-config-endpoint&gt;<span class="w"> </span>--auth-mode<span class="w"> </span>login<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--key<span class="w"> </span>&lt;KEY&gt;<span class="w"> </span>--value<span class="w"> </span>&lt;value&gt;<span class="w"> </span>--label<span class="w"> </span>agent-lz<span class="w"> </span>--yes
 </code></pre></div>
-<p>Restart each affected Container App revision to reload configuration:</p>
+<p>For supported dynamic functional parameters, allow official provider refresh
+and verify a new interaction without rebuilding. Existing workflow runs retain
+their functional snapshot; current authorization is rechecked separately.</p>
+<p>Structural settings, process bootstrap and components without a supported
+dynamic loader require reload/redeployment. Where a Container App restart is
+the documented reload operation:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>containerapp<span class="w"> </span>revision<span class="w"> </span>restart<span class="w"> </span>-g<span class="w"> </span>&lt;resource-group&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;container-app-name&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--revision<span class="w"> </span>&lt;revision-name&gt;
 </code></pre></div>
-<p>For a hosted version, run root <code>azd deploy</code> with the compatible handoff.
-Process environment inputs declared in <code>hosted-agent/azure.yaml</code> are immutable
-version inputs and require a new agent version. An App Configuration edit
-cannot replace a process-only setting such as <code>APP_CONFIG_TLS_COMPATIBILITY</code>.
-Use <code>agent-lz</code> within each environment's separate configuration store.</p>
+<p>For a structural Hosted change, run root <code>azd deploy</code> with the compatible
+handoff and publish each affected application. Process environment inputs are
+immutable publication inputs; an App Configuration edit cannot replace them.
+Host, graph, identity, persistence and registration changes are not dynamic
+functional updates. Use <code>agent-lz</code> within each environment's separate store.</p>
 <h3 id="rotate-a-secret">Rotate a secret</h3>
 <p>Inspect the Key Vault reference before rotating. An unversioned URI resolves
 the current secret version when configuration reloads; a versioned URI must be
@@ -6461,7 +6504,7 @@ wrapper:</p>
 <p>On Linux/macOS use <code>./scripts/bootstrapHostedAccess.sh</code>. The wrapper selects
 <code>hosted-agent</code> / <code>orchestrator-agent</code> by default; custom services use their own
 project/service context. Allow role propagation, then retry root <code>azd deploy</code>
-so the greeting and remaining deployment gates run before cutover.</p>
+so the greeting and remaining deployment gates run before admitting traffic.</p>
 <p>The closed bootstrap set grants App Configuration Data Reader, model access,
 native retrieval's scoped Search transport access and, when configured, access
 to the exact audit secret. It is not a grant to
@@ -6559,35 +6602,30 @@ az<span class="w"> </span>acr<span class="w"> </span>repository<span class="w"> 
    For documents, ingest a harmless test document through the configured source.
    With the integrated delegated retrieval path and downstream consent, test
    both permitted retrieval and denial to a user without that document's permission.
-   Test uploads only when their additional capabilities are selected.</li>
+   For selected private attachments, verify supported input, owner-scoped
+   inline native transport and cross-owner denial. This is not a Blob download
+   or ingestion test. Verify model PDF/image understanding separately.
+   With attachments disabled, confirm controls are
+   unavailable and direct uploads are rejected.</li>
 <li>Correlate the task with runtime telemetry. The deployment's greeting checks
    basic response only; test actual UI login, OBO and source authorization.</li>
 </ol>
-<p>Record unmet capability gates as <strong>blocked</strong>, not passed. Without validated
-continuity, chat context lasts only for the active UI session. Default deployment
-does not promise persistent history, feedback integration or uploads.
+<p>Record unmet capability gates as <strong>blocked</strong>, not passed. Native execution
+continuity belongs to the selected host; saved-history discovery and feedback
+have separate UI feature gates and metadata dependencies.
+A greeting does not verify any of them. For a selected workflow, also verify
+pending human input, fresh-client resume, approval/rejection and denied
+stale/duplicate/wrong-owner replies through the actual application.
 Use <a href="../troubleshooting/">Troubleshooting</a> for failures.</p>
 <p>For optional channel distribution after acceptance, use the
 <a href="../publish-to-teams/">Teams and Microsoft 365 guide</a>. Publication is not
 part of this deployment.</p>
-<p><span id="roll-back-to-a-previous-release"></span></p>
 <h2 id="rollback">Rollback</h2>
-<ol>
-<li>Stop promotion and record the failed revision, inputs and deployed state.
-   Select the previous tested <strong>complete compatible combination</strong>, not an
-   independent component tip. Check compatibility with current data and settings.</li>
-<li>Restore the recorded platform commit, manifest, definition and reviewed
-   parameters without overwriting uncommitted work. Align existing sibling
-   checkouts with the restored manifest after preserving their local work.</li>
-<li>Preview infrastructure or configuration reversals before applying them.
-   Keep the approved authentication and network posture.</li>
-<li>Follow <a href="#step-4-deploy">Step 4</a> with the previous compatible source and inputs:
-   provision, then deploy; deployment prepares the pinned image automatically.
-   If retaining an operator-managed digest, verify its availability and
-   compatibility; deployment does not rebuild it.</li>
-<li>Restore directly managed runtime keys separately from the source checkout,
-   reload affected components and repeat <a href="#validation">Validation</a> before cutover.</li>
-</ol>
+<p>Stop promotion and retain the failed deployment's records and backups.
+Use only recorded, approved artifacts and settings for a reversal; preview
+resource changes and keep the approved authentication and network posture.
+Do not delete existing resources or user data during recovery.
+Repeat <a href="#validation">Validation</a> before routing traffic.</p>
 <h3 id="outbound-rule-recovery">Outbound rule recovery</h3>
 <p>When removing component egress requirements, first review explicit empty
 declarations for the components whose owned rules should be removed.

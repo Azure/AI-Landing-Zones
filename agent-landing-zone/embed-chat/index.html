@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5914,8 +5942,9 @@ failed user authorization check.</p>
 <li>Anonymous embedding supplies no user token and cannot call the default
   user-delegated hosted path. It disables durable threads, uploads and private
   citation downloads; its endpoint is independent of portal login.</li>
-<li>Upload controls require the separately deployed ingestion capability.
-  Embedding does not add native hosted-agent uploads.</li>
+<li>Embedding the UI or deploying ingestion does not enable private attachments.
+  Authenticated attachments require the selected application's explicit
+  feature gate, supported file path and owner checks.</li>
 </ul>
 <p>A separately authenticated client is an application extension under
 <a href="../build-your-own-app/">Bring your own app</a>.</p>

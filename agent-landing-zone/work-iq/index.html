@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5414,8 +5442,8 @@ The source must belong to the selected knowledge base. These runtime settings
 do not register it or grant Microsoft 365 access.
 <code>FOUNDRY_IQ_MAX_RUNTIME_SECONDS</code> defaults to <code>120</code> and provides the retrieve
 runtime ceiling when remote sources are enabled.
-<a href="../application-settings/">Application settings</a> explains effective values and
-the restart or new hosted version needed after a change.</p>
+<a href="../application-settings/">Application settings</a> explains effective values,
+supported functional refresh and structural redeployment.</p>
 <p><span id="prepare-the-tenant"></span></p>
 <h2 id="tenant-and-governance-requirements">Tenant and governance requirements</h2>
 <p>The <a href="https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/enable-work-iq">Work IQ tenant guide</a>
@@ -5493,19 +5521,17 @@ separate Work IQ app. Mismatched application or UI-tenant settings fail closed.
 Bearer tokens must stay out of prompts, history and logs.</p>
 <p><span id="verify-before-connecting-users"></span>
 <span id="diagnose-or-back-out"></span></p>
-<p>The backend's classic OBO helper also needs
+<p>The UI's confidential OBO client needs
 <code>OAUTH_AZURE_AD_TENANT_ID</code>, <code>OAUTH_AZURE_AD_CLIENT_ID</code> and
 <code>OAUTH_AZURE_AD_CLIENT_SECRET</code> for exchanges where applicable. Keep the secret
 server-side as a Key Vault reference. It is not a credential embedded in the
 Work IQ knowledge-source definition. Follow
 <a href="../application-auth/">Application authentication</a> for the complete login and
 delegation setup.</p>
-<p>Do not treat connector-level source omission as successful Work IQ grounding.
-The source builder can skip an empty name or missing OBO token with a warning.
-The context provider requires user delegation for enabled remote sources, and
-the native protected path additionally requires the Work IQ assertion and
-compatible API. A Toolbox call ID is not a substitute for either token.
-<code>FOUNDRY_IQ_FORWARD_SOURCE_AUTH</code> is deprecated and ignored.</p>
+<p>Do not treat source omission as successful Work IQ grounding.
+Required Work IQ retrieval needs user delegation, the distinct Work IQ
+assertion and a compatible API. A Toolbox call ID is not a substitute for
+either credential, and workload identity must not replace a missing user.</p>
 <h2 id="acceptance-and-recovery">Acceptance and recovery</h2>
 <p>A pilot needs a known Microsoft 365 document and two accounts with different
 permissions. Acceptance includes the allowed user's grounded answer and source

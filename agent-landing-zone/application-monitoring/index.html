@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -2121,10 +2149,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#orchestrator-audit" class="md-nav__link">
+  <a href="#native-runtime-audit-scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchestrator audit
+        Native runtime audit scope
       
     </span>
   </a>
@@ -5345,10 +5373,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#orchestrator-audit" class="md-nav__link">
+  <a href="#native-runtime-audit-scope" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchestrator audit
+        Native runtime audit scope
       
     </span>
   </a>
@@ -5426,23 +5454,19 @@ retention policies or service backups.</p>
 <p>Process health probes confirm that a process is running. They do not establish
 successful indexing, correct source access or production readiness.
 Use <a href="../troubleshooting/">Troubleshooting</a> for boundary-specific diagnosis.</p>
-<h2 id="orchestrator-audit">Orchestrator audit</h2>
-<p>Orchestrator audit is off by default. To enable it:</p>
-<ol>
-<li>Generate a 256-bit secret and store it in Key Vault.</li>
-<li>Publish it as the <code>AUDIT_HMAC_KEY</code> Key Vault reference. The value must
-   encode exactly 32 random bytes as Base64, Base64URL or hexadecimal.</li>
-<li>Set <code>AUDIT_HMAC_KEY_ID</code> to the approved key identifier, default <code>v1</code>,
-   and <code>AUDIT_EVENTS_ENABLED=true</code>.</li>
-<li>Restart the affected Container Apps orchestrator or deploy a new hosted
-   agent version, then verify export through the existing telemetry pipeline.</li>
-</ol>
-<p>Events use the <code>gptrag.audit</code> logger and <code>agentlz.audit.*</code> custom-event names.
-Delivery is best-effort, not an immutable ledger or a compliance certification.
-Keep the HMAC secret out of the dashboard and diagnostic output.</p>
-<p>Rotate the key and its identifier together. Pseudonyms produced under different
-keys cannot be directly correlated. Set <code>AUDIT_EVENTS_ENABLED=false</code> and reload
-to stop new orchestrator audit emission. This does not delete exported events.</p>
+<h2 id="native-runtime-audit-scope">Native runtime audit scope</h2>
+<p>Native entrypoints retain in-process tool/datasource audit hooks. They do
+not mount retired request APIs or provide their complete request-lifecycle
+and remote-tool audit stream. A historical schema or
+<code>AUDIT_EVENTS_ENABLED=true</code> is not evidence that those paths emit events.
+Verify the actual hook and telemetry exporter used by the selected runtime.</p>
+<p>If the consumer requires <code>AUDIT_HMAC_KEY</code>, keep its actual Key Vault reference
+and secret-scoped grant with that consumer. A bootstrap grant does not prove
+event export. Never expose the secret in diagnostics.
+Audit delivery is best-effort, not an immutable ledger or a compliance
+certification. Disabling emission does not delete exported events.
+Correlate native UI actions, provider outcomes and in-process tool events
+without claiming complete remote-call coverage.</p>
 <h2 id="ingestion-audit-and-provenance">Ingestion audit and provenance</h2>
 <p>Ingestion emits audit events through its existing OpenTelemetry pipeline
 without an <code>AUDIT_EVENTS_ENABLED</code> opt-in. Export depends on telemetry setup.
@@ -5479,10 +5503,10 @@ For hosted orchestration, the deployment input
 <code>HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT</code> supplies
 <code>OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT</code>. A change requires a
 new hosted version.</p>
-<p>Sensitive orchestrator audit capture additionally requires
-<code>AUDIT_SENSITIVE_CONTENT_ENABLED</code> and the explicit
-<code>AUDIT_SENSITIVE_CONTENT_FIELDS</code> allowlist. Redaction reduces risk but cannot
-guarantee that arbitrary user-authored content is safe to export.
+<p>An audit-content allowlist does not establish that every native path has
+capture wired, nor guarantee that user-authored content is safe to export.
+UI metadata deliberately contains no transcripts, tokens or attachment bytes;
+native input and telemetry retention remain separate concerns.
 Never log tokens, client credentials or authentication claims.</p>
 <h2 id="event-schemas-and-investigation">Event schemas and investigation</h2>
 <p>The component repositories retain the executable audit schemas and digests:
@@ -5494,7 +5518,7 @@ events, treat <code>parent_event_id=evt_00000000000000000000000000000000</code> 
 no parent. Historical schema files remain available for older exported events.</p>
 <p>Reverting an image does not restore deleted documents, undo configuration
 writes or remove telemetry. Follow separately approved data restoration,
-reingestion and <a href="../deploy-full-stack/#roll-back-to-a-previous-release">configuration recovery</a>.
+reingestion and <a href="../deploy-full-stack/#rollback">configuration recovery</a>.
 For a workload evaluation and release workflow, see <a href="../agentops/">AgentOps</a>.</p>
 
 

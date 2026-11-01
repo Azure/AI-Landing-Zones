@@ -16,7 +16,7 @@
         <link rel="prev" href="../hosted-agents/">
       
       
-        <link rel="next" href="../agent-tools/">
+        <link rel="next" href="../workflows/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Strategies & prompts - AI Landing Zones</title>
+        <title>Agents & prompts - AI Landing Zones</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#strategies-prompts" class="md-skip">
+        <a href="#agents-prompts" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Strategies & prompts
+              Agents & prompts
             
           </span>
         </div>
@@ -1342,7 +1342,7 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
   
 
     
@@ -1360,7 +1360,7 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
   
 
     
@@ -1386,38 +1386,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#choose-a-strategy" class="md-nav__link">
+  <a href="#choose-the-application-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose a strategy
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Choose a strategy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#choose-retrieval-separately" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choose retrieval separately
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configure-prompts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configure prompts
+        Choose the application experience
       
     </span>
   </a>
@@ -1425,10 +1397,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#change-instructions-safely" class="md-nav__link">
+  <a href="#choose-capabilities-independently" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Change instructions safely
+        Choose capabilities independently
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure instructions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-and-test-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure and test behavior
       
     </span>
   </a>
@@ -1439,6 +1433,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -5329,38 +5351,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#choose-a-strategy" class="md-nav__link">
+  <a href="#choose-the-application-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose a strategy
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Choose a strategy">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#choose-retrieval-separately" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choose retrieval separately
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configure-prompts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configure prompts
+        Choose the application experience
       
     </span>
   </a>
@@ -5368,10 +5362,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#change-instructions-safely" class="md-nav__link">
+  <a href="#choose-capabilities-independently" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Change instructions safely
+        Choose capabilities independently
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure instructions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-and-test-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure and test behavior
       
     </span>
   </a>
@@ -5398,151 +5414,84 @@
   
 
 
-<h1 id="strategies-prompts">Strategies &amp; prompts</h1>
-<p>A strategy defines how the orchestrator uses a model, retrieves knowledge and
-calls tools. Choose one for the task and hosting mode, then configure its
-dependencies and instructions. Creating a prompt agent in the Foundry portal
-does not replace the strategy running inside the application.</p>
-<h2 id="choose-a-strategy">Choose a strategy</h2>
-<p>Set <code>AGENT_STRATEGY</code> through <a href="../application-settings/">Application settings</a>.
-The runtime default is <code>maf_lite</code>. A sample configuration is not the effective
-setting in your deployment.</p>
+<h1 id="agents-prompts">Agents &amp; prompts</h1>
+<p>Microsoft Agent Framework (MAF) provides two application building blocks:
+an <strong>Agent</strong> for a conversation and a <strong>Workflow</strong> for a process with explicit
+steps, conditions and human input. Hosting and tools are separate choices.
+Creating a prompt agent in the Foundry portal does not replace the application
+code, its instructions or its registered tools.</p>
+<h2 id="choose-the-application-experience">Choose the application experience</h2>
+<p><code>APPLICATION_MODE</code> selects the experience. The default is <code>conversational</code>.
+Use the <a href="../configuration/#native-execution-selection">deployment configuration</a>
+to change the selection; this is not a per-message switch.</p>
 <table>
 <thead>
 <tr>
-<th>Strategy key</th>
-<th>When to use it</th>
-<th>Hosting</th>
+<th>Value</th>
+<th>Experience</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>maf_lite</code></td>
-<td>Microsoft Agent Framework orchestration with direct Azure OpenAI model access and configured retrieval.</td>
-<td>Container Apps or Foundry hosted</td>
+<td><code>conversational</code></td>
+<td>A MAF Agent answers questions and uses authorized tools.</td>
 </tr>
 <tr>
-<td><code>maf_agent_service</code></td>
-<td>Microsoft Agent Framework orchestration backed by Foundry Agent Service.</td>
-<td>Container Apps or Foundry hosted</td>
+<td><code>workflow</code></td>
+<td>A published MAF Workflow executes a named process and can wait for human input.</td>
 </tr>
 <tr>
-<td><code>single_agent_rag</code></td>
-<td>Foundry Agent Service orchestration with intent routing and direct-model paths.</td>
-<td>Container Apps or Foundry hosted</td>
-</tr>
-<tr>
-<td><code>mcp</code></td>
-<td>A request-scoped agent that loads callable tools from an MCP server.</td>
-<td>Container Apps or Foundry hosted, with the hosted call-context requirement</td>
-</tr>
-<tr>
-<td><code>multimodal</code></td>
-<td>Image-aware grounding from the classic Search pipeline. Foundry IQ supplies text grounding instead.</td>
-<td>Container Apps only</td>
-</tr>
-<tr>
-<td><code>nl2sql</code></td>
-<td>Generate, validate and execute read-only SQL over configured SQL databases or Fabric SQL endpoints.</td>
-<td>Container Apps only</td>
+<td><code>both</code></td>
+<td>The UI offers conversation and a named process. On Hosted, these are two separate publications.</td>
 </tr>
 </tbody>
 </table>
-<p>Use the exact keys above. <code>multiagent</code> is not registered, and <code>rag</code> and
-<code>multimodal_rag</code> are not accepted aliases. Hosted execution rejects unsupported
-strategies rather than falling back to another one.
-<a href="../hosted-agents/">Agent hosting</a> explains the execution and state boundaries.</p>
-<h3 id="choose-retrieval-separately">Choose retrieval separately</h3>
-<p><code>RETRIEVAL_BACKEND</code> selects <code>ai_search</code> or <code>foundry_iq</code> for the shared
-knowledge-search connector and the MAF Lite, MAF Agent Service and multimodal
-context providers. It does not replace every strategy's tools or datasources.
-For example, <code>nl2sql</code> uses its SQL metadata indexes and database connections,
-not a Fabric data-agent knowledge source.</p>
+<p><code>ORCHESTRATION_HOST</code> selects <code>hosted</code> or <code>container_apps</code>.
+<a href="../hosted-agents/">Agent hosting</a> explains the distinct native integrations
+and their state ownership. Neither mode selects a retrieval strategy.
+The UI presents the task, not a hosting or strategy picker.</p>
+<h2 id="choose-capabilities-independently">Choose capabilities independently</h2>
+<p>MCP, Foundry IQ and Azure AI Search are tools or retrieval capabilities, not
+alternative agent implementations. An agent and a workflow can use the same
+authorized capability when it is registered in their definitions.</p>
 <ul>
-<li>Use <a href="../foundry-iq/">Foundry IQ</a> for a knowledge base over native or existing
-  indexed sources.</li>
-<li>Use <a href="../agent-tools/">Tools &amp; MCP</a> for callable operations.</li>
-<li>Use <a href="../nl2sql/">NL2SQL</a> to choose between direct SQL execution and a remote
-  Fabric data agent.</li>
-<li>Use <a href="../multimodality/">Document formats &amp; images</a> to understand document
-  image processing without assuming direct image chat.</li>
+<li>Use <a href="../foundry-iq/">Foundry IQ</a> for a knowledge base over native or
+  independently indexed sources.</li>
+<li>Use <a href="../agent-tools/">Tools &amp; MCP</a> for reviewed operations and downstream
+  identity requirements.</li>
+<li>Use <a href="../nl2sql/">NL2SQL</a> to understand the difference between database
+  execution and a remote Fabric data agent.</li>
+<li>Use <a href="../multimodality/">Document formats &amp; images</a> to distinguish document
+  processing from direct image input in chat.</li>
 </ul>
-<p>The shared strategy base requires <code>AI_FOUNDRY_PROJECT_ENDPOINT</code>,
-<code>AI_FOUNDRY_ACCOUNT_ENDPOINT</code> and <code>CHAT_DEPLOYMENT_NAME</code>, even when the strategy
-calls the model directly. Classic execution also needs its conversation
-database. Retrieval, tools, SQL and prompt storage have their own permissions
-and connectivity requirements.</p>
-<h2 id="configure-prompts">Configure prompts</h2>
-<p><code>PROMPT_SOURCE</code> defaults to <code>file</code>. File-backed prompts are part of the
-orchestrator image, so changing them is an application customization, not a
-portal prompt edit.</p>
-<table>
-<thead>
-<tr>
-<th>Strategy</th>
-<th>Bundled prompt location in the orchestrator</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>maf_lite</code>, <code>maf_agent_service</code></td>
-<td><code>src/prompts/maf/main.txt</code></td>
-</tr>
-<tr>
-<td><code>single_agent_rag</code></td>
-<td><code>src/prompts/single_agent_rag/main.jinja2</code></td>
-</tr>
-<tr>
-<td><code>mcp</code></td>
-<td><code>src/prompts/mcp/main.txt</code></td>
-</tr>
-<tr>
-<td><code>multimodal</code></td>
-<td><code>src/prompts/multimodal/main.txt</code></td>
-</tr>
-<tr>
-<td><code>nl2sql</code></td>
-<td><code>src/prompts/nl2sql/triage_agent.txt</code>, <code>sqlquery_agent.txt</code> and <code>syntetizer_agent.txt</code></td>
-</tr>
-</tbody>
-</table>
-<p>The plain-text loader substitutes supplied <code>{{ placeholders }}</code> and can resolve
-remaining placeholders from common prompt files. An unresolved placeholder
-can remain in the prompt with a warning, so inspect the rendered instructions
-when customizing. Jinja templates support conditional instructions and use
-strict undefined-variable handling. The single-agent RAG strategy explicitly
-requires its Jinja template.</p>
-<p>Classic execution also supports <code>PROMPT_SOURCE=cosmos</code>. It reads the <code>prompts</code>
-container using IDs such as <code>&lt;namespace&gt;_&lt;prompt-name&gt;</code> and the document's
-<code>content</code> field. Common placeholders use <code>placeholder_&lt;name&gt;</code> documents.
-The MAF strategies share the <code>maf</code> namespace. File templates are not
-automatically uploaded or rendered by selecting Cosmos.</p>
-<p><strong>Foundry hosted execution requires file-backed prompts.</strong> Selecting Cosmos
-prompts fails construction. The hosted container does not use classic Cosmos
-conversation state or profile memory. Automatic profile access is also
-suspended by the shared base in classic execution, so conversation history
-does not imply cross-conversation personalization.</p>
-<h2 id="change-instructions-safely">Change instructions safely</h2>
+<p>A source, model or MCP endpoint in configuration does not automatically make
+that capability available. Its definition, permissions and network path must
+all be present. Instructions cannot grant document access or turn a retrieval
+source into a model-callable operation.</p>
+<h2 id="configure-instructions">Configure instructions</h2>
+<p>Keep agent instructions and workflow definitions with the reviewed application
+source. Publish a compatible image when changing code, graph structure,
+executor identifiers or packaged prompts.</p>
+<p>Use <a href="../application-settings/">App Configuration</a> for supported functional
+parameters, not arbitrary graph replacement or credentials in prompts.
+A running workflow retains its functional configuration snapshot; a new
+configuration value does not rewrite a process that is already waiting.
+Current authorization is checked separately on every interaction.</p>
+<h2 id="configure-and-test-behavior">Configure and test behavior</h2>
 <ol>
-<li>Select the supported hosting and strategy combination.</li>
-<li>Review the strategy's dependencies and the effective
-   <a href="../application-settings/">runtime settings</a>.</li>
+<li>Select the application mode and host, then verify the required dependencies.</li>
 <li>Keep instructions focused on task, grounding, citations and tool use.
-   Do not put credentials, user tokens or private configuration in prompts.</li>
-<li>For bundled prompt changes, follow
-   <a href="../customize-components/">Customize components</a> and deploy the reviewed
-   image through the <a href="../deploy-full-stack/">deployment guide</a>.</li>
-<li>Start a new hosted version for hosted settings or image changes. Restart
-   affected classic processes after changing strategy or cached dependencies.</li>
-<li>Check a representative question, a required-source failure and an
-   unauthorized-user case. Use <a href="../application-monitoring/">Monitoring &amp; audit</a>
-   to correlate activity without capturing sensitive prompt content.</li>
+   Never include user tokens, credentials or private configuration in prompts.</li>
+<li>Test a representative answer, required-source failure, denied user and
+   cancellation. For workflows, also test pending human input, reconnect,
+   rejection and a stale or duplicate reply.</li>
+<li>Follow <a href="../customize-components/">Customize components</a> and the
+   <a href="../deploy-full-stack/">deployment guide</a> for reviewed source and image
+   deployment.</li>
 </ol>
-<p>Instructions cannot grant source access, make an absent tool available, enforce
-read-only database permissions or approve a write operation. Those controls
-belong at the service and tool boundaries.
-<a href="../application-auth/">Application authentication</a> covers sign-in and delegation.
-Request formats belong in the <a href="../application-api/">API reference</a>.</p>
+<p>For process operation, see <a href="../workflows/">Workflows &amp; human input</a>.
+For caller boundaries, see <a href="../application-auth/">Sign-in &amp; access</a> and
+the <a href="../application-api/">API reference</a>.</p>
 
 
 

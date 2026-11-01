@@ -1609,13 +1609,30 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hosted-agent" class="md-nav__link">
+  <a href="#native-execution-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted agent
+        Native execution selection
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Native execution selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hosted-foundation-and-publication-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted foundation and publication inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1934,7 +1951,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -6272,13 +6317,30 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hosted-agent" class="md-nav__link">
+  <a href="#native-execution-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted agent
+        Native execution selection
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Native execution selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hosted-foundation-and-publication-inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hosted foundation and publication inputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -6810,19 +6872,14 @@ When unset, they use the template defaults shown below.</p>
 <td>Uses Cloud Adoption Framework prefixes and naming tokens. See <a href="../resource-naming/">Resource naming</a>.</td>
 </tr>
 <tr>
-<td><code>USE_CAPP_API_KEY</code></td>
-<td><code>false</code></td>
-<td>Hosted composition keeps this API-key mechanism disabled. It does not configure Entra ID sign-in.</td>
-</tr>
-<tr>
 <td><code>APP_RUNTIME_CONFIGURATION_MODE</code></td>
 <td><code>appConfig</code></td>
 <td>The Agent Application reads runtime settings from App Configuration.</td>
 </tr>
 <tr>
 <td><code>DEPLOY_COSMOS_DB</code></td>
-<td><code>false</code> for <code>hosted-no-panel</code>; enabled when required by selected consumers</td>
-<td>Controls Agent Application Cosmos DB only, not Foundry Agent Service backing storage.</td>
+<td>Not selected for default conversational execution without a storage consumer; selected when required</td>
+<td>Application Cosmos resource selection follows actual consumers. Foundry backing storage is separate.</td>
 </tr>
 <tr>
 <td><code>ENABLE_COSMOS_ANALYTICAL_STORAGE</code></td>
@@ -6865,12 +6922,25 @@ resource creation.</p>
 <h4 id="application-cosmos-db">Application Cosmos DB</h4>
 <p>The default <a href="../application/#default-deployment">application layout</a>
 does not create application Cosmos DB resources or their dedicated identity.
-Foundry backing storage is independent. Application composition enables Cosmos DB
-for classic orchestration, administrative-panel metadata, a preserved classic
-runtime, or a custom component declaring the <code>conversation-store</code> capability.
-Setting <code>DEPLOY_COSMOS_DB=false</code> explicitly conflicts with those consumers and
-stops provisioning with an explanation. Otherwise, leave the input unset to
-follow the selected application's requirements.</p>
+Foundry backing storage is independent. Native Hosted execution uses Foundry
+persistence; durable Container Apps execution uses Durable Task Scheduler
+(DTS). Neither uses application Cosmos as a duplicate execution checkpoint
+store. Workflow mode or <code>both</code> selects UI metadata even when
+<code>ENABLE_CHAT_HISTORY=false</code> and <code>ENABLE_USER_FEEDBACK=false</code>, their defaults.
+Enabled history, feedback or private attachments also selects this dependency.
+The UI consumes
+<code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
+(default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>, owner <code>tid:oid</code>), with its grant
+assigned only to the frontend. Existing <code>COSMOS_DB_ENDPOINT</code> and
+<code>COSMOS_DB_ACCOUNT_RESOURCE_ID</code> outputs remain conditional; no separate native
+endpoint key is introduced. Enabled direct NL2SQL instead needs its own
+datasource catalog. A custom component may declare another application storage
+requirement. UI metadata contains descriptors and references, not bytes,
+transcripts or tokens. With conversational mode and every product flag off,
+bounded volatile UI owner maps are lost on restart.</p>
+<p>Do not omit a store required by a selected consumer, or enable ingestion just
+to supply metadata storage. Leave deployment selection consistent with the
+application definition and review all consumers before changing it.</p>
 <p>For an additional application storage requirement, opt in before provisioning:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_COSMOS_DB<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
@@ -6892,7 +6962,7 @@ data-retention requirements have been reviewed.</p>
 <tr>
 <td><code>DEPLOY_INGESTION_CONTAINER_APP</code></td>
 <td><code>false</code></td>
-<td>Selects the optional Agent App Ingestion component of the Agent Application, independently of <code>DEPLOYMENT_TOPOLOGY</code>.</td>
+<td>Selects optional Agent App Ingestion independently of native host, application mode and product metadata.</td>
 </tr>
 </tbody>
 </table>
@@ -6919,17 +6989,18 @@ infrastructure composition.</p>
 </tbody>
 </table>
 <p>The source/index arrangement must support omission. See <a href="../ingestion/">Ingestion</a>
-for supported combinations, conversation-upload gates and UI behavior.</p>
+for supported source combinations and the native private-input boundary.</p>
 <h3 id="search-region-and-quota">Search region and quota</h3>
 <p><code>AZURE_SEARCH_LOCATION</code> resolves the effective Bicep <code>searchServiceLocation</code>.
 An unset or empty value falls back to <code>AZURE_LOCATION</code>. Both newly created
 Search services use this effective region. Provider availability and Search
 quota checks use that same region, not the primary region when an override
 is set.</p>
-<p>Search quota must cover the complete enabled service count: one Agent Application service
-when <code>deploySearchService</code> (<code>DEPLOY_SEARCH_SERVICE</code>) is enabled, plus one Foundry
-Search service when <code>deployAiFoundry</code> and <code>deployAAfAgentSvc</code>
-(<code>DEPLOY_AAF_AGENT_SVC</code>) are enabled and <code>aiSearchResourceId</code> is not supplied.</p>
+<p>Search quota must cover the complete enabled service count: the selected Agent
+Application Search service plus a separate Foundry backing Search service when
+the selected component requires Foundry Agent Service and no existing backing
+Search resource is supplied. Host-specific provider flags are derived, not
+additional public native selectors.</p>
 <p>When both creation paths are enabled, the check requires quota for two services.
 Reusing a Foundry Search resource does not request a new service for that path.
 Bypassing preflight does not resolve region mismatches or insufficient quota.
@@ -7828,7 +7899,96 @@ plans or outputs between environments. Use the
 <a href="../deploy-infra-only/#review-component-egress">review procedure</a> for local and
 resolved read-only reports, and <a href="../deploy-full-stack/#outbound-rule-recovery">rollback</a>
 for rule removal before reverting hooks.</p>
-<h2 id="hosted-agent">Hosted agent</h2>
+<p><span id="hosted-agent"></span></p>
+<h2 id="native-execution-selection">Native execution selection</h2>
+<p>The application separates behavior from hosting and retrieval:</p>
+<table>
+<thead>
+<tr>
+<th>Canonical setting</th>
+<th>Values or requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPLICATION_MODE</code></td>
+<td><code>conversational</code> (default), <code>workflow</code> or <code>both</code></td>
+</tr>
+<tr>
+<td><code>ORCHESTRATION_HOST</code></td>
+<td><code>hosted</code> (default) or <code>container_apps</code>; selects native execution host</td>
+</tr>
+<tr>
+<td><code>HOSTED_AGENT_BASE_URL</code></td>
+<td>Actual Hosted conversational publication endpoint, when selected</td>
+</tr>
+<tr>
+<td><code>HOSTED_WORKFLOW_BASE_URL</code></td>
+<td>Actual separate Hosted workflow publication endpoint, when selected</td>
+</tr>
+<tr>
+<td><code>DURABLE_TASK_SCHEDULER_CONNECTION_STRING</code></td>
+<td>Official nonsecret managed-identity backend binding for the durable client/worker</td>
+</tr>
+</tbody>
+</table>
+<p>The only public native deployment selectors are <code>ORCHESTRATION_HOST</code> and
+<code>APPLICATION_MODE</code>. Set them before provision; the UI is included automatically.
+History, feedback and private attachments independently default to off.
+Hosted does not enable history; workflow or <code>both</code> always selects UI metadata.
+Endpoint/binding rows are actual generated application contracts, not extra
+host choices. Do not construct scheduler endpoints or set internal host flags.
+Native feature keys are shared <code>additionalAppConfigurationSettings</code> entries
+under <code>agent-lz</code>, not new same-named Bicep or Terraform parameters.
+See <a href="../application-settings/#native-application-contract">Application settings</a>
+for exact feature and consumer keys.</p>
+<p>On Hosted, select <code>APPLICATION_MODE=both</code>; the lifecycle prepares a
+conversational publication with derived process mode <code>conversational</code> and a
+separate workflow publication with derived process mode <code>workflow</code>, then
+passes both endpoints to the UI. These process inputs are not extra public
+deployment selectors.
+Each publication's single-mode process input must take precedence over the
+shared composition value. A common App Configuration store does not turn
+Hosted <code>both</code> into a single publication.
+If attachments are enabled, retain the shared/UI and conversational
+<code>ENABLE_PRIVATE_ATTACHMENTS=true</code>; only the workflow publication gets <code>false</code>.
+Workflow-only composition rejects an enabled attachment flag.
+On Container Apps, use the official standalone Durable Extension worker and
+DTS with stable native registration names <code>agent-lz-conversation</code> and
+<code>agent-lz-research-review</code>. Azure Functions, Dapr and public worker HTTP ingress
+are not required. Use the actual provisioned nonsecret managed-identity
+scheduler binding:
+<code>Endpoint=&lt;actual provisioned output&gt;;TaskHub=agent-lz;Authentication=ManagedIdentity</code>.
+Keep the same binding compatible with the native worker and UI client. Do not
+construct the endpoint from a guessed hostname or change authentication on
+one side only.</p>
+<p>MCP, Foundry IQ and Search are tools/capabilities, not application modes or
+competing strategy names. Graph, host, identity, persistence and publication
+changes require compatible deployment; functional parameters follow scoped
+App Configuration refresh and per-run snapshots.
+See <a href="../hosted-agents/">Agent hosting</a>,
+<a href="../workflows/">Workflows &amp; human input</a> and
+<a href="../application-settings/">Application settings</a>.</p>
+<p><code>ENABLE_CHAT_HISTORY</code> and <code>ENABLE_USER_FEEDBACK</code> default to <code>false</code>;
+workflow mode, <code>both</code> or enabled history, feedback or attachments declares UI metadata
+storage directly. <code>NL2SQL_ENABLED=false</code> keeps
+the direct SQL catalog/connector dependencies unselected.
+<code>NL2SQL_SOURCE_REGISTRY</code> defaults to an empty string. When direct SQL is enabled,
+explicit <code>cosmos</code> selects the datasource catalog and publishes
+<code>DATASOURCES_CONTAINER=datasources</code>, with reader access to that exact container.
+Declare actual tool secret names through <code>NATIVE_TOOL_SECRET_NAMES</code> (default
+<code>[]</code>), a JSON array of names rather than values, and grant only the consuming
+component. This is a platform grant declaration; the native runtime does not
+consume <code>NATIVE_TOOL_SECRET_NAMES</code> as a secret-loading or tool-enabling setting.
+<code>ENABLE_PRIVATE_ATTACHMENTS=false</code> is the default. Enabling it selects
+owner-bound inline conversational input and UI metadata, not ingestion or
+corporate publication. Workflow attachments are unsupported.
+Admission allows at most three files, 64 KiB per file and 256 KiB for the
+serialized inline turn. See <a href="../conversations/#private-attachments">Private attachments</a>
+for the MIME, encoding and owner contract.
+Native Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags also default
+to off; configured infrastructure alone does not register those tools.</p>
+<h3 id="hosted-foundation-and-publication-inputs">Hosted foundation and publication inputs</h3>
 <p>These inputs prepare hosting resources and metadata.
 The <a href="../application/#default-deployment">default application layout</a>
 and <a href="../hosted-agents/">Hosted agents</a> explain the application capabilities.</p>
@@ -7841,16 +8001,6 @@ and <a href="../hosted-agents/">Hosted agents</a> explain the application capabi
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><code>DEPLOYMENT_TOPOLOGY</code></td>
-<td><code>hosted-no-panel</code></td>
-<td>Selects Agent Application hosting and resource composition. It does not activate optional runtime features.</td>
-</tr>
-<tr>
-<td><code>DEPLOY_AAF_AGENT_SVC</code></td>
-<td><code>true</code></td>
-<td>Enables the Foundry Agent Service capability host.</td>
-</tr>
 <tr>
 <td><code>HOSTED_AGENT_NAME</code></td>
 <td><code>agent-app-orchestrator</code></td>
@@ -7873,19 +8023,17 @@ and <a href="../hosted-agents/">Hosted agents</a> explain the application capabi
 </tr>
 </tbody>
 </table>
-<p>The supplied child <code>hosted-agent/azure.yaml</code> declares agent name, CPU, memory,
-startup command and protocols as <strong>literal fields</strong>. Provisioning variables
-alone do not override them or resize the running agent. A change requires
-a reviewed compatible child definition and a new version. See
+<p>Use the generated compatible host-specific application definitions for
+registration names, CPU, memory, entrypoints and protocols. Provisioning
+metadata alone does not resize or republish a running application. A change
+requires a reviewed definition and compatible publication. See
 <a href="../sizing-cost-planner/#application-hosting">host capacity requirements</a>.</p>
-<p>Hosted process settings, including <code>HOSTED_AGENT_SSE_IDLE_TIMEOUT_SECONDS</code>,
-belong in <a href="../hosted-agents/#validation-rules">Hosted agents</a>.
-Continuity controls <code>HOSTED_CONVERSATION_OWNER_BINDING</code> and
-<code>HOSTED_CONTINUITY_ENABLED</code> belong in
+<p>Native package/publication constraints belong in
+<a href="../hosted-agents/#validation-rules">Agent hosting</a>.
+Owner-bound discovery and product metadata belong in
 <a href="../conversations/#continuity-settings">Conversations &amp; files</a>.
-The bootstrap input <code>APP_CONFIG_TLS_COMPATIBILITY</code> belongs in
-<a href="../application-settings/#orchestrator-tls-compatibility">Application settings</a>,
-not in App Configuration.</p>
+Process bootstrap values are distinct from dynamically refreshed functional
+parameters in <a href="../application-settings/">Application settings</a>.</p>
 <h2 id="deployment-controls">Deployment controls</h2>
 <p>Hook execution and application selection use the variables below.
 The selected application also affects the resource footprint.</p>
@@ -7988,8 +8136,8 @@ for diagnosis.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>PREPARE_HOSTED_AGENT</code>, <code>HOSTED_AGENT_PREPARED</code>, <code>DEPLOY_HOSTED_AGENT</code></td>
-<td>Script-managed preparation/deployment state. Do not change flags to bypass a missing foundation or image handoff.</td>
+<td>Generated Hosted preparation/deployment state</td>
+<td>Script-managed handoff, not a public host boolean. Do not set internal flags to bypass missing foundation or image prerequisites.</td>
 </tr>
 <tr>
 <td><code>RETRIEVAL_AUTH_MODE</code></td>
@@ -8033,7 +8181,7 @@ for pending approval, propagation, timeouts and retry.</p>
 <h2 id="configuration-publication">Configuration publication</h2>
 <p>Use <a href="../application-settings/">Application settings</a> for runtime configuration
 tasks and effective-value checks. <a href="../conversations/">Conversations &amp; files</a>
-covers continuity settings. The declarations below describe how deployment
+covers native-state and product-metadata ownership. The declarations below describe how deployment
 publishes and owns those values.</p>
 <p>Post-provision publishes runtime settings to Azure App Configuration with
 the label <code>agent-lz</code>. That is the label for platform-owned settings.
@@ -8056,7 +8204,7 @@ are not substitutes. The publisher's optional <code>--input &lt;path&gt;</code> 
 exact parameter document. Do not create per-key azd variables to transport it.</p>
 <p>Routing, identity and other authority-controlled conflicts are rejected.
 Unsupported runtime Key Vault-reference overrides fail explicitly; use the
-existing governance or continuity owner for those references.</p>
+declared secret consumer and provisioning owner for those references.</p>
 <h3 id="effective-settings">Effective settings</h3>
 <p>Change foundation-owned settings in their declared inputs and runtime-owned
 settings through their publisher; a missing-only default seed does not make

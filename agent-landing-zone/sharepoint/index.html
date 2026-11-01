@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -6056,7 +6084,8 @@ It also supports manual execution:</p>
 </code></pre></div>
 <p>Use the deployment's configured administrative authentication. Do not expose
 an unconfigured development endpoint. These routes require Admin when Entra
-authentication is configured and are not mounted in every hosted/panel mode.
+authentication is configured and are available only when the ingestion
+component's administrative surface is mounted.
 <code>202 Accepted</code> means queued, not indexed. <code>409</code> means that job type is already
 running. See <a href="../ingestion-jobs/">Jobs &amp; schedules</a> for scheduling, conflicts and
 cleanup effects, <a href="../operations/">Administration</a> for route availability, and

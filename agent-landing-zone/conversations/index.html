@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -1548,10 +1576,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#continuity-settings" class="md-nav__link">
+  <a href="#state-and-metadata-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Continuity settings
+        State and metadata dependencies
       
     </span>
   </a>
@@ -1575,10 +1603,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#upload-files-to-a-conversation" class="md-nav__link">
+  <a href="#private-attachments" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Upload files to a conversation
+        Private attachments
       
     </span>
   </a>
@@ -5374,10 +5402,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#continuity-settings" class="md-nav__link">
+  <a href="#state-and-metadata-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Continuity settings
+        State and metadata dependencies
       
     </span>
   </a>
@@ -5401,10 +5429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#upload-files-to-a-conversation" class="md-nav__link">
+  <a href="#private-attachments" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Upload files to a conversation
+        Private attachments
       
     </span>
   </a>
@@ -5443,134 +5471,170 @@
 
 
 <h1 id="conversations-files">Conversations &amp; files</h1>
-<p>Conversation context, saved history and file uploads are separate capabilities.
-Choose the behavior you need before enabling storage or administrative panels.</p>
+<p>Native execution state and user-facing saved history have separate owners.
+<code>ENABLE_CHAT_HISTORY</code> and <code>ENABLE_USER_FEEDBACK</code> default to <code>false</code>.
+Private attachments are an independently selected optional capability.
+<code>ENABLE_PRIVATE_ATTACHMENTS</code> defaults to <code>false</code>.</p>
 <h2 id="context-during-a-chat">Context during a chat</h2>
-<p>The default hosted orchestrator is stateless. The UI sends the available
-conversation transcript with each turn. The hosted container does not load
-managed conversation history on its own.</p>
-<p>Without optional continuity, context lasts for the active UI session. Reloading
-the browser, restarting it or starting a new chat does not provide durable
-history. A conversation identifier scopes a request. Knowing that identifier
-does not grant access to another person's messages or uploaded documents.</p>
+<p>A conversational MAF Agent uses the selected host's native session state:
+Foundry persistence on Hosted or Durable Task Scheduler (DTS) through the
+official Durable Extension on Container Apps.
+The UI does not make a stateless adapter stateful by replaying its transcript.</p>
+<p>The UI/BFF binds the authenticated owner to native session IDs. Knowing an ID
+or calling through a shared service identity does not authorize another
+person's messages, pending actions or files.
+See <a href="../hosted-agents/">Agent hosting</a> for the distinct clients.</p>
 <h2 id="resume-a-saved-conversation">Resume a saved conversation</h2>
-<p>Hosted continuity lets the UI read and append messages in a managed Conversations
-store. It is disabled by default through <code>HOSTED_CONTINUITY_ENABLED=false</code>.
-The UI still sends the resulting transcript to the stateless orchestrator.</p>
-<p>Before enabling it, configure the store and validate user isolation. In the
-default <code>delegated</code> ownership mode, the UI's middle-tier identity requires a
-reviewed agent-scoped <code>UserIdentityImpersonation</code> grant and a deployed Responses
-protocol version of at least <code>2.0.0</code>. Set
-<code>HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED=true</code> only after that authorization
-has been verified. This setting records evidence, it does not grant permission.</p>
-<p>An explicit <code>capability</code> ownership mode instead uses signed owner handles and
-user OBO for store calls. It requires its own signing-key setup. Do not select
-it as a fallback after delegated authorization fails.</p>
-<h3 id="continuity-settings">Continuity settings</h3>
-<p>These settings are ignored while continuity is disabled. Nonblank environment
-values override remote settings when the continuity loader reads them.
-Invalid required settings fail startup.</p>
+<p>When saved history is enabled, reopen a conversation through the authenticated
+UI. The BFF checks its owner
+mapping before using the host client to read or continue the native session.
+Native state and UI discoverability are different: a persisted session does
+not by itself supply a list of the current user's conversations.</p>
+<p>The UI/BFF owns titles, owner mappings and other product metadata in its
+declared store. That store is not a transcript replay service or a workflow
+checkpoint engine. Missing metadata, failed state reads and denied ownership
+must not be treated as an empty successful conversation.</p>
+<p><span id="continuity-settings"></span></p>
+<h3 id="state-and-metadata-dependencies">State and metadata dependencies</h3>
 <table>
 <thead>
 <tr>
-<th>Setting</th>
-<th>Default or requirement</th>
+<th>Feature</th>
+<th>Owner</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>HOSTED_CONTINUITY_ENABLED</code></td>
-<td><code>false</code></td>
+<td>Agent conversation/session execution</td>
+<td>Selected native host</td>
 </tr>
 <tr>
-<td><code>HOSTED_CONVERSATION_OWNER_BINDING</code></td>
-<td><code>delegated</code>. Explicit alternative: <code>capability</code>.</td>
+<td>Workflow graph state and pending human input</td>
+<td>Selected native host</td>
 </tr>
 <tr>
-<td><code>HOSTED_CONVERSATION_STORE_BASE_URL</code></td>
-<td>Required HTTPS Conversations-store URL. HTTP is accepted only for local loopback development. There is no hosted-endpoint fallback.</td>
+<td>User-to-session/run mapping, titles and discovery</td>
+<td>UI/BFF product metadata</td>
 </tr>
 <tr>
-<td><code>HOSTED_CONVERSATION_STORE_RESOURCE_SCOPE</code></td>
-<td>Required data-plane scope ending in <code>/.default</code>. Falls back to <code>HOSTED_AGENT_RESOURCE_SCOPE</code>, not an ARM management scope.</td>
+<td>Message/run feedback</td>
+<td>UI/BFF feedback store</td>
 </tr>
 <tr>
-<td><code>HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED</code></td>
-<td><code>false</code>. Required as <code>true</code> for validated delegated ownership.</td>
-</tr>
-<tr>
-<td><code>HOSTED_AGENT_PROTOCOL_VERSION</code></td>
-<td>Required in delegated mode, at least <code>2.0.0</code>.</td>
-</tr>
-<tr>
-<td><code>HOSTED_CONVERSATION_CAPABILITY_KEY</code></td>
-<td>Capability mode only. At least 32 characters after trimming, supplied through a Key Vault reference.</td>
-</tr>
-<tr>
-<td><code>HOSTED_CONVERSATION_CAPABILITY_KEY_ID</code></td>
-<td>Required with the capability signing key.</td>
-</tr>
-<tr>
-<td><code>HOSTED_CONVERSATION_CAPABILITY_TTL_SECONDS</code></td>
-<td><code>900</code>, valid range <code>60</code> to <code>86400</code>.</td>
+<td>Private file input and access metadata</td>
+<td>Explicit attachment capability; authenticated UI/file boundary and selected native input or authorized tool path</td>
 </tr>
 </tbody>
 </table>
-<p>The standalone UI loader defaults history limits to <code>HOSTED_HISTORY_MAX_ITEMS=40</code>
-and <code>HOSTED_HISTORY_MAX_TOKENS=8000</code>. Platform composition can publish different
-values: its continuity defaults are <code>100</code> items and <code>32000</code> estimated tokens,
-with capability key ID <code>v1</code>. These values do not activate continuity.
-Valid ranges are <code>1</code> to <code>500</code> items and <code>256</code> to <code>200000</code> estimated tokens.</p>
-<p>The store client reads one ascending page of at most 100 items and does not
-follow pagination. Larger item settings do not extend that read. It trims the
-oldest items in the returned page using an approximate character-based token
-budget. The last remaining item is retained and the new question is added
-afterward. These settings are not hard model-input limits or a guarantee of
-the latest complete transcript in a long conversation.</p>
-<p>Store read and append failures are reported, not converted into an empty or
-successfully saved conversation. A rejected owner handle does not silently
-create a replacement conversation. Locks and idempotency tracking are local
-to a process, not distributed coordination.</p>
+<p>Hosted execution does not require application Cosmos DB.
+Workflow mode or <code>both</code> selects UI metadata even with product flags off;
+enabled history, feedback or attachments also selects it. The UI reads
+<code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
+(default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>, owner value
+<code>tid:oid</code>).
+Only the frontend receives its metadata grant. The container holds owner/run
+mappings, references, feedback and attachment descriptors, not bytes,
+transcripts, tokens or Foundry/DTS execution checkpoints.
+In conversational mode with every product flag off, the UI uses bounded
+volatile owner maps. They are lost on UI restart; native host persistence alone
+cannot restore the UI mapping or provide saved discovery.
+Do not deploy ingestion or an additional runtime merely to support metadata.
+Saved listing and history reads require <code>ENABLE_CHAT_HISTORY=true</code>.
+A known owner-bound workflow can resume with history off through
+<code>/api/native/sessions/{id}/resume</code>; workflow mode already selects metadata.</p>
 <h2 id="history-and-administration">History and administration</h2>
-<p>An administrative panel is not required merely to retain active-session context.
-User-facing panel history additionally requires actual panel deployment,
-active continuity and <code>PANEL_HISTORY_ENABLED=true</code>. Delegated enumeration and
-operator access have independent authorization gates.</p>
-<p>See <a href="../operations/">Administration</a> for panel setup and
-<a href="../user-feedback/">User feedback</a> for owner-scoped feedback.</p>
-<p>The Container Apps orchestrator uses a different path: its classic conversation
-API persists messages and feedback in Cosmos DB with authenticated ownership
-checks. Some writes run in background tasks. Receiving a streamed answer is
-not an acknowledgement that all writes completed. Classic history also does
-not enable cross-conversation profile personalization.</p>
-<h2 id="upload-files-to-a-conversation">Upload files to a conversation</h2>
-<p>Conversation uploads require the optional ingestion service.
-<code>DEPLOY_INGESTION_CONTAINER_APP=false</code> hides controls and rejects attachments
-before files are dispatched. <code>true</code> retains authentication, validation and
-conversation checks. A missing value preserves legacy eligibility, while an
-invalid boolean fails configuration loading.</p>
-<p>Hosted uploads need a valid issued conversation ID and the authenticated
-uploader's object ID before file reads or ingestion dispatch. Uploaded files
-remain scoped to that user and conversation. Native Foundry IQ source ingestion
-does not replace this conversation-upload path.</p>
-<p>Anonymous embedded sessions cannot upload files. Follow
-<a href="../ingestion/">Ingestion</a> to enable the required processing and
-<a href="../multimodality/">document formats</a> to check supported inputs.</p>
+<p>An administrative panel is not required for native session persistence.
+User history and operator access are separately authorized product surfaces;
+an operator role does not automatically grant access to every transcript.</p>
+<p>Define retention and deletion for native state, owner mappings, feedback,
+attachments, audit data and backups separately. A metadata cleanup is not proof
+that all downstream artifacts were erased. Confirm partial failures and follow
+the installation's retention policy.</p>
+<p>See <a href="../operations/">Administration</a> and <a href="../user-feedback/">User feedback</a>.</p>
+<h2 id="private-attachments">Private attachments</h2>
+<p>Enable <code>ENABLE_PRIVATE_ATTACHMENTS</code> for conversational operation in
+<code>conversational</code> or <code>both</code>. Workflow attachments are not supported.
+The native turn accepts at most <strong>three files</strong>, each at most <strong>64 KiB</strong>:
+UTF-8 TXT/Markdown, PDF, PNG or JPEG.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Use this note in your answer."</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"attachments"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"note.txt"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"content_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text/plain"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"data_base64"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SGVsbG8="</span>
+<span class="w">  </span><span class="p">}]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Send this body to <code>POST /api/native/sessions/{id}/turns</code> for an owner-bound
+UI session. Strict Base64, content/format signatures and owner checks reject
+malformed or mismatched input. Unknown or nonowned session IDs return <code>404</code>
+before native backend access.</p>
+<p>The maximum serialized inline turn is <strong>256 KiB</strong>, checked against both
+Hosted and DTS content envelopes. Text, filenames, MIME metadata, data URIs,
+Base64 expansion and JSON escaping count toward this budget. Three files
+that individually meet their byte limit can still exceed it.
+Each name is a basename of <code>1..128</code> characters (no path separators, leading
+dot or control characters); content type is at most 64 characters.
+Base64 text is bounded to 87,384 characters, and decoded input must be
+nonempty. Extension and MIME must match:</p>
+<table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>Content type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.txt</code></td>
+<td><code>text/plain</code></td>
+</tr>
+<tr>
+<td><code>.md</code></td>
+<td><code>text/markdown</code></td>
+</tr>
+<tr>
+<td><code>.pdf</code></td>
+<td><code>application/pdf</code></td>
+</tr>
+<tr>
+<td><code>.png</code></td>
+<td><code>image/png</code></td>
+</tr>
+<tr>
+<td><code>.jpg</code>, <code>.jpeg</code></td>
+<td><code>image/jpeg</code></td>
+</tr>
+</tbody>
+</table>
+<p>PDF, PNG and JPEG signature checks are input admission checks, not malware
+scanning or proof that a model understands the content. Native state capacity
+and retention limits remain independent of this UI input budget.</p>
+<p>Hosted forwards official <code>input_file</code>/image input. DTS carries native
+<code>context_messages</code> and IDs. This inline path does not use Blob URLs, SAS,
+Agent App Ingestion or corporate knowledge publication. UI Cosmos stores
+descriptors, not file bytes; review native host input retention separately.
+There is no native private-attachment Blob download/reindexing workflow.</p>
+<p>Transport tests verify the input path, not model PDF/image understanding.
+Use a compatible model and verify its actual output before promising those
+capabilities to users.</p>
+<p>A model citation, Blob URL or opaque session ID is not a grant.
+Shared managed identity does not by itself enforce user isolation.</p>
+<p>Custom ingestion remains a separate optional feature, disabled by default.
+Select it only when its processing path is actually needed.
+<a href="../ingestion/">Ingestion</a> explains shared-source indexing and
+<a href="../multimodality/">Document formats &amp; images</a> explains processing boundaries.</p>
 <h2 id="open-citations-and-downloads">Open citations and downloads</h2>
-<p>Native hosted citations use a signed, short-lived UI download link. The UI
-rechecks the current identity and source authorization when the link is opened.
-Shared Blob/ADLS documents use the user's Storage OBO permission.
-Conversation uploads require a fresh native Search match for the exact document,
-conversation and uploader before a workload Blob read is allowed.</p>
-<p>The native route limits streamed documents to 100 MiB and 120 seconds and does
-not retry a response after streaming has started. Search ownership checks are
-bounded and deny access when the exact authorized document is not found.
-Classical standalone citations can retain their separate SAS/direct-link path.
-See <a href="../application-auth/#protected-citation-downloads">Protected citation downloads</a>
-for the consent, storage permissions and verification steps.</p>
-<p>Restarting the UI invalidates process-local embedded sessions and download
-grants. A saved citation or conversation ID alone is never permission to
-download a document.</p>
+<p>Recheck the current identity and source authorization when a protected
+citation is opened. Do not trust a browser-supplied object ID,
+session ID or document URL as proof of ownership.</p>
+<p>Source-delegated access and workload transport credentials are independent.
+A source denial cannot be repaired by retrying with the application's broader
+identity. Signed selectors and short-lived links do not replace the current
+owner/source check.
+See <a href="../application-auth/#protected-citation-downloads">Protected citation downloads</a>.</p>
+<p>For a process waiting on a person, use
+<a href="../workflows/">Workflows &amp; human input</a>. A chat reconnect is not approval.</p>
 
 
 

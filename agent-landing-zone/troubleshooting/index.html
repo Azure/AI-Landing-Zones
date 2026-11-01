@@ -1414,10 +1414,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#administrative-panel-cannot-resolve-its-cosmos-database" class="md-nav__link">
+  <a href="#required-ui-metadata-database-is-missing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Administrative panel cannot resolve its Cosmos database
+        Required UI metadata database is missing
       
     </span>
   </a>
@@ -1545,6 +1545,17 @@
     <span class="md-ellipsis">
       
         The application starts but does not answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-sql-query-fails-or-its-caller-is-cancelled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A SQL query fails or its caller is cancelled
       
     </span>
   </a>
@@ -1953,7 +1964,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -6179,10 +6218,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#administrative-panel-cannot-resolve-its-cosmos-database" class="md-nav__link">
+  <a href="#required-ui-metadata-database-is-missing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Administrative panel cannot resolve its Cosmos database
+        Required UI metadata database is missing
       
     </span>
   </a>
@@ -6310,6 +6349,17 @@
     <span class="md-ellipsis">
       
         The application starts but does not answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-sql-query-fails-or-its-caller-is-cancelled" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A SQL query fails or its caller is cancelled
       
     </span>
   </a>
@@ -6502,14 +6552,16 @@ failure. Diagnose the failing stage before retrying or changing inputs.</p>
    CLI identity; each tool can use a different account.</li>
 <li>Record the failing command, time, stage, source revision and relevant
    non-secret settings, such as <code>NETWORK_ISOLATION</code>, <code>BUILD_MODE</code> and
-   <code>DEPLOYMENT_TOPOLOGY</code>.</li>
+   <code>ORCHESTRATION_HOST</code> and <code>APPLICATION_MODE</code>.</li>
 <li>For private environments, use a host with the required VPN/VNet connectivity.
    Inspect DNS, TLS and authorization separately.</li>
 <li>Preserve local work, data, environment bindings and security controls while
    investigating. Use the recovery steps below for the failed stage.</li>
 </ol>
-<p>The default <code>hosted-no-panel</code> layout runs the orchestrator in Foundry, with
-<code>maf_lite</code> and Foundry IQ. Confirm the recorded layout before recovery.
+<p>The default host is <code>hosted</code> and mode is <code>conversational</code>, with the UI
+included automatically. Record the canonical host/mode before recovery.
+History, feedback and attachments are independent default-off features;
+workflow or <code>both</code> requires UI metadata even with those flags off.
 Do not switch runtimes or weaken authentication to diagnose a failure.</p>
 <div class="admonition tip">
 <p class="admonition-title">Share useful, redacted diagnostics</p>
@@ -6565,8 +6617,8 @@ for the required records, preview and explicit destruction approval.</p>
 <h4 id="hosted-deployment-is-not-prepared">Hosted deployment is not prepared</h4>
 <p><strong>Symptom:</strong> Deployment reports missing hosted foundation prerequisites or
 automatic image preparation fails.</p>
-<p><strong>Diagnose:</strong> Provision creates prerequisites and records
-<code>HOSTED_AGENT_PREPARED=true</code>. Deployment builds or reuses the immutable image,
+<p><strong>Diagnose:</strong> Provision creates prerequisites and records the foundation
+handoff. Deployment builds or reuses the immutable image,
 records its application handoff and creates the running agent version. A missing
 digest before deployment is normal; it does not require another provision.</p>
 <p><strong>Correct:</strong> Provision if the foundation is missing. Otherwise review the failed
@@ -6600,11 +6652,9 @@ with exit code <code>2</code>. An invalid definition instead exits with code <co
 for that environment; orchestrator topology is a separate choice.</p>
 <p><strong>Correct:</strong> Restore the matching definition. For a different application ID,
 use a separate environment and select the definition <strong>before first provision</strong>.
-Retain the original environment's binding and topology.</p>
+Retain the original environment's binding and canonical host/mode selection.</p>
 <p><strong>Verify:</strong> Definition validation and binding checks pass for the intended
 environment. See <a href="../build-your-own-app/">Custom applications</a>.</p>
-<p><span id="custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator"></span></p>
-<p><span id="custom-hosted-image-pull-fails-with-a-classic-agent-application-orchestrator"></span></p>
 <h4 id="custom-hosted-image-pull-fails">Custom hosted image pull fails</h4>
 <p><strong>Symptom:</strong> A custom <code>azure.ai.agent</code> service cannot activate its private image,
 although Foundry project and registry outputs exist.</p>
@@ -6794,8 +6844,10 @@ See <a href="../configuration/#search-shared-private-links">Private native Blob 
 combination fails validation, or attachment behavior differs from expectations.</p>
 <p><strong>Diagnose:</strong> Fresh Agent Application deployments default to
 <code>DEPLOY_INGESTION_CONTAINER_APP=false</code>, independently of orchestrator hosting.
-Native source ingestion uses Search's service-managed pipeline. Conversation
-uploads and Agent App Ingestion features require separate selection.
+Native source ingestion uses Search's service-managed pipeline.
+Agent App Ingestion features require explicit selection.
+Private attachments have a separate feature gate and file-processing path;
+ingestion selection does not enable them.
 Existing environments and custom definitions retain their component selections.</p>
 <p><strong>Correct:</strong> Check the resolved component selection, retrieval backend, source
 kind and index bindings using <a href="../ingestion/">Ingestion</a>. To retain or restore
@@ -6803,13 +6855,15 @@ Agent App Ingestion, select it explicitly and run the
 <a href="../deploy-full-stack/#step-4-deploy">full workflow</a>, not only <code>azd deploy</code>.
 An externally populated index must be named explicitly where required.</p>
 <p><strong>Verify:</strong> Confirm the effective <code>agent-lz</code> key and intended UI revision.
-With ingestion disabled, attachment controls must be hidden and direct/stale
-uploads rejected. Verify text chat and retrieval separately, including the
+With attachments disabled, controls must be unavailable and direct/stale
+uploads rejected. With attachments enabled, verify the supported file path,
+owner-bound reads/downloads and denied cross-user access. Verify chat and retrieval
+separately, including the
 <a href="#protected-retrieval-fails-after-hosted-sign-in">delegated retrieval checks</a>.
 Ingestion selection is not a source of delegated user or owner context.</p>
-<p>If ingestion is selected, confirm the selection is <code>true</code> and test only
-eligible authenticated uploads. Processing success does not prove authorized
-conversation retrieval.
+<p>If ingestion is selected, confirm the selection is <code>true</code> and test its actual
+document-processing APIs. Processing success does not prove authorized
+retrieval or enable a native attachment path.
 Retire existing apps and permissions only as a
 separate authorized task, preserving documents and indexes.</p>
 <h4 id="shared-source-permission-options-are-rejected-or-unexpected">Shared-source permission options are rejected or unexpected</h4>
@@ -6844,9 +6898,13 @@ client with public access still disabled.</p>
 Vault references.</p>
 <p><strong>Diagnose:</strong> Distinguish name resolution, routing, TLS and HTTP authorization
 errors at both endpoints. Confirm the actual runtime identity and identify
-which connection stage stalls before choosing a recovery action.</p>
+which connection stage stalls before choosing a recovery action.
+Runtime availability handling catches Azure SDK and Requests transport
+failures, not arbitrary provider exceptions. An unexpected provider failure
+propagates unchanged; do not diagnose it as disabled configuration or successful
+empty settings. Distinguish the failure family before applying transport recovery.</p>
 <p><strong>Correct:</strong> Only for the confirmed transport compatibility case, use the
-<a href="../hosted-agents/#configuration-tls-compatibility">endpoint-scoped TLS profile</a>.
+<a href="../application-settings/#orchestrator-tls-compatibility">transport and TLS guidance</a>.
 Supply the actual <code>KEY_VAULT_URI</code>, deliberately select
 <code>APP_CONFIG_TLS_COMPATIBILITY=true</code> and deploy a new agent version.
 To restore SDK defaults, use <code>false</code> and
@@ -6895,14 +6953,15 @@ The supported configuration skips inapplicable key injection. Investigate
 unexpected key or Key Vault errors instead of enabling local authentication.</p>
 <p><strong>Verify:</strong> Post-provision reports the expected Entra-only path and evaluation
 works with the intended identity while local authentication remains disabled.</p>
-<h4 id="administrative-panel-cannot-resolve-its-cosmos-database">Administrative panel cannot resolve its Cosmos database</h4>
-<p><strong>Symptom:</strong> <code>DEPLOY_ADMINISTRATIVE_PANEL is true but DATABASE_ACCOUNT_NAME is not set</code>.</p>
+<h4 id="required-ui-metadata-database-is-missing">Required UI metadata database is missing</h4>
+<p><strong>Symptom:</strong> Workflow/both or an enabled product feature requires metadata,
+but the UI cannot resolve its database account or name.</p>
 <p><strong>Diagnose:</strong> Identify the selected database account and name, then check
 process inputs and the settings published in App Configuration.</p>
 <p><strong>Correct:</strong> Confirm the two settings under <code>agent-lz</code> for the selected
 environment. Setup reads published settings when process inputs are absent.
 Resolve missing or conflicting values in their provisioning source.</p>
-<p><strong>Verify:</strong> Panel configuration resolves the actual account/database and
+<p><strong>Verify:</strong> UI metadata configuration resolves the actual account/database and
 preserves container-scoped grants. Compare the resolved names with the
 provisioned resources and keep permissions scoped to the required containers.</p>
 <h4 id="missing-endpoint-output">Missing endpoint output</h4>
@@ -6957,7 +7016,7 @@ inspect the first failed operation, including its policy, quota, region or
 resource-name error.</p>
 <p><strong>Correct:</strong> Resolve that specific cause. Region/name changes can replace
 stateful resources, so review their impact before retrying the
-<a href="../deploy-infra-only/#reconfigure-or-upgrade-the-foundation">foundation workflow</a>.
+<a href="../deploy-infra-only/#review-infrastructure-changes">foundation workflow</a>.
 For a name conflict, identify the existing resource and its owner before
 deciding whether to reuse it or choose another name.</p>
 <p><strong>Verify:</strong> The failed deployment and post-provision configuration both complete.
@@ -7003,45 +7062,53 @@ permitted retrieval and denial through the actual UI or channel, including
 references and downloads. A unit test or successful greeting is not
 authorization evidence for a deployed source.</p>
 <h4 id="a-protected-citation-download-is-denied">A protected citation download is denied</h4>
-<p><strong>Diagnose:</strong> Distinguish shared-source Storage authorization from upload
-authorization. Shared Blob/ADLS reads require the current user's Storage OBO,
-delegated <code>user_impersonation</code> consent and source RBAC/ACLs. Uploads require a
-fresh Search-authorized match for the exact document, conversation and uploader,
-plus the UI's Search transport role. Knowing the URL or possessing an old
-signed selector is not sufficient.</p>
+<p><strong>Diagnose:</strong> Shared Blob/ADLS citation reads require the current user's
+Storage OBO, delegated <code>user_impersonation</code> consent and source RBAC/ACLs.
+Knowing the URL or possessing an old signed selector is not sufficient.
+Native private attachments are inline inputs, not Blob/SAS downloads or
+Search-indexed conversation uploads.</p>
 <p><strong>Correct:</strong> Sign in again after session expiry and resolve consent or source
 permissions at their own boundary. Confirm the configured storage locations,
 Search index and bundled UI <code>retrieval-reader</code> profile. The native route
-limits a download to 100 MiB and 120 seconds; upload authorization examines
-at most 1,000 Search rows within 4 MiB and 30 seconds. An unverified target
-beyond those bounds is denied, not read with elevated access.
+limits a download to 100 MiB and 120 seconds. An unverified target beyond
+those bounds is denied, not read with elevated access.
 Do not re-enable the legacy reader, mint SAS or replace user Storage access
 with workload access to make the download succeed.</p>
 <p><strong>Verify:</strong> Repeat allowed/denied-user, expiry and permission-revocation checks
-through the authenticated UI route, including an uploaded document.
+through the authenticated citation route. Test private attachments separately
+using their supported inline formats and denied cross-owner session.
 See <a href="../application-auth/#protected-citation-downloads">protected citation downloads</a>.</p>
 <h4 id="the-orchestrator-returns-http-422">The orchestrator returns HTTP 422</h4>
 <p><strong>Symptom:</strong> The agent rejects a request with validation details.</p>
-<p><strong>Diagnose:</strong> The stateless <strong>Responses 2.0.0</strong> adapter rejects non-null
-<code>previous_response_id</code>, empty asks and message arrays not ending with a user
-message. The adapter ignores top-level <code>conversation</code>.
-The UI's <code>/invocations?api-version=v1</code> uses another request shape.</p>
+<p><strong>Diagnose:</strong> Check the selected native client, application kind and typed
+input. Hosted Responses and the durable client have different contracts.
+A workflow's initial input and its pending human reply are also different
+operations. A native session/run ID selects execution; it does not establish
+ownership or replace the pending request ID.</p>
 <p><strong>Correct:</strong> Use the returned validation detail and the correct
-<a href="../hosted-agents/#calling-the-agent">request format</a>. For stateless Responses,
-remove state selectors and supply complete, ordered context.</p>
+<a href="../application-api/">native client contract</a>. Do not send a retired strategy-specific
+ask envelope to a native entrypoint, strip native state selectors to force
+stateless execution, or manufacture a human reply for a different request.</p>
 <p><strong>Verify:</strong> A request in the intended endpoint's format succeeds through that endpoint.</p>
 <h4 id="hosted-chat-works-but-history-is-unavailable">Hosted chat works but history is unavailable</h4>
-<p><strong>Symptom:</strong> A greeting works, but history is unavailable or panel history
-returns 503.</p>
-<p><strong>Diagnose:</strong> Hosted runtime is stateless. Without separately activated
-continuity, context is limited to the active UI session. Agent Application Cosmos DB
-in <code>hosted-panel</code> stores owner/index and feedback metadata, not transcripts.
-UI history requires continuity and the separately documented panel gates.</p>
-<p><strong>Correct:</strong> Review continuity activation, panel gates, owner binding and
-agent-scoped permissions in <a href="../hosted-agents/#calling-the-agent">Hosted agents</a>.
-Apply configuration changes through the full workflow using hosted continuity
-and owner-scoped permissions. Keep the hosted container's conversation access
-restricted; do not enable the panel merely to obtain persistence.</p>
+<p><strong>Symptom:</strong> A greeting works, but saved history is unavailable.</p>
+<p><strong>Diagnose:</strong> Separate native execution continuity from saved-history discovery.
+Foundry owns Hosted state; DTS owns Container Apps durable state.
+The UI/BFF owns the authenticated owner map and display metadata.
+A successful greeting does not prove that the metadata store, native state
+read and owner-bound resume path are ready. An administrative panel is not
+required to obtain native persistence.</p>
+<p><strong>Correct:</strong> Check the selected publication or durable registration, current
+identity, owner mapping, metadata dependency and native client permissions.
+Saved listing/history requires <code>ENABLE_CHAT_HISTORY=true</code>; known workflow
+resume does not. With conversational mode and all product flags off, bounded
+volatile UI owner maps are lost on restart. Native state does not reconstruct
+them.
+Follow <a href="../conversations/">Conversations &amp; files</a> and
+<a href="../hosted-agents/#calling-the-agent">Agent hosting</a>.
+Report a failed state read rather than presenting empty history or replaying
+a UI transcript as a replacement execution store. Switching hosts does not
+import a session from the previous backend.</p>
 <p><strong>Verify:</strong> Open a saved conversation in a new session as its owner and confirm
 the transcript is available. Repeat as another user and confirm access is denied.</p>
 <h4 id="the-application-starts-but-does-not-answer">The application starts but does not answer</h4>
@@ -7062,6 +7129,21 @@ Use provisioning for infrastructure changes and a new process or hosted version
 for startup settings, as specified in those workflows.</p>
 <p><strong>Verify:</strong> Repeat the same authenticated task and test document authorization
 when retrieval is involved. Keep credentials and content out of diagnostics.</p>
+<h4 id="a-sql-query-fails-or-its-caller-is-cancelled">A SQL query fails or its caller is cancelled</h4>
+<p><strong>Diagnose:</strong> SQL result translation retains error-result behavior for actual
+Azure SDK, ODBC and Pydantic failures. Unexpected implementation failures
+propagate unchanged instead of being converted into disabled, success-shaped
+or generic error-result fallbacks. Distinguish a known dependency/data failure
+from an implementation defect; do not retry under broader datasource access.</p>
+<p><strong>Correct:</strong> Preserve read-only guards, datasource authorization and the
+1,000-row/30-second bounds. After caller cancellation, retain that original
+cancellation even if the worker completes, the driver or worker fails, or
+the worker cancels. Cursor/connection cleanup must wait until the worker
+finishes; do not close resources beneath a running worker.</p>
+<p><strong>Verify:</strong> Check the failure/cancellation outcome and cleanup using the
+owning component's regression tests. Caller cancellation is not evidence
+of instant SQL-server cancellation.
+See <a href="../nl2sql/#failures-cancellation-and-cleanup">SQL failure handling</a>.</p>
 <h4 id="access-denied-between-services">Access denied between services</h4>
 <p><strong>Symptom:</strong> A dependency returns HTTP 401/403 or names a denied action.</p>
 <p><strong>Diagnose:</strong> Identify the caller's actual principal, target, denied action
@@ -7096,13 +7178,14 @@ capability permissions:</p>
 </tr>
 <tr>
 <td>Key Vault Secrets User</td>
-<td>Selected Key Vault</td>
-<td>Resolve secret references</td>
+<td>Required secrets or selected Key Vault</td>
+<td>Resolve references only for components that actually consume those secrets</td>
 </tr>
 </tbody>
 </table>
 <p>Additional grants depend on declared profiles, selected resources and topology.
-Hosted bootstrap, continuity and panel permissions are reconciled separately.
+Hosted bootstrap, native invocation, product metadata and panel permissions are
+reconciled separately.
 Use the relevant workflow to grant only the roles required by the actual caller.</p>
 <p><strong>Verify:</strong> The same intended identity can perform the required operation while
 unauthorized users/documents remain denied.</p>

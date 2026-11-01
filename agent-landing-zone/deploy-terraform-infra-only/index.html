@@ -1557,7 +1557,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5800,9 +5828,11 @@ one environment binds to one application ID. For a custom definition, follow
 <a href="../build-your-own-app/">Bring your own app</a> and set:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AGENTLZ_APP_DEFINITION<span class="w"> </span>&lt;path-to-app-definition.json&gt;
 </code></pre></div>
-<p>For the supplied Agent Application, the default is <code>hosted-no-panel</code>, with
-<code>maf_lite</code>, Foundry IQ and no Agent App Ingestion. It still needs the approved
-<code>HOSTED_AGENT_RESOURCE_SCOPE</code> before service configuration. Review the
+<p>For the supplied Agent Application, defaults are <code>ORCHESTRATION_HOST=hosted</code>
+and <code>APPLICATION_MODE=conversational</code>, with the UI included automatically and
+Agent App Ingestion off. History, feedback and attachments independently
+default to off; workflow or <code>both</code> always requires UI metadata.
+Hosted still needs the approved <code>HOSTED_AGENT_RESOURCE_SCOPE</code> before service configuration. Review the
 <a href="../deploy-full-stack/#step-3-choose-the-application-and-network">application and identity choices</a>
 and configure <a href="../application-auth/">per-user document authorization</a> before
 deploying the application.</p>

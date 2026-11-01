@@ -913,10 +913,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reconfigure-the-foundation" class="md-nav__link">
+  <a href="#review-infrastructure-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reconfigure the foundation
+        Review infrastructure changes
       
     </span>
   </a>
@@ -1662,7 +1662,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5783,10 +5811,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#reconfigure-the-foundation" class="md-nav__link">
+  <a href="#review-infrastructure-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Reconfigure the foundation
+        Review infrastructure changes
       
     </span>
   </a>
@@ -5979,8 +6007,9 @@ allowed IP ranges or the network address plan, go in the root
 files</strong> below for details.</p>
 <p><code>DEPLOYMENT_MODE</code> identifies the network design, but does not configure routing,
 DNS or isolation by itself. Configure those through the settings for your chosen
-approach below. <code>DEPLOYMENT_TOPOLOGY</code> separately chooses where the orchestrator
-runs. See <a href="../configuration/#deployment-inputs">Deployment inputs</a> for input
+approach below. <code>ORCHESTRATION_HOST</code> selects <code>hosted</code> or <code>container_apps</code>;
+<code>APPLICATION_MODE</code> selects <code>conversational</code>, <code>workflow</code> or <code>both</code>.
+See <a href="../configuration/#deployment-inputs">Deployment inputs</a> for input
 formats and generated files.</p>
 <h4 id="private-standalone-network">Private standalone network</h4>
 <p>Choose this when your workload team will manage its own network, private DNS
@@ -6083,9 +6112,12 @@ now, even if images will be deployed later. For a different application:</p>
 <p>Otherwise use the Agent Application definition. The first provision binds the environment
 to its application ID; a different ID requires a new environment.
 Preserve the existing layout and ingestion selection during recovery.</p>
-<p>The default Agent layout is <code>hosted-no-panel</code>, using <code>maf_lite</code> and Foundry IQ
-without Agent App Ingestion. Set <code>HOSTED_AGENT_RESOURCE_SCOPE</code> to the approved
-delegated Foundry audience followed by <code>/.default</code> before provisioning, even
+<p>The defaults are <code>ORCHESTRATION_HOST=hosted</code> and
+<code>APPLICATION_MODE=conversational</code>, with the UI included automatically and
+Agent App Ingestion off. History, feedback and attachments default to off;
+workflow or <code>both</code> requires UI metadata regardless of those flags.
+Set <code>HOSTED_AGENT_RESOURCE_SCOPE</code> for Hosted
+to the approved delegated Foundry audience followed by <code>/.default</code> before provisioning, even
 when application deployment will happen later. See the linked full-stack
 guide for identity inputs, downstream consent and protected-retrieval acceptance.</p>
 <h3 id="step-4-preview-and-provision">Step 4: Preview and provision</h3>
@@ -6273,22 +6305,15 @@ Verify platform outputs and required data-plane access before deploying.
 Private native Blob sources can require an administrator to approve the
 exact Search shared private-link request reported by the readiness gate.
 Do not approve every pending connection or bypass the gate.</p>
-<p><span id="reconfigure-or-upgrade-the-foundation"></span></p>
-<h3 id="reconfigure-the-foundation">Reconfigure the foundation</h3>
-<p>Record the deployed source revision, approved parameters, outputs and dependent
-applications. Back up required data and configuration, check compatibility and
-retain existing names, locations, layout and ingestion intent.
-If previewing changes, repeat the
-<a href="#optional-preview-agent-source">selected-environment preparation</a> before
-reviewing the preview. Apply approved root parameter changes with the provisioning step above.</p>
-<p>Update the coordinated platform and its <code>infra/</code> tree together.
-Use the <a href="../deploy-full-stack/#upgrade-to-a-new-release">reapply procedure</a>
-and <a href="../deploy-full-stack/#rollback">rollback</a> in the full-stack deployment guide.</p>
-<p>Retry a partial deployment with the same approved revision and environment after
-repairing the specific failure. Review resource and data changes separately
-when reverting code. Do not delete data, rename subnets, move existing
-resources to another region, weaken isolation or bypass preflight to recover.
-Turning a deploy flag off is not deletion or permission cleanup.</p>
+<h3 id="review-infrastructure-changes">Review infrastructure changes</h3>
+<p>Record the approved inputs, outputs and resource ownership, and back up
+required data and configuration. Before applying resource changes, follow
+<a href="#optional-preview-agent-source">selected-environment preparation</a> and review
+the provisioning preview.</p>
+<p>Retry a failed installation with the same approved revision and environment
+after repairing the specific failure. Do not delete data, rename subnets,
+move resources to another region, weaken isolation or bypass preflight to
+recover. Resource deletion and permission cleanup require separate approval.</p>
 <h3 id="add-an-application-later">Add an application later</h3>
 <p>Deploy the same bound application and selected components.
 Follow <a href="../deploy-full-stack/#step-4-deploy">Step 4 of the full-stack deployment guide</a>:

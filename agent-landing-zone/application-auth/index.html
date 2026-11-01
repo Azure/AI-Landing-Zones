@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -1495,6 +1523,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#trusted-identity-and-native-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trusted identity and native state
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#configure-login-in-order" class="md-nav__link">
@@ -5445,6 +5484,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#trusted-identity-and-native-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trusted identity and native state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#configure-login-in-order" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5632,13 +5682,31 @@
 
 <p><span id="application-access"></span></p>
 <h1 id="agent-application-access">Agent Application access</h1>
-<p>Agent Application has three independent access boundaries: UI admission,
-delegated Foundry invocation and document authorization. Signing in does not
-grant access to every document. Follow the setup sequence below for the default
+<p>Agent Application has independent access boundaries: UI admission,
+native host invocation, owner-bound execution and document/tool authorization.
+Signing in does not grant access to every document or run.
+Follow the setup sequence below for the default
 Foundry-hosted agent and Container Apps frontend. Azure CLI and azd sign-in
 authenticate the deployment operator, not application users.
 Deployment and redeployment belong to the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
+<h2 id="trusted-identity-and-native-state">Trusted identity and native state</h2>
+<p>The UI/BFF binds the authenticated tenant/user to native conversation and
+workflow IDs. Validate the owner on reads, history discovery, feedback,
+attachments and human replies. For a human reply, also validate the currently
+pending request and intended run. A stale, duplicate or wrong-run action must
+not advance another or completed execution.</p>
+<p>Hosted must use trusted platform invocation context or an explicitly
+supported delegation path. Container Apps uses the authenticated BFF boundary
+and identity-based scheduler access. A shared managed identity authorizes a
+service connection; it does <strong>not</strong> make arbitrary session IDs or body-supplied
+user metadata safe for per-user access. Missing required trusted context
+fails closed.</p>
+<p>Native persistence does not remove source authorization or OBO requirements.
+Functional configuration snapshots must never freeze user permissions:
+recheck current authorization on every interaction.
+See <a href="../hosted-agents/">Agent hosting</a> and
+<a href="../workflows/">Workflows &amp; human input</a>.</p>
 <p><span id="before-you-start"></span>
 <span id="1-configure-ui-sign-in"></span>
 <span id="ui-sign-in"></span></p>
@@ -5703,7 +5771,7 @@ known as <code>Entra</code>), the downstream scope is <code>https://ai.azure.com
 Confirm the deployed endpoint's audience with its owner; do not substitute
 the UI API scope or a management-plane audience. Set
 <code>HOSTED_AGENT_RESOURCE_SCOPE</code> in the selected azd environment before provision,
-as shown in the <a href="../deploy-full-stack/#orchestrator-topology">full-stack deployment guide</a>.
+as shown in the <a href="../deploy-full-stack/#native-application-selection">full-stack deployment guide</a>.
 This value is separate from the UI login scopes in step 4.</p>
 <p>The <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token">Foundry client authorization procedure</a>
 explains downstream permission and consent. The UI exchanges its user's API
@@ -5804,7 +5872,9 @@ access. Source/document grants remain a separate data-owner decision.</p>
 restart/redeploy its Container App after publishing settings, then sign out
 and sign in again. The UI caches settings at startup.
 A UI-only authentication change does not require restarting the hosted agent.
-Changes to hosted runtime settings require a new agent version instead.</p>
+Supported functional runtime parameters use App Configuration refresh and
+per-run snapshots. Structural host, graph, identity or publication changes
+require a compatible new publication; they are not live parameter updates.</p>
 <p>Verify in order: signed-out chat is denied; an admitted test user completes
 sign-in and returns to the exact callback; that user can invoke the intended
 agent through OBO; and a user outside the admission lists is denied.
@@ -5827,7 +5897,7 @@ Neither mode alone establishes authorization inside the hosted container.</p>
 <p>With <code>RETRIEVAL_AUTH_MODE=native_search</code>, the supplied UI performs a separate
 OBO exchange for <code>https://search.azure.com/.default</code> from the same authenticated
 UI assertion used for the Foundry exchange. Foundry forwards the resulting
-<code>x-client-search-token</code> to both hosted adapters. The connector supplies that
+<code>x-client-search-token</code> to the selected native Hosted publication. The connector supplies that
 raw token in <code>x-ms-query-source-authorization</code>, separately from its workload
 authentication to Search. It does not exchange the Search token again.</p>
 <p>This built-in path does not require customer-written Toolbox integration or
@@ -5858,12 +5928,12 @@ checks the current identity and source authorization again.</p>
 <p>Shared Blob/ADLS documents use the current user's Storage OBO token. The user
 needs actual Blob RBAC or ADLS ACL access, even if retrieval returned a citation.
 Missing Storage consent or source access never falls back to the UI identity.</p>
-<p>Conversation uploads instead require a fresh native Search check for the exact
-document URL, conversation and authenticated uploader before the UI workload
-reads the Blob. Deployment assigns the bundled UI Search Index Data Reader
-through its <code>retrieval-reader</code> capability profile for this transport check.
-Its existing Blob transport grants do not authorize a user by themselves.
-Missing ownership, scope or an exact authorized result denies the download.</p>
+<p>Native private attachments are different: the authenticated UI checks the
+owner-bound session and validates bounded inline file content before calling
+the native host. They do not use this Blob download route, a Search upload
+index, SAS or corporate ingestion. Cosmos stores descriptors only.
+See <a href="../conversations/#private-attachments">Private attachments</a> for the format
+and transport limits. Model PDF/image understanding remains unverified.</p>
 <p>The route accepts only configured storage locations and enforces bounded
 streaming. Embedded sessions retain their own principal/session boundary.
 External source links, such as SharePoint citations, remain subject to the
@@ -5906,12 +5976,20 @@ An answer without a citation is not sufficient evidence of denial.</p>
 <td>A permitted user downloads the cited document; another user, an expired session or a revoked source permission cannot redeem its grant.</td>
 </tr>
 <tr>
-<td>Uploaded document</td>
-<td>Only the authenticated uploader can retrieve or download it in its conversation; knowing a document URL or conversation ID is insufficient.</td>
+<td>Private attachment</td>
+<td>Only its owner-bound conversation accepts the validated inline input; another user's session ID is rejected before native access. This is not a Blob upload/download feature.</td>
 </tr>
 <tr>
-<td>Conversation ownership</td>
-<td>A different user cannot open the owner's history.</td>
+<td>Conversation/run ownership</td>
+<td>A different user cannot open or continue the owner's native state or product history.</td>
+</tr>
+<tr>
+<td>Human input</td>
+<td>Wrong-owner, stale, duplicate and wrong-request/run replies do not advance the workflow.</td>
+</tr>
+<tr>
+<td>Service identity</td>
+<td>A caller cannot obtain user access merely by knowing a native ID or using shared workload credentials.</td>
 </tr>
 </tbody>
 </table>
@@ -5926,7 +6004,7 @@ indicate missing downstream consent or Foundry user/agent access.
 Tool consent is separate from UI consent, as described in
 <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication">tool authentication</a>.</p>
 <p>Initial UI token acquisition and downstream Search failures retain distinct
-authentication outcomes. Both hosted adapters preserve a bounded, validated
+authentication outcomes. Recovery accepts only a bounded, validated
 claims challenge from the configured Search response. Provider response bodies,
 authorization URLs and arbitrary resource hints are not recovery instructions.</p>
 <p>The UI offers explicit interactive authentication rather than retrying the

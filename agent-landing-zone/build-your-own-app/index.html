@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5897,14 +5925,16 @@ different application. Choose the branch that matches your change:</p>
 </tbody>
 </table>
 <p>For the Agent Application orchestrator hosted in Foundry, use <a href="../foundry-iq/">Foundry IQ</a> for
-knowledge base retrieval. Custom strategies and tools must implement and test
-the hosted entrypoint and authorization path before deployment to Foundry.
-The default remains <code>maf_lite</code> with Foundry IQ.</p>
+knowledge base retrieval. Custom agent/workflow definitions and tools must use
+and test the selected native host integration and authorization path before
+deployment. The default is a conversational MAF Agent with Foundry IQ.
+Hosted conversation and workflow are separate publications when both are selected;
+the Container Apps alternative uses the official Durable Extension and DTS.</p>
 <p>The supplied UI/hosted native path integrates delegated Search authorization.
 A source fork or capability profile does not automatically preserve it.
 Custom applications must implement and test the same identity and source
 permission boundaries before using protected documents; do not substitute a
-strategy flag.</p>
+tool flag or prompt.</p>
 <p><span id="before-you-start"></span></p>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
@@ -5916,7 +5946,7 @@ strategy flag.</p>
   runner; Azure sign-in does not authorize Git.</li>
 <li>Hosted components require the runner's Foundry agent-authoring access on the
   exact project, plus account read access. Review the
-  <a href="../deploy-full-stack/#foundry-orchestrator-hosted-no-panel-or-hosted-panel">hosted deployment permissions</a>
+  <a href="../deploy-full-stack/#native-application-provisioning">hosted deployment permissions</a>
   for the required scopes.</li>
 <li>Private deployments require a connected host with private DNS resolution.
   An ACR build pool does not provide that host's connectivity.</li>
@@ -5998,7 +6028,9 @@ Agent Application Container App placeholders can remain alongside custom resourc
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
 If reusing Agent App UI, preserve its
-<a href="../ingestion/">upload-gate contract</a>.</p>
+<a href="../conversations/#private-attachments">inline attachment contract</a>, including
+owner mappings, exact byte/serialized limits and no corporate ingestion
+fallback. Workflow attachments are not supported by that native UI path.</p>
 </details>
 <h3 id="deploy-a-different-application">Deploy a different application</h3>
 <p>Use <code>samples/custom-app/hosted/</code>. Its minimal Responses server demonstrates
@@ -6039,12 +6071,11 @@ azd<span class="w"> </span>hooks<span class="w"> </span>run<span class="w"> </sp
   accepts the all-zero editing marker; deployment requires actual source HEAD.</p>
 </li>
 <li>
-<p>For a custom-only deployment, set <code>DEPLOYMENT_TOPOLOGY=classic</code> in the azd
-   environment <strong>before first provision</strong> to suppress the bundled hosted
-   orchestrator selection. This is a custom-definition composition requirement,
-   not a second Agent Application deployment path. The custom hosted component
-   receives its required hosted foundation resources.</p>
-<p>Then provision the selected definition using
+<p>Review the resolved custom definition's components and resource requirements
+   <strong>before first provision</strong>. The explicit definition selects the application;
+   do not use a native host flag as a substitute for its component declarations.
+   Required hosted foundation resources follow the custom hosted component.</p>
+<p>Provision the selected definition using
   the <a href="../deploy-infra-only/">infrastructure-only deployment guide</a>, and run root <code>azd deploy</code>.
   Its service uses its own source/image
   contract, not the Agent Application hosted image-preparation handoff.</p>
@@ -6067,7 +6098,7 @@ the hosted example's <code>kind</code> is insufficient.</p>
 For HEAD mismatches, compare <code>git rev-parse HEAD</code> inside the source folder with
 the declared pin without disabling validation.</p>
 <p>For image-pull or role failures, keep the same application ID and immutable image.
-Use <a href="../troubleshooting/#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator">custom hosted image-pull recovery</a>.
+Use <a href="../troubleshooting/#custom-hosted-image-pull-fails">custom hosted image-pull recovery</a>.
 Do not substitute another environment's endpoints, broad grants or registry admin
 credentials. Role propagation can require an explicit retry.</p>
 <h3 id="application-definition">Application definition</h3>

@@ -1496,7 +1496,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5533,9 +5561,13 @@
 <h1 id="deploy-full-stack-with-terraform">Deploy full stack with Terraform</h1>
 <h2 id="objective">Objective</h2>
 <p>Provision the Azure foundation with Terraform and deploy the Agent Application
-through the shared azd lifecycle. The default <code>hosted-no-panel</code> layout uses a
-Foundry-hosted orchestrator, a Container Apps UI and native Foundry IQ ingestion
-and retrieval, without an administrative panel or Agent Application Cosmos DB.</p>
+through the shared azd lifecycle. Defaults are <code>ORCHESTRATION_HOST=hosted</code>
+and <code>APPLICATION_MODE=conversational</code>: Foundry-hosted execution, an automatically
+included Container Apps UI and the selected native Foundry IQ source.
+History, feedback and private attachments independently default to off.
+Workflow or <code>both</code> always selects UI metadata. Native Hosted execution does
+not require application Cosmos DB; enabled UI product metadata declares its
+own dependencies.</p>
 <p>Terraform owns the foundation, not a second application deployment mechanism.
 <code>azd provision</code> creates and configures the foundation, <code>azd deploy</code> builds and
 publishes the selected application, and <code>azd up</code> runs both.</p>
@@ -5581,7 +5613,8 @@ Review <a href="../network-isolation/">network design</a>, quotas and recurring 
 An environment binds to one application ID.</p>
 <h3 id="step-2-confirm-application-and-build-choices">Step 2: Confirm application and build choices</h3>
 <p>For a <strong>new</strong> default Agent Application environment:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOYMENT_TOPOLOGY<span class="w"> </span>hosted-no-panel
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ORCHESTRATION_HOST<span class="w"> </span>hosted
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>APPLICATION_MODE<span class="w"> </span>conversational
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_RESOURCE_SCOPE<span class="w"> </span>&lt;approved-foundry-audience&gt;/.default
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>BUILD_MODE<span class="w"> </span>acr-task
@@ -5595,6 +5628,13 @@ Use <a href="../build-your-own-app/">Bring your own app</a> for a custom definit
 repositories and commits. Hooks validate the definition against those pins,
 fetch the selected sources, prepare the hosted image and coordinate deployment.
 Foundation outputs pass automatically to the component projects.</p>
+<p>Confirm <code>APPLICATION_MODE</code> and <code>ORCHESTRATION_HOST</code> through the canonical
+<a href="../configuration/#native-execution-selection">native execution selection</a>.
+Conversation is the default experience. Hosted conversation and workflow
+require separate publications when both are selected; pass their actual
+distinct endpoints to the UI. The Container Apps alternative uses the
+official Durable Extension worker/client and provisioned DTS binding.
+Do not treat every canonical runtime key as an implied <code>azd env</code> input.</p>
 <h3 id="step-3-provision-the-foundation">Step 3: Provision the foundation</h3>
 <p>Complete the <a href="../deploy-terraform-infra-only/#step-5-review-and-provision">Terraform infrastructure review</a>
 before the first apply. From the <strong>product root</strong>, with the intended azd
@@ -5640,6 +5680,12 @@ Then follow the shared <a href="../deploy-full-stack/#validation">application va
    retrieval and denial for an unauthorized user.</li>
 <li>Correlate requests with telemetry and record unmet capabilities as blocked.</li>
 </ol>
+<p>For native execution, verify session continuity from a fresh client.
+For a selected workflow, test pending review, approval/rejection and
+stale/duplicate/wrong-owner replies. Container Apps also needs evidence that
+the pending run survives an owned worker restart. Use the same exact product
+entrypoints/images on both providers; mocks do not establish deployed parity.
+See <a href="../workflows/#acceptance-checks">Workflows &amp; human input</a>.</p>
 <p>Record source, manifest, inputs, backend identity/key, provider lock and image
 digests without exposing state or secrets. In an authorized test environment,
 reprovision after deployment and verify that images, revisions and application

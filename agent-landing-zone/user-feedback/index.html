@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -1581,10 +1609,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#available-surfaces" class="md-nav__link">
+  <a href="#user-controls-and-storage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available surfaces
+        User controls and storage
       
     </span>
   </a>
@@ -1592,10 +1620,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hosted-panel-integration-contract" class="md-nav__link">
+  <a href="#ownership-contract" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted-panel integration contract
+        Ownership contract
       
     </span>
   </a>
@@ -1603,10 +1631,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#expected-isolation-and-failures" class="md-nav__link">
+  <a href="#verify-and-recover" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Expected isolation and failures
+        Verify and recover
       
     </span>
   </a>
@@ -5334,10 +5362,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#available-surfaces" class="md-nav__link">
+  <a href="#user-controls-and-storage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available surfaces
+        User controls and storage
       
     </span>
   </a>
@@ -5345,10 +5373,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hosted-panel-integration-contract" class="md-nav__link">
+  <a href="#ownership-contract" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted-panel integration contract
+        Ownership contract
       
     </span>
   </a>
@@ -5356,10 +5384,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#expected-isolation-and-failures" class="md-nav__link">
+  <a href="#verify-and-recover" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Expected isolation and failures
+        Verify and recover
       
     </span>
   </a>
@@ -5409,162 +5437,70 @@
 
 
 <h1 id="user-feedback">User feedback</h1>
-<p>The default <code>hosted-no-panel</code> application has no supported feedback collection
-or feedback administration surface. Optional <code>hosted-panel</code> provides
-Cosmos-backed APIs, but the supplied chat controls do not call those APIs.
-Hosted feedback requires a custom UI control and validated conversation
-ownership. <a href="https://learn.microsoft.com/en-us/azure/ai-foundry/agents/concepts/hosted-agents">Foundry hosted agents</a>
-provide the container runtime, not this feedback integration.</p>
-<p>This page describes those boundaries. The <a href="../deploy-full-stack/">full-stack deployment guide</a>
-covers deployment and redeployment, not a ready-made feedback customization.</p>
+<p>Feedback is a UI/BFF product feature, separate from native agent or workflow
+execution. Foundry and Durable Task Scheduler persist execution state;
+neither automatically supplies the application's owner-scoped ratings,
+comments or operator views.</p>
+<p>Select <code>ENABLE_USER_FEEDBACK=true</code> explicitly; its default is <code>false</code>.
+Provision the UI metadata store and frontend-only permissions. The UI consumes
+<code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
+(default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>).
+Do not require optional ingestion or an additional execution service merely
+to store a user's feedback.
+See <a href="../conversations/">Conversations &amp; files</a> for state ownership and
+<a href="../application-settings/">Application settings</a> for configuration.</p>
 <p><span id="choose-the-supported-path"></span></p>
-<h2 id="available-surfaces">Available surfaces</h2>
-<table>
-<thead>
-<tr>
-<th>Surface</th>
-<th>Supplied behavior</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>hosted-no-panel</code></td>
-<td>Chat without application feedback storage.</td>
-</tr>
-<tr>
-<td><code>hosted-panel</code></td>
-<td>Metadata storage and gated APIs; selection alone does not activate feedback.</td>
-</tr>
-<tr>
-<td><code>ENABLE_USER_FEEDBACK</code></td>
-<td>Default <code>false</code>. Existing Chainlit thumbs call the non-hosted orchestrator backend, not the panel API.</td>
-</tr>
-<tr>
-<td><code>USER_FEEDBACK_RATING</code></td>
-<td>Default <code>false</code>. Changes those same controls to a rating/comment form; it does not connect them to hosted feedback.</td>
-</tr>
-</tbody>
-</table>
-<p>Anonymous embedded sessions cannot use feedback actions.
-Keeping both control flags off avoids presenting a hosted feedback integration
-that is not supplied.</p>
-<p><span id="prepare-a-hosted-panel-integration"></span></p>
-<h2 id="hosted-panel-integration-contract">Hosted-panel integration contract</h2>
-<p>User-facing history, feedback and deletion share the same gates.</p>
-<table>
-<thead>
-<tr>
-<th>Dependency</th>
-<th>Contract</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Panel deployment</td>
-<td><code>DEPLOY_ADMINISTRATIVE_PANEL</code> reflects actual <code>hosted-panel</code> provisioning.</td>
-</tr>
-<tr>
-<td>Continuity</td>
-<td>Active owner-bound hosted continuity, not just <code>HOSTED_CONTINUITY_ENABLED=true</code>.</td>
-</tr>
-<tr>
-<td>User surfaces</td>
-<td><code>PANEL_HISTORY_ENABLED</code> defaults to <code>false</code>.</td>
-</tr>
-<tr>
-<td>Token validation</td>
-<td><code>PANEL_CONVERSATIONS_TOKEN_AUDIENCE</code> identifies the delegated token audience; tenant comes from <code>PANEL_CONVERSATIONS_TENANT_ID</code> or the OAuth tenant.</td>
-</tr>
-<tr>
-<td>Metadata</td>
-<td>Provisioned <code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and UI identity access to Cosmos.</td>
-</tr>
-<tr>
-<td>Enumeration</td>
-<td><code>PANEL_CONVERSATION_ENUMERATION_MODE=owner_index</code> is the default. Delegated mode requires its own evidence gate.</td>
-</tr>
-</tbody>
-</table>
-<p>The default containers are <code>panel-conversation-owner-index</code> and <code>panel-feedback</code>.
-<code>HOSTED_CONVERSATION_OWNER_BINDING_VALIDATED</code> gates delegated continuity;
-<code>PANEL_HISTORY_OWNER_BINDING_VALIDATED</code> independently gates delegated panel
-enumeration. Neither grants permissions. Provisioning resets owner-validation
-and operator-surface gates to <code>false</code>; they remain false until deployment-specific
-authorization evidence exists. <a href="../hosted-agents/">Agent hosting</a> describes the
-continuity protocol and permission requirements.</p>
-<p>The custom control calls the <strong>UI service</strong>, not the hosted container:</p>
-<div class="reference-fields responsive-reference">
-<table role="table">
-<thead role="rowgroup">
-<tr role="row">
-<th role="columnheader" scope="col">UI endpoint</th>
-<th role="columnheader" scope="col">Purpose</th>
-</tr>
-</thead>
-<tbody role="rowgroup">
-<tr role="row">
-<th role="rowheader" scope="row"><code>GET /panel/conversations</code></th>
-<td data-label="Purpose" role="cell">Lists the caller's conversation IDs.</td>
-</tr>
-<tr role="row">
-<th role="rowheader" scope="row"><code>POST /panel/conversations/{conversation_id}/feedback</code></th>
-<td data-label="Purpose" role="cell">Creates or upserts that owner's feedback.</td>
-</tr>
-<tr role="row">
-<th role="rowheader" scope="row"><code>GET /panel/conversations/{conversation_id}/feedback</code></th>
-<td data-label="Purpose" role="cell">Reads feedback after the same ownership check.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Every request requires a delegated user bearer with <code>user_impersonation</code>,
-valid tenant/audience and active gates. Listing is scoped to the caller;
-per-conversation operations require a Cosmos owner-index match.
-A conversation ID alone grants no access.</p>
-<p>The body contains <code>feedback_id</code> and <code>message_ref</code> (1–128 characters each),
-optional integer <code>rating</code> from <code>-5</code> to <code>5</code>, <code>category</code> up to 64 characters and
-<code>comment</code> up to 2,000. Unknown fields are rejected. The feedback ID is unique
-across that owner's conversations; retrying it upserts the owner's record.
-Tokens are not body fields or URL parameters.</p>
-<p>Runtime settings normally use App Configuration label <code>agent-lz</code> and load at
-UI startup. <a href="../application-settings/#overrides-and-effective-values">Application settings</a>
-describes overrides.
-Changes require a UI process reload. Source changes require a compatible
-application build. Neither enabling flags nor deploying the panel implements
-the missing control.</p>
+<h2 id="user-controls-and-storage">User controls and storage</h2>
+<p>When feedback is enabled and its dependencies are ready, the chat control
+submits to the authenticated UI/BFF. The BFF checks the current owner mapping
+and associates feedback with the intended conversation/run and message/result.
+The product store holds feedback metadata, not native execution checkpoints.
+The route is <code>POST /api/native/sessions/{id}/feedback</code> with
+<code>native_ref</code>, <code>rating</code> (<code>-1</code> or <code>1</code>) and <code>comment</code> (at most 2,000 characters).
+The UI UUID must belong to the authenticated owner. Unknown/nonowned IDs
+return <code>404</code> before backend access; a native reference alone grants nothing.
+Feedback uses the native UI route above; <code>/panel/conversations</code> is not mounted.</p>
+<p>Do not display working-looking controls for an unavailable integration.
+A clicked thumb or accepted browser event is not evidence that feedback was
+saved. Report storage failures rather than confirming a successful write.
+Anonymous embedding does not establish an authenticated conversation owner.</p>
+<h2 id="ownership-contract">Ownership contract</h2>
+<p>Every feedback read or mutation must:</p>
+<ol>
+<li>Validate the authenticated user at the BFF boundary.</li>
+<li>Resolve a server-owned mapping to the selected native session/run.</li>
+<li>Check that the target message/result belongs to that owner and execution.</li>
+<li>Validate the feedback payload and persist it in the declared product store.</li>
+<li>Return the actual result without forwarding credentials into the feedback
+   document, prompt or telemetry.</li>
+</ol>
+<p>A known run ID, user ID in the body or a shared managed identity is not
+authorization. Missing mappings or dependencies fail closed; they must not
+fall back to another user's execution or an unrelated backend.</p>
 <p><span id="verify-and-recover"></span></p>
-<h2 id="expected-isolation-and-failures">Expected isolation and failures</h2>
-<p>An owner can submit and read back saved fields and timestamp. Another user
-receives <code>404</code>, indistinguishable from a missing conversation. Missing active
-gates return <code>503</code>; invalid identity returns <code>401</code>/<code>403</code>; invalid input returns
-<code>422</code>. Metadata or managed-conversation failures can return <code>502</code>, not an
-empty successful feedback list.</p>
-<p><code>PANEL_HISTORY_ENABLED=false</code> disables user history, feedback and deletion after
-reload without deleting stored metadata or changing hosted chat routing.</p>
+<h2 id="verify-and-recover">Verify and recover</h2>
+<p>Verify the feedback write response and authorized metadata persistence,
+that another user cannot submit against that session, and that an unavailable
+store produces an explicit failure. Do not invent a native feedback-list
+endpoint from the old panel API.
+Check the result after retries so that a transport interruption does not
+silently create unrelated records.</p>
+<p>Disabling a product surface is not data deletion. Retain existing feedback
+according to policy and verify cleanup separately when a conversation or run
+is removed. Native state and product metadata have different lifecycle APIs.</p>
 <h2 id="administrative-views">Administrative views</h2>
-<p>See <a href="../operations/">Administration</a> for panel setup and operator access.</p>
-<p>When the ingestion service is selected, its separate hosted-panel API exposes
-<code>GET /api/panel/feedback</code> and counts in <code>GET /api/panel/overview</code>. It validates
-an Entra bearer with the <code>Admin</code> app role and rejects missing tenant configuration.
-Its schema uses <code>conversationId</code>, <code>messageId</code>, <code>rating: "up" | "down"</code>, <code>comment</code>
-and <code>tags</code>.</p>
-<p>The UI schema instead uses <code>message_ref</code> and numeric ratings.
-There is no shipped adapter joining these schemas into an administrative view.</p>
-<p>Operator overview/curation is separately gated by
-<code>PANEL_OPERATOR_SURFACES_ENABLED</code>, actual deployment, an explicit
-<code>PANEL_OPERATOR_APP_ROLE</code> or <code>PANEL_OPERATOR_GROUP_ID</code>, and the backend
-cursor-signing secret. Provisioning leaves it disabled pending authorization
-validation. The <code>Admin</code> role and user-history gate do not substitute for this
-operator contract.</p>
+<p>User feedback authorization is not operator authorization.
+Expose administrative reads only through an explicitly supported operator
+surface with its own roles, aggregation and privacy controls.
+Do not assume the optional ingestion dashboard shares the UI's schema or
+provides a consolidated native history/feedback administration API.
+See <a href="../operations/">Administration</a>.</p>
 <h2 id="privacy-and-retention">Privacy and retention</h2>
-<p>Panel Cosmos stores ownership and feedback metadata, not chat transcripts or
-citations. Comments are still user-authored data and can contain sensitive
-content. Operator authorization and feedback retention need explicit policy
-separate from Foundry conversation retention.
-<a href="https://learn.microsoft.com/en-us/azure/cosmos-db/time-to-live">Cosmos DB time to live</a>
-can expire configured metadata; this integration sets no automatic retention
-period. Conversation deletion attempts feedback cleanup, which can fail and
-needs result verification. Backups have their own retention boundary.</p>
+<p>Comments can contain sensitive user-authored data even when the store contains
+no transcript. Define retention, allowed operator access, export/deletion
+handling and backup policy separately from native conversation retention.
+Audit identifiers and outcomes without recording tokens or unnecessary content.
+<a href="../application-monitoring/">Monitoring &amp; audit</a> covers operational evidence.</p>
 
 
 

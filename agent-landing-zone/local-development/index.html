@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -2243,30 +2271,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#orchestrator" class="md-nav__link">
+  <a href="#native-orchestrator" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchestrator
+        Native orchestrator
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Orchestrator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hosted-entrypoint" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hosted entrypoint
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -5395,30 +5406,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#orchestrator" class="md-nav__link">
+  <a href="#native-orchestrator" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Orchestrator
+        Native orchestrator
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Orchestrator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hosted-entrypoint" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hosted entrypoint
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -5558,7 +5552,7 @@ in place of <code>python</code> rather than changing execution policy.</p>
 <tbody>
 <tr>
 <td>Orchestrator</td>
-<td>Runtime environment overrides require <code>allow_environment_variables=true</code>. Its parser also accepts <code>1</code> and <code>yes</code>. The classic entrypoint loads <code>.env</code>, not <code>.env.sample</code>. The hosted entrypoint expects process environment configuration.</td>
+<td>Supply native host/mode and process bootstrap inputs explicitly. Relevant functional settings come from the scoped App Configuration provider. A sample <code>.env</code> does not replace the selected native entrypoint's contract.</td>
 </tr>
 <tr>
 <td>Ingestion</td>
@@ -5573,48 +5567,55 @@ in place of <code>python</code> rather than changing execution policy.</p>
 <p>Bootstrap values such as <code>APP_CONFIG_ENDPOINT</code> are direct process inputs.
 See <a href="../application-settings/">Application settings</a> for provider precedence,
 required feature settings, and restart behavior.</p>
-<h2 id="orchestrator">Orchestrator</h2>
-<p>The orchestrator chooses an agent strategy, calls models and tools, and streams
-answers. In the <strong>orchestrator root</strong>, after the setup above:</p>
-<div class="highlight"><pre><span></span><code>python -m uvicorn main:app --app-dir src --host 127.0.0.1 --port 9000
+<h2 id="native-orchestrator">Native orchestrator</h2>
+<p>Use the owning component's explicit native host entrypoint after preparing
+its compatible published dependencies. Select <code>APPLICATION_MODE</code> and
+<code>ORCHESTRATION_HOST</code>; do not start a retired HTTP strategy service
+as a substitute for native execution.</p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>Local-development boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hosted</td>
+<td>Official Responses hosting with request-aware agent/workflow factories. A local listener does not publish an application or simulate trusted Foundry ingress context.</td>
+</tr>
+<tr>
+<td>Container Apps</td>
+<td>Official standalone Durable Extension worker connected to a development DTS backend, with the native durable client. It is not a Hosted ASGI application or an Azure Functions host.</td>
+</tr>
+</tbody>
+</table>
+<p>From the orchestrator root, run the selected entrypoint:</p>
+<div class="highlight"><pre><span></span><code>python -m native.hosted
 </code></pre></div>
-<p>Classic startup needs the shared strategy settings
-<code>AI_FOUNDRY_PROJECT_ENDPOINT</code>, <code>AI_FOUNDRY_ACCOUNT_ENDPOINT</code>, and
-<code>CHAT_DEPLOYMENT_NAME</code>. Conversation storage also needs
-<code>DATABASE_ACCOUNT_NAME</code> and <code>DATABASE_NAME</code>.
-<code>CONVERSATIONS_DATABASE_CONTAINER</code> defaults to <code>conversations</code>.
-Retrieval and optional integrations need their own resources and permissions.
-The sample environment file is illustrative, not a complete platform.</p>
-<p>SQL and Fabric connectors use <code>pyodbc</code>, Python's Open Database Connectivity
-adapter. For SQL execution, install Microsoft ODBC Driver 18 for SQL Server and
-the native ODBC dependencies for your OS, as illustrated by the repository's
-Dockerfile. On Linux, importing <code>pyodbc</code> may also require the native ODBC loader
-even when you are not executing a SQL strategy. Installing Python requirements
-alone does not install a database driver. Use a least-privilege read-only
-database identity for generated SQL.</p>
-<p>Call <code>POST /orchestrator</code> using the
-<a href="../application-api/#classic-orchestrator">classic API contract</a>. Service
-credentials and the user's bearer token are distinct requirements.
-<code>ALLOW_ANONYMOUS</code> does not bypass service authentication.
-Do not use <code>DISABLE_AUTH=true</code> on a shared or publicly reachable service.</p>
-<p>For the classic <code>mcp</code> strategy, the client uses <code>http://localhost:5000</code>
-outside Azure detection, even if another <code>MCP_APP_ENDPOINT</code> was configured.
-Run your local MCP test server there. Detection checks <code>CONTAINER_APP_NAME</code>
-or <code>WEBSITE_INSTANCE_ID</code>, not whether you ran <code>az login</code>.
-Use <a href="../agent-tools/">Tools &amp; MCP</a> for transport and endpoint configuration.</p>
-<h3 id="hosted-entrypoint">Hosted entrypoint</h3>
-<p>To develop the hosted protocol adapter, start this <strong>instead of</strong> the classic
-entrypoint, from the orchestrator root:</p>
-<div class="highlight"><pre><span></span><code>python -m uvicorn api.hosted_entrypoint:app --app-dir src --host 127.0.0.1 --port 8001
+<p>Hosted listens on port <code>8080</code>. For the standalone durable worker, use instead:</p>
+<div class="highlight"><pre><span></span><code>python -m native.durable
 </code></pre></div>
-<p>This selects another ASGI application, the Python web-server entrypoint.
-It does not register an agent with Foundry or emulate Foundry ingress and
-identity passthrough. Only <code>maf_lite</code>, <code>maf_agent_service</code>,
-<code>single_agent_rag</code>, and <code>mcp</code> are hosted-eligible. Hosted execution uses
-file-backed prompts and caller-supplied text history, not classic Cosmos state.
-<code>mcp</code> requires a valid platform-injected call ID and is not a bare local HTTP
-substitute for Toolbox. See <a href="../hosted-agents/">Hosted agents</a> and the
-<a href="../application-api/#hosted-orchestrator">hosted API contracts</a>.</p>
+<p>The worker has no public HTTP ingress or Dapr. Supply the actual DTS binding
+with <code>TaskHub=agent-lz;Authentication=ManagedIdentity</code>, and keep native names
+<code>agent-lz-conversation</code> and <code>agent-lz-research-review</code> aligned with the UI client.</p>
+<p>The selected mode needs its model, configuration and tool dependencies.
+Hosted native execution does not require application Cosmos; DTS owns durable
+worker execution. UI product metadata and an enabled direct NL2SQL tool can
+have their own storage requirements. Do not require every optional source
+credential or secret to start an unrelated capability.</p>
+<p>For enabled direct SQL or Fabric SQL connectors, install Microsoft ODBC Driver
+18 for SQL Server and the native ODBC dependencies for your OS.
+Installing Python requirements alone does not install a database driver.
+Use a read-only database principal, reviewed datasource metadata and the
+bound schema/example indexes described in <a href="../nl2sql/">NL2SQL</a>.
+This is optional tool setup, not a global SQL strategy.</p>
+<p>Use host-specific native inputs and clients described in the
+<a href="../application-api/#native-execution-contracts">API reference</a>.
+Test installed SDK call shapes and owner/pending-request denial with synthetic
+data before live use. Mocks do not prove deployed checkpoint durability or
+private connectivity. <a href="../hosted-agents/">Agent hosting</a> explains publication
+and worker requirements; <a href="../agent-tools/">Tools &amp; MCP</a> explains registration.</p>
 <h2 id="ingestion">Ingestion</h2>
 <p>The ingestion service processes documents and can change Search indexes and
 Blob control data.</p>
@@ -5652,9 +5653,11 @@ origin and sign-in redirect deliberately using
 origin, including protected-source recovery, still need that origin and an
 appropriate local HTTPS proxy. Changing the listening port alone does not
 reconfigure Entra or callback URLs.</p>
-<p><code>CHAT_BACKEND</code> defaults to <code>hosted_agent</code>. Use <code>orchestrator</code> explicitly for
-the classic backend, with its endpoint and service credentials configured.
-Hosted failures do not fall back to classic execution.
+<p><code>APPLICATION_MODE</code> selects conversation, workflow or both.
+<code>ORCHESTRATION_HOST</code> selects the explicit Hosted or durable client.
+Hosted <code>both</code> requires two publication endpoints; the durable client needs
+the actual scheduler binding and the worker's registered names.
+Failures do not fall back to a retired backend.
 The default hosted <code>user_delegated</code> authentication uses an on-behalf-of
 exchange, where the UI exchanges a user's API token for a downstream token.
 It needs the confidential-client settings and consent described in
@@ -5668,11 +5671,13 @@ self-contained deployed UI. Do not write assets into <code>site-packages</code>.
 Missing <code>VERSION</code> is optional and a missing <code>.chainlit/config.toml</code> produces
 a warning.</p>
 <p>A missing or disconnected App Configuration provider produces an HTTP <code>503</code>
-not-ready app. Uploads additionally require the optional ingestion application
-and an authorized conversation. See <a href="../conversations/">Conversations &amp; files</a>.</p>
+not-ready app. Private attachments require their explicitly selected file
+path and ownership checks; ingestion is not a replacement upload path. See
+<a href="../conversations/">Conversations &amp; files</a>.</p>
 <h2 id="operator-dashboard-frontend">Operator dashboard frontend</h2>
-<p>The orchestrator and ingestion repositories each contain a React/TypeScript
-dashboard under <code>frontend/</code>. Vite is their local frontend server and build tool.
+<p>The ingestion repository contains its React/TypeScript operator dashboard
+under <code>frontend/</code>. Native orchestrator entrypoints do not mount a dashboard
+or retired administration APIs. Vite is ingestion's frontend server and build tool.
 It proxies API requests to an independently running backend.</p>
 <table>
 <thead>
@@ -5685,13 +5690,6 @@ It proxies API requests to an independently running backend.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>Orchestrator</td>
-<td>20</td>
-<td><code>npm install --no-audit --no-fund</code></td>
-<td><code>/api</code> to <code>http://localhost:9000</code></td>
-<td><code>src/static/</code></td>
-</tr>
 <tr>
 <td>Ingestion</td>
 <td>22</td>
@@ -5708,9 +5706,9 @@ The ingestion Dockerfile's Node 20 build stage is not the maintained local/CI
 Node 22 choice. Do not bypass peer-dependency checks.</p>
 <p><code>npm run build</code> writes the static bundle consumed by FastAPI at <code>/dashboard</code>
 when the administrative surface is mounted. A bundle does not enable that
-surface. Orchestrator requires <code>ENABLE_DASHBOARD=true</code>.
-Ingestion mounting depends on hosted/panel mode. Both can expose a development
-admin gate when Entra is not configured. Keep them private and follow
+surface. Route mounting belongs to the ingestion component's declared
+administrative surface. It can expose a development admin gate when Entra
+is not configured. Keep those endpoints private and follow
 <a href="../operations/">Administration</a> for production setup.</p>
 <h2 id="verify-the-intended-boundary">Verify the intended boundary</h2>
 <p>Check the selected backend, effective configuration, and logs before exercising

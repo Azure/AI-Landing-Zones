@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5516,19 +5544,19 @@ content and return source references.</p>
 <p>This page describes Foundry IQ and the Agent Application's integration limits.
 Deployment follows the <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
 <h2 id="choose-the-retrieval-backend">Choose the retrieval backend</h2>
-<p>The orchestrator's runtime default for <code>RETRIEVAL_BACKEND</code> is <code>ai_search</code>.
-The platform can supply <code>foundry_iq</code> for a native knowledge-base topology.
-Empty or unknown runtime values fall back to <code>ai_search</code>, so read back the
-effective setting rather than relying on a misspelled value. Restart after
-changing this cached selection.</p>
+<p>Select the registered retrieval capability and its resource bindings.
+The default platform topology supplies <code>RETRIEVAL_BACKEND=foundry_iq</code>.
+Read back the effective relevant settings; do not rely on an unknown value
+falling back to another backend or silently changing source authorization.</p>
 <p><code>ai_search</code> queries the configured index directly. <code>foundry_iq</code> calls a
 knowledge base and combines its configured sources. The selector applies to
-the shared knowledge-search connector and the MAF Lite, MAF Agent Service and
-multimodal context providers. It does not reroute the
-<a href="../nl2sql/#direct-nl2sql-strategy">NL2SQL strategy</a> or replace callable
+the application's registered knowledge-search capability, usable by an Agent
+or Workflow. It does not reroute the
+<a href="../nl2sql/#direct-nl2sql-tool">NL2SQL tool</a> or replace callable
 <a href="../agent-tools/">MCP tools</a>.
 <a href="../application-settings/">Application settings</a> describes how to change runtime
-values. <a href="../agent-strategies/">Strategies &amp; prompts</a> describes hosting eligibility.</p>
+values. <a href="../agent-strategies/">Agents &amp; prompts</a> describes application selection
+independently of the host and its tools.</p>
 <p><span id="before-you-start"></span>
 <span id="1-choose-who-manages-the-source"></span></p>
 <h2 id="managed-and-remote-sources">Managed and remote sources</h2>
@@ -5540,7 +5568,7 @@ index. Both can return content to the agent and model.</p>
 standard content extraction and ingestion permission options <code>["rbacScope"]</code>.
 Search manages the generated indexing assets. Optional Agent App Ingestion is
 disabled by default for new environments and is not needed for this source.
-<a href="../ingestion/">Ingestion</a> explains native source ingestion, conversation uploads
+<a href="../ingestion/">Ingestion</a> explains native source ingestion, private-input boundaries
 and custom processing.</p>
 <p>An existing Search index can be registered as a <code>searchIndex</code> knowledge source.
 The pipeline that owns that index remains responsible for its content, schema
@@ -5612,7 +5640,7 @@ The connector reads runtime values from App Configuration with label <code>agent
 default API. Adopting a source requires compatibility across registration,
 retrieve requests and response parsing, not an API-version edit alone.</p>
 <h2 id="delegated-native-retrieval">Delegated native retrieval</h2>
-<p>The supplied UI and hosted strategy integrate the user authorization path.
+<p>The UI and native retrieval capability have a separate user authorization path.
 The UI obtains a delegated Search token through OBO and forwards it with
 <code>x-client-search-token</code>. The hosted connector passes the raw token in
 <code>x-ms-query-source-authorization</code>. The connector's workload credential

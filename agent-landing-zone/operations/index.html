@@ -1331,7 +1331,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -2082,10 +2110,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#choose-the-administrative-surface" class="md-nav__link">
+  <a href="#choose-the-operational-surface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose the administrative surface
+        Choose the operational surface
       
     </span>
   </a>
@@ -2093,10 +2121,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#classic-orchestrator-dashboard" class="md-nav__link">
+  <a href="#conversations-workflows-and-feedback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Classic orchestrator dashboard
+        Conversations, workflows and feedback
       
     </span>
   </a>
@@ -2112,24 +2140,30 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hosted-conversation-and-feedback-panel" class="md-nav__link">
+    <nav class="md-nav" aria-label="Ingestion dashboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operator-overview-and-curation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted conversation and feedback panel
+        Operator overview and curation
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#operator-overview-and-curation" class="md-nav__link">
+  <a href="#configuration-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Operator overview and curation
+        Configuration changes
       
     </span>
   </a>
@@ -5345,10 +5379,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#choose-the-administrative-surface" class="md-nav__link">
+  <a href="#choose-the-operational-surface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose the administrative surface
+        Choose the operational surface
       
     </span>
   </a>
@@ -5356,10 +5390,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#classic-orchestrator-dashboard" class="md-nav__link">
+  <a href="#conversations-workflows-and-feedback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Classic orchestrator dashboard
+        Conversations, workflows and feedback
       
     </span>
   </a>
@@ -5375,24 +5409,30 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hosted-conversation-and-feedback-panel" class="md-nav__link">
+    <nav class="md-nav" aria-label="Ingestion dashboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operator-overview-and-curation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted conversation and feedback panel
+        Operator overview and curation
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#operator-overview-and-curation" class="md-nav__link">
+  <a href="#configuration-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Operator overview and curation
+        Configuration changes
       
     </span>
   </a>
@@ -5432,137 +5472,119 @@
 
 <p><span id="operations"></span></p>
 <h1 id="administration">Administration</h1>
-<p>The application has separate administrative surfaces for conversations,
-configuration and document processing. Deploy and authorize only the ones
-your operators need. An administrative role does not grant access to every
-source document.</p>
-<h2 id="choose-the-administrative-surface">Choose the administrative surface</h2>
+<p>Native execution, UI product metadata and optional document processing have
+separate operational owners. Deploy and authorize only the surfaces needed
+by the installation. An operator role is not blanket permission to read
+every user's transcript, private attachment or source document.</p>
+<h2 id="choose-the-operational-surface">Choose the operational surface</h2>
 <table>
 <thead>
 <tr>
-<th>Surface</th>
-<th>Purpose</th>
-<th>Prerequisite</th>
+<th>Area</th>
+<th>Responsibility</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Classic orchestrator dashboard</td>
-<td>Inspect classic conversations and change allowlisted settings.</td>
-<td><code>ENABLE_DASHBOARD=true</code>, built dashboard assets and configured Entra access.</td>
+<td>Foundry Hosted</td>
+<td>Native application publications, session/workflow state and host telemetry</td>
 </tr>
 <tr>
-<td>Ingestion dashboard</td>
-<td>Inspect files, jobs, schedules and allowlisted ingestion settings.</td>
-<td>Selected ingestion service and its administrative surface.</td>
+<td>Container Apps and Durable Task Scheduler</td>
+<td>Durable worker lifecycle, scheduler connectivity and native run state</td>
 </tr>
 <tr>
-<td>Hosted user panel</td>
-<td>Owner-scoped conversation and feedback APIs in the UI service.</td>
-<td>Panel deployment, active continuity and user-history gates.</td>
+<td>UI/BFF</td>
+<td>Owner mappings, history discovery, feedback and enabled product administration</td>
 </tr>
 <tr>
-<td>Operator overview and curation</td>
-<td>Aggregate metrics and blocked-file curation.</td>
-<td>Panel deployment and separately validated operator authorization.</td>
+<td>Optional ingestion service</td>
+<td>Files, indexing/purge jobs, schedules and allowlisted processing settings</td>
+</tr>
+<tr>
+<td>App Configuration and Key Vault</td>
+<td>Declared settings, supported refresh, scoped access and secret rotation</td>
 </tr>
 </tbody>
 </table>
-<p>The default <code>hosted-no-panel</code> topology does not deploy the hosted administrative
-panel or its application Cosmos resources. Selecting a panel topology does
-not automatically enable history, feedback or operator access.</p>
-<h2 id="classic-orchestrator-dashboard">Classic orchestrator dashboard</h2>
-<p>Set <code>ENABLE_DASHBOARD=true</code> and deploy the built dashboard assets to serve
-<code>/dashboard/</code>. Use one Entra app registration for both the dashboard SPA and API.
-Its client ID is the backend token audience.</p>
-<ol>
-<li>Add the <strong>Single-page application</strong> platform with the redirect
-   <code>https://&lt;orchestrator-host&gt;/dashboard/</code>, including its trailing slash.
-   Add local redirects only for development.</li>
-<li>Expose the delegated API scope <code>api://&lt;client-id&gt;/access_as_user</code> and
-   complete the required consent.</li>
-<li>Define an enabled <strong>Users/Groups</strong> app role with exact value <code>Admin</code> and
-   assign approved operators through the enterprise application.</li>
-<li>Publish <code>OAUTH_AZURE_AD_TENANT_ID</code> and <code>OAUTH_AZURE_AD_CLIENT_ID</code>.
-   <code>OAUTH_AZURE_AD_API_SCOPE</code> can override the requested scope on that API.</li>
-<li>Restart the backend and sign in again after role changes.</li>
-</ol>
-<p>Use the dashboard API's access token, not a Graph token. An invalid bearer
-returns <code>401</code>, and a valid token without <code>Admin</code> returns <code>403</code>.
-A configured tenant without a client ID is a configuration error.
-The SPA needs no client secret. Backend OBO secrets remain server-side.</p>
-<div class="admonition warning">
-<p class="admonition-title">Configure identity before exposing a dashboard</p>
-<p>The classic dashboard's development gate is open when the tenant is absent.
-The dashboard can write allowlisted settings, it is not read-only.
-Do not expose this development configuration as a production endpoint.</p>
-</div>
-<p>Your tenant's <strong>Assignment required</strong> policy can reject an unassigned user
-before the API is reached. Preserve the approved production policy rather
-than weakening it just to observe an API denial.</p>
+<p>Native persistence belongs to the selected execution host.
+Do not deploy an extra execution or ingestion service to act as a second
+workflow-state store. If an enabled UI feature requires a metadata store,
+provision that dependency directly and grant access to its actual consumer.</p>
+<h2 id="conversations-workflows-and-feedback">Conversations, workflows and feedback</h2>
+<p>Use the selected host's official client and service operations to inspect
+native execution. Product-facing reads and actions must pass through the
+authenticated BFF owner checks; arbitrary run/session IDs are not permission.</p>
+<p>Pending human input belongs to the native workflow. An operator UI must not
+silently convert a pending request into an approval or manufacture a new run
+after a browser disconnect.
+See <a href="../workflows/">Workflows &amp; human input</a>.</p>
+<p>Metadata and native state have distinct lifecycle operations. Define retention,
+deletion and partial-failure handling for both, including attachments,
+feedback, audit data and backups.
+<a href="../conversations/">Conversations &amp; files</a> and
+<a href="../user-feedback/">User feedback</a> explain the product boundaries.
+Do not assume the ingestion dashboard is a consolidated native history or
+feedback administration surface.</p>
 <h2 id="ingestion-dashboard">Ingestion dashboard</h2>
-<p>The ingestion dashboard manages document processing, not conversational agents.
-Review <a href="../ingestion-jobs/">Jobs &amp; schedules</a> before starting or changing a job.
-Startup and cron runs can write or delete indexed content.</p>
-<p>With <code>DEPLOY_HOSTED_AGENT_ORCHESTRATION=false</code>, the classic ingestion admin
-routes mount. In hosted mode, <code>DEPLOY_ADMINISTRATIVE_PANEL=true</code> is also
-required to mount the hosted admin surface. A built frontend bundle is needed
-for its dashboard UI.</p>
-<p>Classic manual job runs and configuration mutations use the <code>Admin</code> gate when
-Entra is configured. Administrative reads and file unblocking do not share
-that unconditional gate. Protect the whole service boundary deliberately,
-including the tenant-free development configuration.
-Hosted <code>/api/panel/*</code> instead requires a validated <code>Admin</code> bearer with no
-tenant-free bypass.</p>
+<p>The optional ingestion service manages source processing, not agent/workflow
+execution. Review <a href="../ingestion-jobs/">Jobs &amp; schedules</a> before starting or
+changing jobs: startup and scheduled runs can index and delete content.</p>
+<p>Administrative routes belong to the ingestion component's declared
+administrative surface.
+Selecting <code>hosted</code> does not activate an operator UI, history or feedback.
+A built frontend bundle is needed for the ingestion dashboard.
+Hiding that UI does not disable document APIs or jobs.</p>
+<p>Manual job runs and configuration mutations use the <code>Admin</code> gate when Entra
+is configured. Administrative reads and file unblocking do not all share that
+unconditional gate. Protect the whole service boundary deliberately, including
+the tenant-free development configuration.
+Hosted ingestion <code>/api/panel/*</code> instead requires a validated <code>Admin</code> bearer
+with no tenant-free bypass. These gates are separate from UI user history.</p>
 <p>The ingestion panel exposes its own feedback schema and an ingestion overview.
-Its conversation-history endpoint returns <code>501</code>, it does not retrieve managed
-Foundry transcripts. Do not assume it shares the UI panel's feedback schema.</p>
-<h2 id="hosted-conversation-and-feedback-panel">Hosted conversation and feedback panel</h2>
-<p>User-facing UI routes require <code>DEPLOY_ADMINISTRATIVE_PANEL</code>, active hosted
-continuity and <code>PANEL_HISTORY_ENABLED</code>. Configure the token audience through
-<code>PANEL_CONVERSATIONS_TOKEN_AUDIENCE</code>, the tenant through
-<code>PANEL_CONVERSATIONS_TENANT_ID</code> or the OAuth tenant, and the required Cosmos
-metadata access.</p>
-<p><code>PANEL_CONVERSATION_ENUMERATION_MODE=owner_index</code> is the default.
-Delegated enumeration requires separate evidence through
-<code>PANEL_HISTORY_OWNER_BINDING_VALIDATED</code>. These gates do not grant Azure
-permissions. Missing active gates return <code>503</code>.</p>
-<p>The default owner-index and feedback containers are
-<code>panel-conversation-owner-index</code> and <code>panel-feedback</code>. Cosmos holds metadata,
-not the managed transcript. Follow <a href="../conversations/">Conversations &amp; files</a>
-and <a href="../user-feedback/">User feedback</a> for their setup and limitations.</p>
-<h2 id="operator-overview-and-curation">Operator overview and curation</h2>
+Its conversation-history endpoint returns <code>501</code>; it does not retrieve managed
+native transcripts. Do not assume it shares the UI's metadata or feedback
+schema. See the <a href="../application-api/#ingestion-administration">ingestion API contracts</a>.</p>
+<h3 id="operator-overview-and-curation">Operator overview and curation</h3>
 <p>Enable <code>PANEL_OPERATOR_SURFACES_ENABLED</code> only after validating the approved
 operator role or group. Set an explicit <code>PANEL_OPERATOR_APP_ROLE</code> or
-<code>PANEL_OPERATOR_GROUP_ID</code>. These are separate from user-history access.</p>
-<p>The ingestion operator routes additionally require the
-<code>DATA_INGEST_APP_APIKEY</code> cursor-signing secret and panel deployment.
-They accept delegated user tokens, not app-only tokens. Aggregate metrics
-suppress groups smaller than <code>PANEL_OVERVIEW_MIN_CARDINALITY</code>, default <code>5</code>.
+<code>PANEL_OPERATOR_GROUP_ID</code>. A UI user-history permission does not imply this
+aggregate/operator access.</p>
+<p>The ingestion operator routes also require the <code>DATA_INGEST_APP_APIKEY</code>
+cursor-signing secret and panel deployment. They accept delegated user tokens,
+not app-only tokens. Aggregate metrics suppress groups smaller than
+<code>PANEL_OVERVIEW_MIN_CARDINALITY</code>, default <code>5</code>.
 Blocked-file curation operates on Blob logs, not conversation messages.
-Its caller-bound signed cursor expires after <code>PANEL_CURSOR_TTL_SECONDS</code>,
-default <code>600</code>.</p>
+The caller-bound signed cursor expires after <code>PANEL_CURSOR_TTL_SECONDS</code>,
+default <code>600</code>. See <a href="../application-api/#operator-metrics-and-corpus-curation">operator API contracts</a>.</p>
 <p>Configuration writes can partially succeed. A saved value is not undone by a
 failed local refresh or later schedule-application error. Verify effective
-settings before retrying. Use <a href="../application-settings/">Application settings</a>
-and the <a href="../application-api/">API reference</a> for the corresponding boundaries.</p>
+settings before retrying.</p>
+<h2 id="configuration-changes">Configuration changes</h2>
+<p>Use the <a href="../configuration/#configuration-ownership-and-declarations">ownership inventory</a>
+and <a href="../application-settings/">Application settings</a> before editing a key.
+Supported functional parameters refresh through the official provider.
+Running workflows retain their functional snapshots; current authorization
+is rechecked separately.</p>
+<p>Structural changes to host, graph, identity, persistence, registration names
+or process bootstrap require compatible deployment. An accepted write is
+not proof that every affected process loaded it.</p>
 <p><span id="lifecycle-guidance-has-moved"></span></p>
 <h2 id="maintenance-and-recovery">Maintenance and recovery</h2>
 <ul>
 <li><a href="../application-monitoring/">Monitor requests and audit events</a>.</li>
 <li><a href="../deploy-full-stack/#redeploy-applications-only">Redeploy applications</a>,
   <a href="../deploy-full-stack/#rotate-a-secret">rotate secrets</a> or
-  <a href="../deploy-full-stack/#roll-back-to-a-previous-release">restore a reviewed deployment</a>.</li>
+  <a href="../deploy-full-stack/#rollback">review recovery safeguards</a>.</li>
 <li>Diagnose failures with <a href="../troubleshooting/">Troubleshooting</a>.</li>
 <li>For infrastructure changes, retain the provider, backend and approved
   resource-group mapping. Follow <a href="../deploy-infra-only/">Bicep maintenance</a>
   or <a href="../deploy-terraform-infra-only/">Terraform maintenance</a>.</li>
 </ul>
-<p><span id="upgrade-ingestion-selection-to-v430"></span>
-<span id="change-ingestion-selection-safely"></span></p>
+<p>Retries and redeployments must not delete existing user data or resources.</p>
+<p><span id="change-ingestion-selection-safely"></span></p>
 <p>Changing <a href="../ingestion/">ingestion selection</a> does not remove existing resources
-or permissions. Environment destruction is a separate authorized operation,
-not an application rollback.</p>
+or permissions. Environment destruction is a separate authorized operation.</p>
 
 
 

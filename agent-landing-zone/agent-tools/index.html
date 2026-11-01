@@ -13,7 +13,7 @@
       
       
       
-        <link rel="prev" href="../agent-strategies/">
+        <link rel="prev" href="../workflows/">
       
       
         <link rel="next" href="../application-auth/">
@@ -1333,7 +1333,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -1422,36 +1450,14 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#supplied-hosted-execution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Supplied hosted execution
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configure-the-mcp-strategy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configure the MCP strategy
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configure the MCP strategy">
+    <nav class="md-nav" aria-label="Tools, Toolbox and knowledge">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#hosted-mcp-call-context" class="md-nav__link">
+  <a href="#optional-direct-nl2sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted MCP call context
+        Optional direct NL2SQL
       
     </span>
   </a>
@@ -1464,6 +1470,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#application-owned-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application-owned registration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-and-connect-mcp-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize and connect MCP safely
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authorize and connect MCP safely">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#authenticated-toolbox-contract" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1471,6 +1500,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5381,36 +5415,14 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#supplied-hosted-execution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Supplied hosted execution
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configure-the-mcp-strategy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configure the MCP strategy
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configure the MCP strategy">
+    <nav class="md-nav" aria-label="Tools, Toolbox and knowledge">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#hosted-mcp-call-context" class="md-nav__link">
+  <a href="#optional-direct-nl2sql" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hosted MCP call context
+        Optional direct NL2SQL
       
     </span>
   </a>
@@ -5423,6 +5435,29 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#application-owned-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application-owned registration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authorize-and-connect-mcp-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authorize and connect MCP safely
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authorize and connect MCP safely">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#authenticated-toolbox-contract" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5430,6 +5465,11 @@
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5488,14 +5528,21 @@
 
 <p><span id="agent-tools"></span></p>
 <h1 id="tools-mcp">Tools &amp; MCP</h1>
-<p>Foundry tools let an agent call approved operations. A Toolbox groups configured
-tools and their connections. An MCP server exposes operations through Model
-Context Protocol. A Foundry IQ knowledge base instead supplies retrieved
-grounding. These are different integration boundaries.</p>
-<p>The supplied <code>mcp</code> strategy can consume an MCP server. Other strategies do not
-automatically load a portal-managed tool list. This page explains that choice
-and the separate hosted authorization contract. Deployment and redeployment
-follow the <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
+<p>Tools are approved operations that a MAF Agent or Workflow can call.
+Model Context Protocol (MCP) exposes operations through a tool server.
+Foundry IQ and Azure AI Search provide knowledge/retrieval capabilities.
+These are not competing orchestration strategies.</p>
+<p>Select the application experience and host through
+<a href="../agent-strategies/">Agents &amp; prompts</a> and
+<a href="../hosted-agents/">Agent hosting</a>, then register the required capabilities.
+A portal connection or endpoint string alone does not attach a tool to
+the running application.</p>
+<p>Native capabilities are <strong>off by default</strong>: <code>SEARCH_RETRIEVAL_ENABLED</code>,
+<code>FOUNDRY_IQ_ENABLED</code>, <code>MCP_ENABLED</code>, <code>NL2SQL_ENABLED</code> and
+<code>MULTIMODAL_ENABLED</code>. Select only the capabilities whose source, identity,
+network and tool contracts are configured. The multimodal tool flag is
+different from custom ingestion <code>MULTIMODAL</code> and inline private attachments.
+See <a href="../application-settings/#native-application-contract">Application settings</a>.</p>
 <p><span id="choose-the-extension-point"></span></p>
 <h2 id="tools-toolbox-and-knowledge">Tools, Toolbox and knowledge</h2>
 <table>
@@ -5507,172 +5554,128 @@ follow the <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
 </thead>
 <tbody>
 <tr>
-<td>Call a service operation</td>
-<td>A reviewed Foundry tool or Toolbox connection, consumed by the application.</td>
+<td>Call an operation</td>
+<td>A reviewed tool with a narrow schema and explicit authorization</td>
 </tr>
 <tr>
-<td>Ground answers in documents</td>
-<td>A Foundry IQ knowledge source bound to the knowledge base.</td>
+<td>Connect an MCP server</td>
+<td>Registered MCP tools, authenticated transport and approved destination</td>
 </tr>
 <tr>
-<td>Change instructions or orchestration</td>
-<td>Hosted orchestrator source and its configured prompts.</td>
+<td>Ground an answer</td>
+<td>A configured Foundry IQ source or Search capability</td>
+</tr>
+<tr>
+<td>Query approved SQL or Fabric SQL data</td>
+<td>Optional registered NL2SQL tool with its own metadata, connector and read-only database principal</td>
+</tr>
+<tr>
+<td>Wait for a person's decision</td>
+<td>Native workflow human input, not a blocking tool socket</td>
+</tr>
+<tr>
+<td>Change a process graph</td>
+<td>Reviewed workflow definition and compatible publication</td>
 </tr>
 </tbody>
 </table>
-<p>Select a supported <a href="../agent-strategies/">strategy and prompt source</a> before
-configuring tools. A Foundry IQ <code>mcpServer</code> source is retrieval configuration,
-not <code>AGENT_STRATEGY=mcp</code>. Its separate
-<a href="../foundry-iq/#generic-mcp-knowledge-sources">MCP knowledge-source settings</a>
+<p>A Foundry IQ <code>mcpServer</code> source is retrieval configuration, not automatically
+a model-callable MCP tool. Its
+<a href="../foundry-iq/#generic-mcp-knowledge-sources">knowledge-source settings</a>
 control source planning, output parsing and query credentials.</p>
-<p>Foundry supports <a href="https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/model-context-protocol?view=foundry">MCP tools</a>
-and <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox">Toolbox connections</a>.
-Creating either in the portal does not make the default Agent Application
-consume it.</p>
+<h3 id="optional-direct-nl2sql">Optional direct NL2SQL</h3>
+<p>An Agent or Workflow can use the registered direct SQL tool without changing
+its application mode or host. Enable it only for approved SQL or Fabric SQL
+datasources. Its metadata store, schema/example indexes, ODBC driver, network
+access and chosen database credential are conditional dependencies.
+Applications without the tool do not need those SQL resources.</p>
+<p>The configured database principal performs direct queries; no automatic
+end-user SQL delegation is supplied. Read-only grants are the primary data
+boundary, with generated-query validation as defense in depth.
+This is separate from a Foundry IQ <code>fabricDataAgent</code> source, where Fabric owns
+query generation and execution.
+See <a href="../nl2sql/">Ask questions about SQL data</a> for setup and denial checks.
+The reused helper suite includes <code>validate_sql_query(query)</code>,
+<code>execute_sql_query(datasource,query)</code> and <code>execute_dax_query(datasource,query)</code>.
+Tokens are trusted server context, never model-callable arguments.
+Execution is bounded to 30 seconds and 1,000 rows.
+DAX and delegated multimodal calls fail closed when native host token
+binding is unavailable; end-to-end delegation is not established by the
+registered function or local transport tests.</p>
 <p><span id="before-you-start"></span>
-<span id="1-check-what-the-hosted-strategy-loads"></span></p>
-<h2 id="supplied-hosted-execution">Supplied hosted execution</h2>
-<p>The default <code>maf_lite</code> orchestrator constructs a Microsoft Agent Framework
-agent inside the hosted container. It calls the configured model deployment
-directly and uses a Foundry IQ context provider for knowledge-base retrieval.
-It does not read a portal-managed prompt agent's tool list or automatically
-instantiate <code>FoundryToolbox</code>.</p>
-<p><a href="https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents?view=foundry">Hosted agents run containerized application code</a>.
-Foundry hosts that code and authenticates invocation, but code defines its
-model, instructions, tool registration and retrieval behavior.
-A portal tool attachment alone therefore does not change the running
-<code>maf_lite</code> orchestration.</p>
+<span id="1-check-what-the-hosted-strategy-loads"></span>
+<span id="supplied-hosted-execution"></span></p>
+<h2 id="application-owned-registration">Application-owned registration</h2>
+<p>Native host integrations run the application's agent/workflow definitions.
+Code defines the model, instructions, tools and retrieval behavior. Foundry
+hosting does not automatically consume a portal-managed prompt agent's tool
+list, and a durable worker does not infer a process from App Configuration.</p>
+<p>Use the registered capabilities for the selected application. Keep naturally
+shared agent definitions and tools common where appropriate, but use explicit
+Hosted and durable integrations rather than a universal host/state wrapper.</p>
 <p><span id="2-configure-the-mcp-connection"></span>
-<span id="3-authorize-and-connect-safely"></span></p>
-<h2 id="configure-the-mcp-strategy">Configure the MCP strategy</h2>
-<p>Select <code>AGENT_STRATEGY=mcp</code> and configure the following through
-<a href="../application-settings/">Application settings</a>. The strategy creates its agent
-and MCP connection for the request rather than sharing a tool session between
-users.</p>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>MCP_APP_ENDPOINT</code></td>
-<td><code>http://localhost:80</code> in detected Azure execution</td>
-<td>Trusted server base URL. Outside detected Azure execution, the runtime overrides it with <code>http://localhost:5000</code>.</td>
-</tr>
-<tr>
-<td><code>MCP_SERVER_TRANSPORT</code></td>
-<td><code>sse</code></td>
-<td><code>sse</code> or <code>streamable_http</code>.</td>
-</tr>
-<tr>
-<td><code>MCP_CLIENT_TIMEOUT</code></td>
-<td><code>600</code> seconds</td>
-<td>Positive integer connection/read timeout.</td>
-</tr>
-<tr>
-<td><code>MCP_APP_APIKEY</code></td>
-<td>Unset</td>
-<td>Optional <code>X-API-KEY</code>, stored as a Key Vault reference.</td>
-</tr>
-<tr>
-<td><code>AGENT_ID</code></td>
-<td>Unset</td>
-<td>Optional agent ID passed when constructing the request-scoped agent.</td>
-</tr>
-</tbody>
-</table>
-<p>Azure detection checks for <code>CONTAINER_APP_NAME</code> or <code>WEBSITE_INSTANCE_ID</code> in the
-process environment. For local work, run the MCP server on port <code>5000</code>.
-In Azure, configure the actual trusted destination and confirm the execution
-environment is detected as intended. Use HTTPS outside controlled local work.</p>
-<p>The client appends <code>/sse</code> for SSE or <code>/mcp</code> for Streamable HTTP exactly once.
-An endpoint ending in the conflicting transport suffix is rejected.
-For example, <code>https://mcp.contoso.com</code> resolves to
-<code>https://mcp.contoso.com/sse</code> with the default transport.</p>
-<p>The client sends a serialized <code>user-context</code> header and the optional API key.
-The receiving service must authenticate the request and authorize its
-operations. User-context fields alone are not verified downstream identity.
-This client does not apply the trusted-host allowlist used by generic Foundry
-IQ MCP sources. Review the destination, egress, data handling and permissions
-before enabling it.</p>
-<h3 id="hosted-mcp-call-context">Hosted MCP call context</h3>
-<p>Hosted <code>mcp</code> additionally requires the platform's valid
-<code>x-agent-foundry-call-id</code>, including on response-management routes. Missing or
-malformed context is rejected with <code>401</code>. The runtime forwards the validated
-opaque call ID to the tool server. It does not turn that ID into a user token
-or grant downstream consent.</p>
-<p>The hosted Toolbox integration resolves the caller through that platform
-context. Do not fabricate a call ID, substitute caller-supplied group IDs, or
-fall back to the workload identity when caller authorization is required.
-See <a href="../application-auth/">Application authentication</a> and the
-<a href="../application-api/">API reference</a> for the invocation boundary.</p>
-<h2 id="authenticated-toolbox-contract">Authenticated Toolbox contract</h2>
-<p>Microsoft's <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent">hosted Toolbox integration</a>
-uses an authenticated <code>FoundryToolbox</code> software development kit (SDK) client
-with platform-provided hosted call context. The application must actually invoke that client, with
-the appropriate connection, tool authorization and source permissions.
-An endpoint string or a forwarded call ID without client authentication is
-not a complete integration.</p>
-<p>The supplied <code>maf_lite</code> knowledge-base path uses integrated UI OBO and native
-Search permission enforcement instead of this Toolbox client. It forwards a
-Search-audience delegated token through Foundry's supported custom-header
-contract. No customer-written Toolbox integration is needed for that path.
-<a href="../application-auth/#3-verify-the-retrieval-identity-boundary">Agent Application access</a>
-describes the separate invocation and retrieval credentials.</p>
-<p>Arbitrary tools still require their own authenticated integration. A Search
-token cannot be reused as a generic MCP user assertion. Caller-supplied group
-IDs, fabricated platform call IDs and a prompt instruction do not authorize a
-tool or its source data.</p>
-<p>Knowledge-base MCP source configuration is separate from callable agent tools.
-<code>FOUNDRY_IQ_MCP_SOURCES_JSON</code> describes sources consumed by the knowledge-base
-connector. It does not register a model-callable Toolbox in <code>maf_lite</code>.
-<a href="../foundry-iq/">Foundry IQ</a> describes retrieval configuration.</p>
+<span id="3-authorize-and-connect-safely"></span>
+<span id="configure-the-mcp-strategy"></span></p>
+<h2 id="authorize-and-connect-mcp-safely">Authorize and connect MCP safely</h2>
+<p>Review the destination, transport, timeout, data handling and permissions
+before enabling an MCP connection. Use HTTPS outside controlled local
+development and approved egress from the actual application host.
+Credentials belong in Key Vault only when the selected tool really needs
+a secret; prefer managed identity where supported.</p>
+<p>Authenticate the tool client and preserve the tool's verified end-user
+context when user authorization is required. User-context JSON, caller-supplied
+groups, an opaque call ID or a shared managed identity is not proof of the
+user's entitlement. Keep credentials request-local and out of prompts,
+history, functional snapshots and telemetry.</p>
+<h3 id="authenticated-toolbox-contract">Authenticated Toolbox contract</h3>
+<p>Foundry's <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent">hosted Toolbox integration</a>
+uses an authenticated SDK client and trusted platform invocation context.
+The application must actually invoke that supported integration.
+Do not fabricate platform context or assume the browser's Authorization
+header arrives unchanged inside a Hosted container.</p>
+<p>The durable host uses its own explicit authenticated client/tool boundary.
+Foundry invocation context must not be simulated on Container Apps.
+Source-specific OBO and document permissions remain independently required;
+a Search token is not a generic MCP user assertion.
+See <a href="../application-auth/">Sign-in &amp; access</a>.</p>
 <p><span id="4-add-code-when-configuration-is-not-enough"></span></p>
 <h2 id="application-extension-boundary">Application extension boundary</h2>
-<p>A custom integration belongs in the orchestrator's existing strategy and
-connector modules, with a narrow tool schema, explicit caller authorization,
-bounded results, timeout/cancellation handling and safe failures. Write actions
-also need an explicit approval policy. A prompt instruction is not an
-authorization or approval control.</p>
-<p>The runtime principal needs narrowly scoped dependency grants. Secrets remain
-in Key Vault, not tool definitions or ordinary App Configuration values.
-The standard bootstrap covers its declared configuration/model/audit access
-and scoped Search transport access for native retrieval. That transport role
-does not replace end-user source authorization. Extra tool access needs its
-own narrowly scoped grants.
-<a href="../hosted-agents/">Agent hosting</a> explains the identities.
-Private tools also depend on DNS, TLS and authorized egress from the actual
-hosted network path. Tool destinations receive application data and require
-data-handling approval.</p>
-<p><a href="../build-your-own-app/">Bring your own app</a> describes source pins and capability
-profiles for custom code. New runtime settings are cross-component contracts
-with the platform that publishes them and every consuming component.</p>
+<p>Keep integrations in the owning application's tool/connector modules:</p>
+<ul>
+<li>Validate typed inputs and bound results, timeouts and cancellation.</li>
+<li>Preserve source denial as denial; do not retry under a broader identity.</li>
+<li>Register a capability explicitly for the agent and/or workflow using it.</li>
+<li>Require tool authorization and a native human decision where the process
+  calls for approval. A prompt instruction is not an approval control.</li>
+<li>For external writes, implement the target system's idempotency and recovery
+  contract. Native durable execution does not guarantee exactly-once writes.</li>
+</ul>
+<p>Grant only the required model, source, scheduler and secret access.
+App Configuration Reader does not grant Key Vault secret access.
+<code>NATIVE_TOOL_SECRET_NAMES</code> (default <code>[]</code>) is the platform's scoped-grant
+declaration of actual names, not values. The native runtime does not consume
+that setting to load secrets or enable tools.
+Provision resources and grants before activation; startup must not repair
+infrastructure. <a href="../customize-components/">Customize components</a> and
+<a href="../build-your-own-app/">Bring your own app</a> describe ownership and adoption.</p>
 <p><span id="5-deploy-and-verify"></span></p>
 <h2 id="deployment-and-evidence">Deployment and evidence</h2>
-<p>Changed orchestrator source requires a new image from the reviewed source pin,
-an immutable-digest handoff and a new agent version. Runtime settings are
-cached at startup, so settings-only changes also require a new hosted version,
-potentially reusing the compatible digest.
-<a href="../application-settings/">Application settings</a> explains runtime values and
-<a href="../configuration/">Deployment settings</a> explains deployment inputs.</p>
-<p>Evidence includes an actual tool call and result, denied-user isolation,
-timeout/outage behavior and no invented result when a required tool fails.
-Logs and traces can identify calls without retaining credentials, sensitive
-arguments or full caller-context headers. Portal registration or successful
-deployment alone does not establish this behavior.
-<a href="../application-monitoring/">Monitoring &amp; audit</a> covers operational evidence.</p>
+<p>Changes to code, graph, tool registration or identity require a reviewed image
+and compatible publication. Supported functional parameters refresh through
+the official provider; workflow runs keep their functional snapshot.
+Current source/tool authorization is rechecked rather than frozen in that
+snapshot. See <a href="../application-settings/">Application settings</a>.</p>
+<p>Verify actual tool calls, denied-user isolation, timeout/outage handling and
+the absence of invented results when a required tool fails. A successful
+deployment or portal registration is not this evidence.
+Correlate operations without retaining secrets or sensitive tool arguments.
+See <a href="../application-monitoring/">Monitoring &amp; audit</a>.</p>
 <p><span id="recover-or-undo"></span></p>
 <h2 id="failure-boundaries">Failure boundaries</h2>
-<p>Missing tools can indicate that the code never registered or invoked them,
-not just a connection failure. Authentication failures concern the client,
-connection and downstream permissions separately. Stale behavior can indicate
-a cached process or the wrong deployed version. Recovery retains the
-authenticated caller boundary and the previous compatible source/image
-combination rather than bypassing authorization.</p>
+<p>Missing tools can mean the application never registered them.
+Authentication failures concern the client, connection and source separately.
+Retain the authenticated caller boundary during recovery rather than
+substituting service identity or silently dropping a required capability.</p>
 
 
 

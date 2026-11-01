@@ -1303,6 +1303,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#application-mode-and-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application mode and host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#before-you-invite-users" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1516,7 +1527,35 @@
   <span class="md-ellipsis">
     
   
-    Strategies & prompts
+    Agents & prompts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflows & human input
   
 
     
@@ -5437,6 +5476,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#application-mode-and-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application mode and host
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#before-you-invite-users" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5575,9 +5625,9 @@
 <p><span id="configure-the-application"></span></p>
 <h1 id="agent-application">Agent Application</h1>
 <p>Agent Application is the reference application included with Agent Landing Zone.
-It brings together a chat interface, an agent orchestration service and optional
-document processing. You can configure the supplied application or adapt its
-components to your own requirements.</p>
+It brings together a Chainlit chat/process interface, native Microsoft Agent
+Framework (MAF) execution and optional document processing. Use an Agent for
+conversation or a Workflow for a published process with human input.</p>
 <p>Start with <a href="../deploy-full-stack/">Deploy full stack</a> to deploy the application.
 The guides below explain how to configure, operate and extend it.</p>
 <h2 id="how-the-components-fit-together">How the components fit together</h2>
@@ -5590,12 +5640,12 @@ The guides below explain how to configure, operate and extend it.</p>
 </thead>
 <tbody>
 <tr>
-<td>Agent App UI</td>
-<td>Provides the web chat, sign-in, citations and conversation controls.</td>
+<td>Agent App UI/BFF</td>
+<td>Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback.</td>
 </tr>
 <tr>
 <td>Agent App Orchestrator</td>
-<td>Runs the selected agent strategy, calls the model and connects retrieval and tools.</td>
+<td>Runs native MAF Agents and Workflows, using the explicit integration for the selected host.</td>
 </tr>
 <tr>
 <td>Agent App Ingestion</td>
@@ -5605,14 +5655,35 @@ The guides below explain how to configure, operate and extend it.</p>
 </table>
 <h2 id="default-deployment">Default deployment</h2>
 <p>The default deployment has web chat in Azure Container Apps and an
-orchestrator hosted in Microsoft Foundry, without an administrative panel
-or application-owned Cosmos DB. The deployment setting calls this layout
-<code>hosted-no-panel</code>. It does not mean Foundry has no backing resources of its own.</p>
+orchestrator hosted in Microsoft Foundry. The public native selectors are
+<code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>, their defaults.
+The UI is included automatically. Native Hosted execution does
+not require application-owned Cosmos DB; Foundry backing resources and
+optional UI product storage are separate concerns.
+Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags default to off.
+Preparing a source does not register a tool. History, feedback and private
+attachments also default to off; conversational UI owner maps are then bounded
+and volatile, not a restart-safe saved-session store.</p>
 <p>Foundry IQ manages
 ingestion for the configured native Blob source. Deploy Agent App Ingestion
-only when your chosen processing or conversation-upload workflow needs it.
-Hosting does not enable durable history, continuity, feedback or document
-authorization by itself. Those have independent requirements in their guides.</p>
+only when a selected custom processing path needs it; it is disabled by
+default. A private conversation attachment is not a shared source-ingestion
+request. Hosting owns native execution state, not the UI's history discovery,
+feedback or per-user document authorization.</p>
+<h2 id="application-mode-and-host">Application mode and host</h2>
+<p><code>APPLICATION_MODE</code> selects <code>conversational</code>, <code>workflow</code> or <code>both</code>.
+<code>ORCHESTRATION_HOST</code> selects <code>hosted</code> or <code>container_apps</code>.
+These are deployment choices, not a user-facing strategy selector.
+History, feedback and private attachments remain independently selected
+default-off features. Selecting Hosted does not enable history.
+Workflow mode and <code>both</code> always require UI metadata, even with every product
+flag off.</p>
+<p>Hosted uses the official Responses integration and native persistence.
+Container Apps uses the official Durable Extension worker/client and
+Durable Task Scheduler. When both experiences use Hosted, conversation and
+workflow are published as separate applications with separate endpoints.
+See <a href="../hosted-agents/">Agent hosting</a> and
+<a href="../workflows/">Workflows &amp; human input</a>.</p>
 <p>The application repositories contain the code. These guides are the shared
 documentation for all three components. The
 <a href="https://github.com/Azure/agent-landing-zone/blob/main/manifest.json">release manifest</a>
@@ -5623,18 +5694,22 @@ records their compatible versions.</p>
 in do not by themselves prove that every user has the right document access.
 Complete the <a href="../application-auth/">sign-in and access setup</a>, configure the
 sources you need and check both allowed and denied access.</p>
-<p>Optional capabilities have their own prerequisites. Conversation history,
-file uploads, additional channels and external tools are not all enabled by
-the default deployment. Each guide explains what is supplied, what to configure
-and where application development is needed.</p>
+<p>Optional capabilities have their own prerequisites. Saved history and feedback
+default to off; a selected workflow declares UI metadata storage independently
+of native execution state. Private attachments have an explicit feature gate,
+an owner-bound inline native input path and their own retention requirements.
+They are conversational only; transport support is not proof of model
+PDF/image understanding.
+Additional channels and external tools have separate integration requirements.</p>
 <p><span id="choose-a-task"></span>
 <span id="application-components"></span></p>
 <h2 id="find-your-guide">Find your guide</h2>
 <p><span id="agent-hosting"></span>
 <span id="model-tools-and-knowledge-base"></span></p>
 <h3 id="agents">Agents</h3>
-<p>Choose <a href="../hosted-agents/">where the agent runs</a>, select its
-<a href="../agent-strategies/">strategy and prompts</a>, or connect
+<p>Choose <a href="../hosted-agents/">where execution runs</a>, configure
+<a href="../agent-strategies/">agents and prompts</a>, operate
+<a href="../workflows/">workflows and human input</a>, or connect
 <a href="../agent-tools/">tools and MCP servers</a>. A tool lets an agent perform an
 operation. Retrieval supplies information for its answer.</p>
 <p><span id="frontend"></span></p>
@@ -5659,9 +5734,9 @@ These guides explain the available integration paths and their prerequisites.</p
 <p>Decide <a href="../ingestion/">when you need the ingestion service</a>, check
 <a href="../multimodality/">document formats and image processing</a>, and configure
 <a href="../ingestion-jobs/">jobs and schedules</a>.
-Preparing a shared document collection is different from uploading a file
-to a conversation. Processing images inside a document also does not imply
-support for direct image or voice input in chat.</p>
+Preparing a shared document collection is not private conversation input.
+Shared ingestion does not enable private uploads. Processing images inside a
+shared document also does not imply direct image or voice chat input.</p>
 <h3 id="operations">Operations</h3>
 <p>Change <a href="../application-settings/">application settings</a>, use the
 <a href="../operations/">administrative panels</a>, and review
