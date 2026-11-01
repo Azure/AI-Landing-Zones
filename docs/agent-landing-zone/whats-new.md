@@ -3,6 +3,12 @@
 Major updates by month. See the [release notes](https://github.com/Azure/agent-landing-zone/releases)
 for all changes and fixes.
 
+## November 2026
+
+| Release | Highlights |
+| --- | --- |
+| v6.0.0 | Native conversations and human-reviewed workflows with state and resume on Foundry Hosted or durable Container Apps. Two public native selection axes: `ORCHESTRATION_HOST` and `APPLICATION_MODE`. Authenticated native UI with independently optional history, feedback and private files. |
+
 ## October 2026
 
 | Release | Highlights |
