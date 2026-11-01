@@ -12,6 +12,10 @@ The guides below explain how to configure, operate and extend it.
 
 ## How the components fit together
 
+![Agent Application overview: the UI connects to native MAF agents and workflows on one selected execution host, with separate conditional UI metadata and optional retrieval tools and source ingestion.](../media/agent-application-overview.svg)
+
+[Open the full-size diagram](../media/agent-application-overview.svg)
+
 | Component | What it does |
 | --- | --- |
 | Agent App UI/BFF | Provides sign-in, chat/process presentation, owner mappings, product metadata and feedback. |
