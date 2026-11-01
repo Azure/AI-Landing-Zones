@@ -54,7 +54,7 @@ transcripts, tokens or Foundry/DTS execution checkpoints.
 In conversational mode with every product flag off, the UI uses bounded
 volatile owner maps. They are lost on UI restart; native host persistence alone
 cannot restore the UI mapping or provide saved discovery.
-Do not deploy ingestion or a classic orchestrator merely to support metadata.
+Do not deploy ingestion or an additional runtime merely to support metadata.
 Saved listing and history reads require `ENABLE_CHAT_HISTORY=true`.
 A known owner-bound workflow can resume with history off through
 `/api/native/sessions/{id}/resume`; workflow mode already selects metadata.

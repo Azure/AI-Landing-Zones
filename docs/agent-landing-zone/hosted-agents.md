@@ -27,13 +27,14 @@ workflow engine, generalized state SDK or duplicate checkpoint database is
 required. See [Conversations & files](conversations.md) and
 [Workflows & human input](workflows.md).
 
-## Topologies
+## Public execution selection
 
-Infrastructure topology, application mode and runtime host are distinct
-choices. The default `hosted-no-panel` layout places the UI in Container Apps
-and execution in Foundry without an administrative panel. Topology inputs
-must map consistently to `ORCHESTRATION_HOST`; contradictory selections
-are configuration errors, not a request for fallback.
+Select only `ORCHESTRATION_HOST=hosted|container_apps` and
+`APPLICATION_MODE=conversational|workflow|both`. Defaults are `hosted` and
+`conversational`, with the UI included automatically. Network design remains
+independent. History, feedback and private attachments are separate default-off
+features; Hosted does not automatically enable history.
+Workflow or `both` always requires UI metadata.
 
 Foundry backing resources are not application-owned Cosmos DB. Native Hosted
 execution does not require application Cosmos. Product metadata, history

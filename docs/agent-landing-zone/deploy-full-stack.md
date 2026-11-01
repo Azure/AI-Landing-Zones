@@ -9,12 +9,13 @@
 ## Objective
 
 Deploy the Azure infrastructure and the Agent Application with its default
-layout: Foundry hosts the orchestrator, Agent App UI runs in Container Apps,
-and Foundry IQ manages source ingestion and retrieval. The default
-`hosted-no-panel` layout omits the administrative panel. Native Hosted
+selection: `ORCHESTRATION_HOST=hosted` and `APPLICATION_MODE=conversational`.
+Foundry hosts execution, Agent App UI is included in Container Apps, and
+Foundry IQ prepares the selected native source. Native Hosted
 execution does not require application Cosmos DB; selected UI product metadata
 and Foundry backing resources have their own storage requirements.
-`APPLICATION_MODE` defaults to `conversational`.
+History, feedback and private attachments default to off independently.
+Workflow or `both` requires UI metadata even when those flags remain off.
 This procedure uses the default Bicep provider. For Terraform, use
 [Deploy full stack with Terraform](deploy-terraform-full-stack.md); application
 configuration and deployment are shared.
@@ -226,30 +227,33 @@ infrastructure choices.
 [Deployment inputs](configuration.md#deployment-inputs) explains input formats,
 ownership and generated provider files.
 
-#### Orchestrator topology
+#### Native application selection
 
-Set the default layout explicitly for this new environment.
-`DEPLOYMENT_TOPOLOGY` chooses the runtime layout, not the VNet design:
+Choose execution host and application mode for this new environment.
+These are the only public native execution selectors, separate from VNet
+design and independently optional product features:
 
 ```bash
-azd env set DEPLOYMENT_TOPOLOGY hosted-no-panel
+azd env set ORCHESTRATION_HOST hosted
+azd env set APPLICATION_MODE conversational
 azd env set HOSTED_AGENT_RESOURCE_SCOPE <approved-foundry-audience>/.default
 azd env set DEPLOY_INGESTION_CONTAINER_APP false
 ```
 
-Expect no administrative panel or Agent Application Cosmos DB. Preserve the
-recorded layout when recovering an existing environment. See
-[Hosted agents](hosted-agents.md) for separately configured capabilities.
-Confirm the canonical selection `APPLICATION_MODE=conversational` and
-`ORCHESTRATION_HOST=hosted` through the declared composition, with the selected
-Foundry IQ capability. Inspect effective relevant `agent-lz` settings after
-service configuration. Canonical runtime keys are not all independent
-`azd env` inputs.
+The UI is included automatically for either host. History, feedback and private
+attachments default to off; Hosted does not turn them on. The default
+conversational selection with no declared storage consumer does not require
+application Cosmos. Workflow or `both` always selects UI metadata; enabling
+history, feedback or attachments also selects it.
+See [Application settings](application-settings.md) for the separate feature
+keys and inspect effective relevant `agent-lz` settings after configuration.
+Preserve the recorded host, mode and application binding during recovery.
 
 To select a workflow or both experiences, use the compatible application
-definition and [native execution contract](configuration.md#native-execution-selection).
-Hosted `both` requires a conversational publication and a separate workflow
-publication, each with a single mode. Hand their actual endpoints to the UI.
+mode and [native execution contract](configuration.md#native-execution-selection).
+For Hosted `both`, the root lifecycle prepares a conversational publication
+and a separate workflow publication, each with its derived single mode, and
+passes their actual endpoints to the UI. Do not select extra host booleans.
 The Container Apps alternative requires the official Durable Extension worker
 and DTS, not the Hosted HTTP entrypoint or a custom queue.
 Review [Agent hosting](hosted-agents.md) before changing an existing layout.
@@ -335,10 +339,9 @@ with `python -m config.deployment.egress --plan --environment <environment-name>
 Deployment applies managed firewall rules automatically. If you use an external
 firewall, give the generated report to its owner to arrange the required access.
 
-<span id="container-apps-orchestrator-classic"></span>
-<span id="foundry-orchestrator-hosted-no-panel-or-hosted-panel"></span>
+<span id="native-application-provisioning"></span>
 
-#### Default Foundry orchestrator (`hosted-no-panel`)
+#### Provision and deploy the selected native application
 
 For a new environment, run these commands in order:
 
@@ -535,7 +538,7 @@ pwsh scripts/bootstrapHostedAccess.ps1
 On Linux/macOS use `./scripts/bootstrapHostedAccess.sh`. The wrapper selects
 `hosted-agent` / `orchestrator-agent` by default; custom services use their own
 project/service context. Allow role propagation, then retry root `azd deploy`
-so the greeting and remaining deployment gates run before cutover.
+so the greeting and remaining deployment gates run before admitting traffic.
 
 The closed bootstrap set grants App Configuration Data Reader, model access,
 native retrieval's scoped Search transport access and, when configured, access
@@ -685,7 +688,7 @@ part of this deployment.
    If retaining an operator-managed digest, verify its availability and
    compatibility; deployment does not rebuild it.
 5. Restore directly managed runtime keys separately from the source checkout,
-   reload affected components and repeat [Validation](#validation) before cutover.
+   reload affected components and repeat [Validation](#validation) before routing traffic.
 
 ### Outbound rule recovery
 

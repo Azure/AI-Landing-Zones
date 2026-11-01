@@ -196,9 +196,11 @@ one environment binds to one application ID. For a custom definition, follow
 azd env set AGENTLZ_APP_DEFINITION <path-to-app-definition.json>
 ```
 
-For the supplied Agent Application, the default is `hosted-no-panel`, with
-a conversational MAF Agent, Foundry IQ and no Agent App Ingestion.
-It still needs the approved `HOSTED_AGENT_RESOURCE_SCOPE` before service configuration. Review the
+For the supplied Agent Application, defaults are `ORCHESTRATION_HOST=hosted`
+and `APPLICATION_MODE=conversational`, with the UI included automatically and
+Agent App Ingestion off. History, feedback and attachments independently
+default to off; workflow or `both` always requires UI metadata.
+Hosted still needs the approved `HOSTED_AGENT_RESOURCE_SCOPE` before service configuration. Review the
 [application and identity choices](deploy-full-stack.md#step-3-choose-the-application-and-network)
 and configure [per-user document authorization](application-auth.md) before
 deploying the application.

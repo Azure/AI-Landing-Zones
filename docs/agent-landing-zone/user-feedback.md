@@ -9,8 +9,8 @@ Select `ENABLE_USER_FEEDBACK=true` explicitly; its default is `false`.
 Provision the UI metadata store and frontend-only permissions. The UI consumes
 `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and `NATIVE_UI_METADATA_CONTAINER`
 (default `native-ui-metadata`, partition key `/principal_id`).
-Do not require the optional ingestion service, an administrative panel or
-a classic orchestrator merely to store a user's feedback.
+Do not require optional ingestion or an additional execution service merely
+to store a user's feedback.
 See [Conversations & files](conversations.md) for state ownership and
 [Application settings](application-settings.md) for configuration.
 
@@ -26,15 +26,12 @@ The route is `POST /api/native/sessions/{id}/feedback` with
 `native_ref`, `rating` (`-1` or `1`) and `comment` (at most 2,000 characters).
 The UI UUID must belong to the authenticated owner. Unknown/nonowned IDs
 return `404` before backend access; a native reference alone grants nothing.
-There is no mounted classic feedback API or `/panel/conversations` integration.
+Feedback uses the native UI route above; `/panel/conversations` is not mounted.
 
 Do not display working-looking controls for an unavailable integration.
 A clicked thumb or accepted browser event is not evidence that feedback was
 saved. Report storage failures rather than confirming a successful write.
 Anonymous embedding does not establish an authenticated conversation owner.
-
-<span id="prepare-a-hosted-panel-integration"></span>
-<span id="hosted-panel-integration-contract"></span>
 
 ## Ownership contract
 

@@ -3,9 +3,11 @@
 ## Objective
 
 Provision the Azure foundation with Terraform and deploy the Agent Application
-through the shared azd lifecycle. The default `hosted-no-panel` layout uses a
-Foundry-hosted orchestrator, a Container Apps UI and native Foundry IQ ingestion
-and retrieval, without an administrative panel. Native Hosted execution does
+through the shared azd lifecycle. Defaults are `ORCHESTRATION_HOST=hosted`
+and `APPLICATION_MODE=conversational`: Foundry-hosted execution, an automatically
+included Container Apps UI and the selected native Foundry IQ source.
+History, feedback and private attachments independently default to off.
+Workflow or `both` always selects UI metadata. Native Hosted execution does
 not require application Cosmos DB; enabled UI product metadata declares its
 own dependencies.
 
@@ -67,7 +69,8 @@ An environment binds to one application ID.
 For a **new** default Agent Application environment:
 
 ```bash
-azd env set DEPLOYMENT_TOPOLOGY hosted-no-panel
+azd env set ORCHESTRATION_HOST hosted
+azd env set APPLICATION_MODE conversational
 azd env set HOSTED_AGENT_RESOURCE_SCOPE <approved-foundry-audience>/.default
 azd env set DEPLOY_INGESTION_CONTAINER_APP false
 azd env set BUILD_MODE acr-task

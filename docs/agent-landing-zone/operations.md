@@ -17,8 +17,8 @@ every user's transcript, private attachment or source document.
 | Optional ingestion service | Files, indexing/purge jobs, schedules and allowlisted processing settings |
 | App Configuration and Key Vault | Declared settings, supported refresh, scoped access and secret rotation |
 
-An administrative panel is not required for native persistence.
-Do not deploy a classic orchestrator or ingestion service to act as a second
+Native persistence belongs to the selected execution host.
+Do not deploy an extra execution or ingestion service to act as a second
 workflow-state store. If an enabled UI feature requires a metadata store,
 provision that dependency directly and grant access to its actual consumer.
 
@@ -47,10 +47,11 @@ The optional ingestion service manages source processing, not agent/workflow
 execution. Review [Jobs & schedules](ingestion-jobs.md) before starting or
 changing jobs: startup and scheduled runs can index and delete content.
 
-With `DEPLOY_HOSTED_AGENT_ORCHESTRATION=false`, its ordinary ingestion admin
-routes mount. In hosted mode, `DEPLOY_ADMINISTRATIVE_PANEL=true` is also
-required to mount the hosted admin surface. A built frontend bundle is needed
-for the dashboard UI. Hiding the panel does not disable document APIs or jobs.
+Administrative routes belong to the ingestion component's declared
+administrative surface.
+Selecting `hosted` does not activate an operator UI, history or feedback.
+A built frontend bundle is needed for the ingestion dashboard.
+Hiding that UI does not disable document APIs or jobs.
 
 Manual job runs and configuration mutations use the `Admin` gate when Entra
 is configured. Administrative reads and file unblocking do not all share that

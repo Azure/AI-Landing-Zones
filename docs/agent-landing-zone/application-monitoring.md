@@ -22,7 +22,7 @@ Use [Troubleshooting](troubleshooting.md) for boundary-specific diagnosis.
 ## Native runtime audit scope
 
 Native entrypoints retain in-process tool/datasource audit hooks. They do
-not mount classic request APIs or provide the complete classic request-lifecycle
+not mount retired request APIs or provide their complete request-lifecycle
 and remote-tool audit stream. A historical schema or
 `AUDIT_EVENTS_ENABLED=true` is not evidence that those paths emit events.
 Verify the actual hook and telemetry exporter used by the selected runtime.

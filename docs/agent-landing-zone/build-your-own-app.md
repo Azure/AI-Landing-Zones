@@ -43,7 +43,7 @@ tool flag or prompt.
   runner; Azure sign-in does not authorize Git.
 - Hosted components require the runner's Foundry agent-authoring access on the
   exact project, plus account read access. Review the
-  [hosted deployment permissions](deploy-full-stack.md#foundry-orchestrator-hosted-no-panel-or-hosted-panel)
+  [hosted deployment permissions](deploy-full-stack.md#native-application-provisioning)
   for the required scopes.
 - Private deployments require a connected host with private DNS resolution.
   An ACR build pool does not provide that host's connectivity.
@@ -190,13 +190,12 @@ this release's deployment.
     binding, not image availability or application behavior. Schema validation
     accepts the all-zero editing marker; deployment requires actual source HEAD.
 
-5. For a custom-only deployment, set `DEPLOYMENT_TOPOLOGY=classic` in the azd
-   environment **before first provision** to suppress the bundled hosted
-   orchestrator selection. This is a custom-definition composition requirement,
-   not a second Agent Application deployment path. The custom hosted component
-   receives its required hosted foundation resources.
+5. Review the resolved custom definition's components and resource requirements
+   **before first provision**. The explicit definition selects the application;
+   do not use a native host flag as a substitute for its component declarations.
+   Required hosted foundation resources follow the custom hosted component.
 
-    Then provision the selected definition using
+    Provision the selected definition using
     the [infrastructure-only deployment guide](deploy-infra-only.md), and run root `azd deploy`.
     Its service uses its own source/image
     contract, not the Agent Application hosted image-preparation handoff.
@@ -220,7 +219,7 @@ For HEAD mismatches, compare `git rev-parse HEAD` inside the source folder with
 the declared pin without disabling validation.
 
 For image-pull or role failures, keep the same application ID and immutable image.
-Use [custom hosted image-pull recovery](troubleshooting.md#custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator).
+Use [custom hosted image-pull recovery](troubleshooting.md#custom-hosted-image-pull-fails).
 Do not substitute another environment's endpoints, broad grants or registry admin
 credentials. Role propagation can require an explicit retry.
 

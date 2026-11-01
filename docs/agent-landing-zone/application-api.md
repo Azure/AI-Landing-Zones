@@ -39,7 +39,7 @@ application; it does not change the deployment's host or mode.
 Tools, including optional direct NL2SQL, are registered capabilities rather
 than strategy keys.
 
-The former classic ask/feedback stream and strategy-specific conversation
+Retired ask/feedback streams and strategy-specific conversation
 envelopes are not the native protocol. UI feedback belongs to the product
 metadata service, not a feedback-shaped model invocation.
 
@@ -240,7 +240,7 @@ query.
 ## Native endpoint boundary
 
 `python -m native.hosted` and `python -m native.durable` do not mount the
-classic orchestrator conversation, feedback, history, upload, dashboard or
+retired orchestrator conversation, feedback, history, upload, dashboard or
 administration APIs. The native UI composition does not mount
 `/panel/conversations`. Use the native UI routes below, host-native clients
 and platform configuration tooling. The independently deployed ingestion
@@ -248,14 +248,14 @@ administration APIs remain separate supported surfaces.
 
 ## Ingestion administration
 
-Classic mode mounts `/api/*` administration and available dashboard assets.
-Hosted mode mounts neither classic administration nor `/api/panel/*` unless
-the administrative panel is selected. Mounting is resolved at startup.
-Jobs and document APIs are not disabled by hiding the panel.
+Ingestion administration is owned by the optional ingestion component.
+Its declared administrative surfaces are resolved at startup; native host
+and application mode are not alternative administration protocols.
+Jobs and document APIs are not disabled by hiding an operator UI.
 
-The classic admin reads do not all require Entra. The `require_admin`
+Ingestion admin reads do not all require Entra. The `require_admin`
 dependency used for job/config mutations permits development access when no
-tenant is configured. This is not the strict hosted-panel or operator gate.
+tenant is configured. This is not the strict ingestion operator gate.
 In particular, the shipped file-unblock route does not carry an unconditional
 Admin dependency. Protect the whole service boundary deliberately.
 
@@ -278,9 +278,10 @@ cache refresh fails. Schedule or write errors do not reverse earlier effects.
 Use [Application settings](application-settings.md) for allowlists and refresh.
 Use the job types reported by the running service, not an invented job name.
 
-### Hosted administrative panel
+### Declared ingestion administrative surface
 
-In ingestion hosted/panel mode, `/api/panel/status` exposes nonsensitive
+When the ingestion component declares that administrative surface,
+`/api/panel/status` exposes nonsensitive
 `mode`, `panelEnabled` and `authEnabled` bootstrap metadata.
 Protected `/api/panel/*` routes require a validated bearer and exact `Admin`
 role, with **no tenant-absent development bypass**.
@@ -363,7 +364,7 @@ maps are lost on UI restart; persisted host state alone cannot restore them.
 ## Operator metrics and corpus curation
 
 These ingestion routes are registered independently and return `503` unless
-`DEPLOY_ADMINISTRATIVE_PANEL`, `PANEL_OPERATOR_SURFACES_ENABLED`, an explicit
+the ingestion component's declared operator surface, `PANEL_OPERATOR_SURFACES_ENABLED`, an explicit
 `PANEL_OPERATOR_APP_ROLE` or `PANEL_OPERATOR_GROUP_ID`, and the
 `DATA_INGEST_APP_APIKEY` cursor-signing secret are configured.
 They require a validated delegated user with the configured role or group.

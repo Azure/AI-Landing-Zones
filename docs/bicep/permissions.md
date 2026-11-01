@@ -1,12 +1,14 @@
 # Permissions
 
-This reference describes the **default Agent Application layout**:
-`hosted-no-panel`, with the agent runtime in **Foundry Agent Service** and the
-`frontend` in **Azure Container Apps**. There is no orchestrator Container App,
-application panel or application Cosmos DB in this layout. Native Foundry IQ
+This reference describes the **default Agent Application selection**:
+`ORCHESTRATION_HOST=hosted` and `APPLICATION_MODE=conversational`, with execution
+in **Foundry Agent Service** and the automatically included `frontend` in
+**Azure Container Apps**. No application Cosmos is selected when no consumer
+requires it. Native Foundry IQ
 ingestion is selected by default; Agent App Ingestion is optional.
 Foundry's own backing resources are separate from application data stores.
-`ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`.
+History, feedback and private attachments independently default to `false`.
+Selecting Hosted does not enable history.
 Workflow mode, `both`, enabled history, feedback or attachments adds UI product metadata,
 not an execution checkpoint database. Durable Container Apps is a separate
 native execution choice with DTS.

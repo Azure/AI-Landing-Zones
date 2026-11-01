@@ -32,14 +32,16 @@ failure. Diagnose the failing stage before retrying or changing inputs.
    CLI identity; each tool can use a different account.
 2. Record the failing command, time, stage, source revision and relevant
    non-secret settings, such as `NETWORK_ISOLATION`, `BUILD_MODE` and
-   `DEPLOYMENT_TOPOLOGY`.
+   `ORCHESTRATION_HOST` and `APPLICATION_MODE`.
 3. For private environments, use a host with the required VPN/VNet connectivity.
    Inspect DNS, TLS and authorization separately.
 4. Preserve local work, data, environment bindings and security controls while
    investigating. Use the recovery steps below for the failed stage.
 
-The default `hosted-no-panel` layout runs the orchestrator in Foundry, with
-a conversational MAF Agent and Foundry IQ. Confirm the recorded layout before recovery.
+The default host is `hosted` and mode is `conversational`, with the UI
+included automatically. Record the canonical host/mode before recovery.
+History, feedback and attachments are independent default-off features;
+workflow or `both` requires UI metadata even with those flags off.
 Do not switch runtimes or weaken authentication to diagnose a failure.
 
 !!! tip "Share useful, redacted diagnostics"
@@ -106,8 +108,8 @@ for the required records, preview and explicit destruction approval.
 **Symptom:** Deployment reports missing hosted foundation prerequisites or
 automatic image preparation fails.
 
-**Diagnose:** Provision creates prerequisites and records
-`HOSTED_AGENT_PREPARED=true`. Deployment builds or reuses the immutable image,
+**Diagnose:** Provision creates prerequisites and records the foundation
+handoff. Deployment builds or reuses the immutable image,
 records its application handoff and creates the running agent version. A missing
 digest before deployment is normal; it does not require another provision.
 
@@ -152,14 +154,10 @@ for that environment; orchestrator topology is a separate choice.
 
 **Correct:** Restore the matching definition. For a different application ID,
 use a separate environment and select the definition **before first provision**.
-Retain the original environment's binding and topology.
+Retain the original environment's binding and canonical host/mode selection.
 
 **Verify:** Definition validation and binding checks pass for the intended
 environment. See [Custom applications](build-your-own-app.md).
-
-<span id="custom-hosted-image-pull-fails-with-a-classic-bundled-orchestrator"></span>
-
-<span id="custom-hosted-image-pull-fails-with-a-classic-agent-application-orchestrator"></span>
 
 #### Custom hosted image pull fails
 
@@ -540,9 +538,10 @@ unexpected key or Key Vault errors instead of enabling local authentication.
 **Verify:** Post-provision reports the expected Entra-only path and evaluation
 works with the intended identity while local authentication remains disabled.
 
-#### Administrative panel cannot resolve its Cosmos database
+#### Required UI metadata database is missing
 
-**Symptom:** `DEPLOY_ADMINISTRATIVE_PANEL is true but DATABASE_ACCOUNT_NAME is not set`.
+**Symptom:** Workflow/both or an enabled product feature requires metadata,
+but the UI cannot resolve its database account or name.
 
 **Diagnose:** Identify the selected database account and name, then check
 process inputs and the settings published in App Configuration.
@@ -551,7 +550,7 @@ process inputs and the settings published in App Configuration.
 environment. Setup reads published settings when process inputs are absent.
 Resolve missing or conflicting values in their provisioning source.
 
-**Verify:** Panel configuration resolves the actual account/database and
+**Verify:** UI metadata configuration resolves the actual account/database and
 preserves container-scoped grants. Compare the resolved names with the
 provisioned resources and keep permissions scoped to the required containers.
 
@@ -718,7 +717,7 @@ operations. A native session/run ID selects execution; it does not establish
 ownership or replace the pending request ID.
 
 **Correct:** Use the returned validation detail and the correct
-[native client contract](application-api.md). Do not send the obsolete classic
+[native client contract](application-api.md). Do not send a retired strategy-specific
 ask envelope to a native entrypoint, strip native state selectors to force
 stateless execution, or manufacture a human reply for a different request.
 
@@ -740,7 +739,7 @@ identity, owner mapping, metadata dependency and native client permissions.
 Saved listing/history requires `ENABLE_CHAT_HISTORY=true`; known workflow
 resume does not. With conversational mode and all product flags off, bounded
 volatile UI owner maps are lost on restart. Native state does not reconstruct
-them, and a classic panel is not a remedy.
+them.
 Follow [Conversations & files](conversations.md) and
 [Agent hosting](hosted-agents.md#calling-the-agent).
 Report a failed state read rather than presenting empty history or replaying

@@ -253,9 +253,8 @@ When unset, they use the template defaults shown below.
 | `DEPLOYMENT_MODE` | `standalone` | Declares deployment intent for tags and preflight. `ailz-integrated` does not automatically attach a hub or override component flags. Supply the hub, routing, resource reuse and DNS inputs explicitly. |
 | `POLICY_MANAGED_PRIVATE_DNS` | `false` | Delegates private DNS zone groups/records to Azure Policy. Use instead of BYO private DNS zone IDs; agree policy coverage, VNet links and readiness with the DNS owner. |
 | `RESOURCE_NAMING_MODE` | `caf` | Uses Cloud Adoption Framework prefixes and naming tokens. See [Resource naming](resource-naming.md). |
-| `USE_CAPP_API_KEY` | `false` | Hosted composition keeps this API-key mechanism disabled. It does not configure Entra ID sign-in. |
 | `APP_RUNTIME_CONFIGURATION_MODE` | `appConfig` | The Agent Application reads runtime settings from App Configuration. |
-| `DEPLOY_COSMOS_DB` | `false` for `hosted-no-panel`; enabled when required by selected consumers | Controls Agent Application Cosmos DB only, not Foundry Agent Service backing storage. |
+| `DEPLOY_COSMOS_DB` | Not selected for default conversational execution without a storage consumer; selected when required | Application Cosmos resource selection follows actual consumers. Foundry backing storage is separate. |
 | `ENABLE_COSMOS_ANALYTICAL_STORAGE` | `false` | Enables the Agent Application Cosmos DB analytical store. |
 | `AZURE_SEARCH_LOCATION` | Empty | Region for both the Agent Application Search service and the separate Foundry Agent Service Search service. Leave empty to use `AZURE_LOCATION`. |
 | `AZURE_SPEECH_LOCATION` | Empty | Region for Azure AI Speech. Leave empty to use the deployment region. |
@@ -312,7 +311,7 @@ data-retention requirements have been reviewed.
 
 | Variable | Fresh-environment default | Description |
 | --- | --- | --- |
-| `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects the optional Agent App Ingestion component of the Agent Application, independently of `DEPLOYMENT_TOPOLOGY`. |
+| `DEPLOY_INGESTION_CONTAINER_APP` | `false` | Selects optional Agent App Ingestion independently of native host, application mode and product metadata. |
 
 The boolean is persisted by pre-provision and published under label `agent-lz`.
 Existing environments retain their selection rather than silently adopting the
@@ -335,10 +334,11 @@ Search services use this effective region. Provider availability and Search
 quota checks use that same region, not the primary region when an override
 is set.
 
-Search quota must cover the complete enabled service count: one Agent Application service
-when `deploySearchService` (`DEPLOY_SEARCH_SERVICE`) is enabled, plus one Foundry
-Search service when `deployAiFoundry` and `deployAAfAgentSvc`
-(`DEPLOY_AAF_AGENT_SVC`) are enabled and `aiSearchResourceId` is not supplied.
+Search quota must cover the complete enabled service count: the selected Agent
+Application Search service plus a separate Foundry backing Search service when
+the selected component requires Foundry Agent Service and no existing backing
+Search resource is supplied. Host-specific provider flags are derived, not
+additional public native selectors.
 
 When both creation paths are enabled, the check requires quota for two services.
 Reusing a Foundry Search resource does not request a new service for that path.
@@ -948,23 +948,27 @@ The application separates behavior from hosting and retrieval:
 | Canonical setting | Values or requirement |
 | --- | --- |
 | `APPLICATION_MODE` | `conversational` (default), `workflow` or `both` |
-| `ORCHESTRATION_HOST` | `hosted` (default) or `container_apps`; must agree with topology composition |
+| `ORCHESTRATION_HOST` | `hosted` (default) or `container_apps`; selects native execution host |
 | `HOSTED_AGENT_BASE_URL` | Actual Hosted conversational publication endpoint, when selected |
 | `HOSTED_WORKFLOW_BASE_URL` | Actual separate Hosted workflow publication endpoint, when selected |
 | `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Official nonsecret managed-identity backend binding for the durable client/worker |
 
-These are canonical application contracts, not an assertion that every key is
-an independent `azd env` input. Use the platform's declared mappings and actual
-outputs. Do not construct scheduler endpoints or override topology with an
-inconsistent runtime key.
+The only public native deployment selectors are `ORCHESTRATION_HOST` and
+`APPLICATION_MODE`. Set them before provision; the UI is included automatically.
+History, feedback and private attachments independently default to off.
+Hosted does not enable history; workflow or `both` always selects UI metadata.
+Endpoint/binding rows are actual generated application contracts, not extra
+host choices. Do not construct scheduler endpoints or set internal host flags.
 Native feature keys are shared `additionalAppConfigurationSettings` entries
 under `agent-lz`, not new same-named Bicep or Terraform parameters.
 See [Application settings](application-settings.md#native-application-contract)
 for exact feature and consumer keys.
 
-On Hosted, `both` is a composition choice: create a conversational publication
-with `APPLICATION_MODE=conversational` and a separate workflow publication with
-`APPLICATION_MODE=workflow`. Pass both endpoints to the UI.
+On Hosted, select `APPLICATION_MODE=both`; the lifecycle prepares a
+conversational publication with derived process mode `conversational` and a
+separate workflow publication with derived process mode `workflow`, then
+passes both endpoints to the UI. These process inputs are not extra public
+deployment selectors.
 Each publication's single-mode process input must take precedence over the
 shared composition value. A common App Configuration store does not turn
 Hosted `both` into a single publication.
@@ -1017,8 +1021,6 @@ and [Hosted agents](hosted-agents.md) explain the application capabilities.
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `DEPLOYMENT_TOPOLOGY` | `hosted-no-panel` | Selects Agent Application hosting and resource composition. It does not activate optional runtime features. |
-| `DEPLOY_AAF_AGENT_SVC` | `true` | Enables the Foundry Agent Service capability host. |
 | `HOSTED_AGENT_NAME` | `agent-app-orchestrator` | Name of the hosted agent in the Foundry project. |
 | `HOSTED_AGENT_IMAGE` | `agent-app-orchestrator` | Repository name of the agent image in Container Registry. |
 | `HOSTED_AGENT_CONTAINER_CPU` | `2` | CPU recorded in provisioning metadata. See the literal-definition constraint below. |
@@ -1125,7 +1127,7 @@ These are not freely editable provisioning controls.
 
 | Value or record | Owner and use |
 | --- | --- |
-| `PREPARE_HOSTED_AGENT`, `HOSTED_AGENT_PREPARED`, `DEPLOY_HOSTED_AGENT` | Script-managed preparation/deployment state. Do not change flags to bypass a missing foundation or image handoff. |
+| Generated Hosted preparation/deployment state | Script-managed handoff, not a public host boolean. Do not set internal flags to bypass missing foundation or image prerequisites. |
 | `RETRIEVAL_AUTH_MODE` | Platform-published `native_search` authorization contract, not an operator permission bypass. See [delegated retrieval](foundry-iq.md#delegated-native-retrieval). |
 | `KEY_VAULT_URI` | Infrastructure output for the deployed vault, empty when absent. Use the actual URI for bootstrap rather than constructing a cloud DNS suffix. |
 | Local binding records | Preserve the original application, provider, group and backend bindings for updates, recovery and removal. Refreshing outputs does not recreate immutable bindings. |

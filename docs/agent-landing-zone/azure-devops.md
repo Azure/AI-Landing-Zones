@@ -66,8 +66,9 @@ Commit your configuration and compatible component pins
 before queuing a pipeline. Do not commit credentials or local azd environments.
 
 The downloadable example initially deploys the **Agent Application** with
-`hosted-no-panel`, native Blob ingestion and private endpoints. Set the same
-reviewed topology and ingestion selection across the three environments.
+`ORCHESTRATION_HOST=hosted`, `APPLICATION_MODE=conversational`, native Blob
+ingestion and private endpoints. Set the same reviewed host, mode and ingestion
+selection across the three environments.
 The table lists deployment inputs placed in each stage's YAML `settings` map
 in Step 3; the task applies them to its selected azd environment.
 [Deployment inputs](configuration.md#deployment-inputs) explains their formats
@@ -75,8 +76,9 @@ and generated provider files.
 
 | Input | Choices and effect |
 | --- | --- |
-| `DEPLOYMENT_TOPOLOGY` | Keep `hosted-no-panel` for this default deployment. |
-| `HOSTED_AGENT_RESOURCE_SCOPE` | Required **before first provision** for hosted modes: the deployed Foundry delegated-user audience followed by `/.default`. It has no implicit runtime default. |
+| `ORCHESTRATION_HOST` | `hosted` (default) or `container_apps`; selects native execution, not product features. |
+| `APPLICATION_MODE` | `conversational` (default), `workflow` or `both`; the latter two require UI metadata even with history/feedback off. |
+| `HOSTED_AGENT_RESOURCE_SCOPE` | Required **before first provision** when host is `hosted`: the deployed Foundry delegated-user audience followed by `/.default`. It has no implicit runtime default. |
 | `DEPLOY_INGESTION_CONTAINER_APP` | Keep `'false'` for native Foundry IQ source ingestion. Custom ingestion requires separate acceptance; selecting it does not enable native private uploads. Preserve existing selections during recovery. |
 | `NETWORK_ISOLATION` | Explicit `'true'`. Do not change it merely to make a pipeline pass. |
 | `BUILD_MODE` | `acr-task`; private image builds use the foundation's ACR Tasks pool. Local Docker is not required. |
@@ -85,6 +87,8 @@ See [Deployment settings](configuration.md), [Hosted agents](hosted-agents.md) a
 [ingestion compatibility](configuration.md#ingestion-application-selection).
 Preserve an existing environment's recorded layout. This example is not a
 procedure for changing runtime layouts.
+The UI is included automatically. History, feedback and private attachments
+remain independently default-off; selecting Hosted does not enable history.
 
 !!! warning "Automation does not close runtime capability gaps"
     Keep the default conversational MAF Agent with its configured Foundry IQ

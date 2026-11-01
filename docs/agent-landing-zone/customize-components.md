@@ -128,7 +128,7 @@ mapping and product metadata; explicit host clients own execution calls.
 Do not route native operations through an old orchestrator data-layer adapter.
 Callback, history, and OAuth registration must remain idempotent.
 Native history uses the selected host client plus UI-owned metadata, not a
-classic orchestrator conversation API. Keep session/run owner checks explicit
+retired orchestrator conversation API. Keep session/run owner checks explicit
 before native reads, continuation and pending human replies.
 
 For presentation, start with `public/theme.json`, `public/custom.css`, and
@@ -144,7 +144,7 @@ Edit React/TypeScript under ingestion's `frontend/`.
 Use its [local proxy and Node setup](local-development.md#operator-dashboard-frontend),
 start the backend separately, and keep typed frontend payloads aligned with
 the [API reference](application-api.md). Native orchestrator entrypoints do
-not mount the classic dashboard/admin APIs.
+not mount retired dashboard/admin APIs.
 
 Test read-only, administrator, unauthenticated, denied, empty, loading, and
 failure states. A local development admin bypass is not production

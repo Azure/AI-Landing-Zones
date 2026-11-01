@@ -133,8 +133,9 @@ files** below for details.
 
 `DEPLOYMENT_MODE` identifies the network design, but does not configure routing,
 DNS or isolation by itself. Configure those through the settings for your chosen
-approach below. `DEPLOYMENT_TOPOLOGY` separately chooses where the orchestrator
-runs. See [Deployment inputs](configuration.md#deployment-inputs) for input
+approach below. `ORCHESTRATION_HOST` selects `hosted` or `container_apps`;
+`APPLICATION_MODE` selects `conversational`, `workflow` or `both`.
+See [Deployment inputs](configuration.md#deployment-inputs) for input
 formats and generated files.
 
 #### Private standalone network
@@ -242,8 +243,11 @@ Otherwise use the Agent Application definition. The first provision binds the en
 to its application ID; a different ID requires a new environment.
 Preserve the existing layout and ingestion selection during recovery.
 
-The default Agent layout is `hosted-no-panel`, using a conversational MAF Agent
-and Foundry IQ without Agent App Ingestion. Set `HOSTED_AGENT_RESOURCE_SCOPE`
+The defaults are `ORCHESTRATION_HOST=hosted` and
+`APPLICATION_MODE=conversational`, with the UI included automatically and
+Agent App Ingestion off. History, feedback and attachments default to off;
+workflow or `both` requires UI metadata regardless of those flags.
+Set `HOSTED_AGENT_RESOURCE_SCOPE` for Hosted
 to the approved delegated Foundry audience followed by `/.default` before provisioning, even
 when application deployment will happen later. See the linked full-stack
 guide for identity inputs, downstream consent and protected-retrieval acceptance.

@@ -21,9 +21,9 @@ The guides below explain how to configure, operate and extend it.
 ## Default deployment
 
 The default deployment has web chat in Azure Container Apps and an
-orchestrator hosted in Microsoft Foundry, without an administrative panel.
-The deployment setting calls this layout `hosted-no-panel`.
-`APPLICATION_MODE` defaults to `conversational`. Native Hosted execution does
+orchestrator hosted in Microsoft Foundry. The public native selectors are
+`ORCHESTRATION_HOST=hosted` and `APPLICATION_MODE=conversational`, their defaults.
+The UI is included automatically. Native Hosted execution does
 not require application-owned Cosmos DB; Foundry backing resources and
 optional UI product storage are separate concerns.
 Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags default to off.
@@ -43,6 +43,10 @@ feedback or per-user document authorization.
 `APPLICATION_MODE` selects `conversational`, `workflow` or `both`.
 `ORCHESTRATION_HOST` selects `hosted` or `container_apps`.
 These are deployment choices, not a user-facing strategy selector.
+History, feedback and private attachments remain independently selected
+default-off features. Selecting Hosted does not enable history.
+Workflow mode and `both` always require UI metadata, even with every product
+flag off.
 
 Hosted uses the official Responses integration and native persistence.
 Container Apps uses the official Durable Extension worker/client and

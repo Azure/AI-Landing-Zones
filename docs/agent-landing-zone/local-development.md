@@ -100,7 +100,7 @@ required feature settings, and restart behavior.
 
 Use the owning component's explicit native host entrypoint after preparing
 its compatible published dependencies. Select `APPLICATION_MODE` and
-`ORCHESTRATION_HOST`; do not start the former classic HTTP strategy service
+`ORCHESTRATION_HOST`; do not start a retired HTTP strategy service
 as a substitute for native execution.
 
 | Host | Local-development boundary |
@@ -196,7 +196,7 @@ reconfigure Entra or callback URLs.
 `ORCHESTRATION_HOST` selects the explicit Hosted or durable client.
 Hosted `both` requires two publication endpoints; the durable client needs
 the actual scheduler binding and the worker's registered names.
-Failures do not fall back to the former classic backend.
+Failures do not fall back to a retired backend.
 The default hosted `user_delegated` authentication uses an on-behalf-of
 exchange, where the UI exchanges a user's API token for a downstream token.
 It needs the confidential-client settings and consent described in
@@ -220,7 +220,7 @@ path and ownership checks; ingestion is not a replacement upload path. See
 
 The ingestion repository contains its React/TypeScript operator dashboard
 under `frontend/`. Native orchestrator entrypoints do not mount a dashboard
-or classic administration APIs. Vite is ingestion's frontend server and build tool.
+or retired administration APIs. Vite is ingestion's frontend server and build tool.
 It proxies API requests to an independently running backend.
 
 | Repository | Node used by current CI | Install from `frontend/` | Development proxy | Build output |
@@ -235,8 +235,9 @@ Node 22 choice. Do not bypass peer-dependency checks.
 
 `npm run build` writes the static bundle consumed by FastAPI at `/dashboard`
 when the administrative surface is mounted. A bundle does not enable that
-surface. Ingestion mounting depends on its hosted/panel mode. It can expose a development
-admin gate when Entra is not configured. Keep them private and follow
+surface. Route mounting belongs to the ingestion component's declared
+administrative surface. It can expose a development admin gate when Entra
+is not configured. Keep those endpoints private and follow
 [Administration](operations.md) for production setup.
 
 ## Verify the intended boundary

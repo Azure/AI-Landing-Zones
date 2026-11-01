@@ -91,7 +91,7 @@ known as `Entra`), the downstream scope is `https://ai.azure.com/.default`.
 Confirm the deployed endpoint's audience with its owner; do not substitute
 the UI API scope or a management-plane audience. Set
 `HOSTED_AGENT_RESOURCE_SCOPE` in the selected azd environment before provision,
-as shown in the [full-stack deployment guide](deploy-full-stack.md#orchestrator-topology).
+as shown in the [full-stack deployment guide](deploy-full-stack.md#native-application-selection).
 This value is separate from the UI login scopes in step 4.
 
 The [Foundry client authorization procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token)

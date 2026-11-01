@@ -489,7 +489,8 @@ POST https://<ingestion-app-host>/api/jobs/sharepoint_purge/run
 
 Use the deployment's configured administrative authentication. Do not expose
 an unconfigured development endpoint. These routes require Admin when Entra
-authentication is configured and are not mounted in every hosted/panel mode.
+authentication is configured and are available only when the ingestion
+component's administrative surface is mounted.
 `202 Accepted` means queued, not indexed. `409` means that job type is already
 running. See [Jobs & schedules](ingestion-jobs.md) for scheduling, conflicts and
 cleanup effects, [Administration](operations.md) for route availability, and
