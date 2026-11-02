@@ -40,26 +40,24 @@ The below diagram represents the reference architecture of the AI Gateway Landin
 
 The table represents the various reference implementations of the AI Landing Zone based on the service inventory & configuration
 
-### Foundry Modules
-| Type | Description |
-| ----------- | ----------- |
-| Terraform | [Repo](https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest) |
-| Bicep | [Repo](https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry) |
-
 ### Agent Landing Zone
 | Type | Description |
 | ----------- | ----------- |
-| Infrastructure with Terraform | [Repo](https://aka.ms/ailz/terraform) |
-| Infrastructure with Bicep | [Repo](https://aka.ms/ailz/bicep) |
-| Infrastructure and agent application with azd and Bicep | [Docs](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/) |
+| Infrastructure with Terraform | [Repo](https://github.com/Azure/agent-landing-zone/tree/main/infra/terraform) |
+| Infrastructure with Bicep | [Repo](https://github.com/Azure/agent-landing-zone/tree/main/infra/bicep) |
+| Infrastructure and agent application with azd and Bicep | [Docs](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/deploy-full-stack/) |
 | Infrastructure and agent application with azd and Terraform | [Docs](https://azure.github.io/AI-Landing-Zones/agent-landing-zone/deploy-terraform-full-stack/) |
 | Infrastructure through the portal | [![Deploy To Azure](https://learn.microsoft.com/en-us/azure/templates/media/deploy-to-azure.svg)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Ftemplate.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAI-Landing-Zones%2Frefs%2Fheads%2Fportal%2Fportal%2Fform.json) |
 
 The infrastructure implementations do not deploy the default agent application.
-Use the azd full-stack guides for application integration; Bicep remains the
+Use the azd full-stack guides for application integration. Bicep remains the
 default provider.
 
-> **Note:** The previous Bicep implementation is still available in the [`legacy-bicep`](https://github.com/Azure/AI-Landing-Zones/tree/legacy-bicep) branch for users who need the legacy codebase.
+### Foundry Modules (AVM)
+| Type | Description |
+| ----------- | ----------- |
+| Terraform | [Repo](https://registry.terraform.io/modules/Azure/avm-ptn-aiml-ai-foundry/azurerm/latest) |
+| Bicep | [Repo](https://github.com/Azure/bicep-registry-modules/tree/main/avm/ptn/ai-ml/ai-foundry) |
 
 ### AI Gateway Landing Zone
 | Type | Description |
