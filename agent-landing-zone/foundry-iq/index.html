@@ -5676,13 +5676,14 @@ Deployment follows the <a href="../deploy-full-stack/">full-stack deployment gui
 <p><strong>What must be connected before an agent can use a knowledge base?</strong></p>
 <ol>
 <li>Search owns the knowledge base and its registered sources.</li>
-<li>The native Agent uses a project-connection MCP tool, not the direct Search
-   connector. The provisioned Search connection is not that MCP connection.</li>
+<li>The native Agent uses a Model Context Protocol (MCP) project-connection tool,
+   not the direct connector. Foundry Search and Foundry IQ have distinct
+   connections; the IQ tool binding still needs a compatible connection.</li>
 <li>Source ingestion, tool registration and end-user authorization are separate
    setup tasks. Test all three before admitting users.</li>
 </ol>
 </div>
-<p><a aria-label="Open full-size Foundry IQ connection diagram" class="runbook-diagram__image" href="../../media/runbooks/foundry-iq.svg"><img alt="A native Agent calls a reviewed MCP project connection to reach a Search knowledge base. Native Blob ingestion copies content into Search; an existing index keeps its own ingestion owner. Setup must replace the generated Search connection with a compatible MCP connection and verify user authorization." src="../../media/runbooks/foundry-iq.svg" /></a></p>
+<p><a aria-label="Open full-size Foundry IQ connection diagram" class="runbook-diagram__image" href="../../media/runbooks/foundry-iq.svg"><img alt="A native Agent or Workflow uses a Model Context Protocol (MCP) project connection to reach a Search knowledge base, separately from the native Foundry Search connection. Native Blob ingestion owns its generated index; an existing index keeps its ingestion owner. The Foundry IQ tool binding requires a compatible RemoteTool connection and verified source-specific user authorization." src="../../media/runbooks/foundry-iq.svg" /></a></p>
 <p><a class="runbook-diagram__open" href="../../media/runbooks/foundry-iq.svg">Open full-size diagram</a></p>
 </div>
 <p><span id="choose-the-retrieval-backend"></span></p>

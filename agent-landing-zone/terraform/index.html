@@ -5527,8 +5527,8 @@ Keep the environment created by init; no second <code>azd env new</code> is need
     foundation["Azure foundation&lt;br/&gt;Network · identities · AI services · runtimes · data"]
     outputs["Infrastructure output contract"]
     configuration["Shared service configuration&lt;br/&gt;App Configuration · Key Vault references · access"]
-    deploy["Shared application deployment&lt;br/&gt;Manifest-pinned sources · image builds · publication"]
-    application["Running application&lt;br/&gt;Foundry hosted agent · selected Container Apps"]
+    deploy["azd deploy — separate application stage&lt;br/&gt;Pinned sources · build/reuse images · publish"]
+    application["Running selected application&lt;br/&gt;UI · Hosted agent OR Container Apps worker"]
     state[("Existing Azure Storage backend&lt;br/&gt;Environment-specific state")]
 
     inputs --&gt; azd
@@ -5540,7 +5540,7 @@ Keep the environment created by init; no second <code>azd env new</code> is need
     foundation --&gt; outputs
     outputs --&gt; configuration
     azd -.-&gt;|"postprovision"| configuration
-    configuration --&gt;|"Ready foundation"| deploy
+    configuration -.-&gt;|"Prerequisite; provision stops here"| deploy
     azd --&gt;|"deploy"| deploy
     deploy --&gt; application
 

@@ -14,7 +14,7 @@
   <rect x="32" y="184" width="238" height="202" class="node"/>
   <text x="52" y="220" class="head">Application</text>
   <text x="52" y="247" class="head">integration</text>
-  <text x="52" y="286">Native MCP connection</text>
+  <text x="52" y="286">Native tool connection</text>
   <text x="52" y="316">or custom connector</text>
   <text x="52" y="346">Prove user delegation</text>
   <rect x="366" y="136" width="242" height="300" class="group"/>
@@ -24,17 +24,17 @@
   <use href="#search-icon" transform="translate(462 220) scale(2.6)"/>
   <text x="402" y="303" class="head">Knowledge base</text>
   <text x="402" y="342">Bound Fabric source</text>
-  <text x="402" y="378">Aug 2026 preview</text>
+  <text x="402" y="378">Preview integration</text>
   <rect x="704" y="118" width="264" height="338" class="group"/>
   <rect x="704" y="118" width="264" height="44" class="header"/>
   <text x="722" y="147" class="head">Fabric: choose a source</text>
   <rect x="720" y="184" width="232" height="108" class="node"/>
   <text x="740" y="219" class="head">Data agent</text>
-  <text x="740" y="252">Workspace + item ID</text>
+  <text x="740" y="252">Analytical answers</text>
   <text x="740" y="280">Published + shared</text>
   <rect x="720" y="324" width="232" height="108" class="node"/>
   <text x="740" y="359" class="head">Ontology</text>
-  <text x="740" y="392">Workspace + item ID</text>
+  <text x="740" y="392">Business relationships</text>
   <text x="815" y="316">OR</text>
   <path d="M270 286H382" class="flow"/>
   <text x="282" y="242">Authorized</text>
@@ -49,6 +49,6 @@
   <text x="52" y="617" class="head">Fabric + Search owners</text>
   <text x="52" y="648">Publish, share, bind source</text>
   <text x="550" y="613">No landing-zone corpus copy.</text>
-  <text x="550" y="645">MCP NL2SQL is a separate approved SQL route.</text>
+  <text x="550" y="645">App-managed SQL tools are a separate route.</text>
   <text x="32" y="704">Blue: proposed retrieval calls. Source registration and data grants precede application testing.</text>
 </svg>

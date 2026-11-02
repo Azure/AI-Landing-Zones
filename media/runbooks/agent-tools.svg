@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="960" viewBox="0 0 1000 960" role="img" aria-labelledby="title desc">
-  <title id="title">Tools available to the agent</title>
+  <title id="title">Tools integrated in the reference application</title>
   <desc id="desc">The Agent Application explicitly supplies tools to its agent or workflow on one selected host. Foundry tool integrations include Azure AI Search for a configured index and Foundry IQ through its own prepared project connection. Application tool integrations include the multimodal_retrieve function and tool functions discovered from an MCP server. The explicitly selected NL2SQL toolset on Agent App MCP Server provides nl2sql.list_sources and nl2sql.query. The four branches are independent optional integrations, not a required sequence. Each needs its own configuration and authorization.</desc>
   <!-- Azure public service icons, July 2026 pack. https://learn.microsoft.com/azure/architecture/icons/ -->
   <defs>
@@ -16,14 +16,14 @@
     </symbol>
   </defs>
   <rect width="1000" height="960" fill="#fff"/>
-  <text class="title" x="40" y="52">Tools available to the agent</text>
-  <text x="40" y="88">The application supplies the agent's tool list explicitly.</text>
+  <text class="title" x="40" y="52">Tools integrated in the reference application</text>
+  <text x="40" y="88">A starting set, not the full Foundry catalog. Add other tools through application integration.</text>
   <rect class="group" x="40" y="150" width="270" height="710"/>
   <rect class="header" x="40" y="150" width="270" height="52"/>
   <text class="heading" x="60" y="184">Agent Application</text>
   <text x="60" y="253">Select one host:</text>
   <text x="60" y="285">Foundry Hosted</text>
-  <text class="label" x="60" y="315">or Container Apps + DTS</text>
+  <text class="label" x="60" y="315">or Azure Container Apps</text>
   <rect class="node" x="60" y="445" width="230" height="160"/>
   <text class="heading" x="175" y="490" text-anchor="middle">Agent or workflow</text>
   <text x="175" y="535" text-anchor="middle">Configured tools</text>
@@ -50,7 +50,7 @@
   <text class="heading" x="475" y="616" text-anchor="middle" aria-hidden="true">fn</text>
   <text class="heading" x="515" y="607">Multimodal retrieval</text>
   <text class="code" x="515" y="632">multimodal_retrieve</text>
-  <text class="label" x="515" y="659">Function implemented in the application</text>
+  <text class="label" x="515" y="659">Retrieves document text, images and captions</text>
   <rect class="node" x="440" y="695" width="490" height="140"/>
   <use href="#aca" x="455" y="737" width="40" height="40" aria-hidden="true"/>
   <text class="heading" x="515" y="727">Selected MCP tools</text>
@@ -64,5 +64,5 @@
   <path class="flow" d="M360 625H440"/>
   <path class="flow" d="M360 765H440"/>
   <text x="40" y="907">Connections, permissions and network access are configured for each integration.</text>
-  <text class="label" x="40" y="939">Foundry IQ uses its own project connection; NL2SQL requires explicit toolset selection.</text>
+  <text class="label" x="40" y="939">MCP = Model Context Protocol. The SQL tools shown are an optional example.</text>
 </svg>

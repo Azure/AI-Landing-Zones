@@ -5730,14 +5730,16 @@ validation and read-only database execution.</p>
 <div class="runbook-diagram__summary">
 <p><strong>Where is SQL generated and authorized?</strong></p>
 <ol>
-<li>An authenticated Agent or Workflow invokes Agent App MCP Server.</li>
+<li>An authenticated Agent or Workflow invokes Agent App MCP Server, the
+   separate Model Context Protocol tool service.</li>
 <li>Only an explicitly selected <code>nl2sql</code> toolset reads its own approved source
    and vector-metadata catalog, generates SQL and validates it.</li>
 <li>The server executes against the approved database under its read-only
-   principal. Users share that approved dataset; this is not per-user SQL OBO.</li>
+   principal. Users share that approved dataset; there is no per-user database
+   delegation.</li>
 </ol>
 </div>
-<p><a aria-label="Open full-size NL2SQL ownership and execution diagram" class="runbook-diagram__image" href="../../media/runbooks/nl2sql.svg"><img alt="Agent App MCP Server contains the explicitly selected nl2sql toolset. It reads approved source and vector metadata from Cosmos, generates and validates SQL, then queries an approved read-only database. A separate importer activates catalog versions. The default server exposes zero tools and Search is not a dependency." src="../../media/runbooks/nl2sql.svg" /></a></p>
+<p><a aria-label="Open full-size NL2SQL ownership and execution diagram" class="runbook-diagram__image" href="../../media/runbooks/nl2sql.svg"><img alt="Agent App MCP Server contains the explicitly selected natural-language-to-SQL toolset. It reads approved source and vector metadata from application Cosmos, generates and validates SQL, then queries an approved read-only database. A separate managed-identity importer activates catalog versions. Admitted users share the approved dataset without per-user database delegation. The default server exposes zero tools and Search is not a dependency." src="../../media/runbooks/nl2sql.svg" /></a></p>
 <p><a class="runbook-diagram__open" href="../../media/runbooks/nl2sql.svg">Open full-size diagram</a></p>
 </div>
 <h2 id="how-to-enable-nl2sql">How to enable NL2SQL</h2>

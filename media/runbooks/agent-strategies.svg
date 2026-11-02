@@ -14,12 +14,12 @@
   </defs>
   <rect width="1000" height="760" fill="#fff"/>
   <text class="title" x="40" y="52">Three choices compose the application</text>
-  <text x="40" y="88">Make each choice explicitly before provision and application publication.</text>
+  <text x="40" y="88">Microsoft Agent Framework: choose experience, host and tools before deployment.</text>
   <rect class="group" x="40" y="140" width="280" height="370"/>
   <rect class="header" x="40" y="140" width="280" height="52"/>
   <text class="heading" x="60" y="174">1 · Experience</text>
   <rect class="node" x="60" y="225" width="240" height="215"/>
-  <text class="heading" x="180" y="270" text-anchor="middle">MAF application</text>
+  <text class="heading" x="180" y="270" text-anchor="middle">Application mode</text>
   <text x="180" y="315" text-anchor="middle">Conversation</text>
   <text x="180" y="350" text-anchor="middle">Workflow</text>
   <text x="180" y="385" text-anchor="middle">or both</text>
@@ -33,14 +33,14 @@
   <text class="label" x="500" y="343" text-anchor="middle">OR</text>
   <rect class="node" x="380" y="360" width="240" height="100"/>
   <use href="#aca" x="400" y="385" width="45" height="45" aria-hidden="true"/>
-  <text x="460" y="402">Container Apps</text><text x="460" y="432">+ DTS</text>
+  <text x="460" y="402">Container Apps</text><text class="label" x="460" y="432">Durable worker</text>
   <rect class="group" x="680" y="140" width="280" height="370"/>
   <rect class="header" x="680" y="140" width="280" height="52"/>
   <text class="heading" x="700" y="174">3 · Capabilities</text>
   <rect class="node" x="700" y="225" width="240" height="215"/>
   <text class="heading" x="820" y="270" text-anchor="middle">Optional tools</text>
   <text x="820" y="320" text-anchor="middle">Retrieval</text>
-  <text x="820" y="355" text-anchor="middle">and/or MCP</text>
+  <text x="820" y="355" text-anchor="middle">and/or external tools</text>
   <text class="label" x="820" y="405" text-anchor="middle">Off by default</text>
   <text class="label" x="700" y="480">App owns registration</text>
   <path class="setup" d="M180 510V560H380V610"/>

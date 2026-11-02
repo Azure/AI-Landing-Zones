@@ -5725,13 +5725,13 @@ Deployment and redeployment belong to the
 <p><strong>Three separate access checks</strong></p>
 <ol>
 <li>Entra sign-in supplies a UI API token; the UI checks admission and ownership.</li>
-<li>The UI exchanges delegated credentials for Foundry invocation and, separately,
-   Search retrieval. The user also needs Foundry caller access.</li>
-<li>Search checks current document permissions. Login and workload RBAC do not
-   grant access to every source.</li>
+<li>The UI exchanges delegated credentials for Foundry invocation.
+   The user also needs Foundry caller access.</li>
+<li>Configure and verify source authorization for the selected retrieval tool.
+   Login and workload roles do not grant access to every document.</li>
 </ol>
 </div>
-<p><a aria-label="Open full-size application access diagram" class="runbook-diagram__image" href="../../media/runbooks/application-auth.svg"><img alt="A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Native retrieval separately checks the user's document permissions in Azure AI Search." src="../../media/runbooks/application-auth.svg" /></a></p>
+<p><a aria-label="Open full-size application access diagram" class="runbook-diagram__image" href="../../media/runbooks/application-auth.svg"><img alt="A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Protected retrieval requires a separate source-specific authorization integration. Foundry invocation alone does not establish document access." src="../../media/runbooks/application-auth.svg" /></a></p>
 <p><a class="runbook-diagram__open" href="../../media/runbooks/application-auth.svg">Open full-size diagram</a></p>
 </div>
 <h2 id="trusted-identity-and-native-state">Trusted identity and native state</h2>
@@ -5950,18 +5950,21 @@ describes downstream consent.</p>
 <p><code>user_delegated</code> rejects a missing user token without service-identity fallback.
 <code>service_identity</code> would make Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.</p>
-<p>With <code>RETRIEVAL_AUTH_MODE=native_search</code>, the supplied UI performs a separate
-OBO exchange for <code>https://search.azure.com/.default</code>.
-It uses the same authenticated UI assertion as the Foundry exchange.
-Foundry forwards the resulting <code>x-client-search-token</code> to the selected native
-Hosted publication. The connector supplies that
-raw token in <code>x-ms-query-source-authorization</code>, separately from its workload
-authentication to Search. It does not exchange the Search token again.</p>
-<p>This built-in path does not require customer-written Toolbox integration or
-forward the browser's Authorization header unchanged. Native Search evaluates
-document permissions; caller-provided identity/group IDs are not entitlement
-evidence. The transport identity's Search role alone does not grant the user
-access to protected sources.</p>
+<p>The native UI client exchanges the user token for Foundry invocation.
+It does not automatically forward a separate Search user token.
+The native agent registers Search and Foundry IQ through Foundry client
+integrations and project connections. Configure and verify the selected
+integration's source authorization before enabling protected retrieval.</p>
+<p>The separate direct-connector implementation uses
+<code>RETRIEVAL_AUTH_MODE=native_search</code>, an OBO token for
+<code>https://search.azure.com/.default</code> and <code>x-client-search-token</code>.
+Its Search connector supplies <code>x-ms-query-source-authorization</code> separately
+from workload authentication. Those connector functions are not the native
+client's automatic retrieval path.</p>
+<p>Do not treat Foundry invocation consent as evidence of document authorization.
+Caller-provided identity/group IDs are not entitlement evidence.
+The transport identity's Search role alone does not grant the user access
+to protected sources.</p>
 <p>Required retrieval rejects a missing credential before execution. Tokens stay
 request-local, outside prompts, conversation history and recovery checkpoints.
 Consent, Conditional Access and source denial must be resolved at their own

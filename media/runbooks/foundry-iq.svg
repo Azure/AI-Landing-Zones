@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="730" viewBox="0 0 1000 730" role="img" aria-labelledby="title desc">
   <title id="title">What connects an Agent to a Foundry IQ knowledge base?</title>
-  <desc id="desc">The native Agent registers an MCP project-connection tool. A compatible RemoteTool connection is an operator integration task: the generated CognitiveSearch connection is not that connection. Search owns the knowledge base and either native Blob ingestion or a registered existing index. User authorization must be verified separately. Purple dashed arrows show setup, not runtime traffic.</desc>
+  <desc id="desc">The native Agent or Workflow registers a Model Context Protocol (MCP) project-connection tool for Foundry IQ, separately from the native Foundry Search connection. Provisioning supplies a dedicated CognitiveSearch connection ID for the knowledge base; the documented native tool requires a compatible RemoteTool connection. The application owner must configure that binding and verify source-specific user authorization. Search owns the knowledge base and either native Blob ingestion or a registered existing index. Purple dashed arrows show setup, not runtime traffic.</desc>
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#32698e"/></marker>
     <marker id="setup-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#766798"/></marker>
@@ -23,11 +23,11 @@
   <text x="112" y="233" class="head">Workflow</text>
   <text x="62" y="267">Foundry IQ flag on</text>
   <rect x="370" y="176" width="262" height="110" class="node"/>
-  <text x="390" y="207" class="head">MCP connection</text>
+  <text x="390" y="207" class="head">Project tool connection</text>
   <text x="390" y="238">RemoteTool contract</text>
   <text x="390" y="267">Operator must connect</text>
   <path d="M276 226H370" class="flow"/>
-  <text x="302" y="203">MCP</text>
+  <text x="298" y="203">Tool call</text>
   <rect x="710" y="116" width="258" height="188" class="group"/>
   <rect x="710" y="116" width="258" height="44" class="header"/>
   <text x="728" y="145" class="head">Azure AI Search</text>
@@ -43,10 +43,10 @@
   <rect x="32" y="382" width="466" height="137" class="node"/>
   <text x="52" y="415" class="head">Native Blob source (default)</text>
   <text x="52" y="449">Search manages ingestion + generated index</text>
-  <text x="52" y="482">Permission metadata defaults to rbacScope</text>
+  <text x="52" y="482">Default permissions: storage access scopes</text>
   <rect x="546" y="382" width="422" height="137" class="node"/>
   <text x="566" y="415" class="head">Existing index source (alternative)</text>
-  <text x="566" y="449">Index owner supplies content + ACLs</text>
+  <text x="566" y="449">Owner supplies content + permissions</text>
   <text x="566" y="482">Registration does not ingest content</text>
   <text x="32" y="365">Source lookups</text>
   <path d="M32 550H968" stroke="#9bb2c4" stroke-dasharray="4 4"/>
@@ -55,8 +55,8 @@
   <text x="103" y="615" class="head">App owner</text>
   <text x="103" y="646">Connection setup</text>
   <path d="M292 625H315V537H522V320H501V286" class="setup"/>
-  <text x="380" y="594" class="head">Generated CognitiveSearch ≠ MCP RemoteTool</text>
-  <text x="380" y="628">Configure the actual connection; redeploy the capability.</text>
-  <text x="380" y="660">Prove source-specific allowed / denied-user retrieval.</text>
-  <text x="32" y="709">Blue: retrieval calls. Purple dashed: setup only. No shared identity grants user document access.</text>
+  <text x="350" y="584" class="head">Foundry Search and Foundry IQ use distinct connections.</text>
+  <text x="350" y="614">Generated CognitiveSearch ≠ required RemoteTool contract.</text>
+  <text x="350" y="644">Bind the tool, redeploy; prove allowed / denied-user access.</text>
+  <text x="32" y="709">MCP = Model Context Protocol. Blue: retrieval calls. Purple dashed: setup only.</text>
 </svg>

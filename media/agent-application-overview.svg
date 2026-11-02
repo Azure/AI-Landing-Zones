@@ -81,7 +81,7 @@
     <rect x="32" y="174" width="244" height="363" rx="18" fill="#ffffff" stroke="#dce4ed" filter="url(#shadow)"/>
     <rect x="56" y="196" width="40" height="5" rx="2.5" fill="url(#accent)"/>
     <text x="56" y="237" font-size="27" font-weight="650">Agent App UI</text>
-    <text x="56" y="268" font-size="22" fill="#526579">Chainlit + BFF</text>
+    <text x="56" y="268" font-size="22" fill="#526579">Chat UI + backend</text>
     <rect x="56" y="287" width="196" height="34" rx="9" fill="#f3f7fc"/>
     <text x="154" y="310" font-size="18" text-anchor="middle" fill="#4051b5">Azure Container Apps</text>
     <path d="M 56 339 H 252" stroke="#dce4ed"/>

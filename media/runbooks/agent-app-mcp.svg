@@ -14,7 +14,7 @@
   </defs>
   <rect width="1000" height="820" fill="#fff"/>
   <text class="title" x="40" y="52">Server compute is not tool selection</text>
-  <text x="40" y="88">MCP is the protocol. Agent App MCP Server is the component. NL2SQL is a toolset.</text>
+  <text x="40" y="88">The server exposes selected tools. NL2SQL answers database questions in natural language.</text>
   <rect class="group" x="370" y="130" width="590" height="490"/>
   <rect class="header" x="370" y="130" width="590" height="75"/>
   <use href="#aca" x="390" y="142" width="50" height="50" aria-hidden="true"/>
@@ -22,7 +22,8 @@
   <text class="label" x="460" y="190">Separate Container App</text>
   <rect class="node" x="40" y="225" width="230" height="130"/>
   <text class="heading" x="155" y="270" text-anchor="middle">Agent or workflow</text>
-  <text class="label" x="155" y="315" text-anchor="middle">Either native host</text>
+  <text class="label" x="155" y="305" text-anchor="middle">Foundry Hosted</text>
+  <text class="label" x="155" y="335" text-anchor="middle">or Container Apps</text>
   <rect class="node" x="400" y="225" width="530" height="95"/>
   <use href="#role" x="420" y="240" width="45" height="45" aria-hidden="true"/>
   <text class="heading" x="485" y="260">Entra authentication</text>
@@ -41,16 +42,17 @@
   <rect class="header" x="665" y="385" width="265" height="50"/>
   <text class="heading" x="797" y="418" text-anchor="middle">Opt in: ["nl2sql"]</text>
   <text x="797" y="483" text-anchor="middle">Two SQL tools</text>
-  <text class="label" x="797" y="525" text-anchor="middle">App owns the selection</text>
+  <text class="label" x="797" y="525" text-anchor="middle">List sources · query SQL</text>
   <text class="label" x="643" y="485" text-anchor="middle">OR</text>
-  <text x="40" y="460">Select before provision;</text>
-  <text x="40" y="493">restart/redeploy to change.</text>
+  <text x="40" y="430">Set MCP_TOOLSETS</text>
+  <text x="40" y="460">before provision.</text>
+  <text x="40" y="493">Restart/redeploy to change.</text>
   <text class="label" x="40" y="553">Both choices remain</text>
   <text class="label" x="40" y="583">authenticated.</text>
   <path class="flow" d="M800 565V675"/>
   <text class="label" x="820" y="650">NL2SQL only</text>
   <rect class="node" x="500" y="675" width="430" height="85"/>
   <text class="heading" x="715" y="708" text-anchor="middle">Selected dependencies</text>
-  <text class="label" x="715" y="743" text-anchor="middle">Catalog · models · read-only SQL</text>
-  <text class="label" x="40" y="802">The foundation is generic. Empty selection initializes no NL2SQL dependencies.</text>
+  <text class="label" x="715" y="743" text-anchor="middle">Cosmos catalog · models · read-only SQL</text>
+  <text class="label" x="40" y="802">MCP = Model Context Protocol. Empty selection initializes no SQL toolset dependencies.</text>
 </svg>

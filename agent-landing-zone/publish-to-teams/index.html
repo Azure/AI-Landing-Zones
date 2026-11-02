@@ -5971,7 +5971,7 @@ resource teams 'Microsoft.BotService/botServices/channels@2021-03-01' = {
 <p>Replace <code>&lt;agent-display-name&gt;</code> with the name users should see. Run the commands
 from <code>$work</code> to deploy the saved template into the Foundry resource group.</p>
 <div class="highlight"><pre><span></span><code><span class="nv">$displayName</span> <span class="p">=</span> <span class="s2">"&lt;agent-display-name&gt;"</span>
-<span class="nv">$activityEndpoint</span> <span class="p">=</span> <span class="s2">"$agentUri/endpoint/protocols/activityProtocol"</span>
+<span class="nv">$activityEndpoint</span> <span class="p">=</span> <span class="s2">"$agentUri/endpoint/protocols/activityProtocol?api-version=v1"</span>
 
 <span class="n">az</span> <span class="n">deployment</span> <span class="nb">group </span><span class="n">create</span> <span class="p">-</span><span class="n">-resource-group</span> <span class="nv">$resourceGroup</span> <span class="p">`</span>
     <span class="p">-</span><span class="n">-name</span> <span class="s2">"teams-bot"</span> <span class="p">-</span><span class="n">-template</span><span class="o">-file</span> <span class="n">bot-service</span><span class="p">.</span><span class="n">bicep</span> <span class="p">`</span>
@@ -5989,6 +5989,9 @@ from <code>$work</code> to deploy the saved template into the Foundry resource g
 URL, and its network setting is <code>"pna": "Disabled"</code>. The bot uses the agent's
 identity; you do not need a client secret, public VNet ingress or a custom
 connector.</p>
+<p>The <code>api-version=v1</code> query is part of
+<a href="https://learn.microsoft.com/azure/foundry/agents/how-to/publish-copilot-virtual-network">Microsoft's documented Bot Service endpoint URL</a>;
+it selects the API contract, not the agent version.</p>
 <h3 id="step-3-enable-the-source-ip-filtered-public-activity-route">Step 3: Enable the source-IP-filtered public Activity route</h3>
 <p>Run the block below to enable the <strong>public HTTPS Activity exception</strong>.
 The block also applies the Bot Service authorization scheme for your chosen
