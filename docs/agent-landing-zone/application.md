@@ -14,8 +14,8 @@ The reference application is **one application on the reusable foundation**,
 not the definition of that foundation. To deploy other components instead of
 the supplied UI/orchestrator, select your own
 [application definition](build-your-own-app.md#application-binding-and-selection)
-before provision. Application composition owns component names, tool selection
-and dependency declarations; the foundation accepts generic compute, data,
+before provision. Application composition declares component names, tool
+selection and dependencies. The foundation accepts generic compute, data,
 capability and role inputs.
 
 ## First time using Agent Application?
@@ -32,9 +32,9 @@ after that baseline works.
 | 5. Add a capability | Select a route in the table below and complete its source/identity setup | The capability works with permitted data and rejects denied access |
 | 6. Operate | Set retention, inspect [native traces](application-monitoring.md#native-tracing) and follow [updates and recovery](deployment-operations.md) | Owners can find a real request trace, diagnose failures and apply controlled changes |
 
-Provisioning and login setup are interleaved: register the UI application and
-arrange consent **before provision**, then configure its actual callback,
-secrets and admission **after provision and before deploy**.
+**Before provision**, register the UI application and arrange consent.
+**After provision and before deploy**, configure the actual UI callback,
+secrets and admission.
 The deployment guide marks that handoff explicitly.
 
 The first greeting proves model connectivity, not document retrieval, SQL
@@ -85,12 +85,9 @@ Keep deployment selection and runtime key edits in their documented surfaces.
 
 ## Default deployment
 
-The default deployment has web chat in Azure Container Apps and an
-orchestrator hosted in Microsoft Foundry. The public native selectors are
-`ORCHESTRATION_HOST=hosted` and `APPLICATION_MODE=conversational`, their defaults.
-The UI is included automatically. Native Hosted execution does
-not require application-owned Cosmos DB; Foundry backing resources and
-optional UI product storage are separate concerns.
+By default, web chat runs in Azure Container Apps and the orchestrator runs
+in Microsoft Foundry. The defaults are `ORCHESTRATION_HOST=hosted` and
+`APPLICATION_MODE=conversational`. The UI is included automatically.
 
 Search, Foundry IQ and multimodal tool flags default to off.
 Agent App MCP Server is also omitted by default (`DEPLOY_AGENT_APP_MCP=false`).
@@ -98,16 +95,18 @@ When deployed, its `MCP_TOOLSETS` still defaults to `[]`: no business tools
 or NL2SQL dependencies are initialized until explicitly selected.
 Preparing a source does not register a tool.
 
-History, feedback and private attachments also default to off.
-Conversational UI owner maps are then bounded
-and volatile, not a restart-safe saved-session store.
+If a native Blob source is configured, Foundry IQ manages its ingestion.
+Deploy Agent App Ingestion only when a selected custom processing path needs it.
+Agent App Ingestion is disabled by default.
+A private conversation attachment is not a shared source-ingestion request.
 
-Foundry IQ manages
-ingestion for the configured native Blob source. Deploy Agent App Ingestion
-only when a selected custom processing path needs it; it is disabled by
-default. A private conversation attachment is not a shared source-ingestion
-request. Hosting owns native execution state, not the UI's history discovery,
-feedback or per-user document authorization.
+History, feedback and private attachments also default to off.
+With these flags off in conversational mode, UI owner maps are bounded
+and volatile, not a restart-safe saved-session store.
+Native Hosted execution does not require application-owned Cosmos DB.
+Foundry backing resources and optional UI product storage are separate.
+Hosting owns native execution state. Hosting alone does not enable UI history
+discovery or feedback, or grant per-user document access.
 
 ## Choose only the capabilities you need
 
@@ -123,16 +122,20 @@ feedback or per-user document authorization.
 
 The platform handles resource dependencies and generated connections.
 You still choose the data sources, arrange authorization and provide approved
-content. For NL2SQL, SQL owners approve database access and operators import
-the catalog. Search and document ingestion are independent capabilities.
+content. For NL2SQL, SQL owners approve read-only database access.
+Operators import the approved catalog metadata.
+Search and document ingestion are independent capabilities.
 
 ### What Cosmos means in this application
 
 There are separate storage responsibilities:
 
 - **Application Cosmos** is conditional. It is required automatically for
-  workflow/`both` UI metadata, enabled history, feedback or private attachments,
-  the selected NL2SQL toolset, retained catalogs and declared custom Cosmos capabilities.
+  workflow/`both` UI ownership/action metadata.
+  Enabling history, feedback or private attachments also requires application
+  Cosmos for UI/product metadata.
+  The selected NL2SQL toolset, retained catalogs and declared custom Cosmos
+  capabilities require their respective application Cosmos dependencies.
   A compatible existing application account is reused, with separate containers
   and scoped grants for each consumer.
 - **Foundry backing Cosmos** belongs to Foundry's service infrastructure.
@@ -150,13 +153,14 @@ application and its resource consumers.
 ## Application mode and host
 
 `APPLICATION_MODE` selects `conversational`, `workflow` or `both`.
-`ORCHESTRATION_HOST` selects `hosted` or `container_apps`.
-These are deployment choices, not a user-facing strategy selector.
+Independently, `ORCHESTRATION_HOST` selects `hosted` or `container_apps`.
+These are deployment choices, not a user-facing runtime strategy or host picker.
 History, feedback and private attachments are independent, default-off
 features. Set their supported azd inputs
 [before provisioning](application-settings.md#enable-a-product-feature).
 Workflow mode and `both` always require UI metadata, even with every product
 flag off.
+Selecting Hosted alone does not enable history.
 
 Hosted uses the official Responses integration and native persistence.
 Container Apps uses the official Durable Extension worker/client and
@@ -174,22 +178,28 @@ records their compatible versions.
 
 ## Before you invite users
 
-Deployment creates the selected resources, but connecting a source and signing
-in do not by themselves prove that every user has the right document access.
-Complete the [sign-in and access setup](application-auth.md), configure the
-sources you need and check both allowed and denied access.
+Complete the [sign-in and access setup](application-auth.md) and check both
+allowed and denied access. Configure the sources you need and verify per-user
+document access. Deployment creates the selected resources. Signing in or
+connecting a source does not by itself prove document authorization.
 
-Optional capabilities have their own prerequisites. Saved history and feedback
-default to off; a selected workflow declares UI metadata storage independently
-of native execution state. Private attachments have an explicit feature gate,
-an owner-bound inline native input path and their own retention requirements.
-They are conversational only; transport support is not proof of model
-PDF/image understanding.
+Check the prerequisites for each selected capability:
+
+- If you enable saved history or feedback, configure that feature's UI metadata
+  and access requirements. Both features default to off.
+- If you select a workflow, verify its declared UI metadata storage.
+  This storage is independent of native execution state.
+- If you enable private attachments, verify the explicit feature gate and
+  retention requirements. Attachments use an owner-bound inline native input
+  path and are conversational only.
+  Transport support does not prove model PDF/image understanding.
 
 Additional channels and external tools have separate integration requirements.
-For SQL, complete [MCP source onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users):
-authorize a read-only database principal, import approved metadata and verify
-known results and denials. A deployed MCP container is not a populated catalog.
+For NL2SQL, complete [MCP source onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users).
+Have the SQL owner authorize a read-only database principal.
+Import approved metadata and verify known results and denied access.
+A deployed or authenticated MCP container does not prove that the NL2SQL
+catalog is initialized.
 
 <span id="choose-a-task"></span>
 <span id="application-components"></span>
