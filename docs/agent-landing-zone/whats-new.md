@@ -7,8 +7,8 @@ for all changes and fixes.
 
 | Release | Highlights |
 | --- | --- |
-| v7.0.0 | [Agent App MCP Server](agent-app-mcp.md) with explicit, empty-by-default toolsets. [NL2SQL](nl2sql.md) runs through two authenticated MCP tools instead of direct orchestrator SQL. Applications declare their own tools and dependencies above the [reusable foundation](build-your-own-app.md). |
-| v6.0.0 | Native conversations and human-reviewed workflows with state and resume on Foundry Hosted or durable Container Apps. Two public native selection axes: `ORCHESTRATION_HOST` and `APPLICATION_MODE`. Authenticated native UI with independently optional history, feedback and private files. |
+| [v7.0.0](https://github.com/Azure/agent-landing-zone/releases/tag/v7.0.0) | [Agent App MCP Server](agent-app-mcp.md) with explicit, empty-by-default toolsets. [NL2SQL](nl2sql.md) runs through two authenticated MCP tools instead of direct orchestrator SQL. Applications declare their own tools and dependencies above the [reusable foundation](build-your-own-app.md). |
+| [v6.0.0](https://github.com/Azure/agent-landing-zone/releases/tag/v6.0.0) | Native conversations and human-reviewed workflows with state and resume on Foundry Hosted or durable Container Apps. Two public native selection axes: `ORCHESTRATION_HOST` and `APPLICATION_MODE`. Authenticated native UI with independently optional history, feedback and private files. |
 
 ## October 2026
 
