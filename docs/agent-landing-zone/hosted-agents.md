@@ -5,6 +5,66 @@ Choose the application experience with `APPLICATION_MODE` and the host with
 `ORCHESTRATION_HOST`. [Agents & prompts](agent-strategies.md) explains the
 experience; the [full-stack guide](deploy-full-stack.md) owns deployment order.
 
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Choose one execution host.** The authenticated UI uses either the Hosted
+Responses client or the durable client. Foundry owns Hosted execution state;
+DTS owns durable execution state for the Container Apps worker. UI metadata
+is separate from both.
+
+</div>
+
+[![The authenticated UI connects to one of two alternative native hosts: Foundry Hosted with native persistence, or a Container Apps worker with execution state in Durable Task Scheduler. Neither host requires the other.](../media/runbooks/hosted-agents.svg)](../media/runbooks/hosted-agents.svg){: .runbook-diagram__image aria-label="Open full-size agent hosting diagram"}
+
+[Open full-size diagram](../media/runbooks/hosted-agents.svg){: .runbook-diagram__open}
+
+</div>
+
+## Before you start
+
+Have the compatible platform checkout, an azd environment and an authorized
+deployment identity. Confirm service availability, model capacity and network
+access for the selected host. Private deployments need a connected runner.
+Use the full-stack prerequisites
+[for Bicep](deploy-full-stack.md#prerequisites) or
+[for Terraform](deploy-terraform-full-stack.md#prerequisites).
+
+## Select and activate a host
+
+1. **Before provision**, select the environment from the platform repository
+    root. Set the supported host and application mode there, not in the UI.
+    For example, to run the reference review process on Container Apps:
+
+    ```bash
+    azd env select <environment-name>
+    azd env set ORCHESTRATION_HOST container_apps
+    azd env set APPLICATION_MODE workflow
+    ```
+
+    Use `hosted` for Foundry; mode accepts `conversational`, `workflow` or `both`.
+    See [native execution selection](configuration.md#native-execution-selection).
+
+2. **Provision and deploy** through the matching full-stack
+    [Bicep procedure](deploy-full-stack.md#procedure) or
+    [Terraform procedure](deploy-terraform-full-stack.md#procedure).
+    Provision prepares dependencies and grants; deploy publishes the matching
+    native image and binds the UI. Complete post-provision login setup before
+    admitting users. Do not copy endpoint settings from a different host.
+3. **After deployment**, check the generated bindings below and
+    [runtime identity access](#runtime-identities-and-access). On Hosted `both`,
+    confirm two single-mode publications and two distinct UI endpoints.
+4. **At runtime**, sign in and complete a conversation or the
+    [reference review process](workflows.md#try-the-reference-process).
+    Reopen the owner-bound session/run, and verify another user cannot read
+    or act on it. For durable execution, also verify recovery after an owned
+    worker restart; local checks do not prove cloud durability.
+
+Changing hosts or modes requires the matching provision/deploy lifecycle;
+it is not a hot-reload setting or an automatic migration of existing native
+sessions. Retain the old host and its state until owners approve retirement.
+
 ## Native host integrations
 
 | Concern | Foundry Hosted | Azure Container Apps |

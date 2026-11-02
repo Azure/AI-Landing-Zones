@@ -17,6 +17,9 @@ behavior. The [overview](index.md) explains what the template delivers.
 Both use the same platform workflow. Direct Bicep deployment or
 `terraform apply` does not replace its configuration and validation stages.
 Choose the provider before first provision and retain it for updates and removal.
+Both guides start with `azd init --template Azure/agent-landing-zone .` in a
+new empty project directory. Init creates/selects the environment; Terraform
+users then change the root `azure.yaml` provider and path before provisioning.
 See the [Terraform overview](terraform.md) for its constraints.
 
 The [Azure portal path](portal.md) is a separate infrastructure workflow with

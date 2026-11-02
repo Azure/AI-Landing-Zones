@@ -25,8 +25,8 @@ They are not six-field Azure Functions timers.
 | `blob_purge` | `CRON_RUN_BLOB_PURGE` | `10 * * * *`, hourly at minute 10 |
 | `sharepoint_index` | `CRON_RUN_SHAREPOINT_INDEX` | No schedule |
 | `sharepoint_purge` | `CRON_RUN_SHAREPOINT_PURGE` | No schedule |
-| `nl2sql_index` | `CRON_RUN_NL2SQL_INDEX` | No schedule; optional metadata pipeline, not required for MCP |
-| `nl2sql_purge` | `CRON_RUN_NL2SQL_PURGE` | No schedule; optional metadata maintenance, not required for MCP |
+| `nl2sql_index` | `CRON_RUN_NL2SQL_INDEX` | No schedule; Search metadata indexing, not the MCP catalog importer |
+| `nl2sql_purge` | `CRON_RUN_NL2SQL_PURGE` | No schedule; Search metadata cleanup, not MCP catalog maintenance |
 | `multimodality_images_purge` | `CRON_RUN_IMAGES_PURGE` | No schedule, and the worker skips unless `MULTIMODAL=true` |
 | Log cleanup, not a manual job type | `CRON_RUN_LOG_CLEANUP` | `0 * * * *`, plus immediate startup cleanup |
 
@@ -50,14 +50,36 @@ schedule setup.
 
 1. Confirm the selected [ingestion path](ingestion.md) and required source
    dependencies. Use a development corpus for the first run.
-2. Set cron values through [Application settings](application-settings.md).
-   Verify effective reads after writes, especially where duplicate labels exist.
-3. If the administrative surface is mounted, use its configuration apply action
+2. **Before first startup**, declare schedules as string-valued entries under
+   root `parameters.additionalAppConfigurationSettings.value`, label `agent-lz`,
+   and use the [settings publication procedure](configuration.md#configuration-ownership-and-declarations).
+   `SCHEDULER_TIMEZONE` is instead a process environment variable set before
+   startup. It is not read from App Configuration.
+3. **After deployment**, an administrator can use `PUT /api/config` for the
+   allowlisted cron keys. The ingestion workload needs App Configuration
+   write permission for this action; the caller's Admin role is not that
+   data-plane grant. For example, the following sets weekly SharePoint indexing:
+
+    ```http
+    PUT /api/config
+    Content-Type: application/json
+
+    {"updates":[{"key":"CRON_RUN_SHAREPOINT_INDEX","value":"0 2 * * mon"}]}
+    ```
+
+    The route writes under `agent-lz` by default, refreshes its local provider
+    and attempts to reschedule the written cron. Inspect `applied`, `failed`
+    and `rescheduled`, then read `GET /api/config` for the effective value.
+    A conflicting no-label value or opted-in process override can mask the write.
+
+4. If settings were published outside that route and the administrative surface
+   is mounted, use its configuration apply action
    or `POST /api/config/apply` to refresh configuration and reschedule known
    ingestion/purge jobs. This is an in-process refresh, not a Container App
    restart. It does not remount administrative routes or re-resolve deployment
    mode.
-4. Inspect the returned rescheduled list and any failures, then verify the queue's
+
+5. Inspect the returned rescheduled list and any failures, then verify the queue's
    next run and time zone. Restart when a changed setting requires fresh clients
    or changes the mounted surface.
 
@@ -94,14 +116,15 @@ between different job types. Plan index and purge windows so they do not race
 over the same corpus. Do not infer cross-replica serialization from `409`.
 
 Manual runs and configuration mutations require the exact `Admin` role when
-Entra is configured. Classic development without a configured tenant has an
+Entra is configured. Development without a configured tenant has an
 open development gate. Administrative reads and the file-unblock route do not
 have that same unconditional gate.
 
 Restrict access to the administrative
 surface through the deployment's network and access controls rather than
-exposing it publicly. Hosted mode without
-the administrative panel does not mount these routes, although jobs still run.
+exposing it publicly. Administrative route mounting is resolved by ingestion
+at startup; do not infer availability from the native orchestrator's host.
+Jobs can run even when the administrative routes are absent.
 
 [Administration](operations.md) describes the dashboard and mode-specific
 availability. [Application authentication](application-auth.md) covers access.
@@ -115,8 +138,8 @@ availability. [Application authentication](application-auth.md) covers access.
 | Blob purge | Intended to remove indexed Blob documents missing from the selected container/prefix. The initialization limitation below currently prevents this cleanup. |
 | SharePoint index | Processes configured lists/libraries and reconciles supported ACLs even for unchanged content. See [permission synchronization](sharepoint.md#permission-synchronization). |
 | SharePoint purge | Deletes indexed copies of missing items in enumerated collections. It is not complete source retirement or filter reconciliation. Empty or unavailable collections are skipped. |
-| NL2SQL index | Optional SQL-metadata pipeline. For MCP, its destination must honor the approved Cosmos catalog, embedding dimensions and complete-version activation contract. It does not copy business rows. |
-| NL2SQL purge | Metadata maintenance, not SQL table/row deletion. Review the target and active-version retention before authorizing cleanup; do not apply document Search cleanup to the MCP catalog. |
+| NL2SQL index | Reads JSON under `queries/`, `tables/` and `measures/` in `NL2SQL_STORAGE_CONTAINER` (default `nl2sql`), generates embeddings and writes `SEARCH_QUERIES_INDEX_NAME`, `SEARCH_TABLES_INDEX_NAME` and `SEARCH_MEASURES_INDEX_NAME`. It does not populate MCP Cosmos or copy business rows. |
+| NL2SQL purge | Deletes entries missing from that Blob source in those three Search indexes. It does not delete SQL rows or maintain MCP catalog versions. |
 | Image purge | Deletes image blobs not referenced by `relatedImages` in its configured Search index. A wrong index/container pair can make live images look unreferenced. |
 | Log cleanup | Keeps at most `MAX_LOG_RUN_FILES` run-summary blobs, default `500`, deleting the oldest excess summaries. It is not a retained audit archive. |
 
@@ -147,8 +170,8 @@ SQL metadata onboarding is not a document indexing or purge job.
 Use the MCP repository's administrative Python importer for approved metadata:
 it generates embeddings into the application Cosmos catalog and activates
 only a complete version. No ingestion Container App or recurring schedule is
-required. An optional metadata pipeline must honor that same contract; document
-Search-index jobs must not manage MCP catalog data.
+required. The supplied `nl2sql_index`/`nl2sql_purge` Search jobs do not implement
+that importer contract and must not manage MCP catalog data.
 See [SQL metadata boundaries](ingestion.md#sql-metadata-is-separate-from-document-ingestion).
 
 ## Inspect results and recover

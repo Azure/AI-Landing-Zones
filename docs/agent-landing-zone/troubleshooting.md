@@ -14,6 +14,7 @@ failure. Diagnose the failing stage before retrying or changing inputs.
 
 | What you see | Start here |
 | --- | --- |
+| Init created a nested project or the environment already exists | [Initialization directory and environment](#initialization-directory-and-environment) |
 | Multi-group setup reports a missing target or denied access | [Resource group destination checks](#resource-group-destination-checks) |
 | `azd down` is blocked for split resource group destinations | [Split-group cleanup safety check](#split-group-cleanup-safety-check) |
 | Hosted deployment asks for preparation | [Hosted handoff](#hosted-deployment-is-not-prepared) |
@@ -57,6 +58,31 @@ Do not switch runtimes or weaken authentication to diagnose a failure.
 2. Check the named source, identity, endpoint and selected environment.
 3. Apply only the entry's scoped correction, then run its verification.
 4. Complete [Validation](#validation) before reopening access or promotion.
+
+### Initialization directory and environment
+
+**Symptom:** the template files are in a nested directory, or `azd env new`
+reports that the environment already exists after init.
+
+**Check:** locate the directory containing root `azure.yaml`, `manifest.json`
+and `main.parameters.json`. Run `azd env list` there to confirm the local
+environment.
+
+**Correct:** for a fresh installation, create and enter a new empty directory,
+then run `azd init --template Azure/agent-landing-zone .`. The trailing `.`
+explicitly uses the current directory; without it, current azd creates a
+template-named subdirectory. Interactive init creates/selects the named
+environment, so do not follow it with another `azd env new`.
+
+For an already initialized project, enter its actual root and use
+`azd env select <environment-name>` to resume. Do not delete `.azure/`, rerun
+template initialization over local work, or create a different environment to
+evade an existing deployment binding.
+
+**Verify:** confirm the selected environment, target subscription/region and
+root `azure.yaml` provider/path before following the
+[deployment guide](index.md#infrastructure-and-application). Initialization is
+not evidence of successful provisioning or application deployment.
 
 ### Deploy stage
 

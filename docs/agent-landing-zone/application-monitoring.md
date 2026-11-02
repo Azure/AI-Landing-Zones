@@ -97,15 +97,43 @@ Use [Troubleshooting](troubleshooting.md) for boundary-specific diagnosis.
 
 ## Native runtime audit scope
 
-Native entrypoints retain in-process tool audit hooks. They do
-not mount retired request APIs or provide their complete request-lifecycle
-and remote-tool audit stream. A historical schema or
-`AUDIT_EVENTS_ENABLED=true` is not evidence that those paths emit events.
-Verify the actual hook and telemetry exporter used by the selected runtime.
+The orchestrator provides audit hooks for in-process tool operations.
+Use those events alongside native host traces and the remote service's
+own evidence. An orchestrator tool event describes that local operation,
+not every step performed inside a remote service.
 
-If the consumer requires `AUDIT_HMAC_KEY`, keep its actual Key Vault reference
-and secret-scoped grant with that consumer. A bootstrap grant does not prove
-event export. Never expose the secret in diagnostics.
+### How to enable orchestrator tool audit
+
+1. Complete [trace export setup](#set-up-trace-export) and verify a normal
+   application request before enabling additional event export.
+2. Choose a secret name for the audit HMAC key in the installation's Key Vault.
+   Add that **name**, not its value, to the azd environment's JSON array
+   `NATIVE_TOOL_SECRET_NAMES` before provision. Preserve existing declared names.
+   Run `azd provision` for the selected installation.
+3. Once the vault is available, store exactly 32 random bytes encoded as
+   Base64, Base64URL or hexadecimal under the selected secret name.
+   Open the vault's **Secrets** page in Azure Portal and use the installation's
+   approved secret-generation procedure. The operator needs secret-write
+   permission; the runtime needs only its secret-scoped read grant.
+4. In App Configuration **Configuration explorer**, under label `agent-lz`,
+   create `AUDIT_HMAC_KEY` as a **Key Vault reference** to that secret.
+   Set `AUDIT_HMAC_KEY_ID` to your nonsecret key identifier.
+   Keep `AUDIT_SENSITIVE_CONTENT_ENABLED=false`.
+5. Set the nonsecret key `AUDIT_EVENTS_ENABLED` to string `true` under the
+   same label. Record these declarations in the installation's approved
+   configuration. Follow [Application settings](application-settings.md#edit-an-existing-nonsecret-key)
+   for the operator's permissions and edit location.
+6. Run `azd deploy`. The lifecycle grants the declared secret to the selected
+   orchestrator identity, including the identity created by a Hosted
+   publication. Invoke an enabled in-process tool and inspect the resulting
+   events in Application Insights. Check exporter errors and verify that no
+   credentials or message content were captured.
+
+For the Container Apps worker, the audit-only logging mode exports audit
+events while `AZURE_MONITOR_DISABLE_LOGGING=true` keeps general log export
+off. The Hosted SDK configures its own export.
+Keep the selected host's telemetry configuration with that host.
+
 Audit delivery is best-effort, not an immutable ledger or a compliance
 certification. Disabling emission does not delete exported events.
 Correlate native UI actions, provider outcomes and in-process tool events
@@ -173,6 +201,12 @@ For hosted orchestration, the deployment input
 A change requires a new hosted version. Leave it off when enabling or
 investigating basic traces.
 
+After privacy approval, change `HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT` in the
+selected azd environment **before** `azd deploy`. The deployment maps it into
+the Hosted process environment. Keep it `false` for ordinary diagnostics.
+Set the approved retention and telemetry-reader permissions before collecting
+any content.
+
 An audit-content allowlist does not establish that every native path has
 capture wired, nor guarantee that user-authored content is safe to export.
 UI metadata deliberately contains no transcripts, tokens or attachment bytes;
@@ -188,7 +222,7 @@ Use the schema corresponding to your deployed component.
 
 Application Insights custom properties are strings. When correlating root
 events, treat `parent_event_id=evt_00000000000000000000000000000000` as
-no parent. Historical schema files remain available for older exported events.
+no parent. Select the schema matching the component that emitted the event.
 
 Reverting an image does not restore deleted documents, undo configuration
 writes or remove telemetry. Follow separately approved data restoration,

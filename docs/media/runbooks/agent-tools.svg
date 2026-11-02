@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="660" viewBox="0 0 1000 660" role="img" aria-labelledby="title desc">
+  <title id="title">What makes a capability callable?</title>
+  <desc id="desc">The application registers optional capabilities for an agent or workflow on either native host. Search retrieval and Agent App MCP Server are two examples shown here. Search source access is independent of MCP transport and tool authorization. All capabilities start disabled. Configuration, permissions and network reachability are required in addition to registration. Other reviewed MCP servers have their own hosting contracts.</desc>
+  <!-- Azure public service icons, July 2026 pack. https://learn.microsoft.com/azure/architecture/icons/ -->
+  <defs>
+    <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:22px}.title{font-size:28px;font-weight:700}.heading{font-size:23px;font-weight:700}.label{font-size:20px}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#32698e"/></marker>
+    <symbol id="search" viewBox="0 0 18 18">
+      <defs><linearGradient id="b198f9ad-224e-4f37-99bb-f1c5a20d3916" x1="9" y1="0.36" x2="9" y2="18.31" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef"/><stop offset="1" stop-color="#0078d4"/></linearGradient></defs><path d="M18,11.32a4.12,4.12,0,0,0-3.51-4,5.15,5.15,0,0,0-5.25-5,5.25,5.25,0,0,0-5,3.49A4.86,4.86,0,0,0,0,10.59a5,5,0,0,0,5.07,4.82l.44,0h8.21a.78.78,0,0,0,.22,0A4.13,4.13,0,0,0,18,11.32Z" fill="url(#b198f9ad-224e-4f37-99bb-f1c5a20d3916)"/><path d="M12.33,6.59a3.07,3.07,0,0,0-5.61.85,3.16,3.16,0,0,0,.33,2.27L4.71,12.08a.79.79,0,0,0,0,1.12.78.78,0,0,0,.56.23.76.76,0,0,0,.56-.23l2.33-2.36a3.14,3.14,0,0,0,.81.33,3.08,3.08,0,0,0,3.36-4.58Zm-.54,2.1A2.16,2.16,0,0,1,9.7,10.34a1.79,1.79,0,0,1-.51-.07,1.87,1.87,0,0,1-.7-.32,2.13,2.13,0,0,1-.56-.56,2.17,2.17,0,0,1-.31-1.73A2.14,2.14,0,0,1,9.7,6a2.31,2.31,0,0,1,.52.06,2.18,2.18,0,0,1,1.32,1A2.13,2.13,0,0,1,11.79,8.69Z" fill="#f2f2f2"/><ellipse cx="9.69" cy="8.18" rx="2.15" ry="2.16" fill="#83b9f9"/>
+    </symbol>
+    <symbol id="aca" viewBox="0 0 18 18">
+      <defs><linearGradient id="a3a44093-b157-426e-a8fe-cec9f9c23978" x1="11.729" y1="4.88" x2="11.729" y2="13.099" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.528" stop-color="#6635bb"/><stop offset="1" stop-color="#552f99"/></linearGradient><linearGradient id="ad838859-03f4-472f-81bc-ebc921d71335" x1="6.35" y1="13.914" x2="6.35" y2="4.198" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.307" stop-color="#793ddd"/><stop offset="0.532" stop-color="#8046e1"/><stop offset="0.731" stop-color="#8c56e7"/><stop offset="0.915" stop-color="#9c6def"/><stop offset="1" stop-color="#a67af4"/></linearGradient></defs><g id="ae82470d-7a6c-4dfe-8533-59d8ff948629"><g><path d="M8.617,8.644H.639V1.784A1.16,1.16,0,0,1,1.788.624H8.617ZM1.63,7.653h6V1.594H1.788a.158.158,0,0,0-.158.158h0Z" fill="#949494"/><path d="M17.5,8.644H9.523V.624h6.828A1.16,1.16,0,0,1,17.5,1.784Zm-6.987-.991h6V1.784a.157.157,0,0,0-.123-.187.2.2,0,0,0-.035,0H10.513Z" fill="#949494"/><path d="M8.617,17.485H1.788A1.149,1.149,0,0,1,.639,16.347V9.476H8.617ZM1.63,10.467v5.88a.158.158,0,0,0,.158.158H7.626V10.467Z" fill="#949494"/><path d="M16.351,17.485H9.523V9.476H17.5v6.871A1.149,1.149,0,0,1,16.351,17.485Zm-5.838-.991h5.838a.157.157,0,0,0,.158-.158V10.467h-6Z" fill="#949494"/><path d="M14.6,6.294a.294.294,0,0,0-.2-.278L9.044,4.205A.128.128,0,0,0,9,4.2H9a.132.132,0,0,0-.133.133v9.445A.133.133,0,0,0,9,13.911H9a.138.138,0,0,0,.049-.01l5.365-2.145a.292.292,0,0,0,.184-.272Z" fill="url(#a3a44093-b157-426e-a8fe-cec9f9c23978)"/><path d="M8.966,4.2l-5.293.966a.161.161,0,0,0-.13.158V12.63a.16.16,0,0,0,.126.157L8.962,13.91a.161.161,0,0,0,.191-.121.22.22,0,0,0,0-.036V4.358A.16.16,0,0,0,9,4.2.163.163,0,0,0,8.966,4.2Z" fill="url(#ad838859-03f4-472f-81bc-ebc921d71335)"/><path d="M6.52,5.656v6.8l1.842.3V5.335Zm-2.262.367v5.955l1.6.326V5.754Z" fill="#b796f9" opacity="0.5"/></g></g>
+    </symbol>
+  </defs>
+  <rect width="1000" height="660" fill="#fff"/>
+  <text class="title" x="40" y="52">What makes a capability callable?</text>
+  <text x="40" y="88">Application registration is necessary; it is not a source or tool permission grant.</text>
+  <rect class="group" x="40" y="150" width="290" height="410"/>
+  <rect class="header" x="40" y="150" width="290" height="52"/>
+  <text class="heading" x="60" y="184">Either native host</text>
+  <rect class="node" x="60" y="275" width="250" height="165"/>
+  <text class="heading" x="185" y="318" text-anchor="middle">Agent or workflow</text>
+  <text x="185" y="363" text-anchor="middle">App registers</text>
+  <text x="185" y="394" text-anchor="middle">selected capabilities</text>
+  <text class="label" x="60" y="515">Optional flags default off</text>
+  <rect class="group" x="580" y="150" width="380" height="410"/>
+  <rect class="header" x="580" y="150" width="380" height="52"/>
+  <text class="heading" x="600" y="184">Independent path examples</text>
+  <rect class="node" x="610" y="230" width="320" height="130"/>
+  <use href="#search" x="625" y="250" width="45" height="45" aria-hidden="true"/>
+  <text class="heading" x="690" y="267">Search retrieval</text>
+  <text x="690" y="301">Source capability</text>
+  <text class="label" x="630" y="338">Source access still checked</text>
+  <rect class="node" x="610" y="405" width="320" height="130"/>
+  <use href="#aca" x="625" y="425" width="45" height="45" aria-hidden="true"/>
+  <text class="heading" x="690" y="443">Agent App MCP</text>
+  <text x="690" y="477">Server (optional)</text>
+  <text class="label" x="630" y="513">Transport + tool authorization</text>
+  <path class="flow" d="M310 315H440V295H610"/>
+  <text class="label" x="450" y="274">Retrieval</text>
+  <path class="flow" d="M310 400H440V470H610"/>
+  <text class="label" x="450" y="450">MCP</text>
+  <text x="40" y="609">A callable capability needs registration + configuration + permissions + network access.</text>
+  <text class="label" x="40" y="643">Shown: Agent App MCP Server. Other MCP servers have their own hosting contracts.</text>
+</svg>

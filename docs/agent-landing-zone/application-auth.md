@@ -5,12 +5,34 @@
 Agent Application has independent access boundaries: UI admission,
 native host invocation, owner-bound execution and document/tool authorization.
 Signing in does not grant access to every document or run.
+The UI server, also called the backend for frontend (BFF), checks admission
+and maps users to their native sessions.
 
 Follow the setup sequence below for the default
 Foundry-hosted agent and Container Apps frontend. Azure CLI and azd sign-in
 authenticate the deployment operator, not application users.
 Deployment and redeployment belong to the
 [full-stack deployment guide](deploy-full-stack.md).
+
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Three separate access checks**
+
+1. Entra sign-in supplies a UI API token; the UI checks admission and ownership.
+2. The UI exchanges delegated credentials for Foundry invocation and, separately,
+   Search retrieval. The user also needs Foundry caller access.
+3. Search checks current document permissions. Login and workload RBAC do not
+   grant access to every source.
+
+</div>
+
+[![A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Native retrieval separately checks the user's document permissions in Azure AI Search.](../media/runbooks/application-auth.svg)](../media/runbooks/application-auth.svg){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
+
+[Open full-size diagram](../media/runbooks/application-auth.svg){: .runbook-diagram__open}
+
+</div>
 
 ## Trusted identity and native state
 
@@ -92,10 +114,16 @@ known as `Entra`), the downstream scope is `https://ai.azure.com/.default`.
 Confirm the deployed endpoint's audience with its owner; do not substitute
 the UI API scope or a management-plane audience.
 
-Set
-`HOSTED_AGENT_RESOURCE_SCOPE` in the selected azd environment before provision,
-as shown in the [full-stack deployment guide](deploy-full-stack.md#native-application-selection).
-This value is separate from the UI login scopes in step 4.
+From the platform checkout root, select the intended azd environment and set
+the confirmed audience **before `azd provision`**, for example:
+
+```bash
+azd env select <environment-name>
+azd env set HOSTED_AGENT_RESOURCE_SCOPE https://ai.azure.com/.default
+```
+
+Use the audience approved for your endpoint. This supported deployment input
+is separate from the UI login scopes in step 4.
 
 The [Foundry client authorization procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token)
 explains downstream permission and consent. The UI exchanges its user's API
@@ -119,7 +147,7 @@ Register the exact callback, for example:
 https://chat.contoso.com/auth/oauth/azure-ad/callback
 ```
 
-Set `CHAINLIT_URL` to that UI origin (`https://chat.contoso.com`), without a
+In step 4, set `CHAINLIT_URL` to that UI origin (`https://chat.contoso.com`), without a
 trailing slash. Include any supported deployment prefix consistently in the
 URL and callback. Keep previously used callbacks only while they are still
 approved and required.
@@ -145,6 +173,14 @@ as a reference too; do not
 regenerate an existing session-signing secret during a routine update.
 
 Publish the following values in the same store:
+
+Use **Configuration explorer > Create > Key-value** for nonsecrets, with
+label `agent-lz` and plain-text values. These UI login keys are runtime
+configuration, not arbitrary `azd env set` inputs. Keep any reviewed deployment
+declarations aligned so a later provision does not restore different values.
+
+The configuration operator needs App Configuration Data Owner to write keys;
+the frontend needs only the reader permissions described below.
 
 <dl>
 <dt><code>OAUTH_AZURE_AD_CLIENT_ID</code></dt>

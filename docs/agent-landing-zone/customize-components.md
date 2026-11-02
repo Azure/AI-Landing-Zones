@@ -21,6 +21,26 @@ sample documents, schemas, and regression tests with the code. User, operator,
 and developer guides belong on this central site. Local engineering contracts,
 ADRs, policies, and changelogs retain their own repository purpose.
 
+## How to make and adopt a source change
+
+1. **Before editing**, record the platform manifest and the owning component's
+   compatible revision. Obtain a component checkout only for source development,
+   then follow [Run locally](local-development.md); cloning is not the normal
+   application deployment procedure.
+2. Add a focused behavioral test in that repository, then change its canonical
+   owner below. Keep denied-user behavior, wire schemas and deployment inputs
+   unchanged unless the change explicitly requires a coordinated contract update.
+3. Run the [component checks](application-testing.md), using its protected target
+   base. For a setting-only change, use the canonical settings procedure instead
+   of modifying source.
+4. **Before deployment**, pin the tested source in the manifest and application
+   definition together using
+   [component adoption](build-your-own-app.md#customize-a-bundled-component).
+   Source edits and local reloads do not update a running Azure application.
+5. Deploy through the platform lifecycle, then verify the exact changed behavior
+   and a denied case. Keep the prior tested pins for rollback; changing parser
+   code does not rebuild existing indexes or reverse data mutations.
+
 <span id="strategies-and-prompts"></span>
 
 ## Agents, workflows and prompts
@@ -31,6 +51,9 @@ Hosting and tools are separate choices. To extend the application:
 1. Extend the owning agent definition or workflow graph. Use the official MAF
    execution and human-input APIs, not a second execution loop, polling queue
    or application-owned checkpoint engine.
+   Start with `src/native/agent.py`, `src/native/workflow.py` and their
+   `src/native/contracts.py` models. `src/native/hosted.py` and
+   `src/native/durable.py` compose the selected host.
 2. Register the intended capabilities explicitly. Foundry IQ, Search, MCP and
    optional [MCP NL2SQL](nl2sql.md) are tools/capabilities, not a
    mixed strategy registry or a user-facing host picker.
@@ -127,17 +150,17 @@ Import the installed package rather than using filesystem-path manipulation.
 Root `main.py`, `app.py`, `datalayer.py`, and `connectors/` are supported
 compatibility adapters, not implementation owners. Patch canonical owners in
 tests, not private adapter globals. `.quality/migration.json` freezes the
-legacy export inventory and `.quality/policy.json` tracks the current scope.
+compatibility export inventory and `.quality/policy.json` tracks the current scope.
 Do not add `sys.path` or `sys.modules` workarounds.
 
 Keep native session selection and consume-once request metadata at the
 authenticated API boundary. The native application service owns UI UUID
 mapping and product metadata; explicit host clients own execution calls.
-Do not route native operations through an old orchestrator data-layer adapter.
+Do not route native operations through an unrelated data-layer adapter.
 
 Callback, history, and OAuth registration must remain idempotent.
-Native history uses the selected host client plus UI-owned metadata, not a
-retired orchestrator conversation API. Keep session/run owner checks explicit
+Native history uses the selected host client plus UI-owned metadata.
+Keep session/run owner checks explicit
 before native reads, continuation and pending human replies.
 
 For presentation, start with `public/theme.json`, `public/custom.css`, and
@@ -153,7 +176,7 @@ Edit React/TypeScript under ingestion's `frontend/`.
 Use its [local proxy and Node setup](local-development.md#operator-dashboard-frontend),
 start the backend separately, and keep typed frontend payloads aligned with
 the [API reference](application-api.md). Native orchestrator entrypoints do
-not mount retired dashboard/admin APIs.
+not mount ingestion dashboard/admin APIs.
 
 Test read-only, administrator, unauthenticated, denied, empty, loading, and
 failure states. A local development admin bypass is not production

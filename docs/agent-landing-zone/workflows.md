@@ -5,6 +5,32 @@ steps, conditions and typed input. It is not a chat prompt that happens to ask
 for approval. Use a conversational Agent for open-ended chat and a Workflow
 when the application must track a process and wait for an authorized person.
 
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**The native host persists the wait.** A topic produces a draft and a pending
+review request. The authenticated owner submits approval or rejection through
+the UI; the native workflow returns the draft and decision. This reference
+process does not write to a business system.
+
+</div>
+
+[![A topic enters the reference workflow, an agent produces a draft, and the selected native host persists a human-review request. The owner replies through the authenticated UI; the workflow returns the draft and decision without a business-system write.](../media/runbooks/workflows.svg)](../media/runbooks/workflows.svg){: .runbook-diagram__image aria-label="Open full-size workflow human-review diagram"}
+
+[Open full-size diagram](../media/runbooks/workflows.svg){: .runbook-diagram__open}
+
+</div>
+
+## Before you start
+
+Have a provisioned application, working UI sign-in and a compatible workflow
+image. The deployment identity prepares resources and grants; the runtime
+identity calls its configured model/tools; the authenticated user owns the
+run. Use synthetic topics until source access and denied-user checks pass.
+The [host activation procedure](hosted-agents.md#select-and-activate-a-host)
+links the provider-specific prerequisites.
+
 ## Select the process experience
 
 `APPLICATION_MODE` selects `conversational`, `workflow` or `both`; the default
@@ -48,11 +74,34 @@ Human review supplies the typed business reply:
 
 `decision` is `approve` or `reject`. These are business inputs passed through
 the selected host's native client, not one universal HTTP protocol.
-Hosted topic input is at most 8,000 characters and review comment at most
+Topic input is at most 8,000 characters and review comment at most
 4,000. Native terminal output is `ResearchReviewResult`, not an invented
 conversation envelope.
 The pending request/run identifiers come from native state and must match
 before a reply is sent.
+
+## Try the reference process
+
+1. **Before provision**, from the platform root set
+   `azd env set APPLICATION_MODE workflow` (or `both`) and select one
+   [host](hosted-agents.md#select-and-activate-a-host). Follow the full-stack
+   procedure through provision, post-provision login and deploy.
+   Workflow selection creates UI metadata even with history disabled.
+2. **After deploy**, confirm `agent-lz-research-review` is registered and the
+   UI uses its workflow endpoint or matching durable binding.
+   Do not reuse the Hosted conversational publication endpoint.
+3. **At runtime**, follow the steps below with the topic and decision shapes
+   above. Expect `approved` or `rejected`, the original `topic` and `draft`,
+   `review_comment` and `configuration_revision`.
+4. Repeat with rejection, reconnect and a stale/duplicate reply. Check the
+   [acceptance checks](#acceptance-checks), not only the submission message.
+
+The UI supplies native pending identifiers; do not make up a `request_id`,
+revision or owner. For scripted authenticated checks, use the
+[API reference](application-api.md#native-ui-sessions-and-actions) rather than treating
+the business JSON examples as complete HTTP requests.
+
+### Complete a review
 
 1. Sign in and start the published process with the required input.
 2. The workflow performs its configured research/draft step and reaches native
@@ -62,7 +111,8 @@ before a reply is sent.
 4. The BFF checks the authenticated owner, run and currently pending request
    before forwarding the reply through the selected official client.
 5. The native workflow resumes and returns the approved or rejected result.
-   A rejected request must not execute the approved branch.
+   Rejection returns a `rejected` result; neither decision writes to a
+   business system in the supplied graph.
 
 The authenticated UI exposes `/api/native/sessions/{id}/start`, `/progress`
 and `/actions`. Start carries `topic`; actions carry the current `request_id`,
@@ -137,7 +187,8 @@ Before admitting users, verify the exact deployed application:
   client after disconnect.
 - A Container Apps workflow remains pending across an owned worker restart,
   then resumes to the deterministic expected result.
-- Approval and rejection select the intended different outcomes.
+- Approval and rejection return their respective `approved` and `rejected`
+  statuses with the original draft; neither performs an external write.
 - Duplicate, stale, wrong-request, wrong-run and different-owner replies do
   not advance another or completed execution.
 - A functional configuration update affects a new run while the waiting run

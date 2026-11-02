@@ -9,6 +9,8 @@ import threading
 
 from playwright.sync_api import expect, sync_playwright
 
+from application_guides import check_application_guides
+
 
 ROOT = Path(__file__).resolve().parents[2]
 LEGACY_ANCHORS = (
@@ -247,12 +249,16 @@ def check_application_mcp_documentation(page, base):
         "Fresh application", "Add to an existing installation", "Onboard sources",
     ):
         expect(content.get_by_role("heading", name=heading, exact=True)).to_have_count(1)
-    assert content.locator(":scope > h2").all_text_contents() == [
+    sections = [
         "Deploy Agent App MCP Server", "Authentication and endpoint", "Select toolsets",
         "Operate the server", "Configure NL2SQL", "Custom applications",
     ]
+    headings = content.locator(":scope > h2").all_text_contents()
+    positions = [headings.index(section) for section in sections]
+    assert positions == sorted(positions), headings
     blocks = content.locator("pre").all_text_contents()
-    assert any(
+    expect(content.locator('a[href*="deploy-full-stack/"]')).not_to_have_count(0)
+    assert not any(
         "git clone https://github.com/Azure/agent-landing-zone.git" in block
         for block in blocks
     )
@@ -304,7 +310,9 @@ def check_application_mcp_documentation(page, base):
         "MCP_QUERY_TIMEOUT_SECONDS=75", "MCP_CLIENT_TIMEOUT=90",
     ):
         assert value in text, value
-    expect(content.get_by_role("heading", name="Import the approved file", exact=True)).to_have_count(1)
+    expect(content.get_by_role(
+        "heading", name=re.compile(r"Import the approved file", re.IGNORECASE)
+    )).to_have_count(1)
     imports = content.locator("pre").all_text_contents()
     assert any(
         'PYTHONPATH=src uv run --frozen python -m tools.nl2sql.importer --file' in block
@@ -318,11 +326,14 @@ def check_application_mcp_documentation(page, base):
     )
     assert any("--file /path/to/approved-products.json" in block and "APP_CONFIG_ENDPOINT" in block for block in imports)
     expect(content.get_by_role("heading", name="Example approved source file", exact=True)).to_have_count(1)
-    expect(content.get_by_role("heading", name="Ask the first question", exact=True)).to_have_count(1)
+    expect(content.get_by_role(
+        "heading", name=re.compile(r"Ask(?: and verify)? the first question", re.IGNORECASE)
+    )).to_have_count(1)
     expect(content.get_by_role("heading", name="How an NL2SQL request is answered", exact=True)).to_have_count(1)
     expect(content.get_by_role("heading", name="How an MCP question is answered", exact=True)).to_have_count(0)
     assert "Azure CLI login is not an importer credential fallback" in text
-    assert any("--branch <manifest-mcp-tag>" in block for block in imports)
+    assert "manifest-pinned MCP component" in text
+    assert "manifest.json" in text
 
     selection = """azd env set MCP_TOOLSETS '["nl2sql"]'"""
     for path in ("agent-app-mcp/", "nl2sql/", "deploy-full-stack/",
@@ -337,7 +348,7 @@ def check_application_mcp_documentation(page, base):
         assert value in text, value
 
     page.goto(base + "agent-landing-zone/build-your-own-app/")
-    text = content.inner_text()
+    text = " ".join(content.inner_text().split())
     for value in (
         "above the reusable", "AGENTLZ_APP_DEFINITION",
         "only its declared components", "before Azure calls",
@@ -377,12 +388,25 @@ def run_agent_docs(base, screenshots):
         browser = playwright.chromium.launch(ignore_default_args=["--hide-scrollbars"])
         try:
             page = browser.new_page(viewport={"width": 1440, "height": 1000})
+            check_application_guides(page, base, screenshots)
             check_lifecycle_navigation(page, base, screenshots)
             check_application_mcp_documentation(page, base)
             check_agent_page_inventory(page, base)
+            check_application_navigation(page, base, screenshots)
+            check_prose_wrapping(page, base, screenshots)
         finally:
             browser.close()
     print("PASS: MCP server/toolset separation, explicit install, importer, custom-app journey and navigation")
+
+
+def run_application_docs(base, screenshots):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(ignore_default_args=["--hide-scrollbars"])
+        try:
+            page = browser.new_page(viewport={"width": 1440, "height": 1000})
+            check_application_guides(page, base, screenshots)
+        finally:
+            browser.close()
 
 
 def check_prose_wrapping(page, base, screenshots):
@@ -667,6 +691,7 @@ def run(base, screenshots):
         check_application_navigation(page, base, screenshots)
         check_application_mcp_documentation(page, base)
         check_agent_page_inventory(page, base)
+        check_application_guides(page, base, screenshots)
         check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
         for path in ("", "agent-landing-zone/application/"):
@@ -750,12 +775,19 @@ def main():
     parser.add_argument("--screenshots", type=Path)
     parser.add_argument("--agent-docs-only", action="store_true",
                         help="Check Agent documentation/navigation without the unrelated homepage suite")
+    parser.add_argument("--application-guides-only", action="store_true",
+                        help="Check application procedures and contextual diagrams only")
     args = parser.parse_args()
+    if args.screenshots:
+        args.screenshots.mkdir(parents=True, exist_ok=True)
     server = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Handler, directory=str(args.site_dir)))
     worker = threading.Thread(target=server.serve_forever, daemon=True)
     worker.start()
     try:
-        runner = run_agent_docs if args.agent_docs_only else run
+        runner = (
+            run_application_docs if args.application_guides_only else
+            run_agent_docs if args.agent_docs_only else run
+        )
         runner(f"http://127.0.0.1:{server.server_port}/", args.screenshots)
     finally:
         server.shutdown()

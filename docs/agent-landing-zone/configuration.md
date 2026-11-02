@@ -34,6 +34,36 @@ For example, the root parameter `allowedIpRanges` takes an array.
 There is no implied `ALLOWED_IP_RANGES` environment binding.
 Retain the same reviewed root document on every authorized runner.
 
+### Initialization and setting order
+
+For a new installation, [initialize a project with azd](deploy-full-stack.md#step-1-initialize-the-project)
+in a new empty directory. Init creates/selects the environment; do not create
+it again with `azd env new`. Run subsequent commands from the directory
+containing root `azure.yaml`, `manifest.json` and `main.parameters.json`.
+
+Before `azd provision`, select the infrastructure provider in root
+`azure.yaml`, confirm the environment's subscription/region and set the
+documented deployment inputs and typed root parameters. Terraform also needs
+its existing remote-state backend configured first. After provisioning and
+required identity/service configuration, use `azd deploy` for the application.
+Do not use init's `--up` shortcut before these choices are ready.
+
+The lifecycle inputs `ENABLE_CHAT_HISTORY`, `ENABLE_USER_FEEDBACK` and
+`ENABLE_PRIVATE_ATTACHMENTS` have verified `azd env set` mappings. Set them
+before provision so the lifecycle includes their metadata resources and grants,
+then deploy. Do not enable them solely by editing App Configuration or
+`additionalAppConfigurationSettings`.
+See [Enable a product feature](application-settings.md#enable-a-product-feature).
+
+Functional keys such as `SEARCH_RETRIEVAL_ENABLED`, `FOUNDRY_IQ_ENABLED` and
+`MULTIMODAL_ENABLED` instead require explicit declarations in
+`parameters.additionalAppConfigurationSettings.value` in root
+`main.parameters.json`, using `name`, a string `value` and label `agent-lz`.
+Keep existing entries and update or append the intended keys; there is no
+implied same-named azd input. Follow the capability's requirements and
+[configuration procedure](application-settings.md#configure-an-agent-capability)
+before provisioning and deploying it.
+
 ## Terraform backend settings
 
 Use an existing Azure Storage account and container outside every workload
@@ -220,7 +250,7 @@ that identity in the Entra directory; it is not an application's client ID.
 
 | Variable | Description |
 | --- | --- |
-| `AZURE_ENV_NAME` | Environment name. Set by `azd env new`. Used to derive resource names. |
+| `AZURE_ENV_NAME` | Environment name, created/selected during `azd init` for a new project or `azd env new` for an additional environment. Used to derive resource names. |
 | `AZURE_LOCATION` | Primary Azure region. Set it before provision so the first-run hook can create the additional resource groups. |
 | `AZURE_PRINCIPAL_ID` | Deployment identity's object ID for service setup and access. azd resolves it for Bicep; Terraform preprovision detects a missing value for ordinary CLI, service-principal and managed-identity authentication. |
 
@@ -1079,10 +1109,13 @@ Hosted does not enable history; workflow or `both` always selects UI metadata.
 Endpoint/binding rows are actual generated application contracts, not extra
 host choices. Do not construct scheduler endpoints or set internal host flags.
 
-Native feature keys are shared `additionalAppConfigurationSettings` entries
-under `agent-lz`, not new same-named Bicep or Terraform parameters.
-See [Application settings](application-settings.md#native-application-contract)
-for exact feature and consumer keys.
+Set `ENABLE_CHAT_HISTORY`, `ENABLE_USER_FEEDBACK` and
+`ENABLE_PRIVATE_ATTACHMENTS` with `azd env set` before provision, then deploy.
+The lifecycle selects their metadata dependencies and publishes the values
+under `agent-lz`; these are not new same-named Bicep or Terraform parameters.
+Use [Enable a product feature](application-settings.md#enable-a-product-feature)
+for the ordered procedure and keep functional capability declarations
+[separate](#initialization-and-setting-order).
 
 On Hosted, select `APPLICATION_MODE=both`; the lifecycle prepares a
 conversational publication with derived process mode `conversational` and a

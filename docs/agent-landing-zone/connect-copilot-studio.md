@@ -8,6 +8,12 @@ agent** without enabling Foundry public network access.
 You will reuse the existing Foundry agent and network, then create a relay flow
 and a dedicated pilot agent in Copilot Studio.
 
+For a landing-zone application, complete `azd provision` and `azd deploy`
+and verify the hosted agent first. This runbook then changes Power Platform
+policy, connection and flow/topic settings; it does not enable a UI feature
+flag. The Studio maker, Power Platform administrator, network team and Azure
+RBAC administrator each own the steps explicitly assigned below.
+
 <span id="what-youll-have-after-this-runbook"></span>
 
 ## Expected outcome
@@ -15,7 +21,25 @@ and a dedicated pilot agent in Copilot Studio.
 A Copilot Studio agent that calls your private Foundry agent through an
 authenticated Power Automate flow.
 
-![Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API.](../media/runbooks/connect-copilot-studio.png)
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Private relay, shared connection identity**
+
+1. The authenticated Studio user invokes a Power Automate flow.
+2. The flow uses its selected connection user's identity and a dedicated
+   Power Platform delegated subnet in your Azure VNet.
+3. It reaches the Foundry Responses API through a private endpoint in a
+   different subnet. It does not automatically delegate the chat user's identity.
+
+</div>
+
+[![Copilot Studio and Power Automate are in the Power Platform environment. The flow uses a dedicated delegated subnet in your Azure VNet to reach the Foundry private endpoint in a separate subnet, then the Foundry Responses API.](../media/runbooks/connect-copilot-studio.png)](../media/runbooks/connect-copilot-studio.png){: .runbook-diagram__image aria-label="Open full-size Copilot Studio private-relay diagram"}
+
+[Open full-size diagram](../media/runbooks/connect-copilot-studio.png){: .runbook-diagram__open}
+
+</div>
 
 The figure shows one regional path, with separate subnets in your Azure VNet.
 

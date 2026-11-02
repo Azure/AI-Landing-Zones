@@ -9,6 +9,96 @@ boundary. Keep stores, identities and secrets separate between environments.
 ownership and generated outputs. Read individual nonsecret keys rather than
 dumping a store or environment.
 
+## Choose where to configure it
+
+Start in the project directory created by
+[the deployment guide](deploy-full-stack.md). Keep the same azd environment
+and infrastructure provider throughout configuration, provision and deploy.
+
+| What you are changing | Where to edit it | When |
+| --- | --- | --- |
+| Host, application mode, history, feedback or private attachments | The selected azd environment, using the supported `azd env set` inputs | Before `azd provision`, then deploy |
+| An agent capability or another declared application setting | `parameters.additionalAppConfigurationSettings.value` in the project-root `main.parameters.json` | Before provision, after declaring the capability's resource dependencies |
+| An operator-managed value in an existing deployment | Azure App Configuration, key label `agent-lz` | After provision, followed by the setting's documented refresh or restart |
+| Generated endpoints, metadata account/database names or identity allowlists | Their provisioning inputs and lifecycle | Provision/deploy publishes the resolved values |
+| A component's process/bootstrap environment | Its application deployment definition or documented deployment input | Before publishing or restarting that component |
+
+These are different configuration surfaces. An arbitrary `azd env set`
+does not create an App Configuration key. Conversely, editing a key in the
+Azure portal does not provision its resources or grant its consumer access.
+
+## Enable a product feature
+
+History, feedback and private attachments have supported azd deployment inputs.
+Their defaults are `false`. The lifecycle uses these choices to select
+application Cosmos DB, create the owner-partitioned metadata container and
+grant the frontend access before publishing the settings under `agent-lz`.
+
+For example, to enable feedback:
+
+1. In the initialized project directory, select the intended environment with
+   `azd env select <environment-name>`. Use the environment created during
+   initialization, or the existing deployment you are updating.
+2. Set the feature **before provisioning**:
+
+   ```bash
+   azd env set ENABLE_USER_FEEDBACK true
+   ```
+
+3. Run `azd provision` to create or reuse the metadata resources and apply
+   the frontend's scoped permissions.
+4. Complete any sign-in handoff in the
+   [deployment guide](deploy-full-stack.md), then run `azd deploy`.
+5. Sign in, obtain a response and follow the
+   [feedback checks](user-feedback.md). Verify that another user's identity
+   cannot act on your response.
+
+Use the same sequence with `ENABLE_CHAT_HISTORY` for saved-history discovery
+or `ENABLE_PRIVATE_ATTACHMENTS` for private conversational files.
+Read [Conversations & files](conversations.md) before enabling either.
+Workflow mode or `both` also selects UI metadata without enabling those features.
+
+The lifecycle publishes `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and
+`NATIVE_UI_METADATA_CONTAINER` for the selected resources.
+Keep the default container `native-ui-metadata` and partition key
+`/principal_id` unless your deployment deliberately declares a different
+compatible container. Do not copy resource names from another environment.
+
+For an existing deployment, enabling one of these features still requires
+provision and deploy. Disabling it does not delete retained metadata.
+Apply the installation's retention policy separately.
+
+## Configure an agent capability
+
+Agent capabilities such as Foundry IQ have application keys and separate
+resource prerequisites. Complete the selected capability's guide before
+enabling its key. For example, [Foundry IQ](foundry-iq.md) explains the
+knowledge source, Search connection and access checks needed for retrieval.
+
+In the project-root `main.parameters.json`, append the capability's entry to
+`parameters.additionalAppConfigurationSettings.value`. Preserve existing
+entries, including the host and application mode:
+
+```json
+"additionalAppConfigurationSettings": {
+  "value": [
+    { "name": "ORCHESTRATION_HOST", "value": "${ORCHESTRATION_HOST=hosted}", "label": "agent-lz" },
+    { "name": "APPLICATION_MODE", "value": "${APPLICATION_MODE=conversational}", "label": "agent-lz" },
+    { "name": "FOUNDRY_IQ_ENABLED", "value": "true", "label": "agent-lz" }
+  ]
+}
+```
+
+Values in this list are strings. Include the `agent-lz` label.
+This is a fragment of the existing parameters object, not a replacement
+for the complete parameter file. Bicep and Terraform use the same
+application-setting declaration.
+
+Run the selected provider's `azd provision` and `azd deploy` sequence after
+the prerequisites are ready. Verify a real allowed-source query and a
+denied-source query, not just a successful key write.
+Use the feature-specific guide for all additional required settings.
+
 ## Change a setting
 
 1. Select the intended environment and check
@@ -28,6 +118,30 @@ Use the [runtime-setting procedure](deploy-full-stack.md#change-a-runtime-settin
 and [secret rotation](deploy-full-stack.md#rotate-a-secret) for operational
 steps. Not every component or setting shares the runtime's refresh behavior.
 
+### Edit an existing nonsecret key
+
+After provision, retrieve the intended store endpoint with
+`azd env get-value APP_CONFIG_ENDPOINT`. In the Azure portal, open that
+**App Configuration** resource, select **Configuration explorer**, find the
+key with label **agent-lz** and edit its value.
+Your operator identity needs App Configuration Data Owner to write keys.
+
+For a CLI update, the equivalent operation is:
+
+```bash
+az appconfig kv set --endpoint <app-config-endpoint> --auth-mode login --key LOG_LEVEL --label agent-lz --value INFO --yes
+```
+
+Replace the endpoint with your deployment's value.
+This example changes the logging level, which is read at process startup:
+redeploy the affected application before checking its effective level.
+Only settings explicitly documented as dynamic use a refresh cycle instead.
+
+Record a provisioning-managed change in its declared input too, so the next
+provision does not overwrite your intended value.
+Keep secrets in Key Vault and use the owning component's secret-reference
+procedure rather than this nonsecret-key example.
+
 ## Configuration access
 
 Supply `APP_CONFIG_ENDPOINT` as a process bootstrap input. Managed identity
@@ -44,10 +158,10 @@ permissions only to actual consumers at the required scope.
 A missing required setting or authorization context must be reported, not
 converted into an insecure fallback or a successful empty result.
 
-The runtime's App Configuration availability handling catches actual Azure SDK
-and Requests transport failures only. Unexpected provider failures propagate
-unchanged rather than silently disabling configuration, being relabelled as
-ordinary unavailability or becoming a success-shaped result.
+If startup cannot read required configuration, check the selected endpoint,
+managed identity, network path and data-plane permissions. Restore access
+before admitting users. The application reports configuration failures instead
+of starting with an unconfigured fallback.
 
 ## Functional parameters and deployment choices
 
@@ -112,10 +226,12 @@ An unavailable required store is a readiness failure, not an offline mode.
 | `NATIVE_TOOL_SECRET_NAMES` | `[]`; platform scoped-grant declaration of secret **names**, not values; not consumed by the native runtime |
 | `ENABLE_PRIVATE_ATTACHMENTS` | `false`; conversational inline attachments, independent of corporate ingestion; no workflow attachments |
 
-Feature keys are shared `additionalAppConfigurationSettings` entries under
-label `agent-lz`, not additional same-named Bicep or Terraform parameters.
-Resource selection must follow their declared dependencies before application
-startup.
+The host, mode and three product feature flags above are selected through
+their supported azd inputs. Agent capability keys use
+`additionalAppConfigurationSettings`.
+The lifecycle publishes both kinds under `agent-lz`.
+Use the [product-feature](#enable-a-product-feature) or
+[agent-capability](#configure-an-agent-capability) procedure, as appropriate.
 
 Workflow mode or `both` selects UI metadata even when both history and feedback
 flags are `false`. Enabled history, feedback or attachments also selects that

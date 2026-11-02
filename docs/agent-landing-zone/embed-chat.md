@@ -82,6 +82,34 @@ override embedding settings. The UI loads them at startup.
 explains runtime overrides and effective values.
 The existing session-signing secret stays protected.
 
+### Apply configuration before mounting
+
+1. Provision and deploy the standalone application using
+   [full-stack deployment](deploy-full-stack.md), then verify
+   [application access](application-auth.md) with an admitted user.
+2. The portal developer and Entra administrator register the portal's own
+   redirect URI under its **App registration > Authentication**, add the
+   UI API's delegated `user_impersonation` permission under **API permissions**,
+   and complete required tenant consent.
+
+3. The configuration operator publishes the table's nonsecret values in
+   **App Configuration > Configuration explorer > Create > Key-value**, label
+   `agent-lz`, using plain-text strings. Use lowercase `true` and `entra`,
+   the tenant GUID and expected token audience. Enter multiple allowed origins
+   as a comma-separated string, not a JSON array. Do not assume `azd env set`
+   publishes these embedding keys.
+
+Keep the existing `CHAINLIT_AUTH_SECRET` Key Vault reference and its managed
+identity permissions. The configuration operator needs App Configuration
+Data Owner for these writes; see
+[edit an existing nonsecret key](application-settings.md#edit-an-existing-nonsecret-key).
+
+4. Restart/redeploy the **frontend Container App** after the write, then open
+   a new browser session. Its operator must enforce the
+   single-process/revision/replica requirements below before the portal developer
+   adds bootstrap and mounts the widget. No hosted-agent republication is needed
+   for an embedding-only change.
+
 ### Session settings
 
 | Setting | Default | Purpose |
@@ -271,6 +299,13 @@ authoritative rate limits need gateway enforcement.
 An integration is incomplete without account-switch, logout, cookie-policy
 and two-user document allow/deny tests. Do not work around token failures with
 anonymous fallback or service-identity retrieval.
+
+Before rollout, have an admitted user bootstrap from the exact approved
+portal origin and obtain a real answer. Repeat with a signed-out/expired
+token and a user excluded by admission policy; both must fail. Log out and
+switch accounts, confirming the new account cannot reopen the first account's
+session or redeem its citation selectors. Test the actual published portal,
+not only a local developer origin.
 
 <span id="recover-or-remove"></span>
 

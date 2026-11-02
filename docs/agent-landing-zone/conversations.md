@@ -1,9 +1,80 @@
 # Conversations & files
 
 Native execution state and user-facing saved history have separate owners.
+The UI's backend for frontend (BFF) checks users and maps them to native sessions.
 `ENABLE_CHAT_HISTORY` and `ENABLE_USER_FEEDBACK` default to `false`.
 Private attachments are an independently selected optional capability.
 `ENABLE_PRIVATE_ATTACHMENTS` defaults to `false`.
+
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Conversation state and private files**
+
+1. The authenticated UI checks ownership before calling the selected native host.
+2. Foundry owns Hosted state; DTS owns Container Apps execution state.
+3. Optional UI Cosmos stores owner mappings, feedback and attachment descriptors,
+   never transcripts, file bytes or native checkpoints.
+4. Private attachments are validated inline inputs, separate from shared-source
+   ingestion. With all product flags off in conversational mode, owner maps
+   are volatile and disappear on UI restart.
+
+</div>
+
+[![The UI sends owner-checked turns and optional validated inline files to one native host. Foundry or DTS persists execution; optional UI Cosmos stores only owner-scoped metadata, not transcripts or file bytes.](../media/runbooks/conversations.svg)](../media/runbooks/conversations.svg){: .runbook-diagram__image aria-label="Open full-size conversation and private-file diagram"}
+
+[Open full-size diagram](../media/runbooks/conversations.svg){: .runbook-diagram__open}
+
+</div>
+
+## Enable saved history or private files
+
+The deployment operator needs the platform checkout, its selected azd
+environment and the [deployment permissions](deploy-full-stack.md#prerequisites).
+Complete [application access](application-auth.md) first for an existing UI;
+for a new environment, follow that guide's registration and deployment order.
+Agree retention and file handling with the data owner before enabling either
+feature.
+
+1. From the **platform checkout root**, select the intended environment.
+   Set only the features you need, using literal `true` or `false`:
+
+```bash
+azd env select <environment-name>
+azd env set ENABLE_CHAT_HISTORY true
+azd env set ENABLE_PRIVATE_ATTACHMENTS true
+```
+
+Omit the attachment command if you only need history, or the history command
+if you only need private files. Attachments require `APPLICATION_MODE` to be
+`conversational` (the default) or `both`. Do not change an existing mode just
+to enable history.
+
+2. Run `azd provision` in that same checkout/environment before deploying.
+
+These are supported lifecycle inputs. Provisioning selects the application
+Cosmos dependency, creates its metadata container and configures a
+container-scoped frontend grant. The deployment identity needs permission to
+create that grant; application users do not need direct Cosmos access.
+Then deployment reloads the UI with the matching configuration. Follow this
+order for an existing environment too; changing a flag only in the portal
+does not provision its dependencies.
+
+In **App Configuration > Configuration explorer**, label `agent-lz`, verify
+the selected flags and the generated `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME`
+and `NATIVE_UI_METADATA_CONTAINER` bindings. Keep the container default
+`native-ui-metadata` unless you have an approved storage change. In
+**Cosmos DB > Data Explorer**, confirm its partition key is `/principal_id`.
+Do not substitute Foundry's backing Cosmos account.
+
+3. Run `azd deploy` after provision and grants succeed. Sign in again and run
+   the checks below using a new harmless conversation.
+
+See
+[Enable a product feature](application-settings.md#enable-a-product-feature)
+for the canonical configuration procedure and
+[User feedback](user-feedback.md) for its independent flag.
 
 ## Start the first conversation
 
@@ -24,7 +95,7 @@ For a named process rather than chat, use
 
 ## Context during a chat
 
-A conversational MAF Agent uses the selected host's native session state:
+A conversational Microsoft Agent Framework (MAF) Agent uses the selected host's native session state:
 Foundry persistence on Hosted or Durable Task Scheduler (DTS) through the
 official Durable Extension on Container Apps.
 The UI does not make a stateless adapter stateful by replaying its transcript.
@@ -36,8 +107,8 @@ See [Agent hosting](hosted-agents.md) for the distinct clients.
 
 ## Resume a saved conversation
 
-When saved history is enabled, reopen a conversation through the authenticated
-UI. The BFF checks its owner
+When saved history is enabled, choose **Abrir histórico** (open history) in
+the authenticated chat, then select a saved session. The BFF checks its owner
 mapping before using the host client to read or continue the native session.
 Native state and UI discoverability are different: a persisted session does
 not by itself supply a list of the current user's conversations.
@@ -46,6 +117,12 @@ The UI/BFF owns titles, owner mappings and other product metadata in its
 declared store. That store is not a transcript replay service or a workflow
 checkpoint engine. Missing metadata, failed state reads and denied ownership
 must not be treated as an empty successful conversation.
+
+**Verify:** Create a harmless conversation, send a follow-up, sign out and
+return as the same user. Open history and confirm the native conversation
+can be read and continued. A different signed-in user must not list or reopen
+it. Through the authenticated API, unknown/nonowned selectors return `404`;
+disabled history does not return a successful empty history.
 
 <span id="continuity-settings"></span>
 
@@ -56,7 +133,7 @@ must not be treated as an empty successful conversation.
 | Agent conversation/session execution | Selected native host |
 | Workflow graph state and pending human input | Selected native host |
 | User-to-session/run mapping, titles and discovery | UI/BFF product metadata |
-| Message/run feedback | UI/BFF feedback store |
+| Native result/execution feedback | UI/BFF feedback store |
 | Private file input and access metadata | Explicit attachment capability; authenticated UI/file boundary and selected native input or authorized tool path |
 
 Hosted execution does not require application Cosmos DB.
@@ -106,6 +183,12 @@ Enable `ENABLE_PRIVATE_ATTACHMENTS` for conversational operation in
 The native turn accepts at most **three files**, each at most **64 KiB**:
 UTF-8 TXT/Markdown, PDF, PNG or JPEG.
 
+After the provisioning/deployment sequence above, open a **new conversational
+chat**, attach a harmless small `.txt` file using the chat attachment control
+and send a text instruction with it. For an authenticated API integration,
+use the following body instead; obtain the UI session ID from that user's
+session creation response, not from a native host ID.
+
 ```json
 {
   "text": "Use this note in your answer.",
@@ -121,6 +204,12 @@ Send this body to `POST /api/native/sessions/{id}/turns` for an owner-bound
 UI session. Strict Base64, content/format signatures and owner checks reject
 malformed or mismatched input. Unknown or nonowned session IDs return `404`
 before native backend access.
+
+**Verify:** The owner receives a real answer using the harmless text file.
+A second user submitting to the same UI session ID receives `404`.
+Oversize or mismatched-format files are rejected, and disabling attachments
+makes new attachment submissions unavailable. Do not treat successful
+transport as evidence of PDF/image understanding.
 
 The maximum serialized inline turn is **256 KiB**, checked against both
 Hosted and DTS content envelopes. Text, filenames, MIME metadata, data URIs,

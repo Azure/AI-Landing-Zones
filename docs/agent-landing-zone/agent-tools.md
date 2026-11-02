@@ -13,6 +13,31 @@ Select the application experience and host through
 A portal connection or endpoint string alone does not attach a tool to
 the running application.
 
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**A registered capability is not a permission grant.** The application can
+call configured retrieval capabilities and/or an authenticated MCP server.
+Each path needs its own connection, network access and authorization.
+All optional native capabilities start disabled.
+
+</div>
+
+[![An agent or workflow on either native host can use optional Search retrieval and Agent App MCP Server as independent capability examples. Source access and MCP tool authorization remain separate; other MCP servers have their own hosting contracts.](../media/runbooks/agent-tools.svg)](../media/runbooks/agent-tools.svg){: .runbook-diagram__image aria-label="Open full-size tool capability boundaries diagram"}
+
+[Open full-size diagram](../media/runbooks/agent-tools.svg){: .runbook-diagram__open}
+
+</div>
+
+## Before you start
+
+Have a working authenticated application and decide which operation or source
+it should expose. The deployer prepares connections and scoped grants; the
+runtime identity invokes services. Source owners approve the accessible data,
+including any delegated-user requirements. Test with synthetic data before
+giving the model access to a production tool.
+
 Native capabilities are **off by default**: `SEARCH_RETRIEVAL_ENABLED`,
 `FOUNDRY_IQ_ENABLED`, `MCP_ENABLED` and
 `MULTIMODAL_ENABLED`. Select only the capabilities whose source, identity,
@@ -27,6 +52,40 @@ The lifecycle derives MCP connection and caller authorization settings.
 Select tools separately with `MCP_TOOLSETS`: default `[]` registers zero tools;
 `["nl2sql"]` selects the current SQL toolset. This application/runtime setting
 uses label `agent-lz`, not new tool-specific foundation parameters.
+
+## Enable a supported capability
+
+1. **Before provision**, prepare the chosen source/tool and its network path.
+    For integrated MCP, use the [server selection procedure](agent-app-mcp.md#select-and-deploy);
+    do not manually invent its endpoint, scope or caller allowlist.
+2. For native retrieval capabilities, edit the platform root
+    `main.parameters.json` at
+    `parameters.additionalAppConfigurationSettings.value`, preserving existing
+    entries. Use `name`, string `value` and `label: "agent-lz"` as shown in the
+    canonical [agent capability procedure](application-settings.md#configure-an-agent-capability).
+    These flags are not implicitly mapped azd environment variables.
+3. Use only a capability with its required bindings:
+
+    | Capability flag | Required runtime bindings | Preparation |
+    | --- | --- | --- |
+    | `SEARCH_RETRIEVAL_ENABLED` | `SEARCH_CONNECTION_ID`, `SEARCH_RAG_INDEX_NAME`; optional `SEARCH_RAGINDEX_TOP_K` | An authorized Foundry Search connection and populated index |
+    | `FOUNDRY_IQ_ENABLED` | `KNOWLEDGE_BASE_CONNECTION_ID`, `KNOWLEDGE_BASE_NAME` | [Foundry IQ source and connection](foundry-iq.md#how-to-connect-a-knowledge-base) |
+    | `MULTIMODAL_ENABLED` | The [multimodal retrieval bindings](multimodality.md#extract-and-retrieve-figures) | Compatible index, models and invocation-local delegated Search authorization |
+
+4. **Provision/deploy** with the matching
+    [Bicep](deploy-full-stack.md#procedure) or
+    [Terraform](deploy-terraform-full-stack.md#procedure) lifecycle.
+    Changing these capability flags requires a new publication/worker restart:
+    their composition is structural, not a functional hot reload.
+5. **At runtime**, ask a question that needs the chosen source/tool. Verify
+    an actual call, a grounded result and an unauthorized-user/source denial.
+    A missing binding or required-tool outage must fail explicitly, not return
+    a fabricated answer. Use safe trace correlation, not secret/argument dumps.
+
+The shared native implementation composes these capabilities in the
+orchestrator's `src/native/tools.py`. New tool implementations or changed
+registration schemas need reviewed code and a compatible image, not just
+another configuration key.
 
 <span id="choose-the-extension-point"></span>
 

@@ -40,6 +40,14 @@ or [Deploy full stack](deploy-full-stack.md) guide. For component changes, see
     job** and enforces successful prior stages. Images are built per environment.
     Keep the platform's `infra/` and lifecycle hooks in that same revision.
 
+!!! warning "Adapt the downloadable example before deployment"
+    The YAML files still contain `DEPLOYMENT_TOPOLOGY` inputs and checks.
+    The shipped native lifecycle rejects that selector. Replace those inputs
+    and checks with the `ORCHESTRATION_HOST` and `APPLICATION_MODE` contract
+    described below before adapting this example. Its offline validator
+    checks pipeline structure and promotion, not compatibility with a deployed
+    application. Do not queue the unmodified example.
+
 ## Prerequisites
 
 - A reviewed platform revision and stage-specific deployment inputs.
@@ -56,6 +64,12 @@ a deployment until they and the protected checks in Step 4 are complete.
 ## Procedure
 
 ### 1. Prepare the repository and runners
+
+For an interactive first installation, use
+[azd template initialization](deploy-full-stack.md#step-1-initialize-the-project).
+This pipeline instead needs a version-controlled source checkout so every job
+can verify and promote the **same reviewed commit**. Do not download the
+current remote template again in each deployment job.
 
 Use your reviewed platform revision. Keep
 `manifest.json`, `app-definition.json`, `main.parameters.json`,

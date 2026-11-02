@@ -150,26 +150,40 @@ Replace every `<placeholder>`. Run `powershell` blocks as written.
 
 ## Procedure
 
-Run Steps 1-4 in order. After selecting a checkout, run lifecycle commands from
-its platform root with the intended environment selected.
+Run Steps 1-4 in order. After initialization, run lifecycle commands from
+the project root with the intended environment selected.
 
-### Step 1: Get the code
+<a id="step-1-get-the-code"></a>
+
+### Step 1: Initialize the project
 
 ```bash
-git clone https://github.com/Azure/agent-landing-zone.git
+mkdir agent-landing-zone
 cd agent-landing-zone
+azd init --template Azure/agent-landing-zone .
 ```
 
-The checkout's `manifest.json` pins the compatible runtime components;
-the deployment hooks fetch them automatically.
+Start in a **new, empty directory**, outside any existing project checkout.
+The trailing `.` tells azd to put the template in the current directory;
+without it, current azd creates a template-named subdirectory. Stay in this
+project root, which contains `azure.yaml`, `manifest.json` and
+`main.parameters.json`, for the remaining steps.
 
-Alternatively, `azd init -t Azure/agent-landing-zone` initializes the current
-default template in an empty directory. Reuse the environment it creates rather
-than creating it again in Step 2.
+Interactive init asks for an **environment name** and creates/selects that
+local azd environment. Choose the intended name now; **do not run `azd env new`
+again in Step 2**. To supply the name explicitly, use
+`azd init --template Azure/agent-landing-zone --environment <environment-name> .`
+instead of the init command above.
+
+Initialization downloads the template and prepares local project/environment
+files; it does not provision Azure resources. Do not add `--up`: configure the
+deployment first. The project's `manifest.json` pins compatible runtime
+components, which the deployment hooks fetch automatically. No upstream
+platform Git history is required for a normal installation.
 
 #### Prepare Python
 
-From the repository root:
+From the initialized project root:
 
 ```bash
 python -m venv .venv
@@ -187,13 +201,16 @@ Keep this environment active for the lifecycle commands.
 
 #### Working from your own repository
 
-An unmodified deployment needs only the platform checkout. Hooks fetch selected
-runtime components automatically; separate forks are not required. Fork or mirror
-the platform when you maintain deployment inputs or automation, and fork only
-the runtime components whose source you change.
+An unmodified deployment needs only the initialized platform project. Hooks
+fetch selected runtime components automatically; separate forks are not required.
+Use a deliberate Git clone or fork when contributing changes, retaining upstream
+history for source updates, or maintaining reviewed deployment inputs and
+automation. Template initialization is not a checkout of the upstream history.
+Fork only the runtime components whose source you change.
 
-Keep reviewed, nonsecret inputs in source control and apply them explicitly
-with `azd env set`; an `environments/` folder is not loaded automatically.
+Keep reviewed, nonsecret inputs in source control. Apply documented environment
+mappings with `azd env set`; retain native and structured declarations in root
+`main.parameters.json`. An `environments/` folder is not loaded automatically.
 Protect `.azure/`, credentials, sibling component workspaces and deployment
 logs. For private components, configure Git read access on the actual deployment
 host separately from Azure authentication. Never embed tokens in repository URLs.
@@ -203,19 +220,21 @@ See [Custom applications](build-your-own-app.md) for source pinning and composit
 
 ### Step 2: Select the deployment target
 
-The following creates a **new** environment. Replace all placeholders:
+Use the environment created in Step 1. Authenticate both CLIs and set its
+target before provisioning. Replace all placeholders:
 
 ```bash
 az login
 azd auth login
 az account set --subscription <subscription-id>
-azd env new <environment-name>
 azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
 azd env set AZURE_LOCATION <region>
 ```
 
-For an existing environment, use `azd env select <environment-name>` instead
-and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
+To resume an existing local environment, use
+`azd env select <environment-name>` and preserve its approved inputs; do not
+reinitialize the template. Use `azd env new <environment-name>` only when
+intentionally adding a separate environment. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.
 
@@ -674,11 +693,10 @@ do not delete shared hub, DNS or monitoring resources.
 
 ## Validation
 
-1. Confirm the platform revision and frontend source, then inspect the deployed
-   Container Apps rather than accepting a placeholder response:
+1. Confirm the reviewed platform source and frontend source, then inspect the
+   deployed Container Apps rather than accepting a placeholder response:
 
     ```bash
-    git rev-parse HEAD
     git -C ../agent-app-ui rev-parse HEAD
     git -C ../agent-app-ui status --porcelain
     azd env get-value AZURE_RESOURCE_GROUP
@@ -687,9 +705,14 @@ do not delete shared hub, DNS or monitoring resources.
       --query "[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}" -o table
     ```
 
-    Compare the platform commit with your approved record and the UI commit
-    with its `manifest.json` entry. The UI source should have no unexpected
-    edits; matching HEAD alone does not prove the built source was unchanged.
+    For a template-initialized project, retain and compare the approved source
+    snapshot, manifest and deployment inputs: init does not retain upstream
+    Git history, so local `HEAD` is not upstream revision evidence.
+    For a maintained source checkout, use `git rev-parse HEAD` and compare
+    that platform commit with your approved record.
+
+    Compare the UI commit with its `manifest.json` entry. The UI source should
+    have no unexpected edits; matching HEAD alone does not prove the built source was unchanged.
     Apply the same check to ingestion only when that component is selected.
 
     The automatic hosted build clones the pinned orchestrator into a temporary

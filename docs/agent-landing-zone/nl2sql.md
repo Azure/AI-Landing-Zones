@@ -6,6 +6,30 @@ the **NL2SQL tools hosted by [Agent App MCP Server](agent-app-mcp.md)** to query
 an approved Azure SQL or SQL Server source. The server owns query generation,
 validation and read-only database execution.
 
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Where is SQL generated and authorized?**
+
+1. An authenticated Agent or Workflow invokes Agent App MCP Server.
+2. Only an explicitly selected `nl2sql` toolset reads its own approved source
+   and vector-metadata catalog, generates SQL and validates it.
+3. The server executes against the approved database under its read-only
+   principal. Users share that approved dataset; this is not per-user SQL OBO.
+
+</div>
+
+[![Agent App MCP Server contains the explicitly selected nl2sql toolset. It reads approved source and vector metadata from Cosmos, generates and validates SQL, then queries an approved read-only database. A separate importer activates catalog versions. The default server exposes zero tools and Search is not a dependency.](../media/runbooks/nl2sql.svg)](../media/runbooks/nl2sql.svg){: .runbook-diagram__image aria-label="Open full-size NL2SQL ownership and execution diagram"}
+
+[Open full-size diagram](../media/runbooks/nl2sql.svg){: .runbook-diagram__open}
+
+</div>
+
+## How to enable NL2SQL
+
+### 1. Select the toolset before provision
+
 NL2SQL is optional. It does not change `APPLICATION_MODE` or
 `ORCHESTRATION_HOST`, and applications without it do not need its SQL
 connectivity or metadata catalog.
@@ -17,6 +41,12 @@ azd env set MCP_TOOLSETS '["nl2sql"]'
 ```
 
 `MCP_TOOLSETS` defaults to `[]`; choose `["nl2sql"]` for this walkthrough.
+These are supported lifecycle inputs; do not enable only an unrelated
+`MCP_ENABLED` key in the portal. Initialize and run `azd provision`, then
+`azd deploy`, using the [canonical deployment guide](deploy-full-stack.md).
+The [MCP deployment guide](agent-app-mcp.md) owns server identity, caller
+authorization and catalog dependency setup.
+
 Tool registration is startup-scoped; changes require restart/redeployment.
 Disabling NL2SQL stops registration and client initialization, not deletion
 of retained catalogs or automatic revocation of previously granted roles.
@@ -60,7 +90,11 @@ must define the sales measure and date boundaries. The returned aggregate
 comes from SQL under the application's read principal, not from copied rows
 in the catalog.
 
-## Prepare an approved source
+<span id="prepare-an-approved-source"></span>
+
+## How to onboard and query an approved source
+
+### 2. Prepare the database and owner-approved metadata
 
 Start with the [MCP deployment and onboarding steps](agent-app-mcp.md#onboard-sql-before-inviting-users).
 The operator approves the datasource and metadata; the platform supplies the
@@ -161,7 +195,9 @@ The `example` record pairs a useful question with approved read-only SQL.
 Neither record contains product rows. For multiple objects, add schema context
 for every item in `allowed_objects`, including approved relationships.
 
-### Import the approved file
+<span id="import-the-approved-file"></span>
+
+### 3. Import the approved file after provisioning
 
 Use the MCP repository's administrative Python importer, not a tool call or
 document-ingestion job. Run it from the **MCP repository root** on an authorized
@@ -191,18 +227,18 @@ fields above. Every approved object needs schema context; record source IDs
 and metadata versions must match the source. Do not supply precomputed
 embeddings or business rows: the importer generates the vectors.
 
-Obtain the released component on that runner, then install from its frozen lock.
+Obtain the manifest-pinned MCP component on that runner through your reviewed
+component acquisition process, then install from its frozen lock.
 The platform normally downloads runtime components automatically for deployment,
 but that does not launch the administrative import:
 
 ```text
-git clone --branch <manifest-mcp-tag> https://github.com/Azure/agent-app-mcp.git
-cd agent-app-mcp
+# From the manifest-pinned MCP repository root:
 uv sync --frozen
 ```
 
-Replace `<manifest-mcp-tag>` with the MCP tag in your platform's reviewed
-`manifest.json`, not an independently newer component release.
+Use the MCP tag/commit in the platform's reviewed `manifest.json`, not an
+independently newer component release.
 The repository supplies `samples/approved-synthetic.json` for an authorized
 development test. Its illustrative source is not an automatically provisioned
 SQL connection. For your application, replace the sample path with your
@@ -248,7 +284,9 @@ identity cannot perform imports.
 Import does not create Azure resources or database grants, and requires no
 ingestion service, MCP write tool or Search metadata indexes.
 
-### Ask the first question
+<span id="ask-the-first-question"></span>
+
+### 4. Ask and verify the first question at runtime
 
 After a successful import, sign in through the application's normal UI and ask:
 
@@ -331,57 +369,9 @@ successful provision does not establish functional SQL readiness.
 
 ## Fabric data-agent route
 
-Fabric warehouses and lakehouses store analytical data. A Fabric data agent
-generates and executes read-only SQL over their tables.
-A Power BI semantic model uses Data Analysis Expressions (DAX).
-Fabric owns schema context and execution; the application consumes results
-from the knowledge base, without the MCP catalog or SQL connection.
-
-### Fabric source contract
-
-The data agent must be published and shared with the intended users, who also
-need permission to its underlying data. Search and the Fabric workspace use
-the same Entra tenant. Supported capacity, tenant settings and network
-reachability are source requirements. See
-[Fabric data agent requirements](https://learn.microsoft.com/fabric/data-science/concept-data-agent)
-and the [knowledge-source contract](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-fabric-data-agent).
-
-This is a preview `fabricDataAgent` knowledge source with workspace and
-data-agent item IDs. `FABRIC_DATA_AGENT_ENABLED` and
-`FABRIC_DATA_AGENT_KNOWLEDGE_SOURCE_NAME` identify it;
-`FABRIC_IQ_ENABLED` selects the separate ontology route.
-It supports `low` or `medium` retrieval reasoning effort, not `minimal`.
-See [Fabric integration](fabric-iq.md).
-
-### Identity and API boundaries
-
-The connector uses workload authentication for Search transport and a separate
-Search-audience delegated token for source authorization. The UI obtains that
-token from the authenticated user's current assertion. Foundry forwards it to
-the hosted runtime, which sends the raw token in
-`x-ms-query-source-authorization`; it is not exchanged again in the container.
-
-Missing delegation or a failed required source stops retrieval. The source is
-not skipped and the connector does not retry as an application identity.
-Complete [sign-in and consent](application-auth.md).
-
-Fabric requires `FOUNDRY_IQ_API_VERSION=2026-08-01-preview`.
-Provisioning binds the planning model and selects `low` retrieval reasoning
-for a bound Fabric source. The connector parses `fabricAnswer` and textual
-`fabricEmbeddedResources`, retaining source identity in citations.
-This is textual grounding, not an interactive table/chart viewer or SQL
-execution in the hosted container.
-
-### Validate and recover
-
-Compare a fixed known aggregate from an approved table in Fabric and in the
-application. Selected tables, business definitions, date boundaries and
-permissions affect the result. Verify activity from the intended source,
-parsed results and denial for a user without access.
-[Creating a Fabric data agent](https://learn.microsoft.com/fabric/data-science/how-to-create-data-agent)
-is a separate service procedure, not evidence of application integration.
-
-Missing answers can indicate denied consent/access, an incorrect binding or
-incompatible API settings. Incorrect aggregates can reflect schema or business
-definitions. Removing a source binding does not require deleting tables or
-other knowledge sources. Retain permission boundaries during recovery.
+Fabric owns schema context and analytical execution for its data-agent route;
+the application consumes grounded results, without the MCP catalog or SQL
+connection. Its source-registration template does not install end-to-end
+native application delegation. Follow [Fabric IQ](fabric-iq.md) for the
+preview prerequisites, exact declaration shape, integration work and
+allowed/denied-user tests rather than applying the NL2SQL setup to Fabric.

@@ -52,7 +52,10 @@ Replace every `<placeholder>` with an approved value before running a command.
 
 Complete [foundation preparation Steps 1–4](deploy-terraform-infra-only.md#procedure):
 
-- Use the reviewed Agent Landing Zone source and configure the **root**
+- Initialize a new empty project directory with
+  `azd init --template Azure/agent-landing-zone .` as shown in that guide.
+  Keep the environment init creates; do not follow it with `azd env new`.
+- Configure the **root**
   `azure.yaml` once with `infra.provider: terraform` and
   `infra.path: infra/terraform`, with `infra.module: main`.
   Preserve the hooks and services.
@@ -63,7 +66,8 @@ Complete [foundation preparation Steps 1–4](deploy-terraform-infra-only.md#pro
 - Set documented environment inputs and root `main.parameters.json` values.
   Preprovision generates typed Terraform inputs automatically.
 
-Use this checkout's Terraform configuration for every lifecycle command.
+Run every lifecycle command from the initialized product root, using its
+Terraform configuration, not from `infra/terraform/`.
 An environment binds to one application ID.
 
 ### Step 2: Confirm application and build choices
@@ -190,8 +194,10 @@ outer command. Preserve permission and connectivity gates.
 First complete [foundation validation](deploy-terraform-infra-only.md#validation).
 Then follow the shared [application validation](deploy-full-stack.md#validation):
 
-1. Compare the platform revision and fetched component commits with the approved
-   manifest and check for uncommitted source changes.
+1. Compare the platform source snapshot (or maintained source-checkout revision)
+   and fetched component commits with the approved record and manifest.
+   Check for uncommitted component changes; template initialization does not
+   retain upstream platform Git history.
 2. Verify selected Container Apps run application revisions, not placeholders,
    and the Foundry version uses the recorded immutable image digest.
 3. Test the UI from the intended network, including Entra sign-in and delegated

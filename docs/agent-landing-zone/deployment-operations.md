@@ -4,6 +4,13 @@ Use the existing deployment guides for changes to a deployed environment. Choose
 infrastructure provider below and follow the linked procedure, including its
 prerequisites, validation and recovery guidance.
 
+`azd init --template Azure/agent-landing-zone .` is for a new local project,
+not an update or recovery command. For an existing installation, keep its
+reviewed source, select the existing environment with
+`azd env select <environment-name>` and preserve provider, inputs and private
+deployment records. A clean replacement runner must restore that same
+revision and the records required by the linked recovery procedure.
+
 | Task | Bicep | Terraform |
 | --- | --- | --- |
 | Review infrastructure changes | [Review changes](deploy-infra-only.md#review-infrastructure-changes) | [Review or recover](deploy-terraform-infra-only.md#reconfigure-or-recover-the-foundation) |

@@ -30,6 +30,27 @@ return record errors and some plain-text `400` responses. Do not impose one
 error parser on all routes. An error after a streaming response has started
 must be read from the stream, even if the HTTP status was `200`.
 
+## How to call an application API safely
+
+1. **After provision/deploy**, take the endpoint from the selected environment's
+   published outputs or application publication. The UI, ingestion and Hosted
+   endpoints are different services; do not construct one from another's URL.
+2. Select the route and authentication boundary in the table above. Use
+   [Sign-in & access](application-auth.md) to obtain the correct delegated
+   audience or service credential. Never send an ingestion API key as native
+   session authentication.
+3. Use a development identity and synthetic input. Session creation, turns,
+   configuration writes and ingestion calls are mutations, not health probes.
+4. Validate status **and** the route's result envelope. For records, inspect
+   each error and confirmed count; for native work, observe progress/completion.
+5. Test a nonowner or denied user. Reload current state after an uncertain
+   native outcome before retrying; do not replay a model request under broader
+   credentials to bypass a denial.
+
+Configuration and resource grants must already be applied through their owning
+lifecycle. An API request does not provision a metadata container, consent a
+source or register a tool.
+
 ## Native execution contracts
 
 The application uses explicit host-specific clients, not one universal state
@@ -45,8 +66,7 @@ these are not browser-to-SQL APIs. See [NL2SQL results](nl2sql.md#results-and-ex
 for the versioned typed result and [MCP settings](application-settings.md#agent-app-mcp-contract)
 for authenticated transport.
 
-Retired ask/feedback streams and strategy-specific conversation
-envelopes are not the native protocol. UI feedback belongs to the product
+UI feedback belongs to the product
 metadata service, not a feedback-shaped model invocation.
 
 ### Foundry Hosted
@@ -80,8 +100,8 @@ tool arguments. See [Sign-in & access](application-auth.md).
 
 Parse the selected SDK's native response and streaming events. An event or
 partial text is not evidence of successful terminal completion.
-Do not synthesize a second Responses event protocol or treat every stream as
-the old conversation-ID-prefixed text format.
+Do not synthesize a second Responses event protocol or infer a text framing
+format independent of the selected SDK.
 
 ### Container Apps and DTS
 
@@ -123,7 +143,7 @@ retry under broader workload permissions.
 ## Ingestion document APIs
 
 All three document endpoints require `X-API-KEY`.
-The validator accepts `DATA_INGEST_APP_APIKEY` and legacy
+The validator accepts `DATA_INGEST_APP_APIKEY` and its supported alias
 `INGESTION_APP_APIKEY`. Invalid supplied keys return `401`. The shipped
 API-key security dependency rejects a missing header with `403`.
 Credential-based Azure SDK access does not make these HTTP routes keyless.
@@ -248,12 +268,11 @@ query.
 
 ## Native endpoint boundary
 
-`python -m native.hosted` and `python -m native.durable` do not mount the
-retired orchestrator conversation, feedback, history, upload, dashboard or
-administration APIs. The native UI composition does not mount
-`/panel/conversations`. Use the native UI routes below, host-native clients
-and platform configuration tooling. The independently deployed ingestion
-administration APIs remain separate supported surfaces.
+`python -m native.hosted` serves native Hosted execution.
+`python -m native.durable` starts the standalone worker without public HTTP
+ingress. Neither mounts ingestion or UI product APIs. Use the native UI routes
+below, host-native clients and platform configuration tooling for their
+respective operations.
 
 ## Ingestion administration
 
@@ -276,7 +295,7 @@ Admin dependency. Protect the whole service boundary deliberately.
 | `POST /api/jobs/{job_type}/run` | No body. `202` returns `jobType`, `triggerId`, `status:"queued"`. Invalid type format `400`, unknown type `404`, conflicting run `409`, enqueue failure `500`. Queued is not completed. |
 | `POST /api/files/unblock?blobName=<encoded-log-path>` | No body. Resets a blocked file-log blob. Requires a path containing `/files/` and ending `.json`. Invalid path `400`, missing log `404`, read/write failure can return `500`. |
 | `GET /api/config` | Curated `sections`, flat `settings`, `canEdit`, `authEnabled` |
-| `PUT /api/config` | Body `{"updates":[{"key":"RUN_JOBS_ON_STARTUP","value":false}]}` |
+| `PUT /api/config` | Allowlisted settings only, for example `{"updates":[{"key":"CRON_RUN_SHAREPOINT_INDEX","value":"0 2 * * mon"}]}` |
 | `POST /api/config/reload` | Refreshes local caches, returns `{"status":"ok"}` |
 | `POST /api/config/apply` | Refreshes and reapplies schedules. Returns `status`, `rescheduled`, `note`, not a hard container restart. Schedule failures return `500` with failed/rescheduled keys. |
 
@@ -286,6 +305,9 @@ and all-write failure `500`. Confirmed writes remain applied if best-effort
 cache refresh fails. Schedule or write errors do not reverse earlier effects.
 Use [Application settings](application-settings.md) for allowlists and refresh.
 Use the job types reported by the running service, not an invented job name.
+
+`RUN_JOBS_ON_STARTUP` is not in this API's write allowlist; configure it
+before startup through the declared settings path.
 
 ### Declared ingestion administrative surface
 
@@ -327,6 +349,37 @@ host's native references. A native reference is not the UI session ID and
 neither is authorization.
 Unknown or nonowned IDs return opaque `404` **before backend access**.
 Stale or duplicate actions return `409`.
+
+### How to send an owner-bound conversational turn
+
+**After application deployment**, authenticate as the intended user and create
+a session on the **UI/BFF** endpoint:
+
+```http
+POST /api/native/sessions
+Authorization: Bearer <delegated-UI-API-token>
+Content-Type: application/json
+
+{"application":"conversational"}
+```
+
+Use the returned UI `id` in the next request, with the same owner's
+authenticated context:
+
+```http
+POST /api/native/sessions/<returned-id>/turns
+Authorization: Bearer <delegated-UI-API-token>
+Content-Type: application/json
+
+{"text":"Read this short note.","attachments":[{"name":"note.txt","content_type":"text/plain","data_base64":"SGVsbG8="}]}
+```
+
+Attachments require
+[prior feature/resource setup](ingestion.md#how-to-enable-private-conversational-input).
+Omit `attachments` for a text-only turn. Expect `response` and `native_ref`,
+not a new UI ID. A different user's request using that ID must receive opaque
+`404` before the native backend is called. No ingestion URL or API key
+participates in this path.
 
 | Request | Contract |
 | --- | --- |
@@ -382,6 +435,12 @@ the ingestion component's declared operator surface, `PANEL_OPERATOR_SURFACES_EN
 `DATA_INGEST_APP_APIKEY` cursor-signing secret are configured.
 They require a validated delegated user with the configured role or group.
 App-only tokens return `403`.
+
+These are component contracts, **not an activation procedure** for the current
+native platform. Its lifecycle keeps `PANEL_OPERATOR_SURFACES_ENABLED=false`
+and does not accept the component's panel-mount flags as native deployment
+selectors. Do not bypass that ownership by writing flags in the portal.
+See [Administration](operations.md) for available operator surfaces.
 
 | Request | Contract |
 | --- | --- |

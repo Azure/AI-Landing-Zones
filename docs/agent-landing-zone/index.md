@@ -44,6 +44,12 @@ The Azure Developer CLI (`azd`) coordinates the selected infrastructure
 provider and the platform's service configuration. The workflow separates
 preparing Azure resources from publishing application code.
 
+Start a new project with
+[`azd init --template Azure/agent-landing-zone .`](deploy-full-stack.md#step-1-initialize-the-project)
+in a new empty project directory. Init prepares the template and local
+environment, not Azure resources. Follow the selected provider's guide before
+provisioning.
+
 | Stage | What the template does |
 | --- | --- |
 | Inputs | Resolves the selected environment, target, network and resource choices. |

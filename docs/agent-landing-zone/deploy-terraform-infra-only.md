@@ -41,14 +41,27 @@ run the command on one line.
 
 ## Procedure
 
-### Step 1: Get the product source and select Terraform once
+<a id="step-1-get-the-product-source-and-select-terraform-once"></a>
+
+### Step 1: Initialize the project and select Terraform once
+
+Create a **new, empty directory**, outside an existing checkout:
 
 ```bash
-git clone https://github.com/Azure/agent-landing-zone.git
+mkdir agent-landing-zone
 cd agent-landing-zone
+azd init --template Azure/agent-landing-zone .
 ```
 
-[Prepare Python](deploy-full-stack.md#prepare-python) in this checkout and
+The trailing `.` initializes the current directory rather than creating a
+template-named subdirectory. Interactive init asks for an environment name
+and creates/selects it; **do not create it again in Step 2**. To supply the
+name explicitly, use
+`azd init --template Azure/agent-landing-zone --environment <environment-name> .`
+instead of the init command above. Initialization does not provision resources.
+Do not add `--up`: select Terraform and configure its backend and inputs first.
+
+[Prepare Python](deploy-full-stack.md#prepare-python) in this project and
 keep its environment active.
 
 In the **root** `azure.yaml`, set these fields while preserving services,
@@ -61,26 +74,29 @@ infra:
   module: main
 ```
 
-Run all lifecycle commands from the product root. Provider selection applies to
-the checkout; use its Terraform configuration for provisioning, updates and
-removal. Bicep is the default choice in an unconfigured checkout.
+Run all lifecycle commands from this product root, alongside `azure.yaml`,
+`manifest.json` and `main.parameters.json`, not from `infra/terraform/`.
+Provider selection applies to the whole project, not to an individual azd
+environment; use its Terraform configuration for provisioning, updates and
+removal. The template initializes with Bicep by default, so complete the edit
+above before provisioning. No separate Terraform template is required.
 
 ### Step 2: Authenticate and select the target
 
-For a **new**, dedicated environment:
+Use the dedicated environment created in Step 1:
 
 ```bash
 az login
 azd auth login
 az account set --subscription <subscription-id>
-azd env new <environment-name>
 azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
 azd env set AZURE_RESOURCE_GROUP <dedicated-resource-group>
 azd env set AZURE_LOCATION <region>
 ```
 
 For an existing Terraform environment, select it with
-`azd env select <environment-name>` and retain its approved inputs and backend.
+`azd env select <environment-name>` and retain its approved inputs and backend;
+do not reinitialize the template.
 Confirm the cloud, tenant and subscription for both CLIs and Terraform.
 Interactive use needs Azure CLI and azd sessions. Automation can supply
 process-scoped `ARM_*` credentials for its selected authentication method.

@@ -46,38 +46,51 @@ to identify the resources for your deployment.
 
 <a id="step-1-choose-the-source"></a>
 
-### Step 1: Clone Agent Landing Zone
+<a id="step-1-clone-agent-landing-zone"></a>
 
-Use this source for infrastructure-only and full-stack deployments:
+### Step 1: Initialize Agent Landing Zone
+
+Create a **new, empty project directory**, outside any existing checkout:
 
 ```bash
-git clone https://github.com/Azure/agent-landing-zone.git
+mkdir agent-landing-zone
 cd agent-landing-zone
+azd init --template Azure/agent-landing-zone .
 ```
+
+The trailing `.` initializes the current directory rather than creating a
+template-named subdirectory. Interactive init asks for the environment name
+and creates/selects it; **do not create it again in Step 2**. To supply the
+name explicitly, use
+`azd init --template Azure/agent-landing-zone --environment <environment-name> .`
+instead of the init command above. Initialization does not provision resources;
+leave `--up` off until the required choices have been configured.
 
 Run all lifecycle commands from this root, not from `infra/`.
 Its `infra/` contains the foundation source. `manifest.json` records the
-coordinated application component pins.
+coordinated application component pins. The template's root `azure.yaml`
+already selects Bicep; no upstream platform Git history is needed.
 
 [Set up Python](deploy-full-stack.md#prepare-python) from
-the cloned repository before lifecycle commands.
+the initialized project before lifecycle commands.
 
-### Step 2: Create and confirm the target
+<a id="step-2-create-and-confirm-the-target"></a>
 
-Replace the placeholders for a **new**, dedicated environment:
+### Step 2: Select and confirm the target
+
+Use the dedicated environment created in Step 1. Replace the placeholders:
 
 ```bash
 az login
 azd auth login
 az account set --subscription <subscription-id>
-azd env new <environment-name>
 azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
 azd env set AZURE_RESOURCE_GROUP <dedicated-resource-group>
 azd env set AZURE_LOCATION <region>
 ```
 
-Use `azd env select <environment-name>` for an existing environment and keep
-its approved inputs.
+Use `azd env select <environment-name>` to resume an existing local
+environment and keep its approved inputs; do not reinitialize the template.
 
 Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local `.azure/` state.
@@ -421,19 +434,21 @@ Successful provisioning then reports that application setup is incomplete.
 Deferral does not bypass earlier topology/private-service checks.
 
 On a new connected host, restore the **same reviewed source revision** and
-root parameter file. Install the prerequisites and Python dependencies,
-authenticate both CLIs, then initialize local state only if absent:
+root parameter file. Install the prerequisites and Python dependencies and
+authenticate both CLIs. If that environment's local state is absent, create
+it once with `azd env new <same-environment-name>`; if template initialization
+already created it, use `azd env select <same-environment-name>` instead.
+Then set the existing target and refresh outputs:
 
 ```bash
-azd env new <same-environment-name>
 azd env set AZURE_SUBSCRIPTION_ID <subscription-id>
 azd env set AZURE_RESOURCE_GROUP <existing-resource-group>
 azd env set AZURE_LOCATION <region>
 azd env refresh
 ```
 
-If the environment is already present, select it instead. Reapply the approved
-deployment inputs: refresh restores outputs, not your full configuration.
+Reapply the approved deployment inputs: refresh restores outputs, not your
+full configuration.
 
 For the multi-group path, restore the same approved application/network
 destination mapping as well; the root group alone is not sufficient.

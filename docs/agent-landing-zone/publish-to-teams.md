@@ -13,6 +13,11 @@ You will create a Bot Service resource, enable channel access and publish the
 agent's app listing. These are manual post-deployment tasks; the landing zone
 template does not perform them.
 
+Complete `azd provision` and `azd deploy`, then test the selected hosted agent
+before starting this runbook. The publisher changes Foundry endpoint settings
+through its project API, not through UI App Configuration. A working
+standalone UI login is not Teams login or channel authorization.
+
 <span id="what-youll-have-after-this-runbook"></span>
 
 ## Expected outcome

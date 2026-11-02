@@ -51,6 +51,26 @@ quota and extraction compatibility.
 The rendered source's model binding and extracted diagram content are the
 evidence of successful processing, not the model name alone.
 
+### How to validate native image grounding
+
+1. **Before provision**, select the native Blob path in
+   [Ingestion](ingestion.md#how-to-prepare-a-shared-blob-source).
+   In root `main.parameters.json`, inspect
+   `parameters.modelDeploymentList.value`: the entry with
+   `canonical_name: CHAT_DEPLOYMENT_NAME` declares `model.name`, `model.version`,
+   deployment `name` and capacity. Choose an available model supported by the
+   extraction template; do not rename a deployment to imply another model.
+2. Run the [provision/deploy lifecycle](deploy-full-stack.md) with the reviewed
+   model and source settings. The platform operator owns model quota and
+   service bindings; the source owner approves ingestion access.
+3. **After provision**, upload an approved PDF containing a legible diagram to
+   the configured shared container. Wait for managed indexing, then inspect
+   extracted text for a fact present only in that diagram.
+4. **At runtime**, ask for that fact through the enabled Foundry IQ capability.
+   Verify the answer and citation, then repeat with a denied user.
+   Missing extracted text is an ingestion/model-binding issue; a missing
+   retrieved chunk can instead be a source-binding or authorization issue.
+
 The ingestion identity's source/model access is independent of the user's
 retrieval permissions. Private connectivity follows
 [Network design](network-isolation.md). Protected hosted retrieval uses the
@@ -82,8 +102,8 @@ outside its supported set. That fallback does not mean every file type is
 supported.
 
 The factory also routes `.xls` to the spreadsheet chunker, but its
-OpenPyXL parser expects an Open XML workbook, not a legacy binary Excel file.
-Convert legacy workbooks to `.xlsx` before ingestion.
+OpenPyXL parser expects an Open XML workbook, not a binary Excel file.
+Convert binary workbooks to `.xlsx` before ingestion.
 
 A source connector can impose a narrower allowlist, such as
 SharePoint's default `pdf,docx,pptx`. This custom processing table is not a
@@ -93,6 +113,21 @@ native chat upload allowlist.
 
 Configure these values through [Application settings](application-settings.md).
 They affect the custom ingestion service, not native Search source extraction.
+
+For **initial deployment**, declare the nonsecret settings as string-valued
+`{name,value,label}` entries under root
+`parameters.additionalAppConfigurationSettings.value`, label `agent-lz`.
+For example:
+
+```json
+{"name":"CHUNKING_NUM_TOKENS","value":"2048","label":"agent-lz"}
+```
+
+Use the [declared-settings publisher](configuration.md#configuration-ownership-and-declarations),
+not an undeclared azd variable. **After deployment**, ingestion's configuration
+API can update allowlisted settings such as `CHUNKING_NUM_TOKENS` and
+`MULTIMODAL`; it does not accept every analysis/model setting.
+See [API reference](application-api.md#ingestion-administration).
 
 - `USE_DOCUMENT_INTELLIGENCE=false` selects Content Understanding using
   `AI_FOUNDRY_ACCOUNT_ENDPOINT`, `CONTENT_UNDERSTANDING_ANALYZER`
@@ -118,6 +153,19 @@ content, so those paths can also call the chat model.
 
 ### Extract and retrieve figures
 
+To try this on an isolated custom pipeline:
+
+1. **Before starting ingestion**, review [schedules](ingestion-jobs.md) and
+   approve the target index, image container, analysis service and model.
+2. Declare `MULTIMODAL=true` using the settings location above, together with
+   the image storage/model settings below. The ingestion identity needs image
+   Blob write and model access; a querying user's access is separate.
+3. Publish settings and restart ingestion for consistent module-level clients.
+   Reprocess a small source document; changing a setting does not rebuild
+   already indexed chunks or captions.
+4. Inspect `relatedImages`, `imageCaptions` and caption vectors in the indexed
+   chunks. Verify actual retrieval output before expanding the corpus.
+
 `MULTIMODAL=false` is the custom ingestion default. Enabling it selects figure
 processing for supported document/image inputs. The pipeline extracts figures,
 stores images, generates captions and attaches related-image URLs, caption text
@@ -134,8 +182,7 @@ rather than a useful description.
 The registered retrieval tool determines which indexed text and image fields
 reach an Agent or Workflow. Extracting figures in ingestion does not register
 an image tool, change the chat input contract or automatically pass original
-images to a model. Check actual tool output and model inputs instead of
-selecting a legacy multimodal strategy.
+images to a model. Check actual tool output and model inputs.
 
 Review the separate image cleanup configuration in
 [Jobs & schedules](ingestion-jobs.md#index-purge-and-cleanup-effects).
@@ -161,6 +208,11 @@ transcripts or tokens. Do not infer this allowlist from shared ingestion.
 Selecting `DEPLOY_INGESTION_CONTAINER_APP=true` only deploys that separate
 processing service. Transport tests do not verify model PDF/image understanding.
 See [Conversations & files](conversations.md#private-attachments).
+
+For setup, follow
+[enable private conversational input](ingestion.md#how-to-enable-private-conversational-input).
+The product flag is a lifecycle input selected before provision/deploy;
+custom ingestion's `MULTIMODAL` setting is not its substitute.
 
 <span id="diagnose-a-missing-image-answer"></span>
 

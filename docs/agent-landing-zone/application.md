@@ -41,6 +41,22 @@ The first greeting proves model connectivity, not document retrieval, SQL
 readiness, saved history or workflow recovery. The default application does
 not automatically know your organization's documents or databases.
 
+### How to configure an optional capability
+
+1. Choose the capability's guide below **before the first provision**, or before
+   updating an existing installation. Check its resources, permissions and
+   source preparation requirements.
+2. Use [Application settings](application-settings.md#choose-where-to-configure-it)
+   to locate its supported input. History, feedback and private attachments
+   use `azd env set` before provision. Agent capability keys are declared in
+   the project-root `main.parameters.json`.
+3. Complete the required provision and deploy steps, then sign in with a pilot
+   user. Follow the capability's verification steps and check both a permitted
+   operation and a denied one before inviting other users.
+
+The lifecycle publishes the corresponding values to App Configuration.
+Keep deployment selection and runtime key edits in their documented surfaces.
+
 ### Choose what to add next
 
 | You want to | Follow | Important distinction |
@@ -82,8 +98,8 @@ When deployed, its `MCP_TOOLSETS` still defaults to `[]`: no business tools
 or NL2SQL dependencies are initialized until explicitly selected.
 Preparing a source does not register a tool.
 
-History, feedback and private
-attachments also default to off; conversational UI owner maps are then bounded
+History, feedback and private attachments also default to off.
+Conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.
 
 Foundry IQ manages
@@ -128,15 +144,17 @@ There are separate storage responsibilities:
 You may also select generic application Cosmos with `DEPLOY_COSMOS_DB=true`
 without MCP or the reference orchestrator, including for a custom application.
 See [Application Cosmos DB](configuration.md#application-cosmos-db).
-The normal standalone and customer-owned application paths remain available.
+Use [Bring your own app](build-your-own-app.md) to declare a separate
+application and its resource consumers.
 
 ## Application mode and host
 
 `APPLICATION_MODE` selects `conversational`, `workflow` or `both`.
 `ORCHESTRATION_HOST` selects `hosted` or `container_apps`.
 These are deployment choices, not a user-facing strategy selector.
-History, feedback and private attachments remain independently selected
-default-off features. Selecting Hosted does not enable history.
+History, feedback and private attachments are independent, default-off
+features. Set their supported azd inputs
+[before provisioning](application-settings.md#enable-a-product-feature).
 Workflow mode and `both` always require UI metadata, even with every product
 flag off.
 

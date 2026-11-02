@@ -19,6 +19,21 @@ repository `main`**, which may contain newer quality-tooling patches.
 They do not adopt newer runtime behavior into the umbrella application.
 When working on another revision, inspect its own workflow and tool arguments.
 
+### How to choose a useful first check
+
+1. **Before running commands**, identify the changed repository and exact
+   source revision. Component source checkouts are for contributing/testing,
+   not an installation prerequisite for deploying the application.
+2. Select the smallest behavioral test covering the changed boundary: parser
+   and record failure for ingestion; native host/configuration for orchestration;
+   owner denial and package imports for UI.
+3. Run it offline with synthetic data, then run that repository's broader
+   checks below. Test fixtures own mocked clients; starting ingestion against
+   Azure storage is not a unit-test shortcut.
+4. Inspect the JUnit/receipt and quality report. Record failures, skips and
+   unperformed live checks. A successful static report is not evidence that
+   indexing, identity grants or model interpretation worked.
+
 For ordinary contributions targeting `develop`:
 
 ```powershell
@@ -38,6 +53,8 @@ quality evaluation:
 
 ```powershell
 python -m pip install -r requirements.txt
+python -m pip install -r requirements-hosted.txt -r requirements-container-apps.txt -r requirements-tools.txt
+python -m pip check
 python -m pip install pytest pytest-asyncio pytest-mock jsonschema
 python -m pip install -r requirements-quality.txt
 python -m pytest -q --junitxml=.artifacts/pytest.xml
@@ -45,6 +62,11 @@ python -I -S .github/scripts/check-quality.py --check all --base-ref $Base --tes
 ```
 
 Use `-I -S` for this repository's checker and aggregate entrypoint.
+The maintained test workflow installs both host SDK requirement files and
+tool requirements so SDK-contract tests use published types. Runtime images
+still install only their selected host. For local server startup, follow the
+[separate host setup](local-development.md#how-to-start-the-selected-native-host).
+
 These Python options isolate interpreter startup and skip automatic site
 initialization. Static tools analyze fresh source-only snapshots with installed
 wheel paths exposed without executing `.pth` startup hooks.
@@ -161,7 +183,7 @@ python -m unittest discover -s tests -p test_quality_policy.py -v
 ```
 
 Installed-package acceptance creates a clean non-editable environment, installs
-runtime requirements, runs `pip check`, and verifies canonical and legacy
+runtime requirements, runs `pip check`, and verifies canonical and compatibility
 import origins outside the checkout. It copies tests, not runtime sources.
 This can install dependencies and needs package-feed access. It does not prove
 a Linux container or Azure integration.
@@ -222,7 +244,7 @@ blocking. Keep the distinction between those diagnostics and enforced scope.
 - Ingestion's initial blocking type scope includes
   `telemetry/audit_contract.py`, `telemetry/audit_sanitizer.py`, and
   `jobs/runtime.py`.
-- UI's `.quality/migration.json` preserves supported legacy exports while
+- UI's `.quality/migration.json` preserves supported compatibility exports while
   `.quality/policy.json` tracks canonical modules and adapters.
 
 An exception record is an exact, bounded allowance, not a blanket waiver for
@@ -275,6 +297,5 @@ Data recovery and reingestion require their own plan.
 ## Optional workload evaluation
 
 Consider the [AgentOps Accelerator](agentops.md) to evaluate, ship, and operate
-your Agent Landing Zone workload. The orchestrator's deprecated `evaluations/`
-folder contains no maintained standalone runner. Linking to AgentOps does not
+your Agent Landing Zone workload. Linking to AgentOps does not
 integrate it automatically or enable an evaluation or pull-request gate.

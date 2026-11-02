@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1060" viewBox="0 0 1000 1060" role="img" aria-labelledby="ingestion-title ingestion-description">
+  <title id="ingestion-title">Ingestion and private-input boundaries</title>
+  <desc id="ingestion-description">Two separate data paths. Shared Blob content and permissions belong to source administrators. Native Foundry IQ Blob ingestion manages indexing without Agent App Ingestion. Optional custom Agent App Ingestion can instead populate a compatible Azure AI Search index. Foundry IQ retrieval still requires delegated user authorization and query-time permission checks. Private inline attachments belong to the signed-in conversation owner. An explicit ENABLE_PRIVATE_ATTACHMENTS flag and UI metadata grant are required. The UI/BFF checks ownership and bounded inline inputs, then calls the native conversational backend on Hosted or DTS. That host owns native state. UI-owned Cosmos stores owner mappings and attachment descriptors, never file bytes, transcripts or tokens. Attachments are conversational only, not workflow input, and have no path to shared ingestion or the corporate index. Retrieval and custom ingestion are optional application capabilities, not requirements for every deployment. Blue arrows show data flow; there is no deployment setup path in this diagram.</desc>
+  <metadata>Azure Public Service Icons v24, Microsoft. Usage: https://learn.microsoft.com/azure/architecture/icons/ . Official icons are embedded intact, uniformly scaled and not recolored. All layout, labels and connectors are editable SVG elements.</metadata>
+  <defs>
+    <marker id="runtime-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" viewBox="0 0 8 8">
+      <path d="M0 0 8 4 0 8Z" fill="#32698e"/>
+    </marker>
+    <!-- Original Microsoft SVGs are nested unchanged. Gradients belong only to the official icons. -->
+    <g id="icon-storage">
+      <svg id="f2f04349-8aee-4413-84c9-a9053611b319" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="ad4c4f96-09aa-4f91-ba10-5cb8ad530f74" x1="9" y1="15.83" x2="9" y2="5.79" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#b3b3b3" /><stop offset="0.26" stop-color="#c1c1c1" /><stop offset="1" stop-color="#e6e6e6" /></linearGradient></defs><title>Icon-storage-86</title><path d="M.5,5.79h17a0,0,0,0,1,0,0v9.48a.57.57,0,0,1-.57.57H1.07a.57.57,0,0,1-.57-.57V5.79A0,0,0,0,1,.5,5.79Z" fill="url(#ad4c4f96-09aa-4f91-ba10-5cb8ad530f74)" /><path d="M1.07,2.17H16.93a.57.57,0,0,1,.57.57V5.79a0,0,0,0,1,0,0H.5a0,0,0,0,1,0,0V2.73A.57.57,0,0,1,1.07,2.17Z" fill="#37c2b1" /><path d="M2.81,6.89H15.18a.27.27,0,0,1,.26.27v1.4a.27.27,0,0,1-.26.27H2.81a.27.27,0,0,1-.26-.27V7.16A.27.27,0,0,1,2.81,6.89Z" fill="#fff" /><path d="M2.82,9.68H15.19a.27.27,0,0,1,.26.27v1.41a.27.27,0,0,1-.26.27H2.82a.27.27,0,0,1-.26-.27V10A.27.27,0,0,1,2.82,9.68Z" fill="#37c2b1" /><path d="M2.82,12.5H15.19a.27.27,0,0,1,.26.27v1.41a.27.27,0,0,1-.26.27H2.82a.27.27,0,0,1-.26-.27V12.77A.27.27,0,0,1,2.82,12.5Z" fill="#258277" /></svg>
+    </g>
+    <g id="icon-iq">
+      <svg id="uuid-818d34ac-4a59-4f5a-a262-953afc7dbf9c" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="uuid-7526d738-2276-4943-a89d-7b8f37e752c7" x1="9.52" y1="1882" x2="17.62" y2="1887.9" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-9a254082-ecd5-41e7-b516-d7222c830106" x1="7.5" y1="1885.6" x2="10" y2="1883.1" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-944cb126-a8a3-4575-8c15-15b68bff8253" x1="-.5" y1="1890.98" x2="5.4" y2="1882.88" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-fd46aaed-c6ee-4ec5-a79a-c451c5d41ce7" x1="3.11" y1="1892.99" x2=".61" y2="1890.49" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-cdf32197-da5e-480d-8e7c-e9db7b4aa8d2" x1="8.46" y1="1900.94" x2=".36" y2="1895.14" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-5e60f7f1-a5c7-49fe-a279-f1bde8ca60da" x1="10.54" y1="1897.44" x2="8.04" y2="1899.94" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-308c4ccc-3630-4f7c-98c6-7ffbde4b8d5b" x1="18.44" y1="1892.04" x2="12.64" y2="1900.14" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-b0c66d16-3170-41c2-a75a-45479ea00a11" x1="14.95" y1="1889.95" x2="17.45" y2="1892.45" gradientTransform="translate(0 -1882.5)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient></defs><rect width="18" height="18" fill="none" /><g><path d="M7.85.25h5.2c.4,0,.8.2,1.1.5l1.1,1.1c.1.1.1.3,0,.4l-1.9,1.9h-.4l-1.2-1.2-1.7-1.7c-.4-.4-.8-.6-1.3-.8-.3,0-.6-.1-.9-.1h0v-.1Z" fill="url(#uuid-7526d738-2276-4943-a89d-7b8f37e752c7)" /><path d="M2.75,1.85l1.1-1.1c.3-.3.7-.5,1.1-.5h2.8c.4,0,.7,0,1,.1.5.1,1,.4,1.3.8l1,1c-.2-.2-.5,0-.5.2v4s-.1.3-.3.3h-2.7s-.3,0-.3-.3V2.35c0-.2,0-.3-.3-.3s0,0-.2,0l-1.1,1.1-.9.9h-.4l-1.9-1.9v-.4h.3v.1Z" fill="url(#uuid-9a254082-ecd5-41e7-b516-d7222c830106)" /><path d="M.25,10.15v-5.2c0-.4.2-.8.5-1.1l1.1-1.1h.4l1.9,1.9v.4l-1.2,1.2-1.7,1.7c-.4.4-.6.8-.8,1.3,0,.3-.1.6-.1.9h-.1Z" fill="url(#uuid-944cb126-a8a3-4575-8c15-15b68bff8253)" /><path d="M1.85,15.25l-1.1-1.1c-.3-.3-.5-.7-.5-1.1v-2.8c0-.4,0-.7.1-1,.1-.5.4-1,.8-1.3l1-1c-.2.2,0,.5.2.5h4s.3,0,.3.3v2.7c0,.1,0,.3-.3.3H2.35c-.2,0-.3.1-.3.3v.2l1.1,1.1.9.9v.4l-1.9,1.9c-.1.1-.3.1-.4,0h0v-.3h.1Z" fill="url(#uuid-fd46aaed-c6ee-4ec5-a79a-c451c5d41ce7)" /><path d="M10.15,17.75h-5.2c-.4,0-.8-.2-1.1-.5l-1.1-1.1v-.4l1.9-1.9c0-.1.3-.1.4,0l1.2,1.2,1.7,1.7c.4.4.8.6,1.3.8.3,0,.6.1.9.1h0v.1Z" fill="url(#uuid-cdf32197-da5e-480d-8e7c-e9db7b4aa8d2)" /><path d="M15.25,16.15l-1.1,1.1c-.3.3-.7.5-1.1.5h-2.8c-.3,0-.6,0-.9-.1-.5-.1-1-.4-1.3-.8l-1-1c.2.2.5,0,.5-.2v-4c0-.1,0-.3.3-.3h2.7c.1,0,.3.1.3.3v4c0,.2.1.3.3.3h.2l1.1-1.1.9-.9c.1-.1.3-.1.4,0l1.9,1.9c.1.1.1.3,0,.4h-.4v-.1Z" fill="url(#uuid-5e60f7f1-a5c7-49fe-a279-f1bde8ca60da)" /><path d="M17.75,7.85v5.2c0,.4-.2.8-.5,1.1l-1.1,1.1c-.1.1-.3.1-.4,0l-1.9-1.9c-.1-.1-.1-.3,0-.4l1.2-1.2,1.7-1.7c.4-.4.6-.8.8-1.3,0-.3.1-.6.1-.9,0,0,.1,0,.1,0Z" fill="url(#uuid-308c4ccc-3630-4f7c-98c6-7ffbde4b8d5b)" /><path d="M16.15,2.75l1.1,1.1c.3.3.5.7.5,1.1v2.8c0,.3,0,.6-.1.9-.1.5-.4,1-.8,1.3l-1,1c.2-.2,0-.5-.2-.5h-4c-.1,0-.3-.1-.3-.3v-2.7s.1-.3.3-.3h4c.2,0,.3,0,.3-.3s0,0,0-.2l-1.1-1.1-.9-.9c-.1,0-.1-.3,0-.4l1.9-1.9c.1-.1.3-.1.4,0h0v.4h-.1Z" fill="url(#uuid-b0c66d16-3170-41c2-a75a-45479ea00a11)" /></g></svg>
+    </g>
+    <g id="icon-search">
+      <svg id="f470e112-f1d8-4c18-a381-9b54e11a9ca3" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="b198f9ad-224e-4f37-99bb-f1c5a20d3916" x1="9" y1="0.36" x2="9" y2="18.31" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef" /><stop offset="1" stop-color="#0078d4" /></linearGradient></defs><title>Icon-web-44</title><path d="M18,11.32a4.12,4.12,0,0,0-3.51-4,5.15,5.15,0,0,0-5.25-5,5.25,5.25,0,0,0-5,3.49A4.86,4.86,0,0,0,0,10.59a5,5,0,0,0,5.07,4.82l.44,0h8.21a.78.78,0,0,0,.22,0A4.13,4.13,0,0,0,18,11.32Z" fill="url(#b198f9ad-224e-4f37-99bb-f1c5a20d3916)" /><path d="M12.33,6.59a3.07,3.07,0,0,0-5.61.85,3.16,3.16,0,0,0,.33,2.27L4.71,12.08a.79.79,0,0,0,0,1.12.78.78,0,0,0,.56.23.76.76,0,0,0,.56-.23l2.33-2.36a3.14,3.14,0,0,0,.81.33,3.08,3.08,0,0,0,3.36-4.58Zm-.54,2.1A2.16,2.16,0,0,1,9.7,10.34a1.79,1.79,0,0,1-.51-.07,1.87,1.87,0,0,1-.7-.32,2.13,2.13,0,0,1-.56-.56,2.17,2.17,0,0,1-.31-1.73A2.14,2.14,0,0,1,9.7,6a2.31,2.31,0,0,1,.52.06,2.18,2.18,0,0,1,1.32,1A2.13,2.13,0,0,1,11.79,8.69Z" fill="#f2f2f2" /><ellipse cx="9.69" cy="8.18" rx="2.15" ry="2.16" fill="#83b9f9" /></svg>
+    </g>
+    <g id="icon-container-apps">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="a3a44093-b157-426e-a8fe-cec9f9c23978" x1="11.729" y1="4.88" x2="11.729" y2="13.099" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc" /><stop offset="0.528" stop-color="#6635bb" /><stop offset="1" stop-color="#552f99" /></linearGradient><linearGradient id="ad838859-03f4-472f-81bc-ebc921d71335" x1="6.35" y1="13.914" x2="6.35" y2="4.198" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc" /><stop offset="0.307" stop-color="#793ddd" /><stop offset="0.532" stop-color="#8046e1" /><stop offset="0.731" stop-color="#8c56e7" /><stop offset="0.915" stop-color="#9c6def" /><stop offset="1" stop-color="#a67af4" /></linearGradient></defs><g id="ae82470d-7a6c-4dfe-8533-59d8ff948629"><g><path d="M8.617,8.644H.639V1.784A1.16,1.16,0,0,1,1.788.624H8.617ZM1.63,7.653h6V1.594H1.788a.158.158,0,0,0-.158.158h0Z" fill="#949494" /><path d="M17.5,8.644H9.523V.624h6.828A1.16,1.16,0,0,1,17.5,1.784Zm-6.987-.991h6V1.784a.157.157,0,0,0-.123-.187.2.2,0,0,0-.035,0H10.513Z" fill="#949494" /><path d="M8.617,17.485H1.788A1.149,1.149,0,0,1,.639,16.347V9.476H8.617ZM1.63,10.467v5.88a.158.158,0,0,0,.158.158H7.626V10.467Z" fill="#949494" /><path d="M16.351,17.485H9.523V9.476H17.5v6.871A1.149,1.149,0,0,1,16.351,17.485Zm-5.838-.991h5.838a.157.157,0,0,0,.158-.158V10.467h-6Z" fill="#949494" /><path d="M14.6,6.294a.294.294,0,0,0-.2-.278L9.044,4.205A.128.128,0,0,0,9,4.2H9a.132.132,0,0,0-.133.133v9.445A.133.133,0,0,0,9,13.911H9a.138.138,0,0,0,.049-.01l5.365-2.145a.292.292,0,0,0,.184-.272Z" fill="url(#a3a44093-b157-426e-a8fe-cec9f9c23978)" /><path d="M8.966,4.2l-5.293.966a.161.161,0,0,0-.13.158V12.63a.16.16,0,0,0,.126.157L8.962,13.91a.161.161,0,0,0,.191-.121.22.22,0,0,0,0-.036V4.358A.16.16,0,0,0,9,4.2.163.163,0,0,0,8.966,4.2Z" fill="url(#ad838859-03f4-472f-81bc-ebc921d71335)" /><path d="M6.52,5.656v6.8l1.842.3V5.335Zm-2.262.367v5.955l1.6.326V5.754Z" fill="#b796f9" opacity="0.5" /></g></g></svg>
+    </g>
+    <g id="icon-user">
+      <svg id="e24671f6-f501-4952-a2db-8b0b1d329c17" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="be92901b-ec33-4c65-adf1-9b0eed06d677" x1="9" y1="6.88" x2="9" y2="20.45" gradientUnits="userSpaceOnUse"><stop offset="0.22" stop-color="#32d4f5" /><stop offset="1" stop-color="#198ab3" /></linearGradient><linearGradient id="b46fc246-25d8-4398-8779-1042e8cacae7" x1="8.61" y1="-0.4" x2="9.6" y2="11.92" gradientUnits="userSpaceOnUse"><stop offset="0.22" stop-color="#32d4f5" /><stop offset="1" stop-color="#198ab3" /></linearGradient></defs><title>Icon-identity-230</title><path d="M15.72,18a1.45,1.45,0,0,0,1.45-1.45.47.47,0,0,0,0-.17C16.59,11.81,14,8.09,9,8.09S1.34,11.24.83,16.39A1.46,1.46,0,0,0,2.14,18H15.72Z" fill="url(#be92901b-ec33-4c65-adf1-9b0eed06d677)" /><path d="M9,9.17a4.59,4.59,0,0,1-2.48-.73L9,14.86l2.44-6.38A4.53,4.53,0,0,1,9,9.17Z" fill="#fff" opacity="0.8" /><circle cx="9.01" cy="4.58" r="4.58" fill="url(#b46fc246-25d8-4398-8779-1042e8cacae7)" /></svg>
+    </g>
+    <g id="icon-agent">
+      <svg id="uuid-f9dbb74c-bb65-44f5-a0f2-185541c8f2e3" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="uuid-c41a1b5d-c3ee-4413-bef2-f5a072ba936e" x1="7.28" y1="272.84" x2=".39" y2="267.87" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset=".8" stop-color="#7274ff" /></linearGradient><linearGradient id="uuid-7a8397bb-f82e-4b4e-8fb1-c49dc20eae52" x1="10.19" y1="268.41" x2="4.38" y2="265.16" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-364cb38b-25e6-4d45-a5f3-7f7567cf1947" x1="17.43" y1="267.02" x2="5.08" y2="264.98" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".2" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-fb32e334-867d-4ede-bed1-56aecae762cb" x1="10.15" y1="273.41" x2="16.87" y2="269.71" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-257bedeb-cb4e-48ec-978d-667d943d4887" x1="17.68" y1="270.57" x2="8.68" y2="279.43" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset=".8" stop-color="#7274ff" /></linearGradient><linearGradient id="uuid-d24b3f2b-55bd-4731-8d82-2ccb3a949da7" x1="6.64" y1="271.02" x2="6.64" y2="278.12" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient></defs><path d="M5.02,15.31l-2.82-1.63c-.66-.38-1.06-1.08-1.06-1.83v-5.69c0-.76.4-1.46,1.06-1.83l1.53-.88c.1-.06.24.01.24.14v9.91c0,.37.1.73.28,1.04.18.32.45.59.78.78h0Z" fill="url(#uuid-c41a1b5d-c3ee-4413-bef2-f5a072ba936e)" /><path d="M10.14,10.59v1.76c0,.76-.4,1.46-1.06,1.83l-1.94,1.12c-.65.38-1.46.38-2.12,0-.33-.19-.59-.46-.78-.78-.18-.31-.28-.67-.28-1.04v-.42c0,.36.39.59.71.4l5.23-3.02c.1-.06.24.01.24.14Z" fill="url(#uuid-7a8397bb-f82e-4b4e-8fb1-c49dc20eae52)" /><path d="M16.86,9.53v3.26c0,.76-.4,1.46-1.06,1.83l-4.93,2.84c-.65.38-1.46.38-2.12,0l-1.53-.88c-.1-.06-.1-.21,0-.27l8.59-4.96c.32-.19.58-.45.76-.77.18-.32.28-.68.28-1.06Z" fill="url(#uuid-364cb38b-25e6-4d45-a5f3-7f7567cf1947)" /><path d="M10.22,7.46l1.53-.88c.65-.38,1.46-.38,2.12,0l1.94,1.12c.65.38,1.06,1.08,1.06,1.83,0,.38-.1.74-.28,1.06-.18.31-.44.58-.76.77l-.36.21c.31-.18.31-.63,0-.81l-5.23-3.02c-.1-.06-.1-.21,0-.27Z" fill="url(#uuid-fb32e334-867d-4ede-bed1-56aecae762cb)" /><path d="M5.94,2.16l2.82-1.63c.66-.38,1.46-.38,2.12,0l4.93,2.84c.65.38,1.06,1.08,1.06,1.83v1.76c0,.12-.13.2-.24.14L8.04,2.16c-.32-.18-.68-.28-1.05-.28-.37,0-.73.09-1.06.28h0Z" fill="url(#uuid-257bedeb-cb4e-48ec-978d-667d943d4887)" /><path d="M7.47,8.95l-1.53-.88c-.66-.38-1.06-1.08-1.06-1.83v-2.24c0-.76.4-1.46,1.06-1.83.33-.19.69-.28,1.06-.28s.72.09,1.04.28l.36.21c-.31-.18-.7.05-.7.41v6.04c0,.12-.13.2-.24.14h0Z" fill="url(#uuid-d24b3f2b-55bd-4731-8d82-2ccb3a949da7)" /></svg>
+    </g>
+    <g id="icon-cosmos">
+      <svg id="b089cfca-0de1-451c-a1ca-6680ea50cb4f" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><radialGradient id="b25d0836-964a-4c84-8c20-855f66e8345e" cx="-105.006" cy="-10.409" r="5.954" gradientTransform="translate(117.739 19.644) scale(1.036 1.027)" gradientUnits="userSpaceOnUse"><stop offset="0.183" stop-color="#5ea0ef" /><stop offset="1" stop-color="#0078d4" /></radialGradient><clipPath id="b36c7f5d-2ef1-4760-8a25-eeb9661f4e47"><path d="M14.969,7.53A6.137,6.137,0,1,1,7.574,2.987,6.137,6.137,0,0,1,14.969,7.53Z" fill="none" /></clipPath></defs><title>Icon-databases-121</title><path d="M2.954,5.266a.175.175,0,0,1-.176-.176h0A2.012,2.012,0,0,0,.769,3.081a.176.176,0,0,1-.176-.175h0a.176.176,0,0,1,.176-.176A2.012,2.012,0,0,0,2.778.72.175.175,0,0,1,2.954.544h0A.175.175,0,0,1,3.13.72h0A2.012,2.012,0,0,0,5.139,2.729a.175.175,0,0,1,.176.176h0a.175.175,0,0,1-.176.176h0A2.011,2.011,0,0,0,3.13,5.09.177.177,0,0,1,2.954,5.266Z" fill="#50e6ff" /><path d="M15.611,17.456a.141.141,0,0,1-.141-.141h0a1.609,1.609,0,0,0-1.607-1.607.141.141,0,0,1-.141-.14h0a.141.141,0,0,1,.141-.141h0a1.608,1.608,0,0,0,1.607-1.607.141.141,0,0,1,.141-.141h0a.141.141,0,0,1,.141.141h0a1.608,1.608,0,0,0,1.607,1.607.141.141,0,1,1,0,.282h0a1.609,1.609,0,0,0-1.607,1.607A.141.141,0,0,1,15.611,17.456Z" fill="#50e6ff" /><g><path d="M14.969,7.53A6.137,6.137,0,1,1,7.574,2.987,6.137,6.137,0,0,1,14.969,7.53Z" fill="url(#b25d0836-964a-4c84-8c20-855f66e8345e)" /><g clip-path="url(#b36c7f5d-2ef1-4760-8a25-eeb9661f4e47)"><path d="M5.709,13.115A1.638,1.638,0,1,0,5.714,9.84,1.307,1.307,0,0,0,5.721,9.7,1.651,1.651,0,0,0,4.06,8.064H2.832a6.251,6.251,0,0,0,1.595,5.051Z" fill="#f2f2f2" /><path d="M15.045,7.815c0-.015,0-.03-.007-.044a5.978,5.978,0,0,0-1.406-2.88,1.825,1.825,0,0,0-.289-.09,1.806,1.806,0,0,0-2.3,1.663,2,2,0,0,0-.2-.013,1.737,1.737,0,0,0-.581,3.374,1.451,1.451,0,0,0,.541.1h2.03A13.453,13.453,0,0,0,15.045,7.815Z" fill="#f2f2f2" /></g></g><path d="M17.191,3.832c-.629-1.047-2.1-1.455-4.155-1.149a14.606,14.606,0,0,0-2.082.452,6.456,6.456,0,0,1,1.528.767c.241-.053.483-.116.715-.151A7.49,7.49,0,0,1,14.3,3.662a2.188,2.188,0,0,1,1.959.725h0c.383.638.06,1.729-.886,3a16.723,16.723,0,0,1-4.749,4.051A16.758,16.758,0,0,1,4.8,13.7c-1.564.234-2.682,0-3.065-.636s-.06-1.73.886-2.995c.117-.157.146-.234.279-.392a6.252,6.252,0,0,1,.026-1.63A11.552,11.552,0,0,0,1.756,9.419C.517,11.076.181,12.566.809,13.613a3.165,3.165,0,0,0,2.9,1.249,8.434,8.434,0,0,0,1.251-.1,17.855,17.855,0,0,0,6.219-2.4,17.808,17.808,0,0,0,5.061-4.332C17.483,6.369,17.819,4.88,17.191,3.832Z" fill="#50e6ff" /></svg>
+    </g>
+  </defs>
+  <rect width="1000" height="1060" fill="#ffffff"/>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#1e3646">
+    <text x="30" y="46" font-size="28" font-weight="700">Ingestion and private-input boundaries</text>
+    <text x="30" y="80" font-size="18">Choose shared source processing, private conversation input, or neither.</text>
+
+    <!-- Shared-source lane: alternative processing paths, one authorization boundary. -->
+    <rect x="30" y="110" width="940" height="420" fill="#f3f8fc" stroke="#9bb2c4" stroke-width="1.5"/>
+    <rect x="30" y="110" width="940" height="48" fill="#e1edf4" stroke="#9bb2c4" stroke-width="1.5"/>
+    <text x="50" y="142" font-size="22" font-weight="700">Shared sources — source / Search administrators</text>
+    <g fill="#ffffff" stroke="#9bb2c4" stroke-width="1.5">
+      <rect x="50" y="185" width="200" height="115"/>
+      <rect x="310" y="185" width="280" height="115"/>
+      <rect x="650" y="185" width="295" height="115"/>
+      <rect x="310" y="360" width="280" height="105"/>
+      <rect x="650" y="360" width="295" height="105"/>
+    </g>
+    <g aria-hidden="true">
+      <use href="#icon-storage" transform="translate(65 200) scale(2.333333)"/>
+      <use href="#icon-iq" transform="translate(325 200) scale(2.333333)"/>
+      <use href="#icon-search" transform="translate(665 200) scale(2.333333)"/>
+      <use href="#icon-container-apps" transform="translate(325 374) scale(2.333333)"/>
+      <use href="#icon-iq" transform="translate(665 374) scale(2.333333)"/>
+    </g>
+    <g font-size="20" font-weight="700">
+      <text x="118" y="227">Shared Blob</text>
+      <text x="380" y="227">Foundry IQ</text>
+      <text x="720" y="227">Azure AI Search</text>
+      <text x="380" y="388">Agent App</text>
+      <text x="380" y="412">Ingestion (optional)</text>
+      <text x="720" y="388">Foundry IQ</text>
+      <text x="720" y="412">retrieval</text>
+    </g>
+    <g font-size="18">
+      <text x="65" y="269">Content + permissions</text>
+      <text x="330" y="264">Native Blob ingestion</text>
+      <text x="330" y="287">Service-managed indexing</text>
+      <text x="668" y="269">Shared index + ACLs</text>
+      <text x="330" y="446">Custom processing → index</text>
+      <text x="668" y="446">Allowed results → agent</text>
+      <text x="65" y="341">Optional path</text>
+      <text x="665" y="336">Query-time authorization</text>
+      <text x="50" y="504">Indexing identity writes content; retrieval still requires delegated user access.</text>
+    </g>
+    <g fill="none" stroke="#32698e" stroke-width="2.2" marker-end="url(#runtime-arrow)">
+      <path d="M250 248H308"/>
+      <path d="M590 248H648"/>
+      <path d="M230 300V414H308"/>
+      <path d="M590 414H620V282H648"/>
+      <path d="M925 300V358"/>
+    </g>
+
+    <!-- Private lane: no connector to shared ingestion or Search. -->
+    <rect x="30" y="560" width="940" height="445" fill="#f3f8fc" stroke="#9bb2c4" stroke-width="1.5"/>
+    <rect x="30" y="560" width="940" height="48" fill="#e1edf4" stroke="#9bb2c4" stroke-width="1.5"/>
+    <text x="50" y="592" font-size="22" font-weight="700">Private attachments — signed-in conversation owner</text>
+    <g fill="#ffffff" stroke="#9bb2c4" stroke-width="1.5">
+      <rect x="50" y="640" width="200" height="140"/>
+      <rect x="310" y="640" width="280" height="140"/>
+      <rect x="650" y="640" width="295" height="140"/>
+      <rect x="310" y="835" width="510" height="120"/>
+    </g>
+    <g aria-hidden="true">
+      <use href="#icon-user" transform="translate(65 657) scale(2.333333)"/>
+      <use href="#icon-container-apps" transform="translate(325 657) scale(2.333333)"/>
+      <use href="#icon-agent" transform="translate(665 657) scale(2.333333)"/>
+      <use href="#icon-cosmos" transform="translate(325 849) scale(2.333333)"/>
+    </g>
+    <g font-size="20" font-weight="700">
+      <text x="118" y="685">Owner's file</text>
+      <text x="380" y="685">UI / BFF</text>
+      <text x="720" y="685">Native conversation</text>
+      <text x="380" y="878">UI-owned Cosmos metadata</text>
+    </g>
+    <g font-size="18">
+      <text x="65" y="723">Inline file input</text>
+      <text x="65" y="753">No input URLs</text>
+      <text x="330" y="723">Flag + owner checks</text>
+      <text x="330" y="753">Bounded inline turn</text>
+      <text x="668" y="723">Hosted or DTS</text>
+      <text x="668" y="753">Host owns native state</text>
+      <text x="330" y="911">Owner mappings + attachment descriptors</text>
+      <text x="330" y="940">No file bytes, transcripts or tokens</text>
+      <text x="50" y="987">Optional: ENABLE_PRIVATE_ATTACHMENTS + UI metadata grant. No workflows.</text>
+    </g>
+    <g fill="none" stroke="#32698e" stroke-width="2.2" marker-end="url(#runtime-arrow)">
+      <path d="M250 710H308"/>
+      <path d="M590 710H648"/>
+      <path d="M450 780V833"/>
+    </g>
+    <text x="30" y="1040" font-size="20" font-weight="700">Private attachments do not enter shared ingestion or the corporate index.</text>
+  </g>
+</svg>

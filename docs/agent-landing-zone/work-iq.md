@@ -1,147 +1,195 @@
 # Work IQ
 
-Work IQ provides the signed-in user's Microsoft 365 context, including documents,
-email and meetings. As a Foundry IQ `workIQ` knowledge source, it queries that
-context at retrieval time, without Agent App Ingestion or a landing-zone index
-copy of the Microsoft 365 corpus.
+Work IQ queries the signed-in user's Microsoft 365 context, including documents,
+email and meetings. A Foundry IQ `workIQ` knowledge source retrieves that
+context at request time. It does not copy the Microsoft 365 corpus into a
+landing-zone index or require Agent App Ingestion.
 
-This page explains the integration contract. Deployment procedures remain in
-the [full-stack deployment guide](deploy-full-stack.md).
+The platform supplies a source-registration template. **The native reference
+application does not load the Work IQ connector settings or forward its
+source-specific assertion.** This guide separates that shipped provisioning
+support from the application integration you must implement and validate.
+
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Which identity authorizes a Work IQ answer?**
+
+1. The source template registers Work IQ, but does not grant Microsoft 365 access.
+2. A custom integration must carry a user assertion for the Work IQ app,
+   separately from the workload credential that authenticates Search transport.
+3. Search exchanges the assertion for delegated Work IQ access. The user's
+   permissions apply; a shared managed identity must not replace the user.
+
+</div>
+
+[![Work IQ integration recipe: a trusted application sends a Work IQ app-audience user assertion to Search, separately from workload transport authentication. Search exchanges it for delegated Microsoft 365 access. Source registration and tenant consent are setup, not an installed native application path.](../media/runbooks/work-iq.svg)](../media/runbooks/work-iq.svg){: .runbook-diagram__image aria-label="Open full-size Work IQ identity diagram"}
+
+[Open full-size diagram](../media/runbooks/work-iq.svg){: .runbook-diagram__open}
+
+</div>
 
 <span id="check-hosted-support-first"></span>
+<span id="product-support-and-application-readiness"></span>
+<span id="tenant-and-governance-requirements"></span>
 
-## Product support and application readiness
+## Before you start
 
-Microsoft supports a [Work IQ knowledge source](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq)
-in preview. The source can participate in a Foundry IQ knowledge base called by
-Foundry Agent Service. Preview status does not require a custom ingestion
-pipeline.
+Microsoft's [Work IQ knowledge-source guide](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq)
+defines this preview. The [tenant enablement guide](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/enable-work-iq)
+requires usage-based billing, an Azure subscription/resource group and
+assignment of querying users. Microsoft 365 Copilot licensing does not replace
+that billing setup.
 
-The supplied source template includes the app-authentication contract and the
-UI/hosted path keeps Work IQ's app-audience assertion separate from the Search
-token. No custom retrieval connector is required. Administrator registration,
-consent, federation and billing remain prerequisites.
+You need a tenant/billing administrator, an Entra administrator authorized to
+grant consent and create federation, a Search source administrator, and an
+application owner who can implement the credential path. Search Service
+Contributor is the recommended keyless knowledge-object management role.
+Private Azure resources still need permitted access to Microsoft 365 and Entra.
 
-Enable the named source with `WORK_IQ_ENABLED` and
-`WORK_IQ_KNOWLEDGE_SOURCE_NAME`, configure the identity values below, and select
-`FOUNDRY_IQ_API_VERSION=2026-08-01-preview`. Missing required settings or
-unverified consent stop provisioning instead of silently removing the source.
-[Foundry IQ](foundry-iq.md) explains the integrated identity boundary.
+!!! warning "Preview and action scope"
+    Work IQ can invoke capabilities that perform actions, not only retrieve
+    information. Approve trusted applications/users, permissions, billing and
+    data handling before a pilot. The preview has no SLA and is not recommended
+    for production. Do not describe this integration as guaranteed read-only.
 
-For application retrieval, select `RETRIEVAL_BACKEND=foundry_iq`.
-`WORK_IQ_ENABLED` defaults to `false` and the source name defaults to empty.
-The source must belong to the selected knowledge base. These runtime settings
-do not register it or grant Microsoft 365 access.
-
-`FOUNDRY_IQ_MAX_RUNTIME_SECONDS` defaults to `120` and provides the retrieve
-runtime ceiling when remote sources are enabled.
-[Application settings](application-settings.md) explains effective values,
-supported functional refresh and structural redeployment.
+## How to prepare a Work IQ pilot
 
 <span id="prepare-the-tenant"></span>
-
-## Tenant and governance requirements
-
-The [Work IQ tenant guide](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/enable-work-iq)
-describes administrator enablement and billing. It requires a usage-based billing
-plan, its Azure subscription/resource group and assignment of querying users.
-Microsoft 365 Copilot licensing does not replace this billing setup.
-
-Tenant enablement, delegated consent and retrieval-service access are separate
-requirements. The source administrator needs permission to manage knowledge
-objects. Microsoft recommends Search Service Contributor for keyless management.
-Network-isolated Azure resources still need the permitted paths to Microsoft 365
-and Microsoft Entra services.
-
-!!! warning "Preview scope"
-    Microsoft warns that this source can invoke Work IQ capabilities that
-    perform actions, not only retrieve information. A pilot needs trusted
-    applications/users, reviewed permissions, billing and data-handling approval.
-    Preview functionality has no SLA and is not recommended for production.
-
 <span id="configure-the-authentication-contract"></span>
 <span id="configure-authentication"></span>
+<span id="authentication-contract"></span>
 
-## Authentication contract
+### 1. Prepare tenant access and federation
 
-The accelerator defaults to Search API `2026-05-01-preview`. Microsoft's current
-`2026-08-01-preview` source contract requires
-`workIQParameters.entraAppAuthentication`, including the app's client ID and
-federated credential object ID. The tenant ID is required for a cross-tenant
-app registration. These are distinct Entra objects, not source names.
+Initialize the environment through the [full-stack deployment guide](deploy-full-stack.md).
+Enable Work IQ billing and assign pilot users. Follow the
+[official Entra authentication procedure](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq#set-up-microsoft-entra-authentication)
+for a customer-owned application exposing `access_as_user`, delegated
+`WorkIQAgent.Ask` permission, administrator consent and a federated credential
+trusting Search's managed identity.
 
-| Runtime setting | Required value |
-| --- | --- |
-| `WORK_IQ_APPLICATION_ID` | Work IQ app's application/client ID. The bundled UI requires the same value as `OAUTH_AZURE_AD_CLIENT_ID`. |
-| `WORK_IQ_FEDERATED_CREDENTIAL_ID` | Object ID returned when creating the app's federated credential, not the Search principal ID or credential name. |
-| `WORK_IQ_TENANT_ID` | App tenant ID when different from Search's tenant. Otherwise optional. It must match the bundled UI's OAuth tenant. |
+Record the application's client ID and the federated credential's **object
+ID**. Neither is the Search principal ID. Creating the source does not create
+these Entra objects or grant consent. If Search does not exist yet, provision
+the foundation with Work IQ disabled, establish federation using its actual
+identity, then enable and reprovision the source.
 
-These are nonsecret UUIDs, published with label `agent-lz` when explicitly
-supplied as deployment environment inputs. They do not create the Entra objects
-or grant tenant consent.
+### 2. Declare the source before provisioning it
 
-The customer-owned app exposes `access_as_user` and has the delegated
-`WorkIQAgent.Ask` permission with administrator consent. A federated credential
-allows the Search managed identity to authenticate as that app without storing
-a client secret in the source.
+In root `main.parameters.json`, merge these entries into
+`parameters.additionalAppConfigurationSettings.value`. Preserve existing
+host/mode entries. Values are strings; `agent-lz` is the shared label:
 
-At query time, service authentication to Search is separate from the
-signed-in user's assertion:
+```json
+[
+  { "name": "WORK_IQ_ENABLED", "value": "true", "label": "agent-lz" },
+  { "name": "WORK_IQ_KNOWLEDGE_SOURCE_NAME", "value": "work-iq-pilot", "label": "agent-lz" }
+]
+```
 
-- The user assertion targets the customer-owned Work IQ app and includes
-  `access_as_user`.
-- The current contract carries the raw assertion in
-  `x-ms-query-work-iq-source-authorization`, **not**
-  `x-ms-query-source-authorization`.
-- Search exchanges that assertion for delegated Work IQ access. A Search-audience
-  user token or the agent's managed-identity token is not a substitute.
+These are source-setup keys, not native capability switches. Their defaults
+are `false` and an empty source name. There is no declared environment mapping
+for those two keys; setting same-named `azd` variables alone does not publish
+them. Both providers publish explicit additional settings before Search setup.
+See [Application settings](application-settings.md) for ownership and effective values.
 
-The [official authentication procedure](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq#set-up-microsoft-entra-authentication)
-defines registration, federation and client consent. For the bundled UI, use
-its OAuth app as the Work IQ application: expose `access_as_user`, grant
-`WorkIQAgent.Ask` and configure Search federation on that registration.
+The following nonsecret identity inputs have an explicit deployment environment
+publication path:
 
-The built-in path validates and forwards the original app-audience assertion
-through `x-client-work-iq-assertion`. It never substitutes the Search token or
-invokes Work IQ as the workload.
+```bash
+azd env set WORK_IQ_APPLICATION_ID "<work-iq-app-client-id>"
+azd env set WORK_IQ_FEDERATED_CREDENTIAL_ID "<federated-credential-object-id>"
+azd env set FOUNDRY_IQ_API_VERSION "2026-08-01-preview"
+```
 
-It does not exchange an assertion for a
-separate Work IQ app. Mismatched application or UI-tenant settings fail closed.
-Bearer tokens must stay out of prompts, history and logs.
+Set `WORK_IQ_TENANT_ID` only when the app is in another tenant; it is also a
+published nonsecret UUID. Retain `RETRIEVAL_BACKEND=foundry_iq`. The template
+uses `workIQParameters.entraAppAuthentication`; the default Blob API
+`2026-05-01-preview` is incompatible with this implemented source contract.
+
+### 3. Provision and inspect the knowledge objects
+
+1. Run `azd provision` through the selected deployment guide after the
+   identity inputs and source declaration are ready.
+2. In Search, inspect the source's app/federation values and its reference
+   in the intended knowledge base. Confirm the names are distinct from other
+   sources.
+
+Missing bindings, incompatible API settings or unverified Work IQ consent fail
+setup rather than silently dropping the source.
+
+Platform setup reconciles its named sources and knowledge base. Later
+provisioning can overwrite manual edits. Use reviewed template changes for
+platform-owned objects, or separate names and explicit ownership for
+operator-managed objects. Neither provider provisions Microsoft 365 billing,
+user assignment or consent.
+
+### 4. Implement the application credential and retrieval path
+
+Choose a reviewed native Foundry MCP connection or explicitly integrate the
+direct connector. [Foundry IQ](foundry-iq.md#native-tools-and-the-accelerator-boundary)
+explains why the generated `CognitiveSearch` connection is not the native
+`RemoteTool` MCP connection. Merely enabling `FOUNDRY_IQ_ENABLED` does not
+implement Work IQ user delegation.
+
+For the direct-connector recipe, the application must obtain and validate the
+original user assertion for the Work IQ app, including `access_as_user`.
+It must forward that assertion to the connector in trusted invocation context.
+The connector sends the raw assertion in
+`x-ms-query-work-iq-source-authorization`. It must not be a Search-audience
+token or a workload managed-identity token.
+
+The available UI helper/connector code defines
+`x-client-work-iq-assertion`, but the native Responses UI does not call that
+helper. Native `ToolIdentity` carries no Work IQ assertion. You must implement
+the missing acquisition/forwarding/invocation wiring, or configure and prove
+the equivalent native service connection contract. Do not put assertions in
+prompts, tool arguments, saved history, checkpoints or logs.
+
+When reusing the UI helper, `WORK_IQ_APPLICATION_ID` must match
+`OAUTH_AZURE_AD_CLIENT_ID`, and the optional Work IQ tenant must match the UI's
+OAuth tenant. The helper does not exchange an assertion for a separate Work IQ
+app. Any confidential OBO client secret stays server-side as a Key Vault
+reference; follow [Sign-in & access](application-auth.md).
+
+Publish/deploy the custom integration only after registration, consent and
+federation are verified. Source/identity/binding changes require the matching
+setup and application redeployment, not just provider refresh. For a direct
+connector, `FOUNDRY_IQ_MAX_RUNTIME_SECONDS` defaults to `120`; that setting is
+not loaded by native MCP tool composition.
 
 <span id="verify-before-connecting-users"></span>
 <span id="diagnose-or-back-out"></span>
 
-The UI's confidential OBO client needs
-`OAUTH_AZURE_AD_TENANT_ID`, `OAUTH_AZURE_AD_CLIENT_ID` and
-`OAUTH_AZURE_AD_CLIENT_SECRET` for exchanges where applicable. Keep the secret
-server-side as a Key Vault reference. It is not a credential embedded in the
-Work IQ knowledge-source definition. Follow
-[Application authentication](application-auth.md) for the complete login and
-delegation setup.
+<span id="acceptance-and-recovery"></span>
 
-Do not treat source omission as successful Work IQ grounding.
-Required Work IQ retrieval needs user delegation, the distinct Work IQ
-assertion and a compatible API. A Toolbox call ID is not a substitute for
-either credential, and workload identity must not replace a missing user.
+## Verify and recover
 
-## Acceptance and recovery
+Use a known Microsoft 365 document and two pilot accounts with different
+permissions. The allowed user must receive the expected answer and source
+reference. The denied user's retrieved content and citations must exclude the
+document. Missing/expired/wrong-audience assertions must fail, not retry under
+the workload identity. Concurrent sessions must not share credentials or content.
 
-A pilot needs a known Microsoft 365 document and two accounts with different
-permissions. Acceptance includes the allowed user's grounded answer and source
-reference, exclusion of that document for the denied user, and rejection of
-missing or expired assertions. Concurrent sessions must not share tokens or
-retrieved content.
+Verify actual source activity, not just provisioning or container health.
+Source omission is not successful Work IQ grounding. A Foundry call ID does
+not substitute for the source's required user assertion. Record application
+version, knowledge-base/source names and nonsecret correlation IDs without
+logging tokens or Microsoft 365 content.
 
-Provisioning can overwrite manual knowledge-base edits. Recovery restores the
-previous application/settings and removes the pilot source reference without
-deleting shared tenant objects. Revocation of pilot-only grants is a separate,
-authorized action.
+Recovery restores the prior compatible publication/settings and removes only
+the pilot source reference. Do not delete shared tenant objects or other
+knowledge sources. Revoking pilot-only consent, assignments and federation
+requires the relevant administrator's separate approval.
 
 <span id="direct-work-iq-mcp-is-different"></span>
 
-The separate [Work IQ MCP product](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/mcp/overview)
-exposes callable tools. It is separate from the `workIQ` knowledge source and
-does not replace this source's consent or delegated assertion requirements.
-See [Tools & MCP](agent-tools.md) for callable operations and
-[Monitoring & audit](application-monitoring.md) for operational traces.
+## Callable Work IQ MCP tools are a different integration
+
+The [Work IQ MCP product](https://learn.microsoft.com/microsoft-365/copilot/extensibility/work-iq/mcp/overview)
+exposes callable tools, not this `workIQ` knowledge source. It needs its own
+reviewed tool registration and authentication. It does not remove source
+consent requirements, and deploying Agent App MCP Server does not install it.
+See [Tools & MCP](agent-tools.md).

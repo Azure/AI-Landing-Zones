@@ -4,7 +4,9 @@ Agent Landing Zone offers Bicep and Terraform infrastructure definitions in the
 [same product repository](https://github.com/Azure/agent-landing-zone).
 The **Azure Developer CLI (`azd`)** coordinates provisioning, service
 configuration and application deployment for either choice. Bicep is the
-default. Select Terraform once in the checkout's root `azure.yaml`.
+default. [Initialize the project with azd](deploy-terraform-infra-only.md#step-1-initialize-the-project-and-select-terraform-once),
+then select Terraform once in root `azure.yaml` before provisioning.
+Keep the environment created by init; no second `azd env new` is needed.
 
 ## Choose the outcome
 
@@ -61,8 +63,10 @@ Reprovisioning must preserve application images and revisions already published
 by deployment. Infrastructure ownership does not extend to resetting those
 application-managed values.
 
-The root `azure.yaml` selects the native azd Terraform provider,
-`infra/terraform` path and `main` module. Shared PowerShell and shell hooks
+For Terraform, set the root `azure.yaml` to the native azd Terraform provider,
+`infra/terraform` path and `main` module, preserving the hooks. The template
+initializes with Bicep by default; provider selection applies to the whole
+project rather than each environment. Shared PowerShell and shell hooks
 configure services and deploy the application. Use the selected provider for
 provisioning, updates and removal.
 

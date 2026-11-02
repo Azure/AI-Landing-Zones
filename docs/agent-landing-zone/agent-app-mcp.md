@@ -8,6 +8,41 @@ Configure the server below, then select the toolsets your application needs
 through `MCP_TOOLSETS`. The available **NL2SQL** toolset lists approved sources
 and answers questions over SQL data.
 
+MCP is the protocol; **Agent App MCP Server** is the optional component;
+**NL2SQL** is one explicitly selected toolset. Deploying the component does
+not automatically select SQL tools. The foundation remains generic;
+application composition owns tool choices and their dependency declarations.
+
+<div class="runbook-diagram" markdown="1">
+
+<div class="runbook-diagram__summary" markdown="1">
+
+**Server compute and tool selection are different choices.** Either native
+host calls the separate Container App through Entra-authenticated MCP.
+The default `[]` exposes zero tools. Only `["nl2sql"]` activates the supplied
+SQL tools and their catalog, model and read-only SQL dependencies.
+
+</div>
+
+[![Either native host invokes Agent App MCP Server in a separate Container App through Entra authentication. Startup selection is either an empty tool list with no SQL clients or the explicit nl2sql toolset with catalog, model and read-only SQL dependencies.](../media/runbooks/agent-app-mcp.svg)](../media/runbooks/agent-app-mcp.svg){: .runbook-diagram__image aria-label="Open full-size MCP server and toolset diagram"}
+
+[Open full-size diagram](../media/runbooks/agent-app-mcp.svg){: .runbook-diagram__open}
+
+</div>
+
+## Before you start
+
+- Have the initialized platform project and selected azd environment.
+  Follow the provider-specific prerequisites linked below; isolated
+  deployments require a connected runner. For an existing installation,
+  verify application sign-in; a fresh installation configures it after provision.
+- The deployer needs Azure provisioning/scoped-grant access **and** Entra
+  rights to create or reuse the API registration and assign application roles.
+- Arrange HTTPS/DNS/egress from each actual agent/workflow caller to the
+  server. Selecting Hosted does not move MCP compute into Foundry.
+- For `["nl2sql"]` only, have a SQL data owner approve the dataset, read-only
+  access and metadata import. An empty server needs none of those SQL inputs.
+
 <span id="select-and-deploy"></span>
 
 ## Deploy Agent App MCP Server
@@ -19,12 +54,11 @@ Application composition coordinates its image, caller authorization and connecti
 
 <span id="use-the-coordinated-platform-source"></span>
 
-Use the stable platform source with its complete manifest and application definition:
-
-```bash
-git clone https://github.com/Azure/agent-landing-zone.git
-cd agent-landing-zone
-```
+Initialize the azd project using
+[Step 1: Initialize the project](deploy-full-stack.md#step-1-get-the-code).
+Use that initialized platform root and its selected environment for the
+commands below. This prepares the complete manifest and application definition;
+the MCP component repository alone is not a full-stack deployment template.
 
 The manifest binds compatible server and consumer releases. For an existing
 installation, review the complete platform update before changing source.
@@ -122,6 +156,24 @@ list. Test denied callers as well. A healthy process alone does not establish
 tool dependency readiness. Resolve an existing external MCP endpoint conflict
 explicitly before selecting the integrated server.
 
+### Verify the deployed selection
+
+After root deployment finishes, use the authorized native consumer for MCP
+discovery. Its managed identity must acquire a token for the generated
+`MCP_AUTH_RESOURCE_SCOPE`; do not test by pasting a browser token or API key.
+
+| Selection/check | Observable result |
+| --- | --- |
+| `[]` with an authorized caller | MCP `tools/list` returns an empty `tools` array; `nl2sql.query` is not registered. |
+| `["nl2sql"]` with an authorized caller | Discovery returns exactly `nl2sql.list_sources` and `nl2sql.query`; an onboarded synthetic query returns the expected typed result. |
+| Missing token, wrong audience, missing role or unapproved client | Invocation is denied, including on an empty server. |
+| `/healthz` | Liveness only; it is not an authenticated discovery or SQL-readiness check. |
+
+Use the [NL2SQL admission checks](nl2sql.md#check-before-admitting-users)
+after onboarding sources, and the
+[MCP troubleshooting procedure](troubleshooting.md#agent-app-mcp-failures)
+for configuration, identity or discovery failures.
+
 Inspect individual nonsecret settings and safe correlation fields through
 [Monitoring & audit](application-monitoring.md) and
 [MCP troubleshooting](troubleshooting.md#agent-app-mcp-failures).
@@ -214,7 +266,7 @@ document ingestion are independent capabilities.
    reference. Arrange DNS, TLS and routes from the server to SQL and its dependencies.
 3. Prepare the [approved source JSON](nl2sql.md#example-approved-source-file)
    with schemas, relationships, descriptions and question/query examples.
-4. Run the [administrative importer](nl2sql.md#import-the-approved-file) on a
+4. Run the [administrative importer](nl2sql.md#3-import-the-approved-file-after-provisioning) on a
    separately authorized managed-identity runner. It generates embeddings and
    activates a metadata version after the complete import succeeds.
 5. Verify a known result through the application and check denied callers,
@@ -253,3 +305,9 @@ reserved for the reference application and is rejected with custom definitions.
 Declare and authorize each custom consumer/dependency explicitly. Generic
 Cosmos and `COSMOS_VECTOR_SEARCH_ENABLED` can be selected independently of the
 reference catalog. Follow [Bring your own app](build-your-own-app.md#application-binding-and-selection).
+
+Adding another packaged toolset requires reviewed MCP server code, an explicit
+factory in `src/toolsets.py`, typed inputs/results, dependency lifecycle cleanup
+and authorization tests. Updating `MCP_TOOLSETS` alone cannot load arbitrary
+modules or add a new implementation. Publish a compatible server image and
+declare the custom application's resources/grants before selecting it.

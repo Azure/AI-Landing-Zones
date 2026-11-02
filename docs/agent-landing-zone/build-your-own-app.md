@@ -66,6 +66,21 @@ Do not restart a Container App to refresh a Foundry-hosted agent.
 
 ## Procedure
 
+### How to choose the configuration owner and timing
+
+| What you change | Supported location | When and observable result |
+| --- | --- | --- |
+| Bundled component source | Platform `manifest.json` plus matching component `source.commit` in `app-definition.json` | Before deploy; validation accepts aligned immutable pins and the deployed component shows the tested behavior. |
+| Different application composition | Application folder's `app-definition.json` and adjacent `azure.yaml`; select with `AGENTLZ_APP_DEFINITION` in a new azd environment | Before first provision; preup accepts the definition and binds one application ID. |
+| Additional application runtime settings | App-owned configuration publisher; for supported platform-published settings, root `parameters.additionalAppConfigurationSettings.value` | Publish before starting the consumer; verify an effective read and operation. Definition `settings` are not a publisher. |
+| Bundled history, feedback or private attachments | Supported product-feature azd inputs, not an isolated portal key | Provision resources/grants, then deploy; follow [Enable a product feature](application-settings.md#enable-a-product-feature). |
+| Custom dependencies and permissions | The custom definition's explicit components/profiles/egress plus app-owned service configuration | Review before provision; profiles grant workload access, not user consent or document authorization. |
+
+Custom application dependencies remain app-owned. A setting named after a
+reference tool does not add its Container App, database, model, SQL permission
+or runtime implementation. After structural changes, deploy compatible
+application code; only supported functional parameters use refresh.
+
 Choose **Customize an Agent Application component** for a source change.
 For a different application, follow **Application binding and selection**, then
 **Deploy a different application**. Inspect the contract reference below when
@@ -293,8 +308,8 @@ IP addresses and local hostnames are rejected. Each component supports at most
 
 An explicit `egress: []` means no additional runtime egress and removes that
 component's ownership of previously generated requirements. Omitting `egress`
-remains valid: an enabled legacy component retains its previously owned
-requirements, but a fresh legacy definition adds none. Removing a component
+remains valid: an enabled component retains its previously owned
+requirements, but a fresh definition with no declaration adds none. Removing a component
 removes its ownership, not another component's shared dependency.
 
 Review the exact source's fixed downloads and configured integrations when
