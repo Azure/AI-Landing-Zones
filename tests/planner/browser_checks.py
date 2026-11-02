@@ -110,6 +110,15 @@ def run(base, candidate=None):
         matrix = page.evaluate("""() => {
           const p=planner, results=[];
           const assert=(name,ok)=>{if(!ok)throw Error(name);results.push(name);};
+          for(const [label,url] of [
+            ["Azure Retail Prices API","https://prices.azure.com/api/retail/prices"],
+            ["gpt-5-nano Global token rates","https://azure.microsoft.com/en-us/pricing/details/azure-openai/"],
+            ["dedicated ACR S1 allocation rate","https://azure.microsoft.com/en-us/pricing/details/container-registry/"]
+          ]){
+            const link=[...document.querySelectorAll("#coverage .coverage-grid a")]
+              .find(a=>a.textContent.trim()===label);
+            assert("Pricing source link: "+label,link?.href===url);
+          }
           assert("All 77 architecture resources are present",p.snapshot.rows.length===77);
           assert("Every active default resource has a price",p.snapshot.rows.every(r=>r.amount!==null));
           const embedding=p.snapshot.rows.find(r=>r.id==="embeddings");
