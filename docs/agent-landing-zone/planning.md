@@ -94,10 +94,13 @@ both with `APPLICATION_MODE`. Select `ORCHESTRATION_HOST` independently:
 Keep UI/BFF owner mappings, history discovery and feedback separate from native
 execution state. Optional product storage is not a second checkpoint engine.
 Custom ingestion is disabled by default and is not required merely to retain
-metadata or to select a workflow. Workflow mode, `both`, enabled history,
+metadata or to select a workflow.
+
+Workflow mode, `both`, enabled history,
 feedback or private attachments selects UI metadata storage directly.
 Product flags default to off; conversational mode then uses bounded volatile
 owner maps lost on UI restart.
+
 Private attachments use validated inline native input, not Blob/SAS or
 ingestion. They are conversational only; verify model PDF/image understanding
 separately from transport.

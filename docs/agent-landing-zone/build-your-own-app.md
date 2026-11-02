@@ -6,7 +6,9 @@ Customize the Agent Application or deploy a different, customer-owned applicatio
 with pinned deployment inputs. The application sits **above the reusable
 foundation**: its definition/composition owns names, tool selection and
 dependencies; foundation inputs describe generic compute, data, capabilities
-and roles. The supplied UI/orchestrator are one usable application, not
+and roles.
+
+The supplied UI/orchestrator are one usable application, not
 mandatory foundation components. A different application implements only the
 authentication, UI and ingestion API contracts for components it actually reuses.
 
@@ -25,7 +27,9 @@ different application. Choose the branch that matches your change:
 For the Agent Application orchestrator hosted in Foundry, use [Foundry IQ](foundry-iq.md) for
 knowledge base retrieval. Custom agent/workflow definitions and tools must use
 and test the selected native host integration and authorization path before
-deployment. The reference default is a conversational MAF Agent; Foundry IQ
+deployment.
+
+The reference default is a conversational MAF Agent; Foundry IQ
 retrieval is independently selected and defaults to off.
 Hosted conversation and workflow are separate publications when both are selected;
 the Container Apps alternative uses the official Durable Extension and DTS.
@@ -110,8 +114,10 @@ Keep manifest names `agent-app-ui`, `agent-app-orchestrator`,
 When MCP is selected, retain its component/service names as declared in the
 compatible manifest and application definition; pin changes with the same
 source/definition discipline.
+
 Hooks use these to map sibling folders. Existing checkouts are verified, not
 advanced automatically: preserve local work before relocating stale checkouts.
+
 Matching HEAD does not detect uncommitted source changes. Run
 `git status --porcelain` in each source folder and require no output for the
 source being built; retain reviewed deployment-input edits separately.
@@ -153,13 +159,16 @@ an explicit custom definition. A custom-only definition contributes only its
 declared components, profiles and resource requirements.
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
+
 `DEPLOY_AGENT_APP_MCP` is reserved for the reference application and is
 rejected for custom definitions before Azure calls.
+
 A custom app can explicitly pass `MCP_TOOLSETS` as its own runtime setting.
 Its definition/composition owns compute, configuration, dependencies and
 permissions; the setting adds no automatic reference server, catalog, model
 resources or SQL grants. To reuse or consume MCP, declare and test the app's
 own explicit component, runtime configuration, dependency and permission contracts.
+
 If reusing Agent App UI, preserve its
 [inline attachment contract](conversations.md#private-attachments), including
 owner mappings, exact byte/serialized limits and no corporate ingestion

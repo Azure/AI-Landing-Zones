@@ -27,9 +27,11 @@ the application's registered knowledge-search capability, usable by an Agent
 or Workflow. It does not reroute the
 [MCP NL2SQL tools](nl2sql.md) or replace callable
 [MCP tools](agent-tools.md).
+
 [Application settings](application-settings.md) describes how to change runtime
 values. [Agents & prompts](agent-strategies.md) describes application selection
 independently of the host and its tools.
+
 The NL2SQL tools on Agent App MCP Server store approved SQL metadata and vectors
 in application Cosmos. This toolset does not require Search; enabling the server does not enable Foundry IQ
 or alter this knowledge base's sources.
@@ -242,10 +244,12 @@ The names and resource scope are illustrative, not provisioned resources.
 Each source needs a unique name, HTTPS server URL and non-empty tool list.
 Tool names must be unique within the source. Each tool declares output parsing,
 `inclusionMode` (`reranked` or `always`) and `maxOutputTokens` from `1` to `8192`.
+
 Parsing kinds are `auto`, `none`, `json` and `split`.
 `json` needs a `documentsPath` and optional boolean `includeContext`.
 `split` supports page or sentence splitting, positive page length and page-count
 limits, non-negative overlap smaller than page length, and a default language.
+
 Do not mix parsing parameters across kinds or add unknown fields.
 The [API reference](application-api.md) is the payload reference.
 

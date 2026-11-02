@@ -63,12 +63,15 @@ and `/actions`. Start carries `topic`; actions carry the current `request_id`,
 `revision` and business `response`. Progress returns `id`, `status`, `pending`,
 `revision` and `output`. Unknown/nonowned IDs return `404` before backend
 access and stale/duplicate actions return `409`.
+
 Delivery reported as **submitted** is not worker admission or completion.
 Read progress for the actual native result.
 
 Hosted start uses stored Responses input. Pending `request_info` is a native
 `function_call` with `arguments.request`; reply uses `previous_response_id`
-and `function_call_output` with its actual `call_id`. DTS uses native typed
+and `function_call_output` with its actual `call_id`.
+
+DTS uses native typed
 state/output and the runtime's `native.contracts` codecs. Do not flatten
 typed list/yield output or replace it with a custom workflow protocol.
 Private attachments are not supported in this workflow.
@@ -82,6 +85,7 @@ Closing the browser does not approve or reject a process.
 Reconnect through the authenticated UI and reopen the same owner-bound run.
 Known workflow resume is available with `ENABLE_CHAT_HISTORY=false`;
 saved listing and history reads require that flag to be enabled.
+
 The client reads current native state before displaying a pending action.
 Replies for a stale request, another run or an already completed action
 must not advance an execution. Duplicate submission is not a second approval.

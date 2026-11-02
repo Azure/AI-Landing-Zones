@@ -140,12 +140,15 @@ and identity responsibilities, not direct SQL configuration in this process.
 
 For local MCP development, follow the MCP repository's contributor setup and
 frozen dependency lock rather than the `requirements.txt` setup above.
+
 Select toolsets explicitly: `MCP_TOOLSETS=[]` starts an authenticated server
 with zero tools and no NL2SQL clients/dependencies; `["nl2sql"]` selects the
 SQL toolset. Changes require restart/redeployment, not hot reload.
+
 The NL2SQL execution environment requires Microsoft ODBC Driver 18 for SQL Server
 and native ODBC dependencies; installing Python packages alone does not
 install the driver. Use approved development metadata and read-only SQL access.
+
 Local startup neither provisions the catalog nor authorizes Azure callers.
 The administrative importer is separate from the MCP query service.
 Run [catalog import](nl2sql.md#import-the-approved-file) on an authorized
@@ -166,7 +169,9 @@ Blob control data.
 !!! warning "Starting ingestion can write and delete data"
     Use an isolated development environment. `RUN_JOBS_ON_STARTUP` defaults to
     `true`. Setting it to `false` skips immediate ingestion and purge runs,
-    **not scheduled runs or immediate log cleanup**. Blob indexing defaults
+    **not scheduled runs or immediate log cleanup**.
+
+    Blob indexing defaults
     to `0 * * * *`, Blob purge to `10 * * * *`, and log cleanup to
     `0 * * * *`. Blank Blob schedules receive defaults rather than disabling
     those jobs. Review [Jobs & schedules](ingestion-jobs.md) before startup.
@@ -211,6 +216,7 @@ reconfigure Entra or callback URLs.
 Hosted `both` requires two publication endpoints; the durable client needs
 the actual scheduler binding and the worker's registered names.
 Failures do not fall back to a retired backend.
+
 The default hosted `user_delegated` authentication uses an on-behalf-of
 exchange, where the UI exchanges a user's API token for a downstream token.
 It needs the confidential-client settings and consent described in

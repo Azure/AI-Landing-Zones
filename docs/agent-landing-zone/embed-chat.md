@@ -223,10 +223,14 @@ from portal configuration, never the challenge or widget.
 The helper handles the named recovery notification, fetches validated claims
 through authenticated `POST /copilot/auth/recovery`, and displays an explicit
 portal sign-in button. After MSAL verification, it completes recovery with the
-fresh UI token and remounts the widget without sending a message. Recovery
+fresh UI token and remounts the widget without sending a message.
+
+Recovery
 tickets expire after 180 seconds. Ordinary source denials do not start this
 interaction. Do not send embedded users through standalone OAuth or replay
-failed turns. Call `stopRecovery()` before the logout/account-switch sequence
+failed turns.
+
+Call `stopRecovery()` before the logout/account-switch sequence
 below. Keep tokens and claims out of URLs, local storage and portal logs.
 
 Native citation downloads use authenticated principal/session-bound selectors

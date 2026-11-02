@@ -28,6 +28,7 @@ For MCP, server compute and startup toolset selection are separate.
 `MCP_TOOLSETS=[]` registers zero tools; `["nl2sql"]` needs its declared
 catalog/model dependencies, SQL-owner approvals and active metadata version.
 Provision matching dependencies and restart/redeploy after toolset changes.
+
 Deselection stops initialization but does not delete retained catalog data or
 automatically revoke old grants. Review retirement explicitly; recovery does not run direct SQL
 inside the orchestrator. Embedding model/dimension changes need reindexing,

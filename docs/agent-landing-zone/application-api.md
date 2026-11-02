@@ -36,6 +36,7 @@ The application uses explicit host-specific clients, not one universal state
 or request SDK. Select `APPLICATION_MODE` and `ORCHESTRATION_HOST` through
 deployment composition. UI session creation selects an already enabled
 application; it does not change the deployment's host or mode.
+
 Tools, including optional MCP NL2SQL, are registered capabilities rather
 than strategy keys.
 With the `nl2sql` toolset explicitly selected, the Agent/Workflow calls `nl2sql.list_sources()` and
@@ -67,6 +68,7 @@ decode its `arguments.request`. Reply using `previous_response_id` and native
 reply `{"decision":"approve","comment":"Reviewed"}`. Decision is `approve`
 or `reject`, and comment is at most 4,000 characters. Terminal output is the
 typed `ResearchReviewResult` in `structured_outputs`.
+
 A reply must match the intended run and currently pending request. A free-form
 chat message or fabricated event must not be interpreted as an approval.
 
@@ -97,6 +99,7 @@ The BFF authenticates the user and checks its owner mapping before native
 reads, continuation or human replies. Scheduler RBAC authenticates a service
 connection, not a product user. IDs are selectors, not capabilities.
 Durable progress need not provide Hosted per-token streaming parity.
+
 The native DTS agent entity version is `2`. Keep client and worker registration
 names aligned: `agent-lz-conversation` and `agent-lz-research-review`.
 Native outputs can contain typed lists/yields; use the runtime's
@@ -195,9 +198,11 @@ This handler does not share the strict schema of `/ingest-documents`.
 `conversationId` is nonempty. `values` contains `1..5` records with nonempty
 `recordId`, `fileName`, `contentType` and `fileBase64`.
 The schema rejects unknown fields at the envelope, record and data levels.
+
 `securityUserIds` is optional in the wire schema. The trusted caller must
 derive any uploader ACL from authenticated identity, not user-entered IDs.
 An API key alone does not establish user ownership.
+
 This separate ingestion API is not the native UI attachment path. Native
 private attachments do not dispatch files here or publish them into Search.
 
@@ -338,9 +343,11 @@ Stale or duplicate actions return `409`.
 Request bodies reject unknown fields. `request_id` and `native_ref` are
 `1..512` characters; revision is the current 64-character lowercase hexadecimal
 UI revision, not the DTS entity version.
+
 Missing/invalid bearer returns `401`, nondelegated or denied access `403`,
 invalid input `422`, unavailable feature/dependency `503`, and sanitized native
 dependency failure `502`.
+
 Use `request_id` and `revision` from current progress, not a cached browser
 action. Delivery reported as **submitted** does not mean the durable worker
 admitted the reply or completed execution. Read progress to observe the actual
@@ -352,8 +359,10 @@ UTF-8 TXT/Markdown, PDF, PNG or JPEG. Each entry contains
 and owner validation. The larger of the Hosted and DTS serialized inline
 envelopes must be at most **256 KiB**, including text, JSON escaping, filenames,
 MIME metadata and Base64/data-URI expansion. This is not a raw-file-size sum.
+
 Attachments are supported for conversational operation
 in `conversational` or `both`, not workflow input.
+
 Hosted uses official `input_file`/image inputs; DTS uses native
 `context_messages` and IDs. There is no attachment Blob URL, SAS, ingestion
 dispatch or corporate publication. Transport tests do not establish model

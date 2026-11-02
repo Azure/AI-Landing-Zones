@@ -20,6 +20,7 @@ the UI and Foundry retain their private backend paths.
 The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
 bases. Their private connectivity, authentication, and authorization still apply.
+
 Start with a working deployment from the [full-stack deployment guide](deploy-full-stack.md) and
 [application authentication](application-auth.md).
 For hosted runtime/network prerequisites, use [Hosted agents](hosted-agents.md)
@@ -95,7 +96,9 @@ runtime App Configuration setting or an `azd env set` gateway flag:
 `backendAppIndex` is a zero-based position in the **composed**
 `containerAppsList`, not an app name or resource ID. For a new, unmodified
 hosted deployment, composition removes the orchestrator Container App and the
-UI (`service_name: frontend`) becomes index `0`. The raw parameter file still
+UI (`service_name: frontend`) becomes index `0`.
+
+The raw parameter file still
 lists the orchestrator first. Custom compositions can differ:
 confirm the selected backend is the UI, never ingestion or an old orchestrator.
 
@@ -203,6 +206,7 @@ Apply the URL change by restarting/redeploying the **UI Container App**:
 the UI loads this setting at process startup. This does not require a hosted
 agent restart. Do not rewrite the provisioning-managed `FRONTEND_APP_ENDPOINT`
 to the public hostname; it describes the deployed Container App endpoint.
+
 Keep delegated authentication/OBO and source authorization unchanged.
 Document permissions are enforced by the application and its data sources,
 separately from the gateway's WAF controls.

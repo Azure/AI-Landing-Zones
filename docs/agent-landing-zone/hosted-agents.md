@@ -86,6 +86,7 @@ endpoint from a resource name or reuse a conversational endpoint as a workflow
 endpoint. Keep registration names stable and align the durable client with
 the worker's registered names: `agent-lz-conversation` and
 `agent-lz-research-review`.
+
 These native registration names are distinct from Azure resource names and
 the Hosted publication's deployment name. Use the provisioned nonsecret
 managed-identity scheduler binding:
@@ -122,11 +123,13 @@ infer that every capability passed from local mocks.
 Grant App Configuration Data Reader to actual readers. Grant Key Vault secret
 access only to components that consume the corresponding secrets. Reading
 App Configuration does not grant access to Key Vault references.
+
 The implicit base grants are configuration read and image pull, not blanket
 secret access. UI authentication, enabled audit and MCP/tool secrets require
 their declared grants; `NATIVE_TOOL_SECRET_NAMES` is the platform's actual
 name-only grant declaration, not a key consumed by the native runtime to load
 secrets.
+
 Grant scheduler access to durable worker/client identities at the required
 scope. These service permissions are not end-user authorization.
 
@@ -177,18 +180,23 @@ conversation or workflow persistence.
 History, feedback and private attachments default to off. Workflow mode,
 `both` or any enabled product flag selects UI metadata in `native-ui-metadata`,
 partition key `/principal_id` with owner `tid:oid`; only the frontend receives
-its metadata grant. Records contain descriptors/references, not bytes,
+its metadata grant.
+
+Records contain descriptors/references, not bytes,
 transcripts or tokens. With conversational mode and all product flags off,
 bounded volatile owner maps are lost on UI restart.
+
 Selecting the NL2SQL toolset on Agent App MCP Server requires a separate
 source/vector-metadata catalog in application Cosmos, without making Cosmos
 the native execution backend. Server compute alone, with `MCP_TOOLSETS=[]`,
 does not require that catalog or NL2SQL model/secret access.
+
 The MCP server always runs in a separate Container App, including
 when its consumers use Hosted. The lifecycle authorizes the actual consuming
 identities; Hosted `both` has separate conversation and workflow callers.
 Catalog and SQL grants belong to the MCP identity, not the Hosted runtime.
 See [Agent App MCP Server](agent-app-mcp.md).
+
 Private attachments use owner-bound conversational inline native file/image
 input, not Blob, SAS or corporate ingestion. They are not workflow inputs;
 transport tests do not verify model PDF/image understanding.

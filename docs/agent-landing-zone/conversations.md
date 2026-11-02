@@ -61,21 +61,26 @@ must not be treated as an empty successful conversation.
 
 Hosted execution does not require application Cosmos DB.
 Workflow mode or `both` selects UI metadata even with product flags off;
-enabled history, feedback or attachments also selects it. The UI reads
+enabled history, feedback or attachments also selects it.
+
+The UI reads
 `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and `NATIVE_UI_METADATA_CONTAINER`
 (default `native-ui-metadata`, partition key `/principal_id`, owner value
 `tid:oid`).
 Only the frontend receives its metadata grant. The container holds owner/run
 mappings, references, feedback and attachment descriptors, not bytes,
 transcripts, tokens or Foundry/DTS execution checkpoints.
+
 The optional NL2SQL toolset on Agent App MCP Server can reuse the same application
 Cosmos account with separate source/vector-metadata containers and grants.
 An empty MCP server does not select those containers. Selecting MCP does
 not enable history, feedback or attachments, and its catalog is not a UI
 session store. See [Cosmos ownership](application.md#what-cosmos-means-in-this-application).
+
 In conversational mode with every product flag off, the UI uses bounded
 volatile owner maps. They are lost on UI restart; native host persistence alone
 cannot restore the UI mapping or provide saved discovery.
+
 Do not deploy ingestion or an additional runtime merely to support metadata.
 Saved listing and history reads require `ENABLE_CHAT_HISTORY=true`.
 A known owner-bound workflow can resume with history off through
@@ -121,6 +126,7 @@ The maximum serialized inline turn is **256 KiB**, checked against both
 Hosted and DTS content envelopes. Text, filenames, MIME metadata, data URIs,
 Base64 expansion and JSON escaping count toward this budget. Three files
 that individually meet their byte limit can still exceed it.
+
 Each name is a basename of `1..128` characters (no path separators, leading
 dot or control characters); content type is at most 64 characters.
 Base64 text is bounded to 87,384 characters, and decoded input must be

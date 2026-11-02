@@ -87,6 +87,7 @@ automatically. The hooks publish runtime settings and
 App Configuration label, with secrets referenced from Key Vault.
 The platform-output document is part of the integration contract, not a
 replacement for every lifecycle output.
+
 Foundation settings and declared additional values retain their labels and
 content types. Shared defaults fill only missing keys; runtime-owned values
 follow the [declared ownership contract](configuration.md#configuration-ownership-and-declarations).

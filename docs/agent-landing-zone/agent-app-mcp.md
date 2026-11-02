@@ -130,7 +130,9 @@ Authentication and configuration changes follow the owning lifecycle.
 To disable reference server compute, clear `MCP_TOOLSETS` to `[]`, set
 `DEPLOY_AGENT_APP_MCP=false`, then provision/deploy. The lifecycle publishes
 `MCP_ENABLED=false`, clears the caller allowlist and restarts remaining serving
-revisions to load the revoked authorization. Terraform removes deselected
+revisions to load the revoked authorization.
+
+Terraform removes deselected
 compute through its managed deployment; Bicep incremental deployments can
 leave the Container App present. After verifying disablement, an operator
 may explicitly retire unused compute.
@@ -183,7 +185,9 @@ Provision preserves existing capabilities, including `EnableServerless` where
 present, and adds `EnableNoSQLVectorSearch`. The metadata policy uses
 `/embedding`, `float32`, cosine distance and `quantizedFlat`, with the selected
 embedding dimensions (default `3072`). Resolve model selection/dimensions
-before provision. Shared-throughput accounts and incompatible policies fail
+before provision.
+
+Shared-throughput accounts and incompatible policies fail
 explicitly; existing catalog-name/dimension changes require migration/reindexing.
 An explicit `DEPLOY_COSMOS_DB=false` conflict must be unset for automatic
 selection or set to `true`.
@@ -191,7 +195,9 @@ selection or set to `true`.
 The MCP identity receives catalog read and selected model access. The SQL
 owner grants read access to approved views/tables. SQL-password sources use
 Key Vault references; declare exact secret names in `MCP_SQL_SECRET_NAMES`
-(default `[]`) before provision for secret-scoped grants. The administrative
+(default `[]`) before provision for secret-scoped grants.
+
+The administrative
 importer has separately authorized catalog-write and embedding-model access.
 The consuming Agent/Workflow receives MCP invocation access.
 
@@ -230,7 +236,9 @@ Deselection does not automatically revoke previously granted roles.
 Retain active metadata versions and review data/grant retirement with owners.
 Embedding-model, dimension or vector-policy changes require explicit reindexing.
 Below 1,000 vectors, Cosmos can use a vector full scan; measure RU consumption
-and latency. Correlate queries with `query_id` and `metadata_version`; tokens,
+and latency.
+
+Correlate queries with `query_id` and `metadata_version`; tokens,
 generated SQL, returned rows and internal reasoning stay out of default logs.
 Recover through a compatible image/configuration or controlled deactivation.
 

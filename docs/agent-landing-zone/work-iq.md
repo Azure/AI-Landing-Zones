@@ -32,6 +32,7 @@ For application retrieval, select `RETRIEVAL_BACKEND=foundry_iq`.
 `WORK_IQ_ENABLED` defaults to `false` and the source name defaults to empty.
 The source must belong to the selected knowledge base. These runtime settings
 do not register it or grant Microsoft 365 access.
+
 `FOUNDRY_IQ_MAX_RUNTIME_SECONDS` defaults to `120` and provides the retrieve
 runtime ceiling when remote sources are enabled.
 [Application settings](application-settings.md) explains effective values,
@@ -99,9 +100,12 @@ The [official authentication procedure](https://learn.microsoft.com/azure/search
 defines registration, federation and client consent. For the bundled UI, use
 its OAuth app as the Work IQ application: expose `access_as_user`, grant
 `WorkIQAgent.Ask` and configure Search federation on that registration.
+
 The built-in path validates and forwards the original app-audience assertion
 through `x-client-work-iq-assertion`. It never substitutes the Search token or
-invokes Work IQ as the workload. It does not exchange an assertion for a
+invokes Work IQ as the workload.
+
+It does not exchange an assertion for a
 separate Work IQ app. Mismatched application or UI-tenant settings fail closed.
 Bearer tokens must stay out of prompts, history and logs.
 

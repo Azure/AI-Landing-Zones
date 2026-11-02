@@ -7,6 +7,7 @@ through the shared azd lifecycle. Defaults are `ORCHESTRATION_HOST=hosted`
 and `APPLICATION_MODE=conversational`: Foundry-hosted execution, an automatically
 included Container Apps UI. Foundry IQ sources and retrieval are configured
 when selected, not proved by the initial greeting.
+
 History, feedback and private attachments independently default to off.
 Workflow or `both` always selects UI metadata. Native Hosted execution does
 not require application Cosmos DB; enabled UI product metadata declares its
@@ -109,13 +110,16 @@ azd env set MCP_TOOLSETS '["nl2sql"]'
 Use the [coordinated MCP platform source](agent-app-mcp.md#use-the-coordinated-platform-source)
 and its complete manifest/application definition, not an isolated component
 version change in another checkout.
+
 The server default is `false`; toolsets default to `[]`. Empty server compute
 does not require the NL2SQL catalog, models or secret grants.
+
 With NL2SQL selected, Terraform projects the application's declared catalog
 policies and scoped grants into generic foundation inputs, as Bicep does.
 The shared application lifecycle publishes `MCP_TOOLSETS` under `agent-lz`
 and generates the consuming MCP connection and authorization.
 Search and document ingestion remain independent.
+
 See [Agent App MCP Server](agent-app-mcp.md) for what is automatic and for
 operator-owned SQL permissions and approved metadata import.
 
@@ -158,12 +162,14 @@ Provisioning does not build application images or create the running hosted
 agent version. Deploy fetches manifest-pinned sources, prepares the immutable
 hosted image when needed, binds it to the provisioned Foundry project and
 registry, then publishes the hosted version and selected Container Apps.
+
 When MCP is selected, its image deploys before the consuming application is
 activated; the lifecycle obtains actual caller identities and checks
 their authorization, publishes the allowlist/connection settings and
 automatically restarts every active MCP revision to load startup-only auth.
 Authenticated discovery precedes consumer activation; no manual MCP restart
 is required during normal deploy.
+
 Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.
 
@@ -240,5 +246,6 @@ Use root `azd down` only within its validated deletion scope; honor all safety
 blocks rather than bypassing them. Keep backend storage and recovery access
 outside workload teardown. Retained data, shared network/DNS resources and
 backend retirement require separate owner decisions.
+
 Terraform uses recorded, state-scoped ownership across its groups; the
 infrastructure guide explains the preview and explicit destruction commands.

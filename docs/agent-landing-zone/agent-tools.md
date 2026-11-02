@@ -16,9 +16,12 @@ the running application.
 Native capabilities are **off by default**: `SEARCH_RETRIEVAL_ENABLED`,
 `FOUNDRY_IQ_ENABLED`, `MCP_ENABLED` and
 `MULTIMODAL_ENABLED`. Select only the capabilities whose source, identity,
-network and tool contracts are configured. The multimodal tool flag is
+network and tool contracts are configured.
+
+The multimodal tool flag is
 different from custom ingestion `MULTIMODAL` and inline private attachments.
 See [Application settings](application-settings.md#native-application-contract).
+
 For the integrated server, select `DEPLOY_AGENT_APP_MCP=true` before provision.
 The lifecycle derives MCP connection and caller authorization settings.
 Select tools separately with `MCP_TOOLSETS`: default `[]` registers zero tools;
@@ -52,6 +55,7 @@ Workflows. Its available NL2SQL toolset provides `nl2sql.list_sources()` and
 `DEPLOY_AGENT_APP_MCP=true` selects server compute and authentication.
 `MCP_TOOLSETS=["nl2sql"]` selects the application Cosmos catalog and
 model/declared-secret access. Search and document ingestion remain independent.
+
 The operator still approves SQL destinations, read permissions and metadata.
 The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
 metadata retrieval and generated-query validation. Operators import approved
@@ -137,9 +141,11 @@ Keep integrations in the owning application's tool/connector modules:
 
 Grant only the required model, source, scheduler and secret access.
 App Configuration Reader does not grant Key Vault secret access.
+
 `NATIVE_TOOL_SECRET_NAMES` (default `[]`) is the platform's scoped-grant
 declaration of actual names, not values. The native runtime does not consume
 that setting to load secrets or enable tools.
+
 Provision resources and grants before activation; startup must not repair
 infrastructure. [Customize components](customize-components.md) and
 [Bring your own app](build-your-own-app.md) describe ownership and adoption.

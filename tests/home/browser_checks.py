@@ -438,6 +438,21 @@ def check_prose_wrapping(page, base, screenshots):
                 name = "prose-desktop.png" if width == 1280 else "prose-mobile.png"
                 page.screenshot(path=str(screenshots / name))
 
+    # Keep the reported state/metadata wall of text split by its distinct owners
+    # and lifecycle topics, regardless of viewport or font-dependent line breaks.
+    page.goto(base + "agent-landing-zone/conversations/#state-and-metadata-dependencies")
+    paragraphs = page.locator("#state-and-metadata-dependencies").evaluate("""heading => {
+        const paragraphs = [];
+        for (let next = heading.nextElementSibling; next && next.tagName !== "H2";
+             next = next.nextElementSibling) {
+            if (next.tagName === "P") paragraphs.push(next.textContent.trim());
+        }
+        return paragraphs;
+    }""")
+    assert len(paragraphs) >= 5, paragraphs
+    for paragraph in paragraphs:
+        assert len(paragraph.split()) <= 70, paragraph
+
 
 def run(base, screenshots):
     with sync_playwright() as playwright:

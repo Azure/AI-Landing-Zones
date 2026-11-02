@@ -77,10 +77,13 @@ and published installed types. They do not establish deployed checkpoint
 durability, platform cross-user isolation, private-network reachability or
 exactly-once external writes. Record supplemental live evidence separately
 and never deploy a full landing zone merely to run a unit or SDK proof.
+
 For attachments, test exact MIME/name/Base64/signature admission, the 64 KiB
 file and 256 KiB serialized-turn budgets, both native input envelopes and
 owner denial before backend access. These are transport/contract tests, not
-proof of model PDF/image understanding. DAX/delegated multimodal host-token
+proof of model PDF/image understanding.
+
+DAX/delegated multimodal host-token
 binding must be exercised separately and fails closed when unavailable.
 
 The PR workflow's `tests` job produces same-run JUnit evidence.
@@ -193,7 +196,9 @@ prove live Entra Conditional Access, browser, or proxy behavior.
 CI evaluates quality in a separate environment using protected requirements
 and tool pins without installing candidate application code there.
 `quality-gate` requires real unit-test, quality-matrix, and `container-tests`
-results plus fresh bound reports and the unittest receipt. `container-tests`
+results plus fresh bound reports and the unittest receipt.
+
+`container-tests`
 builds an ephemeral Linux image and runs `tests/container_smoke.py` with no
 network and read-only mounted tests. It checks installed imports, staged
 resources, startup, and offline behavior. It publishes and deploys no image.
@@ -224,7 +229,9 @@ An exception record is an exact, bounded allowance, not a blanket waiver for
 a category of handlers. Preserve source/handler fingerprints, protected-base
 metadata, expiry, stage, and passing same-run evidence as required by the
 owning checker. UI `active` records are eligible for technical validation, not
-human approval. Logging and rethrowing do not automatically waive a handler
+human approval.
+
+Logging and rethrowing do not automatically waive a handler
 check. Do not grow baselines, add suppressions, weaken policy, or fabricate
 evidence to turn a candidate green. Protected checker/tool/workflow changes
 require explicit maintainer authorization.
@@ -232,6 +239,7 @@ require explicit maintainer authorization.
 Missing, skipped, cancelled, failed, stale, or mismatched CI results do not
 authorize a merge. The shared repository standard requires PRs and successful
 quality and behavior/frontend or container checks on both `develop` and `main`.
+
 The required approving-review count is zero. Code-owner and latest-head
 approvals are not mandatory, and maintainers may merge their own passing PRs.
 An authorized administrative exception is temporary, not a permanent bypass

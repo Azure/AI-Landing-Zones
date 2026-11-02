@@ -102,7 +102,9 @@ remain independently default-off; selecting Hosted does not enable history.
 
 Create authorized **Linux self-hosted Azure Pipelines agent pools**, with a runner
 able to reach each environment's private endpoints through its VNet or a peered
-hub/VPN. Bootstrap the deployment network before this full-stack pipeline: an
+hub/VPN.
+
+Bootstrap the deployment network before this full-stack pipeline: an
 agent cannot depend on the VNet it is about to create to become reachable.
 Use [Network design](network-isolation.md) for DNS, routing and egress checks.
 The CI-only pool need not reach Azure data-plane endpoints.
@@ -174,12 +176,16 @@ work around an unattended failure. Allow RBAC propagation before retrying.
 
 The pipeline service connection authenticates deployment jobs. The UI uses a
 separate Entra application registration and tenant consent, which must be
-configured outside the deployment scripts. For each isolated application
+configured outside the deployment scripts.
+
+For each isolated application
 environment, follow the single canonical
 [login setup sequence](application-auth.md#configure-login-in-order):
 registration and consent before first provision, final HTTPS callback and
 settings after the frontend URL is known, then caller/admission grants and
-user validation. For an already deployed UI, reload it after settings change.
+user validation.
+
+For an already deployed UI, reload it after settings change.
 
 Complete tenant consent and sign-in configuration through a separately reviewed
 administrative procedure or automation before accepting the deployment.
@@ -428,6 +434,7 @@ Preup validates/checks binding before standalone provisioning. Preprovision
 resolves topology using `python -m config.deployment.topology` and composes
 `infra/bicep/main.parameters.json`; subsequent hooks use `--describe` to read its JSON.
 This tracked Bicep seed is regenerated; never commit resolved environment values.
+
 Post-provision configures application services and roles. Provision prepares
 the hosted foundation prerequisites. Deploy automatically builds or reuses the
 immutable image, materializes its application handoff and creates the hosted
@@ -451,7 +458,9 @@ No build artifacts are published or downloaded. Do not add a whole-workspace
 publish step: hooks copy `.azure` to sibling components and create `.logs`.
 Exclude `.azure`, `.env`/environment files, logs, secret files, credential/config
 caches, `.git` credentials and Python dependency environments from any future
-artifact. If changing to CI artifacts, deploy from the downloaded validated tree
+artifact.
+
+If changing to CI artifacts, deploy from the downloaded validated tree
 and explicitly solve the Git metadata requirement for local custom sources.
 
 Cleanup runs even after failure. Its fixed path list removes `.azure` and `.logs`

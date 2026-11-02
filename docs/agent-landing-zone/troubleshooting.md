@@ -465,6 +465,7 @@ Vault references.
 **Diagnose:** Distinguish name resolution, routing, TLS and HTTP authorization
 errors at both endpoints. Confirm the actual runtime identity and identify
 which connection stage stalls before choosing a recovery action.
+
 Runtime availability handling catches Azure SDK and Requests transport
 failures, not arbitrary provider exceptions. An unexpected provider failure
 propagates unchanged; do not diagnose it as disabled configuration or successful
@@ -698,6 +699,7 @@ permissions at their own boundary. Confirm the configured storage locations,
 Search index and bundled UI `retrieval-reader` profile. The native route
 limits a download to 100 MiB and 120 seconds. An unverified target beyond
 those bounds is denied, not read with elevated access.
+
 Do not re-enable the legacy reader, mint SAS or replace user Storage access
 with workload access to make the download succeed.
 
@@ -736,12 +738,15 @@ required to obtain native persistence.
 
 **Correct:** Check the selected publication or durable registration, current
 identity, owner mapping, metadata dependency and native client permissions.
+
 Saved listing/history requires `ENABLE_CHAT_HISTORY=true`; known workflow
 resume does not. With conversational mode and all product flags off, bounded
 volatile UI owner maps are lost on restart. Native state does not reconstruct
 them.
+
 Follow [Conversations & files](conversations.md) and
 [Agent hosting](hosted-agents.md#calling-the-agent).
+
 Report a failed state read rather than presenting empty history or replaying
 a UI transcript as a replacement execution store. Switching hosts does not
 import a session from the previous backend.
@@ -900,7 +905,9 @@ application health directly.
 UI records containing `exception_type` and `failure_site` intentionally omit
 dependency error payloads. Correlate the static operation, code location and
 request reference with dependency telemetry. Do not enable raw token, cookie,
-claim, signed-URL or document logging to fill that gap. A failed optional panel
+claim, signed-URL or document logging to fill that gap.
+
+A failed optional panel
 index write needs repair even when the chat continues. Confirm the expected
 owner-index record exists after retrying the write.
 

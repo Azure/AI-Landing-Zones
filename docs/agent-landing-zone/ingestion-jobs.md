@@ -96,10 +96,13 @@ over the same corpus. Do not infer cross-replica serialization from `409`.
 Manual runs and configuration mutations require the exact `Admin` role when
 Entra is configured. Classic development without a configured tenant has an
 open development gate. Administrative reads and the file-unblock route do not
-have that same unconditional gate. Restrict access to the administrative
+have that same unconditional gate.
+
+Restrict access to the administrative
 surface through the deployment's network and access controls rather than
 exposing it publicly. Hosted mode without
 the administrative panel does not mount these routes, although jobs still run.
+
 [Administration](operations.md) describes the dashboard and mode-specific
 availability. [Application authentication](application-auth.md) covers access.
 [API reference](application-api.md) supplies request and response schemas.

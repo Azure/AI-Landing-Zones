@@ -54,6 +54,7 @@ An infrastructure-only deployment stops after resource provisioning and
 service configuration. It does not publish application images or start a
 hosted agent. Generic compute placeholders may exist until application deploy.
 Reprovisioning preserves application images/revisions already published.
+
 There is no extra application-deployment flag: use native `azd provision`
 for the foundation and `azd deploy` for the application.
 A full-stack deployment completes the application stage too.
@@ -76,7 +77,7 @@ inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
   [new-user application route](application.md#first-time-using-agent-application)
   from deployment and sign-in to the first conversation, then add only the
   optional capabilities you need.
-- **What does the template do?** See [provisioning and deployment](#how-the-template-works).
+- **What does the template do?** Review the [deployment lifecycle](#how-the-template-works).
 - **What needs planning?** Review [resources, networking and deployment tools](planning.md),
   then use the [Design checklist](../architecture/design-checklist.md) for architecture
   and security decisions.
@@ -85,8 +86,8 @@ inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.
   choices and editable estimates.
 - **Do I only need Azure resources?** Deploy infra only
   [with&nbsp;Bicep](deploy-infra-only.md) or [with&nbsp;Terraform](deploy-terraform-infra-only.md).
-- **Want the reference application?** Deploy full stack with
-  [Bicep](deploy-full-stack.md) or [Terraform](deploy-terraform-full-stack.md).
+- **Want the reference application?** Use [Bicep](deploy-full-stack.md) or
+  [Terraform](deploy-terraform-full-stack.md) for the full stack.
 
 For an existing environment, **Operate** brings together
 [updates and recovery](deployment-operations.md) and

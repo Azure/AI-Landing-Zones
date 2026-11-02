@@ -9,6 +9,7 @@ Select `ENABLE_USER_FEEDBACK=true` explicitly; its default is `false`.
 Provision the UI metadata store and frontend-only permissions. The UI consumes
 `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and `NATIVE_UI_METADATA_CONTAINER`
 (default `native-ui-metadata`, partition key `/principal_id`).
+
 Do not require optional ingestion or an additional execution service merely
 to store a user's feedback.
 See [Conversations & files](conversations.md) for state ownership and
@@ -22,10 +23,12 @@ When feedback is enabled and its dependencies are ready, the chat control
 submits to the authenticated UI/BFF. The BFF checks the current owner mapping
 and associates feedback with the intended conversation/run and message/result.
 The product store holds feedback metadata, not native execution checkpoints.
+
 The route is `POST /api/native/sessions/{id}/feedback` with
 `native_ref`, `rating` (`-1` or `1`) and `comment` (at most 2,000 characters).
 The UI UUID must belong to the authenticated owner. Unknown/nonowned IDs
 return `404` before backend access; a native reference alone grants nothing.
+
 Feedback uses the native UI route above; `/panel/conversations` is not mounted.
 
 Do not display working-looking controls for an unavailable integration.

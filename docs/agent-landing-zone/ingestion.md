@@ -49,11 +49,14 @@ Foundry also supports native SharePoint options, including previews:
 
 These product options are not all wired into Agent Application. The native
 indexed SharePoint path includes source registration, permission ingestion
-and delegated Search authorization. Remote retrieval and native tools need
+and delegated Search authorization.
+
+Remote retrieval and native tools need
 their own connection, consent and trusted delegated-user integration.
 Native tool calls require the user's identity, not application-only access.
 [SharePoint](sharepoint.md) explains the supported bindings and administrator
 prerequisites.
+
 Preview status is a governance consideration, not a reason to assume custom
 ingestion is required.
 

@@ -166,6 +166,7 @@ for every item in `allowed_objects`, including approved relationships.
 Use the MCP repository's administrative Python importer, not a tool call or
 document-ingestion job. Run it from the **MCP repository root** on an authorized
 managed-identity runner with Python 3.12 and the repository's `uv` tooling.
+
 Supply `APP_CONFIG_ENDPOINT` for the application's store and, when using an
 assigned identity, `AZURE_CLIENT_ID`. The identity needs configuration read,
 write access to both catalog containers and embedding-model inference access.
@@ -233,8 +234,10 @@ uv run --frozen python -m tools.nl2sql.importer --file C:\approved\approved-prod
 The importer validates the file, generates embeddings, stages a unique catalog
 version and activates it only after every metadata write completes. It prints
 `Activated metadata_version:` with the resulting active version on success.
+
 Confirm the source's active version and an approved query before admitting
 users. Partial staging leaves the previous active version in use.
+
 A failed import does not confirm activation; inspect the source's
 active version before retrying. Staged inactive records need separately
 approved retention/cleanup, not automatic container deletion.

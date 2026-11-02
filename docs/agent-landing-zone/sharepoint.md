@@ -102,7 +102,9 @@ Use this path when you need custom processing or the Graph-based connector's
 list and document-library ingestion. **Agent App Ingestion** runs indexing and
 purge jobs inside its Container App, reads SharePoint through Microsoft Graph,
 and writes content, embeddings and supported permission metadata to an
-**Azure AI Search index**. That index can then be attached to Foundry IQ as a
+**Azure AI Search index**.
+
+That index can then be attached to Foundry IQ as a
 `searchIndex` knowledge source. It is not the managed `indexedSharePoint`
 source described above.
 
@@ -116,7 +118,9 @@ compatible ingestion component from your platform release.
 Before enabling jobs, confirm the ingestion application's identity can read
 App Configuration and Cosmos DB, retrieve secrets from Key Vault, write to the
 target Search index and job-log storage, and call the configured embedding and
-document-analysis services. Confirm network access from the Container App to
+document-analysis services.
+
+Confirm network access from the Container App to
 those resources, Entra ID and Microsoft Graph. Azure resource access uses the
 workload identity. SharePoint access uses the separate application credentials
 created in step 3.
@@ -307,7 +311,9 @@ requires `Sites.FullControl.All` on the **granting session**. In a delegated
 Graph Explorer workflow, the signed-in user also needs SharePoint
 Administrator or higher and membership in the target site. A `403` here is a
 reason to check that administrator's role, membership and Explorer consent,
-not to give the ingestion app tenant-wide access. Keep the ingestion app at
+not to give the ingestion app tenant-wide access.
+
+Keep the ingestion app at
 `Sites.Selected` with the reviewed site grant.
 
 Validate that the app-only identity can read the selected items **and their
@@ -322,6 +328,7 @@ a credential with an appropriate expiry and rotation owner. Copy its **Value**
 (not its Secret ID) directly into the ingestion application's Key Vault as
 `sharepointClientSecret`, or a reviewed custom secret name. Do not put the value
 in Cosmos DB, plaintext App Configuration, source files or command logs.
+
 The current Graph client uses this client-secret flow. Native indexed
 SharePoint's federated credentials are a different configuration.
 
@@ -491,6 +498,7 @@ Use the deployment's configured administrative authentication. Do not expose
 an unconfigured development endpoint. These routes require Admin when Entra
 authentication is configured and are available only when the ingestion
 component's administrative surface is mounted.
+
 `202 Accepted` means queued, not indexed. `409` means that job type is already
 running. See [Jobs & schedules](ingestion-jobs.md) for scheduling, conflicts and
 cleanup effects, [Administration](operations.md) for route availability, and

@@ -79,9 +79,12 @@ in application Cosmos; no document ingestion service is required.
 
 An unrecognized extension falls to the text chunker, which still rejects formats
 outside its supported set. That fallback does not mean every file type is
-supported. The factory also routes `.xls` to the spreadsheet chunker, but its
+supported.
+
+The factory also routes `.xls` to the spreadsheet chunker, but its
 OpenPyXL parser expects an Open XML workbook, not a legacy binary Excel file.
 Convert legacy workbooks to `.xlsx` before ingestion.
+
 A source connector can impose a narrower allowlist, such as
 SharePoint's default `pdf,docx,pptx`. This custom processing table is not a
 native chat upload allowlist.

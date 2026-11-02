@@ -262,10 +262,12 @@ Reprovisioning must not restore placeholders over deployed application images.
 
 All flat Terraform outputs flow natively into azd and are consumed by the
 shared postprovision and predeploy hooks. No manual output copying is needed.
+
 Terraform publishes foundation-owned App Configuration connections, model
 metadata and declared additional settings. Shared postprovision seeds only
 missing defaults; the runtime publisher updates its explicitly owned keys.
 See [configuration ownership](configuration.md#configuration-ownership-and-declarations).
+
 The shared [platform output reference](deploy-infra-only.md#platform-outputs)
 explains `AGENTLZ_PLATFORM_OUTPUTS` and flat keys published in App Configuration
 under label `agent-lz`. The platform document is not the full azd output set.
@@ -299,10 +301,12 @@ validation results. Protect state, plans, generated inputs, logs and `.azure/`.
 If provisioning explicitly deferred service configuration while a connected
 host was prepared, keep the same source, provider/path, application binding,
 destination mapping, inputs and remote backend on that host.
+
 Securely restore the [original deployment records](#private-deployment-records),
 selected environment/application bindings and the exact reviewed parameter
 declaration, including any required private declaration. Keep the same backend
 and cloud. `azd env refresh` does not restore those records or declared intent.
+
 Missing required declarations fail rather than being reconstructed from
 defaults, outputs or state.
 After restoring the environment, complete configuration:

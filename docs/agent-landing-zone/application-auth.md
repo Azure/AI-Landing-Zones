@@ -5,6 +5,7 @@
 Agent Application has independent access boundaries: UI admission,
 native host invocation, owner-bound execution and document/tool authorization.
 Signing in does not grant access to every document or run.
+
 Follow the setup sequence below for the default
 Foundry-hosted agent and Container Apps frontend. Azure CLI and azd sign-in
 authenticate the deployment operator, not application users.
@@ -89,7 +90,9 @@ access to source documents; retain the source's RBAC and ACL checks.
 For the standard Foundry-resource authorization scheme (`AzureRbac`, also
 known as `Entra`), the downstream scope is `https://ai.azure.com/.default`.
 Confirm the deployed endpoint's audience with its owner; do not substitute
-the UI API scope or a management-plane audience. Set
+the UI API scope or a management-plane audience.
+
+Set
 `HOSTED_AGENT_RESOURCE_SCOPE` in the selected azd environment before provision,
 as shown in the [full-stack deployment guide](deploy-full-stack.md#native-application-selection).
 This value is separate from the UI login scopes in step 4.
@@ -134,7 +137,9 @@ and rotation owner. Do not copy the value into source, shell commands or logs.
 In **App Configuration > Configuration explorer**, create a **Key Vault
 reference** named `OAUTH_AZURE_AD_CLIENT_SECRET`, label `agent-lz`, pointing
 to that stored secret. Select the Key Vault reference type, not an ordinary
-string containing a secret or URI. Keep a stable, securely generated
+string containing a secret or URI.
+
+Keep a stable, securely generated
 `CHAINLIT_AUTH_SECRET` of at least 32 UTF-8 bytes in Key Vault and publish it
 as a reference too; do not
 regenerate an existing session-signing secret during a routine update.
@@ -194,12 +199,14 @@ its agent endpoints is intended. Agent-scope grants can be made after the
 first agent deployment and before user acceptance. Use Azure CLI for these
 scopes following [Foundry RBAC](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry#agent-scope-role-assignments);
 the Azure portal's consumer-role picker currently uses account scope.
+
 Broader authoring roles are not needed just to invoke an endpoint.
 
 `ALLOWED_USER_PRINCIPALS` admits individual users by comma-separated
 `tenant-id:object-id` values. `ALLOWED_USER_NAMES` is an alternative list of
 sign-in names. The lists combine with **OR**; empty lists admit all successfully
 authenticated users. The callback does not fetch Graph group membership.
+
 These lists restrict UI admission, not Foundry access or document access-control
 lists (ACLs). Publish the approved admission settings with label `agent-lz`;
 for a restricted pilot, do not leave both lists empty.
@@ -213,6 +220,7 @@ For the first deployment, return to root `azd deploy` in the
 [full-stack deployment guide](deploy-full-stack.md#step-4-deploy). For an existing UI,
 restart/redeploy its Container App after publishing settings, then sign out
 and sign in again. The UI caches settings at startup.
+
 A UI-only authentication change does not require restarting the hosted agent.
 Supported functional runtime parameters use App Configuration refresh and
 per-run snapshots. Structural host, graph, identity or publication changes

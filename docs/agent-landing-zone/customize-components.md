@@ -134,6 +134,7 @@ Keep native session selection and consume-once request metadata at the
 authenticated API boundary. The native application service owns UI UUID
 mapping and product metadata; explicit host clients own execution calls.
 Do not route native operations through an old orchestrator data-layer adapter.
+
 Callback, history, and OAuth registration must remain idempotent.
 Native history uses the selected host client plus UI-owned metadata, not a
 retired orchestrator conversation API. Keep session/run owner checks explicit
