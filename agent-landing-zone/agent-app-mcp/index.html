@@ -5587,15 +5587,23 @@
 
 
 <h1 id="agent-app-mcp-server">Agent App MCP Server</h1>
-<p><strong>Agent App MCP Server</strong> gives an Agent or Workflow access to approved SQL
-data through Model Context Protocol (MCP). It is an optional application
+<p><strong>Agent App MCP Server</strong> hosts tools that an Agent or Workflow calls through
+Model Context Protocol (MCP). It is an optional application
 component in a <strong>separate Azure Container App</strong>, whether the consuming
 orchestrator runs in Foundry Hosted Agents or Azure Container Apps.</p>
+<p>MCP is the communication protocol, not a SQL feature. Agent App MCP is the
+server component. <strong>NL2SQL is the toolset currently supplied by that server</strong>,
+with operations for listing approved sources and asking questions about SQL
+data. Other reviewed toolsets can be added to the server without redefining
+MCP as NL2SQL.</p>
 <p>The server uses the official Python MCP SDK, not Microsoft Agent Framework.
 It performs a bounded operation for each request; it does not host conversations,
 workflows, a scheduler or a UI.</p>
 <h2 id="start-here-from-deployment-to-the-first-question">Start here: from deployment to the first question</h2>
-<p>Follow these steps in order. <strong>Deploying the component does not connect a SQL
+<p>The steps below deploy the server and onboard its current <strong>NL2SQL toolset</strong>.
+SQL permissions and catalog import belong to that toolset, not to the MCP
+protocol or every possible MCP tool.
+Follow these steps in order. <strong>Deploying the component does not connect a SQL
 source or populate its catalog.</strong></p>
 <table>
 <thead>
@@ -5640,7 +5648,7 @@ and approved metadata separately.</p>
 <table>
 <thead>
 <tr>
-<th>MCP operation</th>
+<th>NL2SQL tool exposed over MCP</th>
 <th>Purpose</th>
 </tr>
 </thead>
@@ -5655,10 +5663,13 @@ and approved metadata separately.</p>
 </tr>
 </tbody>
 </table>
-<p>These are the only supplied tools. The model cannot submit arbitrary SQL,
+<p>These are the currently supplied tools, not a fixed limit of MCP or the
+server's intended tool catalog. This release does not provide additional
+toolsets or automatic plugin installation.
+Through the NL2SQL tools, the model cannot submit arbitrary SQL,
 change the catalog or pass identities and credentials as tool arguments.
-Azure SQL and SQL Server are supported; Fabric SQL endpoints, semantic models
-and DAX are not part of this component.</p>
+The current NL2SQL toolset supports Azure SQL and SQL Server, not Fabric SQL
+endpoints, semantic models or DAX.</p>
 <p>The server listens on port <code>8080</code> inside its container. The Azure HTTPS
 endpoint uses stateless Streamable HTTP at <code>/mcp</code>.
 <code>/healthz</code> checks liveness, not successful authentication, catalog readiness or
@@ -5761,7 +5772,8 @@ Hosted <code>both</code> has separate conversation and workflow callers.
 An existing external MCP endpoint conflict must be resolved explicitly;
 selection does not silently replace it or create a multi-endpoint integration.</p>
 <h2 id="why-application-cosmos-db-is-required">Why application Cosmos DB is required</h2>
-<p>MCP uses the <strong>application-owned Cosmos DB for NoSQL account</strong>, never Foundry's
+<p>The supplied NL2SQL toolset uses the <strong>application-owned Cosmos DB for NoSQL
+account</strong>, never Foundry's
 backing Cosmos account. The platform reuses the account managed by this
 deployment when compatible, or creates it during <code>azd provision</code> if absent.
 Selecting MCP automatically requires this dependency. Normal application
@@ -5874,8 +5886,13 @@ or catalog as part of that compute cleanup. Sources, data and other grants
 still need explicit owner review. Recovery uses a compatible image/configuration
 or controlled deactivation, never direct SQL inside the orchestrator as a fallback.</p>
 <p>The server's transport, authentication, configuration and observability can
-support future reviewed tool modules. Adding a tool is development work with
-its own schema, permissions and tests; no additional tools are supplied here.</p>
+be reused for other reviewed tool modules. Adding a tool is development work
+with its own schema, permissions, dependencies and tests, plus explicit
+registration in the consuming application.
+The current startup initializes NL2SQL's Cosmos/model/SQL services. A future
+toolset that does not need those services must have its initialization and
+deployment dependencies separated accordingly. The current component is not
+an automatic, independently configurable plugin platform.</p>
 
 
 

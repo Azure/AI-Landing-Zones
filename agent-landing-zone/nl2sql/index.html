@@ -1899,10 +1899,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-an-mcp-question-is-answered" class="md-nav__link">
+  <a href="#how-an-nl2sql-request-is-answered" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How an MCP question is answered
+        How an NL2SQL request is answered
       
     </span>
   </a>
@@ -5529,10 +5529,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-an-mcp-question-is-answered" class="md-nav__link">
+  <a href="#how-an-nl2sql-request-is-answered" class="md-nav__link">
     <span class="md-ellipsis">
       
-        How an MCP question is answered
+        How an NL2SQL request is answered
       
     </span>
   </a>
@@ -5723,8 +5723,10 @@
 <h1 id="ask-questions-about-sql-data">Ask questions about SQL data</h1>
 <p>Natural-language-to-SQL (NL2SQL) turns a question into a validated, read-only
 database query. In Agent Application, an Agent or Workflow calls
-<strong><a href="../agent-app-mcp/">Agent App MCP Server</a></strong> to query an approved Azure SQL or
-SQL Server source. The orchestrator does not connect directly to SQL.</p>
+the <strong>NL2SQL tools hosted by <a href="../agent-app-mcp/">Agent App MCP Server</a></strong> to query
+an approved Azure SQL or SQL Server source. The orchestrator does not connect
+directly to SQL. MCP is the tool-call protocol, the server hosts the tools,
+and NL2SQL is the capability described on this page.</p>
 <p>NL2SQL is optional. It does not change <code>APPLICATION_MODE</code> or
 <code>ORCHESTRATION_HOST</code>, and applications without it do not need its SQL
 connectivity or metadata catalog.</p>
@@ -5739,8 +5741,8 @@ connectivity or metadata catalog.</p>
 </thead>
 <tbody>
 <tr>
-<td>Agent App MCP Server</td>
-<td>A separate Container App generates, validates and executes SQL as the application's read-only principal</td>
+<td>NL2SQL tools on Agent App MCP Server</td>
+<td>The tool implementation in a separate Container App generates, validates and executes SQL as the application's read-only principal</td>
 <td>Approved SQL source, Cosmos schemas/examples and embeddings, model selection and network access</td>
 </tr>
 <tr>
@@ -5750,11 +5752,12 @@ connectivity or metadata catalog.</p>
 </tr>
 </tbody>
 </table>
-<p>The MCP component supports Azure SQL and SQL Server, not Fabric SQL endpoints,
+<p>The current NL2SQL toolset supports Azure SQL and SQL Server, not Fabric SQL endpoints,
 semantic models or DAX. Use the Fabric route for its supported analytical
-sources. Changing a retrieval-backend setting does not redirect MCP queries.
-Search remains a dependency of Foundry IQ, not of the MCP metadata catalog.</p>
-<h2 id="how-an-mcp-question-is-answered">How an MCP question is answered</h2>
+sources. Changing a retrieval-backend setting does not redirect NL2SQL tool calls.
+Search remains a dependency of Foundry IQ, not of the NL2SQL metadata catalog.</p>
+<p><span id="how-an-mcp-question-is-answered"></span></p>
+<h2 id="how-an-nl2sql-request-is-answered">How an NL2SQL request is answered</h2>
 <ol>
 <li>The Agent or Workflow lists the approved sources using
    <code>nl2sql.list_sources()</code>.</li>

@@ -5598,7 +5598,7 @@ NL2SQL with a second runtime flag.</p>
 </tr>
 <tr>
 <td>Query approved Azure SQL or SQL Server data</td>
-<td>Agent App MCP Server, with a Cosmos metadata catalog and read-only SQL principal</td>
+<td>NL2SQL tools hosted by Agent App MCP Server, with a Cosmos metadata catalog and read-only SQL principal</td>
 </tr>
 <tr>
 <td>Wait for a person's decision</td>
@@ -5616,14 +5616,18 @@ a model-callable MCP tool. Its
 control source planning, output parsing and query credentials.</p>
 <h3 id="optional-agent-app-mcp-server">Optional Agent App MCP Server</h3>
 <p>The separate MCP Container App works with either consuming host and any
-application mode. It exposes only <code>nl2sql.list_sources()</code> and
-<code>nl2sql.query(source_id, question)</code>. The official Python MCP SDK hosts the
+application mode. It hosts tools over MCP. Its currently supplied toolset is
+NL2SQL: <code>nl2sql.list_sources()</code> and <code>nl2sql.query(source_id, question)</code>.
+MCP is not synonymous with this toolset. Other tools require reviewed
+implementation, permissions, dependency wiring and consumer registration.
+The official Python MCP SDK hosts the
 server; MAF remains in the consuming orchestrator.</p>
-<p>Selecting <code>DEPLOY_AGENT_APP_MCP=true</code> adds its application Cosmos catalog,
+<p>Selecting <code>DEPLOY_AGENT_APP_MCP=true</code> deploys the current server and adds its
+NL2SQL application Cosmos catalog,
 identity and deployment. It does not enable Search or require ingestion.
 The operator still approves SQL destinations, read permissions and metadata.
-The server—not the orchestrator—owns SQL connectivity, metadata retrieval and
-generated-query validation. There are no individually registered SQL helpers,
+The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
+metadata retrieval and generated-query validation. There are no individually registered SQL helpers,
 arbitrary-SQL arguments, catalog write tools or DAX operations.</p>
 <p>The configured read-only principal queries the application's approved dataset,
 without automatic per-user SQL delegation. This differs from a Foundry IQ

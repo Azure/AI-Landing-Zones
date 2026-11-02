@@ -5898,7 +5898,7 @@ not automatically know your organization's documents or databases.</p>
 </tr>
 <tr>
 <td><a href="../agent-app-mcp/">Agent App MCP Server</a></td>
-<td>Runs in a separate Container App and queries approved Azure SQL/SQL Server data through two NL2SQL tools.</td>
+<td>Hosts authenticated tools in a separate Container App. The currently supplied toolset is NL2SQL over approved Azure SQL/SQL Server data.</td>
 </tr>
 </tbody>
 </table>
@@ -6029,8 +6029,9 @@ known results and denials. A deployed MCP container is not a populated catalog.<
 <a href="../workflows/">workflows and human input</a>, or connect
 <a href="../agent-tools/">tools and MCP servers</a>. A tool lets an agent perform an
 operation. Retrieval supplies information for its answer.
-For the optional SQL component, start with <a href="../agent-app-mcp/">Agent App MCP Server</a>
-to understand deployment, automatic configuration and operator responsibilities.</p>
+For the optional tool server, start with <a href="../agent-app-mcp/">Agent App MCP Server</a>
+to understand deployment, automatic configuration and operator responsibilities.
+Its current NL2SQL tools have their own SQL onboarding procedure.</p>
 <p><span id="frontend"></span></p>
 <h3 id="chat-channels">Chat &amp; channels</h3>
 <p>Configure <a href="../application-auth/">sign-in and access</a>,
