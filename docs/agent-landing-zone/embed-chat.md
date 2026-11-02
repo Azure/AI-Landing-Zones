@@ -178,6 +178,12 @@ caller boundary. Protected document access still requires the
 the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
 alone does not establish downstream consent or source permissions.
 
+The explicit [mode without OBO](application-auth.md#choose-user-delegation)
+changes downstream credentials, not portal bootstrap, UI admission, cookie
+isolation or conversation ownership. It uses each source's service-authentication
+contract and cannot replace required user delegation. Sources requiring OBO fail
+explicitly when it is unavailable.
+
 ### Bootstrap and mount the widget
 
 Acquire a UI API access token with your portal's existing authentication library.

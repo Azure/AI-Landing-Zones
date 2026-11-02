@@ -96,8 +96,9 @@ and protected retrieval do not have the same integration requirements.
   virtual network (VNet), directly or through a virtual private network (VPN).
   It must resolve private service hostnames. An Azure Container Registry (ACR)
   Tasks build pool is not that host.
-- **Identity inputs:** obtain the delegated Foundry audience and tenant consent
-  plan from your identity administrator. `HOSTED_AGENT_RESOURCE_SCOPE` must be
+- **Identity inputs:** select the [user delegation mode](application-auth.md#choose-user-delegation)
+  and obtain the Foundry audience and corresponding consent/role plan.
+  `HOSTED_AGENT_RESOURCE_SCOPE` must be
   that audience followed by `/.default`, for example
   `https://ai.azure.com/.default` when that is the deployed audience.
   It is not the UI's `api://<client-id>/user_impersonation` login scope.
@@ -115,11 +116,15 @@ and protected retrieval do not have the same integration requirements.
   database grants.
 
 !!! important "Protected retrieval keeps the signed-in user's permissions"
-    The UI and native agent's retrieval capability require delegated Search
-    authorization with `RETRIEVAL_AUTH_MODE=native_search`. The UI performs
-    the downstream OBO exchange; the hosted connector supplies that credential
-    to Search separately from its workload transport identity. A custom
-    Toolbox integration is not required for this built-in path.
+    Protected retrieval requires downstream user authorization for Search.
+    Foundry invocation OBO and `RETRIEVAL_AUTH_MODE=native_search` are not
+    substitutes for that authorization. The native Hosted application uses
+    Foundry-managed delegation through the official MAF Toolbox integration.
+    Provisioning publishes its derived `TOOLBOX_ENDPOINT` after Search setup.
+    Managed consent requests are explicit UI errors requiring approved consent
+    and manual retry, not automatic consent resumption.
+    Missing context, consent or source authorization must fail explicitly. See the
+    [current retrieval boundary](application-auth.md#hosted-retrieval-identity-boundary).
 
     Arrange downstream consent and source permissions, retain permission
     ingestion, and verify an allowed and a denied user before admitting
@@ -270,6 +275,7 @@ design and independently optional product features:
 ```bash
 azd env set ORCHESTRATION_HOST hosted
 azd env set APPLICATION_MODE conversational
+azd env set HOSTED_AGENT_AUTH_MODE user_delegated
 azd env set HOSTED_AGENT_RESOURCE_SCOPE <approved-foundry-audience>/.default
 azd env set DEPLOY_INGESTION_CONTAINER_APP false
 ```
@@ -279,6 +285,18 @@ attachments default to off; Hosted does not turn them on. The default
 conversational selection with no declared storage consumer does not require
 application Cosmos. Workflow or `both` always selects UI metadata; enabling
 history, feedback or attachments also selects it.
+
+OBO remains the default. The alternative `HOSTED_AGENT_AUTH_MODE=service_identity`
+requires the coordinated native implementation and scoped component identity
+grants. It does not restrict source types or remove the UI login requirement.
+A source that requires user delegation fails explicitly when OBO is unavailable.
+The existing source permission default remains protected, and this mode does not
+require or automatically set ingestion permission options to `[]`.
+
+The selected value is published to App Configuration under `agent-lz`. A later
+change requires reconciling source policy, connection authentication and caller
+grants, followed by compatible application publications and new sessions.
+Do not treat a key edit or an OBO failure as an automatic mode change.
 
 See [Application settings](application-settings.md) for the separate feature
 keys and inspect effective relevant `agent-lz` settings after configuration.

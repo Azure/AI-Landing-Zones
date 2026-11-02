@@ -173,6 +173,7 @@ of starting with an unconfigured fallback.
 | Host or application mode | Deployment composition; not a per-message or UI strategy switch |
 | Workflow graph/executor identifiers, native registration names | Reviewed application definition and compatible publication |
 | Identity, persistence backend, endpoints or process bootstrap | Matching resources, permissions and deployment/restart |
+| User delegation (`HOSTED_AGENT_AUTH_MODE`) | Structural deployment choice, persisted in App Configuration, requiring coordinated component/connection updates and new sessions when changed |
 | MCP toolset selection | Startup-only; provision declared dependencies and restart/redeploy, no hot reload |
 
 Do not assume arbitrary configuration changes can safely mutate an in-flight
@@ -211,11 +212,13 @@ An unavailable required store is a readiness failure, not an offline mode.
 | --- | --- |
 | `APPLICATION_MODE` | `conversational`; also accepts `workflow` and `both` |
 | `ORCHESTRATION_HOST` | `hosted`; also accepts `container_apps` |
+| `HOSTED_AGENT_AUTH_MODE` | `user_delegated` by default, or `service_identity` for authenticated service access subject to each source's authorization |
 | `HOSTED_AGENT_BASE_URL` | Actual conversational Hosted publication endpoint |
 | `HOSTED_WORKFLOW_BASE_URL` | Actual separate workflow Hosted publication endpoint |
 | `DURABLE_TASK_SCHEDULER_CONNECTION_STRING` | Native managed-identity binding using the actual scheduler output and configured task hub |
 | `SEARCH_RETRIEVAL_ENABLED` | `false`; native Search tool capability |
 | `FOUNDRY_IQ_ENABLED` | `false`; native Foundry IQ capability |
+| `TOOLBOX_ENDPOINT` | Platform-derived project Toolbox endpoint under `agent-lz`, required for native Hosted Foundry IQ, structural rather than a user-configurable auth mode |
 | `MCP_ENABLED` | `false`; native MCP connection/registration, derived by the integrated server lifecycle; does not select server toolsets |
 | `MULTIMODAL_ENABLED` | `false`; native multimodal tool capability, separate from ingestion `MULTIMODAL` and private attachments |
 | `ENABLE_CHAT_HISTORY` | `false`; explicitly selects saved-history discovery |
@@ -232,6 +235,13 @@ their supported azd inputs. Agent capability keys use
 The lifecycle publishes both kinds under `agent-lz`.
 Use the [product-feature](#enable-a-product-feature) or
 [agent-capability](#configure-an-agent-capability) procedure, as appropriate.
+
+User delegation uses one existing selector, not independent login, OBO and
+retrieval switches. Both modes require login. The platform derives the retrieval
+contract from the selected mode. It does not impose a Blob-only source allowlist.
+Operations requiring user delegation fail explicitly when OBO is unavailable.
+See [Choose user delegation](application-auth.md#choose-user-delegation)
+for caller grants, source authorization and coordinated changes.
 
 Workflow mode or `both` selects UI metadata even when both history and feedback
 flags are `false`. Enabled history, feedback or attachments also selects that

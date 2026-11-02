@@ -48,7 +48,7 @@ Each integration needs its own configuration and authorization.
 | Integration | What the agent receives |
 | --- | --- |
 | Azure AI Search | A Foundry search tool targeting a configured index |
-| Foundry IQ | A knowledge-base tool through its own prepared Foundry project connection |
+| Foundry IQ | Knowledge-base tools discovered through the official managed Foundry Toolbox integration |
 | Multimodal retrieval | `multimodal_retrieve`, a function implemented in the application |
 | Agent App MCP Server | Tools from the selected toolset; NL2SQL provides `nl2sql.list_sources()` and `nl2sql.query(source_id, question)` |
 
@@ -96,7 +96,7 @@ uses label `agent-lz`, not new tool-specific foundation parameters.
     | Capability flag | Required runtime bindings | Preparation |
     | --- | --- | --- |
     | `SEARCH_RETRIEVAL_ENABLED` | `SEARCH_CONNECTION_ID`, `SEARCH_RAG_INDEX_NAME`; optional `SEARCH_RAGINDEX_TOP_K` | An authorized Foundry Search connection and populated index |
-    | `FOUNDRY_IQ_ENABLED` | `KNOWLEDGE_BASE_CONNECTION_ID`, `KNOWLEDGE_BASE_NAME` | [Foundry IQ source and connection](foundry-iq.md#how-to-connect-a-knowledge-base) |
+    | `FOUNDRY_IQ_ENABLED` | Platform-published `TOOLBOX_ENDPOINT` | [Foundry IQ source and connection](foundry-iq.md#how-to-connect-a-knowledge-base) |
     | `MULTIMODAL_ENABLED` | The [multimodal retrieval bindings](multimodality.md#extract-and-retrieve-figures) | Compatible index, models and invocation-local delegated Search authorization |
 
 4. **Provision/deploy** with the matching
@@ -257,9 +257,30 @@ history, functional snapshots and telemetry.
 
 Foundry's [hosted Toolbox integration](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent)
 uses an authenticated SDK client and trusted platform invocation context.
-The application must actually invoke that supported integration.
+Native Foundry IQ uses the official MAF `FoundryToolbox` integration rather
+than a parallel token-forwarding client. It forwards the current request's
+Foundry call ID so that the service can resolve downstream user authorization.
 Do not fabricate platform context or assume the browser's Authorization
 header arrives unchanged inside a Hosted container.
+
+Provisioning registers and promotes the knowledge-base Toolbox after Search
+setup, then publishes the derived `TOOLBOX_ENDPOINT` under `agent-lz`.
+This internal binding is not another operator authentication choice.
+
+With OBO enabled, the managed service handles delegated knowledge-base access
+subject to consent and source permissions. Without OBO, component identities
+may access sources that accept service authentication, subject to scoped grants.
+There is no Blob-only capability allowlist. A tool requiring user delegation
+fails at invocation when OBO is unavailable, without blocking startup solely
+because its source type is enabled.
+Changing the operator mode must not silently change a protected source's
+audience or cause a privileged retry after user denial.
+
+Managed consent requests produce explicit UI `consent_required` errors.
+The UI does not accept dynamic consent links or implement automatic consent
+resumption. Complete the approved Foundry consent process and retry manually.
+In service mode, an explicit consent request instead returns
+`user_delegation_required`, directing the operator to enable OBO.
 
 The durable host uses its own explicit authenticated client/tool boundary.
 Foundry invocation context must not be simulated on Container Apps.

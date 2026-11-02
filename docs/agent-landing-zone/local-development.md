@@ -253,8 +253,10 @@ Host/client configuration failures are reported rather than silently switching h
 The default hosted `user_delegated` authentication uses an on-behalf-of
 exchange, where the UI exchanges a user's API token for a downstream token.
 It needs the confidential-client settings and consent described in
-[Sign-in & access](application-auth.md). Do not switch to `service_identity`
-to work around login or consent failures.
+[Sign-in & access](application-auth.md). The explicit `service_identity` mode
+uses the service's source permissions, not per-user document access. It is not a login
+bypass or automatic recovery from consent failures. It still needs an
+authenticated admitted user, compatible components and scoped service grants.
 
 Keep `.chainlit/`, `public/`, `chainlit.config.yaml`, `chainlit.md`, and
 `VERSION` together in a writable application root. A source-checkout `main.py`

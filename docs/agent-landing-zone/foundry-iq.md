@@ -15,17 +15,17 @@ Deployment follows the [full-stack deployment guide](deploy-full-stack.md).
 **What must be connected before an agent can use a knowledge base?**
 
 1. Search owns the knowledge base and its registered sources.
-2. The native Agent uses a Model Context Protocol (MCP) project-connection tool,
-   not the direct connector. Foundry Search and Foundry IQ have distinct
-   connections; the IQ tool binding still needs a compatible connection.
+2. The native Agent uses the managed Foundry Toolbox integration,
+   not the separate direct Search connector. The Toolbox reaches the knowledge
+   base through its platform-provisioned RemoteTool project connection.
 3. Source ingestion, tool registration and end-user authorization are separate
    setup tasks. Test all three before admitting users.
 
 </div>
 
-[![A native Agent or Workflow uses a Model Context Protocol (MCP) project connection to reach a Search knowledge base, separately from the native Foundry Search connection. Native Blob ingestion owns its generated index; an existing index keeps its ingestion owner. The Foundry IQ tool binding requires a compatible RemoteTool connection and verified source-specific user authorization.](../media/runbooks/foundry-iq.svg?v=8ac74be62322)](../media/runbooks/foundry-iq.svg?v=8ac74be62322){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
+[![A native Agent uses the managed Foundry Toolbox to reach a Search knowledge base through its RemoteTool project connection. Native Blob ingestion owns its generated index and an existing index keeps its ingestion owner. Each source enforces its authorization contract, with explicit errors when required user delegation is unavailable.](../media/runbooks/foundry-iq.svg?v=51b2f3b8149c)](../media/runbooks/foundry-iq.svg?v=51b2f3b8149c){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
 
-[Open full-size diagram](../media/runbooks/foundry-iq.svg?v=8ac74be62322){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/foundry-iq.svg?v=51b2f3b8149c){: .runbook-diagram__open}
 
 </div>
 
@@ -43,10 +43,10 @@ capability flags default to off. Follow [Tools & MCP](agent-tools.md) and the
 to select the capability with its required bindings, then verify a real
 source-backed answer and a denied-user case.
 
-The native runtime registers Foundry IQ using
-`FoundryChatClient.get_mcp_tool(project_connection_id=KNOWLEDGE_BASE_CONNECTION_ID)`.
-It does not call `connectors/foundry_iq.py`. Selecting `RETRIEVAL_BACKEND`
-does not change that native registration or reroute the
+The native runtime registers Foundry IQ through the official MAF
+`FoundryToolbox` integration. It does not call `connectors/foundry_iq.py`
+or manually serialize user Search tokens on a model MCP tool.
+Selecting `RETRIEVAL_BACKEND` does not reroute the
 [MCP NL2SQL tools](nl2sql.md) or replace callable
 [MCP tools](agent-tools.md).
 
@@ -93,20 +93,27 @@ to integrate them with Agent Application.
 
 Microsoft's [Foundry Agent Service connection guide](https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect)
 connects a knowledge base through its MCP endpoint and a Foundry `RemoteTool`
-project connection. The connection belongs to the agent's native tool definition.
+project connection. Hosted applications consume it through the official
+[managed Toolbox integration](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent).
 
-The accelerator provisions an Entra ID-authenticated `CognitiveSearch` project
-connection and publishes its ID as `KNOWLEDGE_BASE_CONNECTION_ID`.
-**The native runtime consumes that ID as an MCP project connection.**
-A `CognitiveSearch` connection is not the `RemoteTool` connection required by
-the native-tool procedure. Default provisioning alone therefore does not
-establish a working Foundry IQ MCP tool or source-specific user delegation.
+The coordinated platform implementation provisions a project-scoped
+`RemoteTool` connection to the knowledge base's MCP endpoint and publishes its
+ID as `KNOWLEDGE_BASE_CONNECTION_ID` for tool registration. Its
+`ProjectManagedIdentity` authentication uses the Search audience
+`https://search.azure.com/`. After successful Search setup, provisioning creates
+and promotes a Toolbox version containing the `knowledge_base_retrieve` tool.
+It publishes `TOOLBOX_ENDPOINT` under App Configuration label `agent-lz`:
 
-The application owner must create a compatible MCP project connection, bind
-the reviewed knowledge base and configure its authentication. Keep the
-connection under separate ownership and preserve its binding across later
-provisioning. Do not enable protected corporate sources until the complete
-native invocation and source-authorization path passes allow/deny tests.
+```text
+<AI_FOUNDRY_PROJECT_ENDPOINT>/toolboxes/<KNOWLEDGE_BASE_NAME>/mcp?api-version=v1
+```
+
+The native runtime consumes that derived endpoint, not the connection ID as a
+direct model MCP tool. The Hosted identity has Foundry User access at the exact
+project scope. The project identity retains scoped Search access, separately
+from the UI's Foundry caller grant and ingestion's Blob access.
+The direct Search connection remains separate. These service grants do not
+replace user authorization for a protected source.
 
 <span id="3-configure-application-consumption"></span>
 <span id="3-configure-agent-application-consumption"></span>
@@ -117,10 +124,11 @@ from settings used by the separately available direct connector:
 
 | Setting | Consumer and meaning |
 | --- | --- |
-| `FOUNDRY_IQ_ENABLED` | Native runtime: enables MCP tool registration; structural, requires redeployment. |
-| `KNOWLEDGE_BASE_CONNECTION_ID` | Native runtime: actual compatible MCP project connection ID, not merely the generated Search connection. |
+| `FOUNDRY_IQ_ENABLED` | Native runtime: enables managed Toolbox retrieval, structural, requires redeployment. |
+| `TOOLBOX_ENDPOINT` | Native runtime: platform-derived project Toolbox endpoint, published under `agent-lz`, not an additional authentication selector. |
+| `KNOWLEDGE_BASE_CONNECTION_ID` | Provisioning: compatible project `RemoteTool` connection used to register the knowledge-base tool in the Toolbox. |
 | `RETRIEVAL_BACKEND` | Provisioning: `foundry_iq` selects knowledge-base setup. The direct connector also reads this selector; native tool composition does not. |
-| `RETRIEVAL_AUTH_MODE` | Application authorization policy; setting `native_search` alone does not implement source delegation for a native MCP connection. |
+| `RETRIEVAL_AUTH_MODE` | Platform-derived `native_search` contract in both profiles. Managed Toolbox integration, consent and source permissions establish downstream authorization. |
 | `KNOWLEDGE_BASE_ENDPOINT` | Direct connector: Search service root, such as `https://<service>.search.windows.net`, not a Foundry project or retrieve URL. |
 | `KNOWLEDGE_BASE_NAME` | Provisioning/direct connector: knowledge-base object name, not an index name. Native configuration also loads the name. |
 | `FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME` | Primary registered source name. |
@@ -149,7 +157,7 @@ For an existing populated index, set the mapped deployment inputs
 `FOUNDRY_IQ_SEARCH_INDEX_NAME` to that index. Confirm schema, semantic
 configuration, embeddings and ACL metadata before registering it.
 
-### 2. Provision sources, then configure the native connection
+### 2. Provision sources and the managed Toolbox
 
 1. Run the selected guide's `azd provision` procedure after source inputs and
    grants are ready.
@@ -159,11 +167,14 @@ configuration, embeddings and ACL metadata before registering it.
 Source setup is not a runtime refresh operation. Provisioning reconciles
 platform-owned names and can overwrite manual edits.
 
-Follow Microsoft's [native connection procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect)
-to create the compatible `RemoteTool` project connection. Configure the
-source's required user authorization there or implement the missing
-application identity integration. A project connection or service role must
-not turn a user-protected corpus into application-wide access.
+Review the generated project `RemoteTool` binding against Microsoft's
+[native connection procedure](https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect)
+and verify its MCP target, authentication and scoped project identity grants.
+Confirm the post-provision step creates and promotes the knowledge-base
+Toolbox version after successful Search setup.
+A project connection or service role must not turn a user-protected corpus into
+application-wide access. A source-validation failure blocks application
+deployment, even if some settings have already been published.
 
 ### 3. Enable the capability and publish the application
 
@@ -177,35 +188,43 @@ entries and all other required settings:
 ```
 
 There is no declared `azd env set FOUNDRY_IQ_ENABLED` mapping.
-Run `azd provision` again to publish the capability declaration. This can
-restore the generated Search connection ID. After that provision, configure
-`KNOWLEDGE_BASE_CONNECTION_ID` under `agent-lz` to the actual compatible
-MCP connection using the [nonsecret-key procedure](application-settings.md#edit-an-existing-nonsecret-key).
-
-This is an explicit application-owned binding override; later provisioning
-can restore the generated Search ID. Recheck it after every provision.
+Run `azd provision` again to publish the capability declaration and native
+Toolbox binding. Verify `TOOLBOX_ENDPOINT` under `agent-lz`
+identifies that project's knowledge-base Toolbox, not a direct Search endpoint.
+Keep reviewed overrides aligned with their provisioning owner rather than
+relying on a manual key edit that a later provision can overwrite.
 
 Deploy/redeploy the affected native publication after the binding is ready.
 Capability composition is structural: a provider refresh is not enough to
-enable it. Confirm the effective ID, a real tool invocation and the
+enable it. Confirm the effective endpoint, a real tool invocation and the
 allow/deny cases below. A successful deployment is not proof of grounding.
 
 <span id="delegated-native-retrieval"></span>
 
 ## User authorization boundaries
 
-Protected retrieval requires a source-compatible user credential, separately
-from workload authentication. The native UI delegates to the Hosted
-Responses endpoint; the native runtime forwards a trusted Foundry call ID.
-It does not invoke the direct connector or forward that connector's
-`x-client-search-token`/Work IQ assertion headers. Do not assume those headers
-are wired into the native MCP tool.
+Protected retrieval requires source-compatible user authorization, separately
+from workload authentication. The official MAF `FoundryToolbox` integration
+forwards the current trusted Hosted call ID so that Foundry can resolve the
+user context and manage downstream knowledge-base authorization.
+Foundry supplies the appropriate Search user credential outside the agent
+container. The application does not implement a second OBO/token-forwarding
+protocol or put tokens in model inputs.
 
-For an application explicitly integrating the direct connector, a delegated
-Search token is sent raw as `x-ms-query-source-authorization`; the connector's
-workload credential authenticates Search transport only. That recipe needs
-trusted credential acquisition/forwarding and invocation wiring, not credentials
-as model arguments. See [Sign-in & access](application-auth.md).
+The call ID alone is not authorization. Missing context, denied source access
+or required consent must produce an explicit failure, never an app-only retry
+against protected data. The mode without OBO uses service credentials for sources
+that accept them. It does not impose a Blob-only allowlist, and a source requiring
+user delegation must fail explicitly. See [Sign-in & access](application-auth.md).
+
+The UI reports managed `oauth_consent_request` outcomes as an explicit
+`401 consent_required`, with instructions to complete the approved Foundry
+consent process and retry. It does not open returned consent links or
+automatically resume the failed request. Failed tool calls are not accepted
+as successful answers.
+In service mode, consent requests return `403 user_delegation_required`.
+Other retrieval failures return a safe `tool_failed` error with service-permission
+and OBO guidance, without automatically acquiring another credential.
 
 Native permission filtering is enabled for the application index's user,
 group and RBAC scope fields. Indexing must populate the appropriate metadata.
@@ -238,6 +257,13 @@ ingestion permission metadata. Omission or an actual null value retains the prot
 `["rbacScope"]`. An explicit JSON empty array, `[]`, is an opt-in for a
 deliberately shared source **when native Blob ingestion is active**.
 An empty array is distinct from an omitted setting.
+
+The explicit [mode without OBO](application-auth.md#choose-user-delegation)
+does not require `[]` or restrict source types. Source metadata and the
+connection's scoped service grants remain independent. Selecting
+`service_identity` must not clear existing permission metadata or silently
+drop sources. If a source requires user delegation, its runtime operation fails
+without retrying with another identity.
 
 For active native Blob ingestion, the shared-source empty list is accepted
 with `RETRIEVAL_BACKEND=foundry_iq`, `FOUNDRY_IQ_PATTERN=azureBlob`,
