@@ -10,8 +10,8 @@
 
 Deploy the Azure infrastructure and the Agent Application with its default
 selection: `ORCHESTRATION_HOST=hosted` and `APPLICATION_MODE=conversational`.
-Foundry hosts execution, Agent App UI is included in Container Apps, and
-Foundry IQ prepares the selected native source. Native Hosted
+Foundry hosts execution and Agent App UI is included in Container Apps.
+Foundry IQ prepares a native source when that retrieval path is selected. Native Hosted
 execution does not require application Cosmos DB; selected UI product metadata
 and Foundry backing resources have their own storage requirements.
 History, feedback and private attachments default to off independently.
@@ -28,8 +28,9 @@ configuration and deployment are shared.
 
 ## Expected outcome
 
-Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
-orchestrator and native Foundry IQ ingestion and retrieval.
+Your Agent Application deployed with a Container Apps UI and a Foundry-hosted
+orchestrator. Document retrieval, SQL tools and product features are separate
+selections, not capabilities proved by the initial greeting.
 
 <div class="runbook-diagram" markdown="1">
 
@@ -40,8 +41,8 @@ orchestrator and native Foundry IQ ingestion and retrieval.
 1. **Application resource group:** Agent App UI runs in Container Apps,
    alongside Container Registry, App Configuration and Key Vault.
 2. **Foundry resource group:** the UI calls the hosted orchestrator over HTTPS.
-   The orchestrator uses the Foundry IQ knowledge base, with native ingestion
-   from the Blob source.
+   When selected, the orchestrator uses the Foundry IQ knowledge base, with
+   native ingestion from the Blob source.
 3. **Network resource group:** the illustrated private layout uses the workload
    VNet, private DNS and private endpoints. Bastion or jumpbox operator access
    is optional.
@@ -269,7 +270,8 @@ Review [Agent hosting](hosted-agents.md) before changing an existing layout.
 
 #### Ingestion and custom applications
 
-Use native Foundry IQ ingestion for the configured Blob source. Keep its
+When selecting shared-document retrieval, use native Foundry IQ ingestion for
+the configured Blob source. Keep its
 protected source policy; source ingestion does not prove user-authorized
 retrieval works. Review [Ingestion](ingestion.md) if custom source processing is required.
 Private attachments have their own feature gate and file path; enabling
@@ -285,6 +287,10 @@ One environment binds to one application ID.
 
 To query approved Azure SQL or SQL Server data, select
 **[Agent App MCP Server](agent-app-mcp.md)** before provision:
+
+First select the [coordinated MCP platform source](agent-app-mcp.md#use-the-coordinated-platform-source).
+The MCP component release alone does not add this integration to a checkout
+whose application definition does not include it.
 
 ```bash
 azd env set DEPLOY_AGENT_APP_MCP true
@@ -375,14 +381,30 @@ firewall, give the generated report to its owner to arrange the required access.
 
 #### Provision and deploy the selected native application
 
-For a new environment, run these commands in order:
+For a new environment, first provision:
 
 ```bash
 azd provision
+```
+
+**Before deploying the application**, complete steps 3-5 of
+[login setup](application-auth.md#3-register-the-final-https-callback) using
+the frontend URL from provision outputs: register the exact callback, store
+the credentials as Key Vault references, publish UI settings and configure
+admission. Grant agent-scoped invocation access after the first agent
+publication when that scope does not exist yet, before pilot acceptance.
+The platform's Azure deployment does not complete tenant consent or UI login
+configuration for you.
+
+Then deploy from the same platform root and selected environment:
+
+```bash
 azd deploy
 ```
 
-Alternatively, run `azd up` to perform both stages in one command.
+Use `azd up` to combine both stages only when the required callback,
+credentials and login configuration are already prepared for the intended
+endpoint. It does not replace the identity setup above.
 These commands work on Windows, Linux and macOS. The normal deployment runs
 its configuration checks automatically; no manual preparation command is needed.
 
@@ -440,7 +462,8 @@ preview confirms that private application connections work.
 
 </details>
 
-For an initial deployment, continue to [Validation](#validation) now.
+For an initial deployment, continue to [Validation](#validation) now, then
+follow [first use](application.md#first-time-using-agent-application).
 Use the maintenance procedures below only for a later operational change.
 
 ### Lifecycle preparation

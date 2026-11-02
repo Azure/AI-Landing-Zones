@@ -15,6 +15,12 @@ The default platform topology supplies `RETRIEVAL_BACKEND=foundry_iq`.
 Read back the effective relevant settings; do not rely on an unknown value
 falling back to another backend or silently changing source authorization.
 
+Choosing a retrieval backend is not enabling its native tool. The native
+capability flags default to off. Follow [Tools & MCP](agent-tools.md) and the
+[native application settings](application-settings.md#native-application-contract)
+to select the capability with its required bindings, then verify a real
+source-backed answer and a denied-user case.
+
 `ai_search` queries the configured index directly. `foundry_iq` calls a
 knowledge base and combines its configured sources. The selector applies to
 the application's registered knowledge-search capability, usable by an Agent

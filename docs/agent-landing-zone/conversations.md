@@ -5,6 +5,23 @@ Native execution state and user-facing saved history have separate owners.
 Private attachments are an independently selected optional capability.
 `ENABLE_PRIVATE_ATTACHMENTS` defaults to `false`.
 
+## Start the first conversation
+
+After the operator completes [application access](application-auth.md), open
+the frontend HTTPS URL from deployment outputs using the required network
+connection. Sign in with an admitted account and start a conversation in the
+chat experience. Send a simple greeting and check that a real response arrives.
+
+Then test a follow-up that depends on the preceding turn. This checks context
+within that session. It does not prove that the UI can list or reopen saved
+conversations after a restart.
+
+Ask questions about documents or SQL only after those sources and their
+capabilities are configured. The application cannot infer your data sources
+from a greeting or from an empty deployed catalog.
+For a named process rather than chat, use
+[Workflows & human input](workflows.md).
+
 ## Context during a chat
 
 A conversational MAF Agent uses the selected host's native session state:

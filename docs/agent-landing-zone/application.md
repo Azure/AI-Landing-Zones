@@ -10,6 +10,42 @@ conversation or a Workflow for a published process with human input.
 Start with [Deploy full stack](deploy-full-stack.md) to deploy the application.
 The guides below explain how to configure, operate and extend it.
 
+## First time using Agent Application?
+
+Start with ordinary authenticated chat. Add data sources and other capabilities
+after that baseline works.
+
+| Order | Your next step | What to verify before continuing |
+| --- | --- | --- |
+| 1. Prepare | Review the full-stack [prerequisites](deploy-full-stack.md#prerequisites), budget, region, permissions and network | You have a deployment host, supported models and both Azure and Entra administrators where required |
+| 2. Install | Follow the full-stack guide for [Bicep](deploy-full-stack.md) or [Terraform](deploy-terraform-full-stack.md), not both | The selected infrastructure and real application images are deployed |
+| 3. Complete sign-in | Follow [login setup in order](application-auth.md#configure-login-in-order), including the post-provision callback and user grants | Your pilot user can sign in and invoke the agent, an unapproved user is denied |
+| 4. Start a conversation | Open the frontend HTTPS URL from deployment outputs, sign in and send a simple greeting | The application receives a real model response |
+| 5. Add a capability | Select a route in the table below and complete its source/identity setup | The capability works with permitted data and rejects denied access |
+| 6. Operate | Set retention, review [monitoring](application-monitoring.md) and follow [updates and recovery](deployment-operations.md) | Owners know how to diagnose failures and apply controlled changes |
+
+Provisioning and login setup are interleaved: register the UI application and
+arrange consent **before provision**, then configure its actual callback,
+secrets and admission **after provision and before deploy**.
+The deployment guide marks that handoff explicitly.
+
+The first greeting proves model connectivity, not document retrieval, SQL
+readiness, saved history or workflow recovery. The default application does
+not automatically know your organization's documents or databases.
+
+### Choose what to add next
+
+| You want to | Follow | Important distinction |
+| --- | --- | --- |
+| Ask about shared documents | [Foundry IQ](foundry-iq.md) and [source ingestion](ingestion.md) | Connect and authorize a source, enable its retrieval capability and check document allow/deny behavior |
+| Ask about approved SQL data | [Agent App MCP Server](agent-app-mcp.md) and [NL2SQL walkthrough](nl2sql.md) | A separate optional server, read-only SQL access and an approved metadata import, not a document-ingestion job |
+| Run a process with human review | [Workflows & human input](workflows.md) | Select `workflow` or `both`, publish the process and test both approval and rejection |
+| Reopen saved conversations | [Conversations & files](conversations.md) | Native execution persistence is not the same as enabled UI history discovery |
+| Collect ratings | [User feedback](user-feedback.md) | Feedback is independently enabled and has its own metadata and access requirements |
+| Add private files to a conversation | [Private attachments](conversations.md#private-attachments) | Independently enabled, conversational only, bounded formats/sizes, not shared knowledge publication |
+| Customize document processing | [Agent App Ingestion](ingestion.md#3-custom-ingestion-only-when-needed) | Deploy it only for a processing path that needs it |
+| Add another channel or your own code | [Chat & channels](#chat-channels) and [Bring your own app](build-your-own-app.md) | Each integration has its own identity, deployment and acceptance requirements |
+
 ## How the components fit together
 
 ![Agent Application overview: the UI connects to native MAF agents and workflows on one selected execution host, with separate conditional UI metadata and optional retrieval tools and source ingestion.](../media/agent-application-overview.svg)

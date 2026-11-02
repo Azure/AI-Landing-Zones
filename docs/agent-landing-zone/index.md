@@ -62,6 +62,10 @@ The deployment guides provide the supported sequence and its checks.
 
 ## Where do I start?
 
+- **Is this my first installation?** Follow the
+  [new-user application route](application.md#first-time-using-agent-application)
+  from deployment and sign-in to the first conversation, then add only the
+  optional capabilities you need.
 - **What does the template do?** [How the template works](#how-the-template-works)
   explains resource provisioning and application deployment.
 - **What needs planning?** [Deployment choices](planning.md) covers resources,

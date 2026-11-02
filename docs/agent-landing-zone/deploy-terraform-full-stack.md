@@ -5,7 +5,8 @@
 Provision the Azure foundation with Terraform and deploy the Agent Application
 through the shared azd lifecycle. Defaults are `ORCHESTRATION_HOST=hosted`
 and `APPLICATION_MODE=conversational`: Foundry-hosted execution, an automatically
-included Container Apps UI and the selected native Foundry IQ source.
+included Container Apps UI. Foundry IQ sources and retrieval are configured
+when selected, not proved by the initial greeting.
 History, feedback and private attachments independently default to off.
 Workflow or `both` always selects UI metadata. Native Hosted execution does
 not require application Cosmos DB; enabled UI product metadata declares its
@@ -99,6 +100,9 @@ official Durable Extension worker/client and provisioned DTS binding.
 Do not treat every canonical runtime key as an implied `azd env` input.
 
 For optional SQL tools, set `DEPLOY_AGENT_APP_MCP=true` before provision.
+Use the [coordinated MCP platform source](agent-app-mcp.md#use-the-coordinated-platform-source)
+and its complete manifest/application definition, not an isolated component
+version change in another checkout.
 The default is `false`. Terraform provisions the separate MCP Container App,
 its identity and application Cosmos dependency with the same policies and
 scoped access contract as Bicep. The shared lifecycle generates the consuming
@@ -122,6 +126,12 @@ infrastructure-only guide with the same component selection and requirements.
 Adding MCP to an existing compatible installation requires a reviewed
 `azd provision` followed by `azd deploy`.
 
+Before Step 4, complete the [post-provision login setup](application-auth.md#3-register-the-final-https-callback):
+register the actual UI callback, store Key Vault credential references and
+publish sign-in/admission settings. The Azure foundation does not grant tenant
+consent. Complete agent-scoped invocation grants after publication if that
+scope is not available yet, before user acceptance.
+
 <a id="deploy-the-application"></a>
 
 ### Step 4: Deploy the application
@@ -132,8 +142,9 @@ For an already configured foundation:
 azd deploy
 ```
 
-For a new deployment, `azd up` is an alternative to Steps 3 and 4: it performs
-both stages after the same preparation.
+`azd up` is an alternative to Steps 3 and 4 only when login configuration is
+already prepared for the intended endpoint. Otherwise keep the separate
+stages so that the post-provision identity work happens before deploy.
 
 Provisioning does not build application images or create the running hosted
 agent version. Deploy fetches manifest-pinned sources, prepares the immutable

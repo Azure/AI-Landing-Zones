@@ -72,6 +72,23 @@ Runtime identities do not need those directory administration rights.
 The public selector is `DEPLOY_AGENT_APP_MCP`, default `false`. It selects the
 server, not the Agent's host or application mode.
 
+### Use the coordinated platform source
+
+The MCP-enabled full-stack integration is available on the platform's
+`develop` branch. Use that checkout and its complete `manifest.json` and
+application definition together:
+
+```bash
+git clone --branch develop https://github.com/Azure/agent-landing-zone.git
+cd agent-landing-zone
+```
+
+The MCP component has its own release, but installing that component alone
+does not add the foundation selector, caller authorization or consumer
+integration to another platform checkout. Do not copy only its version into
+an unrelated manifest. For an existing installation, review and approve the
+complete platform update before changing its selected source.
+
 ### Fresh application
 
 Follow the full-stack guide's target, identity, model and network preparation
@@ -81,13 +98,15 @@ Before first provision, from the platform root:
 
 ```bash
 azd env set DEPLOY_AGENT_APP_MCP true
-azd up
+azd provision
 ```
 
-`azd up` runs provisioning and application deployment. Provisioning creates or
-reuses dependencies and prepares their configuration; deployment builds and
-deploys the selected images and publishes the consuming application.
-SQL onboarding is a separate step, described below.
+After provision, complete the full-stack guide's UI callback, credentials and
+admission setup, then run `azd deploy` from the same platform root.
+Provisioning creates or reuses dependencies and prepares their configuration.
+Deployment builds the selected images and publishes the consuming application.
+Use `azd up` to combine both stages only when the required login configuration
+is already prepared. SQL onboarding is a separate step, described below.
 
 ### Add to an existing installation
 
