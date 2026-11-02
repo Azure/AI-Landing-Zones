@@ -348,9 +348,10 @@ connector.
 
 ### Step 3: Enable the source-IP-filtered public Activity route
 
-Run the block below to enable the **public HTTPS Activity exception**, apply the Bot
-Service authorization scheme for your chosen audience and send traffic to the
-tested agent version. The block reads the current configuration so it can
+Run the block below to enable the **public HTTPS Activity exception**.
+The block also applies the Bot Service authorization scheme for your chosen
+audience. It sends traffic to the tested agent version.
+The block reads the current configuration so it can
 preserve the existing protocols and non-Bot authorization schemes. It also
 checks for Foundry's default `Entra` authorization. If you changed that
 configuration, review the

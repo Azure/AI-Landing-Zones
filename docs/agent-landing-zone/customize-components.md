@@ -92,10 +92,12 @@ from an MCP knowledge source consulted by Foundry IQ.
 - For SQL, keep a read-only database principal as the primary security boundary.
   Generated-SQL validation is not a substitute for database permissions.
   SQL generation, catalog retrieval and execution belong in Agent App MCP
-  Server. Keep its reviewed modules, typed schemas, scoped permissions,
+  Server.
+
+  Keep its reviewed modules, typed schemas, scoped permissions,
   dependencies and tests aligned with explicit module registration.
   `MCP_TOOLSETS=[]` registers zero tools and initializes no NL2SQL
-  dependencies; `["nl2sql"]` selects the two supplied SQL tools at startup.
+  dependencies. `["nl2sql"]` selects the two supplied SQL tools at startup.
   Unknown/duplicate/invalid selections fail closed. Changes require
   restart/redeployment.
 

@@ -88,9 +88,9 @@ The existing session-signing secret stays protected.
    [full-stack deployment](deploy-full-stack.md), then verify
    [application access](application-auth.md) with an admitted user.
 2. The portal developer and Entra administrator register the portal's own
-   redirect URI under its **App registration > Authentication**, add the
+   redirect URI under its **App registration > Authentication**. They add the
    UI API's delegated `user_impersonation` permission under **API permissions**,
-   and complete required tenant consent.
+   then complete required tenant consent.
 
 3. The configuration operator publishes the table's nonsecret values in
    **App Configuration > Configuration explorer > Create > Key-value**, label
@@ -105,9 +105,10 @@ Data Owner for these writes; see
 [edit an existing nonsecret key](application-settings.md#edit-an-existing-nonsecret-key).
 
 4. Restart/redeploy the **frontend Container App** after the write, then open
-   a new browser session. Its operator must enforce the
-   single-process/revision/replica requirements below before the portal developer
-   adds bootstrap and mounts the widget. No hosted-agent republication is needed
+   a new browser session. The frontend operator must enforce the
+   single-process/revision/replica requirements below.
+   Only then can the portal developer add bootstrap and mount the widget.
+   No hosted-agent republication is needed
    for an embedding-only change.
 
 ### Session settings

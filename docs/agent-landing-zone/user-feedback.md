@@ -77,8 +77,9 @@ it does not give users or the native runtime a metadata grant.
 
 3. Run `azd deploy` only after provision and grants succeed.
 
-The UI chooses its metadata backend at startup, so a flag write alone cannot switch a running
-volatile owner map to Cosmos. Reopen/sign in to chat after deployment and use
+The UI chooses its metadata backend at startup.
+A flag write alone cannot switch a running volatile owner map to Cosmos.
+Reopen/sign in to chat after deployment and use
 a new harmless conversation for acceptance. Existing volatile mappings are
 not recovered or migrated by enabling feedback.
 

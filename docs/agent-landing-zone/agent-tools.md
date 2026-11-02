@@ -18,8 +18,9 @@ the running application.
 <div class="runbook-diagram__summary" markdown="1">
 
 **The application supplies the agent's tools explicitly.** Foundry integrations
-provide an Azure AI Search tool and a Foundry IQ tool through its own project
-connection. Application integrations provide the multimodal retrieval function
+provide an Azure AI Search tool and a Foundry IQ tool.
+Each tool uses its own project connection.
+Application integrations provide the multimodal retrieval function
 and selected tools discovered from an MCP server, such as the NL2SQL toolset.
 Each integration needs its own configuration and authorization.
 

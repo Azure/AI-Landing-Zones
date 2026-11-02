@@ -66,9 +66,10 @@ Private Azure resources still need permitted access to Microsoft 365 and Entra.
 Initialize the environment through the [full-stack deployment guide](deploy-full-stack.md).
 Enable Work IQ billing and assign pilot users. Follow the
 [official Entra authentication procedure](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq#set-up-microsoft-entra-authentication)
-for a customer-owned application exposing `access_as_user`, delegated
-`WorkIQAgent.Ask` permission, administrator consent and a federated credential
-trusting Search's managed identity.
+for a customer-owned application exposing `access_as_user`.
+The application needs delegated `WorkIQAgent.Ask` permission and administrator
+consent. The application also needs a federated credential trusting Search's
+managed identity.
 
 Record the application's client ID and the federated credential's **object
 ID**. Neither is the Search principal ID. Creating the source does not create

@@ -97,7 +97,7 @@ in the catalog.
 ### 2. Prepare the database and owner-approved metadata
 
 Start with the [MCP deployment and onboarding steps](agent-app-mcp.md#onboard-sql-before-inviting-users).
-The operator approves the datasource and metadata; the platform supplies the
+The operator approves the datasource and metadata. The platform supplies the
 Container App, identity, Cosmos policies, scoped grants and connection settings.
 Provisioning alone does not make a datasource ready.
 

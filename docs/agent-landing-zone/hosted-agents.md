@@ -238,9 +238,9 @@ metadata store. An administrative panel is not a prerequisite for native
 conversation or workflow persistence.
 
 History, feedback and private attachments default to off. Workflow mode,
-`both` or any enabled product flag selects UI metadata in `native-ui-metadata`,
-partition key `/principal_id` with owner `tid:oid`; only the frontend receives
-its metadata grant.
+`both` or any enabled product flag selects UI metadata.
+The container is `native-ui-metadata`, with partition key `/principal_id`
+and owner `tid:oid`. Only the frontend receives its metadata grant.
 
 Records contain descriptors/references, not bytes,
 transcripts or tokens. With conversational mode and all product flags off,

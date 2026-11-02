@@ -207,9 +207,10 @@ not a switch to enable in an otherwise undeployed application. Use the
 compatible ingestion component from your platform release.
 
 Before enabling jobs, confirm the ingestion application's identity can read
-App Configuration and Cosmos DB, retrieve secrets from Key Vault, write to the
-target Search index and job-log storage, and call the configured embedding and
-document-analysis services.
+App Configuration and Cosmos DB.
+Confirm it can retrieve secrets from Key Vault and write to the target Search
+index and job-log storage.
+Also confirm it can call the configured embedding and document-analysis services.
 
 Confirm network access from the Container App to
 those resources, Entra ID and Microsoft Graph. Azure resource access uses the
@@ -665,9 +666,10 @@ and its permissions.
 ### Permission synchronization
 
 Each custom SharePoint indexing run reads current permissions independently of
-content modification timestamps. It compares the stored user and group ACLs on
-every indexed document for each selected item, including all document-library
-chunks and previously indexed file names. Changed ACLs are replaced, so
+content modification timestamps. Each run compares the stored user and group
+ACLs on every indexed document for each selected item.
+This includes all document-library chunks and previously indexed file names.
+Changed ACLs are replaced, so
 revocations remove stale principals. A successful empty permission result clears
 the stored principal lists.
 

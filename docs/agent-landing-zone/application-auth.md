@@ -262,9 +262,10 @@ Supported functional runtime parameters use App Configuration refresh and
 per-run snapshots. Structural host, graph, identity or publication changes
 require a compatible new publication; they are not live parameter updates.
 
-Verify in order: signed-out chat is denied; an admitted test user completes
-sign-in and returns to the exact callback; that user can invoke the intended
-agent through OBO; and a user outside the admission lists is denied.
+First, verify that signed-out chat is denied. Then sign in as an admitted
+test user and confirm the return to the exact callback.
+Verify that the same user can invoke the intended agent through OBO.
+Finally, confirm that a user outside the admission lists is denied.
 Use sanitized status/correlation information, not raw tokens.
 
 **Login and invocation are not protected retrieval.** Complete the identity
@@ -288,9 +289,10 @@ describes downstream consent.
 Neither mode alone establishes authorization inside the hosted container.
 
 With `RETRIEVAL_AUTH_MODE=native_search`, the supplied UI performs a separate
-OBO exchange for `https://search.azure.com/.default` from the same authenticated
-UI assertion used for the Foundry exchange. Foundry forwards the resulting
-`x-client-search-token` to the selected native Hosted publication. The connector supplies that
+OBO exchange for `https://search.azure.com/.default`.
+It uses the same authenticated UI assertion as the Foundry exchange.
+Foundry forwards the resulting `x-client-search-token` to the selected native
+Hosted publication. The connector supplies that
 raw token in `x-ms-query-source-authorization`, separately from its workload
 authentication to Search. It does not exchange the Search token again.
 

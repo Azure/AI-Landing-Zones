@@ -261,8 +261,8 @@ Keep `.chainlit/`, `public/`, `chainlit.config.yaml`, `chainlit.md`, and
 uses its adjacent assets. For an installed package staged elsewhere, set
 `CHAINLIT_APP_ROOT` to that root or start there. A wheel contains code, not a
 self-contained deployed UI. Do not write assets into `site-packages`.
-Missing `VERSION` is optional and a missing `.chainlit/config.toml` produces
-a warning.
+The `VERSION` file is optional.
+A missing `.chainlit/config.toml` produces a warning.
 
 A missing or disconnected App Configuration provider produces an HTTP `503`
 not-ready app. Private attachments require their explicitly selected file

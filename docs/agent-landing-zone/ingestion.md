@@ -183,8 +183,9 @@ into Search. Permission synchronization and query-time enforcement still need
 validation.
 
 Every selected item's supported ACLs are reconciled on each
-SharePoint index run, even when content is unchanged, without re-downloading or
-embedding that content. Grants and revocations replace stored permissions on
+SharePoint index run, even when content is unchanged.
+Unchanged content is not re-downloaded or embedded.
+Grants and revocations replace stored permissions on
 all affected documents and chunks. See
 [SharePoint permission synchronization](sharepoint.md#permission-synchronization)
 for scheduling, filter boundaries, inherited-permission support and recovery.

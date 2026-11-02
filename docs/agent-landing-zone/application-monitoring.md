@@ -181,8 +181,8 @@ results as well as [job status](ingestion-jobs.md).
 `INGESTION_PROVENANCE_ENABLED` defaults to `false`. Enable it to add optional
 provenance to indexed/deleted events.
 `INGESTION_REQUIRE_GOVERNANCE_METADATA=true` also requires provenance or startup
-fails. It reports classification and right-to-use only when explicitly supplied,
-it does not reject indexing merely because they are absent.
+fails. It reports classification and right-to-use only when explicitly supplied.
+It does not reject indexing merely because they are absent.
 
 Without strict metadata reporting, defaults are
 `INGESTION_DEFAULT_CLASSIFICATION=unclassified` and

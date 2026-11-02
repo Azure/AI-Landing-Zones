@@ -34,9 +34,10 @@ This path uses `RETRIEVAL_BACKEND=foundry_iq`,
 and `FOUNDRY_IQ_CONTENT_EXTRACTION_MODE=standard`.
 Agent App Ingestion is not required.
 
-The provisioning template sets `disableImageVerbalization=false`, but only
-supplies `chatCompletionModel` for its supported Content Understanding model
+The provisioning template sets `disableImageVerbalization=false`.
+It supplies `chatCompletionModel` only for its supported Content Understanding model
 names. `gpt-4.1` is supported. The default `gpt-5-nano` is not in that allowlist.
+
 The flag alone therefore does **not** establish working image verbalization
 in a fresh deployment. Standard extraction also requires a compatible region,
 Foundry AI Services endpoint and embedding deployment.

@@ -335,9 +335,9 @@ Configure user consent and document authorization separately, preserving
 [Foundry IQ source permissions](foundry-iq.md).
 
 Container App profiles reconcile during post-provisioning. Hosted image pull
-uses the existing Foundry **project** managed identity. After deployment verifies
-the routed agent version and **instance** identity, it reconciles that instance's
-declared profiles before greeting smoke. Agent Application orchestrator grants are not
+uses the existing Foundry **project** managed identity. Deployment first verifies
+the routed agent version and **instance** identity. It then reconciles that instance's
+declared profiles before the greeting smoke check. Agent Application orchestrator grants are not
 substituted; denied or ambiguous assignments fail deployment.
 
 Key Vault targeting and scope resolution follow the

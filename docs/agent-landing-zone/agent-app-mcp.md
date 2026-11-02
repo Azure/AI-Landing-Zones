@@ -146,10 +146,11 @@ restart/redeploy after a change; there is no hot reload.
 
 ## Operate the server
 
-Use the normal root `azd deploy` lifecycle. It deploys the server image, resolves
-actual callers, grants `MCP.Invoke`, publishes the allowlist and connection,
-restarts every active MCP revision to load startup-only authentication settings,
-and verifies authenticated discovery before activating consumers.
+Use the normal root `azd deploy` lifecycle. It deploys the server image and
+resolves actual callers. It grants `MCP.Invoke` and publishes the allowlist
+and connection. It restarts every active MCP revision to load startup-only
+authentication settings. It then verifies authenticated discovery before
+activating consumers.
 
 Check `/healthz` for liveness and authenticated discovery for the selected tool
 list. Test denied callers as well. A healthy process alone does not establish

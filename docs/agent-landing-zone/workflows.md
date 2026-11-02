@@ -170,10 +170,12 @@ See [Sign-in & access](application-auth.md).
 | Availability | Published workflow and its service dependencies | Worker availability, scheduler connectivity and dependency access |
 | UI progress | Selected Hosted protocol | Durable process progress; not a promise of per-token streaming |
 
-The product metadata store keeps owner maps, display information and feedback,
-with `/principal_id` set to `tid:oid`; it contains no transcripts, file bytes
+The product metadata store keeps owner maps, display information and feedback.
+Its `/principal_id` value is `tid:oid`. It contains no transcripts, file bytes
 or tokens. Workflow mode and `both` select it even when history and feedback
-are off. It is not a second copy of execution checkpoints. Redis is not required to imitate
+are off.
+
+It is not a second copy of execution checkpoints. Redis is not required to imitate
 Hosted streaming. No ALZ queue, scheduler or custom workflow-state engine is
 introduced.
 

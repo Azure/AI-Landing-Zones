@@ -54,8 +54,8 @@ values. [Agents & prompts](agent-strategies.md) describes application selection
 independently of the host and its tools.
 
 The NL2SQL tools on Agent App MCP Server store approved SQL metadata and vectors
-in application Cosmos. This toolset does not require Search; enabling the server does not enable Foundry IQ
-or alter this knowledge base's sources.
+in application Cosmos. This toolset does not require Search.
+Enabling the server does not enable Foundry IQ or alter this knowledge base's sources.
 
 <span id="before-you-start"></span>
 <span id="1-choose-who-manages-the-source"></span>

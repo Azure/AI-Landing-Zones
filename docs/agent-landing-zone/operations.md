@@ -97,10 +97,11 @@ to select the supported administration operations.
 
 ### Operator overview and curation
 
-In a component-managed integration, operator readiness requires the selected
-administrative surface, `PANEL_OPERATOR_SURFACES_ENABLED`, an explicit
-`PANEL_OPERATOR_APP_ROLE` or `PANEL_OPERATOR_GROUP_ID`, and the securely resolved
-`DATA_INGEST_APP_APIKEY` cursor-signing secret before routes are exposed.
+Before exposing operator routes, a component-managed integration requires the
+selected administrative surface and `PANEL_OPERATOR_SURFACES_ENABLED`.
+The integration also requires an explicit `PANEL_OPERATOR_APP_ROLE` or
+`PANEL_OPERATOR_GROUP_ID`.
+The `DATA_INGEST_APP_APIKEY` cursor-signing secret must be securely resolved.
 These are component contracts, not an activation recipe for the reference
 platform: its configuration ownership fixes operator surfaces to `false`.
 

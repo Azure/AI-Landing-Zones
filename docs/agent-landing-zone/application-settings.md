@@ -261,7 +261,7 @@ separate source and vector-metadata containers. An empty Agent App MCP server
 does not require that catalog or NL2SQL model/secret access.
 
 The MCP identity receives declared catalog/model access and SQL-owner-approved
-read access only for NL2SQL; the orchestrator receives MCP invocation access only.
+read access only for NL2SQL. The orchestrator receives MCP invocation access only.
 Generic application Cosmos and custom Cosmos capabilities remain independent
 of MCP selection. See [Application Cosmos DB](configuration.md#application-cosmos-db).
 
