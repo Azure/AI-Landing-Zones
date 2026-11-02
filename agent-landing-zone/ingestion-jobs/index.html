@@ -5610,11 +5610,12 @@ over the same corpus. Do not infer cross-replica serialization from <code>409</c
 <p>Manual runs and configuration mutations require the exact <code>Admin</code> role when
 Entra is configured. Classic development without a configured tenant has an
 open development gate. Administrative reads and the file-unblock route do not
-have that same unconditional gate. Restrict access to the administrative
+have that same unconditional gate.</p>
+<p>Restrict access to the administrative
 surface through the deployment's network and access controls rather than
 exposing it publicly. Hosted mode without
-the administrative panel does not mount these routes, although jobs still run.
-<a href="../operations/">Administration</a> describes the dashboard and mode-specific
+the administrative panel does not mount these routes, although jobs still run.</p>
+<p><a href="../operations/">Administration</a> describes the dashboard and mode-specific
 availability. <a href="../application-auth/">Application authentication</a> covers access.
 <a href="../application-api/">API reference</a> supplies request and response schemas.</p>
 <h2 id="index-purge-and-cleanup-effects">Index, purge and cleanup effects</h2>

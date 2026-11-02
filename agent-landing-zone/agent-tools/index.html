@@ -5568,10 +5568,11 @@ the running application.</p>
 <p>Native capabilities are <strong>off by default</strong>: <code>SEARCH_RETRIEVAL_ENABLED</code>,
 <code>FOUNDRY_IQ_ENABLED</code>, <code>MCP_ENABLED</code> and
 <code>MULTIMODAL_ENABLED</code>. Select only the capabilities whose source, identity,
-network and tool contracts are configured. The multimodal tool flag is
+network and tool contracts are configured.</p>
+<p>The multimodal tool flag is
 different from custom ingestion <code>MULTIMODAL</code> and inline private attachments.
-See <a href="../application-settings/#native-application-contract">Application settings</a>.
-For the integrated server, select <code>DEPLOY_AGENT_APP_MCP=true</code> before provision.
+See <a href="../application-settings/#native-application-contract">Application settings</a>.</p>
+<p>For the integrated server, select <code>DEPLOY_AGENT_APP_MCP=true</code> before provision.
 The lifecycle derives MCP connection and caller authorization settings.
 Select tools separately with <code>MCP_TOOLSETS</code>: default <code>[]</code> registers zero tools;
 <code>["nl2sql"]</code> selects the current SQL toolset. This application/runtime setting
@@ -5622,8 +5623,8 @@ Workflows. Its available NL2SQL toolset provides <code>nl2sql.list_sources()</co
 <code>nl2sql.query(source_id, question)</code>.</p>
 <p><code>DEPLOY_AGENT_APP_MCP=true</code> selects server compute and authentication.
 <code>MCP_TOOLSETS=["nl2sql"]</code> selects the application Cosmos catalog and
-model/declared-secret access. Search and document ingestion remain independent.
-The operator still approves SQL destinations, read permissions and metadata.
+model/declared-secret access. Search and document ingestion remain independent.</p>
+<p>The operator still approves SQL destinations, read permissions and metadata.
 The server's NL2SQL implementation—not the orchestrator—owns SQL connectivity,
 metadata retrieval and generated-query validation. Operators import approved
 metadata through the separate administrative importer.</p>
@@ -5690,11 +5691,11 @@ See <a href="../application-auth/">Sign-in &amp; access</a>.</p>
   contract. Native durable execution does not guarantee exactly-once writes.</li>
 </ul>
 <p>Grant only the required model, source, scheduler and secret access.
-App Configuration Reader does not grant Key Vault secret access.
-<code>NATIVE_TOOL_SECRET_NAMES</code> (default <code>[]</code>) is the platform's scoped-grant
+App Configuration Reader does not grant Key Vault secret access.</p>
+<p><code>NATIVE_TOOL_SECRET_NAMES</code> (default <code>[]</code>) is the platform's scoped-grant
 declaration of actual names, not values. The native runtime does not consume
-that setting to load secrets or enable tools.
-Provision resources and grants before activation; startup must not repair
+that setting to load secrets or enable tools.</p>
+<p>Provision resources and grants before activation; startup must not repair
 infrastructure. <a href="../customize-components/">Customize components</a> and
 <a href="../build-your-own-app/">Bring your own app</a> describe ownership and adoption.</p>
 <p><span id="5-deploy-and-verify"></span></p>

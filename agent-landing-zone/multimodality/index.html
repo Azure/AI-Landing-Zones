@@ -5659,10 +5659,11 @@ not document OCR or a schema/example Search index. Their embeddings are stored
 in application Cosmos; no document ingestion service is required.</p>
 <p>An unrecognized extension falls to the text chunker, which still rejects formats
 outside its supported set. That fallback does not mean every file type is
-supported. The factory also routes <code>.xls</code> to the spreadsheet chunker, but its
+supported.</p>
+<p>The factory also routes <code>.xls</code> to the spreadsheet chunker, but its
 OpenPyXL parser expects an Open XML workbook, not a legacy binary Excel file.
-Convert legacy workbooks to <code>.xlsx</code> before ingestion.
-A source connector can impose a narrower allowlist, such as
+Convert legacy workbooks to <code>.xlsx</code> before ingestion.</p>
+<p>A source connector can impose a narrower allowlist, such as
 SharePoint's default <code>pdf,docx,pptx</code>. This custom processing table is not a
 native chat upload allowlist.</p>
 <h3 id="select-analysis-and-chunking">Select analysis and chunking</h3>

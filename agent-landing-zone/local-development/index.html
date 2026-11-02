@@ -5640,14 +5640,14 @@ ODBC driver or SQL/catalog grants for NL2SQL. The separate MCP server owns
 those dependencies. Use <a href="../agent-app-mcp/">Agent App MCP Server</a> for catalog
 and identity responsibilities, not direct SQL configuration in this process.</p>
 <p>For local MCP development, follow the MCP repository's contributor setup and
-frozen dependency lock rather than the <code>requirements.txt</code> setup above.
-Select toolsets explicitly: <code>MCP_TOOLSETS=[]</code> starts an authenticated server
+frozen dependency lock rather than the <code>requirements.txt</code> setup above.</p>
+<p>Select toolsets explicitly: <code>MCP_TOOLSETS=[]</code> starts an authenticated server
 with zero tools and no NL2SQL clients/dependencies; <code>["nl2sql"]</code> selects the
-SQL toolset. Changes require restart/redeployment, not hot reload.
-The NL2SQL execution environment requires Microsoft ODBC Driver 18 for SQL Server
+SQL toolset. Changes require restart/redeployment, not hot reload.</p>
+<p>The NL2SQL execution environment requires Microsoft ODBC Driver 18 for SQL Server
 and native ODBC dependencies; installing Python packages alone does not
-install the driver. Use approved development metadata and read-only SQL access.
-Local startup neither provisions the catalog nor authorizes Azure callers.
+install the driver. Use approved development metadata and read-only SQL access.</p>
+<p>Local startup neither provisions the catalog nor authorizes Azure callers.
 The administrative importer is separate from the MCP query service.
 Run <a href="../nl2sql/#import-the-approved-file">catalog import</a> on an authorized
 managed-identity runner, not an unconfigured workstation.</p>
@@ -5664,7 +5664,8 @@ Blob control data.</p>
 <p class="admonition-title">Starting ingestion can write and delete data</p>
 <p>Use an isolated development environment. <code>RUN_JOBS_ON_STARTUP</code> defaults to
 <code>true</code>. Setting it to <code>false</code> skips immediate ingestion and purge runs,
-<strong>not scheduled runs or immediate log cleanup</strong>. Blob indexing defaults
+<strong>not scheduled runs or immediate log cleanup</strong>.</p>
+<p>Blob indexing defaults
 to <code>0 * * * *</code>, Blob purge to <code>10 * * * *</code>, and log cleanup to
 <code>0 * * * *</code>. Blank Blob schedules receive defaults rather than disabling
 those jobs. Review <a href="../ingestion-jobs/">Jobs &amp; schedules</a> before startup.</p>
@@ -5698,8 +5699,8 @@ reconfigure Entra or callback URLs.</p>
 <code>ORCHESTRATION_HOST</code> selects the explicit Hosted or durable client.
 Hosted <code>both</code> requires two publication endpoints; the durable client needs
 the actual scheduler binding and the worker's registered names.
-Failures do not fall back to a retired backend.
-The default hosted <code>user_delegated</code> authentication uses an on-behalf-of
+Failures do not fall back to a retired backend.</p>
+<p>The default hosted <code>user_delegated</code> authentication uses an on-behalf-of
 exchange, where the UI exchanges a user's API token for a downstream token.
 It needs the confidential-client settings and consent described in
 <a href="../application-auth/">Sign-in &amp; access</a>. Do not switch to <code>service_identity</code>

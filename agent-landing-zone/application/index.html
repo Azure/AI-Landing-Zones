@@ -5816,8 +5816,8 @@ after that baseline works.</p>
 </tr>
 <tr>
 <td>6. Operate</td>
-<td>Set retention, review <a href="../application-monitoring/">monitoring</a> and follow <a href="../deployment-operations/">updates and recovery</a></td>
-<td>Owners know how to diagnose failures and apply controlled changes</td>
+<td>Set retention, inspect <a href="../application-monitoring/#native-tracing">native traces</a> and follow <a href="../deployment-operations/">updates and recovery</a></td>
+<td>Owners can find a real request trace, diagnose failures and apply controlled changes</td>
 </tr>
 </tbody>
 </table>
@@ -5915,12 +5915,13 @@ orchestrator hosted in Microsoft Foundry. The public native selectors are
 <code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>, their defaults.
 The UI is included automatically. Native Hosted execution does
 not require application-owned Cosmos DB; Foundry backing resources and
-optional UI product storage are separate concerns.
-Search, Foundry IQ and multimodal tool flags default to off.
+optional UI product storage are separate concerns.</p>
+<p>Search, Foundry IQ and multimodal tool flags default to off.
 Agent App MCP Server is also omitted by default (<code>DEPLOY_AGENT_APP_MCP=false</code>).
 When deployed, its <code>MCP_TOOLSETS</code> still defaults to <code>[]</code>: no business tools
 or NL2SQL dependencies are initialized until explicitly selected.
-Preparing a source does not register a tool. History, feedback and private
+Preparing a source does not register a tool.</p>
+<p>History, feedback and private
 attachments also default to off; conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.</p>
 <p>Foundry IQ manages
@@ -6027,8 +6028,8 @@ default to off; a selected workflow declares UI metadata storage independently
 of native execution state. Private attachments have an explicit feature gate,
 an owner-bound inline native input path and their own retention requirements.
 They are conversational only; transport support is not proof of model
-PDF/image understanding.
-Additional channels and external tools have separate integration requirements.
+PDF/image understanding.</p>
+<p>Additional channels and external tools have separate integration requirements.
 For SQL, complete <a href="../agent-app-mcp/#onboard-sql-before-inviting-users">MCP source onboarding</a>:
 authorize a read-only database principal, import approved metadata and verify
 known results and denials. A deployed MCP container is not a populated catalog.</p>
@@ -6076,6 +6077,10 @@ shared document also does not imply direct image or voice chat input.</p>
 <a href="../operations/">administrative panels</a>, and review
 <a href="../application-monitoring/">monitoring and audit events</a>.
 For failures, use <a href="../troubleshooting/">Troubleshooting</a>.</p>
+<p>Native Foundry and Agent Framework tracing is already integrated.
+Follow <a href="../application-monitoring/#set-up-trace-export">Set up trace export</a>
+to verify Application Insights and find a request in Foundry.
+Message-content capture is a separate, default-off privacy choice.</p>
 <h3 id="agentops">AgentOps</h3>
 <p>Use the <a href="../agentops/">AgentOps Accelerator</a> to evaluate, ship and operate
 your workload on Agent Landing Zone.</p>

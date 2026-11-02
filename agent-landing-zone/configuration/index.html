@@ -6706,7 +6706,8 @@ manifest. For direct shared-module use or portal deployment, follow those
 implementations' input references.</p>
 <p>New environments use three resource groups by default: Foundry/grounding,
 application and workload networking. Existing environments keep their mapping.
-All workload destinations must be in <code>AZURE_SUBSCRIPTION_ID</code>. Equal names are
+All workload destinations must be in <code>AZURE_SUBSCRIPTION_ID</code>.</p>
+<p>Equal names are
 valid: one, two or three distinct groups can express the same three logical
 destinations. These inputs do not enable services, change network isolation or
 create a platform hub; existing BYO VNet, DNS and hub settings still apply.</p>
@@ -6975,20 +6976,23 @@ does not create application Cosmos DB resources or their dedicated identity.
 Foundry backing storage is independent. Native Hosted execution uses Foundry
 persistence; durable Container Apps execution uses Durable Task Scheduler
 (DTS). Neither uses application Cosmos as a duplicate execution checkpoint
-store. Workflow mode or <code>both</code> selects UI metadata even when
+store.</p>
+<p>Workflow mode or <code>both</code> selects UI metadata even when
 <code>ENABLE_CHAT_HISTORY=false</code> and <code>ENABLE_USER_FEEDBACK=false</code>, their defaults.
-Enabled history, feedback or private attachments also selects this dependency.
-The UI consumes
+Enabled history, feedback or private attachments also selects this dependency.</p>
+<p>The UI consumes
 <code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
 (default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>, owner <code>tid:oid</code>), with its grant
 assigned only to the frontend. Existing <code>COSMOS_DB_ENDPOINT</code> and
 <code>COSMOS_DB_ACCOUNT_RESOURCE_ID</code> outputs remain conditional; no separate native
-endpoint key is introduced. The explicitly selected NL2SQL toolset uses the same application
+endpoint key is introduced.</p>
+<p>The explicitly selected NL2SQL toolset uses the same application
 account for its separate approved-source and vector-metadata containers,
-with grants assigned to the MCP identity, not the orchestrator.
-A custom component may declare another application storage
+with grants assigned to the MCP identity, not the orchestrator.</p>
+<p>A custom component may declare another application storage
 requirement. UI metadata contains descriptors and references, not bytes,
-transcripts or tokens. With conversational mode and every product flag off,
+transcripts or tokens.</p>
+<p>With conversational mode and every product flag off,
 bounded volatile UI owner maps are lost on restart.</p>
 <p>Do not omit a store required by a selected consumer, or enable ingestion just
 to supply metadata storage. Leave deployment selection consistent with the
@@ -7003,8 +7007,8 @@ overridden.</p>
 <p>This selection also works for generic storage without MCP or the reference
 orchestrator, including a custom <code>AGENTLZ_APP_DEFINITION</code>.
 Custom Cosmos capabilities can declare the dependency directly.
-Enabling Cosmos alone does not deploy MCP or enable vector search.
-Normal application Cosmos is serverless. NL2SQL selects vector capability and
+Enabling Cosmos alone does not deploy MCP or enable vector search.</p>
+<p>Normal application Cosmos is serverless. NL2SQL selects vector capability and
 its catalog policies; a retained catalog preserves them.
 Custom applications may explicitly select generic vector capability with
 <code>COSMOS_VECTOR_SEARCH_ENABLED</code> without injecting the reference catalog.
@@ -7052,37 +7056,38 @@ Do not manually copy generated endpoint/authentication settings.</p>
 compatible application account managed by this deployment. Provision captures
 and preserves the exact existing capability set and data, adds
 <code>EnableNoSQLVectorSearch</code> and provisions
-<code>mcp-sources</code> and <code>mcp-nl2sql-metadata</code>, partitioned by <code>/source_id</code>.
-The metadata vector policy uses <code>/embedding</code>, <code>float32</code>, cosine,
+<code>mcp-sources</code> and <code>mcp-nl2sql-metadata</code>, partitioned by <code>/source_id</code>.</p>
+<p>The metadata vector policy uses <code>/embedding</code>, <code>float32</code>, cosine,
 <code>quantizedFlat</code> and the selected model dimensions (default <code>3072</code>).
-Model selection and dimensions must resolve before policies are provisioned.
-Existing catalog name/dimension changes are rejected in place; use an explicit
+Model selection and dimensions must resolve before policies are provisioned.</p>
+<p>Existing catalog name/dimension changes are rejected in place; use an explicit
 migration/reindexing plan instead of changing settings on the existing catalog.</p>
 <p>Incompatible throughput or policies fail explicitly. The lifecycle does not
 recreate accounts/containers, convert shared throughput or choose an unrelated
-external or Foundry backing account. The MCP receives catalog read, model
+external or Foundry backing account.</p>
+<p>The MCP receives catalog read, model
 access and only required secret grants; the importer has separately authorized
 catalog write access. SQL users and grants remain the SQL owner's responsibility.
 <code>MCP_SQL_SECRET_NAMES=[]</code> declares optional SQL password-secret names for
-secret-scoped MCP vault grants; do not place passwords in that list.
-The deployment helper configures the Entra API registration/service principal
+secret-scoped MCP vault grants; do not place passwords in that list.</p>
+<p>The deployment helper configures the Entra API registration/service principal
 and <code>MCP.Invoke</code> app role automatically, creating or reusing the registration
-by the exact application object ID recorded in App Configuration.
-The deployer must have directory
+by the exact application object ID recorded in App Configuration.</p>
+<p>The deployer must have directory
 rights for registration and application-role assignments, separate from ARM
 permissions; there is no broad ARM-token authentication fallback.</p>
 <p>An empty server retains mandatory tenant/audience/app-role/client restrictions
-but receives no NL2SQL catalog, model or secret grants.
-Selection does not enable <code>DEPLOY_SEARCH_SERVICE</code>, create Search indexes or
+but receives no NL2SQL catalog, model or secret grants.</p>
+<p>Selection does not enable <code>DEPLOY_SEARCH_SERVICE</code>, create Search indexes or
 grant Search access. Other retrieval consumers keep their independent Search
 requirements. Generated settings are published under <code>agent-lz</code>; see the
-<a href="../application-settings/#agent-app-mcp-contract">MCP contract</a>.
-Use the <a href="../agent-app-mcp/#select-and-deploy">MCP component guide</a> for fresh and
+<a href="../application-settings/#agent-app-mcp-contract">MCP contract</a>.</p>
+<p>Use the <a href="../agent-app-mcp/#select-and-deploy">MCP component guide</a> for fresh and
 existing-installation steps. Toolsets are startup-only: changes require
 restart/redeployment. Setting <code>MCP_TOOLSETS=[]</code> stops NL2SQL
 registration and dependency initialization; it does not automatically revoke
-old roles. Disabling server compute likewise does not delete catalog metadata.
-The retained <code>COSMOS_VECTOR_SEARCH_ENABLED</code> marker preserves vector capability.
+old roles. Disabling server compute likewise does not delete catalog metadata.</p>
+<p>The retained <code>COSMOS_VECTOR_SEARCH_ENABLED</code> marker preserves vector capability.
 The catalog account,
 container declarations and vector policies are retained for owner-reviewed
 safe cleanup.</p>
@@ -7430,8 +7435,8 @@ label alone does not configure egress or change hub resources.</p>
 <code>enableFirewallDnsProxy</code> (also default <code>false</code>), which sets
 <code>dnsSettings.enableProxy</code> on a <code>Standard</code> firewall. Basic with proxy enabled
 is rejected; its policy omits DNS settings. It applies only when the
-<code>deployAzureFirewall</code> and <code>networkIsolation</code> gates enable firewall deployment.
-It is intended for a topology that deliberately uses the firewall as its DNS
+<code>deployAzureFirewall</code> and <code>networkIsolation</code> gates enable firewall deployment.</p>
+<p>It is intended for a topology that deliberately uses the firewall as its DNS
 forwarding path. The matching deployment guide applies the selection through
 normal provisioning.</p>
 <p>Enabling the proxy does
@@ -7445,10 +7450,11 @@ does not depend on it before reprovisioning.</p>
 <p>Choose <a href="../network-isolation/#allocate-subnets-and-agree-ownership">subnet ownership</a> first.
 The global <code>DEPLOY_SUBNETS</code> switch defaults to <code>true</code>. Firewall data and
 management switches default to <code>null</code> (auto): data follows the local isolated
-firewall requirement, while management is used only by standalone Basic.
-<code>DEPLOY_GATEWAY_SUBNET</code> defaults to <code>false</code>; explicitly enable it to reserve a
+firewall requirement, while management is used only by standalone Basic.</p>
+<p><code>DEPLOY_GATEWAY_SUBNET</code> defaults to <code>false</code>; explicitly enable it to reserve a
 subnet for a separately configured local gateway. Other individual subnet
-switches default to <code>true</code>. Creation also requires network isolation and the
+switches default to <code>true</code>.</p>
+<p>Creation also requires network isolation and the
 global switch; management additionally requires an active standalone Basic
 firewall, even when its creation switch is explicitly true.</p>
 <table>
@@ -7544,9 +7550,10 @@ when application private endpoints are enabled.</p>
 <p>An isolated new VNet is still created when subnet creation is disabled, but
 configuration fails if an enabled workload requires a subnet that is absent.
 For an existing VNet, only selected subnets are created/updated, through
-serialized child deployments; its entire subnet collection is not replaced.
-Managed BYO subnet writes require <code>deployNsgs=true</code>; opting out of a subnet's
-creation does not remove its existing NSG association. Creation flags are not
+serialized child deployments; its entire subnet collection is not replaced.</p>
+<p>Managed BYO subnet writes require <code>deployNsgs=true</code>; opting out of a subnet's
+creation does not remove its existing NSG association.</p>
+<p>Creation flags are not
 deletion commands or a guarantee of preserving every previously submitted
 subnet in a deployment-owned VNet; Azure can reject removal of occupied subnets.</p>
 <p><code>deployAiFoundrySubnet</code> controls the Foundry Agent Service subnet association,
@@ -7672,7 +7679,8 @@ or associate a Power Platform environment. Those integrations need separate setu
 <p>See the <a href="#application-private-endpoint-subnet">application private endpoint subnet</a>
 for its consumers and required separation from Foundry/grounding endpoints.</p>
 <p>Keep the reserved name <code>GatewaySubnet</code>; do not attach an NSG, default-route
-UDR or delegation to it. AI Gateway uses APIM Standard v2/Premium v2 outbound
+UDR or delegation to it.</p>
+<p>AI Gateway uses APIM Standard v2/Premium v2 outbound
 VNet integration, with a subnet of <code>/27</code> or larger, delegated to
 <code>Microsoft.Web/serverFarms</code> and associated with an NSG. Preserve an outbound
 HTTPS path to Azure Key Vault. No reserved subnet name is required for APIM;
@@ -7837,9 +7845,11 @@ if <code>10.20.0.0/21</code> is approved and does not overlap connected networks
 </code></pre></div>
 <p>A subnet override does not resize the VNet; a reused VNet's actual address
 space is authoritative. Names must be unique and required names/prefixes
-cannot be empty. CIDRs must be aligned IPv4 ranges, contained in the VNet and
+cannot be empty.</p>
+<p>CIDRs must be aligned IPv4 ranges, contained in the VNet and
 nonoverlapping with other requested or existing subnets. The same managed
-subnet's current range is not counted twice. Invalid ranges fail rather than
+subnet's current range is not counted twice.</p>
+<p>Invalid ranges fail rather than
 being replaced with defaults. Reserved names and service-specific size,
 delegation and NSG requirements still apply.</p>
 <p><span id="optional-application-private-endpoint-subnet"></span></p>
@@ -8073,10 +8083,10 @@ for rule removal before reverting hooks.</p>
 <p>The only public native deployment selectors are <code>ORCHESTRATION_HOST</code> and
 <code>APPLICATION_MODE</code>. Set them before provision; the UI is included automatically.
 History, feedback and private attachments independently default to off.
-Hosted does not enable history; workflow or <code>both</code> always selects UI metadata.
-Endpoint/binding rows are actual generated application contracts, not extra
-host choices. Do not construct scheduler endpoints or set internal host flags.
-Native feature keys are shared <code>additionalAppConfigurationSettings</code> entries
+Hosted does not enable history; workflow or <code>both</code> always selects UI metadata.</p>
+<p>Endpoint/binding rows are actual generated application contracts, not extra
+host choices. Do not construct scheduler endpoints or set internal host flags.</p>
+<p>Native feature keys are shared <code>additionalAppConfigurationSettings</code> entries
 under <code>agent-lz</code>, not new same-named Bicep or Terraform parameters.
 See <a href="../application-settings/#native-application-contract">Application settings</a>
 for exact feature and consumer keys.</p>
@@ -8084,20 +8094,20 @@ for exact feature and consumer keys.</p>
 conversational publication with derived process mode <code>conversational</code> and a
 separate workflow publication with derived process mode <code>workflow</code>, then
 passes both endpoints to the UI. These process inputs are not extra public
-deployment selectors.
-Each publication's single-mode process input must take precedence over the
+deployment selectors.</p>
+<p>Each publication's single-mode process input must take precedence over the
 shared composition value. A common App Configuration store does not turn
-Hosted <code>both</code> into a single publication.
-If attachments are enabled, retain the shared/UI and conversational
+Hosted <code>both</code> into a single publication.</p>
+<p>If attachments are enabled, retain the shared/UI and conversational
 <code>ENABLE_PRIVATE_ATTACHMENTS=true</code>; only the workflow publication gets <code>false</code>.
-Workflow-only composition rejects an enabled attachment flag.
-On Container Apps, use the official standalone Durable Extension worker and
+Workflow-only composition rejects an enabled attachment flag.</p>
+<p>On Container Apps, use the official standalone Durable Extension worker and
 DTS with stable native registration names <code>agent-lz-conversation</code> and
 <code>agent-lz-research-review</code>. Azure Functions, Dapr and public worker HTTP ingress
 are not required. Use the actual provisioned nonsecret managed-identity
 scheduler binding:
-<code>Endpoint=&lt;actual provisioned output&gt;;TaskHub=agent-lz;Authentication=ManagedIdentity</code>.
-Keep the same binding compatible with the native worker and UI client. Do not
+<code>Endpoint=&lt;actual provisioned output&gt;;TaskHub=agent-lz;Authentication=ManagedIdentity</code>.</p>
+<p>Keep the same binding compatible with the native worker and UI client. Do not
 construct the endpoint from a guessed hostname or change authentication on
 one side only.</p>
 <p>MCP, Foundry IQ and Search are tools/capabilities, not application modes or
@@ -8109,22 +8119,23 @@ See <a href="../hosted-agents/">Agent hosting</a>,
 <a href="../application-settings/">Application settings</a>.</p>
 <p><code>ENABLE_CHAT_HISTORY</code> and <code>ENABLE_USER_FEEDBACK</code> default to <code>false</code>;
 workflow mode, <code>both</code> or enabled history, feedback or attachments declares UI metadata
-storage directly. <code>DEPLOY_AGENT_APP_MCP=false</code> keeps the optional MCP server
+storage directly.</p>
+<p><code>DEPLOY_AGENT_APP_MCP=false</code> keeps the optional MCP server
 unselected. Selecting it derives the consuming MCP connection and registration,
 not SQL. Explicit <code>MCP_TOOLSETS=["nl2sql"]</code> requires the application catalog.
 Catalog and SQL access belong to the MCP
-identity, not the native execution host.
-Declare actual tool secret names through <code>NATIVE_TOOL_SECRET_NAMES</code> (default
+identity, not the native execution host.</p>
+<p>Declare actual tool secret names through <code>NATIVE_TOOL_SECRET_NAMES</code> (default
 <code>[]</code>), a JSON array of names rather than values, and grant only the consuming
 component. This is a platform grant declaration; the native runtime does not
-consume <code>NATIVE_TOOL_SECRET_NAMES</code> as a secret-loading or tool-enabling setting.
-<code>ENABLE_PRIVATE_ATTACHMENTS=false</code> is the default. Enabling it selects
+consume <code>NATIVE_TOOL_SECRET_NAMES</code> as a secret-loading or tool-enabling setting.</p>
+<p><code>ENABLE_PRIVATE_ATTACHMENTS=false</code> is the default. Enabling it selects
 owner-bound inline conversational input and UI metadata, not ingestion or
 corporate publication. Workflow attachments are unsupported.
 Admission allows at most three files, 64 KiB per file and 256 KiB for the
 serialized inline turn. See <a href="../conversations/#private-attachments">Private attachments</a>
-for the MIME, encoding and owner contract.
-Native Search, Foundry IQ, MCP and multimodal registration default to off;
+for the MIME, encoding and owner contract.</p>
+<p>Native Search, Foundry IQ, MCP and multimodal registration default to off;
 the integrated MCP lifecycle coordinates registration when selected.
 Configured infrastructure alone does not onboard SQL or populate its catalog.</p>
 <h3 id="hosted-foundation-and-publication-inputs">Hosted foundation and publication inputs</h3>
@@ -8238,7 +8249,8 @@ See <a href="../troubleshooting/#acr-task-agent-pool-is-missing">pool diagnostic
 destinations alongside common language and OS package registries, through
 the scoped infrastructure build-egress configuration. This is a build-only
 allowlist, not a runtime or general Internet exception. It does not allow
-every mirror recorded in a custom application's lockfile. The exact component
+every mirror recorded in a custom application's lockfile.</p>
+<p>The exact component
 commit's <code>resolved</code> URLs and download redirects determine its build needs.</p>
 <p>Additional dependencies are declared in
 <code>parameters.additionalAcrTaskBuildFqdns.value</code> in the root <code>main.parameters.json</code>.

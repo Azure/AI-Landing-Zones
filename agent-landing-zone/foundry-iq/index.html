@@ -5586,11 +5586,11 @@ knowledge base and combines its configured sources. The selector applies to
 the application's registered knowledge-search capability, usable by an Agent
 or Workflow. It does not reroute the
 <a href="../nl2sql/">MCP NL2SQL tools</a> or replace callable
-<a href="../agent-tools/">MCP tools</a>.
-<a href="../application-settings/">Application settings</a> describes how to change runtime
+<a href="../agent-tools/">MCP tools</a>.</p>
+<p><a href="../application-settings/">Application settings</a> describes how to change runtime
 values. <a href="../agent-strategies/">Agents &amp; prompts</a> describes application selection
-independently of the host and its tools.
-The NL2SQL tools on Agent App MCP Server store approved SQL metadata and vectors
+independently of the host and its tools.</p>
+<p>The NL2SQL tools on Agent App MCP Server store approved SQL metadata and vectors
 in application Cosmos. This toolset does not require Search; enabling the server does not enable Foundry IQ
 or alter this knowledge base's sources.</p>
 <p><span id="before-you-start"></span>
@@ -5832,12 +5832,12 @@ The names and resource scope are illustrative, not provisioned resources.</p>
 <h3 id="source-limits-and-credentials">Source limits and credentials</h3>
 <p>Each source needs a unique name, HTTPS server URL and non-empty tool list.
 Tool names must be unique within the source. Each tool declares output parsing,
-<code>inclusionMode</code> (<code>reranked</code> or <code>always</code>) and <code>maxOutputTokens</code> from <code>1</code> to <code>8192</code>.
-Parsing kinds are <code>auto</code>, <code>none</code>, <code>json</code> and <code>split</code>.
+<code>inclusionMode</code> (<code>reranked</code> or <code>always</code>) and <code>maxOutputTokens</code> from <code>1</code> to <code>8192</code>.</p>
+<p>Parsing kinds are <code>auto</code>, <code>none</code>, <code>json</code> and <code>split</code>.
 <code>json</code> needs a <code>documentsPath</code> and optional boolean <code>includeContext</code>.
 <code>split</code> supports page or sentence splitting, positive page length and page-count
-limits, non-negative overlap smaller than page length, and a default language.
-Do not mix parsing parameters across kinds or add unknown fields.
+limits, non-negative overlap smaller than page length, and a default language.</p>
+<p>Do not mix parsing parameters across kinds or add unknown fields.
 The <a href="../application-api/">API reference</a> is the payload reference.</p>
 <p><code>failOnError=true</code> makes a reported source failure fail the request.
 Choose <code>false</code> only when partial grounding is acceptable. Per-source

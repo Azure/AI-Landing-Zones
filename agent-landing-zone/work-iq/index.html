@@ -5467,8 +5467,8 @@ unverified consent stop provisioning instead of silently removing the source.
 <p>For application retrieval, select <code>RETRIEVAL_BACKEND=foundry_iq</code>.
 <code>WORK_IQ_ENABLED</code> defaults to <code>false</code> and the source name defaults to empty.
 The source must belong to the selected knowledge base. These runtime settings
-do not register it or grant Microsoft 365 access.
-<code>FOUNDRY_IQ_MAX_RUNTIME_SECONDS</code> defaults to <code>120</code> and provides the retrieve
+do not register it or grant Microsoft 365 access.</p>
+<p><code>FOUNDRY_IQ_MAX_RUNTIME_SECONDS</code> defaults to <code>120</code> and provides the retrieve
 runtime ceiling when remote sources are enabled.
 <a href="../application-settings/">Application settings</a> explains effective values,
 supported functional refresh and structural redeployment.</p>
@@ -5541,10 +5541,11 @@ signed-in user's assertion:</p>
 <p>The <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-work-iq#set-up-microsoft-entra-authentication">official authentication procedure</a>
 defines registration, federation and client consent. For the bundled UI, use
 its OAuth app as the Work IQ application: expose <code>access_as_user</code>, grant
-<code>WorkIQAgent.Ask</code> and configure Search federation on that registration.
-The built-in path validates and forwards the original app-audience assertion
+<code>WorkIQAgent.Ask</code> and configure Search federation on that registration.</p>
+<p>The built-in path validates and forwards the original app-audience assertion
 through <code>x-client-work-iq-assertion</code>. It never substitutes the Search token or
-invokes Work IQ as the workload. It does not exchange an assertion for a
+invokes Work IQ as the workload.</p>
+<p>It does not exchange an assertion for a
 separate Work IQ app. Mismatched application or UI-tenant settings fail closed.
 Bearer tokens must stay out of prompts, history and logs.</p>
 <p><span id="verify-before-connecting-users"></span>

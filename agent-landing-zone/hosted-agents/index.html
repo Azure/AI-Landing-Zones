@@ -5759,8 +5759,8 @@ store while loading only relevant settings for each publication.</p>
 endpoint from a resource name or reuse a conversational endpoint as a workflow
 endpoint. Keep registration names stable and align the durable client with
 the worker's registered names: <code>agent-lz-conversation</code> and
-<code>agent-lz-research-review</code>.
-These native registration names are distinct from Azure resource names and
+<code>agent-lz-research-review</code>.</p>
+<p>These native registration names are distinct from Azure resource names and
 the Hosted publication's deployment name. Use the provisioned nonsecret
 managed-identity scheduler binding:
 <code>Endpoint=&lt;actual output&gt;;TaskHub=agent-lz;Authentication=ManagedIdentity</code>.
@@ -5808,13 +5808,13 @@ infer that every capability passed from local mocks.</p>
 </table>
 <p>Grant App Configuration Data Reader to actual readers. Grant Key Vault secret
 access only to components that consume the corresponding secrets. Reading
-App Configuration does not grant access to Key Vault references.
-The implicit base grants are configuration read and image pull, not blanket
+App Configuration does not grant access to Key Vault references.</p>
+<p>The implicit base grants are configuration read and image pull, not blanket
 secret access. UI authentication, enabled audit and MCP/tool secrets require
 their declared grants; <code>NATIVE_TOOL_SECRET_NAMES</code> is the platform's actual
 name-only grant declaration, not a key consumed by the native runtime to load
-secrets.
-Grant scheduler access to durable worker/client identities at the required
+secrets.</p>
+<p>Grant scheduler access to durable worker/client identities at the required
 scope. These service permissions are not end-user authorization.</p>
 <p>If publication creates a runtime identity, reconcile its grants as an explicit
 deployment step before admitting traffic. Runtime startup does not create
@@ -5851,19 +5851,20 @@ conversation or workflow persistence.</p>
 <p>History, feedback and private attachments default to off. Workflow mode,
 <code>both</code> or any enabled product flag selects UI metadata in <code>native-ui-metadata</code>,
 partition key <code>/principal_id</code> with owner <code>tid:oid</code>; only the frontend receives
-its metadata grant. Records contain descriptors/references, not bytes,
+its metadata grant.</p>
+<p>Records contain descriptors/references, not bytes,
 transcripts or tokens. With conversational mode and all product flags off,
-bounded volatile owner maps are lost on UI restart.
-Selecting the NL2SQL toolset on Agent App MCP Server requires a separate
+bounded volatile owner maps are lost on UI restart.</p>
+<p>Selecting the NL2SQL toolset on Agent App MCP Server requires a separate
 source/vector-metadata catalog in application Cosmos, without making Cosmos
 the native execution backend. Server compute alone, with <code>MCP_TOOLSETS=[]</code>,
-does not require that catalog or NL2SQL model/secret access.
-The MCP server always runs in a separate Container App, including
+does not require that catalog or NL2SQL model/secret access.</p>
+<p>The MCP server always runs in a separate Container App, including
 when its consumers use Hosted. The lifecycle authorizes the actual consuming
 identities; Hosted <code>both</code> has separate conversation and workflow callers.
 Catalog and SQL grants belong to the MCP identity, not the Hosted runtime.
-See <a href="../agent-app-mcp/">Agent App MCP Server</a>.
-Private attachments use owner-bound conversational inline native file/image
+See <a href="../agent-app-mcp/">Agent App MCP Server</a>.</p>
+<p>Private attachments use owner-bound conversational inline native file/image
 input, not Blob, SAS or corporate ingestion. They are not workflow inputs;
 transport tests do not verify model PDF/image understanding.</p>
 <p>Retention, deletion and recovery must cover each store explicitly.

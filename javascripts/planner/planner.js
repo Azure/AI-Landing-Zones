@@ -446,6 +446,28 @@
     const pricing = row.quoteRequired ? "Your plan's price" : row.amount === null ? "Price to confirm" :
       row.zeroCostConfirmed ? "Operator-confirmed $0, not an independently verified quote" : row.operatorEstimate ? "Operator estimate" :
       row.billingNote ? "Shared / configuration" : "Public rates";
+    // Separate the existing assumptions at reviewed topic boundaries. Keep the
+    // resource detail itself unchanged for calculations, snapshots and exports.
+    let detail = row.detail;
+    for (const topic of [
+      "The alternative gpt-4.1-nano", "Two calls per turn",
+      "The initial 200 runtime-hours", "Resizing needs",
+      "Availability requirements", "The separate embedding row includes", "Document bytes",
+      "The example assumes continuous", "Service availability",
+      "Sweden Central's", "Basic has management",
+      "When included, cost", "The Standard Regional", "Dedicated subnet default:",
+      "Setting quantity back", "Base allocation =", "Standard v2 private ingress",
+      "Private endpoints/DNS,", "Compare tiers using",
+      "Global deployment processing", "This separate embedding row retains", "5M recurring tokens",
+      "These are explicit billing", "For autoscale enter", "Bicep inherits",
+      "Continuous30Days backup is", "This what-if assumes", "Continuous backup storage is",
+      "This is not a measured build", "Cost = allocated hours", "No shared-task free allowance",
+      "Quantities describe a fresh", "Allocation controls:", "Zero is a fresh-budget"
+    ]) {
+      detail = detail.replace(" " + topic, "\n\n" + topic);
+    }
+    const assumptions = detail.trim().split("\n\n").map(paragraph =>
+      `<p class="resource-assumption">${paragraph}</p>`).join("");
     return `<details class="resource" id="entry-${row.id}" data-resource="${row.id}"${expanded.has(`entry-${row.id}`) ? " open" : ""}>
       <summary><span class="resource-identity"><span class="resource-name">${escape(row.name)}</span><small>${escape(inclusion)}${rowChanged(row) ? " / modified" : ""}</small></span><span class="resource-cost" data-row-total="${row.id}">${total}<small>/ month</small></span><span class="disclosure" aria-hidden="true">+</span></summary>
       <div class="resource-body"><p class="resource-description">${escape(row.description)}</p>
@@ -453,7 +475,7 @@
       <div class="sizing-text"><h4>Sizing guidance</h4>${row.sizing}</div>${row.sizingURL || row.sourceURL ? `<a class="sizing-source" href="${escape(row.sizingURL || row.sourceURL)}" target="_blank" rel="noopener">Product guidance &#8599;</a>` : ""}<span class="sizing-alert">${row.signal || ""}</span>
       <details class="resource-sources" id="detail-${row.id}"${expanded.has(`detail-${row.id}`) ? " open" : ""}><summary>Price calculation, assumptions &amp; sources</summary><div class="detail-content">
       <p class="fine">${escape(pricing)}</p>${price}
-      <p>${row.detail}</p><p><strong>Configuration source:</strong> <code>${escape(row.parameter)}</code></p>
+      ${assumptions}<p><strong>Configuration source:</strong> <code>${escape(row.parameter)}</code></p>
       ${row.sourceURL ? `<p><a href="${escape(row.sourceURL)}" target="_blank" rel="noopener">${escape(row.sourceLabel)} &#8599;</a></p>` : ""}
       ${row.issue ? `<p class="unpriced">${escape(row.issue)} ${row.optional && !row.included ? "Not included at quantity 0. A regional price is needed before adding it to the estimate." : "Excluded from the sample subtotal, not assumed free."}</p>` : ""}
       ${meters}

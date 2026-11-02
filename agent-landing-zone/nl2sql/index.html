@@ -5904,8 +5904,8 @@ for every item in <code>allowed_objects</code>, including approved relationships
 <h3 id="import-the-approved-file">Import the approved file</h3>
 <p>Use the MCP repository's administrative Python importer, not a tool call or
 document-ingestion job. Run it from the <strong>MCP repository root</strong> on an authorized
-managed-identity runner with Python 3.12 and the repository's <code>uv</code> tooling.
-Supply <code>APP_CONFIG_ENDPOINT</code> for the application's store and, when using an
+managed-identity runner with Python 3.12 and the repository's <code>uv</code> tooling.</p>
+<p>Supply <code>APP_CONFIG_ENDPOINT</code> for the application's store and, when using an
 assigned identity, <code>AZURE_CLIENT_ID</code>. The identity needs configuration read,
 write access to both catalog containers and embedding-model inference access.
 Azure CLI login is not an importer credential fallback.</p>
@@ -5976,10 +5976,10 @@ Use that identity's client ID, not its object ID or the MCP API audience.</p>
 </code></pre></div>
 <p>The importer validates the file, generates embeddings, stages a unique catalog
 version and activates it only after every metadata write completes. It prints
-<code>Activated metadata_version:</code> with the resulting active version on success.
-Confirm the source's active version and an approved query before admitting
-users. Partial staging leaves the previous active version in use.
-A failed import does not confirm activation; inspect the source's
+<code>Activated metadata_version:</code> with the resulting active version on success.</p>
+<p>Confirm the source's active version and an approved query before admitting
+users. Partial staging leaves the previous active version in use.</p>
+<p>A failed import does not confirm activation; inspect the source's
 active version before retrying. Staged inactive records need separately
 approved retention/cleanup, not automatic container deletion.</p>
 <p>The import operator needs explicit write access scoped to both catalog

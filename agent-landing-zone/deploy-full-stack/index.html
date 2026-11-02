@@ -6071,11 +6071,11 @@
 <h2 id="objective">Objective</h2>
 <p>Deploy the Azure infrastructure and the Agent Application with its default
 selection: <code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>.
-Foundry hosts execution and Agent App UI is included in Container Apps.
-Foundry IQ prepares a native source when that retrieval path is selected. Native Hosted
+Foundry hosts execution and Agent App UI is included in Container Apps.</p>
+<p>Foundry IQ prepares a native source when that retrieval path is selected. Native Hosted
 execution does not require application Cosmos DB; selected UI product metadata
-and Foundry backing resources have their own storage requirements.
-History, feedback and private attachments default to off independently.
+and Foundry backing resources have their own storage requirements.</p>
+<p>History, feedback and private attachments default to off independently.
 Workflow or <code>both</code> requires UI metadata even when those flags remain off.</p>
 <p>This guide covers a fresh native installation with new execution contracts;
 existing execution state is not automatically converted.</p>
@@ -6268,7 +6268,8 @@ data. Promote the same reviewed source revision with stage-specific inputs.</p>
 <code>rg-&lt;environment-name&gt;</code> for Foundry, <code>rg-&lt;environment-name&gt;-app</code> for the
 application and <code>rg-&lt;environment-name&gt;-network</code> for workload networking.
 To choose a different Foundry/root name, set <code>AZURE_RESOURCE_GROUP</code> before
-provision. The hook creates missing additional groups by default; the deploying
+provision.</p>
+<p>The hook creates missing additional groups by default; the deploying
 identity needs permission to create them. To reuse pre-created groups or select
 one or two groups, set the
 <a href="../configuration/#resource-group-destinations">resource group destinations</a>
@@ -6294,24 +6295,24 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 attachments default to off; Hosted does not turn them on. The default
 conversational selection with no declared storage consumer does not require
 application Cosmos. Workflow or <code>both</code> always selects UI metadata; enabling
-history, feedback or attachments also selects it.
-See <a href="../application-settings/">Application settings</a> for the separate feature
+history, feedback or attachments also selects it.</p>
+<p>See <a href="../application-settings/">Application settings</a> for the separate feature
 keys and inspect effective relevant <code>agent-lz</code> settings after configuration.
 Preserve the recorded host, mode and application binding during recovery.</p>
 <p>To select a workflow or both experiences, use the compatible application
 mode and <a href="../configuration/#native-execution-selection">native execution contract</a>.
 For Hosted <code>both</code>, the root lifecycle prepares a conversational publication
 and a separate workflow publication, each with its derived single mode, and
-passes their actual endpoints to the UI. Do not select extra host booleans.
-The Container Apps alternative requires the official Durable Extension worker
+passes their actual endpoints to the UI. Do not select extra host booleans.</p>
+<p>The Container Apps alternative requires the official Durable Extension worker
 and DTS, not the Hosted HTTP entrypoint or a custom queue.
 Review <a href="../hosted-agents/">Agent hosting</a> before changing an existing layout.</p>
 <h4 id="ingestion-and-custom-applications">Ingestion and custom applications</h4>
 <p>When selecting shared-document retrieval, use native Foundry IQ ingestion for
 the configured Blob source. Keep its
 protected source policy; source ingestion does not prove user-authorized
-retrieval works. Review <a href="../ingestion/">Ingestion</a> if custom source processing is required.
-Private attachments have their own feature gate and file path; enabling
+retrieval works. Review <a href="../ingestion/">Ingestion</a> if custom source processing is required.</p>
+<p>Private attachments have their own feature gate and file path; enabling
 ingestion does not add that capability. Product metadata does not require the
 ingestion service. These are separate capabilities, not default deployment
 steps.</p>
@@ -6328,8 +6329,8 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 <p>The server selector defaults to <code>false</code> and adds separate compute with either
 orchestration host. <code>MCP_TOOLSETS</code> defaults to <code>[]</code>: server deployment alone
-registers zero tools and needs no NL2SQL catalog/model/secret grants.
-The explicit <code>["nl2sql"]</code> selection requires application Cosmos automatically,
+registers zero tools and needs no NL2SQL catalog/model/secret grants.</p>
+<p>The explicit <code>["nl2sql"]</code> selection requires application Cosmos automatically,
 reusing a compatible account or creating it when absent. Catalog containers,
 vector policies, scoped grants and settings under label <code>agent-lz</code> are
 coordinated by application composition, not tool-specific foundation parameters.
@@ -6494,14 +6495,14 @@ second provision is required. If provisioning deferred configuration, complete
 that work from a connected host before deployment. Do not replace the digest
 with an image tag or bypass permission, network or configuration failures.</p>
 <p>For an already configured infrastructure-only environment, reuse the same
-checkout, inputs and bound application, then run <code>azd deploy</code>.
-This applies only when the provisioned component selection is unchanged;
+checkout, inputs and bound application, then run <code>azd deploy</code>.</p>
+<p>This applies only when the provisioned component selection is unchanged;
 adding MCP requires provision first. A deployed MCP image can deny callers
 until authorization is complete. Liveness is not authenticated integration
-readiness, and SQL source readiness still requires approved metadata import.
-Normal <code>azd deploy</code> coordinates the MCP restarts; do not add a manual restart
-step to load the generated allowlist.
-Review hook logs even after success: some configuration sections can log
+readiness, and SQL source readiness still requires approved metadata import.</p>
+<p>Normal <code>azd deploy</code> coordinates the MCP restarts; do not add a manual restart
+step to load the generated allowlist.</p>
+<p>Review hook logs even after success: some configuration sections can log
 failures and continue. Resolve those failures before validation.</p>
 <details>
 <summary>Optional: preview infrastructure changes before deployment</summary>
@@ -6570,12 +6571,12 @@ environment value. Confirm the endpoint before invoking them. They read the
 application destination from <code>AZURE_APP_RESOURCE_GROUP</code> under <code>agent-lz</code>.
 For UI and ingestion scripts, only a successful missing or empty read falls
 back to <code>AZURE_RESOURCE_GROUP</code>.
-An inaccessible store or conflicting destinations stops deployment.
-Agent App MCP Server requires <code>AZURE_APP_RESOURCE_GROUP</code>; it does not fall
+An inaccessible store or conflicting destinations stops deployment.</p>
+<p>Agent App MCP Server requires <code>AZURE_APP_RESOURCE_GROUP</code>; it does not fall
 back to the Foundry/root <code>AZURE_RESOURCE_GROUP</code>. The platform automatically
 publishes its application target and matching registry outputs under <code>agent-lz</code>;
-operators do not need to hand-configure them for normal deployment.
-Do not treat deployment hooks as offline checks or run them from a test suite.</p>
+operators do not need to hand-configure them for normal deployment.</p>
+<p>Do not treat deployment hooks as offline checks or run them from a test suite.</p>
 <h3 id="change-a-runtime-setting">Change a runtime setting</h3>
 <p>First check <a href="../configuration/">Deployment settings</a> for ownership and overwrite behavior.
 Provisioning-managed inputs must be changed in their source and applied through
@@ -6685,14 +6686,14 @@ az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w
 <li>
 <p>Read <code>AZURE_CONTAINER_REGISTRY_ENDPOINT</code> for the registry login hostname.
    The hosted repository is <code>HOSTED_AGENT_IMAGE</code> when explicitly set, otherwise
-   <code>agent-app-orchestrator</code>, as declared in <code>hosted-agent/azure.yaml</code>.
-   For an automatically generated image, read
-   <code>azd env get-value HOSTED_AGENT_IMAGE_SOURCE_COMMIT</code> and compare it with
-   the orchestrator commit in <code>manifest.json</code>. Retain the build record and
-   <code>HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256</code> as startup provenance.
-   For an operator-supplied digest without generated-source metadata, require
-   the image owner's build/provenance record instead; do not assume the manifest
-   proves its source.</p>
+   <code>agent-app-orchestrator</code>, as declared in <code>hosted-agent/azure.yaml</code>.</p>
+<p>For an automatically generated image, read
+ <code>azd env get-value HOSTED_AGENT_IMAGE_SOURCE_COMMIT</code> and compare it with
+ the orchestrator commit in <code>manifest.json</code>. Retain the build record and
+ <code>HOSTED_AGENT_IMAGE_STARTUP_COMMAND_SHA256</code> as startup provenance.</p>
+<p>For an operator-supplied digest without generated-source metadata, require
+ the image owner's build/provenance record instead; do not assume the manifest
+ proves its source.</p>
 <p>Use that registry's resource name, repository and recorded digest below
  (<code>&lt;sha256-digest&gt;</code> includes the <code>sha256:</code> prefix):</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>HOSTED_AGENT_IMAGE_VERSION

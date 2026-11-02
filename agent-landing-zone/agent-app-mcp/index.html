@@ -5751,7 +5751,8 @@ Authentication and configuration changes follow the owning lifecycle.</p>
 <p>To disable reference server compute, clear <code>MCP_TOOLSETS</code> to <code>[]</code>, set
 <code>DEPLOY_AGENT_APP_MCP=false</code>, then provision/deploy. The lifecycle publishes
 <code>MCP_ENABLED=false</code>, clears the caller allowlist and restarts remaining serving
-revisions to load the revoked authorization. Terraform removes deselected
+revisions to load the revoked authorization.</p>
+<p>Terraform removes deselected
 compute through its managed deployment; Bicep incremental deployments can
 leave the Container App present. After verifying disablement, an operator
 may explicitly retire unused compute.</p>
@@ -5820,14 +5821,16 @@ Cosmos is serverless; Foundry backing Cosmos has separate ownership.</p>
 present, and adds <code>EnableNoSQLVectorSearch</code>. The metadata policy uses
 <code>/embedding</code>, <code>float32</code>, cosine distance and <code>quantizedFlat</code>, with the selected
 embedding dimensions (default <code>3072</code>). Resolve model selection/dimensions
-before provision. Shared-throughput accounts and incompatible policies fail
+before provision.</p>
+<p>Shared-throughput accounts and incompatible policies fail
 explicitly; existing catalog-name/dimension changes require migration/reindexing.
 An explicit <code>DEPLOY_COSMOS_DB=false</code> conflict must be unset for automatic
 selection or set to <code>true</code>.</p>
 <p>The MCP identity receives catalog read and selected model access. The SQL
 owner grants read access to approved views/tables. SQL-password sources use
 Key Vault references; declare exact secret names in <code>MCP_SQL_SECRET_NAMES</code>
-(default <code>[]</code>) before provision for secret-scoped grants. The administrative
+(default <code>[]</code>) before provision for secret-scoped grants.</p>
+<p>The administrative
 importer has separately authorized catalog-write and embedding-model access.
 The consuming Agent/Workflow receives MCP invocation access.</p>
 <p>Business rows stay in SQL; the catalog holds approved metadata. Search and
@@ -5860,7 +5863,8 @@ Deselection does not automatically revoke previously granted roles.</p>
 <p>Retain active metadata versions and review data/grant retirement with owners.
 Embedding-model, dimension or vector-policy changes require explicit reindexing.
 Below 1,000 vectors, Cosmos can use a vector full scan; measure RU consumption
-and latency. Correlate queries with <code>query_id</code> and <code>metadata_version</code>; tokens,
+and latency.</p>
+<p>Correlate queries with <code>query_id</code> and <code>metadata_version</code>; tokens,
 generated SQL, returned rows and internal reasoning stay out of default logs.
 Recover through a compatible image/configuration or controlled deactivation.</p>
 <h2 id="custom-applications">Custom applications</h2>

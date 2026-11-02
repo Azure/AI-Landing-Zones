@@ -5688,8 +5688,8 @@ the UI and Foundry retain their private backend paths.</p>
 <p><img alt="An approved user's browser reaches the public HTTPS frontend of Application Gateway. The gateway forwards to the private UI Container App, which calls Foundry through a private endpoint." src="../../media/runbooks/application-gateway.png" /></p>
 <p>The UI makes the authenticated Foundry call server-side. This gateway does not
 publish Foundry project APIs, hosted-agent endpoints, or Foundry IQ knowledge
-bases. Their private connectivity, authentication, and authorization still apply.
-Start with a working deployment from the <a href="../deploy-full-stack/">full-stack deployment guide</a> and
+bases. Their private connectivity, authentication, and authorization still apply.</p>
+<p>Start with a working deployment from the <a href="../deploy-full-stack/">full-stack deployment guide</a> and
 <a href="../application-auth/">application authentication</a>.
 For hosted runtime/network prerequisites, use <a href="../hosted-agents/">Hosted agents</a>
 and Microsoft's <a href="https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents">hosted-agent networking and limitations</a>.</p>
@@ -5767,7 +5767,8 @@ runtime App Configuration setting or an <code>azd env set</code> gateway flag:</
 <p><code>backendAppIndex</code> is a zero-based position in the <strong>composed</strong>
 <code>containerAppsList</code>, not an app name or resource ID. For a new, unmodified
 hosted deployment, composition removes the orchestrator Container App and the
-UI (<code>service_name: frontend</code>) becomes index <code>0</code>. The raw parameter file still
+UI (<code>service_name: frontend</code>) becomes index <code>0</code>.</p>
+<p>The raw parameter file still
 lists the orchestrator first. Custom compositions can differ:
 confirm the selected backend is the UI, never ingestion or an old orchestrator.</p>
 <p>Keep the existing hosted deployment inputs. If you choose to preview, first
@@ -5850,8 +5851,8 @@ Configuration; remove or update a conflicting override.</p>
 <p>Apply the URL change by restarting/redeploying the <strong>UI Container App</strong>:
 the UI loads this setting at process startup. This does not require a hosted
 agent restart. Do not rewrite the provisioning-managed <code>FRONTEND_APP_ENDPOINT</code>
-to the public hostname; it describes the deployed Container App endpoint.
-Keep delegated authentication/OBO and source authorization unchanged.
+to the public hostname; it describes the deployed Container App endpoint.</p>
+<p>Keep delegated authentication/OBO and source authorization unchanged.
 Document permissions are enforced by the application and its data sources,
 separately from the gateway's WAF controls.</p>
 <h3 id="4-admit-https-clients">4. Admit HTTPS clients</h3>

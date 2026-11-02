@@ -2166,6 +2166,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#native-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native tracing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Native tracing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-up-trace-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set up trace export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#view-traces-in-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        View traces in Foundry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traces-logs-and-content-are-separate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Traces, logs and content are separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#check-an-application-request" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5401,6 +5451,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#native-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native tracing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Native tracing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-up-trace-export" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Set up trace export
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#view-traces-in-foundry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        View traces in Foundry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#traces-logs-and-content-are-separate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Traces, logs and content are separate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#check-an-application-request" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5491,6 +5591,67 @@
 failures and inspect ingestion results. Audit events add structured evidence
 about application operations. They do not replace user authorization, data
 retention policies or service backups.</p>
+<h2 id="native-tracing">Native tracing</h2>
+<p>Microsoft Foundry and Microsoft Agent Framework provide native
+OpenTelemetry-based tracing. The reference orchestrator uses that integration
+to record agent execution, model calls and tool operations.</p>
+<p><strong>Foundry Hosted:</strong> the official hosting SDK configures OpenTelemetry and export
+using the Application Insights connection string.
+View execution in the Foundry project under <strong>Agents &gt; Traces</strong>, with
+Application Insights for deeper investigation.</p>
+<p><strong>Container Apps with Durable Task Scheduler:</strong> the native worker configures
+Azure Monitor export, and Agent Framework instrumentation is enabled by default.
+Investigate the worker and its dependencies in Application Insights.
+This host is separate from Foundry Hosted publications.</p>
+<h3 id="set-up-trace-export">Set up trace export</h3>
+<p>The standard full-stack deployment provisions or reuses Application Insights,
+connects it to Foundry and publishes <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code>
+in App Configuration under <code>agent-lz</code>. The orchestrator reads it at startup.
+There is no separate application feature flag to enable basic tracing.</p>
+<p>When reusing infrastructure, verify that the Foundry project is connected to
+the intended Application Insights resource and that the connection string
+points to that same resource. Use the declared
+<a href="../configuration/">deployment inputs</a>, not a manually copied connection to a
+different environment.</p>
+<p>The investigating operator needs access to the Foundry project and its
+telemetry. The Foundry tracing quickstart lists Foundry User and
+Log Analytics Reader, with Privileged Monitoring Data Reader when protected
+tables require it.
+See the <a href="https://learn.microsoft.com/azure/foundry/observability/quickstarts/quickstart-tracing-hosted-agent">official tracing prerequisites</a>.</p>
+<p>Changing the export destination requires restarting or redeploying the
+affected process. It is not a per-message functional refresh.
+Generate a real request after deployment before looking for its trace.</p>
+<h3 id="view-traces-in-foundry">View traces in Foundry</h3>
+<ol>
+<li>Open the deployed Foundry project, then <strong>Agents &gt; Traces</strong>.</li>
+<li>Select the Hosted agent and a time range that includes your request.</li>
+<li>Find the request by trace ID, response ID or time.</li>
+<li>Open the trace to inspect the hosting operation and its nested Agent
+   Framework spans, including the model and tools that actually ran.</li>
+</ol>
+<p>Foundry emits service-side invocation telemetry automatically.
+The application instrumentation supplies the agent/model/tool detail.
+A service invocation trace alone does not establish that every application
+span was exported.</p>
+<p>If traces are missing, check the selected project, connected Application
+Insights resource, startup configuration, ingestion delay, operator access
+and exporter errors. A custom process override
+<code>ENABLE_INSTRUMENTATION=false</code> disables Agent Framework instrumentation.
+For Container Apps, start in Application Insights rather than expecting a
+Hosted-agent entry in Foundry.</p>
+<h3 id="traces-logs-and-content-are-separate">Traces, logs and content are separate</h3>
+<p>Basic traces do not require prompt or response-content capture.
+Keep that capture off unless its privacy and retention requirements have been
+approved. Timing, outcome and correlation remain useful without transcripts.</p>
+<p>In the Container Apps worker, <code>AZURE_MONITOR_DISABLE_LOGGING=true</code> suppresses
+general application-log export, not tracing.
+<code>AUDIT_EVENTS_ENABLED</code> controls the orchestrator's supported audit hooks,
+not the creation of basic agent traces. The Hosted SDK owns its own telemetry
+setup, so do not apply the worker's logging switch as a universal control.</p>
+<p>See <a href="../application-settings/#telemetry-settings">telemetry settings</a>,
+<a href="#content-capture-and-privacy">content capture</a> and
+<a href="https://learn.microsoft.com/agent-framework/agents/observability">Agent Framework observability</a>
+for the separate controls.</p>
 <h2 id="check-an-application-request">Check an application request</h2>
 <ol>
 <li>Record the deployed application revision and the time of the request.</li>
@@ -5566,8 +5727,9 @@ The <code>delete_after</code> provenance field is metadata, not an automatic pur
 purpose, access controls and retention have been approved.
 For hosted orchestration, the deployment input
 <code>HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT</code> supplies
-<code>OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT</code>. A change requires a
-new hosted version.</p>
+<code>OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT</code> and defaults to <code>false</code>.
+A change requires a new hosted version. Leave it off when enabling or
+investigating basic traces.</p>
 <p>An audit-content allowlist does not establish that every native path has
 capture wired, nor guarantee that user-authored content is safe to export.
 UI metadata deliberately contains no transcripts, tokens or attachment bytes;

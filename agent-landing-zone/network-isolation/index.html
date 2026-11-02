@@ -5665,14 +5665,14 @@ from a connected host before deploying applications.</p>
 <h2 id="account-for-integration-specific-paths">Account for integration-specific paths</h2>
 <p>Agent App MCP Server needs HTTPS from the actual Hosted or Container Apps
 consumer to its separate Container App, plus configuration and identity
-connectivity even when <code>MCP_TOOLSETS=[]</code>.
-Only the selected NL2SQL toolset adds outbound paths to application Cosmos,
+connectivity even when <code>MCP_TOOLSETS=[]</code>.</p>
+<p>Only the selected NL2SQL toolset adds outbound paths to application Cosmos,
 generation/embedding models and the approved SQL destination. SQL-password
 sources also need the selected Key Vault. The administrative metadata importer
-needs its own catalog/model path.
-Plan routes, DNS and TLS with the SQL and network owners; provisioning does
-not authorize an external database or make its network reachable.
-MCP does not add a Search path or Search grant. Other retrieval consumers keep
+needs its own catalog/model path.</p>
+<p>Plan routes, DNS and TLS with the SQL and network owners; provisioning does
+not authorize an external database or make its network reachable.</p>
+<p>MCP does not add a Search path or Search grant. Other retrieval consumers keep
 their independent requirements. See <a href="../agent-app-mcp/#onboard-sql-before-inviting-users">MCP onboarding</a>.</p>
 <p>For private native Blob ingestion, plan Search-to-source/model links and
 approval by the authorized target owners. Pending approval is not fixed by

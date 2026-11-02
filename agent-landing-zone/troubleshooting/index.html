@@ -6926,8 +6926,8 @@ client with public access still disabled.</p>
 Vault references.</p>
 <p><strong>Diagnose:</strong> Distinguish name resolution, routing, TLS and HTTP authorization
 errors at both endpoints. Confirm the actual runtime identity and identify
-which connection stage stalls before choosing a recovery action.
-Runtime availability handling catches Azure SDK and Requests transport
+which connection stage stalls before choosing a recovery action.</p>
+<p>Runtime availability handling catches Azure SDK and Requests transport
 failures, not arbitrary provider exceptions. An unexpected provider failure
 propagates unchanged; do not diagnose it as disabled configuration or successful
 empty settings. Distinguish the failure family before applying transport recovery.</p>
@@ -7099,8 +7099,8 @@ Search-indexed conversation uploads.</p>
 permissions at their own boundary. Confirm the configured storage locations,
 Search index and bundled UI <code>retrieval-reader</code> profile. The native route
 limits a download to 100 MiB and 120 seconds. An unverified target beyond
-those bounds is denied, not read with elevated access.
-Do not re-enable the legacy reader, mint SAS or replace user Storage access
+those bounds is denied, not read with elevated access.</p>
+<p>Do not re-enable the legacy reader, mint SAS or replace user Storage access
 with workload access to make the download succeed.</p>
 <p><strong>Verify:</strong> Repeat allowed/denied-user, expiry and permission-revocation checks
 through the authenticated citation route. Test private attachments separately
@@ -7127,14 +7127,14 @@ A successful greeting does not prove that the metadata store, native state
 read and owner-bound resume path are ready. An administrative panel is not
 required to obtain native persistence.</p>
 <p><strong>Correct:</strong> Check the selected publication or durable registration, current
-identity, owner mapping, metadata dependency and native client permissions.
-Saved listing/history requires <code>ENABLE_CHAT_HISTORY=true</code>; known workflow
+identity, owner mapping, metadata dependency and native client permissions.</p>
+<p>Saved listing/history requires <code>ENABLE_CHAT_HISTORY=true</code>; known workflow
 resume does not. With conversational mode and all product flags off, bounded
 volatile UI owner maps are lost on restart. Native state does not reconstruct
-them.
-Follow <a href="../conversations/">Conversations &amp; files</a> and
-<a href="../hosted-agents/#calling-the-agent">Agent hosting</a>.
-Report a failed state read rather than presenting empty history or replaying
+them.</p>
+<p>Follow <a href="../conversations/">Conversations &amp; files</a> and
+<a href="../hosted-agents/#calling-the-agent">Agent hosting</a>.</p>
+<p>Report a failed state read rather than presenting empty history or replaying
 a UI transcript as a replacement execution store. Switching hosts does not
 import a session from the previous backend.</p>
 <p><strong>Verify:</strong> Open a saved conversation in a new session as its owner and confirm
@@ -7325,7 +7325,8 @@ application health directly.</p>
 <p>UI records containing <code>exception_type</code> and <code>failure_site</code> intentionally omit
 dependency error payloads. Correlate the static operation, code location and
 request reference with dependency telemetry. Do not enable raw token, cookie,
-claim, signed-URL or document logging to fill that gap. A failed optional panel
+claim, signed-URL or document logging to fill that gap.</p>
+<p>A failed optional panel
 index write needs repair even when the chat continues. Confirm the expected
 owner-index record exists after retrying the write.</p>
 <p>Telemetry content capture is off by default. Keep prompts and answers private;

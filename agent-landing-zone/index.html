@@ -5512,8 +5512,8 @@ preparing Azure resources from publishing application code.</p>
 <p>An infrastructure-only deployment stops after resource provisioning and
 service configuration. It does not publish application images or start a
 hosted agent. Generic compute placeholders may exist until application deploy.
-Reprovisioning preserves application images/revisions already published.
-There is no extra application-deployment flag: use native <code>azd provision</code>
+Reprovisioning preserves application images/revisions already published.</p>
+<p>There is no extra application-deployment flag: use native <code>azd provision</code>
 for the foundation and <code>azd deploy</code> for the application.
 A full-stack deployment completes the application stage too.
 The deployment guides provide the supported sequence and its checks.</p>
@@ -5532,19 +5532,17 @@ inputs. Custom-only applications do not inherit reference MCP, SQL or catalogs.<
   <a href="application/#first-time-using-agent-application">new-user application route</a>
   from deployment and sign-in to the first conversation, then add only the
   optional capabilities you need.</li>
-<li><strong>What does the template do?</strong> <a href="#how-the-template-works">How the template works</a>
-  explains resource provisioning and application deployment.</li>
-<li><strong>What needs planning?</strong> <a href="planning/">Deployment choices</a> covers resources,
-  network integration and deployment tools. The
-  <a href="../architecture/design-checklist/">Design checklist</a> supports architecture
-  and security review.</li>
+<li><strong>What does the template do?</strong> Review the <a href="#how-the-template-works">deployment lifecycle</a>.</li>
+<li><strong>What needs planning?</strong> Review <a href="planning/">resources, networking and deployment tools</a>,
+  then use the <a href="../architecture/design-checklist/">Design checklist</a> for architecture
+  and security decisions.</li>
 <li><strong>How much capacity and budget are needed?</strong> The
   <a href="sizing-cost-planner/">Sizing &amp; cost planner</a> combines guidance, resource
   choices and editable estimates.</li>
 <li><strong>Do I only need Azure resources?</strong> Deploy infra only
   <a href="deploy-infra-only/">with&nbsp;Bicep</a> or <a href="deploy-terraform-infra-only/">with&nbsp;Terraform</a>.</li>
-<li><strong>Do I want the supplied application running?</strong> Deploy full stack
-  <a href="deploy-full-stack/">with&nbsp;Bicep</a> or <a href="deploy-terraform-full-stack/">with&nbsp;Terraform</a>.</li>
+<li><strong>Want the reference application?</strong> Use <a href="deploy-full-stack/">Bicep</a> or
+  <a href="deploy-terraform-full-stack/">Terraform</a> for the full stack.</li>
 </ul>
 <p>For an existing environment, <strong>Operate</strong> brings together
 <a href="deployment-operations/">updates and recovery</a> and

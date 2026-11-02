@@ -5904,12 +5904,12 @@ not build or publish application images or create a running hosted agent
 version. Selected Container Apps may initially have placeholder images.
 Reprovisioning must not restore placeholders over deployed application images.</p>
 <p>All flat Terraform outputs flow natively into azd and are consumed by the
-shared postprovision and predeploy hooks. No manual output copying is needed.
-Terraform publishes foundation-owned App Configuration connections, model
+shared postprovision and predeploy hooks. No manual output copying is needed.</p>
+<p>Terraform publishes foundation-owned App Configuration connections, model
 metadata and declared additional settings. Shared postprovision seeds only
 missing defaults; the runtime publisher updates its explicitly owned keys.
-See <a href="../configuration/#configuration-ownership-and-declarations">configuration ownership</a>.
-The shared <a href="../deploy-infra-only/#platform-outputs">platform output reference</a>
+See <a href="../configuration/#configuration-ownership-and-declarations">configuration ownership</a>.</p>
+<p>The shared <a href="../deploy-infra-only/#platform-outputs">platform output reference</a>
 explains <code>AGENTLZ_PLATFORM_OUTPUTS</code> and flat keys published in App Configuration
 under label <code>agent-lz</code>. The platform document is not the full azd output set.</p>
 <h2 id="validation">Validation</h2>
@@ -5939,12 +5939,12 @@ validation results. Protect state, plans, generated inputs, logs and <code>.azur
 <h2 id="complete-deferred-private-configuration">Complete deferred private configuration</h2>
 <p>If provisioning explicitly deferred service configuration while a connected
 host was prepared, keep the same source, provider/path, application binding,
-destination mapping, inputs and remote backend on that host.
-Securely restore the <a href="#private-deployment-records">original deployment records</a>,
+destination mapping, inputs and remote backend on that host.</p>
+<p>Securely restore the <a href="#private-deployment-records">original deployment records</a>,
 selected environment/application bindings and the exact reviewed parameter
 declaration, including any required private declaration. Keep the same backend
-and cloud. <code>azd env refresh</code> does not restore those records or declared intent.
-Missing required declarations fail rather than being reconstructed from
+and cloud. <code>azd env refresh</code> does not restore those records or declared intent.</p>
+<p>Missing required declarations fail rather than being reconstructed from
 defaults, outputs or state.
 After restoring the environment, complete configuration:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>RUN_FROM_JUMPBOX<span class="w"> </span><span class="nb">true</span>

@@ -5537,12 +5537,13 @@ before a reply is sent.</p>
 and <code>/actions</code>. Start carries <code>topic</code>; actions carry the current <code>request_id</code>,
 <code>revision</code> and business <code>response</code>. Progress returns <code>id</code>, <code>status</code>, <code>pending</code>,
 <code>revision</code> and <code>output</code>. Unknown/nonowned IDs return <code>404</code> before backend
-access and stale/duplicate actions return <code>409</code>.
-Delivery reported as <strong>submitted</strong> is not worker admission or completion.
+access and stale/duplicate actions return <code>409</code>.</p>
+<p>Delivery reported as <strong>submitted</strong> is not worker admission or completion.
 Read progress for the actual native result.</p>
 <p>Hosted start uses stored Responses input. Pending <code>request_info</code> is a native
 <code>function_call</code> with <code>arguments.request</code>; reply uses <code>previous_response_id</code>
-and <code>function_call_output</code> with its actual <code>call_id</code>. DTS uses native typed
+and <code>function_call_output</code> with its actual <code>call_id</code>.</p>
+<p>DTS uses native typed
 state/output and the runtime's <code>native.contracts</code> codecs. Do not flatten
 typed list/yield output or replace it with a custom workflow protocol.
 Private attachments are not supported in this workflow.</p>
@@ -5552,8 +5553,8 @@ timeout or waiting Python coroutine is not the system of record.
 Closing the browser does not approve or reject a process.</p>
 <p>Reconnect through the authenticated UI and reopen the same owner-bound run.
 Known workflow resume is available with <code>ENABLE_CHAT_HISTORY=false</code>;
-saved listing and history reads require that flag to be enabled.
-The client reads current native state before displaying a pending action.
+saved listing and history reads require that flag to be enabled.</p>
+<p>The client reads current native state before displaying a pending action.
 Replies for a stale request, another run or an already completed action
 must not advance an execution. Duplicate submission is not a second approval.</p>
 <p>Do not recreate a workflow as a new run simply because a progress stream

@@ -5372,8 +5372,8 @@ Remove owned rules with the current reconciliation workflow
 <p>For MCP, server compute and startup toolset selection are separate.
 <code>MCP_TOOLSETS=[]</code> registers zero tools; <code>["nl2sql"]</code> needs its declared
 catalog/model dependencies, SQL-owner approvals and active metadata version.
-Provision matching dependencies and restart/redeploy after toolset changes.
-Deselection stops initialization but does not delete retained catalog data or
+Provision matching dependencies and restart/redeploy after toolset changes.</p>
+<p>Deselection stops initialization but does not delete retained catalog data or
 automatically revoke old grants. Review retirement explicitly; recovery does not run direct SQL
 inside the orchestrator. Embedding model/dimension changes need reindexing,
 not just a runtime-setting refresh.</p>

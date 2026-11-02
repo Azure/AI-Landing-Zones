@@ -5592,8 +5592,8 @@
 through the shared azd lifecycle. Defaults are <code>ORCHESTRATION_HOST=hosted</code>
 and <code>APPLICATION_MODE=conversational</code>: Foundry-hosted execution, an automatically
 included Container Apps UI. Foundry IQ sources and retrieval are configured
-when selected, not proved by the initial greeting.
-History, feedback and private attachments independently default to off.
+when selected, not proved by the initial greeting.</p>
+<p>History, feedback and private attachments independently default to off.
 Workflow or <code>both</code> always selects UI metadata. Native Hosted execution does
 not require application Cosmos DB; enabled UI product metadata declares its
 own dependencies.</p>
@@ -5670,15 +5670,15 @@ azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span
 </code></pre></div>
 <p>Use the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated MCP platform source</a>
 and its complete manifest/application definition, not an isolated component
-version change in another checkout.
-The server default is <code>false</code>; toolsets default to <code>[]</code>. Empty server compute
-does not require the NL2SQL catalog, models or secret grants.
-With NL2SQL selected, Terraform projects the application's declared catalog
+version change in another checkout.</p>
+<p>The server default is <code>false</code>; toolsets default to <code>[]</code>. Empty server compute
+does not require the NL2SQL catalog, models or secret grants.</p>
+<p>With NL2SQL selected, Terraform projects the application's declared catalog
 policies and scoped grants into generic foundation inputs, as Bicep does.
 The shared application lifecycle publishes <code>MCP_TOOLSETS</code> under <code>agent-lz</code>
 and generates the consuming MCP connection and authorization.
-Search and document ingestion remain independent.
-See <a href="../agent-app-mcp/">Agent App MCP Server</a> for what is automatic and for
+Search and document ingestion remain independent.</p>
+<p>See <a href="../agent-app-mcp/">Agent App MCP Server</a> for what is automatic and for
 operator-owned SQL permissions and approved metadata import.</p>
 <h3 id="step-3-provision-the-foundation">Step 3: Provision the foundation</h3>
 <p>Complete the <a href="../deploy-terraform-infra-only/#step-5-review-and-provision">Terraform infrastructure review</a>
@@ -5706,14 +5706,14 @@ stages so that the post-provision identity work happens before deploy.</p>
 <p>Provisioning does not build application images or create the running hosted
 agent version. Deploy fetches manifest-pinned sources, prepares the immutable
 hosted image when needed, binds it to the provisioned Foundry project and
-registry, then publishes the hosted version and selected Container Apps.
-When MCP is selected, its image deploys before the consuming application is
+registry, then publishes the hosted version and selected Container Apps.</p>
+<p>When MCP is selected, its image deploys before the consuming application is
 activated; the lifecycle obtains actual caller identities and checks
 their authorization, publishes the allowlist/connection settings and
 automatically restarts every active MCP revision to load startup-only auth.
 Authenticated discovery precedes consumer activation; no manual MCP restart
-is required during normal deploy.
-Provision does not import SQL metadata or grant database permissions.
+is required during normal deploy.</p>
+<p>Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.</p>
 <p>azd imports all flat Terraform outputs for the shared hooks automatically. Service
 configuration publishes App Configuration values under <code>agent-lz</code>, with Key
@@ -5779,8 +5779,8 @@ with explicit approval, backups, ownership review and the original backend.
 Use root <code>azd down</code> only within its validated deletion scope; honor all safety
 blocks rather than bypassing them. Keep backend storage and recovery access
 outside workload teardown. Retained data, shared network/DNS resources and
-backend retirement require separate owner decisions.
-Terraform uses recorded, state-scoped ownership across its groups; the
+backend retirement require separate owner decisions.</p>
+<p>Terraform uses recorded, state-scoped ownership across its groups; the
 infrastructure guide explains the preview and explicit destruction commands.</p>
 
 

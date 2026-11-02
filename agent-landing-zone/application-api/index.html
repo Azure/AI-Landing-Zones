@@ -5809,8 +5809,8 @@ must be read from the stream, even if the HTTP status was <code>200</code>.</p>
 <p>The application uses explicit host-specific clients, not one universal state
 or request SDK. Select <code>APPLICATION_MODE</code> and <code>ORCHESTRATION_HOST</code> through
 deployment composition. UI session creation selects an already enabled
-application; it does not change the deployment's host or mode.
-Tools, including optional MCP NL2SQL, are registered capabilities rather
+application; it does not change the deployment's host or mode.</p>
+<p>Tools, including optional MCP NL2SQL, are registered capabilities rather
 than strategy keys.
 With the <code>nl2sql</code> toolset explicitly selected, the Agent/Workflow calls <code>nl2sql.list_sources()</code> and
 <code>nl2sql.query(source_id, question)</code> on the separate Agent App MCP Server;
@@ -5835,8 +5835,8 @@ decode its <code>arguments.request</code>. Reply using <code>previous_response_i
 <code>function_call_output</code> with the actual <code>call_id</code>, carrying the JSON business
 reply <code>{"decision":"approve","comment":"Reviewed"}</code>. Decision is <code>approve</code>
 or <code>reject</code>, and comment is at most 4,000 characters. Terminal output is the
-typed <code>ResearchReviewResult</code> in <code>structured_outputs</code>.
-A reply must match the intended run and currently pending request. A free-form
+typed <code>ResearchReviewResult</code> in <code>structured_outputs</code>.</p>
+<p>A reply must match the intended run and currently pending request. A free-form
 chat message or fabricated event must not be interpreted as an approval.</p>
 <p>Foundry authenticates ingress. Request-aware factories use trusted invocation
 context and current source/tool authorization. A service bearer, arbitrary
@@ -5859,8 +5859,8 @@ Agent sessions, workflow execution and pending human input belong to DTS.</p>
 <p>The BFF authenticates the user and checks its owner mapping before native
 reads, continuation or human replies. Scheduler RBAC authenticates a service
 connection, not a product user. IDs are selectors, not capabilities.
-Durable progress need not provide Hosted per-token streaming parity.
-The native DTS agent entity version is <code>2</code>. Keep client and worker registration
+Durable progress need not provide Hosted per-token streaming parity.</p>
+<p>The native DTS agent entity version is <code>2</code>. Keep client and worker registration
 names aligned: <code>agent-lz-conversation</code> and <code>agent-lz-research-review</code>.
 Native outputs can contain typed lists/yields; use the runtime's
 <code>native.contracts</code> codecs rather than flattening them into invented text or
@@ -5934,11 +5934,11 @@ This handler does not share the strict schema of <code>/ingest-documents</code>.
 </code></pre></div>
 <p><code>conversationId</code> is nonempty. <code>values</code> contains <code>1..5</code> records with nonempty
 <code>recordId</code>, <code>fileName</code>, <code>contentType</code> and <code>fileBase64</code>.
-The schema rejects unknown fields at the envelope, record and data levels.
-<code>securityUserIds</code> is optional in the wire schema. The trusted caller must
+The schema rejects unknown fields at the envelope, record and data levels.</p>
+<p><code>securityUserIds</code> is optional in the wire schema. The trusted caller must
 derive any uploader ACL from authenticated identity, not user-entered IDs.
-An API key alone does not establish user ownership.
-This separate ingestion API is not the native UI attachment path. Native
+An API key alone does not establish user ownership.</p>
+<p>This separate ingestion API is not the native UI attachment path. Native
 private attachments do not dispatch files here or publish them into Search.</p>
 <p>Response example:</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"values"</span><span class="p">:[{</span><span class="nt">"recordId"</span><span class="p">:</span><span class="s2">"attachment-1"</span><span class="p">,</span><span class="nt">"indexedChunks"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nt">"errors"</span><span class="p">:[],</span><span class="nt">"warnings"</span><span class="p">:[]}]}</span>
@@ -6139,11 +6139,11 @@ Stale or duplicate actions return <code>409</code>.</p>
 </table>
 <p>Request bodies reject unknown fields. <code>request_id</code> and <code>native_ref</code> are
 <code>1..512</code> characters; revision is the current 64-character lowercase hexadecimal
-UI revision, not the DTS entity version.
-Missing/invalid bearer returns <code>401</code>, nondelegated or denied access <code>403</code>,
+UI revision, not the DTS entity version.</p>
+<p>Missing/invalid bearer returns <code>401</code>, nondelegated or denied access <code>403</code>,
 invalid input <code>422</code>, unavailable feature/dependency <code>503</code>, and sanitized native
-dependency failure <code>502</code>.
-Use <code>request_id</code> and <code>revision</code> from current progress, not a cached browser
+dependency failure <code>502</code>.</p>
+<p>Use <code>request_id</code> and <code>revision</code> from current progress, not a cached browser
 action. Delivery reported as <strong>submitted</strong> does not mean the durable worker
 admitted the reply or completed execution. Read progress to observe the actual
 native result. Do not invent an exactly-once business-write guarantee.</p>
@@ -6152,10 +6152,10 @@ UTF-8 TXT/Markdown, PDF, PNG or JPEG. Each entry contains
 <code>{name,content_type,data_base64}</code> and is subject to strict Base64, format/signature
 and owner validation. The larger of the Hosted and DTS serialized inline
 envelopes must be at most <strong>256 KiB</strong>, including text, JSON escaping, filenames,
-MIME metadata and Base64/data-URI expansion. This is not a raw-file-size sum.
-Attachments are supported for conversational operation
-in <code>conversational</code> or <code>both</code>, not workflow input.
-Hosted uses official <code>input_file</code>/image inputs; DTS uses native
+MIME metadata and Base64/data-URI expansion. This is not a raw-file-size sum.</p>
+<p>Attachments are supported for conversational operation
+in <code>conversational</code> or <code>both</code>, not workflow input.</p>
+<p>Hosted uses official <code>input_file</code>/image inputs; DTS uses native
 <code>context_messages</code> and IDs. There is no attachment Blob URL, SAS, ingestion
 dispatch or corporate publication. Transport tests do not establish model
 PDF/image understanding.</p>

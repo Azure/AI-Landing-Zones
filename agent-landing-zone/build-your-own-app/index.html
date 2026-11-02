@@ -5946,7 +5946,8 @@
 with pinned deployment inputs. The application sits <strong>above the reusable
 foundation</strong>: its definition/composition owns names, tool selection and
 dependencies; foundation inputs describe generic compute, data, capabilities
-and roles. The supplied UI/orchestrator are one usable application, not
+and roles.</p>
+<p>The supplied UI/orchestrator are one usable application, not
 mandatory foundation components. A different application implements only the
 authentication, UI and ingestion API contracts for components it actually reuses.</p>
 <h2 id="when-to-use">When to use</h2>
@@ -5981,7 +5982,8 @@ different application. Choose the branch that matches your change:</p>
 <p>For the Agent Application orchestrator hosted in Foundry, use <a href="../foundry-iq/">Foundry IQ</a> for
 knowledge base retrieval. Custom agent/workflow definitions and tools must use
 and test the selected native host integration and authorization path before
-deployment. The reference default is a conversational MAF Agent; Foundry IQ
+deployment.</p>
+<p>The reference default is a conversational MAF Agent; Foundry IQ
 retrieval is independently selected and defaults to off.
 Hosted conversation and workflow are separate publications when both are selected;
 the Container Apps alternative uses the official Durable Extension and DTS.</p>
@@ -6055,10 +6057,10 @@ Changing its Git remote does not change component repository URLs.</p>
 <code>agent-app-ingestion</code> and definition names <code>ui</code>, <code>orchestrator</code>, <code>ingestion</code>.
 When MCP is selected, retain its component/service names as declared in the
 compatible manifest and application definition; pin changes with the same
-source/definition discipline.
-Hooks use these to map sibling folders. Existing checkouts are verified, not
-advanced automatically: preserve local work before relocating stale checkouts.
-Matching HEAD does not detect uncommitted source changes. Run
+source/definition discipline.</p>
+<p>Hooks use these to map sibling folders. Existing checkouts are verified, not
+advanced automatically: preserve local work before relocating stale checkouts.</p>
+<p>Matching HEAD does not detect uncommitted source changes. Run
 <code>git status --porcelain</code> in each source folder and require no output for the
 source being built; retain reviewed deployment-input edits separately.</p>
 <p>Upstream validation does not cover your modifications. Before deployment,
@@ -6089,15 +6091,15 @@ Do not edit a binding to force another application into an existing environment.
 an explicit custom definition. A custom-only definition contributes only its
 declared components, profiles and resource requirements.
 Published ingestion capability describes the platform's ingestion selection;
-your application must implement uploads if it needs them.
-<code>DEPLOY_AGENT_APP_MCP</code> is reserved for the reference application and is
-rejected for custom definitions before Azure calls.
-A custom app can explicitly pass <code>MCP_TOOLSETS</code> as its own runtime setting.
+your application must implement uploads if it needs them.</p>
+<p><code>DEPLOY_AGENT_APP_MCP</code> is reserved for the reference application and is
+rejected for custom definitions before Azure calls.</p>
+<p>A custom app can explicitly pass <code>MCP_TOOLSETS</code> as its own runtime setting.
 Its definition/composition owns compute, configuration, dependencies and
 permissions; the setting adds no automatic reference server, catalog, model
 resources or SQL grants. To reuse or consume MCP, declare and test the app's
-own explicit component, runtime configuration, dependency and permission contracts.
-If reusing Agent App UI, preserve its
+own explicit component, runtime configuration, dependency and permission contracts.</p>
+<p>If reusing Agent App UI, preserve its
 <a href="../conversations/#private-attachments">inline attachment contract</a>, including
 owner mappings, exact byte/serialized limits and no corporate ingestion
 fallback. Workflow attachments are not supported by that native UI path.</p>

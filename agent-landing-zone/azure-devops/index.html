@@ -5898,7 +5898,8 @@ source permissions and successful greetings are not substitutes.</p>
 <h4 id="runner-requirements">Runner requirements</h4>
 <p>Create authorized <strong>Linux self-hosted Azure Pipelines agent pools</strong>, with a runner
 able to reach each environment's private endpoints through its VNet or a peered
-hub/VPN. Bootstrap the deployment network before this full-stack pipeline: an
+hub/VPN.</p>
+<p>Bootstrap the deployment network before this full-stack pipeline: an
 agent cannot depend on the VNet it is about to create to become reachable.
 Use <a href="../network-isolation/">Network design</a> for DNS, routing and egress checks.
 The CI-only pool need not reach Azure data-plane endpoints.</p>
@@ -5978,12 +5979,14 @@ work around an unattended failure. Allow RBAC propagation before retrying.</p>
 <h4 id="complete-the-application-sign-in-setup-separately">Complete the application sign-in setup separately</h4>
 <p>The pipeline service connection authenticates deployment jobs. The UI uses a
 separate Entra application registration and tenant consent, which must be
-configured outside the deployment scripts. For each isolated application
+configured outside the deployment scripts.</p>
+<p>For each isolated application
 environment, follow the single canonical
 <a href="../application-auth/#configure-login-in-order">login setup sequence</a>:
 registration and consent before first provision, final HTTPS callback and
 settings after the frontend URL is known, then caller/admission grants and
-user validation. For an already deployed UI, reload it after settings change.</p>
+user validation.</p>
+<p>For an already deployed UI, reload it after settings change.</p>
 <p>Complete tenant consent and sign-in configuration through a separately reviewed
 administrative procedure or automation before accepting the deployment.
 Keep these tasks separate from the deployment connection's Azure permissions;
@@ -6210,8 +6213,8 @@ environment into CI.</p>
 <p>Preup validates/checks binding before standalone provisioning. Preprovision
 resolves topology using <code>python -m config.deployment.topology</code> and composes
 <code>infra/bicep/main.parameters.json</code>; subsequent hooks use <code>--describe</code> to read its JSON.
-This tracked Bicep seed is regenerated; never commit resolved environment values.
-Post-provision configures application services and roles. Provision prepares
+This tracked Bicep seed is regenerated; never commit resolved environment values.</p>
+<p>Post-provision configures application services and roles. Provision prepares
 the hosted foundation prerequisites. Deploy automatically builds or reuses the
 immutable image, materializes its application handoff and creates the hosted
 version plus the other selected components, without another provision.</p>
@@ -6230,7 +6233,8 @@ adopting that promotion model.</p>
 publish step: hooks copy <code>.azure</code> to sibling components and create <code>.logs</code>.
 Exclude <code>.azure</code>, <code>.env</code>/environment files, logs, secret files, credential/config
 caches, <code>.git</code> credentials and Python dependency environments from any future
-artifact. If changing to CI artifacts, deploy from the downloaded validated tree
+artifact.</p>
+<p>If changing to CI artifacts, deploy from the downloaded validated tree
 and explicitly solve the Git metadata requirement for local custom sources.</p>
 <p>Cleanup runs even after failure. Its fixed path list removes <code>.azure</code> and <code>.logs</code>
 from the platform root, <code>hosted-agent/</code>, and the three manifest component sibling

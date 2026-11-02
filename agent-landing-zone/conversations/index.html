@@ -5591,22 +5591,23 @@ must not be treated as an empty successful conversation.</p>
 </table>
 <p>Hosted execution does not require application Cosmos DB.
 Workflow mode or <code>both</code> selects UI metadata even with product flags off;
-enabled history, feedback or attachments also selects it. The UI reads
+enabled history, feedback or attachments also selects it.</p>
+<p>The UI reads
 <code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
 (default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>, owner value
 <code>tid:oid</code>).
 Only the frontend receives its metadata grant. The container holds owner/run
 mappings, references, feedback and attachment descriptors, not bytes,
-transcripts, tokens or Foundry/DTS execution checkpoints.
-The optional NL2SQL toolset on Agent App MCP Server can reuse the same application
+transcripts, tokens or Foundry/DTS execution checkpoints.</p>
+<p>The optional NL2SQL toolset on Agent App MCP Server can reuse the same application
 Cosmos account with separate source/vector-metadata containers and grants.
 An empty MCP server does not select those containers. Selecting MCP does
 not enable history, feedback or attachments, and its catalog is not a UI
-session store. See <a href="../application/#what-cosmos-means-in-this-application">Cosmos ownership</a>.
-In conversational mode with every product flag off, the UI uses bounded
+session store. See <a href="../application/#what-cosmos-means-in-this-application">Cosmos ownership</a>.</p>
+<p>In conversational mode with every product flag off, the UI uses bounded
 volatile owner maps. They are lost on UI restart; native host persistence alone
-cannot restore the UI mapping or provide saved discovery.
-Do not deploy ingestion or an additional runtime merely to support metadata.
+cannot restore the UI mapping or provide saved discovery.</p>
+<p>Do not deploy ingestion or an additional runtime merely to support metadata.
 Saved listing and history reads require <code>ENABLE_CHAT_HISTORY=true</code>.
 A known owner-bound workflow can resume with history off through
 <code>/api/native/sessions/{id}/resume</code>; workflow mode already selects metadata.</p>
@@ -5640,8 +5641,8 @@ before native backend access.</p>
 <p>The maximum serialized inline turn is <strong>256 KiB</strong>, checked against both
 Hosted and DTS content envelopes. Text, filenames, MIME metadata, data URIs,
 Base64 expansion and JSON escaping count toward this budget. Three files
-that individually meet their byte limit can still exceed it.
-Each name is a basename of <code>1..128</code> characters (no path separators, leading
+that individually meet their byte limit can still exceed it.</p>
+<p>Each name is a basename of <code>1..128</code> characters (no path separators, leading
 dot or control characters); content type is at most 64 characters.
 Base64 text is bounded to 87,384 characters, and decoded input must be
 nonempty. Extension and MIME must match:</p>

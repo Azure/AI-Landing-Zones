@@ -5472,8 +5472,8 @@ comments or operator views.</p>
 <p>Select <code>ENABLE_USER_FEEDBACK=true</code> explicitly; its default is <code>false</code>.
 Provision the UI metadata store and frontend-only permissions. The UI consumes
 <code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
-(default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>).
-Do not require optional ingestion or an additional execution service merely
+(default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>).</p>
+<p>Do not require optional ingestion or an additional execution service merely
 to store a user's feedback.
 See <a href="../conversations/">Conversations &amp; files</a> for state ownership and
 <a href="../application-settings/">Application settings</a> for configuration.</p>
@@ -5482,12 +5482,12 @@ See <a href="../conversations/">Conversations &amp; files</a> for state ownershi
 <p>When feedback is enabled and its dependencies are ready, the chat control
 submits to the authenticated UI/BFF. The BFF checks the current owner mapping
 and associates feedback with the intended conversation/run and message/result.
-The product store holds feedback metadata, not native execution checkpoints.
-The route is <code>POST /api/native/sessions/{id}/feedback</code> with
+The product store holds feedback metadata, not native execution checkpoints.</p>
+<p>The route is <code>POST /api/native/sessions/{id}/feedback</code> with
 <code>native_ref</code>, <code>rating</code> (<code>-1</code> or <code>1</code>) and <code>comment</code> (at most 2,000 characters).
 The UI UUID must belong to the authenticated owner. Unknown/nonowned IDs
-return <code>404</code> before backend access; a native reference alone grants nothing.
-Feedback uses the native UI route above; <code>/panel/conversations</code> is not mounted.</p>
+return <code>404</code> before backend access; a native reference alone grants nothing.</p>
+<p>Feedback uses the native UI route above; <code>/panel/conversations</code> is not mounted.</p>
 <p>Do not display working-looking controls for an unavailable integration.
 A clicked thumb or accepted browser event is not evidence that feedback was
 saved. Report storage failures rather than confirming a successful write.
