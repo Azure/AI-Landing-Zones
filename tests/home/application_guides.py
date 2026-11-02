@@ -56,6 +56,15 @@ def check_application_guides(page, base, screenshots=None):
             content = page.locator(".md-content__inner")
             headings = content.locator("h2, h3").all_text_contents()
             assert any(PROCEDURE.search(heading) for heading in headings), (guide, headings)
+            if guide == "agent-tools":
+                tools = content.locator("#tools-available-to-the-agent").locator(
+                    "xpath=following::table[1]"
+                ).inner_text()
+                for tool in (
+                    "Azure AI Search", "Foundry IQ", "multimodal_retrieve",
+                    "nl2sql.list_sources", "nl2sql.query",
+                ):
+                    assert tool in tools, (guide, "Missing registered tool description", tool)
             assert content.locator("ol > li").count() >= 2, (
                 guide, "Expected concrete ordered instructions"
             )
@@ -114,6 +123,17 @@ def check_application_guides(page, base, screenshots=None):
         assert root.find(SVG + "title") is not None, (guide, "Missing SVG title")
         description = root.find(SVG + "desc")
         assert description is not None and description.text, (guide, "Missing SVG description")
+        if guide == "agent-tools":
+            labels = " ".join(
+                "".join(element.itertext()) for element in root.findall(".//" + SVG + "text")
+            )
+            for label in (
+                "Foundry tool integrations", "Azure AI Search", "Foundry IQ",
+                "Application tool integrations", "multimodal_retrieve",
+                "nl2sql.list_sources", "nl2sql.query",
+            ):
+                assert label in labels, (guide, "Missing tool integration", label)
+            assert "Application registration" not in labels
         assert root.find(".//" + SVG + "script") is None, (guide, "Executable SVG")
         assert root.find(".//" + SVG + "foreignObject") is None, (guide, "Embedded HTML")
         assert not re.search(

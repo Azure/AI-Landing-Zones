@@ -2,10 +2,10 @@
 
 # Tools & MCP
 
-Tools are approved operations that a MAF Agent or Workflow can call.
-Model Context Protocol (MCP) exposes operations through a tool server.
-Foundry IQ and Azure AI Search provide knowledge/retrieval capabilities.
-These are not competing orchestration strategies.
+Tools are operations made available to an Agent or Workflow.
+The Agent Application explicitly builds its tool list: Foundry integrations
+for Search and Foundry IQ, an application-provided multimodal function,
+and tools discovered from a Model Context Protocol (MCP) server.
 
 Select the application experience and host through
 [Agents & prompts](agent-strategies.md) and
@@ -17,18 +17,33 @@ the running application.
 
 <div class="runbook-diagram__summary" markdown="1">
 
-**A registered capability is not a permission grant.** The application can
-call configured retrieval capabilities and/or an authenticated MCP server.
-Each path needs its own connection, network access and authorization.
-All optional native capabilities start disabled.
+**The application supplies the agent's tools explicitly.** Foundry integrations
+provide an Azure AI Search tool and a Foundry IQ tool through its own project
+connection. Application integrations provide the multimodal retrieval function
+and selected tools discovered from an MCP server, such as the NL2SQL toolset.
+Each integration needs its own configuration and authorization.
 
 </div>
 
-[![An agent or workflow on either native host can use optional Search retrieval and Agent App MCP Server as independent capability examples. Source access and MCP tool authorization remain separate; other MCP servers have their own hosting contracts.](../media/runbooks/agent-tools.svg)](../media/runbooks/agent-tools.svg){: .runbook-diagram__image aria-label="Open full-size tool capability boundaries diagram"}
+[![The Agent Application supplies Azure AI Search and Foundry IQ tools through Foundry, plus an application multimodal function and selected tools discovered from an MCP server. The explicitly selected NL2SQL toolset is shown as an MCP example.](../media/runbooks/agent-tools.svg)](../media/runbooks/agent-tools.svg){: .runbook-diagram__image aria-label="Open full-size agent tools diagram"}
 
 [Open full-size diagram](../media/runbooks/agent-tools.svg){: .runbook-diagram__open}
 
 </div>
+
+## Tools available to the agent
+
+| Integration | What the agent receives |
+| --- | --- |
+| Azure AI Search | A Foundry search tool targeting a configured index |
+| Foundry IQ | A knowledge-base tool through its own prepared Foundry project connection |
+| Multimodal retrieval | `multimodal_retrieve`, a function implemented in the application |
+| Agent App MCP Server | Tools from the selected toolset; NL2SQL provides `nl2sql.list_sources()` and `nl2sql.query(source_id, question)` |
+
+Search and Foundry IQ use the Foundry client integrations.
+The application registers its multimodal function and the tool functions
+discovered by its MCP client through Microsoft Agent Framework.
+All four integrations are optional; enable only those you have prepared.
 
 ## Before you start
 
