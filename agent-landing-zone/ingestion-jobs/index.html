@@ -5536,12 +5536,12 @@ They are not six-field Azure Functions timers.</p>
 <tr>
 <td><code>nl2sql_index</code></td>
 <td><code>CRON_RUN_NL2SQL_INDEX</code></td>
-<td>No schedule; optional metadata pipeline, not required for MCP</td>
+<td>No schedule; Search metadata indexing, not the MCP catalog importer</td>
 </tr>
 <tr>
 <td><code>nl2sql_purge</code></td>
 <td><code>CRON_RUN_NL2SQL_PURGE</code></td>
-<td>No schedule; optional metadata maintenance, not required for MCP</td>
+<td>No schedule; Search metadata cleanup, not MCP catalog maintenance</td>
 </tr>
 <tr>
 <td><code>multimodality_images_purge</code></td>
@@ -5572,16 +5572,39 @@ schedule setup.</p>
 <ol>
 <li>Confirm the selected <a href="../ingestion/">ingestion path</a> and required source
    dependencies. Use a development corpus for the first run.</li>
-<li>Set cron values through <a href="../application-settings/">Application settings</a>.
-   Verify effective reads after writes, especially where duplicate labels exist.</li>
-<li>If the administrative surface is mounted, use its configuration apply action
+<li><strong>Before first startup</strong>, declare schedules as string-valued entries under
+   root <code>parameters.additionalAppConfigurationSettings.value</code>, label <code>agent-lz</code>,
+   and use the <a href="../configuration/#configuration-ownership-and-declarations">settings publication procedure</a>.
+   <code>SCHEDULER_TIMEZONE</code> is instead a process environment variable set before
+   startup. It is not read from App Configuration.</li>
+<li>
+<p><strong>After deployment</strong>, an administrator can use <code>PUT /api/config</code> for the
+   allowlisted cron keys. The ingestion workload needs App Configuration
+   write permission for this action; the caller's Admin role is not that
+   data-plane grant. For example, the following sets weekly SharePoint indexing:</p>
+<div class="highlight"><pre><span></span><code><span class="err">PUT /api/config</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{"updates":[{"key":"CRON_RUN_SHAREPOINT_INDEX","value":"0 2 * * mon"}]}</span>
+</code></pre></div>
+<p>The route writes under <code>agent-lz</code> by default, refreshes its local provider
+  and attempts to reschedule the written cron. Inspect <code>applied</code>, <code>failed</code>
+  and <code>rescheduled</code>, then read <code>GET /api/config</code> for the effective value.
+  A conflicting no-label value or opted-in process override can mask the write.</p>
+</li>
+<li>
+<p>If settings were published outside that route and the administrative surface
+   is mounted, use its configuration apply action
    or <code>POST /api/config/apply</code> to refresh configuration and reschedule known
    ingestion/purge jobs. This is an in-process refresh, not a Container App
    restart. It does not remount administrative routes or re-resolve deployment
-   mode.</li>
-<li>Inspect the returned rescheduled list and any failures, then verify the queue's
+   mode.</p>
+</li>
+<li>
+<p>Inspect the returned rescheduled list and any failures, then verify the queue's
    next run and time zone. Restart when a changed setting requires fresh clients
-   or changes the mounted surface.</li>
+   or changes the mounted surface.</p>
+</li>
 </ol>
 <p>Apply can remove a scheduled ingestion/purge job when its effective cron is
 blank. For Blob jobs that temporary state does not survive a restart, which
@@ -5608,13 +5631,14 @@ lock across replicas, and the manual duplicate check is not an exclusive lock
 between different job types. Plan index and purge windows so they do not race
 over the same corpus. Do not infer cross-replica serialization from <code>409</code>.</p>
 <p>Manual runs and configuration mutations require the exact <code>Admin</code> role when
-Entra is configured. Classic development without a configured tenant has an
+Entra is configured. Development without a configured tenant has an
 open development gate. Administrative reads and the file-unblock route do not
 have that same unconditional gate.</p>
 <p>Restrict access to the administrative
 surface through the deployment's network and access controls rather than
-exposing it publicly. Hosted mode without
-the administrative panel does not mount these routes, although jobs still run.</p>
+exposing it publicly. Administrative route mounting is resolved by ingestion
+at startup; do not infer availability from the native orchestrator's host.
+Jobs can run even when the administrative routes are absent.</p>
 <p><a href="../operations/">Administration</a> describes the dashboard and mode-specific
 availability. <a href="../application-auth/">Application authentication</a> covers access.
 <a href="../application-api/">API reference</a> supplies request and response schemas.</p>
@@ -5645,11 +5669,11 @@ availability. <a href="../application-auth/">Application authentication</a> cove
 </tr>
 <tr>
 <td>NL2SQL index</td>
-<td>Optional SQL-metadata pipeline. For MCP, its destination must honor the approved Cosmos catalog, embedding dimensions and complete-version activation contract. It does not copy business rows.</td>
+<td>Reads JSON under <code>queries/</code>, <code>tables/</code> and <code>measures/</code> in <code>NL2SQL_STORAGE_CONTAINER</code> (default <code>nl2sql</code>), generates embeddings and writes <code>SEARCH_QUERIES_INDEX_NAME</code>, <code>SEARCH_TABLES_INDEX_NAME</code> and <code>SEARCH_MEASURES_INDEX_NAME</code>. It does not populate MCP Cosmos or copy business rows.</td>
 </tr>
 <tr>
 <td>NL2SQL purge</td>
-<td>Metadata maintenance, not SQL table/row deletion. Review the target and active-version retention before authorizing cleanup; do not apply document Search cleanup to the MCP catalog.</td>
+<td>Deletes entries missing from that Blob source in those three Search indexes. It does not delete SQL rows or maintain MCP catalog versions.</td>
 </tr>
 <tr>
 <td>Image purge</td>
@@ -5686,8 +5710,8 @@ treating unknown state as an empty reference set.</p>
 Use the MCP repository's administrative Python importer for approved metadata:
 it generates embeddings into the application Cosmos catalog and activates
 only a complete version. No ingestion Container App or recurring schedule is
-required. An optional metadata pipeline must honor that same contract; document
-Search-index jobs must not manage MCP catalog data.
+required. The supplied <code>nl2sql_index</code>/<code>nl2sql_purge</code> Search jobs do not implement
+that importer contract and must not manage MCP catalog data.
 See <a href="../ingestion/#sql-metadata-is-separate-from-document-ingestion">SQL metadata boundaries</a>.</p>
 <h2 id="inspect-results-and-recover">Inspect results and recover</h2>
 <p>Use the queue for scheduled/running work, run summaries for outcomes, and

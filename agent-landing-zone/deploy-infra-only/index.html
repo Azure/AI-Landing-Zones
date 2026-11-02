@@ -736,10 +736,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-clone-agent-landing-zone" class="md-nav__link">
+  <a href="#step-1-initialize-agent-landing-zone" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Clone Agent Landing Zone
+        Step 1: Initialize Agent Landing Zone
       
     </span>
   </a>
@@ -747,10 +747,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-2-create-and-confirm-the-target" class="md-nav__link">
+  <a href="#step-2-select-and-confirm-the-target" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Create and confirm the target
+        Step 2: Select and confirm the target
       
     </span>
   </a>
@@ -5662,10 +5662,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-clone-agent-landing-zone" class="md-nav__link">
+  <a href="#step-1-initialize-agent-landing-zone" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Clone Agent Landing Zone
+        Step 1: Initialize Agent Landing Zone
       
     </span>
   </a>
@@ -5673,10 +5673,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-2-create-and-confirm-the-target" class="md-nav__link">
+  <a href="#step-2-select-and-confirm-the-target" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 2: Create and confirm the target
+        Step 2: Select and confirm the target
       
     </span>
   </a>
@@ -5951,28 +5951,38 @@ to identify the resources for your deployment.</p>
 <h2 id="procedure">Procedure</h2>
 <p><a id="steps"></a></p>
 <p><a id="step-1-choose-the-source"></a></p>
-<h3 id="step-1-clone-agent-landing-zone">Step 1: Clone Agent Landing Zone</h3>
-<p>Use this source for infrastructure-only and full-stack deployments:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<p><a id="step-1-clone-agent-landing-zone"></a></p>
+<h3 id="step-1-initialize-agent-landing-zone">Step 1: Initialize Agent Landing Zone</h3>
+<p>Create a <strong>new, empty project directory</strong>, outside any existing checkout:</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>agent-landing-zone
 <span class="nb">cd</span><span class="w"> </span>agent-landing-zone
+azd<span class="w"> </span>init<span class="w"> </span>--template<span class="w"> </span>Azure/agent-landing-zone<span class="w"> </span>.
 </code></pre></div>
+<p>The trailing <code>.</code> initializes the current directory rather than creating a
+template-named subdirectory. Interactive init asks for the environment name
+and creates/selects it; <strong>do not create it again in Step 2</strong>. To supply the
+name explicitly, use
+<code>azd init --template Azure/agent-landing-zone --environment &lt;environment-name&gt; .</code>
+instead of the init command above. Initialization does not provision resources;
+leave <code>--up</code> off until the required choices have been configured.</p>
 <p>Run all lifecycle commands from this root, not from <code>infra/</code>.
 Its <code>infra/</code> contains the foundation source. <code>manifest.json</code> records the
-coordinated application component pins.</p>
+coordinated application component pins. The template's root <code>azure.yaml</code>
+already selects Bicep; no upstream platform Git history is needed.</p>
 <p><a href="../deploy-full-stack/#prepare-python">Set up Python</a> from
-the cloned repository before lifecycle commands.</p>
-<h3 id="step-2-create-and-confirm-the-target">Step 2: Create and confirm the target</h3>
-<p>Replace the placeholders for a <strong>new</strong>, dedicated environment:</p>
+the initialized project before lifecycle commands.</p>
+<p><a id="step-2-create-and-confirm-the-target"></a></p>
+<h3 id="step-2-select-and-confirm-the-target">Step 2: Select and confirm the target</h3>
+<p>Use the dedicated environment created in Step 1. Replace the placeholders:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
 azd<span class="w"> </span>auth<span class="w"> </span>login
 az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>&lt;subscription-id&gt;
-azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_RESOURCE_GROUP<span class="w"> </span>&lt;dedicated-resource-group&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 </code></pre></div>
-<p>Use <code>azd env select &lt;environment-name&gt;</code> for an existing environment and keep
-its approved inputs.</p>
+<p>Use <code>azd env select &lt;environment-name&gt;</code> to resume an existing local
+environment and keep its approved inputs; do not reinitialize the template.</p>
 <p>Use separate environment, resource-group, identity,
 configuration and data boundaries for each stage; protect local <code>.azure/</code> state.
 Fork or mirror the source only when maintaining your own inputs or automation.</p>
@@ -6304,16 +6314,18 @@ first provision when the connected host does not exist yet.
 Successful provisioning then reports that application setup is incomplete.
 Deferral does not bypass earlier topology/private-service checks.</p>
 <p>On a new connected host, restore the <strong>same reviewed source revision</strong> and
-root parameter file. Install the prerequisites and Python dependencies,
-authenticate both CLIs, then initialize local state only if absent:</p>
-<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;same-environment-name&gt;
-azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
+root parameter file. Install the prerequisites and Python dependencies and
+authenticate both CLIs. If that environment's local state is absent, create
+it once with <code>azd env new &lt;same-environment-name&gt;</code>; if template initialization
+already created it, use <code>azd env select &lt;same-environment-name&gt;</code> instead.
+Then set the existing target and refresh outputs:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_RESOURCE_GROUP<span class="w"> </span>&lt;existing-resource-group&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 azd<span class="w"> </span>env<span class="w"> </span>refresh
 </code></pre></div>
-<p>If the environment is already present, select it instead. Reapply the approved
-deployment inputs: refresh restores outputs, not your full configuration.</p>
+<p>Reapply the approved deployment inputs: refresh restores outputs, not your
+full configuration.</p>
 <p>For the multi-group path, restore the same approved application/network
 destination mapping as well; the root group alone is not sufficient.
 Securely restore <code>.azure/&lt;same-environment-name&gt;/resource-groups.json</code> from

@@ -2344,6 +2344,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-to-call-an-application-api-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to call an application API safely
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#native-execution-contracts" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2501,6 +2512,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Native UI sessions and actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-send-an-owner-bound-conversational-turn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to send an owner-bound conversational turn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5540,6 +5568,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#how-to-call-an-application-api-safely" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to call an application API safely
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#native-execution-contracts" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5698,6 +5737,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Native UI sessions and actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-send-an-owner-bound-conversational-turn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to send an owner-bound conversational turn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5805,6 +5861,26 @@ production. Do not put keys or tokens in source, browser code or logs.</p>
 return record errors and some plain-text <code>400</code> responses. Do not impose one
 error parser on all routes. An error after a streaming response has started
 must be read from the stream, even if the HTTP status was <code>200</code>.</p>
+<h2 id="how-to-call-an-application-api-safely">How to call an application API safely</h2>
+<ol>
+<li><strong>After provision/deploy</strong>, take the endpoint from the selected environment's
+   published outputs or application publication. The UI, ingestion and Hosted
+   endpoints are different services; do not construct one from another's URL.</li>
+<li>Select the route and authentication boundary in the table above. Use
+   <a href="../application-auth/">Sign-in &amp; access</a> to obtain the correct delegated
+   audience or service credential. Never send an ingestion API key as native
+   session authentication.</li>
+<li>Use a development identity and synthetic input. Session creation, turns,
+   configuration writes and ingestion calls are mutations, not health probes.</li>
+<li>Validate status <strong>and</strong> the route's result envelope. For records, inspect
+   each error and confirmed count; for native work, observe progress/completion.</li>
+<li>Test a nonowner or denied user. Reload current state after an uncertain
+   native outcome before retrying; do not replay a model request under broader
+   credentials to bypass a denial.</li>
+</ol>
+<p>Configuration and resource grants must already be applied through their owning
+lifecycle. An API request does not provision a metadata container, consent a
+source or register a tool.</p>
 <h2 id="native-execution-contracts">Native execution contracts</h2>
 <p>The application uses explicit host-specific clients, not one universal state
 or request SDK. Select <code>APPLICATION_MODE</code> and <code>ORCHESTRATION_HOST</code> through
@@ -5817,8 +5893,7 @@ With the <code>nl2sql</code> toolset explicitly selected, the Agent/Workflow cal
 these are not browser-to-SQL APIs. See <a href="../nl2sql/#results-and-execution-limits">NL2SQL results</a>
 for the versioned typed result and <a href="../application-settings/#agent-app-mcp-contract">MCP settings</a>
 for authenticated transport.</p>
-<p>Retired ask/feedback streams and strategy-specific conversation
-envelopes are not the native protocol. UI feedback belongs to the product
+<p>UI feedback belongs to the product
 metadata service, not a feedback-shaped model invocation.</p>
 <h3 id="foundry-hosted">Foundry Hosted</h3>
 <p>Use the official Responses hosting integration and the selected publication's
@@ -5845,8 +5920,8 @@ Search and Work IQ delegation are distinct credentials, not interchangeable
 tool arguments. See <a href="../application-auth/">Sign-in &amp; access</a>.</p>
 <p>Parse the selected SDK's native response and streaming events. An event or
 partial text is not evidence of successful terminal completion.
-Do not synthesize a second Responses event protocol or treat every stream as
-the old conversation-ID-prefixed text format.</p>
+Do not synthesize a second Responses event protocol or infer a text framing
+format independent of the selected SDK.</p>
 <h3 id="container-apps-and-dts">Container Apps and DTS</h3>
 <p>Use the official Durable Extension client against the provisioned
 <code>DURABLE_TASK_SCHEDULER_CONNECTION_STRING</code>. The nonsecret managed-identity
@@ -5878,7 +5953,7 @@ Authentication/source denials must not trigger automatic model replay or a
 retry under broader workload permissions.</p>
 <h2 id="ingestion-document-apis">Ingestion document APIs</h2>
 <p>All three document endpoints require <code>X-API-KEY</code>.
-The validator accepts <code>DATA_INGEST_APP_APIKEY</code> and legacy
+The validator accepts <code>DATA_INGEST_APP_APIKEY</code> and its supported alias
 <code>INGESTION_APP_APIKEY</code>. Invalid supplied keys return <code>401</code>. The shipped
 API-key security dependency rejects a missing header with <code>403</code>.
 Credential-based Azure SDK access does not make these HTTP routes keyless.</p>
@@ -5970,12 +6045,11 @@ schema/bounds violations <code>422</code>, missing configuration <code>500</code
 Search failures <code>502</code>. Cleanup failure can still fail an otherwise completed
 query.</p>
 <h2 id="native-endpoint-boundary">Native endpoint boundary</h2>
-<p><code>python -m native.hosted</code> and <code>python -m native.durable</code> do not mount the
-retired orchestrator conversation, feedback, history, upload, dashboard or
-administration APIs. The native UI composition does not mount
-<code>/panel/conversations</code>. Use the native UI routes below, host-native clients
-and platform configuration tooling. The independently deployed ingestion
-administration APIs remain separate supported surfaces.</p>
+<p><code>python -m native.hosted</code> serves native Hosted execution.
+<code>python -m native.durable</code> starts the standalone worker without public HTTP
+ingress. Neither mounts ingestion or UI product APIs. Use the native UI routes
+below, host-native clients and platform configuration tooling for their
+respective operations.</p>
 <h2 id="ingestion-administration">Ingestion administration</h2>
 <p>Ingestion administration is owned by the optional ingestion component.
 Its declared administrative surfaces are resolved at startup; native host
@@ -6020,7 +6094,7 @@ Admin dependency. Protect the whole service boundary deliberately.</p>
 </tr>
 <tr>
 <td><code>PUT /api/config</code></td>
-<td>Body <code>{"updates":[{"key":"RUN_JOBS_ON_STARTUP","value":false}]}</code></td>
+<td>Allowlisted settings only, for example <code>{"updates":[{"key":"CRON_RUN_SHAREPOINT_INDEX","value":"0 2 * * mon"}]}</code></td>
 </tr>
 <tr>
 <td><code>POST /api/config/reload</code></td>
@@ -6038,6 +6112,8 @@ and all-write failure <code>500</code>. Confirmed writes remain applied if best-
 cache refresh fails. Schedule or write errors do not reverse earlier effects.
 Use <a href="../application-settings/">Application settings</a> for allowlists and refresh.
 Use the job types reported by the running service, not an invented job name.</p>
+<p><code>RUN_JOBS_ON_STARTUP</code> is not in this API's write allowlist; configure it
+before startup through the declared settings path.</p>
 <h3 id="declared-ingestion-administrative-surface">Declared ingestion administrative surface</h3>
 <p>When the ingestion component declares that administrative surface,
 <code>/api/panel/status</code> exposes nonsensitive
@@ -6091,6 +6167,29 @@ host's native references. A native reference is not the UI session ID and
 neither is authorization.
 Unknown or nonowned IDs return opaque <code>404</code> <strong>before backend access</strong>.
 Stale or duplicate actions return <code>409</code>.</p>
+<h3 id="how-to-send-an-owner-bound-conversational-turn">How to send an owner-bound conversational turn</h3>
+<p><strong>After application deployment</strong>, authenticate as the intended user and create
+a session on the <strong>UI/BFF</strong> endpoint:</p>
+<div class="highlight"><pre><span></span><code><span class="err">POST /api/native/sessions</span>
+<span class="err">Authorization: Bearer &lt;delegated-UI-API-token&gt;</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{"application":"conversational"}</span>
+</code></pre></div>
+<p>Use the returned UI <code>id</code> in the next request, with the same owner's
+authenticated context:</p>
+<div class="highlight"><pre><span></span><code><span class="err">POST /api/native/sessions/&lt;returned-id&gt;/turns</span>
+<span class="err">Authorization: Bearer &lt;delegated-UI-API-token&gt;</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{"text":"Read this short note.","attachments":[{"name":"note.txt","content_type":"text/plain","data_base64":"SGVsbG8="}]}</span>
+</code></pre></div>
+<p>Attachments require
+<a href="../ingestion/#how-to-enable-private-conversational-input">prior feature/resource setup</a>.
+Omit <code>attachments</code> for a text-only turn. Expect <code>response</code> and <code>native_ref</code>,
+not a new UI ID. A different user's request using that ID must receive opaque
+<code>404</code> before the native backend is called. No ingestion URL or API key
+participates in this path.</p>
 <table>
 <thead>
 <tr>
@@ -6171,6 +6270,11 @@ the ingestion component's declared operator surface, <code>PANEL_OPERATOR_SURFAC
 <code>DATA_INGEST_APP_APIKEY</code> cursor-signing secret are configured.
 They require a validated delegated user with the configured role or group.
 App-only tokens return <code>403</code>.</p>
+<p>These are component contracts, <strong>not an activation procedure</strong> for the current
+native platform. Its lifecycle keeps <code>PANEL_OPERATOR_SURFACES_ENABLED=false</code>
+and does not accept the component's panel-mount flags as native deployment
+selectors. Do not bypass that ownership by writing flags in the portal.
+See <a href="../operations/">Administration</a> for available operator surfaces.</p>
 <table>
 <thead>
 <tr>

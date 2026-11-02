@@ -2149,6 +2149,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AgentOps
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -2165,6 +2183,36 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-add-agentops-to-your-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to add AgentOps to your workload
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -5289,6 +5337,25 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-add-agentops-to-your-workload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to add AgentOps to your workload
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -5314,8 +5381,28 @@ decisions and operational evidence into a repeatable workflow.</p>
 <p>Agent Landing Zone provides the application and its Azure foundation.
 AgentOps complements it with practices and tooling for the workload lifecycle.
 Configure the accelerator for your workload using its own getting-started guide.</p>
-<p>Follow the <a href="https://azure.github.io/agentops/">AgentOps Accelerator documentation</a>
-to get started.</p>
+<h2 id="how-to-add-agentops-to-your-workload">How to add AgentOps to your workload</h2>
+<ol>
+<li>Deploy and verify the Agent Application capability you intend to evaluate.
+   Record its component versions, configuration and execution host as the
+   baseline. Use a separate validation environment for evaluation work.</li>
+<li>Follow the <a href="https://azure.github.io/agentops/">AgentOps installation and workspace setup</a>
+   in your workload's development workspace. This is separate from the
+   Agent Landing Zone infrastructure deployment.</li>
+<li>Follow <a href="https://azure.github.io/agentops/evaluation/">Evaluation</a> to configure
+   the workload connection, test data, expected outcomes and acceptance
+   thresholds. Use the intended caller's identity and approved test content.</li>
+<li>Run the evaluation and review both quality and safety outcomes.
+   Include denied access, tool failures and human-review decisions when those
+   capabilities are part of your application.</li>
+<li>Follow <a href="https://azure.github.io/agentops/ship/">Ship</a> to connect the release
+   gate to your CI/CD process, and <a href="https://azure.github.io/agentops/operate/">Operate</a>
+   to assess readiness and retain the evidence pack.</li>
+</ol>
+<p>Configure evaluation and release policies in the AgentOps workspace using its
+documentation. Configure application features in
+<a href="../application-settings/">Application settings</a>.
+Keep production promotion subject to the workload's human approval policy.</p>
 
 
 

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="760" viewBox="0 0 1000 760" role="img" aria-labelledby="title desc">
+  <title id="title">Three choices compose the application</title>
+  <desc id="desc">Before deployment, select the experience, one native host and optional capabilities independently. Dashed purple setup arrows combine these choices in the reviewed application image and configuration. This is not a request path or runtime strategy picker. A host choice does not enable tools.</desc>
+  <!-- Azure public service icons, July 2026 pack, embedded without geometry or color changes. https://learn.microsoft.com/azure/architecture/icons/ -->
+  <defs>
+    <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:22px}.title{font-size:28px;font-weight:700}.heading{font-size:23px;font-weight:700}.label{font-size:20px}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.setup{fill:none;stroke:#766798;stroke-width:2;stroke-dasharray:7 5;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#766798"/></marker>
+    <symbol id="aca" viewBox="0 0 18 18">
+      <defs><linearGradient id="a3a44093-b157-426e-a8fe-cec9f9c23978" x1="11.729" y1="4.88" x2="11.729" y2="13.099" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.528" stop-color="#6635bb"/><stop offset="1" stop-color="#552f99"/></linearGradient><linearGradient id="ad838859-03f4-472f-81bc-ebc921d71335" x1="6.35" y1="13.914" x2="6.35" y2="4.198" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.307" stop-color="#793ddd"/><stop offset="0.532" stop-color="#8046e1"/><stop offset="0.731" stop-color="#8c56e7"/><stop offset="0.915" stop-color="#9c6def"/><stop offset="1" stop-color="#a67af4"/></linearGradient></defs><g id="ae82470d-7a6c-4dfe-8533-59d8ff948629"><g><path d="M8.617,8.644H.639V1.784A1.16,1.16,0,0,1,1.788.624H8.617ZM1.63,7.653h6V1.594H1.788a.158.158,0,0,0-.158.158h0Z" fill="#949494"/><path d="M17.5,8.644H9.523V.624h6.828A1.16,1.16,0,0,1,17.5,1.784Zm-6.987-.991h6V1.784a.157.157,0,0,0-.123-.187.2.2,0,0,0-.035,0H10.513Z" fill="#949494"/><path d="M8.617,17.485H1.788A1.149,1.149,0,0,1,.639,16.347V9.476H8.617ZM1.63,10.467v5.88a.158.158,0,0,0,.158.158H7.626V10.467Z" fill="#949494"/><path d="M16.351,17.485H9.523V9.476H17.5v6.871A1.149,1.149,0,0,1,16.351,17.485Zm-5.838-.991h5.838a.157.157,0,0,0,.158-.158V10.467h-6Z" fill="#949494"/><path d="M14.6,6.294a.294.294,0,0,0-.2-.278L9.044,4.205A.128.128,0,0,0,9,4.2H9a.132.132,0,0,0-.133.133v9.445A.133.133,0,0,0,9,13.911H9a.138.138,0,0,0,.049-.01l5.365-2.145a.292.292,0,0,0,.184-.272Z" fill="url(#a3a44093-b157-426e-a8fe-cec9f9c23978)"/><path d="M8.966,4.2l-5.293.966a.161.161,0,0,0-.13.158V12.63a.16.16,0,0,0,.126.157L8.962,13.91a.161.161,0,0,0,.191-.121.22.22,0,0,0,0-.036V4.358A.16.16,0,0,0,9,4.2.163.163,0,0,0,8.966,4.2Z" fill="url(#ad838859-03f4-472f-81bc-ebc921d71335)"/><path d="M6.52,5.656v6.8l1.842.3V5.335Zm-2.262.367v5.955l1.6.326V5.754Z" fill="#b796f9" opacity="0.5"/></g></g>
+    </symbol>
+    <symbol id="agent" viewBox="0 0 18 18">
+      <defs><linearGradient id="uuid-c41a1b5d-c3ee-4413-bef2-f5a072ba936e" x1="7.28" y1="272.84" x2=".39" y2="267.87" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd"/><stop offset=".8" stop-color="#7274ff"/></linearGradient><linearGradient id="uuid-7a8397bb-f82e-4b4e-8fb1-c49dc20eae52" x1="10.19" y1="268.41" x2="4.38" y2="265.16" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd"/><stop offset="1" stop-color="#2c08ac"/></linearGradient><linearGradient id="uuid-364cb38b-25e6-4d45-a5f3-7f7567cf1947" x1="17.43" y1="267.02" x2="5.08" y2="264.98" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".2" stop-color="#7274ff"/><stop offset="1" stop-color="#4f42fd"/></linearGradient><linearGradient id="uuid-fb32e334-867d-4ede-bed1-56aecae762cb" x1="10.15" y1="273.41" x2="16.87" y2="269.71" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd"/><stop offset="1" stop-color="#2c08ac"/></linearGradient><linearGradient id="uuid-257bedeb-cb4e-48ec-978d-667d943d4887" x1="17.68" y1="270.57" x2="8.68" y2="279.43" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd"/><stop offset=".8" stop-color="#7274ff"/></linearGradient><linearGradient id="uuid-d24b3f2b-55bd-4731-8d82-2ccb3a949da7" x1="6.64" y1="271.02" x2="6.64" y2="278.12" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd"/><stop offset="1" stop-color="#2c08ac"/></linearGradient></defs><path d="M5.02,15.31l-2.82-1.63c-.66-.38-1.06-1.08-1.06-1.83v-5.69c0-.76.4-1.46,1.06-1.83l1.53-.88c.1-.06.24.01.24.14v9.91c0,.37.1.73.28,1.04.18.32.45.59.78.78h0Z" fill="url(#uuid-c41a1b5d-c3ee-4413-bef2-f5a072ba936e)"/><path d="M10.14,10.59v1.76c0,.76-.4,1.46-1.06,1.83l-1.94,1.12c-.65.38-1.46.38-2.12,0-.33-.19-.59-.46-.78-.78-.18-.31-.28-.67-.28-1.04v-.42c0,.36.39.59.71.4l5.23-3.02c.1-.06.24.01.24.14Z" fill="url(#uuid-7a8397bb-f82e-4b4e-8fb1-c49dc20eae52)"/><path d="M16.86,9.53v3.26c0,.76-.4,1.46-1.06,1.83l-4.93,2.84c-.65.38-1.46.38-2.12,0l-1.53-.88c-.1-.06-.1-.21,0-.27l8.59-4.96c.32-.19.58-.45.76-.77.18-.32.28-.68.28-1.06Z" fill="url(#uuid-364cb38b-25e6-4d45-a5f3-7f7567cf1947)"/><path d="M10.22,7.46l1.53-.88c.65-.38,1.46-.38,2.12,0l1.94,1.12c.65.38,1.06,1.08,1.06,1.83,0,.38-.1,.74-.28,1.06-.18.31-.44.58-.76.77l-.36.21c.31-.18.31-.63,0-.81l-5.23-3.02c-.1-.06-.1-.21,0-.27Z" fill="url(#uuid-fb32e334-867d-4ede-bed1-56aecae762cb)"/><path d="M5.94,2.16l2.82-1.63c.66-.38,1.46-.38,2.12,0l4.93,2.84c.65.38,1.06,1.08,1.06,1.83v1.76c0,.12-.13,.2-.24.14L8.04,2.16c-.32-.18-.68-.28-1.05-.28-.37,0-.73.09-1.06.28h0Z" fill="url(#uuid-257bedeb-cb4e-48ec-978d-667d943d4887)"/><path d="M7.47,8.95l-1.53-.88c-.66-.38-1.06-1.08-1.06-1.83v-2.24c0-.76.4-1.46,1.06-1.83.33-.19.69-.28,1.06-.28s.72.09,1.04.28l.36.21c-.31-.18-.7.05-.7.41v6.04c0,.12-.13,.2-.24.14h0Z" fill="url(#uuid-d24b3f2b-55bd-4731-8d82-2ccb3a949da7)"/>
+    </symbol>
+  </defs>
+  <rect width="1000" height="760" fill="#fff"/>
+  <text class="title" x="40" y="52">Three choices compose the application</text>
+  <text x="40" y="88">Make each choice explicitly before provision and application publication.</text>
+  <rect class="group" x="40" y="140" width="280" height="370"/>
+  <rect class="header" x="40" y="140" width="280" height="52"/>
+  <text class="heading" x="60" y="174">1 · Experience</text>
+  <rect class="node" x="60" y="225" width="240" height="215"/>
+  <text class="heading" x="180" y="270" text-anchor="middle">MAF application</text>
+  <text x="180" y="315" text-anchor="middle">Conversation</text>
+  <text x="180" y="350" text-anchor="middle">Workflow</text>
+  <text x="180" y="385" text-anchor="middle">or both</text>
+  <text class="label" x="60" y="480">Default: conversation</text>
+  <rect class="group" x="360" y="140" width="280" height="370"/>
+  <rect class="header" x="360" y="140" width="280" height="52"/>
+  <text class="heading" x="380" y="174">2 · One host</text>
+  <rect class="node" x="380" y="215" width="240" height="100"/>
+  <use href="#agent" x="400" y="240" width="45" height="45" aria-hidden="true"/>
+  <text x="460" y="258">Foundry</text><text x="460" y="286">Hosted</text>
+  <text class="label" x="500" y="343" text-anchor="middle">OR</text>
+  <rect class="node" x="380" y="360" width="240" height="100"/>
+  <use href="#aca" x="400" y="385" width="45" height="45" aria-hidden="true"/>
+  <text x="460" y="402">Container Apps</text><text x="460" y="432">+ DTS</text>
+  <rect class="group" x="680" y="140" width="280" height="370"/>
+  <rect class="header" x="680" y="140" width="280" height="52"/>
+  <text class="heading" x="700" y="174">3 · Capabilities</text>
+  <rect class="node" x="700" y="225" width="240" height="215"/>
+  <text class="heading" x="820" y="270" text-anchor="middle">Optional tools</text>
+  <text x="820" y="320" text-anchor="middle">Retrieval</text>
+  <text x="820" y="355" text-anchor="middle">and/or MCP</text>
+  <text class="label" x="820" y="405" text-anchor="middle">Off by default</text>
+  <text class="label" x="700" y="480">App owns registration</text>
+  <path class="setup" d="M180 510V560H380V610"/>
+  <path class="setup" d="M500 510V610"/>
+  <path class="setup" d="M820 510V560H620V610"/>
+  <rect class="node" x="280" y="610" width="440" height="80"/>
+  <text class="heading" x="500" y="643" text-anchor="middle">Reviewed application deployment</text>
+  <text class="label" x="500" y="674" text-anchor="middle">Image + configuration + scoped access</text>
+  <text class="label" x="40" y="735">Dashed arrows: setup choices, not request traffic. Choosing a host does not enable tools.</text>
+</svg>

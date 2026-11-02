@@ -864,10 +864,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-get-the-product-source-and-select-terraform-once" class="md-nav__link">
+  <a href="#step-1-initialize-the-project-and-select-terraform-once" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Get the product source and select Terraform once
+        Step 1: Initialize the project and select Terraform once
       
     </span>
   </a>
@@ -5546,10 +5546,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-get-the-product-source-and-select-terraform-once" class="md-nav__link">
+  <a href="#step-1-initialize-the-project-and-select-terraform-once" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Get the product source and select Terraform once
+        Step 1: Initialize the project and select Terraform once
       
     </span>
   </a>
@@ -5741,11 +5741,21 @@ and the <a href="../sizing-cost-planner/">Sizing &amp; cost planner</a>. Infrast
 approved value. In PowerShell, remove any Bash continuation backslashes and
 run the command on one line.</p>
 <h2 id="procedure">Procedure</h2>
-<h3 id="step-1-get-the-product-source-and-select-terraform-once">Step 1: Get the product source and select Terraform once</h3>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<p><a id="step-1-get-the-product-source-and-select-terraform-once"></a></p>
+<h3 id="step-1-initialize-the-project-and-select-terraform-once">Step 1: Initialize the project and select Terraform once</h3>
+<p>Create a <strong>new, empty directory</strong>, outside an existing checkout:</p>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>agent-landing-zone
 <span class="nb">cd</span><span class="w"> </span>agent-landing-zone
+azd<span class="w"> </span>init<span class="w"> </span>--template<span class="w"> </span>Azure/agent-landing-zone<span class="w"> </span>.
 </code></pre></div>
-<p><a href="../deploy-full-stack/#prepare-python">Prepare Python</a> in this checkout and
+<p>The trailing <code>.</code> initializes the current directory rather than creating a
+template-named subdirectory. Interactive init asks for an environment name
+and creates/selects it; <strong>do not create it again in Step 2</strong>. To supply the
+name explicitly, use
+<code>azd init --template Azure/agent-landing-zone --environment &lt;environment-name&gt; .</code>
+instead of the init command above. Initialization does not provision resources.
+Do not add <code>--up</code>: select Terraform and configure its backend and inputs first.</p>
+<p><a href="../deploy-full-stack/#prepare-python">Prepare Python</a> in this project and
 keep its environment active.</p>
 <p>In the <strong>root</strong> <code>azure.yaml</code>, set these fields while preserving services,
 hooks and other settings:</p>
@@ -5754,21 +5764,24 @@ hooks and other settings:</p>
 <span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infra/terraform</span>
 <span class="w">  </span><span class="nt">module</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
 </code></pre></div>
-<p>Run all lifecycle commands from the product root. Provider selection applies to
-the checkout; use its Terraform configuration for provisioning, updates and
-removal. Bicep is the default choice in an unconfigured checkout.</p>
+<p>Run all lifecycle commands from this product root, alongside <code>azure.yaml</code>,
+<code>manifest.json</code> and <code>main.parameters.json</code>, not from <code>infra/terraform/</code>.
+Provider selection applies to the whole project, not to an individual azd
+environment; use its Terraform configuration for provisioning, updates and
+removal. The template initializes with Bicep by default, so complete the edit
+above before provisioning. No separate Terraform template is required.</p>
 <h3 id="step-2-authenticate-and-select-the-target">Step 2: Authenticate and select the target</h3>
-<p>For a <strong>new</strong>, dedicated environment:</p>
+<p>Use the dedicated environment created in Step 1:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
 azd<span class="w"> </span>auth<span class="w"> </span>login
 az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>&lt;subscription-id&gt;
-azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_RESOURCE_GROUP<span class="w"> </span>&lt;dedicated-resource-group&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 </code></pre></div>
 <p>For an existing Terraform environment, select it with
-<code>azd env select &lt;environment-name&gt;</code> and retain its approved inputs and backend.
+<code>azd env select &lt;environment-name&gt;</code> and retain its approved inputs and backend;
+do not reinitialize the template.
 Confirm the cloud, tenant and subscription for both CLIs and Terraform.
 Interactive use needs Azure CLI and azd sessions. Automation can supply
 process-scoped <code>ARM_*</code> credentials for its selected authentication method.

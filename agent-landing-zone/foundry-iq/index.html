@@ -1776,10 +1776,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#choose-the-retrieval-backend" class="md-nav__link">
+  <a href="#what-is-shipped-and-what-you-must-connect" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose the retrieval backend
+        What is shipped, and what you must connect
       
     </span>
   </a>
@@ -1809,10 +1809,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#delegated-native-retrieval" class="md-nav__link">
+  <a href="#how-to-connect-a-knowledge-base" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Delegated native retrieval
+        How to connect a knowledge base
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to connect a knowledge base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-prepare-ownership-and-content-before-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Prepare ownership and content before provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-provision-sources-then-configure-the-native-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Provision sources, then configure the native connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-enable-the-capability-and-publish-the-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Enable the capability and publish the application
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-authorization-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User authorization boundaries
       
     </span>
   </a>
@@ -5440,10 +5490,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#choose-the-retrieval-backend" class="md-nav__link">
+  <a href="#what-is-shipped-and-what-you-must-connect" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Choose the retrieval backend
+        What is shipped, and what you must connect
       
     </span>
   </a>
@@ -5473,10 +5523,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#delegated-native-retrieval" class="md-nav__link">
+  <a href="#how-to-connect-a-knowledge-base" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Delegated native retrieval
+        How to connect a knowledge base
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to connect a knowledge base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-prepare-ownership-and-content-before-provision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Prepare ownership and content before provision
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-provision-sources-then-configure-the-native-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Provision sources, then configure the native connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-enable-the-capability-and-publish-the-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Enable the capability and publish the application
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#user-authorization-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        User authorization boundaries
       
     </span>
   </a>
@@ -5571,20 +5671,34 @@ knowledge base as a native tool, so the agent can ground answers in retrieved
 content and return source references.</p>
 <p>This page describes Foundry IQ and the Agent Application's integration limits.
 Deployment follows the <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
-<h2 id="choose-the-retrieval-backend">Choose the retrieval backend</h2>
-<p>Select the registered retrieval capability and its resource bindings.
-The default platform topology supplies <code>RETRIEVAL_BACKEND=foundry_iq</code>.
-Read back the effective relevant settings; do not rely on an unknown value
-falling back to another backend or silently changing source authorization.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>What must be connected before an agent can use a knowledge base?</strong></p>
+<ol>
+<li>Search owns the knowledge base and its registered sources.</li>
+<li>The native Agent uses a project-connection MCP tool, not the direct Search
+   connector. The provisioned Search connection is not that MCP connection.</li>
+<li>Source ingestion, tool registration and end-user authorization are separate
+   setup tasks. Test all three before admitting users.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size Foundry IQ connection diagram" class="runbook-diagram__image" href="../../media/runbooks/foundry-iq.svg"><img alt="A native Agent calls a reviewed MCP project connection to reach a Search knowledge base. Native Blob ingestion copies content into Search; an existing index keeps its own ingestion owner. Setup must replace the generated Search connection with a compatible MCP connection and verify user authorization." src="../../media/runbooks/foundry-iq.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/foundry-iq.svg">Open full-size diagram</a></p>
+</div>
+<p><span id="choose-the-retrieval-backend"></span></p>
+<h2 id="what-is-shipped-and-what-you-must-connect">What is shipped, and what you must connect</h2>
+<p>The default platform topology supplies <code>RETRIEVAL_BACKEND=foundry_iq</code>.
+That selects Search knowledge-object provisioning. It does not enable a tool
+in the native Agent or Workflow. <code>FOUNDRY_IQ_ENABLED</code> defaults to <code>false</code>.</p>
 <p>Choosing a retrieval backend is not enabling its native tool. The native
 capability flags default to off. Follow <a href="../agent-tools/">Tools &amp; MCP</a> and the
 <a href="../application-settings/#native-application-contract">native application settings</a>
 to select the capability with its required bindings, then verify a real
 source-backed answer and a denied-user case.</p>
-<p><code>ai_search</code> queries the configured index directly. <code>foundry_iq</code> calls a
-knowledge base and combines its configured sources. The selector applies to
-the application's registered knowledge-search capability, usable by an Agent
-or Workflow. It does not reroute the
+<p>The native runtime registers Foundry IQ using
+<code>FoundryChatClient.get_mcp_tool(project_connection_id=KNOWLEDGE_BASE_CONNECTION_ID)</code>.
+It does not call <code>connectors/foundry_iq.py</code>. Selecting <code>RETRIEVAL_BACKEND</code>
+does not change that native registration or reroute the
 <a href="../nl2sql/">MCP NL2SQL tools</a> or replace callable
 <a href="../agent-tools/">MCP tools</a>.</p>
 <p><a href="../application-settings/">Application settings</a> describes how to change runtime
@@ -5603,7 +5717,7 @@ index. Both can return content to the agent and model.</p>
 <p>The accelerator defaults to a native Blob source, container <code>documents</code>,
 standard content extraction and ingestion permission options <code>["rbacScope"]</code>.
 Search manages the generated indexing assets. Optional Agent App Ingestion is
-disabled by default for new environments and is not needed for this source.
+disabled by default and is not needed for this source.
 <a href="../ingestion/">Ingestion</a> explains native source ingestion, private-input boundaries
 and custom processing.</p>
 <p>An existing Search index can be registered as a <code>searchIndex</code> knowledge source.
@@ -5620,39 +5734,53 @@ to integrate them with Agent Application.</p>
 <p>Microsoft's <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect">Foundry Agent Service connection guide</a>
 connects a knowledge base through its MCP endpoint and a Foundry <code>RemoteTool</code>
 project connection. The connection belongs to the agent's native tool definition.</p>
-<p>The accelerator also provisions a Microsoft Entra ID-authenticated <code>CognitiveSearch</code> project
-connection and publishes <code>KNOWLEDGE_BASE_CONNECTION_ID</code>. <strong>The shipped retrieval
-connector does not consume that ID.</strong> It calls the Search endpoint and knowledge
-base name directly. A provisioned connection alone does not attach a native tool
-or establish user delegation in the hosted application. A <code>CognitiveSearch</code>
-connection is not the <code>RemoteTool</code> connection in the native-tool procedure.</p>
+<p>The accelerator provisions an Entra ID-authenticated <code>CognitiveSearch</code> project
+connection and publishes its ID as <code>KNOWLEDGE_BASE_CONNECTION_ID</code>.
+<strong>The native runtime consumes that ID as an MCP project connection.</strong>
+A <code>CognitiveSearch</code> connection is not the <code>RemoteTool</code> connection required by
+the native-tool procedure. Default provisioning alone therefore does not
+establish a working Foundry IQ MCP tool or source-specific user delegation.</p>
+<p>The application owner must create a compatible MCP project connection, bind
+the reviewed knowledge base and configure its authentication. Keep the
+connection under separate ownership and preserve its binding across later
+provisioning. Do not enable protected corporate sources until the complete
+native invocation and source-authorization path passes allow/deny tests.</p>
 <p><span id="3-configure-application-consumption"></span>
 <span id="3-configure-agent-application-consumption"></span></p>
-<p>The relevant <a href="../configuration/">Deployment settings</a> describe distinct objects.
-The connector reads runtime values from App Configuration with label <code>agent-lz</code>.</p>
+<p>The <a href="../configuration/">Deployment settings</a> describe knowledge-object inputs.
+App Configuration uses label <code>agent-lz</code>. Distinguish native application settings
+from settings used by the separately available direct connector:</p>
 <table>
 <thead>
 <tr>
 <th>Setting</th>
-<th>Meaning in the shipped connector</th>
+<th>Consumer and meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>FOUNDRY_IQ_ENABLED</code></td>
+<td>Native runtime: enables MCP tool registration; structural, requires redeployment.</td>
+</tr>
+<tr>
+<td><code>KNOWLEDGE_BASE_CONNECTION_ID</code></td>
+<td>Native runtime: actual compatible MCP project connection ID, not merely the generated Search connection.</td>
+</tr>
+<tr>
 <td><code>RETRIEVAL_BACKEND</code></td>
-<td><code>foundry_iq</code> selects knowledge-base retrieval in this connector. It does not attach a native agent tool.</td>
+<td>Provisioning: <code>foundry_iq</code> selects knowledge-base setup. The direct connector also reads this selector; native tool composition does not.</td>
 </tr>
 <tr>
 <td><code>RETRIEVAL_AUTH_MODE</code></td>
-<td><code>native_search</code> carries the separately delegated Search credential into native permission enforcement.</td>
+<td>Application authorization policy; setting <code>native_search</code> alone does not implement source delegation for a native MCP connection.</td>
 </tr>
 <tr>
 <td><code>KNOWLEDGE_BASE_ENDPOINT</code></td>
-<td>Search service root, such as <code>https://&lt;service&gt;.search.windows.net</code>, not a Foundry project or retrieve URL.</td>
+<td>Direct connector: Search service root, such as <code>https://&lt;service&gt;.search.windows.net</code>, not a Foundry project or retrieve URL.</td>
 </tr>
 <tr>
 <td><code>KNOWLEDGE_BASE_NAME</code></td>
-<td>Knowledge-base object name, not an index name.</td>
+<td>Provisioning/direct connector: knowledge-base object name, not an index name. Native configuration also loads the name.</td>
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_NAME</code></td>
@@ -5666,22 +5794,70 @@ The connector reads runtime values from App Configuration with label <code>agent
 <td><code>FOUNDRY_IQ_API_VERSION</code></td>
 <td>The source and connector contract defaults to <code>2026-05-01-preview</code>.</td>
 </tr>
-<tr>
-<td><code>KNOWLEDGE_BASE_CONNECTION_ID</code></td>
-<td>Provisioned project connection metadata, not a connector target selector.</td>
-</tr>
 </tbody>
 </table>
 <p>Current Microsoft source examples use contracts beyond the accelerator's
 default API. Adopting a source requires compatibility across registration,
 retrieve requests and response parsing, not an API-version edit alone.</p>
-<h2 id="delegated-native-retrieval">Delegated native retrieval</h2>
-<p>The UI and native retrieval capability have a separate user authorization path.
-The UI obtains a delegated Search token through OBO and forwards it with
-<code>x-client-search-token</code>. The hosted connector passes the raw token in
-<code>x-ms-query-source-authorization</code>. The connector's workload credential
-authenticates transport to Search, not the user's entitlement to documents.
-This path needs no customer-written Toolbox integration.</p>
+<h2 id="how-to-connect-a-knowledge-base">How to connect a knowledge base</h2>
+<h3 id="1-prepare-ownership-and-content-before-provision">1. Prepare ownership and content before provision</h3>
+<p>Initialize through the <a href="../deploy-full-stack/">canonical deployment guide</a>.
+Identify the Search administrator, content owner, Entra consent administrator
+and application publisher. The Search administrator needs knowledge-object
+management permission; Search Service Contributor is the keyless management
+role. Ingestion identities need source/model access independently of the
+querying user's document permissions.</p>
+<p>Keep the native Blob defaults unless your content needs another path.
+For an existing populated index, set the mapped deployment inputs
+<code>FOUNDRY_IQ_PATTERN=searchIndex</code> and
+<code>FOUNDRY_IQ_KNOWLEDGE_SOURCE_KIND=searchIndex</code>; set
+<code>FOUNDRY_IQ_SEARCH_INDEX_NAME</code> to that index. Confirm schema, semantic
+configuration, embeddings and ACL metadata before registering it.</p>
+<h3 id="2-provision-sources-then-configure-the-native-connection">2. Provision sources, then configure the native connection</h3>
+<ol>
+<li>Run the selected guide's <code>azd provision</code> procedure after source inputs and
+   grants are ready.</li>
+<li>Inspect the knowledge base's source references and, for indexed sources,
+   successful indexing and permission metadata.</li>
+</ol>
+<p>Source setup is not a runtime refresh operation. Provisioning reconciles
+platform-owned names and can overwrite manual edits.</p>
+<p>Follow Microsoft's <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect">native connection procedure</a>
+to create the compatible <code>RemoteTool</code> project connection. Configure the
+source's required user authorization there or implement the missing
+application identity integration. A project connection or service role must
+not turn a user-protected corpus into application-wide access.</p>
+<h3 id="3-enable-the-capability-and-publish-the-application">3. Enable the capability and publish the application</h3>
+<p>Follow <a href="../application-settings/#configure-an-agent-capability">Configure an agent capability</a>.
+In root <code>main.parameters.json</code>, merge this entry into
+<code>parameters.additionalAppConfigurationSettings.value</code>, retaining its host/mode
+entries and all other required settings:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FOUNDRY_IQ_ENABLED"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>There is no declared <code>azd env set FOUNDRY_IQ_ENABLED</code> mapping.
+Run <code>azd provision</code> again to publish the capability declaration. This can
+restore the generated Search connection ID. After that provision, configure
+<code>KNOWLEDGE_BASE_CONNECTION_ID</code> under <code>agent-lz</code> to the actual compatible
+MCP connection using the <a href="../application-settings/#edit-an-existing-nonsecret-key">nonsecret-key procedure</a>.</p>
+<p>This is an explicit application-owned binding override; later provisioning
+can restore the generated Search ID. Recheck it after every provision.</p>
+<p>Deploy/redeploy the affected native publication after the binding is ready.
+Capability composition is structural: a provider refresh is not enough to
+enable it. Confirm the effective ID, a real tool invocation and the
+allow/deny cases below. A successful deployment is not proof of grounding.</p>
+<p><span id="delegated-native-retrieval"></span></p>
+<h2 id="user-authorization-boundaries">User authorization boundaries</h2>
+<p>Protected retrieval requires a source-compatible user credential, separately
+from workload authentication. The native UI delegates to the Hosted
+Responses endpoint; the native runtime forwards a trusted Foundry call ID.
+It does not invoke the direct connector or forward that connector's
+<code>x-client-search-token</code>/Work IQ assertion headers. Do not assume those headers
+are wired into the native MCP tool.</p>
+<p>For an application explicitly integrating the direct connector, a delegated
+Search token is sent raw as <code>x-ms-query-source-authorization</code>; the connector's
+workload credential authenticates Search transport only. That recipe needs
+trusted credential acquisition/forwarding and invocation wiring, not credentials
+as model arguments. See <a href="../application-auth/">Sign-in &amp; access</a>.</p>
 <p>Native permission filtering is enabled for the application index's user,
 group and RBAC scope fields. Indexing must populate the appropriate metadata.
 Turning on filtering cannot reconstruct missing ACLs. Conversation uploads
@@ -5693,8 +5869,9 @@ sources require compatible preview APIs and user permissions. A source
 registration or runtime connector alone does not establish that the complete
 deployment combination is supported.</p>
 <p>Tokens do not belong in prompts, chat history, recovery checkpoints or
-user-supplied tool arguments. Required retrieval fails closed if credentials or
-source authorization are unavailable.
+user-supplied tool arguments. Required retrieval must fail closed if credentials or
+source authorization are unavailable; verify this in the selected native
+connection or custom integration.
 <a href="../application-auth/">Application authentication</a> describes consent and
 allowed/denied-user acceptance.</p>
 <h2 id="shared-source-permission-metadata">Shared-source permission metadata</h2>
@@ -5738,10 +5915,13 @@ Allowed and denied users both need validation before access resumes. The
 See also
 <a href="../configuration/#search-shared-private-links">Private native Blob ingestion</a>.</p>
 <h2 id="generic-mcp-knowledge-sources">Generic MCP knowledge sources</h2>
-<p>Use this default-off preview to retrieve grounding from registered
+<p>The direct connector includes a default-off preview to retrieve grounding from registered
 <code>mcpServer</code> knowledge sources. This is distinct from callable MCP tools and
-from deploying Agent App MCP Server. It does not create sources.
-Register each source on the selected knowledge base
+from deploying Agent App MCP Server. The native runtime does not load these
+connector settings. Using this planner in your application requires explicit
+connector/invocation integration; the settings below are not native Agent
+tool switches. They do not create sources.</p>
+<p>Register each source on the selected knowledge base
 first, with the same name, server and tools as the runtime metadata.</p>
 <table>
 <thead>

@@ -1621,6 +1621,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#apply-configuration-before-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply configuration before mounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#session-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5491,6 +5502,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#apply-configuration-before-mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apply configuration before mounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#session-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5717,6 +5739,37 @@ override embedding settings. The UI loads them at startup.
 <a href="../application-settings/#overrides-and-effective-values">Application settings</a>
 explains runtime overrides and effective values.
 The existing session-signing secret stays protected.</p>
+<h3 id="apply-configuration-before-mounting">Apply configuration before mounting</h3>
+<ol>
+<li>Provision and deploy the standalone application using
+   <a href="../deploy-full-stack/">full-stack deployment</a>, then verify
+   <a href="../application-auth/">application access</a> with an admitted user.</li>
+<li>
+<p>The portal developer and Entra administrator register the portal's own
+   redirect URI under its <strong>App registration &gt; Authentication</strong>, add the
+   UI API's delegated <code>user_impersonation</code> permission under <strong>API permissions</strong>,
+   and complete required tenant consent.</p>
+</li>
+<li>
+<p>The configuration operator publishes the table's nonsecret values in
+   <strong>App Configuration &gt; Configuration explorer &gt; Create &gt; Key-value</strong>, label
+   <code>agent-lz</code>, using plain-text strings. Use lowercase <code>true</code> and <code>entra</code>,
+   the tenant GUID and expected token audience. Enter multiple allowed origins
+   as a comma-separated string, not a JSON array. Do not assume <code>azd env set</code>
+   publishes these embedding keys.</p>
+</li>
+</ol>
+<p>Keep the existing <code>CHAINLIT_AUTH_SECRET</code> Key Vault reference and its managed
+identity permissions. The configuration operator needs App Configuration
+Data Owner for these writes; see
+<a href="../application-settings/#edit-an-existing-nonsecret-key">edit an existing nonsecret key</a>.</p>
+<ol>
+<li>Restart/redeploy the <strong>frontend Container App</strong> after the write, then open
+   a new browser session. Its operator must enforce the
+   single-process/revision/replica requirements below before the portal developer
+   adds bootstrap and mounts the widget. No hosted-agent republication is needed
+   for an embedding-only change.</li>
+</ol>
 <h3 id="session-settings">Session settings</h3>
 <table>
 <thead>
@@ -5902,6 +5955,12 @@ authoritative rate limits need gateway enforcement.</p>
 <p>An integration is incomplete without account-switch, logout, cookie-policy
 and two-user document allow/deny tests. Do not work around token failures with
 anonymous fallback or service-identity retrieval.</p>
+<p>Before rollout, have an admitted user bootstrap from the exact approved
+portal origin and obtain a real answer. Repeat with a signed-out/expired
+token and a user excluded by admission policy; both must fail. Log out and
+switch accounts, confirming the new account cannot reopen the first account's
+session or redeem its citation selectors. Test the actual published portal,
+not only a local developer origin.</p>
 <p><span id="recover-or-remove"></span></p>
 <h2 id="disabling-embedding">Disabling embedding</h2>
 <p>The portal widget and <code>CHAINLIT_COPILOT_ENABLED</code> control different sides of the

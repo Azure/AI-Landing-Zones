@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="730" viewBox="0 0 1000 730" role="img" aria-labelledby="title desc">
+  <title id="title">What connects an Agent to a Foundry IQ knowledge base?</title>
+  <desc id="desc">The native Agent registers an MCP project-connection tool. A compatible RemoteTool connection is an operator integration task: the generated CognitiveSearch connection is not that connection. Search owns the knowledge base and either native Blob ingestion or a registered existing index. User authorization must be verified separately. Purple dashed arrows show setup, not runtime traffic.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#32698e"/></marker>
+    <marker id="setup-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#766798"/></marker>
+    <!-- Microsoft Azure public service icons, intact; uniformly scaled at use sites.
+         https://learn.microsoft.com/azure/architecture/icons/ -->
+    <g id="search-icon"><svg id="f470e112-f1d8-4c18-a381-9b54e11a9ca3" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="b198f9ad-224e-4f37-99bb-f1c5a20d3916" x1="9" y1="0.36" x2="9" y2="18.31" gradientUnits="userSpaceOnUse"><stop offset="0.18" stop-color="#5ea0ef" /><stop offset="1" stop-color="#0078d4" /></linearGradient></defs><title>Icon-web-44</title><path d="M18,11.32a4.12,4.12,0,0,0-3.51-4,5.15,5.15,0,0,0-5.25-5,5.25,5.25,0,0,0-5,3.49A4.86,4.86,0,0,0,0,10.59a5,5,0,0,0,5.07,4.82l.44,0h8.21a.78.78,0,0,0,.22,0A4.13,4.13,0,0,0,18,11.32Z" fill="url(#b198f9ad-224e-4f37-99bb-f1c5a20d3916)" /><path d="M12.33,6.59a3.07,3.07,0,0,0-5.61.85,3.16,3.16,0,0,0,.33,2.27L4.71,12.08a.79.79,0,0,0,0,1.12.78.78,0,0,0,.56.23.76.76,0,0,0,.56-.23l2.33-2.36a3.14,3.14,0,0,0,.81.33,3.08,3.08,0,0,0,3.36-4.58Zm-.54,2.1A2.16,2.16,0,0,1,9.7,10.34a1.79,1.79,0,0,1-.51-.07,1.87,1.87,0,0,1-.7-.32,2.13,2.13,0,0,1-.56-.56,2.17,2.17,0,0,1-.31-1.73A2.14,2.14,0,0,1,9.7,6a2.31,2.31,0,0,1,.52.06,2.18,2.18,0,0,1,1.32,1A2.13,2.13,0,0,1,11.79,8.69Z" fill="#f2f2f2" /><ellipse cx="9.69" cy="8.18" rx="2.15" ry="2.16" fill="#83b9f9" /></svg></g>
+    <g id="user-icon"><svg id="e24671f6-f501-4952-a2db-8b0b1d329c17" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="be92901b-ec33-4c65-adf1-9b0eed06d677" x1="9" y1="6.88" x2="9" y2="20.45" gradientUnits="userSpaceOnUse"><stop offset="0.22" stop-color="#32d4f5" /><stop offset="1" stop-color="#198ab3" /></linearGradient><linearGradient id="b46fc246-25d8-4398-8779-1042e8cacae7" x1="8.61" y1="-0.4" x2="9.6" y2="11.92" gradientUnits="userSpaceOnUse"><stop offset="0.22" stop-color="#32d4f5" /><stop offset="1" stop-color="#198ab3" /></linearGradient></defs><title>Icon-identity-230</title><path d="M15.72,18a1.45,1.45,0,0,0,1.45-1.45.47.47,0,0,0,0-.17C16.59,11.81,14,8.09,9,8.09S1.34,11.24.83,16.39A1.46,1.46,0,0,0,2.14,18H15.72Z" fill="url(#be92901b-ec33-4c65-adf1-9b0eed06d677)" /><path d="M9,9.17a4.59,4.59,0,0,1-2.48-.73L9,14.86l2.44-6.38A4.53,4.53,0,0,1,9,9.17Z" fill="#fff" opacity="0.8" /><circle cx="9.01" cy="4.58" r="4.58" fill="url(#b46fc246-25d8-4398-8779-1042e8cacae7)" /></svg></g>
+    <g id="agent-icon"><svg id="uuid-f9dbb74c-bb65-44f5-a0f2-185541c8f2e3" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><defs><linearGradient id="uuid-c41a1b5d-c3ee-4413-bef2-f5a072ba936e" x1="7.28" y1="272.84" x2=".39" y2="267.87" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset=".8" stop-color="#7274ff" /></linearGradient><linearGradient id="uuid-7a8397bb-f82e-4b4e-8fb1-c49dc20eae52" x1="10.19" y1="268.41" x2="4.38" y2="265.16" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-364cb38b-25e6-4d45-a5f3-7f7567cf1947" x1="17.43" y1="267.02" x2="5.08" y2="264.98" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".2" stop-color="#7274ff" /><stop offset="1" stop-color="#4f42fd" /></linearGradient><linearGradient id="uuid-fb32e334-867d-4ede-bed1-56aecae762cb" x1="10.15" y1="273.41" x2="16.87" y2="269.71" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient><linearGradient id="uuid-257bedeb-cb4e-48ec-978d-667d943d4887" x1="17.68" y1="270.57" x2="8.68" y2="279.43" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4f42fd" /><stop offset=".8" stop-color="#7274ff" /></linearGradient><linearGradient id="uuid-d24b3f2b-55bd-4731-8d82-2ccb3a949da7" x1="6.64" y1="271.02" x2="6.64" y2="278.12" gradientTransform="translate(0 280) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#4f42fd" /><stop offset="1" stop-color="#2c08ac" /></linearGradient></defs><path d="M5.02,15.31l-2.82-1.63c-.66-.38-1.06-1.08-1.06-1.83v-5.69c0-.76.4-1.46,1.06-1.83l1.53-.88c.1-.06.24.01.24.14v9.91c0,.37.1.73.28,1.04.18.32.45.59.78.78h0Z" fill="url(#uuid-c41a1b5d-c3ee-4413-bef2-f5a072ba936e)" /><path d="M10.14,10.59v1.76c0,.76-.4,1.46-1.06,1.83l-1.94,1.12c-.65.38-1.46.38-2.12,0-.33-.19-.59-.46-.78-.78-.18-.31-.28-.67-.28-1.04v-.42c0,.36.39.59.71.4l5.23-3.02c.1-.06.24.01.24.14Z" fill="url(#uuid-7a8397bb-f82e-4b4e-8fb1-c49dc20eae52)" /><path d="M16.86,9.53v3.26c0,.76-.4,1.46-1.06,1.83l-4.93,2.84c-.65.38-1.46.38-2.12,0l-1.53-.88c-.1-.06-.1-.21,0-.27l8.59-4.96c.32-.19.58-.45.76-.77.18-.32.28-.68.28-1.06Z" fill="url(#uuid-364cb38b-25e6-4d45-a5f3-7f7567cf1947)" /><path d="M10.22,7.46l1.53-.88c.65-.38,1.46-.38,2.12,0l1.94,1.12c.65.38,1.06,1.08,1.06,1.83,0,.38-.1.74-.28,1.06-.18.31-.44.58-.76.77l-.36.21c.31-.18.31-.63,0-.81l-5.23-3.02c-.1-.06-.1-.21,0-.27Z" fill="url(#uuid-fb32e334-867d-4ede-bed1-56aecae762cb)" /><path d="M5.94,2.16l2.82-1.63c.66-.38,1.46-.38,2.12,0l4.93,2.84c.65.38,1.06,1.08,1.06,1.83v1.76c0,.12-.13.2-.24.14L8.04,2.16c-.32-.18-.68-.28-1.05-.28-.37,0-.73.09-1.06.28h0Z" fill="url(#uuid-257bedeb-cb4e-48ec-978d-667d943d4887)" /><path d="M7.47,8.95l-1.53-.88c-.66-.38-1.06-1.08-1.06-1.83v-2.24c0-.76.4-1.46,1.06-1.83.33-.19.69-.28,1.06-.28s.72.09,1.04.28l.36.21c-.31-.18-.7.05-.7.41v6.04c0,.12-.13.2-.24.14h0Z" fill="url(#uuid-d24b3f2b-55bd-4731-8d82-2ccb3a949da7)" /></svg></g>
+  </defs>
+  <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:20px} .title{font-size:28px;font-weight:700}.head{font-size:22px;font-weight:600}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}.setup{fill:none;stroke:#766798;stroke-width:2;stroke-dasharray:7 5;marker-end:url(#setup-arrow)}</style>
+  <rect width="1000" height="730" fill="#fff"/>
+  <text x="32" y="46" class="title">What connects an Agent to a Foundry IQ knowledge base?</text>
+  <text x="32" y="80">Source provisioning ≠ native tool connection ≠ user authorization</text>
+  <rect x="32" y="116" width="260" height="188" class="group"/>
+  <rect x="32" y="116" width="260" height="44" class="header"/>
+  <text x="50" y="145" class="head">Native application</text>
+  <rect x="48" y="176" width="228" height="110" class="node"/>
+  <use href="#agent-icon" transform="translate(62 195) scale(2)"/>
+  <text x="112" y="206" class="head">Agent /</text>
+  <text x="112" y="233" class="head">Workflow</text>
+  <text x="62" y="267">Foundry IQ flag on</text>
+  <rect x="370" y="176" width="262" height="110" class="node"/>
+  <text x="390" y="207" class="head">MCP connection</text>
+  <text x="390" y="238">RemoteTool contract</text>
+  <text x="390" y="267">Operator must connect</text>
+  <path d="M276 226H370" class="flow"/>
+  <text x="302" y="203">MCP</text>
+  <rect x="710" y="116" width="258" height="188" class="group"/>
+  <rect x="710" y="116" width="258" height="44" class="header"/>
+  <text x="728" y="145" class="head">Azure AI Search</text>
+  <rect x="726" y="176" width="226" height="110" class="node"/>
+  <use href="#search-icon" transform="translate(744 188) scale(2.4)"/>
+  <text x="799" y="207" class="head">Knowledge</text>
+  <text x="799" y="234" class="head">base</text>
+  <text x="744" y="270">Bound sources</text>
+  <path d="M632 226H726" class="flow"/>
+  <text x="641" y="203">Retrieve</text>
+  <path d="M839 304V341H265V382" class="flow"/>
+  <path d="M839 341V382" class="flow"/>
+  <rect x="32" y="382" width="466" height="137" class="node"/>
+  <text x="52" y="415" class="head">Native Blob source (default)</text>
+  <text x="52" y="449">Search manages ingestion + generated index</text>
+  <text x="52" y="482">Permission metadata defaults to rbacScope</text>
+  <rect x="546" y="382" width="422" height="137" class="node"/>
+  <text x="566" y="415" class="head">Existing index source (alternative)</text>
+  <text x="566" y="449">Index owner supplies content + ACLs</text>
+  <text x="566" y="482">Registration does not ingest content</text>
+  <text x="32" y="365">Source lookups</text>
+  <path d="M32 550H968" stroke="#9bb2c4" stroke-dasharray="4 4"/>
+  <rect x="32" y="580" width="260" height="90" class="node"/>
+  <use href="#user-icon" transform="translate(50 605) scale(2)"/>
+  <text x="103" y="615" class="head">App owner</text>
+  <text x="103" y="646">Connection setup</text>
+  <path d="M292 625H315V537H522V320H501V286" class="setup"/>
+  <text x="380" y="594" class="head">Generated CognitiveSearch ≠ MCP RemoteTool</text>
+  <text x="380" y="628">Configure the actual connection; redeploy the capability.</text>
+  <text x="380" y="660">Prove source-specific allowed / denied-user retrieval.</text>
+  <text x="32" y="709">Blue: retrieval calls. Purple dashed: setup only. No shared identity grants user document access.</text>
+</svg>

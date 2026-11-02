@@ -1637,10 +1637,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#user-controls-and-storage" class="md-nav__link">
+  <a href="#enable-feedback-in-deployment-order" class="md-nav__link">
     <span class="md-ellipsis">
       
-        User controls and storage
+        Enable feedback in deployment order
       
     </span>
   </a>
@@ -1648,10 +1648,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ownership-contract" class="md-nav__link">
+  <a href="#submit-feedback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ownership contract
+        Submit feedback
       
     </span>
   </a>
@@ -1670,10 +1670,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#administrative-views" class="md-nav__link">
+  <a href="#read-and-administer-stored-feedback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Administrative views
+        Read and administer stored feedback
       
     </span>
   </a>
@@ -1681,10 +1681,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#privacy-and-retention" class="md-nav__link">
+  <a href="#privacy-disablement-and-retention" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Privacy and retention
+        Privacy, disablement and retention
       
     </span>
   </a>
@@ -5390,10 +5390,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#user-controls-and-storage" class="md-nav__link">
+  <a href="#enable-feedback-in-deployment-order" class="md-nav__link">
     <span class="md-ellipsis">
       
-        User controls and storage
+        Enable feedback in deployment order
       
     </span>
   </a>
@@ -5401,10 +5401,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ownership-contract" class="md-nav__link">
+  <a href="#submit-feedback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Ownership contract
+        Submit feedback
       
     </span>
   </a>
@@ -5423,10 +5423,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#administrative-views" class="md-nav__link">
+  <a href="#read-and-administer-stored-feedback" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Administrative views
+        Read and administer stored feedback
       
     </span>
   </a>
@@ -5434,10 +5434,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#privacy-and-retention" class="md-nav__link">
+  <a href="#privacy-disablement-and-retention" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Privacy and retention
+        Privacy, disablement and retention
       
     </span>
   </a>
@@ -5465,70 +5465,173 @@
 
 
 <h1 id="user-feedback">User feedback</h1>
-<p>Feedback is a UI/BFF product feature, separate from native agent or workflow
-execution. Foundry and Durable Task Scheduler persist execution state;
-neither automatically supplies the application's owner-scoped ratings,
-comments or operator views.</p>
-<p>Select <code>ENABLE_USER_FEEDBACK=true</code> explicitly; its default is <code>false</code>.
-Provision the UI metadata store and frontend-only permissions. The UI consumes
-<code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and <code>NATIVE_UI_METADATA_CONTAINER</code>
-(default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>).</p>
-<p>Do not require optional ingestion or an additional execution service merely
-to store a user's feedback.
-See <a href="../conversations/">Conversations &amp; files</a> for state ownership and
-<a href="../application-settings/">Application settings</a> for configuration.</p>
-<p><span id="choose-the-supported-path"></span></p>
-<h2 id="user-controls-and-storage">User controls and storage</h2>
-<p>When feedback is enabled and its dependencies are ready, the chat control
-submits to the authenticated UI/BFF. The BFF checks the current owner mapping
-and associates feedback with the intended conversation/run and message/result.
-The product store holds feedback metadata, not native execution checkpoints.</p>
-<p>The route is <code>POST /api/native/sessions/{id}/feedback</code> with
-<code>native_ref</code>, <code>rating</code> (<code>-1</code> or <code>1</code>) and <code>comment</code> (at most 2,000 characters).
-The UI UUID must belong to the authenticated owner. Unknown/nonowned IDs
-return <code>404</code> before backend access; a native reference alone grants nothing.</p>
-<p>Feedback uses the native UI route above; <code>/panel/conversations</code> is not mounted.</p>
-<p>Do not display working-looking controls for an unavailable integration.
-A clicked thumb or accepted browser event is not evidence that feedback was
-saved. Report storage failures rather than confirming a successful write.
-Anonymous embedding does not establish an authenticated conversation owner.</p>
-<h2 id="ownership-contract">Ownership contract</h2>
-<p>Every feedback read or mutation must:</p>
+<p>Enable feedback when signed-in users need to rate an agent's result.
+<code>ENABLE_USER_FEEDBACK</code> defaults to <code>false</code>; explicitly select <code>true</code> before
+provisioning. Ratings and optional comments belong to the UI's owner-scoped
+metadata store, not to Foundry or Durable Task Scheduler execution storage.
+The UI server, also called the backend for frontend (BFF), checks these requests.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Saving feedback</strong></p>
 <ol>
-<li>Validate the authenticated user at the BFF boundary.</li>
-<li>Resolve a server-owned mapping to the selected native session/run.</li>
-<li>Check that the target message/result belongs to that owner and execution.</li>
-<li>Validate the feedback payload and persist it in the declared product store.</li>
-<li>Return the actual result without forwarding credentials into the feedback
-   document, prompt or telemetry.</li>
+<li>A signed-in user submits a rating with its native result/execution reference.</li>
+<li>The UI checks admission, session ownership and the current native reference,
+   then reads native progress to validate the execution.</li>
+<li>Only the frontend writes the rating, optional comment and references to
+   UI Cosmos. It stores no transcript, token or execution checkpoint.</li>
+<li>The UI confirms success only after the metadata write succeeds.</li>
 </ol>
-<p>A known run ID, user ID in the body or a shared managed identity is not
-authorization. Missing mappings or dependencies fail closed; they must not
-fall back to another user's execution or an unrelated backend.</p>
+</div>
+<p><a aria-label="Open full-size feedback diagram" class="runbook-diagram__image" href="../../media/runbooks/user-feedback.svg"><img alt="A signed-in user rates the current result. The authenticated UI validates ownership and native progress, then writes rating, comment and references to frontend-only UI Cosmos metadata." src="../../media/runbooks/user-feedback.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/user-feedback.svg">Open full-size diagram</a></p>
+</div>
+<h2 id="enable-feedback-in-deployment-order">Enable feedback in deployment order</h2>
+<p>The deployment operator needs the platform checkout and intended azd
+environment, resource deployment permissions and permission to assign scoped
+Cosmos data access. The identity administrator owns login and consent;
+complete <a href="../application-auth/">application access</a> in its stated order.
+The data owner must approve comment retention and operator access before
+users enter real data.</p>
+<ol>
+<li>From the <strong>platform checkout root</strong>, select the intended environment
+   and explicitly enable feedback:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="k">select</span><span class="w"> </span>&lt;environment-name&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ENABLE_USER_FEEDBACK<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+<ol>
+<li>Run <code>azd provision</code> from that checkout with the same environment selected.</li>
+</ol>
+<p>This sequence also applies when adding feedback to an existing deployment.
+The platform reads this supported environment input, selects the application
+Cosmos dependency, provisions the metadata container and grants access to the
+<strong>frontend identity only</strong>. It publishes the flag under App Configuration
+label <code>agent-lz</code>. No ingestion service, extra execution service or history
+flag is required.</p>
+<p>Do not enable the flag only in <strong>Configuration explorer</strong> or add it only
+to <code>additionalAppConfigurationSettings</code>: that bypasses dependency selection.
+Do not force <code>DEPLOY_COSMOS_DB=false</code> when metadata is required.
+<a href="../application-settings/#enable-a-product-feature">Enable a product feature</a>
+describes the canonical lifecycle path.</p>
+<p>After provision, open <strong>App Configuration &gt; Configuration explorer</strong>, select
+label <code>agent-lz</code>, and check these nonsecret values:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Expected value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ENABLE_USER_FEEDBACK</code></td>
+<td>Plain-text <code>true</code></td>
+</tr>
+<tr>
+<td><code>DATABASE_ACCOUNT_NAME</code></td>
+<td>Provisioned application Cosmos account name, not a URL</td>
+</tr>
+<tr>
+<td><code>DATABASE_NAME</code></td>
+<td>Provisioned application database name</td>
+</tr>
+<tr>
+<td><code>NATIVE_UI_METADATA_CONTAINER</code></td>
+<td><code>native-ui-metadata</code> by default</td>
+</tr>
+</tbody>
+</table>
+<p>In <strong>Cosmos DB &gt; Data Explorer</strong>, confirm the named database/container exists
+with partition key <strong><code>/principal_id</code></strong>. Its owner value is the authenticated
+<code>tid:oid</code> (tenant ID and user object ID). The post-provision grant is
+container-scoped Cosmos DB Built-in Data Contributor for the frontend;
+it does not give users or the native runtime a metadata grant.</p>
+<ol>
+<li>Run <code>azd deploy</code> only after provision and grants succeed.</li>
+</ol>
+<p>The UI chooses its metadata backend at startup, so a flag write alone cannot switch a running
+volatile owner map to Cosmos. Reopen/sign in to chat after deployment and use
+a new harmless conversation for acceptance. Existing volatile mappings are
+not recovered or migrated by enabling feedback.</p>
+<p><span id="choose-the-supported-path"></span></p>
+<h2 id="submit-feedback">Submit feedback</h2>
+<p>In conversational chat, send a harmless prompt and wait for the real result.
+Choose <strong>Útil</strong> (helpful) or <strong>Não útil</strong> (not helpful) on that response.
+The supplied controls submit a rating with an empty comment; wait for
+<strong>Feedback salvo.</strong> (feedback saved) before treating it as stored.
+They do not provide a comment editor or a feedback administration panel.</p>
+<p>Authenticated API clients can include a comment using
+<code>POST /api/native/sessions/{id}/feedback</code>. Use the owner-bound <strong>UI session
+UUID</strong> and the <code>native_ref</code> returned by its latest turn:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"native_ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;current-native-ref&gt;"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"rating"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"comment"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The answer helped me locate the policy."</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Send a delegated UI API access token in the bearer header, never in the JSON
+or URL. <code>rating</code> must be <code>-1</code> or <code>1</code>; <code>comment</code> is optional and limited to
+2,000 characters. Successful API writes return <code>201</code> with the feedback
+record's <code>id</code> and <code>created_at</code>.</p>
+<p>The BFF checks current admission and ownership, requires the current native
+reference and reads native progress before saving. Unknown/nonowned UI IDs
+return <code>404</code>. A native ID or body-supplied user identity is not authorization.
+Anonymous embedding cannot supply this authenticated owner.</p>
+<p><strong>Reference granularity differs by host.</strong> Hosted returns a response ID;
+an earlier response reference returns <code>409</code> once a newer turn advances that
+session. DTS retains its session reference across turns, so its feedback is
+execution-scoped, not independently bound to an immutable chat message.
+Always use the reference returned by the UI, not a guessed message ID.</p>
 <p><span id="verify-and-recover"></span></p>
 <h2 id="verify-and-recover">Verify and recover</h2>
-<p>Verify the feedback write response and authorized metadata persistence,
-that another user cannot submit against that session, and that an unavailable
-store produces an explicit failure. Do not invent a native feedback-list
-endpoint from the old panel API.
-Check the result after retries so that a transport interruption does not
-silently create unrelated records.</p>
-<p>Disabling a product surface is not data deletion. Retain existing feedback
-according to policy and verify cleanup separately when a conversation or run
-is removed. Native state and product metadata have different lifecycle APIs.</p>
-<h2 id="administrative-views">Administrative views</h2>
-<p>User feedback authorization is not operator authorization.
-Expose administrative reads only through an explicitly supported operator
-surface with its own roles, aggregation and privacy controls.
-Do not assume the optional ingestion dashboard shares the UI's schema or
-provides a consolidated native history/feedback administration API.
+<ol>
+<li>Submit one harmless rating. Verify the UI confirmation or API <code>201</code>, then
+   have an authorized operator confirm the metadata record below.</li>
+<li>Sign in as a different user and submit against the first user's UI UUID.
+   Expect <code>404</code>, without accessing that native execution.</li>
+<li>On Hosted, advance the owner's conversation and submit the earlier
+   <code>native_ref</code>. Expect <code>409</code>; reload and rate the current result.
+   On DTS, confirm feedback records retain the session's execution reference.</li>
+<li>In a controlled test, confirm an unavailable store reports failure rather
+   than a saved rating. Disabled feedback is unavailable (<code>503</code> on the API).</li>
+</ol>
+<p>On an interrupted request, ask an authorized operator to check whether the
+record exists before retrying. Each accepted submission creates a separate
+record; retries are not an update or a guaranteed deduplication mechanism.
+Keep tokens, comments and document contents out of diagnostic logs.</p>
+<h2 id="read-and-administer-stored-feedback">Read and administer stored feedback</h2>
+<p>The supplied native UI API supports feedback <strong>writes</strong>, not a feedback-list
+or administrative-read endpoint. For an approved investigation, use
+<strong>Azure portal &gt; Cosmos DB &gt; Data Explorer &gt; the application database &gt;
+native-ui-metadata &gt; New SQL Query</strong> (or the configured container).
+The operator needs separately approved Cosmos data-plane read access and
+network connectivity; ordinary UI admission does not grant it.</p>
+<p>Use the returned feedback ID and the approved owner's <code>tid:oid</code> to read only
+that record. Replace both placeholders:</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">session_id</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">native_ref</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">rating</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="k">comment</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">created_at</span>
+<span class="k">FROM</span><span class="w"> </span><span class="k">c</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">"feedback"</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">principal_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">"&lt;tenant-id&gt;:&lt;object-id&gt;"</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">"&lt;feedback-record-id&gt;"</span>
+</code></pre></div>
+<p>Handle the result as sensitive user-authored data. An organization can build
+a separately authorized reporting/export process against this metadata
+schema, with least-privilege reads and audit controls. Such a process is
+customer-owned; deployment does not install a consolidated feedback panel.
 See <a href="../operations/">Administration</a>.</p>
-<h2 id="privacy-and-retention">Privacy and retention</h2>
-<p>Comments can contain sensitive user-authored data even when the store contains
-no transcript. Define retention, allowed operator access, export/deletion
-handling and backup policy separately from native conversation retention.
-Audit identifiers and outcomes without recording tokens or unnecessary content.
-<a href="../application-monitoring/">Monitoring &amp; audit</a> covers operational evidence.</p>
+<h2 id="privacy-disablement-and-retention">Privacy, disablement and retention</h2>
+<p>Comments can contain sensitive data even though metadata stores no transcript.
+Define allowed readers, export/deletion handling and backup policy separately
+from native conversation retention. Audit identifiers and outcomes rather
+than unnecessary comment content.</p>
+<p>To disable new submissions, set <code>ENABLE_USER_FEEDBACK</code> to <code>false</code> in the same
+azd environment and apply the reviewed provision/deploy lifecycle. Review
+resource changes first: workflow mode or other enabled features can still
+require UI metadata. Disabling feedback is not deletion. Retain or remove
+existing records through an approved data-management process, and verify
+native-state cleanup separately.</p>
+<p>See <a href="../conversations/">Conversations &amp; files</a> for ownership and continuity,
+and <a href="../application-monitoring/">Monitoring &amp; audit</a> for operational evidence.</p>
 
 
 

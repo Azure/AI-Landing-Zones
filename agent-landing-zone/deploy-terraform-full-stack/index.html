@@ -5627,7 +5627,10 @@ Review <a href="../network-isolation/">network design</a>, quotas and recurring 
 <h3 id="step-1-prepare-the-terraform-environment">Step 1: Prepare the Terraform environment</h3>
 <p>Complete <a href="../deploy-terraform-infra-only/#procedure">foundation preparation Steps 1–4</a>:</p>
 <ul>
-<li>Use the reviewed Agent Landing Zone source and configure the <strong>root</strong>
+<li>Initialize a new empty project directory with
+  <code>azd init --template Azure/agent-landing-zone .</code> as shown in that guide.
+  Keep the environment init creates; do not follow it with <code>azd env new</code>.</li>
+<li>Configure the <strong>root</strong>
   <code>azure.yaml</code> once with <code>infra.provider: terraform</code> and
   <code>infra.path: infra/terraform</code>, with <code>infra.module: main</code>.
   Preserve the hooks and services.</li>
@@ -5638,7 +5641,8 @@ Review <a href="../network-isolation/">network design</a>, quotas and recurring 
 <li>Set documented environment inputs and root <code>main.parameters.json</code> values.
   Preprovision generates typed Terraform inputs automatically.</li>
 </ul>
-<p>Use this checkout's Terraform configuration for every lifecycle command.
+<p>Run every lifecycle command from the initialized product root, using its
+Terraform configuration, not from <code>infra/terraform/</code>.
 An environment binds to one application ID.</p>
 <h3 id="step-2-confirm-application-and-build-choices">Step 2: Confirm application and build choices</h3>
 <p>For a <strong>new</strong> default Agent Application environment:</p>
@@ -5729,8 +5733,10 @@ outer command. Preserve permission and connectivity gates.</p>
 <p>First complete <a href="../deploy-terraform-infra-only/#validation">foundation validation</a>.
 Then follow the shared <a href="../deploy-full-stack/#validation">application validation</a>:</p>
 <ol>
-<li>Compare the platform revision and fetched component commits with the approved
-   manifest and check for uncommitted source changes.</li>
+<li>Compare the platform source snapshot (or maintained source-checkout revision)
+   and fetched component commits with the approved record and manifest.
+   Check for uncommitted component changes; template initialization does not
+   retain upstream platform Git history.</li>
 <li>Verify selected Container Apps run application revisions, not placeholders,
    and the Foundry version uses the recorded immutable image digest.</li>
 <li>Test the UI from the intended network, including Entra sign-in and delegated

@@ -2110,6 +2110,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choose-where-to-configure-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose where to configure it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-a-product-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enable a product feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-an-agent-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure an agent capability
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#change-a-setting" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2117,6 +2150,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Change a setting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edit-an-existing-nonsecret-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Edit an existing nonsecret key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5440,6 +5490,39 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choose-where-to-configure-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose where to configure it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enable-a-product-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enable a product feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configure-an-agent-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configure an agent capability
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#change-a-setting" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5447,6 +5530,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Change a setting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#edit-an-existing-nonsecret-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Edit an existing nonsecret key
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5572,6 +5672,110 @@ boundary. Keep stores, identities and secrets separate between environments.</p>
 <p><a href="../configuration/">Deployment settings</a> covers resource selection, provisioning
 ownership and generated outputs. Read individual nonsecret keys rather than
 dumping a store or environment.</p>
+<h2 id="choose-where-to-configure-it">Choose where to configure it</h2>
+<p>Start in the project directory created by
+<a href="../deploy-full-stack/">the deployment guide</a>. Keep the same azd environment
+and infrastructure provider throughout configuration, provision and deploy.</p>
+<table>
+<thead>
+<tr>
+<th>What you are changing</th>
+<th>Where to edit it</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Host, application mode, history, feedback or private attachments</td>
+<td>The selected azd environment, using the supported <code>azd env set</code> inputs</td>
+<td>Before <code>azd provision</code>, then deploy</td>
+</tr>
+<tr>
+<td>An agent capability or another declared application setting</td>
+<td><code>parameters.additionalAppConfigurationSettings.value</code> in the project-root <code>main.parameters.json</code></td>
+<td>Before provision, after declaring the capability's resource dependencies</td>
+</tr>
+<tr>
+<td>An operator-managed value in an existing deployment</td>
+<td>Azure App Configuration, key label <code>agent-lz</code></td>
+<td>After provision, followed by the setting's documented refresh or restart</td>
+</tr>
+<tr>
+<td>Generated endpoints, metadata account/database names or identity allowlists</td>
+<td>Their provisioning inputs and lifecycle</td>
+<td>Provision/deploy publishes the resolved values</td>
+</tr>
+<tr>
+<td>A component's process/bootstrap environment</td>
+<td>Its application deployment definition or documented deployment input</td>
+<td>Before publishing or restarting that component</td>
+</tr>
+</tbody>
+</table>
+<p>These are different configuration surfaces. An arbitrary <code>azd env set</code>
+does not create an App Configuration key. Conversely, editing a key in the
+Azure portal does not provision its resources or grant its consumer access.</p>
+<h2 id="enable-a-product-feature">Enable a product feature</h2>
+<p>History, feedback and private attachments have supported azd deployment inputs.
+Their defaults are <code>false</code>. The lifecycle uses these choices to select
+application Cosmos DB, create the owner-partitioned metadata container and
+grant the frontend access before publishing the settings under <code>agent-lz</code>.</p>
+<p>For example, to enable feedback:</p>
+<ol>
+<li>In the initialized project directory, select the intended environment with
+   <code>azd env select &lt;environment-name&gt;</code>. Use the environment created during
+   initialization, or the existing deployment you are updating.</li>
+<li>
+<p>Set the feature <strong>before provisioning</strong>:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ENABLE_USER_FEEDBACK<span class="w"> </span><span class="nb">true</span>
+</code></pre></div>
+</li>
+<li>
+<p>Run <code>azd provision</code> to create or reuse the metadata resources and apply
+   the frontend's scoped permissions.</p>
+</li>
+<li>Complete any sign-in handoff in the
+   <a href="../deploy-full-stack/">deployment guide</a>, then run <code>azd deploy</code>.</li>
+<li>Sign in, obtain a response and follow the
+   <a href="../user-feedback/">feedback checks</a>. Verify that another user's identity
+   cannot act on your response.</li>
+</ol>
+<p>Use the same sequence with <code>ENABLE_CHAT_HISTORY</code> for saved-history discovery
+or <code>ENABLE_PRIVATE_ATTACHMENTS</code> for private conversational files.
+Read <a href="../conversations/">Conversations &amp; files</a> before enabling either.
+Workflow mode or <code>both</code> also selects UI metadata without enabling those features.</p>
+<p>The lifecycle publishes <code>DATABASE_ACCOUNT_NAME</code>, <code>DATABASE_NAME</code> and
+<code>NATIVE_UI_METADATA_CONTAINER</code> for the selected resources.
+Keep the default container <code>native-ui-metadata</code> and partition key
+<code>/principal_id</code> unless your deployment deliberately declares a different
+compatible container. Do not copy resource names from another environment.</p>
+<p>For an existing deployment, enabling one of these features still requires
+provision and deploy. Disabling it does not delete retained metadata.
+Apply the installation's retention policy separately.</p>
+<h2 id="configure-an-agent-capability">Configure an agent capability</h2>
+<p>Agent capabilities such as Foundry IQ have application keys and separate
+resource prerequisites. Complete the selected capability's guide before
+enabling its key. For example, <a href="../foundry-iq/">Foundry IQ</a> explains the
+knowledge source, Search connection and access checks needed for retrieval.</p>
+<p>In the project-root <code>main.parameters.json</code>, append the capability's entry to
+<code>parameters.additionalAppConfigurationSettings.value</code>. Preserve existing
+entries, including the host and application mode:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">"additionalAppConfigurationSettings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ORCHESTRATION_HOST"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${ORCHESTRATION_HOST=hosted}"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"APPLICATION_MODE"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${APPLICATION_MODE=conversational}"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"FOUNDRY_IQ_ENABLED"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Values in this list are strings. Include the <code>agent-lz</code> label.
+This is a fragment of the existing parameters object, not a replacement
+for the complete parameter file. Bicep and Terraform use the same
+application-setting declaration.</p>
+<p>Run the selected provider's <code>azd provision</code> and <code>azd deploy</code> sequence after
+the prerequisites are ready. Verify a real allowed-source query and a
+denied-source query, not just a successful key write.
+Use the feature-specific guide for all additional required settings.</p>
 <h2 id="change-a-setting">Change a setting</h2>
 <ol>
 <li>Select the intended environment and check
@@ -5590,6 +5794,23 @@ dumping a store or environment.</p>
 <p>Use the <a href="../deploy-full-stack/#change-a-runtime-setting">runtime-setting procedure</a>
 and <a href="../deploy-full-stack/#rotate-a-secret">secret rotation</a> for operational
 steps. Not every component or setting shares the runtime's refresh behavior.</p>
+<h3 id="edit-an-existing-nonsecret-key">Edit an existing nonsecret key</h3>
+<p>After provision, retrieve the intended store endpoint with
+<code>azd env get-value APP_CONFIG_ENDPOINT</code>. In the Azure portal, open that
+<strong>App Configuration</strong> resource, select <strong>Configuration explorer</strong>, find the
+key with label <strong>agent-lz</strong> and edit its value.
+Your operator identity needs App Configuration Data Owner to write keys.</p>
+<p>For a CLI update, the equivalent operation is:</p>
+<div class="highlight"><pre><span></span><code>az<span class="w"> </span>appconfig<span class="w"> </span>kv<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--endpoint<span class="w"> </span>&lt;app-config-endpoint&gt;<span class="w"> </span>--auth-mode<span class="w"> </span>login<span class="w"> </span>--key<span class="w"> </span>LOG_LEVEL<span class="w"> </span>--label<span class="w"> </span>agent-lz<span class="w"> </span>--value<span class="w"> </span>INFO<span class="w"> </span>--yes
+</code></pre></div>
+<p>Replace the endpoint with your deployment's value.
+This example changes the logging level, which is read at process startup:
+redeploy the affected application before checking its effective level.
+Only settings explicitly documented as dynamic use a refresh cycle instead.</p>
+<p>Record a provisioning-managed change in its declared input too, so the next
+provision does not overwrite your intended value.
+Keep secrets in Key Vault and use the owning component's secret-reference
+procedure rather than this nonsecret-key example.</p>
 <h2 id="configuration-access">Configuration access</h2>
 <p>Supply <code>APP_CONFIG_ENDPOINT</code> as a process bootstrap input. Managed identity
 is preferred in Azure; local Azure credentials still require the appropriate
@@ -5602,10 +5823,10 @@ references or require optional source credentials to start a different feature.<
 permissions only to actual consumers at the required scope.
 A missing required setting or authorization context must be reported, not
 converted into an insecure fallback or a successful empty result.</p>
-<p>The runtime's App Configuration availability handling catches actual Azure SDK
-and Requests transport failures only. Unexpected provider failures propagate
-unchanged rather than silently disabling configuration, being relabelled as
-ordinary unavailability or becoming a success-shaped result.</p>
+<p>If startup cannot read required configuration, check the selected endpoint,
+managed identity, network path and data-plane permissions. Restore access
+before admitting users. The application reports configuration failures instead
+of starting with an unconfigured fallback.</p>
 <h2 id="functional-parameters-and-deployment-choices">Functional parameters and deployment choices</h2>
 <table>
 <thead>
@@ -5782,10 +6003,12 @@ An unavailable required store is a readiness failure, not an offline mode.</p>
 </tr>
 </tbody>
 </table>
-<p>Feature keys are shared <code>additionalAppConfigurationSettings</code> entries under
-label <code>agent-lz</code>, not additional same-named Bicep or Terraform parameters.
-Resource selection must follow their declared dependencies before application
-startup.</p>
+<p>The host, mode and three product feature flags above are selected through
+their supported azd inputs. Agent capability keys use
+<code>additionalAppConfigurationSettings</code>.
+The lifecycle publishes both kinds under <code>agent-lz</code>.
+Use the <a href="#enable-a-product-feature">product-feature</a> or
+<a href="#configure-an-agent-capability">agent-capability</a> procedure, as appropriate.</p>
 <p>Workflow mode or <code>both</code> selects UI metadata even when both history and feedback
 flags are <code>false</code>. Enabled history, feedback or attachments also selects that
 dependency.</p>

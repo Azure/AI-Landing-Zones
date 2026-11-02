@@ -5817,6 +5817,15 @@ or <a href="../deploy-full-stack/">Deploy full stack</a> guide. For component ch
 job</strong> and enforces successful prior stages. Images are built per environment.
 Keep the platform's <code>infra/</code> and lifecycle hooks in that same revision.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Adapt the downloadable example before deployment</p>
+<p>The YAML files still contain <code>DEPLOYMENT_TOPOLOGY</code> inputs and checks.
+The shipped native lifecycle rejects that selector. Replace those inputs
+and checks with the <code>ORCHESTRATION_HOST</code> and <code>APPLICATION_MODE</code> contract
+described below before adapting this example. Its offline validator
+checks pipeline structure and promotion, not compatibility with a deployed
+application. Do not queue the unmodified example.</p>
+</div>
 <h2 id="prerequisites">Prerequisites</h2>
 <ul>
 <li>A reviewed platform revision and stage-specific deployment inputs.</li>
@@ -5831,6 +5840,11 @@ Keep the platform's <code>infra/</code> and lifecycle hooks in that same revisio
 a deployment until they and the protected checks in Step 4 are complete.</p>
 <h2 id="procedure">Procedure</h2>
 <h3 id="1-prepare-the-repository-and-runners">1. Prepare the repository and runners</h3>
+<p>For an interactive first installation, use
+<a href="../deploy-full-stack/#step-1-initialize-the-project">azd template initialization</a>.
+This pipeline instead needs a version-controlled source checkout so every job
+can verify and promote the <strong>same reviewed commit</strong>. Do not download the
+current remote template again in each deployment job.</p>
 <p>Use your reviewed platform revision. Keep
 <code>manifest.json</code>, <code>app-definition.json</code>, <code>main.parameters.json</code>,
 <code>azure.yaml</code>, <code>infra/</code>, <code>config/</code>, <code>contracts/</code> and <code>scripts/</code> together at its root.

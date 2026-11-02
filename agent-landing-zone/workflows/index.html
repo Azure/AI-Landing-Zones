@@ -1414,6 +1414,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#select-the-process-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1432,6 +1443,34 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-the-reference-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Try the reference process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Try the reference process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#complete-a-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete a review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5401,6 +5440,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#select-the-process-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5419,6 +5469,34 @@
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#try-the-reference-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Try the reference process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Try the reference process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#complete-a-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete a review
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5491,6 +5569,23 @@
 steps, conditions and typed input. It is not a chat prompt that happens to ask
 for approval. Use a conversational Agent for open-ended chat and a Workflow
 when the application must track a process and wait for an authorized person.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>The native host persists the wait.</strong> A topic produces a draft and a pending
+review request. The authenticated owner submits approval or rejection through
+the UI; the native workflow returns the draft and decision. This reference
+process does not write to a business system.</p>
+</div>
+<p><a aria-label="Open full-size workflow human-review diagram" class="runbook-diagram__image" href="../../media/runbooks/workflows.svg"><img alt="A topic enters the reference workflow, an agent produces a draft, and the selected native host persists a human-review request. The owner replies through the authenticated UI; the workflow returns the draft and decision without a business-system write." src="../../media/runbooks/workflows.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/workflows.svg">Open full-size diagram</a></p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<p>Have a provisioned application, working UI sign-in and a compatible workflow
+image. The deployment identity prepares resources and grants; the runtime
+identity calls its configured model/tools; the authenticated user owns the
+run. Use synthetic topics until source access and denied-user checks pass.
+The <a href="../hosted-agents/#select-and-activate-a-host">host activation procedure</a>
+links the provider-specific prerequisites.</p>
 <h2 id="select-the-process-experience">Select the process experience</h2>
 <p><code>APPLICATION_MODE</code> selects <code>conversational</code>, <code>workflow</code> or <code>both</code>; the default
 is <code>conversational</code>. The UI presents a named process alongside chat when both
@@ -5521,11 +5616,32 @@ The process business input is:</p>
 </code></pre></div>
 <p><code>decision</code> is <code>approve</code> or <code>reject</code>. These are business inputs passed through
 the selected host's native client, not one universal HTTP protocol.
-Hosted topic input is at most 8,000 characters and review comment at most
+Topic input is at most 8,000 characters and review comment at most
 4,000. Native terminal output is <code>ResearchReviewResult</code>, not an invented
 conversation envelope.
 The pending request/run identifiers come from native state and must match
 before a reply is sent.</p>
+<h2 id="try-the-reference-process">Try the reference process</h2>
+<ol>
+<li><strong>Before provision</strong>, from the platform root set
+   <code>azd env set APPLICATION_MODE workflow</code> (or <code>both</code>) and select one
+   <a href="../hosted-agents/#select-and-activate-a-host">host</a>. Follow the full-stack
+   procedure through provision, post-provision login and deploy.
+   Workflow selection creates UI metadata even with history disabled.</li>
+<li><strong>After deploy</strong>, confirm <code>agent-lz-research-review</code> is registered and the
+   UI uses its workflow endpoint or matching durable binding.
+   Do not reuse the Hosted conversational publication endpoint.</li>
+<li><strong>At runtime</strong>, follow the steps below with the topic and decision shapes
+   above. Expect <code>approved</code> or <code>rejected</code>, the original <code>topic</code> and <code>draft</code>,
+   <code>review_comment</code> and <code>configuration_revision</code>.</li>
+<li>Repeat with rejection, reconnect and a stale/duplicate reply. Check the
+   <a href="#acceptance-checks">acceptance checks</a>, not only the submission message.</li>
+</ol>
+<p>The UI supplies native pending identifiers; do not make up a <code>request_id</code>,
+revision or owner. For scripted authenticated checks, use the
+<a href="../application-api/#native-ui-sessions-and-actions">API reference</a> rather than treating
+the business JSON examples as complete HTTP requests.</p>
+<h3 id="complete-a-review">Complete a review</h3>
 <ol>
 <li>Sign in and start the published process with the required input.</li>
 <li>The workflow performs its configured research/draft step and reaches native
@@ -5535,7 +5651,8 @@ before a reply is sent.</p>
 <li>The BFF checks the authenticated owner, run and currently pending request
    before forwarding the reply through the selected official client.</li>
 <li>The native workflow resumes and returns the approved or rejected result.
-   A rejected request must not execute the approved branch.</li>
+   Rejection returns a <code>rejected</code> result; neither decision writes to a
+   business system in the supplied graph.</li>
 </ol>
 <p>The authenticated UI exposes <code>/api/native/sessions/{id}/start</code>, <code>/progress</code>
 and <code>/actions</code>. Start carries <code>topic</code>; actions carry the current <code>request_id</code>,
@@ -5618,7 +5735,8 @@ introduced.</p>
   client after disconnect.</li>
 <li>A Container Apps workflow remains pending across an owned worker restart,
   then resumes to the deterministic expected result.</li>
-<li>Approval and rejection select the intended different outcomes.</li>
+<li>Approval and rejection return their respective <code>approved</code> and <code>rejected</code>
+  statuses with the original draft; neither performs an external write.</li>
 <li>Duplicate, stale, wrong-request, wrong-run and different-owner replies do
   not advance another or completed execution.</li>
 <li>A functional configuration update affects a new run while the waiting run

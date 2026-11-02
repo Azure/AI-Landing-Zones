@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="820" viewBox="0 0 1000 820" role="img" aria-labelledby="title desc">
+  <title id="title">Server compute is not tool selection</title>
+  <desc id="desc">An agent or workflow on either native host invokes Agent App MCP Server in a separate Container App over authenticated HTTPS MCP. The default empty selection registers zero tools and no SQL clients. Alternatively, selecting nl2sql registers two SQL tools and initializes catalog, model and read-only SQL dependencies. Both choices require Entra authentication, an allowed client and the MCP.Invoke role. Toolset changes require matching provisioning and restart or redeployment.</desc>
+  <!-- Azure public service icons, July 2026 pack. https://learn.microsoft.com/azure/architecture/icons/ -->
+  <defs>
+    <style>text{font-family:"Segoe UI",sans-serif;fill:#1e3646;font-size:22px}.title{font-size:28px;font-weight:700}.heading{font-size:23px;font-weight:700}.label{font-size:20px}.node{fill:#fff;stroke:#9bb2c4;stroke-width:1.5}.group{fill:#f3f8fc;stroke:#9bb2c4;stroke-width:1.5}.header{fill:#e1edf4;stroke:#9bb2c4;stroke-width:1.5}.flow{fill:none;stroke:#32698e;stroke-width:2;marker-end:url(#arrow)}</style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 10 5 0 10Z" fill="#32698e"/></marker>
+    <symbol id="aca" viewBox="0 0 18 18">
+      <defs><linearGradient id="a3a44093-b157-426e-a8fe-cec9f9c23978" x1="11.729" y1="4.88" x2="11.729" y2="13.099" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.528" stop-color="#6635bb"/><stop offset="1" stop-color="#552f99"/></linearGradient><linearGradient id="ad838859-03f4-472f-81bc-ebc921d71335" x1="6.35" y1="13.914" x2="6.35" y2="4.198" gradientUnits="userSpaceOnUse"><stop offset="0.001" stop-color="#773adc"/><stop offset="0.307" stop-color="#793ddd"/><stop offset="0.532" stop-color="#8046e1"/><stop offset="0.731" stop-color="#8c56e7"/><stop offset="0.915" stop-color="#9c6def"/><stop offset="1" stop-color="#a67af4"/></linearGradient></defs><g id="ae82470d-7a6c-4dfe-8533-59d8ff948629"><g><path d="M8.617,8.644H.639V1.784A1.16,1.16,0,0,1,1.788.624H8.617ZM1.63,7.653h6V1.594H1.788a.158.158,0,0,0-.158.158h0Z" fill="#949494"/><path d="M17.5,8.644H9.523V.624h6.828A1.16,1.16,0,0,1,17.5,1.784Zm-6.987-.991h6V1.784a.157.157,0,0,0-.123-.187.2.2,0,0,0-.035,0H10.513Z" fill="#949494"/><path d="M8.617,17.485H1.788A1.149,1.149,0,0,1,.639,16.347V9.476H8.617ZM1.63,10.467v5.88a.158.158,0,0,0,.158.158H7.626V10.467Z" fill="#949494"/><path d="M16.351,17.485H9.523V9.476H17.5v6.871A1.149,1.149,0,0,1,16.351,17.485Zm-5.838-.991h5.838a.157.157,0,0,0,.158-.158V10.467h-6Z" fill="#949494"/><path d="M14.6,6.294a.294.294,0,0,0-.2-.278L9.044,4.205A.128.128,0,0,0,9,4.2H9a.132.132,0,0,0-.133.133v9.445A.133.133,0,0,0,9,13.911H9a.138.138,0,0,0,.049-.01l5.365-2.145a.292.292,0,0,0,.184-.272Z" fill="url(#a3a44093-b157-426e-a8fe-cec9f9c23978)"/><path d="M8.966,4.2l-5.293.966a.161.161,0,0,0-.13.158V12.63a.16.16,0,0,0,.126.157L8.962,13.91a.161.161,0,0,0,.191-.121.22.22,0,0,0,0-.036V4.358A.16.16,0,0,0,9,4.2.163.163,0,0,0,8.966,4.2Z" fill="url(#ad838859-03f4-472f-81bc-ebc921d71335)"/><path d="M6.52,5.656v6.8l1.842.3V5.335Zm-2.262.367v5.955l1.6.326V5.754Z" fill="#b796f9" opacity="0.5"/></g></g>
+    </symbol>
+    <symbol id="role" viewBox="0 0 18 18">
+      <defs><linearGradient id="e78519cd-36d2-4ee5-987f-be84be24d95e" x1="7.93" y1="17.95" x2="7.93" y2="5.62" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5e9624"/><stop offset="1" stop-color="#b4ec36"/></linearGradient><linearGradient id="ac3f95ec-6391-4f34-b431-9534d4cdf013" x1="7.95" y1="9.21" x2="7.95" y2="-2.02" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#5e9624"/><stop offset="1" stop-color="#b4ec36"/></linearGradient></defs><path d="M14,16.85a1.3,1.3,0,0,0,1.32-1.31.81.81,0,0,0,0-.16c-.52-4.15-2.88-7.53-7.4-7.53S1,10.71.51,15.39A1.34,1.34,0,0,0,1.7,16.85H14Z" fill="url(#e78519cd-36d2-4ee5-987f-be84be24d95e)"/><path d="M8,8.83a4.16,4.16,0,0,1-2.26-.66L7.92,14l2.22-5.79A4.2,4.2,0,0,1,8,8.83Z" fill="#fff"/><circle cx="7.95" cy="4.67" r="4.17" fill="url(#ac3f95ec-6391-4f34-b431-9534d4cdf013)"/><polygon points="17.49 11.13 17.49 15.37 13.85 17.5 13.85 13.26 17.49 11.13" fill="#32bedd"/><polygon points="17.49 11.13 13.85 13.26 10.21 11.13 13.85 9 17.49 11.13" fill="#9cebff"/><polygon points="13.85 13.26 13.85 17.5 10.21 15.37 10.21 11.13 13.85 13.26" fill="#50e6ff"/><polygon points="10.21 15.37 13.85 13.26 13.85 17.5 10.21 15.37" fill="#9cebff"/><polygon points="17.49 15.37 13.85 13.26 13.85 17.5 17.49 15.37" fill="#50e6ff"/>
+    </symbol>
+  </defs>
+  <rect width="1000" height="820" fill="#fff"/>
+  <text class="title" x="40" y="52">Server compute is not tool selection</text>
+  <text x="40" y="88">MCP is the protocol. Agent App MCP Server is the component. NL2SQL is a toolset.</text>
+  <rect class="group" x="370" y="130" width="590" height="490"/>
+  <rect class="header" x="370" y="130" width="590" height="75"/>
+  <use href="#aca" x="390" y="142" width="50" height="50" aria-hidden="true"/>
+  <text class="heading" x="460" y="160">Agent App MCP Server</text>
+  <text class="label" x="460" y="190">Separate Container App</text>
+  <rect class="node" x="40" y="225" width="230" height="130"/>
+  <text class="heading" x="155" y="270" text-anchor="middle">Agent or workflow</text>
+  <text class="label" x="155" y="315" text-anchor="middle">Either native host</text>
+  <rect class="node" x="400" y="225" width="530" height="95"/>
+  <use href="#role" x="420" y="240" width="45" height="45" aria-hidden="true"/>
+  <text class="heading" x="485" y="260">Entra authentication</text>
+  <text class="label" x="420" y="300">Audience · allowed client · MCP.Invoke</text>
+  <path class="flow" d="M270 275H400"/>
+  <text class="label" x="285" y="252">MCP</text>
+  <text class="label" x="285" y="308">HTTPS</text>
+  <path class="flow" d="M665 320V350H510V385"/>
+  <path class="flow" d="M665 350H800V385"/>
+  <rect class="node" x="400" y="385" width="220" height="180"/>
+  <rect class="header" x="400" y="385" width="220" height="50"/>
+  <text class="heading" x="510" y="418" text-anchor="middle">Default: []</text>
+  <text x="510" y="483" text-anchor="middle">Zero tools</text>
+  <text class="label" x="510" y="525" text-anchor="middle">No SQL clients</text>
+  <rect class="node" x="665" y="385" width="265" height="180"/>
+  <rect class="header" x="665" y="385" width="265" height="50"/>
+  <text class="heading" x="797" y="418" text-anchor="middle">Opt in: ["nl2sql"]</text>
+  <text x="797" y="483" text-anchor="middle">Two SQL tools</text>
+  <text class="label" x="797" y="525" text-anchor="middle">App owns the selection</text>
+  <text class="label" x="643" y="485" text-anchor="middle">OR</text>
+  <text x="40" y="460">Select before provision;</text>
+  <text x="40" y="493">restart/redeploy to change.</text>
+  <text class="label" x="40" y="553">Both choices remain</text>
+  <text class="label" x="40" y="583">authenticated.</text>
+  <path class="flow" d="M800 565V675"/>
+  <text class="label" x="820" y="650">NL2SQL only</text>
+  <rect class="node" x="500" y="675" width="430" height="85"/>
+  <text class="heading" x="715" y="708" text-anchor="middle">Selected dependencies</text>
+  <text class="label" x="715" y="743" text-anchor="middle">Catalog · models · read-only SQL</text>
+  <text class="label" x="40" y="802">The foundation is generic. Empty selection initializes no NL2SQL dependencies.</text>
+</svg>

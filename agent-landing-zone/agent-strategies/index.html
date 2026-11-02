@@ -1386,6 +1386,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#choose-the-application-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5379,6 +5390,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#choose-the-application-experience" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5448,6 +5470,23 @@ an <strong>Agent</strong> for a conversation and a <strong>Workflow</strong> for
 steps, conditions and human input. Hosting and tools are separate choices.
 Creating a prompt agent in the Foundry portal does not replace the application
 code, its instructions or its registered tools.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Make three independent choices before deployment:</strong> the experience
+(<code>conversational</code>, <code>workflow</code> or <code>both</code>), one native host, and optional
+capabilities. Reviewed application code composes them; selecting a host does
+not automatically enable retrieval or MCP tools.</p>
+</div>
+<p><a aria-label="Open full-size application choices diagram" class="runbook-diagram__image" href="../../media/runbooks/agent-strategies.svg"><img alt="Application composition combines an experience, one native host and explicitly selected optional capabilities. Dashed setup arrows lead to the reviewed application deployment, not a runtime strategy picker." src="../../media/runbooks/agent-strategies.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/agent-strategies.svg">Open full-size diagram</a></p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<p>Use the compatible platform manifest and orchestrator source. To change
+instructions, you need a reviewed source checkout and permission to build and
+publish its image. To enable a capability, first prepare its source,
+connection, network path and authorized runtime identity. Start with
+<a href="../hosted-agents/#select-and-activate-a-host">Agent hosting</a> if the application
+is not deployed.</p>
 <h2 id="choose-the-application-experience">Choose the application experience</h2>
 <p><code>APPLICATION_MODE</code> selects the experience. The default is <code>conversational</code>.
 Use the <a href="../configuration/#native-execution-selection">deployment configuration</a>
@@ -5499,17 +5538,41 @@ that capability available. Its definition, permissions and network path must
 all be present. Instructions cannot grant document access or turn a retrieval
 source into a model-callable operation.</p>
 <h2 id="configure-instructions">Configure instructions</h2>
-<p>Keep agent instructions and workflow definitions with the reviewed application
-source. Publish a compatible image when changing code, graph structure,
-executor identifiers or packaged prompts.</p>
-<p>Use <a href="../application-settings/">App Configuration</a> for supported functional
-parameters, not arbitrary graph replacement or credentials in prompts.
+<p>In the <strong>orchestrator repository</strong>, edit <code>src/native/prompts/main.txt</code> for the
+shared agent instructions. <code>src/native/agent.py</code> loads that packaged file.
+Both conversation and the workflow's draft step use this definition.
+<code>src/native/workflow.py</code> owns the reference graph; <code>src/native/contracts.py</code>
+owns its typed inputs, result and registration names.</p>
+<ol>
+<li>Change instructions in the reviewed source, keeping task, grounding,
+   citation and tool-use requirements explicit.</li>
+<li>Test the changed behavior against synthetic inputs and existing native
+   tests. Prompt text cannot grant source access or register new tools.</li>
+<li>Build and publish the reviewed image through
+   <a href="../customize-components/">Customize components</a> and the matching
+   <a href="../deploy-full-stack/#procedure">deployment procedure</a>.
+   A portal prompt edit or App Configuration key does not replace the file.</li>
+<li>Start a new interaction on the new publication/revision. Check a grounded
+   answer, a denied source and required-tool failure before admitting users.
+   Record the image/version with the result.</li>
+</ol>
+<p>Graph, executor-ID and registration-name changes also require a compatible
+publication and a recovery plan for waiting runs. Do not replace their
+definition while assuming every pending native checkpoint remains compatible.</p>
+<p>For a supported functional change such as <code>CHAT_TEMPERATURE</code> or
+<code>CHAT_OUTPUT_TOKENS</code>, use the
+<a href="../deploy-full-stack/#change-a-runtime-setting">runtime-setting procedure</a>
+under label <code>agent-lz</code>. These are functional values, not packaged instructions.
 A running workflow retains its functional configuration snapshot; a new
 configuration value does not rewrite a process that is already waiting.
 Current authorization is checked separately on every interaction.</p>
 <h2 id="configure-and-test-behavior">Configure and test behavior</h2>
 <ol>
-<li>Select the application mode and host, then verify the required dependencies.</li>
+<li><strong>Before provision</strong>, select mode and host using
+   <a href="../hosted-agents/#select-and-activate-a-host">Agent hosting</a>.
+   For optional retrieval/tool flags, use the exact
+   <a href="../application-settings/#configure-an-agent-capability">agent capability declaration</a>;
+   do not assume a same-named azd environment variable is mapped.</li>
 <li>Keep instructions focused on task, grounding, citations and tool use.
    Never include user tokens, credentials or private configuration in prompts.</li>
 <li>Test a representative answer, required-source failure, denied user and

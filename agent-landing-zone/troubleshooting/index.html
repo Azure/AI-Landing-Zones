@@ -1132,6 +1132,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#initialization-directory-and-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization directory and environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#deploy-stage" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5964,6 +5975,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#initialization-directory-and-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization directory and environment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#deploy-stage" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6542,6 +6564,10 @@ failure. Diagnose the failing stage before retrying or changing inputs.</p>
 </thead>
 <tbody>
 <tr>
+<td>Init created a nested project or the environment already exists</td>
+<td><a href="#initialization-directory-and-environment">Initialization directory and environment</a></td>
+</tr>
+<tr>
 <td>Multi-group setup reports a missing target or denied access</td>
 <td><a href="#resource-group-destination-checks">Resource group destination checks</a></td>
 </tr>
@@ -6606,6 +6632,25 @@ signed URLs, tokens, cookies and credentials.</p>
 <li>Apply only the entry's scoped correction, then run its verification.</li>
 <li>Complete <a href="#validation">Validation</a> before reopening access or promotion.</li>
 </ol>
+<h3 id="initialization-directory-and-environment">Initialization directory and environment</h3>
+<p><strong>Symptom:</strong> the template files are in a nested directory, or <code>azd env new</code>
+reports that the environment already exists after init.</p>
+<p><strong>Check:</strong> locate the directory containing root <code>azure.yaml</code>, <code>manifest.json</code>
+and <code>main.parameters.json</code>. Run <code>azd env list</code> there to confirm the local
+environment.</p>
+<p><strong>Correct:</strong> for a fresh installation, create and enter a new empty directory,
+then run <code>azd init --template Azure/agent-landing-zone .</code>. The trailing <code>.</code>
+explicitly uses the current directory; without it, current azd creates a
+template-named subdirectory. Interactive init creates/selects the named
+environment, so do not follow it with another <code>azd env new</code>.</p>
+<p>For an already initialized project, enter its actual root and use
+<code>azd env select &lt;environment-name&gt;</code> to resume. Do not delete <code>.azure/</code>, rerun
+template initialization over local work, or create a different environment to
+evade an existing deployment binding.</p>
+<p><strong>Verify:</strong> confirm the selected environment, target subscription/region and
+root <code>azure.yaml</code> provider/path before following the
+<a href="../#infrastructure-and-application">deployment guide</a>. Initialization is
+not evidence of successful provisioning or application deployment.</p>
 <h3 id="deploy-stage">Deploy stage</h3>
 <h4 id="resource-group-destination-checks">Resource group destination checks</h4>
 <p>For <strong>Agent Bicep/azd deployments</strong>, compare the selected environment's

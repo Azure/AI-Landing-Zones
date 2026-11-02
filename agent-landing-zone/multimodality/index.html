@@ -2018,6 +2018,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Document image grounding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-validate-native-image-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to validate native image grounding
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5448,6 +5465,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Document image grounding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-validate-native-image-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to validate native image grounding
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5603,6 +5637,26 @@ quota and extraction compatibility.
 <a href="../configuration/">Deployment settings</a> identifies the configuration inputs.
 The rendered source's model binding and extracted diagram content are the
 evidence of successful processing, not the model name alone.</p>
+<h3 id="how-to-validate-native-image-grounding">How to validate native image grounding</h3>
+<ol>
+<li><strong>Before provision</strong>, select the native Blob path in
+   <a href="../ingestion/#how-to-prepare-a-shared-blob-source">Ingestion</a>.
+   In root <code>main.parameters.json</code>, inspect
+   <code>parameters.modelDeploymentList.value</code>: the entry with
+   <code>canonical_name: CHAT_DEPLOYMENT_NAME</code> declares <code>model.name</code>, <code>model.version</code>,
+   deployment <code>name</code> and capacity. Choose an available model supported by the
+   extraction template; do not rename a deployment to imply another model.</li>
+<li>Run the <a href="../deploy-full-stack/">provision/deploy lifecycle</a> with the reviewed
+   model and source settings. The platform operator owns model quota and
+   service bindings; the source owner approves ingestion access.</li>
+<li><strong>After provision</strong>, upload an approved PDF containing a legible diagram to
+   the configured shared container. Wait for managed indexing, then inspect
+   extracted text for a fact present only in that diagram.</li>
+<li><strong>At runtime</strong>, ask for that fact through the enabled Foundry IQ capability.
+   Verify the answer and citation, then repeat with a denied user.
+   Missing extracted text is an ingestion/model-binding issue; a missing
+   retrieved chunk can instead be a source-binding or authorization issue.</li>
+</ol>
 <p>The ingestion identity's source/model access is independent of the user's
 retrieval permissions. Private connectivity follows
 <a href="../network-isolation/">Network design</a>. Protected hosted retrieval uses the
@@ -5661,14 +5715,25 @@ in application Cosmos; no document ingestion service is required.</p>
 outside its supported set. That fallback does not mean every file type is
 supported.</p>
 <p>The factory also routes <code>.xls</code> to the spreadsheet chunker, but its
-OpenPyXL parser expects an Open XML workbook, not a legacy binary Excel file.
-Convert legacy workbooks to <code>.xlsx</code> before ingestion.</p>
+OpenPyXL parser expects an Open XML workbook, not a binary Excel file.
+Convert binary workbooks to <code>.xlsx</code> before ingestion.</p>
 <p>A source connector can impose a narrower allowlist, such as
 SharePoint's default <code>pdf,docx,pptx</code>. This custom processing table is not a
 native chat upload allowlist.</p>
 <h3 id="select-analysis-and-chunking">Select analysis and chunking</h3>
 <p>Configure these values through <a href="../application-settings/">Application settings</a>.
 They affect the custom ingestion service, not native Search source extraction.</p>
+<p>For <strong>initial deployment</strong>, declare the nonsecret settings as string-valued
+<code>{name,value,label}</code> entries under root
+<code>parameters.additionalAppConfigurationSettings.value</code>, label <code>agent-lz</code>.
+For example:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"CHUNKING_NUM_TOKENS"</span><span class="p">,</span><span class="nt">"value"</span><span class="p">:</span><span class="s2">"2048"</span><span class="p">,</span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"agent-lz"</span><span class="p">}</span>
+</code></pre></div>
+<p>Use the <a href="../configuration/#configuration-ownership-and-declarations">declared-settings publisher</a>,
+not an undeclared azd variable. <strong>After deployment</strong>, ingestion's configuration
+API can update allowlisted settings such as <code>CHUNKING_NUM_TOKENS</code> and
+<code>MULTIMODAL</code>; it does not accept every analysis/model setting.
+See <a href="../application-api/#ingestion-administration">API reference</a>.</p>
 <ul>
 <li><code>USE_DOCUMENT_INTELLIGENCE=false</code> selects Content Understanding using
   <code>AI_FOUNDRY_ACCOUNT_ENDPOINT</code>, <code>CONTENT_UNDERSTANDING_ANALYZER</code>
@@ -5692,6 +5757,19 @@ embedding deployment and compatible vector dimensions. Transcript processing
 generates a summary, and sheet-based spreadsheet processing can summarize large
 content, so those paths can also call the chat model.</p>
 <h3 id="extract-and-retrieve-figures">Extract and retrieve figures</h3>
+<p>To try this on an isolated custom pipeline:</p>
+<ol>
+<li><strong>Before starting ingestion</strong>, review <a href="../ingestion-jobs/">schedules</a> and
+   approve the target index, image container, analysis service and model.</li>
+<li>Declare <code>MULTIMODAL=true</code> using the settings location above, together with
+   the image storage/model settings below. The ingestion identity needs image
+   Blob write and model access; a querying user's access is separate.</li>
+<li>Publish settings and restart ingestion for consistent module-level clients.
+   Reprocess a small source document; changing a setting does not rebuild
+   already indexed chunks or captions.</li>
+<li>Inspect <code>relatedImages</code>, <code>imageCaptions</code> and caption vectors in the indexed
+   chunks. Verify actual retrieval output before expanding the corpus.</li>
+</ol>
 <p><code>MULTIMODAL=false</code> is the custom ingestion default. Enabling it selects figure
 processing for supported document/image inputs. The pipeline extracts figures,
 stores images, generates captions and attaches related-image URLs, caption text
@@ -5706,8 +5784,7 @@ rather than a useful description.</p>
 <p>The registered retrieval tool determines which indexed text and image fields
 reach an Agent or Workflow. Extracting figures in ingestion does not register
 an image tool, change the chat input contract or automatically pass original
-images to a model. Check actual tool output and model inputs instead of
-selecting a legacy multimodal strategy.</p>
+images to a model. Check actual tool output and model inputs.</p>
 <p>Review the separate image cleanup configuration in
 <a href="../ingestion-jobs/#index-purge-and-cleanup-effects">Jobs &amp; schedules</a>.
 It can delete stored figures and does not infer its index/container from every
@@ -5728,6 +5805,10 @@ transcripts or tokens. Do not infer this allowlist from shared ingestion.
 Selecting <code>DEPLOY_INGESTION_CONTAINER_APP=true</code> only deploys that separate
 processing service. Transport tests do not verify model PDF/image understanding.
 See <a href="../conversations/#private-attachments">Conversations &amp; files</a>.</p>
+<p>For setup, follow
+<a href="../ingestion/#how-to-enable-private-conversational-input">enable private conversational input</a>.
+The product flag is a lifecycle input selected before provision/deploy;
+custom ingestion's <code>MULTIMODAL</code> setting is not its substitute.</p>
 <p><span id="diagnose-a-missing-image-answer"></span></p>
 <h2 id="evidence-and-configuration-lifecycle">Evidence and configuration lifecycle</h2>
 <p>Grounded image answers depend on completed ingestion, extracted content, a

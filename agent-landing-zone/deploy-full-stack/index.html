@@ -775,15 +775,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-get-the-code" class="md-nav__link">
+  <a href="#step-1-initialize-the-project" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Get the code
+        Step 1: Initialize the project
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Step 1: Get the code">
+    <nav class="md-nav" aria-label="Step 1: Initialize the project">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -5746,15 +5746,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-get-the-code" class="md-nav__link">
+  <a href="#step-1-initialize-the-project" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Get the code
+        Step 1: Initialize the project
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Step 1: Get the code">
+    <nav class="md-nav" aria-label="Step 1: Initialize the project">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -6218,19 +6218,31 @@ creation, image builds, role propagation and private-link approvals.
 No fixed completion time is guaranteed.</p>
 </div>
 <h2 id="procedure">Procedure</h2>
-<p>Run Steps 1-4 in order. After selecting a checkout, run lifecycle commands from
-its platform root with the intended environment selected.</p>
-<h3 id="step-1-get-the-code">Step 1: Get the code</h3>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<p>Run Steps 1-4 in order. After initialization, run lifecycle commands from
+the project root with the intended environment selected.</p>
+<p><a id="step-1-get-the-code"></a></p>
+<h3 id="step-1-initialize-the-project">Step 1: Initialize the project</h3>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>agent-landing-zone
 <span class="nb">cd</span><span class="w"> </span>agent-landing-zone
+azd<span class="w"> </span>init<span class="w"> </span>--template<span class="w"> </span>Azure/agent-landing-zone<span class="w"> </span>.
 </code></pre></div>
-<p>The checkout's <code>manifest.json</code> pins the compatible runtime components;
-the deployment hooks fetch them automatically.</p>
-<p>Alternatively, <code>azd init -t Azure/agent-landing-zone</code> initializes the current
-default template in an empty directory. Reuse the environment it creates rather
-than creating it again in Step 2.</p>
+<p>Start in a <strong>new, empty directory</strong>, outside any existing project checkout.
+The trailing <code>.</code> tells azd to put the template in the current directory;
+without it, current azd creates a template-named subdirectory. Stay in this
+project root, which contains <code>azure.yaml</code>, <code>manifest.json</code> and
+<code>main.parameters.json</code>, for the remaining steps.</p>
+<p>Interactive init asks for an <strong>environment name</strong> and creates/selects that
+local azd environment. Choose the intended name now; <strong>do not run <code>azd env new</code>
+again in Step 2</strong>. To supply the name explicitly, use
+<code>azd init --template Azure/agent-landing-zone --environment &lt;environment-name&gt; .</code>
+instead of the init command above.</p>
+<p>Initialization downloads the template and prepares local project/environment
+files; it does not provision Azure resources. Do not add <code>--up</code>: configure the
+deployment first. The project's <code>manifest.json</code> pins compatible runtime
+components, which the deployment hooks fetch automatically. No upstream
+platform Git history is required for a normal installation.</p>
 <h4 id="prepare-python">Prepare Python</h4>
-<p>From the repository root:</p>
+<p>From the initialized project root:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
 </code></pre></div>
 <p>On Linux/macOS, use <code>python3</code> if <code>python</code> is unavailable. Activate
@@ -6240,28 +6252,33 @@ than creating it again in Step 2.</p>
 </code></pre></div>
 <p>Keep this environment active for the lifecycle commands.</p>
 <h4 id="working-from-your-own-repository">Working from your own repository</h4>
-<p>An unmodified deployment needs only the platform checkout. Hooks fetch selected
-runtime components automatically; separate forks are not required. Fork or mirror
-the platform when you maintain deployment inputs or automation, and fork only
-the runtime components whose source you change.</p>
-<p>Keep reviewed, nonsecret inputs in source control and apply them explicitly
-with <code>azd env set</code>; an <code>environments/</code> folder is not loaded automatically.
+<p>An unmodified deployment needs only the initialized platform project. Hooks
+fetch selected runtime components automatically; separate forks are not required.
+Use a deliberate Git clone or fork when contributing changes, retaining upstream
+history for source updates, or maintaining reviewed deployment inputs and
+automation. Template initialization is not a checkout of the upstream history.
+Fork only the runtime components whose source you change.</p>
+<p>Keep reviewed, nonsecret inputs in source control. Apply documented environment
+mappings with <code>azd env set</code>; retain native and structured declarations in root
+<code>main.parameters.json</code>. An <code>environments/</code> folder is not loaded automatically.
 Protect <code>.azure/</code>, credentials, sibling component workspaces and deployment
 logs. For private components, configure Git read access on the actual deployment
 host separately from Azure authentication. Never embed tokens in repository URLs.
 See <a href="../build-your-own-app/">Custom applications</a> for source pinning and composition.</p>
 <p><a id="step-2-sign-in-and-create-an-environment"></a></p>
 <h3 id="step-2-select-the-deployment-target">Step 2: Select the deployment target</h3>
-<p>The following creates a <strong>new</strong> environment. Replace all placeholders:</p>
+<p>Use the environment created in Step 1. Authenticate both CLIs and set its
+target before provisioning. Replace all placeholders:</p>
 <div class="highlight"><pre><span></span><code>az<span class="w"> </span>login
 azd<span class="w"> </span>auth<span class="w"> </span>login
 az<span class="w"> </span>account<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--subscription<span class="w"> </span>&lt;subscription-id&gt;
-azd<span class="w"> </span>env<span class="w"> </span>new<span class="w"> </span>&lt;environment-name&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_SUBSCRIPTION_ID<span class="w"> </span>&lt;subscription-id&gt;
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>AZURE_LOCATION<span class="w"> </span>&lt;region&gt;
 </code></pre></div>
-<p>For an existing environment, use <code>azd env select &lt;environment-name&gt;</code> instead
-and preserve its approved inputs. Isolate DEV, TEST and PROD with separate
+<p>To resume an existing local environment, use
+<code>azd env select &lt;environment-name&gt;</code> and preserve its approved inputs; do not
+reinitialize the template. Use <code>azd env new &lt;environment-name&gt;</code> only when
+intentionally adding a separate environment. Isolate DEV, TEST and PROD with separate
 environments, resource groups, identities, configuration stores, secrets and
 data. Promote the same reviewed source revision with stage-specific inputs.</p>
 <p>New environments use three resource groups:
@@ -6665,19 +6682,22 @@ do not delete shared hub, DNS or monitoring resources.</p>
 <h2 id="validation">Validation</h2>
 <ol>
 <li>
-<p>Confirm the platform revision and frontend source, then inspect the deployed
-   Container Apps rather than accepting a placeholder response:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
-git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
+<p>Confirm the reviewed platform source and frontend source, then inspect the
+   deployed Container Apps rather than accepting a placeholder response:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>rev-parse<span class="w"> </span>HEAD
 git<span class="w"> </span>-C<span class="w"> </span>../agent-app-ui<span class="w"> </span>status<span class="w"> </span>--porcelain
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_RESOURCE_GROUP
 azd<span class="w"> </span>env<span class="w"> </span>get-value<span class="w"> </span>AZURE_APP_RESOURCE_GROUP
 az<span class="w"> </span>containerapp<span class="w"> </span>list<span class="w"> </span>-g<span class="w"> </span>&lt;application-resource-group&gt;<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--query<span class="w"> </span><span class="s2">"[].{name:name,state:properties.runningStatus,revision:properties.latestReadyRevisionName}"</span><span class="w"> </span>-o<span class="w"> </span>table
 </code></pre></div>
-<p>Compare the platform commit with your approved record and the UI commit
-  with its <code>manifest.json</code> entry. The UI source should have no unexpected
-  edits; matching HEAD alone does not prove the built source was unchanged.
+<p>For a template-initialized project, retain and compare the approved source
+  snapshot, manifest and deployment inputs: init does not retain upstream
+  Git history, so local <code>HEAD</code> is not upstream revision evidence.
+  For a maintained source checkout, use <code>git rev-parse HEAD</code> and compare
+  that platform commit with your approved record.</p>
+<p>Compare the UI commit with its <code>manifest.json</code> entry. The UI source should
+  have no unexpected edits; matching HEAD alone does not prove the built source was unchanged.
   Apply the same check to ingestion only when that component is selected.</p>
 <p>The automatic hosted build clones the pinned orchestrator into a temporary
   directory; a sibling <code>agent-app-orchestrator</code> checkout is <strong>not required</strong>

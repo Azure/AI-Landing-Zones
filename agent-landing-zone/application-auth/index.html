@@ -5712,12 +5712,28 @@
 <h1 id="agent-application-access">Agent Application access</h1>
 <p>Agent Application has independent access boundaries: UI admission,
 native host invocation, owner-bound execution and document/tool authorization.
-Signing in does not grant access to every document or run.</p>
+Signing in does not grant access to every document or run.
+The UI server, also called the backend for frontend (BFF), checks admission
+and maps users to their native sessions.</p>
 <p>Follow the setup sequence below for the default
 Foundry-hosted agent and Container Apps frontend. Azure CLI and azd sign-in
 authenticate the deployment operator, not application users.
 Deployment and redeployment belong to the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Three separate access checks</strong></p>
+<ol>
+<li>Entra sign-in supplies a UI API token; the UI checks admission and ownership.</li>
+<li>The UI exchanges delegated credentials for Foundry invocation and, separately,
+   Search retrieval. The user also needs Foundry caller access.</li>
+<li>Search checks current document permissions. Login and workload RBAC do not
+   grant access to every source.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size application access diagram" class="runbook-diagram__image" href="../../media/runbooks/application-auth.svg"><img alt="A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Native retrieval separately checks the user's document permissions in Azure AI Search." src="../../media/runbooks/application-auth.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/application-auth.svg">Open full-size diagram</a></p>
+</div>
 <h2 id="trusted-identity-and-native-state">Trusted identity and native state</h2>
 <p>The UI/BFF binds the authenticated tenant/user to native conversation and
 workflow IDs. Validate the owner on reads, history discovery, feedback,
@@ -5798,10 +5814,13 @@ access to source documents; retain the source's RBAC and ACL checks.</p>
 known as <code>Entra</code>), the downstream scope is <code>https://ai.azure.com/.default</code>.
 Confirm the deployed endpoint's audience with its owner; do not substitute
 the UI API scope or a management-plane audience.</p>
-<p>Set
-<code>HOSTED_AGENT_RESOURCE_SCOPE</code> in the selected azd environment before provision,
-as shown in the <a href="../deploy-full-stack/#native-application-selection">full-stack deployment guide</a>.
-This value is separate from the UI login scopes in step 4.</p>
+<p>From the platform checkout root, select the intended azd environment and set
+the confirmed audience <strong>before <code>azd provision</code></strong>, for example:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="k">select</span><span class="w"> </span>&lt;environment-name&gt;
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_RESOURCE_SCOPE<span class="w"> </span>https://ai.azure.com/.default
+</code></pre></div>
+<p>Use the audience approved for your endpoint. This supported deployment input
+is separate from the UI login scopes in step 4.</p>
 <p>The <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent-endpoint-authorization#authorize-the-client-to-request-a-foundry-token">Foundry client authorization procedure</a>
 explains downstream permission and consent. The UI exchanges its user's API
 token for a Foundry token server-side; consent alone does not grant that user
@@ -5817,7 +5836,7 @@ For Application Gateway, use the approved external hostname from its
 Register the exact callback, for example:</p>
 <div class="highlight"><pre><span></span><code>https://chat.contoso.com/auth/oauth/azure-ad/callback
 </code></pre></div>
-<p>Set <code>CHAINLIT_URL</code> to that UI origin (<code>https://chat.contoso.com</code>), without a
+<p>In step 4, set <code>CHAINLIT_URL</code> to that UI origin (<code>https://chat.contoso.com</code>), without a
 trailing slash. Include any supported deployment prefix consistently in the
 URL and callback. Keep previously used callbacks only while they are still
 approved and required.</p>
@@ -5837,6 +5856,12 @@ string containing a secret or URI.</p>
 as a reference too; do not
 regenerate an existing session-signing secret during a routine update.</p>
 <p>Publish the following values in the same store:</p>
+<p>Use <strong>Configuration explorer &gt; Create &gt; Key-value</strong> for nonsecrets, with
+label <code>agent-lz</code> and plain-text values. These UI login keys are runtime
+configuration, not arbitrary <code>azd env set</code> inputs. Keep any reviewed deployment
+declarations aligned so a later provision does not restore different values.</p>
+<p>The configuration operator needs App Configuration Data Owner to write keys;
+the frontend needs only the reader permissions described below.</p>
 <dl>
 <dt><code>OAUTH_AZURE_AD_CLIENT_ID</code></dt>
 <dd>Application (client) ID from step 1.</dd>

@@ -1293,6 +1293,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#how-to-configure-an-optional-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to configure an optional capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#choose-what-to-add-next" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5550,6 +5561,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#how-to-configure-an-optional-capability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to configure an optional capability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#choose-what-to-add-next" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5828,6 +5850,21 @@ The deployment guide marks that handoff explicitly.</p>
 <p>The first greeting proves model connectivity, not document retrieval, SQL
 readiness, saved history or workflow recovery. The default application does
 not automatically know your organization's documents or databases.</p>
+<h3 id="how-to-configure-an-optional-capability">How to configure an optional capability</h3>
+<ol>
+<li>Choose the capability's guide below <strong>before the first provision</strong>, or before
+   updating an existing installation. Check its resources, permissions and
+   source preparation requirements.</li>
+<li>Use <a href="../application-settings/#choose-where-to-configure-it">Application settings</a>
+   to locate its supported input. History, feedback and private attachments
+   use <code>azd env set</code> before provision. Agent capability keys are declared in
+   the project-root <code>main.parameters.json</code>.</li>
+<li>Complete the required provision and deploy steps, then sign in with a pilot
+   user. Follow the capability's verification steps and check both a permitted
+   operation and a denied one before inviting other users.</li>
+</ol>
+<p>The lifecycle publishes the corresponding values to App Configuration.
+Keep deployment selection and runtime key edits in their documented surfaces.</p>
 <h3 id="choose-what-to-add-next">Choose what to add next</h3>
 <table>
 <thead>
@@ -5921,8 +5958,8 @@ Agent App MCP Server is also omitted by default (<code>DEPLOY_AGENT_APP_MCP=fals
 When deployed, its <code>MCP_TOOLSETS</code> still defaults to <code>[]</code>: no business tools
 or NL2SQL dependencies are initialized until explicitly selected.
 Preparing a source does not register a tool.</p>
-<p>History, feedback and private
-attachments also default to off; conversational UI owner maps are then bounded
+<p>History, feedback and private attachments also default to off.
+Conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.</p>
 <p>Foundry IQ manages
 ingestion for the configured native Blob source. Deploy Agent App Ingestion
@@ -5998,13 +6035,15 @@ the catalog. Search and document ingestion are independent capabilities.</p>
 <p>You may also select generic application Cosmos with <code>DEPLOY_COSMOS_DB=true</code>
 without MCP or the reference orchestrator, including for a custom application.
 See <a href="../configuration/#application-cosmos-db">Application Cosmos DB</a>.
-The normal standalone and customer-owned application paths remain available.</p>
+Use <a href="../build-your-own-app/">Bring your own app</a> to declare a separate
+application and its resource consumers.</p>
 <h2 id="application-mode-and-host">Application mode and host</h2>
 <p><code>APPLICATION_MODE</code> selects <code>conversational</code>, <code>workflow</code> or <code>both</code>.
 <code>ORCHESTRATION_HOST</code> selects <code>hosted</code> or <code>container_apps</code>.
 These are deployment choices, not a user-facing strategy selector.
-History, feedback and private attachments remain independently selected
-default-off features. Selecting Hosted does not enable history.
+History, feedback and private attachments are independent, default-off
+features. Set their supported azd inputs
+<a href="../application-settings/#enable-a-product-feature">before provisioning</a>.
 Workflow mode and <code>both</code> always require UI metadata, even with every product
 flag off.</p>
 <p>Hosted uses the official Responses integration and native persistence.

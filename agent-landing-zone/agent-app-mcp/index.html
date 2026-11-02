@@ -1470,6 +1470,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#deploy-agent-app-mcp-server" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1538,6 +1549,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Operate the server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-the-deployed-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify the deployed selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5479,6 +5507,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#before-you-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#deploy-agent-app-mcp-server" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5547,6 +5586,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Operate the server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-the-deployed-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify the deployed selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5649,6 +5705,33 @@ SDK. Agents and Workflows on either supported host can consume its tools.</p>
 <p>Configure the server below, then select the toolsets your application needs
 through <code>MCP_TOOLSETS</code>. The available <strong>NL2SQL</strong> toolset lists approved sources
 and answers questions over SQL data.</p>
+<p>MCP is the protocol; <strong>Agent App MCP Server</strong> is the optional component;
+<strong>NL2SQL</strong> is one explicitly selected toolset. Deploying the component does
+not automatically select SQL tools. The foundation remains generic;
+application composition owns tool choices and their dependency declarations.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Server compute and tool selection are different choices.</strong> Either native
+host calls the separate Container App through Entra-authenticated MCP.
+The default <code>[]</code> exposes zero tools. Only <code>["nl2sql"]</code> activates the supplied
+SQL tools and their catalog, model and read-only SQL dependencies.</p>
+</div>
+<p><a aria-label="Open full-size MCP server and toolset diagram" class="runbook-diagram__image" href="../../media/runbooks/agent-app-mcp.svg"><img alt="Either native host invokes Agent App MCP Server in a separate Container App through Entra authentication. Startup selection is either an empty tool list with no SQL clients or the explicit nl2sql toolset with catalog, model and read-only SQL dependencies." src="../../media/runbooks/agent-app-mcp.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/agent-app-mcp.svg">Open full-size diagram</a></p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>Have the initialized platform project and selected azd environment.
+  Follow the provider-specific prerequisites linked below; isolated
+  deployments require a connected runner. For an existing installation,
+  verify application sign-in; a fresh installation configures it after provision.</li>
+<li>The deployer needs Azure provisioning/scoped-grant access <strong>and</strong> Entra
+  rights to create or reuse the API registration and assign application roles.</li>
+<li>Arrange HTTPS/DNS/egress from each actual agent/workflow caller to the
+  server. Selecting Hosted does not move MCP compute into Foundry.</li>
+<li>For <code>["nl2sql"]</code> only, have a SQL data owner approve the dataset, read-only
+  access and metadata import. An empty server needs none of those SQL inputs.</li>
+</ul>
 <p><span id="select-and-deploy"></span></p>
 <h2 id="deploy-agent-app-mcp-server">Deploy Agent App MCP Server</h2>
 <p>For the reference application, <code>DEPLOY_AGENT_APP_MCP</code> selects optional server
@@ -5656,10 +5739,11 @@ compute and defaults to <code>false</code>. Its Container App has its own manage
 independently of <code>ORCHESTRATION_HOST</code> and <code>APPLICATION_MODE</code>.
 Application composition coordinates its image, caller authorization and connection.</p>
 <p><span id="use-the-coordinated-platform-source"></span></p>
-<p>Use the stable platform source with its complete manifest and application definition:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
-<span class="nb">cd</span><span class="w"> </span>agent-landing-zone
-</code></pre></div>
+<p>Initialize the azd project using
+<a href="../deploy-full-stack/#step-1-get-the-code">Step 1: Initialize the project</a>.
+Use that initialized platform root and its selected environment for the
+commands below. This prepares the complete manifest and application definition;
+the MCP component repository alone is not a full-stack deployment template.</p>
 <p>The manifest binds compatible server and consumer releases. For an existing
 installation, review the complete platform update before changing source.</p>
 <h3 id="fresh-application">Fresh application</h3>
@@ -5744,6 +5828,40 @@ and verifies authenticated discovery before activating consumers.</p>
 list. Test denied callers as well. A healthy process alone does not establish
 tool dependency readiness. Resolve an existing external MCP endpoint conflict
 explicitly before selecting the integrated server.</p>
+<h3 id="verify-the-deployed-selection">Verify the deployed selection</h3>
+<p>After root deployment finishes, use the authorized native consumer for MCP
+discovery. Its managed identity must acquire a token for the generated
+<code>MCP_AUTH_RESOURCE_SCOPE</code>; do not test by pasting a browser token or API key.</p>
+<table>
+<thead>
+<tr>
+<th>Selection/check</th>
+<th>Observable result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[]</code> with an authorized caller</td>
+<td>MCP <code>tools/list</code> returns an empty <code>tools</code> array; <code>nl2sql.query</code> is not registered.</td>
+</tr>
+<tr>
+<td><code>["nl2sql"]</code> with an authorized caller</td>
+<td>Discovery returns exactly <code>nl2sql.list_sources</code> and <code>nl2sql.query</code>; an onboarded synthetic query returns the expected typed result.</td>
+</tr>
+<tr>
+<td>Missing token, wrong audience, missing role or unapproved client</td>
+<td>Invocation is denied, including on an empty server.</td>
+</tr>
+<tr>
+<td><code>/healthz</code></td>
+<td>Liveness only; it is not an authenticated discovery or SQL-readiness check.</td>
+</tr>
+</tbody>
+</table>
+<p>Use the <a href="../nl2sql/#check-before-admitting-users">NL2SQL admission checks</a>
+after onboarding sources, and the
+<a href="../troubleshooting/#agent-app-mcp-failures">MCP troubleshooting procedure</a>
+for configuration, identity or discovery failures.</p>
 <p>Inspect individual nonsecret settings and safe correlation fields through
 <a href="../application-monitoring/">Monitoring &amp; audit</a> and
 <a href="../troubleshooting/#agent-app-mcp-failures">MCP troubleshooting</a>.
@@ -5844,7 +5962,7 @@ document ingestion are independent capabilities.</p>
    reference. Arrange DNS, TLS and routes from the server to SQL and its dependencies.</li>
 <li>Prepare the <a href="../nl2sql/#example-approved-source-file">approved source JSON</a>
    with schemas, relationships, descriptions and question/query examples.</li>
-<li>Run the <a href="../nl2sql/#import-the-approved-file">administrative importer</a> on a
+<li>Run the <a href="../nl2sql/#3-import-the-approved-file-after-provisioning">administrative importer</a> on a
    separately authorized managed-identity runner. It generates embeddings and
    activates a metadata version after the complete import succeeds.</li>
 <li>Verify a known result through the application and check denied callers,
@@ -5876,6 +5994,11 @@ reserved for the reference application and is rejected with custom definitions.<
 <p>Declare and authorize each custom consumer/dependency explicitly. Generic
 Cosmos and <code>COSMOS_VECTOR_SEARCH_ENABLED</code> can be selected independently of the
 reference catalog. Follow <a href="../build-your-own-app/#application-binding-and-selection">Bring your own app</a>.</p>
+<p>Adding another packaged toolset requires reviewed MCP server code, an explicit
+factory in <code>src/toolsets.py</code>, typed inputs/results, dependency lifecycle cleanup
+and authorization tests. Updating <code>MCP_TOOLSETS</code> alone cannot load arbitrary
+modules or add a new implementation. Publish a compatible server image and
+declare the custom application's resources/grants before selecting it.</p>
 
 
 

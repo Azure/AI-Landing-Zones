@@ -2235,6 +2235,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Native runtime audit scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-enable-orchestrator-tool-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to enable orchestrator tool audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5520,6 +5537,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Native runtime audit scope">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-enable-orchestrator-tool-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to enable orchestrator tool audit
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5666,15 +5700,42 @@ for the separate controls.</p>
 successful indexing, correct source access or production readiness.
 Use <a href="../troubleshooting/">Troubleshooting</a> for boundary-specific diagnosis.</p>
 <h2 id="native-runtime-audit-scope">Native runtime audit scope</h2>
-<p>Native entrypoints retain in-process tool audit hooks. They do
-not mount retired request APIs or provide their complete request-lifecycle
-and remote-tool audit stream. A historical schema or
-<code>AUDIT_EVENTS_ENABLED=true</code> is not evidence that those paths emit events.
-Verify the actual hook and telemetry exporter used by the selected runtime.</p>
-<p>If the consumer requires <code>AUDIT_HMAC_KEY</code>, keep its actual Key Vault reference
-and secret-scoped grant with that consumer. A bootstrap grant does not prove
-event export. Never expose the secret in diagnostics.
-Audit delivery is best-effort, not an immutable ledger or a compliance
+<p>The orchestrator provides audit hooks for in-process tool operations.
+Use those events alongside native host traces and the remote service's
+own evidence. An orchestrator tool event describes that local operation,
+not every step performed inside a remote service.</p>
+<h3 id="how-to-enable-orchestrator-tool-audit">How to enable orchestrator tool audit</h3>
+<ol>
+<li>Complete <a href="#set-up-trace-export">trace export setup</a> and verify a normal
+   application request before enabling additional event export.</li>
+<li>Choose a secret name for the audit HMAC key in the installation's Key Vault.
+   Add that <strong>name</strong>, not its value, to the azd environment's JSON array
+   <code>NATIVE_TOOL_SECRET_NAMES</code> before provision. Preserve existing declared names.
+   Run <code>azd provision</code> for the selected installation.</li>
+<li>Once the vault is available, store exactly 32 random bytes encoded as
+   Base64, Base64URL or hexadecimal under the selected secret name.
+   Open the vault's <strong>Secrets</strong> page in Azure Portal and use the installation's
+   approved secret-generation procedure. The operator needs secret-write
+   permission; the runtime needs only its secret-scoped read grant.</li>
+<li>In App Configuration <strong>Configuration explorer</strong>, under label <code>agent-lz</code>,
+   create <code>AUDIT_HMAC_KEY</code> as a <strong>Key Vault reference</strong> to that secret.
+   Set <code>AUDIT_HMAC_KEY_ID</code> to your nonsecret key identifier.
+   Keep <code>AUDIT_SENSITIVE_CONTENT_ENABLED=false</code>.</li>
+<li>Set the nonsecret key <code>AUDIT_EVENTS_ENABLED</code> to string <code>true</code> under the
+   same label. Record these declarations in the installation's approved
+   configuration. Follow <a href="../application-settings/#edit-an-existing-nonsecret-key">Application settings</a>
+   for the operator's permissions and edit location.</li>
+<li>Run <code>azd deploy</code>. The lifecycle grants the declared secret to the selected
+   orchestrator identity, including the identity created by a Hosted
+   publication. Invoke an enabled in-process tool and inspect the resulting
+   events in Application Insights. Check exporter errors and verify that no
+   credentials or message content were captured.</li>
+</ol>
+<p>For the Container Apps worker, the audit-only logging mode exports audit
+events while <code>AZURE_MONITOR_DISABLE_LOGGING=true</code> keeps general log export
+off. The Hosted SDK configures its own export.
+Keep the selected host's telemetry configuration with that host.</p>
+<p>Audit delivery is best-effort, not an immutable ledger or a compliance
 certification. Disabling emission does not delete exported events.
 Correlate native UI actions, provider outcomes and in-process tool events
 without claiming complete remote-call coverage.</p>
@@ -5730,6 +5791,11 @@ For hosted orchestration, the deployment input
 <code>OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT</code> and defaults to <code>false</code>.
 A change requires a new hosted version. Leave it off when enabling or
 investigating basic traces.</p>
+<p>After privacy approval, change <code>HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT</code> in the
+selected azd environment <strong>before</strong> <code>azd deploy</code>. The deployment maps it into
+the Hosted process environment. Keep it <code>false</code> for ordinary diagnostics.
+Set the approved retention and telemetry-reader permissions before collecting
+any content.</p>
 <p>An audit-content allowlist does not establish that every native path has
 capture wired, nor guarantee that user-authored content is safe to export.
 UI metadata deliberately contains no transcripts, tokens or attachment bytes;
@@ -5742,7 +5808,7 @@ and <a href="https://github.com/Azure/agent-app-ingestion/tree/main/contracts">i
 Use the schema corresponding to your deployed component.</p>
 <p>Application Insights custom properties are strings. When correlating root
 events, treat <code>parent_event_id=evt_00000000000000000000000000000000</code> as
-no parent. Historical schema files remain available for older exported events.</p>
+no parent. Select the schema matching the component that emitted the event.</p>
 <p>Reverting an image does not restore deleted documents, undo configuration
 writes or remove telemetry. Follow separately approved data restoration,
 reingestion and <a href="../deploy-full-stack/#rollback">configuration recovery</a>.

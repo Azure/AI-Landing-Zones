@@ -2307,6 +2307,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Native orchestrator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-start-the-selected-native-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to start the selected native host
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5442,6 +5459,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Native orchestrator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-start-the-selected-native-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to start the selected native host
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5509,7 +5543,7 @@
 
 
 <h1 id="run-locally">Run locally</h1>
-<p>Run an application component on your workstation while using an existing
+<p>Use this guide to edit, debug or contribute component source against an existing
 development platform. This is not an offline chat demo and does not provision
 Azure resources. Local servers still need network access, configured models,
 storage, and the permissions used by their selected features.</p>
@@ -5528,7 +5562,7 @@ and <a href="../application-testing/">Tests &amp; quality checks</a>. For deploy
 <li>Obtain data-plane role assignments for the services you will use. A
   data-plane permission authorizes access to service data, rather than resource
   creation. Private endpoints also require connected networking and DNS.</li>
-<li>Clone only the components you need from
+<li>Clone only the components whose source you need to edit or debug from
   <a href="https://github.com/Azure/agent-app-orchestrator">orchestrator</a>,
   <a href="https://github.com/Azure/agent-app-ingestion">ingestion</a>, and
   <a href="https://github.com/Azure/agent-app-ui">UI</a>, or optional
@@ -5538,10 +5572,12 @@ and <a href="../application-testing/">Tests &amp; quality checks</a>. For deploy
   at your platform release. Repository <code>main</code> can contain newer patches.
   For contributions, use the repository's target branch and current checks.</li>
 </ul>
-<p>The UI, orchestrator and ingestion credential providers try managed identity,
-then Azure CLI. The MCP server and its administrative importer require a
-configured managed identity; Azure CLI sign-in is not their fallback.
-<code>AZURE_CLIENT_ID</code> selects a user-assigned managed identity when applicable.
+<p>The UI and ingestion configuration providers try managed identity, then Azure
+CLI. Native orchestrator configuration uses <code>DefaultAzureCredential</code>; its
+DTS transport has a separate credential selection described below.
+The MCP server and its administrative importer require a
+configured managed identity; Azure CLI sign-in is not their fallback.</p>
+<p><code>AZURE_CLIENT_ID</code> selects a user-assigned managed identity when applicable.
 Do not copy an Azure workload's credentials to a workstation. Store secrets
 in Key Vault and never commit local environment files or tokens.</p>
 <p>The component <code>infra/main.bicep</code> files are empty resource-group entrypoints.
@@ -5600,9 +5636,10 @@ See <a href="../application-settings/">Application settings</a> for provider pre
 required feature settings, and restart behavior.</p>
 <h2 id="native-orchestrator">Native orchestrator</h2>
 <p>Use the owning component's explicit native host entrypoint after preparing
-its compatible published dependencies. Select <code>APPLICATION_MODE</code> and
-<code>ORCHESTRATION_HOST</code>; do not start a retired HTTP strategy service
-as a substitute for native execution.</p>
+its compatible published dependencies. <strong>Before startup</strong>, set process
+inputs <code>APPLICATION_MODE</code> and <code>ORCHESTRATION_HOST</code> to match the development
+platform's composition. Do not edit the shared store to redirect other users
+to a local process.</p>
 <table>
 <thead>
 <tr>
@@ -5621,15 +5658,37 @@ as a substitute for native execution.</p>
 </tr>
 </tbody>
 </table>
-<p>From the orchestrator root, run the selected entrypoint:</p>
-<div class="highlight"><pre><span></span><code>python -m native.hosted
+<h3 id="how-to-start-the-selected-native-host">How to start the selected native host</h3>
+<p>From the <strong>orchestrator root</strong>, install the host-specific requirements and
+the source package after the common setup. For Hosted:</p>
+<div class="highlight"><pre><span></span><code>python -m pip install -r requirements-hosted.txt -r requirements-tools.txt
+python -m pip install --no-deps -e .
+python -m pip check
+python -m native.hosted
 </code></pre></div>
-<p>Hosted listens on port <code>8080</code>. For the standalone durable worker, use instead:</p>
-<div class="highlight"><pre><span></span><code>python -m native.durable
+<p>The editable install exposes <code>src/native/</code> as the <code>native</code> module. The base
+<code>requirements.txt</code> alone neither installs the hosting SDK nor exposes that
+source package. Hosted listens on port <code>8080</code>; a local listener does not
+reproduce trusted Foundry invocation context.</p>
+<p>For the standalone durable worker, use a <strong>separate environment</strong> and instead run:</p>
+<div class="highlight"><pre><span></span><code>python -m pip install -r requirements-container-apps.txt -r requirements-tools.txt
+python -m pip install --no-deps -e .
+python -m pip check
+python -m native.durable
 </code></pre></div>
-<p>The worker has no public HTTP ingress or Dapr. Supply the actual DTS binding
-with <code>TaskHub=agent-lz;Authentication=ManagedIdentity</code>, and keep native names
+<p>The worker has no public HTTP ingress or Dapr. Supply the actual
+<code>DURABLE_TASK_SCHEDULER_CONNECTION_STRING</code> in its process environment.
+The deployed binding uses <code>TaskHub=agent-lz;Authentication=ManagedIdentity</code>.
+For an explicitly local <strong>worker</strong>, <code>Authentication=DefaultAzure</code> selects
+<code>DefaultAzureCredential</code> instead; it is not an automatic deployment fallback.
+Use the provisioned endpoint and a separately authorized development hub.
+Keep native names
 <code>agent-lz-conversation</code> and <code>agent-lz-research-review</code> aligned with the UI client.</p>
+<p>Confirm package validation succeeds, configuration loads and the intended
+listener or worker starts. Exercise the host's maintained
+<a href="../application-testing/#orchestrator">SDK/behavioral tests</a> before a live
+turn. CLI sign-in still needs configuration/model permissions and, for local
+DTS, scheduler access approved by the scheduler owner.</p>
 <p>The selected mode needs its model, configuration and tool dependencies.
 Hosted native execution does not require application Cosmos; DTS owns durable
 worker execution. UI product metadata and a selected NL2SQL toolset can
@@ -5649,7 +5708,7 @@ and native ODBC dependencies; installing Python packages alone does not
 install the driver. Use approved development metadata and read-only SQL access.</p>
 <p>Local startup neither provisions the catalog nor authorizes Azure callers.
 The administrative importer is separate from the MCP query service.
-Run <a href="../nl2sql/#import-the-approved-file">catalog import</a> on an authorized
+Run <a href="../nl2sql/#3-import-the-approved-file-after-provisioning">catalog import</a> on an authorized
 managed-identity runner, not an unconfigured workstation.</p>
 <p>Use host-specific native inputs and clients described in the
 <a href="../application-api/#native-execution-contracts">API reference</a>.
@@ -5674,6 +5733,8 @@ those jobs. Review <a href="../ingestion-jobs/">Jobs &amp; schedules</a> before 
 the common setup:</p>
 <div class="highlight"><pre><span></span><code>python -m uvicorn main:app --host 127.0.0.1 --port 8080
 </code></pre></div>
+<p>Run this ingestion example and the Hosted example as <strong>alternatives</strong>: both
+bind port <code>8080</code> and cannot run simultaneously on the same address and port.</p>
 <p>Configure Search, storage, embedding models, and the analysis service required
 by the selected pipeline. Content Understanding is the default analysis path
 when <code>USE_DOCUMENT_INTELLIGENCE=false</code>. Multimodal processing is a separate
@@ -5689,7 +5750,8 @@ In the <strong>UI root</strong>, after the common setup, install its package and
 <div class="highlight"><pre><span></span><code>python -m pip install --no-deps -e .
 python -m uvicorn main:app --host 127.0.0.1 --port 8000
 </code></pre></div>
-<p>Port <code>8000</code> avoids the ingestion server on <code>8080</code>. Configure the local public
+<p>Port <code>8000</code> avoids port <code>8080</code>, used by either the Hosted or ingestion example.
+Configure the local public
 origin and sign-in redirect deliberately using
 <a href="../application-auth/">Sign-in &amp; access</a>. Features requiring a configured HTTPS
 origin, including protected-source recovery, still need that origin and an
@@ -5699,7 +5761,7 @@ reconfigure Entra or callback URLs.</p>
 <code>ORCHESTRATION_HOST</code> selects the explicit Hosted or durable client.
 Hosted <code>both</code> requires two publication endpoints; the durable client needs
 the actual scheduler binding and the worker's registered names.
-Failures do not fall back to a retired backend.</p>
+Host/client configuration failures are reported rather than silently switching hosts.</p>
 <p>The default hosted <code>user_delegated</code> authentication uses an on-behalf-of
 exchange, where the UI exchanges a user's API token for a downstream token.
 It needs the confidential-client settings and consent described in
@@ -5719,7 +5781,7 @@ path and ownership checks; ingestion is not a replacement upload path. See
 <h2 id="operator-dashboard-frontend">Operator dashboard frontend</h2>
 <p>The ingestion repository contains its React/TypeScript operator dashboard
 under <code>frontend/</code>. Native orchestrator entrypoints do not mount a dashboard
-or retired administration APIs. Vite is ingestion's frontend server and build tool.
+or ingestion administration APIs. Vite is ingestion's frontend server and build tool.
 It proxies API requests to an independently running backend.</p>
 <table>
 <thead>
@@ -5747,12 +5809,29 @@ above. The proxy neither starts the backend nor bypasses authorization.
 The ingestion Dockerfile's Node 20 build stage is not the maintained local/CI
 Node 22 choice. Do not bypass peer-dependency checks.</p>
 <p><code>npm run build</code> writes the static bundle consumed by FastAPI at <code>/dashboard</code>
-when the administrative surface is mounted. A bundle does not enable that
-surface. Route mounting belongs to the ingestion component's declared
-administrative surface. It can expose a development admin gate when Entra
+when the administrative surface is mounted. Build it <strong>before backend startup</strong>
+if you need <code>/dashboard</code>; a frontend build alone does not remount routes in a
+running backend. Route mounting belongs to the ingestion component's startup
+configuration, not <code>ORCHESTRATION_HOST</code>.</p>
+<p>It can expose a development admin gate when Entra
 is not configured. Keep those endpoints private and follow
 <a href="../operations/">Administration</a> for production setup.</p>
 <h2 id="verify-the-intended-boundary">Verify the intended boundary</h2>
+<p>After starting the component:</p>
+<ol>
+<li>For ingestion, read <code>http://127.0.0.1:8080/healthz</code> and <code>/readyz</code>, then
+   inspect the scheduler's effective target and next runs. Do not trigger a job
+   until the storage/index owners approve the development corpus.</li>
+<li>For UI, open <code>http://127.0.0.1:8000</code> and complete the configured sign-in.
+   Verify the selected host/client and a synthetic owner-bound session.
+   Persistent features need the local identity's scoped metadata access,
+   not a copied workload credential.</li>
+<li>After endpoint, host or startup dependency changes, stop and restart the
+   affected local process. Use supported functional refresh only for the
+   settings covered by <a href="../application-settings/">Application settings</a>.</li>
+<li>Stop the local servers when finished. Do not leave an ingestion scheduler
+   writing to development resources unintentionally.</li>
+</ol>
 <p>Check the selected backend, effective configuration, and logs before exercising
 a turn or upload. A listening port, successful probe, or local test is not
 Azure readiness. Use the existing offline

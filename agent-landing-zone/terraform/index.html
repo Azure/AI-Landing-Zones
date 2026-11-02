@@ -5491,7 +5491,9 @@
 <a href="https://github.com/Azure/agent-landing-zone">same product repository</a>.
 The <strong>Azure Developer CLI (<code>azd</code>)</strong> coordinates provisioning, service
 configuration and application deployment for either choice. Bicep is the
-default. Select Terraform once in the checkout's root <code>azure.yaml</code>.</p>
+default. <a href="../deploy-terraform-infra-only/#step-1-initialize-the-project-and-select-terraform-once">Initialize the project with azd</a>,
+then select Terraform once in root <code>azure.yaml</code> before provisioning.
+Keep the environment created by init; no second <code>azd env new</code> is needed.</p>
 <h2 id="choose-the-outcome">Choose the outcome</h2>
 <table>
 <thead>
@@ -5554,8 +5556,10 @@ build and publish the selected application. <code>azd up</code> runs both stages
 Reprovisioning must preserve application images and revisions already published
 by deployment. Infrastructure ownership does not extend to resetting those
 application-managed values.</p>
-<p>The root <code>azure.yaml</code> selects the native azd Terraform provider,
-<code>infra/terraform</code> path and <code>main</code> module. Shared PowerShell and shell hooks
+<p>For Terraform, set the root <code>azure.yaml</code> to the native azd Terraform provider,
+<code>infra/terraform</code> path and <code>main</code> module, preserving the hooks. The template
+initializes with Bicep by default; provider selection applies to the whole
+project rather than each environment. Shared PowerShell and shell hooks
 configure services and deploy the application. Use the selected provider for
 provisioning, updates and removal.</p>
 <h2 id="repository-owned-avm-composition">Repository-owned AVM composition</h2>

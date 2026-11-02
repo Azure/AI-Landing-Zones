@@ -1178,6 +1178,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Deployment inputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initialization-and-setting-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization and setting order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -5925,6 +5942,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Deployment inputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#initialization-and-setting-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Initialization and setting order
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -6577,6 +6611,31 @@ in these files or generated <code>.azure/</code> inputs.</p>
 For example, the root parameter <code>allowedIpRanges</code> takes an array.
 There is no implied <code>ALLOWED_IP_RANGES</code> environment binding.
 Retain the same reviewed root document on every authorized runner.</p>
+<h3 id="initialization-and-setting-order">Initialization and setting order</h3>
+<p>For a new installation, <a href="../deploy-full-stack/#step-1-initialize-the-project">initialize a project with azd</a>
+in a new empty directory. Init creates/selects the environment; do not create
+it again with <code>azd env new</code>. Run subsequent commands from the directory
+containing root <code>azure.yaml</code>, <code>manifest.json</code> and <code>main.parameters.json</code>.</p>
+<p>Before <code>azd provision</code>, select the infrastructure provider in root
+<code>azure.yaml</code>, confirm the environment's subscription/region and set the
+documented deployment inputs and typed root parameters. Terraform also needs
+its existing remote-state backend configured first. After provisioning and
+required identity/service configuration, use <code>azd deploy</code> for the application.
+Do not use init's <code>--up</code> shortcut before these choices are ready.</p>
+<p>The lifecycle inputs <code>ENABLE_CHAT_HISTORY</code>, <code>ENABLE_USER_FEEDBACK</code> and
+<code>ENABLE_PRIVATE_ATTACHMENTS</code> have verified <code>azd env set</code> mappings. Set them
+before provision so the lifecycle includes their metadata resources and grants,
+then deploy. Do not enable them solely by editing App Configuration or
+<code>additionalAppConfigurationSettings</code>.
+See <a href="../application-settings/#enable-a-product-feature">Enable a product feature</a>.</p>
+<p>Functional keys such as <code>SEARCH_RETRIEVAL_ENABLED</code>, <code>FOUNDRY_IQ_ENABLED</code> and
+<code>MULTIMODAL_ENABLED</code> instead require explicit declarations in
+<code>parameters.additionalAppConfigurationSettings.value</code> in root
+<code>main.parameters.json</code>, using <code>name</code>, a string <code>value</code> and label <code>agent-lz</code>.
+Keep existing entries and update or append the intended keys; there is no
+implied same-named azd input. Follow the capability's requirements and
+<a href="../application-settings/#configure-an-agent-capability">configuration procedure</a>
+before provisioning and deploying it.</p>
 <h2 id="terraform-backend-settings">Terraform backend settings</h2>
 <p>Use an existing Azure Storage account and container outside every workload
 resource group. Backend settings are separate from workload parameters:</p>
@@ -6821,7 +6880,7 @@ that identity in the Entra directory; it is not an application's client ID.</p>
 <tbody>
 <tr>
 <td><code>AZURE_ENV_NAME</code></td>
-<td>Environment name. Set by <code>azd env new</code>. Used to derive resource names.</td>
+<td>Environment name, created/selected during <code>azd init</code> for a new project or <code>azd env new</code> for an additional environment. Used to derive resource names.</td>
 </tr>
 <tr>
 <td><code>AZURE_LOCATION</code></td>
@@ -8086,10 +8145,13 @@ History, feedback and private attachments independently default to off.
 Hosted does not enable history; workflow or <code>both</code> always selects UI metadata.</p>
 <p>Endpoint/binding rows are actual generated application contracts, not extra
 host choices. Do not construct scheduler endpoints or set internal host flags.</p>
-<p>Native feature keys are shared <code>additionalAppConfigurationSettings</code> entries
-under <code>agent-lz</code>, not new same-named Bicep or Terraform parameters.
-See <a href="../application-settings/#native-application-contract">Application settings</a>
-for exact feature and consumer keys.</p>
+<p>Set <code>ENABLE_CHAT_HISTORY</code>, <code>ENABLE_USER_FEEDBACK</code> and
+<code>ENABLE_PRIVATE_ATTACHMENTS</code> with <code>azd env set</code> before provision, then deploy.
+The lifecycle selects their metadata dependencies and publishes the values
+under <code>agent-lz</code>; these are not new same-named Bicep or Terraform parameters.
+Use <a href="../application-settings/#enable-a-product-feature">Enable a product feature</a>
+for the ordered procedure and keep functional capability declarations
+<a href="#initialization-and-setting-order">separate</a>.</p>
 <p>On Hosted, select <code>APPLICATION_MODE=both</code>; the lifecycle prepares a
 conversational publication with derived process mode <code>conversational</code> and a
 separate workflow publication with derived process mode <code>workflow</code>, then

@@ -1879,14 +1879,47 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What is wired into Agent Application">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-configure-native-indexed-sharepoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to configure native indexed SharePoint
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to configure native indexed SharePoint">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#indexed-source-identity-inputs" class="md-nav__link">
+  <a href="#1-prepare-the-administrators-and-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Indexed source identity inputs
+        1. Prepare the administrators and source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-declare-the-source-then-provision-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Declare the source, then provision it
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-connect-retrieval-and-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Connect retrieval and publish
       
     </span>
   </a>
@@ -1899,15 +1932,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#custom-sharepoint-ingestion" class="md-nav__link">
+  <a href="#how-to-configure-application-managed-sharepoint-ingestion" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom SharePoint ingestion
+        How to configure application-managed SharePoint ingestion
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Custom SharePoint ingestion">
+    <nav class="md-nav" aria-label="How to configure application-managed SharePoint ingestion">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -5509,14 +5542,47 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="What is wired into Agent Application">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-configure-native-indexed-sharepoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to configure native indexed SharePoint
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How to configure native indexed SharePoint">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#indexed-source-identity-inputs" class="md-nav__link">
+  <a href="#1-prepare-the-administrators-and-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Indexed source identity inputs
+        1. Prepare the administrators and source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-declare-the-source-then-provision-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Declare the source, then provision it
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-connect-retrieval-and-publish" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Connect retrieval and publish
       
     </span>
   </a>
@@ -5529,15 +5595,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#custom-sharepoint-ingestion" class="md-nav__link">
+  <a href="#how-to-configure-application-managed-sharepoint-ingestion" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom SharePoint ingestion
+        How to configure application-managed SharePoint ingestion
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Custom SharePoint ingestion">
+    <nav class="md-nav" aria-label="How to configure application-managed SharePoint ingestion">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -5670,6 +5736,20 @@ Foundry Agent Service tool. Custom ingestion is optional for SharePoint groundin
 <p>This page explains content flow, permissions and accelerator readiness.
 Deployment procedures are in the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Who copies SharePoint content, and who keeps its permissions current?</strong></p>
+<ol>
+<li>Native indexed SharePoint lets Search manage indexing and permission ingestion.</li>
+<li>Application-managed ingestion uses Graph, selected-site app access and
+   scheduled ACL refresh to populate a separately owned Search index.</li>
+<li>Both indexed routes still need an authorized retrieval path. Remote
+   SharePoint is another service option, not an installed application switch.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size SharePoint indexing alternatives diagram" class="runbook-diagram__image" href="../../media/runbooks/sharepoint.svg"><img alt="Two supported SharePoint indexing recipes: Search-managed indexedSharePoint copies content and permissions into a generated index; optional Agent App Ingestion reads selected Graph lists and libraries into an application-owned index with scheduled ACL refresh. Retrieval authorization is separate from app-only ingestion access." src="../../media/runbooks/sharepoint.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/sharepoint.svg">Open full-size diagram</a></p>
+</div>
 <p><span id="before-you-start"></span>
 <span id="connect-the-source"></span></p>
 <h2 id="native-sharepoint-options">Native SharePoint options</h2>
@@ -5703,7 +5783,7 @@ Deployment procedures are in the
 <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-sharepoint-remote">remote source</a>
 and <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/sharepoint">native agent tool</a>.
 Preview features are available for evaluation under their documented terms.
-they have no preview SLA and are not recommended for production.</p>
+They have no preview SLA and are not recommended for production.</p>
 <p>Remote SharePoint currently supports textual SharePoint content, not OneDrive,
 Copilot connector content or multimodal retrieval. It requires SharePoint and
 Azure in the same Entra tenant.</p>
@@ -5720,13 +5800,14 @@ principal.</p>
 <ul>
 <li><strong>Indexed source:</strong> the template registers a native source with a secretless
   federated <code>connectionString</code>, <code>defaultSiteLibrary</code>, an embedding model and
-  native <code>userIds</code>/<code>groupIds</code> permission ingestion. The UI/hosted path carries
-  the delegated Search token. Configure the Entra objects and source permissions
-  below. No custom connector or Agent App Ingestion is required.</li>
-<li><strong>Remote source:</strong> the connector recognizes
+  native <code>userIds</code>/<code>groupIds</code> permission ingestion. No Agent App Ingestion is
+  required. Native application tool connection and user delegation still need
+  explicit setup and validation.</li>
+<li><strong>Remote source:</strong> the available direct connector recognizes
   <code>SHAREPOINT_REMOTE_ENABLED</code> and <code>SHAREPOINT_REMOTE_KNOWLEDGE_SOURCE_NAME</code>.
   The source must already exist and belong to the knowledge base. These keys
-  do not create it or establish delegation.</li>
+  do not create it or establish delegation. The native runtime does not load
+  them or call that connector.</li>
 <li><strong>Native tool:</strong> the service connection and identity-passthrough contract
   need an explicit application integration. The remote-source settings do not
   attach this tool.</li>
@@ -5738,35 +5819,89 @@ Platform provisioning can replace manual source references in its managed
 knowledge base.</p>
 <div class="admonition important">
 <p class="admonition-title">Source configuration remains a separate requirement</p>
-<p>The built-in UI/hosted path can forward the delegated Search credential.
-That does not create missing permission metadata or grant access to a site.
-Indexed and remote SharePoint still need their documented registration,
-consent and source-specific configuration.
+<p>The native runtime uses a project-connection MCP tool, not the direct
+connector's Search-token forwarding path. Configure a compatible native
+connection or implement trusted application delegation and invocation.
+Indexed and remote SharePoint still need registration, consent and
+source-specific configuration.
 App-only indexing access is not proof of per-user trimming.</p>
 </div>
-<h3 id="indexed-source-identity-inputs">Indexed source identity inputs</h3>
-<p>Set <code>SHAREPOINT_INDEXED_ENABLED=true</code>, the knowledge-source name, site URL and
-tenant ID. Supply <code>SHAREPOINT_INDEXED_APPLICATION_ID</code> for the ingestion Entra
-app and <code>SHAREPOINT_INDEXED_FEDERATED_CREDENTIAL_APPLICATION_ID</code> for Search's
-managed identity application/client ID. This last value is <strong>not</strong> a federated
-credential object ID. The app must trust the Search identity through federation
-and have the documented SharePoint/Graph permissions and site access.</p>
+<p><span id="indexed-source-identity-inputs"></span></p>
+<h2 id="how-to-configure-native-indexed-sharepoint">How to configure native indexed SharePoint</h2>
+<h3 id="1-prepare-the-administrators-and-source">1. Prepare the administrators and source</h3>
+<p>Initialize through the <a href="../deploy-full-stack/">canonical deployment guide</a>.
+Identify the SharePoint content owner, Entra consent/federation administrator,
+Search source administrator and application publisher. The source administrator
+needs knowledge-object management access, such as Search Service Contributor.
+The <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-sharepoint-indexed">indexed-source procedure</a>
+defines the required app permissions and federation.</p>
+<p>Approve a pilot site and establish the ingestion app's documented Graph/site
+permissions. If Search does not exist yet, provision with indexed SharePoint
+disabled, then create the trust using Search's actual identity before enabling
+the source. Source app access and end-user document access are separate grants.</p>
+<h3 id="2-declare-the-source-then-provision-it">2. Declare the source, then provision it</h3>
+<p>In root <code>main.parameters.json</code>, merge these entries into
+<code>parameters.additionalAppConfigurationSettings.value</code>, preserving the existing
+host/mode entries:</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHAREPOINT_INDEXED_ENABLED"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"true"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHAREPOINT_INDEXED_KNOWLEDGE_SOURCE_NAME"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"sharepoint-pilot"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHAREPOINT_INDEXED_SITE_URL"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://contoso.sharepoint.com/sites/Pilot"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SHAREPOINT_INDEXED_TENANT_ID"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;tenant-id&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"agent-lz"</span><span class="w"> </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>These are source-setup settings, not same-named environment switches.
+The enabled flag defaults to <code>false</code>; the source/site bindings default to
+empty. The identity inputs below have an explicit deployment environment
+publication path:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>SHAREPOINT_INDEXED_APPLICATION_ID<span class="w"> </span><span class="s2">"&lt;ingestion-app-client-id&gt;"</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>SHAREPOINT_INDEXED_FEDERATED_CREDENTIAL_APPLICATION_ID<span class="w"> </span><span class="s2">"&lt;search-managed-identity-client-id&gt;"</span>
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>FOUNDRY_IQ_API_VERSION<span class="w"> </span><span class="s2">"2026-08-01-preview"</span>
+</code></pre></div>
+<p>Retain <code>RETRIEVAL_BACKEND=foundry_iq</code>. The second identity value is <strong>not</strong>
+a federated credential object ID. The app must trust the Search identity
+through federation.</p>
+<ol>
+<li>Run <code>azd provision</code> through the selected deployment guide after
+   federation, source permissions and the declaration are ready.</li>
+<li>Inspect the registered source and knowledge-base reference in Search.
+   Verify successful indexing and permission ingestion before connecting users.</li>
+</ol>
+<p>Both providers publish the settings under <code>agent-lz</code> before Search setup.
+Missing required bindings or an incompatible API fail setup.</p>
 <p>The source creates its own index and indexing assets. An operator-supplied
 <code>SHAREPOINT_INDEXED_INDEX_NAME</code> does not name those generated resources.
-Keep native permission ingestion enabled. Verify ACL propagation and both
+Keep native permission ingestion enabled. Inspect the knowledge-base reference,
+generated indexing assets and populated ACLs. Verify ACL propagation and both
 Entra-group and SharePoint site-group behavior for your corpus before rollout.</p>
 <p>Network-isolated mode selects private model-endpoint access, which requires a
 supported Search tier and approved model private links. SharePoint Online itself
 is not a Search shared-private-link destination. This does not make the
 Microsoft 365 connection private.</p>
-<p>Remote knowledge-source retrieval uses <code>x-ms-query-source-authorization</code> for the
-Search-audience delegated user token, separately from service authentication.
-It preserves SharePoint permissions and supported Purview controls.
+<h3 id="3-connect-retrieval-and-publish">3. Connect retrieval and publish</h3>
+<p>Follow <a href="../foundry-iq/#how-to-connect-a-knowledge-base">Foundry IQ connection setup</a>
+to configure the native MCP project connection and prove its source-specific
+user authorization. The generated <code>CognitiveSearch</code> connection is not that
+<code>RemoteTool</code> connection. Alternatively, implement the direct connector's trusted
+credential/invocation path explicitly. Do not copy tokens into prompts or tool
+arguments.</p>
+<p>For the direct-connector recipe, protected knowledge-source retrieval uses
+<code>x-ms-query-source-authorization</code> for the Search-audience delegated user token,
+separately from service authentication. Configuring the native Responses UI
+does not install that forwarding path.</p>
+<p>The remote SharePoint service option
+preserves SharePoint permissions and supported Purview controls.
 Filters narrow the requested scope. They are not authorization. Invalid Keyword
 Query Language (KQL) filters can be ignored by the Retrieval API.
 <a href="../foundry-iq/">Foundry IQ</a> explains the shared integration boundary.</p>
+<p>Source changes require source setup, not provider refresh alone. Enable native
+capabilities using <a href="../application-settings/#configure-an-agent-capability">Application settings</a>
+and deploy/redeploy after connection and identity setup. Recheck bindings
+after provisioning, which can overwrite platform-owned objects. Run the
+allow/deny tests at the end of this guide before admitting users.</p>
 <p><span id="when-you-need-indexed-content"></span></p>
-<h2 id="custom-sharepoint-ingestion">Custom SharePoint ingestion</h2>
+<p><span id="custom-sharepoint-ingestion"></span></p>
+<h2 id="how-to-configure-application-managed-sharepoint-ingestion">How to configure application-managed SharePoint ingestion</h2>
 <p>Use this path when you need custom processing or the Graph-based connector's
 list and document-library ingestion. <strong>Agent App Ingestion</strong> runs indexing and
 purge jobs inside its Container App, reads SharePoint through Microsoft Graph,
@@ -6060,7 +6195,7 @@ mean "index the whole site."</p>
 </tr>
 <tr>
 <td><code>listId</code></td>
-<td>Prefer the Graph GUID. Name-only lookup is a legacy fallback. Retain <code>listName</code> for readable logs.</td>
+<td>Prefer the Graph GUID. Name-only lookup is supported as a fallback. Retain <code>listName</code> for readable logs.</td>
 </tr>
 <tr>
 <td><code>listType</code></td>
@@ -6173,8 +6308,10 @@ Search cleanup when needed.</p>
    a compatible text/vector schema, semantic configuration, and retrievable
    content/citation fields. Vector dimensions must match the embedding
    deployment. For protected retrieval, retain native permission filtering
-   with the user/group ACL field annotations and pass the delegated Search
-   user token as described in <a href="../foundry-iq/#delegated-native-retrieval">Foundry IQ</a>.
+   with the user/group ACL field annotations and establish the source-compatible
+   user authorization described in <a href="../foundry-iq/#user-authorization-boundaries">Foundry IQ</a>.
+   The native application still needs its compatible MCP project connection;
+   the direct connector instead needs explicit token/invocation wiring.
    Source registration does not ingest content or turn ACL arrays into
    enforced authorization by itself.</li>
 <li>Run the allowed/denied-user checks below, including a permission-only
@@ -6239,7 +6376,7 @@ revocations have reached every indexed copy.</p>
 <h2 id="acceptance-and-recovery">Acceptance and recovery</h2>
 <p>Acceptance uses a distinctive test document, an allowed user and a denied user.
 The allowed user receives grounded content and a citation that opens in SharePoint.
-the denied user's retrieved IDs, excerpts and citations exclude the document.
+The denied user's retrieved IDs, excerpts and citations exclude the document.
 Other sources must not expose an unprotected copy. Missing or expired user
 credentials must not fall back to service-only access.</p>
 <p>Private Azure endpoints do not make Microsoft 365 a private-link source.

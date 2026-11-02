@@ -1971,6 +1971,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choose-the-boundary-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose the boundary first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#1-standard-ingestion-with-foundry-iq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1978,6 +1989,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="1. Standard ingestion with Foundry IQ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-prepare-a-shared-blob-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to prepare a shared Blob source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1989,6 +2017,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="2. Private conversational attachments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-enable-private-conversational-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to enable private conversational input
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2004,10 +2049,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prepare-the-custom-pipeline" class="md-nav__link">
+  <a href="#how-to-prepare-the-custom-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prepare the custom pipeline
+        How to prepare the custom pipeline
       
     </span>
   </a>
@@ -5418,6 +5463,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choose-the-boundary-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose the boundary first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#1-standard-ingestion-with-foundry-iq" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5425,6 +5481,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="1. Standard ingestion with Foundry IQ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-prepare-a-shared-blob-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to prepare a shared Blob source
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5436,6 +5509,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="2. Private conversational attachments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-enable-private-conversational-input" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to enable private conversational input
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -5451,10 +5541,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#prepare-the-custom-pipeline" class="md-nav__link">
+  <a href="#how-to-prepare-the-custom-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Prepare the custom pipeline
+        How to prepare the custom pipeline
       
     </span>
   </a>
@@ -5528,6 +5618,33 @@ store for native execution state or UI/BFF product metadata.</p>
 <p>This page explains those boundaries. Deployment steps are in the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>. Source and index inputs are
 described in <a href="../configuration/#ingestion-application-selection">Deployment settings</a>.</p>
+<h2 id="choose-the-boundary-first">Choose the boundary first</h2>
+<div class="runbook-diagram">
+<div class="runbook-diagram__summary">
+<p><strong>Shared sources</strong></p>
+<ol>
+<li>A source administrator supplies content and permissions.</li>
+<li>Foundry IQ's native Blob pipeline manages indexing, or an <strong>optional</strong>
+   Agent App Ingestion pipeline writes a compatible Search index.</li>
+<li>Retrieval still checks the querying user's access. Indexing success is
+   not an authorization grant.</li>
+</ol>
+<p><strong>Private conversation input</strong></p>
+<ol>
+<li>A signed-in owner submits a bounded inline attachment to the UI/BFF.</li>
+<li>The explicit attachment flag and UI metadata grant must be configured.
+   The UI checks ownership before calling the native conversational backend.</li>
+<li>Hosted or DTS owns native state. UI Cosmos holds owner mappings and
+   descriptors, <strong>not file bytes or transcripts</strong>. This path never publishes
+   the attachment into shared ingestion.</li>
+</ol>
+</div>
+<p><a aria-label="Open full-size ingestion and private-input boundary diagram" class="runbook-diagram__image" href="../../media/runbooks/ingestion.svg"><img alt="Shared content and permissions flow through native Foundry IQ ingestion or optional Agent App Ingestion into Search and authorized retrieval. A separate owner-checked inline attachment path goes from the UI to a native conversation, with descriptors only in UI Cosmos and no shared ingestion." src="../../media/runbooks/ingestion.svg" /></a></p>
+<p><a class="runbook-diagram__open" href="../../media/runbooks/ingestion.svg">Open full-size diagram</a></p>
+</div>
+<p>Neither retrieval nor custom ingestion is required for every application.
+Choose only the paths your application uses; private attachments do not
+select a shared source.</p>
 <p><span id="choose-a-source-ingestion-path"></span></p>
 <h2 id="1-standard-ingestion-with-foundry-iq">1. Standard ingestion with Foundry IQ</h2>
 <p>The default source is Azure Blob Storage, with <code>FOUNDRY_IQ_PATTERN=azureBlob</code>
@@ -5546,6 +5663,28 @@ metadata is <code>["rbacScope"]</code>. Ingestion permissions and the querying u
 authorization remain separate requirements.
 Microsoft's <a href="https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-blob">Blob knowledge-source guide</a>
 describes the managed pipeline and service requirements.</p>
+<h3 id="how-to-prepare-a-shared-blob-source">How to prepare a shared Blob source</h3>
+<ol>
+<li><strong>Before provision</strong>, use the platform's declared source inputs:
+   <code>FOUNDRY_IQ_PATTERN=azureBlob</code>,
+   <code>FOUNDRY_IQ_STORAGE_CONTAINER_NAME</code> and optional
+   <code>FOUNDRY_IQ_STORAGE_FOLDER_PATH</code>. These have explicit mappings in
+   <code>main.parameters.json</code>; keep <code>DEPLOY_INGESTION_CONTAINER_APP=false</code> for
+   this ingestion path. Follow <a href="../foundry-iq/">Foundry IQ setup</a>.</li>
+<li>Provision through the <a href="../deploy-full-stack/">deployment guide</a>.
+   The source/storage owner must approve Search's ingestion access and any
+   private connections. This is separate from application-user consent.</li>
+<li><strong>After provision</strong>, place a small approved document in the selected
+   container/folder and inspect the knowledge source's managed indexing
+   status in Search. Confirm extracted chunks and permission metadata.</li>
+<li><strong>Before deployment/use</strong>, register the required runtime capability through
+   <a href="../application-settings/#configure-an-agent-capability">agent capability configuration</a>.
+   A provisioned knowledge base alone does not enable its tool.</li>
+<li>Query through the deployed application as an allowed user and a denied
+   user. Confirm citations for the allowed user and no protected content for
+   the denied user. Changing source/model bindings requires the provisioning
+   and deployment lifecycle, not only an application restart.</li>
+</ol>
 <p>Successful ingestion alone does not establish protected retrieval. The built-in
 UI/hosted native path forwards a separately delegated Search token. Ingestion
 must still record correct permissions and acceptance must prove allow/deny
@@ -5600,6 +5739,23 @@ The path does <strong>not</strong> call Agent App Ingestion, mint Blob SAS, acce
 URLs or publish the file into a corporate knowledge corpus.
 It selects UI owner mappings and descriptors, not storage of file bytes.
 See <a href="../conversations/#private-attachments">Private attachments</a> for exact limits.</p>
+<h3 id="how-to-enable-private-conversational-input">How to enable private conversational input</h3>
+<ol>
+<li><strong>Before provision</strong>, select <code>conversational</code> or <code>both</code> and set
+   <code>ENABLE_PRIVATE_ATTACHMENTS=true</code> in the selected azd environment.
+   Use <a href="../application-settings/#enable-a-product-feature">Enable a product feature</a>
+   for the canonical commands. Do not write only the runtime key in the portal.</li>
+<li>Run provision, then deploy. Composition selects the UI metadata container
+   and grants the UI identity access; it does not deploy ingestion for this
+   feature. Hosted <code>both</code> keeps attachments disabled on the workflow publication.</li>
+<li><strong>At runtime</strong>, sign in, create a conversational session and send a small
+   TXT attachment through its turn API or UI. Verify the answer and an owner-bound
+   descriptor; confirm that another user cannot access that session.</li>
+<li>Check the <a href="../multimodality/#private-attachment-boundary">file/turn limits</a>
+   and model behavior separately. Enabling this persisted feature in an
+   already running UI requires compatible resources and redeployment, not
+   just a functional refresh.</li>
+</ol>
 <p>Do not enable the custom ingestion service simply to retain owner mappings,
 history discovery or feedback. Selecting ingestion is a processing decision,
 not a way to make native Agent or Workflow persistence work.
@@ -5637,34 +5793,62 @@ Custom application definitions retain their declared components. Selection does
 not change retrieval bindings or document authorization.
 Omitting the application does not delete deployed resources, indexed documents
 or identity grants. Retirement needs separate authorization.</p>
-<h2 id="prepare-the-custom-pipeline">Prepare the custom pipeline</h2>
+<p><span id="prepare-the-custom-pipeline"></span></p>
+<h2 id="how-to-prepare-the-custom-pipeline">How to prepare the custom pipeline</h2>
 <ol>
-<li>Deploy the optional application only for the required processing paths.
-   Starting it can immediately run indexing and destructive maintenance work.
+<li><strong>Before provision</strong>, select <code>DEPLOY_INGESTION_CONTAINER_APP=true</code> in
+   the azd environment using the <a href="../deploy-full-stack/">deployment guide</a>.
+   Select it only for the required processing paths. Configure the following
+   settings before its first deployment: starting it can immediately run
+   indexing and destructive maintenance work.
    Read <a href="../ingestion-jobs/">Jobs &amp; schedules</a> before connecting it to a corpus.</li>
-<li>Supply <code>APP_CONFIG_ENDPOINT</code> in its process environment. Runtime configuration
+<li>
+<p><strong>Before application startup</strong>, supply <code>APP_CONFIG_ENDPOINT</code> in its process
+   environment. Runtime configuration
    and Key Vault references are loaded through Azure credentials. A local
    Azure CLI login still needs data-plane RBAC and network access.
    Use <a href="../application-settings/">Application settings</a> for exact keys and
-   effective-value checks rather than creating duplicate service-label values.</li>
-<li>Configure the target Search endpoint and compatible index, source storage,
+   effective-value checks rather than creating duplicate service-label values.
+   Declare nonsecret processing settings in the platform root's
+   <code>parameters.additionalAppConfigurationSettings.value</code> array:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="s2">"RUN_JOBS_ON_STARTUP"</span><span class="p">,</span><span class="nt">"value"</span><span class="p">:</span><span class="s2">"false"</span><span class="p">,</span><span class="nt">"label"</span><span class="p">:</span><span class="s2">"agent-lz"</span><span class="p">}</span>
+</code></pre></div>
+<p>This is an array entry, not a complete parameter file. It suppresses
+  immediate indexing/purge only; review cron and log cleanup separately.
+  Follow <a href="../configuration/#configuration-ownership-and-declarations">configuration ownership</a>
+  for publishing declarations. Arbitrary <code>azd env set</code> names do not publish keys.</p>
+</li>
+<li>
+<p>Configure the target Search endpoint and compatible index, source storage,
    log storage and embedding deployment. The Blob indexer reads
    <code>SEARCH_SERVICE_QUERY_ENDPOINT</code>, <code>STORAGE_ACCOUNT_NAME</code>,
    <code>DOCUMENTS_STORAGE_CONTAINER</code> (default <code>documents</code>) and <code>BLOB_PREFIX</code>
    (default empty). Its index selection uses <code>AI_SEARCH_INDEX_NAME</code> when
-   configured, otherwise <code>SEARCH_RAG_INDEX_NAME</code>.</li>
-<li>Add only the dependencies required by the selected format and source.
+   configured, otherwise <code>SEARCH_RAG_INDEX_NAME</code>.</p>
+</li>
+<li>
+<p>Add only the dependencies required by the selected format and source.
    PDFs, images and Office documents use the selected analysis service.
    Text, JSON, spreadsheets and transcripts have dedicated paths.
    See <a href="../multimodality/#custom-document-formats">Document formats &amp; images</a>.
    SharePoint additionally needs Graph credentials and source definitions.
    <a href="../nl2sql/">NL2SQL</a> uses a separate administrative Cosmos metadata import;
-   it does not require this document pipeline or Search metadata indexes.</li>
-<li>Grant the ingestion workload only the required source read, target Search
+   it does not require this document pipeline or Search metadata indexes.</p>
+</li>
+<li>
+<p>Grant the ingestion workload only the required source read, target Search
    write, storage, model and secret access. Verify connectivity from the actual
-   service, including private endpoints where configured.</li>
-<li>Process a small corpus and inspect per-file errors, confirmed indexed chunks,
-   citations and allowed/denied-user retrieval before scheduling broader work.</li>
+   service, including private endpoints where configured. Complete provisioning
+   and deploy through the platform lifecycle with those reviewed settings.</p>
+</li>
+<li>
+<p>Process a small corpus and inspect per-file errors, confirmed indexed chunks,
+   citations and allowed/denied-user retrieval before scheduling broader work.
+   For <strong>post-deploy</strong> schedule edits, use
+   <a href="../ingestion-jobs/#configure-and-apply-schedules">configure and apply schedules</a>.
+   Restart ingestion after endpoint/client or analysis-service changes; cache
+   refresh does not replace existing module-level clients.</p>
+</li>
 </ol>
 <p><code>USE_DOCUMENT_INTELLIGENCE=false</code> selects Content Understanding by default.
 <code>MULTIMODAL=false</code> keeps the additional figure extraction and captioning path
@@ -5680,17 +5864,18 @@ vectors in application Cosmos, not the document Search index.
 The operator supplies approved metadata to the MCP repository's administrative
 Python importer, which generates embeddings and activates only a complete
 catalog version. No persistent ingestion Container App is required.</p>
-<p>If an optional NL2SQL metadata pipeline is selected, its destination must use
-the same Cosmos catalog, model dimensions and complete-version contract.
-Do not point document indexing or purge work at the MCP containers or assume
-Search schemas are compatible. SQL read access belongs to the MCP identity;
+<p>The ingestion service's <code>nl2sql_index</code> and <code>nl2sql_purge</code> jobs operate on
+Search query/table/measure indexes. They do <strong>not</strong> implement the MCP Cosmos
+catalog import or complete-version activation contract. Leave those schedules
+unset when onboarding MCP SQL. Do not point document indexing or purge work
+at the MCP containers. SQL read access belongs to the MCP identity;
 metadata import needs its own scoped writer. See
 <a href="../agent-app-mcp/#onboard-sql-before-inviting-users">SQL onboarding</a>.</p>
 <h2 id="ingestion-apis-and-retrieval-boundaries">Ingestion APIs and retrieval boundaries</h2>
 <p><code>POST /document-chunking</code>, <code>POST /text-embedding</code> and
 <code>POST /ingest-documents</code> have different JSON envelopes, not a common arbitrary
 file-upload contract. They require <code>X-API-KEY</code>, accepting
-<code>DATA_INGEST_APP_APIKEY</code> and its legacy <code>INGESTION_APP_APIKEY</code> alias.
+<code>DATA_INGEST_APP_APIKEY</code> and its supported <code>INGESTION_APP_APIKEY</code> alias.
 Keep the key in secret storage. Successful Azure SDK managed-identity access
 does not remove inbound API authentication.</p>
 <p>For direct ingestion, inspect each record's errors and confirmed

@@ -2434,6 +2434,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#how-to-choose-the-configuration-owner-and-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to choose the configuration owner and timing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#customize-an-agent-application-component" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5673,6 +5684,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#how-to-choose-the-configuration-owner-and-timing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to choose the configuration owner and timing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#customize-an-agent-application-component" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6015,6 +6037,47 @@ Keep secrets out of both. For App Configuration updates under label <code>agent-
 and hosted redeployment requirements, follow <a href="../configuration/">Deployment settings</a>.
 Do not restart a Container App to refresh a Foundry-hosted agent.</p>
 <h2 id="procedure">Procedure</h2>
+<h3 id="how-to-choose-the-configuration-owner-and-timing">How to choose the configuration owner and timing</h3>
+<table>
+<thead>
+<tr>
+<th>What you change</th>
+<th>Supported location</th>
+<th>When and observable result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bundled component source</td>
+<td>Platform <code>manifest.json</code> plus matching component <code>source.commit</code> in <code>app-definition.json</code></td>
+<td>Before deploy; validation accepts aligned immutable pins and the deployed component shows the tested behavior.</td>
+</tr>
+<tr>
+<td>Different application composition</td>
+<td>Application folder's <code>app-definition.json</code> and adjacent <code>azure.yaml</code>; select with <code>AGENTLZ_APP_DEFINITION</code> in a new azd environment</td>
+<td>Before first provision; preup accepts the definition and binds one application ID.</td>
+</tr>
+<tr>
+<td>Additional application runtime settings</td>
+<td>App-owned configuration publisher; for supported platform-published settings, root <code>parameters.additionalAppConfigurationSettings.value</code></td>
+<td>Publish before starting the consumer; verify an effective read and operation. Definition <code>settings</code> are not a publisher.</td>
+</tr>
+<tr>
+<td>Bundled history, feedback or private attachments</td>
+<td>Supported product-feature azd inputs, not an isolated portal key</td>
+<td>Provision resources/grants, then deploy; follow <a href="../application-settings/#enable-a-product-feature">Enable a product feature</a>.</td>
+</tr>
+<tr>
+<td>Custom dependencies and permissions</td>
+<td>The custom definition's explicit components/profiles/egress plus app-owned service configuration</td>
+<td>Review before provision; profiles grant workload access, not user consent or document authorization.</td>
+</tr>
+</tbody>
+</table>
+<p>Custom application dependencies remain app-owned. A setting named after a
+reference tool does not add its Container App, database, model, SQL permission
+or runtime implementation. After structural changes, deploy compatible
+application code; only supported functional parameters use refresh.</p>
 <p>Choose <strong>Customize an Agent Application component</strong> for a source change.
 For a different application, follow <strong>Application binding and selection</strong>, then
 <strong>Deploy a different application</strong>. Inspect the contract reference below when
@@ -6203,8 +6266,8 @@ IP addresses and local hostnames are rejected. Each component supports at most
 100 entries; destinations are normalized to lowercase.</p>
 <p>An explicit <code>egress: []</code> means no additional runtime egress and removes that
 component's ownership of previously generated requirements. Omitting <code>egress</code>
-remains valid: an enabled legacy component retains its previously owned
-requirements, but a fresh legacy definition adds none. Removing a component
+remains valid: an enabled component retains its previously owned
+requirements, but a fresh definition with no declaration adds none. Removing a component
 removes its ownership, not another component's shared dependency.</p>
 <p>Review the exact source's fixed downloads and configured integrations when
 editing these declarations. The bundled UI declares <code>[]</code>; both orchestrator

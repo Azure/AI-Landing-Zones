@@ -5311,6 +5311,12 @@
 <p>Use the existing deployment guides for changes to a deployed environment. Choose your
 infrastructure provider below and follow the linked procedure, including its
 prerequisites, validation and recovery guidance.</p>
+<p><code>azd init --template Azure/agent-landing-zone .</code> is for a new local project,
+not an update or recovery command. For an existing installation, keep its
+reviewed source, select the existing environment with
+<code>azd env select &lt;environment-name&gt;</code> and preserve provider, inputs and private
+deployment records. A clean replacement runner must restore that same
+revision and the records required by the linked recovery procedure.</p>
 <table>
 <thead>
 <tr>
