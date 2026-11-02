@@ -22,9 +22,9 @@ Private attachments are an independently selected optional capability.
 
 </div>
 
-[![The UI sends owner-checked turns and optional validated inline files to one native host. Foundry or DTS persists execution; optional UI Cosmos stores only owner-scoped metadata, not transcripts or file bytes.](../media/runbooks/conversations.svg)](../media/runbooks/conversations.svg){: .runbook-diagram__image aria-label="Open full-size conversation and private-file diagram"}
+[![The UI sends owner-checked turns and optional validated inline files to one native host. Foundry or DTS persists execution; optional UI Cosmos stores only owner-scoped metadata, not transcripts or file bytes.](../media/runbooks/conversations.svg?v=392864a8037b)](../media/runbooks/conversations.svg?v=392864a8037b){: .runbook-diagram__image aria-label="Open full-size conversation and private-file diagram"}
 
-[Open full-size diagram](../media/runbooks/conversations.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/conversations.svg?v=392864a8037b){: .runbook-diagram__open}
 
 </div>
 

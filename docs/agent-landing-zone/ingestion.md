@@ -35,9 +35,9 @@ described in [Deployment settings](configuration.md#ingestion-application-select
 
 </div>
 
-[![Shared content flows through native Foundry IQ ingestion into a managed Search index or optional Agent App Ingestion into an application-owned index. Retrieval needs separate tool setup and verified user authorization. Private inline attachments pass through the owner-checking web backend to Foundry Agent Service or Durable Task Scheduler; application Cosmos stores only owner mappings and descriptors, not native state or file bytes. There is no attachment path into shared ingestion.](../media/runbooks/ingestion.svg)](../media/runbooks/ingestion.svg){: .runbook-diagram__image aria-label="Open full-size ingestion and private-input boundary diagram"}
+[![Shared content flows through native Foundry IQ ingestion into a managed Search index or optional Agent App Ingestion into an application-owned index. Retrieval needs separate tool setup and verified user authorization. Private inline attachments pass through the owner-checking web backend to Foundry Agent Service or Durable Task Scheduler; application Cosmos stores only owner mappings and descriptors, not native state or file bytes. There is no attachment path into shared ingestion.](../media/runbooks/ingestion.svg?v=c710fad05408)](../media/runbooks/ingestion.svg?v=c710fad05408){: .runbook-diagram__image aria-label="Open full-size ingestion and private-input boundary diagram"}
 
-[Open full-size diagram](../media/runbooks/ingestion.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/ingestion.svg?v=c710fad05408){: .runbook-diagram__open}
 
 </div>
 

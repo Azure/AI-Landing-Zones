@@ -17,9 +17,9 @@ not automatically enable retrieval or MCP tools.
 
 </div>
 
-[![Application composition combines an experience, one native host and explicitly selected optional capabilities. Dashed setup arrows lead to the reviewed application deployment, not a runtime strategy picker.](../media/runbooks/agent-strategies.svg)](../media/runbooks/agent-strategies.svg){: .runbook-diagram__image aria-label="Open full-size application choices diagram"}
+[![Application composition combines an experience, one native host and explicitly selected optional capabilities. Dashed setup arrows lead to the reviewed application deployment, not a runtime strategy picker.](../media/runbooks/agent-strategies.svg?v=7feef3323c7c)](../media/runbooks/agent-strategies.svg?v=7feef3323c7c){: .runbook-diagram__image aria-label="Open full-size application choices diagram"}
 
-[Open full-size diagram](../media/runbooks/agent-strategies.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/agent-strategies.svg?v=7feef3323c7c){: .runbook-diagram__open}
 
 </div>
 

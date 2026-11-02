@@ -22,9 +22,9 @@ Deployment procedures are in the
 
 </div>
 
-[![Two SharePoint indexing recipes: the native preview source copies content and permissions into a Search-managed generated index; optional Agent App Ingestion reads selected Microsoft Graph lists and libraries into an application-owned Search index with scheduled permission refresh. Retrieval integration and user authorization are separate from app-only ingestion access.](../media/runbooks/sharepoint.svg)](../media/runbooks/sharepoint.svg){: .runbook-diagram__image aria-label="Open full-size SharePoint indexing alternatives diagram"}
+[![Two SharePoint indexing recipes: the native preview source copies content and permissions into a Search-managed generated index; optional Agent App Ingestion reads selected Microsoft Graph lists and libraries into an application-owned Search index with scheduled permission refresh. Retrieval integration and user authorization are separate from app-only ingestion access.](../media/runbooks/sharepoint.svg?v=810a9c4eb7bf)](../media/runbooks/sharepoint.svg?v=810a9c4eb7bf){: .runbook-diagram__image aria-label="Open full-size SharePoint indexing alternatives diagram"}
 
-[Open full-size diagram](../media/runbooks/sharepoint.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/sharepoint.svg?v=810a9c4eb7bf){: .runbook-diagram__open}
 
 </div>
 

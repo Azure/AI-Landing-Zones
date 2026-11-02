@@ -96,7 +96,7 @@ def check_diagram_controls(page, base, screenshots=None):
 
     error_page = page.context.browser.new_page()
     try:
-        error_page.route("**/media/runbooks/fabric-iq.svg", lambda route: route.abort())
+        error_page.route("**/media/runbooks/fabric-iq.svg*", lambda route: route.abort())
         error_page.goto(base + "agent-landing-zone/fabric-iq/")
         error_page.get_by_role("link", name="Expand diagram", exact=True).click()
         expect(error_page.locator(".alz-diagram-viewer__status[role='alert']")).to_contain_text(
@@ -104,7 +104,7 @@ def check_diagram_controls(page, base, screenshots=None):
         )
         expect(error_page.get_by_role("button", name="Zoom in", exact=True)).to_be_disabled()
         expect(error_page.get_by_role("link", name="Open image in new tab")).to_have_attribute(
-            "href", re.compile(r"/media/runbooks/fabric-iq.svg$")
+            "href", re.compile(r"/media/runbooks/fabric-iq.svg(?:\?.*)?$")
         )
     finally:
         error_page.close()

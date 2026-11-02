@@ -28,9 +28,9 @@ Deployment and redeployment belong to the
 
 </div>
 
-[![A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Protected retrieval requires a separate source-specific authorization integration. Foundry invocation alone does not establish document access.](../media/runbooks/application-auth.svg)](../media/runbooks/application-auth.svg){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
+[![A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Protected retrieval requires a separate source-specific authorization integration. Foundry invocation alone does not establish document access.](../media/runbooks/application-auth.svg?v=c14716bbd1e1)](../media/runbooks/application-auth.svg?v=c14716bbd1e1){: .runbook-diagram__image aria-label="Open full-size application access diagram"}
 
-[Open full-size diagram](../media/runbooks/application-auth.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/application-auth.svg?v=c14716bbd1e1){: .runbook-diagram__open}
 
 </div>
 

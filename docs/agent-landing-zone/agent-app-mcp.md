@@ -24,9 +24,9 @@ SQL tools and their catalog, model and read-only SQL dependencies.
 
 </div>
 
-[![Either native host invokes Agent App MCP Server in a separate Container App through Entra authentication. Startup selection is either an empty tool list with no SQL clients or the explicit nl2sql toolset with catalog, model and read-only SQL dependencies.](../media/runbooks/agent-app-mcp.svg)](../media/runbooks/agent-app-mcp.svg){: .runbook-diagram__image aria-label="Open full-size MCP server and toolset diagram"}
+[![Either native host invokes Agent App MCP Server in a separate Container App through Entra authentication. Startup selection is either an empty tool list with no SQL clients or the explicit nl2sql toolset with catalog, model and read-only SQL dependencies.](../media/runbooks/agent-app-mcp.svg?v=1502df21e1d2)](../media/runbooks/agent-app-mcp.svg?v=1502df21e1d2){: .runbook-diagram__image aria-label="Open full-size MCP server and toolset diagram"}
 
-[Open full-size diagram](../media/runbooks/agent-app-mcp.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/agent-app-mcp.svg?v=1502df21e1d2){: .runbook-diagram__open}
 
 </div>
 

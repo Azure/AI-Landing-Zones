@@ -28,9 +28,9 @@ connect and test.
 
 </div>
 
-[![Fabric integration recipe: a Search knowledge base calls either a published Fabric data agent or an ontology. A compatible user-delegation path must be implemented or configured; Fabric enforces underlying data permissions. The reference source flags register objects, not a turnkey application connection.](../media/runbooks/fabric-iq.svg)](../media/runbooks/fabric-iq.svg){: .runbook-diagram__image aria-label="Open full-size Fabric source choice diagram"}
+[![Fabric integration recipe: a Search knowledge base calls either a published Fabric data agent or an ontology. A compatible user-delegation path must be implemented or configured; Fabric enforces underlying data permissions. The reference source flags register objects, not a turnkey application connection.](../media/runbooks/fabric-iq.svg?v=e4ef1fa6f079)](../media/runbooks/fabric-iq.svg?v=e4ef1fa6f079){: .runbook-diagram__image aria-label="Open full-size Fabric source choice diagram"}
 
-[Open full-size diagram](../media/runbooks/fabric-iq.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/fabric-iq.svg?v=e4ef1fa6f079){: .runbook-diagram__open}
 
 </div>
 

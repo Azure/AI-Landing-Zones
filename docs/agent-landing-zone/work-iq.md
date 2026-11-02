@@ -24,9 +24,9 @@ support from the application integration you must implement and validate.
 
 </div>
 
-[![Work IQ integration recipe: a trusted application sends a Work IQ app-audience user assertion to Search, separately from workload transport authentication. Search exchanges it for delegated Microsoft 365 access. Source registration and tenant consent are setup, not an installed native application path.](../media/runbooks/work-iq.svg)](../media/runbooks/work-iq.svg){: .runbook-diagram__image aria-label="Open full-size Work IQ identity diagram"}
+[![Work IQ integration recipe: a trusted application sends a Work IQ app-audience user assertion to Search, separately from workload transport authentication. Search exchanges it for delegated Microsoft 365 access. Source registration and tenant consent are setup, not an installed native application path.](../media/runbooks/work-iq.svg?v=766010d711f9)](../media/runbooks/work-iq.svg?v=766010d711f9){: .runbook-diagram__image aria-label="Open full-size Work IQ identity diagram"}
 
-[Open full-size diagram](../media/runbooks/work-iq.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/work-iq.svg?v=766010d711f9){: .runbook-diagram__open}
 
 </div>
 

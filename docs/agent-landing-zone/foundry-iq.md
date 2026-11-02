@@ -23,9 +23,9 @@ Deployment follows the [full-stack deployment guide](deploy-full-stack.md).
 
 </div>
 
-[![A native Agent or Workflow uses a Model Context Protocol (MCP) project connection to reach a Search knowledge base, separately from the native Foundry Search connection. Native Blob ingestion owns its generated index; an existing index keeps its ingestion owner. The Foundry IQ tool binding requires a compatible RemoteTool connection and verified source-specific user authorization.](../media/runbooks/foundry-iq.svg)](../media/runbooks/foundry-iq.svg){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
+[![A native Agent or Workflow uses a Model Context Protocol (MCP) project connection to reach a Search knowledge base, separately from the native Foundry Search connection. Native Blob ingestion owns its generated index; an existing index keeps its ingestion owner. The Foundry IQ tool binding requires a compatible RemoteTool connection and verified source-specific user authorization.](../media/runbooks/foundry-iq.svg?v=8ac74be62322)](../media/runbooks/foundry-iq.svg?v=8ac74be62322){: .runbook-diagram__image aria-label="Open full-size Foundry IQ connection diagram"}
 
-[Open full-size diagram](../media/runbooks/foundry-iq.svg){: .runbook-diagram__open}
+[Open full-size diagram](../media/runbooks/foundry-iq.svg?v=8ac74be62322){: .runbook-diagram__open}
 
 </div>
 
