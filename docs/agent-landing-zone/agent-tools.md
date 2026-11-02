@@ -270,6 +270,7 @@ This internal binding is not another operator authentication choice.
 With OBO enabled, the managed service handles delegated knowledge-base access
 subject to consent and source permissions. Without OBO, component identities
 may access sources that accept service authentication, subject to scoped grants.
+
 There is no Blob-only capability allowlist. A tool requiring user delegation
 fails at invocation when OBO is unavailable, without blocking startup solely
 because its source type is enabled.

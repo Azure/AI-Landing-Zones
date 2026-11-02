@@ -287,6 +287,7 @@ Broader authoring roles are not needed just to invoke an endpoint.
 
 With `service_identity`, grant the UI's actual workload identity the scoped
 Foundry caller role instead of granting each UI user that downstream role.
+
 The Hosted identity needs declared Foundry User access at the exact project
 scope for the Toolbox. The project identity retains scoped Search access and
 ingestion needs its declared Blob permissions. A UI caller grant is not an
@@ -353,6 +354,7 @@ The call ID is correlation context for that managed exchange, not a bearer
 token or an independent permission grant. It must come from the current Hosted
 request and must not be cached across users or fabricated by the application.
 The runtime does not acquire or serialize a Search token as a model tool header.
+
 Consent, source permissions and Conditional Access remain independent
 requirements. Missing context or denied authorization must not trigger a retry
 with workload privileges against protected content.
@@ -361,6 +363,7 @@ The UI returns `401 consent_required` when the managed flow reports
 `oauth_consent_request`. Complete consent through the organization's approved
 Foundry process and retry manually. This implementation does not open
 service-returned consent links or automatically resume a request after consent.
+
 Service mode does not retry through OBO or interactive consent.
 An explicit consent request in service mode returns `403 user_delegation_required`
 with instructions to enable OBO. Other tool failures return a safe `tool_failed`
@@ -430,6 +433,7 @@ source's authentication rather than being proxied as arbitrary Blob downloads.
 Protected retrieval is only established by tests through the deployed
 integration, using independent signed-in users and nonsensitive documents.
 An answer without a citation is not sufficient evidence of denial.
+
 The restricted-document cases below apply to OBO. In service mode, all admitted
 users share the service's source access. Wrong-owner sessions and grants,
 unapproved storage and operations requiring unavailable user delegation must
