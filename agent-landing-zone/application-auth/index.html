@@ -1555,6 +1555,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choose-user-delegation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose user delegation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#trusted-identity-and-native-state" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5514,6 +5525,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choose-user-delegation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose user delegation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#trusted-identity-and-native-state" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5727,15 +5749,63 @@ Deployment and redeployment belong to the
 <p><strong>Three separate access checks</strong></p>
 <ol>
 <li>Entra sign-in supplies a UI API token; the UI checks admission and ownership.</li>
-<li>The UI exchanges delegated credentials for Foundry invocation.
-   The user also needs Foundry caller access.</li>
-<li>Configure and verify source authorization for the selected retrieval tool.
-   Login and workload roles do not grant access to every document.</li>
+<li>With OBO enabled, the UI exchanges delegated credentials for Foundry.
+   The user also needs Foundry caller access.
+   The managed Foundry Toolbox handles downstream user authorization for retrieval.
+   With OBO disabled, component identities authorize supported service calls.</li>
+<li>Each source enforces its authorization contract. A source requiring user
+   delegation fails explicitly when OBO is unavailable. Login and workload roles
+   do not grant access to every document.</li>
 </ol>
 </div>
 <p><a aria-label="Open full-size application access diagram" class="runbook-diagram__image" href="../../media/runbooks/application-auth.svg?v=c14716bbd1e1"><img alt="A signed-in user reaches the Container Apps UI, which checks admission and ownership before delegated Foundry invocation. Protected retrieval requires a separate source-specific authorization integration. Foundry invocation alone does not establish document access." src="../../media/runbooks/application-auth.svg?v=c14716bbd1e1" /></a></p>
 <p><a class="runbook-diagram__open" href="../../media/runbooks/application-auth.svg?v=c14716bbd1e1">Open full-size diagram</a></p>
 </div>
+<h2 id="choose-user-delegation">Choose user delegation</h2>
+<p>Both modes require Entra login and UI admission. This choice controls downstream
+credentials, not whether users must sign in.</p>
+<table>
+<thead>
+<tr>
+<th>Operator choice</th>
+<th><code>HOSTED_AGENT_AUTH_MODE</code></th>
+<th>Access model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User delegation enabled - OBO, default</td>
+<td><code>user_delegated</code></td>
+<td>User-delegated Foundry invocation and managed Toolbox authorization for protected retrieval.</td>
+</tr>
+<tr>
+<td>User delegation disabled - without OBO</td>
+<td><code>service_identity</code></td>
+<td>Component identities access sources that support service authentication, subject to their grants and authorization rules.</td>
+</tr>
+</tbody>
+</table>
+<p>Use the coordinated platform, UI and native runtime implementation of this
+contract. Changing an App Configuration key alone does not upgrade components.
+The diagram above illustrates the delegated default.</p>
+<p>Select the mode for deployment and persist it in App Configuration under
+<code>agent-lz</code>. It is a <strong>structural setting</strong>, not a per-user or per-message switch.
+To change it later, reconcile the source policy, connections and scoped role
+assignments, then publish compatible application revisions and start new
+sessions. Do not remove existing source permission metadata or reuse old native
+session IDs under another caller identity.</p>
+<p>The mode without OBO does not impose a Blob-only source or capability allowlist.
+Existing indexes and other source types can be configured through their normal
+contracts. This does not guarantee that each provider supports service access.
+Tools such as Work IQ that require user delegation must fail at invocation when
+that delegation is unavailable, rather than blocking application startup,
+disabling the tool silently or changing credentials.</p>
+<p>All admitted users share the source access granted to the service identities,
+not per-user document authorization. Scope these grants to content approved for
+that application audience. An OBO consent failure never selects service
+credentials automatically. UI login remains subject to tenant consent and
+Conditional Access policies in either mode. Native inline private attachments
+retain their separate gate and owner boundary.</p>
 <h2 id="trusted-identity-and-native-state">Trusted identity and native state</h2>
 <p>The UI/BFF binds the authenticated tenant/user to native conversation and
 workflow IDs. Validate the owner on reads, history discovery, feedback,
@@ -5748,7 +5818,7 @@ and identity-based scheduler access. A shared managed identity authorizes a
 service connection; it does <strong>not</strong> make arbitrary session IDs or body-supplied
 user metadata safe for per-user access. Missing required trusted context
 fails closed.</p>
-<p>Native persistence does not remove source authorization or OBO requirements.
+<p>Native persistence does not remove the selected mode's source authorization.
 Functional configuration snapshots must never freeze user permissions:
 recheck current authorization on every interaction.
 See <a href="../hosted-agents/">Agent hosting</a> and
@@ -5801,14 +5871,21 @@ for the portal fields. Register the final callback in step 3.</p>
 <p><strong>Check:</strong> The tenant/client IDs, API URI, enabled scope and version-2 token
 setting belong to the intended environment.</p>
 <h3 id="2-authorize-delegated-foundry-calls">2. Authorize delegated Foundry calls</h3>
+<p>This step describes the default <code>user_delegated</code> mode. With <code>service_identity</code>,
+retain the UI API's login permission and tenant-required consent, but authorize
+downstream service calls through the component identities instead. Do not request
+delegated Foundry, Search or Storage permissions solely for service access.
+An operation requiring user delegation returns an explicit failure in that mode.</p>
 <p>In <strong>API permissions</strong>, configure consent to the UI API's
 <code>user_impersonation</code> scope and add the <strong>Foundry resource's delegated
 <code>user_impersonation</code> permission</strong> for downstream OBO. These are permissions
 on two different APIs, even though their scope names are the same.
 Have the Entra administrator grant the consent required by tenant policy
 before onboarding users.</p>
-<p>Protected native retrieval also needs delegated Search consent for
-<code>https://search.azure.com/.default</code>. Shared Blob/ADLS citation downloads need
+<p>Protected native retrieval also needs the downstream Search consent required
+by Foundry's managed delegation flow for <code>https://search.azure.com/.default</code>.
+The UI does not acquire or forward that Search credential.
+Shared Blob/ADLS citation downloads need
 delegated Azure Storage <code>user_impersonation</code> consent for
 <code>https://storage.azure.com/.default</code>. These permissions do not grant the user
 access to source documents; retain the source's RBAC and ACL checks.</p>
@@ -5886,11 +5963,12 @@ replacing <code>&lt;client-id&gt;</code>. Do not add Graph scopes such as
 <dd><code>false</code>.</dd>
 
 <dt><code>HOSTED_AGENT_AUTH_MODE</code></dt>
-<dd><code>user_delegated</code>.</dd>
+<dd><code>user_delegated</code> by default, or the explicitly selected
+<code>service_identity</code> mode described above.</dd>
 
 <dt><code>RETRIEVAL_AUTH_MODE</code></dt>
-<dd><code>native_search</code>, the integrated native permission path;
-not an anonymous-access switch.</dd>
+<dd>Platform-derived retrieval contract for the selected mode.
+Do not set this independently to bypass source authorization.</dd>
 </dl>
 
 <p>Use label <code>agent-lz</code>. The frontend managed identity needs App Configuration
@@ -5914,6 +5992,12 @@ first agent deployment and before user acceptance. Use Azure CLI for these
 scopes following <a href="https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry#agent-scope-role-assignments">Foundry RBAC</a>;
 the Azure portal's consumer-role picker currently uses account scope.</p>
 <p>Broader authoring roles are not needed just to invoke an endpoint.</p>
+<p>With <code>service_identity</code>, grant the UI's actual workload identity the scoped
+Foundry caller role instead of granting each UI user that downstream role.</p>
+<p>The Hosted identity needs declared Foundry User access at the exact project
+scope for the Toolbox. The project identity retains scoped Search access and
+ingestion needs its declared Blob permissions. A UI caller grant is not an
+ingestion or retrieval grant. Keep these grants limited to the approved resources.</p>
 <p><code>ALLOWED_USER_PRINCIPALS</code> admits individual users by comma-separated
 <code>tenant-id:object-id</code> values. <code>ALLOWED_USER_NAMES</code> is an alternative list of
 sign-in names. The lists combine with <strong>OR</strong>; empty lists admit all successfully
@@ -5934,7 +6018,8 @@ per-run snapshots. Structural host, graph, identity or publication changes
 require a compatible new publication; they are not live parameter updates.</p>
 <p>First, verify that signed-out chat is denied. Then sign in as an admitted
 test user and confirm the return to the exact callback.
-Verify that the same user can invoke the intended agent through OBO.
+Verify that the same user can invoke the intended agent through the selected
+credential mode.
 Finally, confirm that a user outside the admission lists is denied.
 Use sanitized status/correlation information, not raw tokens.</p>
 <p><strong>Login and invocation are not protected retrieval.</strong> Complete the identity
@@ -5950,25 +6035,32 @@ Foundry consent and Foundry project/agent access all have distinct roles.
 <a href="https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow">Microsoft's OBO guidance</a>
 describes downstream consent.</p>
 <p><code>user_delegated</code> rejects a missing user token without service-identity fallback.
-<code>service_identity</code> would make Foundry see the UI service rather than the user.
+<code>service_identity</code> makes Foundry see the UI service rather than the user.
 Neither mode alone establishes authorization inside the hosted container.</p>
-<p>The native UI client exchanges the user token for Foundry invocation.
-It does not automatically forward a separate Search user token.
-The native agent registers Search and Foundry IQ through Foundry client
-integrations and project connections. Configure and verify the selected
-integration's source authorization before enabling protected retrieval.</p>
-<p>The separate direct-connector implementation uses
-<code>RETRIEVAL_AUTH_MODE=native_search</code>, an OBO token for
-<code>https://search.azure.com/.default</code> and <code>x-client-search-token</code>.
-Its Search connector supplies <code>x-ms-query-source-authorization</code> separately
-from workload authentication. Those connector functions are not the native
-client's automatic retrieval path.</p>
-<p>Do not treat Foundry invocation consent as evidence of document authorization.
-Caller-provided identity/group IDs are not entitlement evidence.
-The transport identity's Search role alone does not grant the user access
-to protected sources.</p>
-<p>Required retrieval rejects a missing credential before execution. Tokens stay
-request-local, outside prompts, conversation history and recovery checkpoints.
+<p>Foundry invocation OBO is <strong>not</strong> a delegated Search assertion. The native
+runtime connects through the official MAF <code>FoundryToolbox</code> integration, which
+authenticates to the toolbox and forwards the current trusted Foundry call ID.
+The managed service resolves the caller context and handles the knowledge
+base's downstream source authorization, including its Search user credential.</p>
+<p>The call ID is correlation context for that managed exchange, not a bearer
+token or an independent permission grant. It must come from the current Hosted
+request and must not be cached across users or fabricated by the application.
+The runtime does not acquire or serialize a Search token as a model tool header.</p>
+<p>Consent, source permissions and Conditional Access remain independent
+requirements. Missing context or denied authorization must not trigger a retry
+with workload privileges against protected content.</p>
+<p>The UI returns <code>401 consent_required</code> when the managed flow reports
+<code>oauth_consent_request</code>. Complete consent through the organization's approved
+Foundry process and retry manually. This implementation does not open
+service-returned consent links or automatically resume a request after consent.</p>
+<p>Service mode does not retry through OBO or interactive consent.
+An explicit consent request in service mode returns <code>403 user_delegation_required</code>
+with instructions to enable OBO. Other tool failures return a safe <code>tool_failed</code>
+message that distinguishes service permissions from a possible OBO requirement,
+without exposing provider details or initiating a credential fallback.</p>
+<p>Required retrieval rejects missing trusted context or denied tool access.
+Downstream tokens stay outside application prompts, conversation history and
+recovery checkpoints.
 Consent, Conditional Access and source denial must be resolved at their own
 boundary, not by stripping the credential or retrying as a service.
 <a href="../agent-tools/">Agent tools</a> explains the separate Toolbox extension boundary.</p>
@@ -5979,6 +6071,11 @@ That provides shared-source access, not per-user filtering.
 <a href="../foundry-iq/">Foundry IQ</a> and
 <a href="https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-retrieve">knowledge-base retrieval permissions</a>
 describe source-specific requirements.</p>
+<p>Without OBO, the native connection authenticates with the declared component
+identity and does not send a user Search assertion. The source must accept that
+authentication and enforce its own authorization. Omitted or null ingestion
+permission options retain the protected default. Mode selection does not clear
+metadata, rewrite ACLs or make user-protected content service-accessible.</p>
 <h2 id="protected-citation-downloads">Protected citation downloads</h2>
 <p>Downloads reuse the configured storage and Search bindings,
 <code>SEARCH_SERVICE_QUERY_ENDPOINT</code>, <code>SEARCH_RAG_INDEX_NAME</code> and
@@ -5987,9 +6084,16 @@ describe source-specific requirements.</p>
 UI rather than public Blob links or Blob SAS. The signed selector is bound to
 the principal and UI session; it is not a document permission. Every download
 checks the current identity and source authorization again.</p>
-<p>Shared Blob/ADLS documents use the current user's Storage OBO token. The user
+<p>In <code>user_delegated</code> mode, shared Blob/ADLS documents use the current user's
+Storage OBO token. The user
 needs actual Blob RBAC or ADLS ACL access, even if retrieval returned a citation.
 Missing Storage consent or source access never falls back to the UI identity.</p>
+<p>In <code>service_identity</code> mode, Blob document reads use the UI workload identity
+and Storage enforces its scoped permissions. The route still validates the current
+user, session, citation grant and configured storage allowlist. It must not
+become a general Blob proxy or expose another user's conversation or files.
+Protected conversation-upload downloads still require delegated Search
+authorization and are denied without it.</p>
 <p>Native private attachments are different: the authenticated UI checks the
 owner-bound session and validates bounded inline file content before calling
 the native host. They do not use this Blob download route, a Search upload
@@ -6005,6 +6109,10 @@ source's authentication rather than being proxied as arbitrary Blob downloads.</
 <p>Protected retrieval is only established by tests through the deployed
 integration, using independent signed-in users and nonsensitive documents.
 An answer without a citation is not sufficient evidence of denial.</p>
+<p>The restricted-document cases below apply to OBO. In service mode, all admitted
+users share the service's source access. Wrong-owner sessions and grants,
+unapproved storage and operations requiring unavailable user delegation must
+still be denied. Local mocked checks are not live Foundry acceptance.</p>
 <table>
 <thead>
 <tr>
@@ -6023,7 +6131,7 @@ An answer without a citation is not sufficient evidence of denial.</p>
 </tr>
 <tr>
 <td>Foundry invocation</td>
-<td>An admitted, authorized user can invoke the deployed agent through OBO.</td>
+<td>An admitted user invokes through the selected credential mode, with the corresponding user or workload caller grant.</td>
 </tr>
 <tr>
 <td>Shared document</td>

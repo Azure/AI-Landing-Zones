@@ -5863,6 +5863,10 @@ of starting with an unconfigured fallback.</p>
 <td>Matching resources, permissions and deployment/restart</td>
 </tr>
 <tr>
+<td>User delegation (<code>HOSTED_AGENT_AUTH_MODE</code>)</td>
+<td>Structural deployment choice, persisted in App Configuration, requiring coordinated component/connection updates and new sessions when changed</td>
+</tr>
+<tr>
 <td>MCP toolset selection</td>
 <td>Startup-only; provision declared dependencies and restart/redeploy, no hot reload</td>
 </tr>
@@ -5948,6 +5952,10 @@ An unavailable required store is a readiness failure, not an offline mode.</p>
 <td><code>hosted</code>; also accepts <code>container_apps</code></td>
 </tr>
 <tr>
+<td><code>HOSTED_AGENT_AUTH_MODE</code></td>
+<td><code>user_delegated</code> by default, or <code>service_identity</code> for authenticated service access subject to each source's authorization</td>
+</tr>
+<tr>
 <td><code>HOSTED_AGENT_BASE_URL</code></td>
 <td>Actual conversational Hosted publication endpoint</td>
 </tr>
@@ -5966,6 +5974,10 @@ An unavailable required store is a readiness failure, not an offline mode.</p>
 <tr>
 <td><code>FOUNDRY_IQ_ENABLED</code></td>
 <td><code>false</code>; native Foundry IQ capability</td>
+</tr>
+<tr>
+<td><code>TOOLBOX_ENDPOINT</code></td>
+<td>Platform-derived project Toolbox endpoint under <code>agent-lz</code>, required for native Hosted Foundry IQ, structural rather than a user-configurable auth mode</td>
 </tr>
 <tr>
 <td><code>MCP_ENABLED</code></td>
@@ -6011,6 +6023,12 @@ their supported azd inputs. Agent capability keys use
 The lifecycle publishes both kinds under <code>agent-lz</code>.
 Use the <a href="#enable-a-product-feature">product-feature</a> or
 <a href="#configure-an-agent-capability">agent-capability</a> procedure, as appropriate.</p>
+<p>User delegation uses one existing selector, not independent login, OBO and
+retrieval switches. Both modes require login. The platform derives the retrieval
+contract from the selected mode. It does not impose a Blob-only source allowlist.
+Operations requiring user delegation fail explicitly when OBO is unavailable.
+See <a href="../application-auth/#choose-user-delegation">Choose user delegation</a>
+for caller grants, source authorization and coordinated changes.</p>
 <p>Workflow mode or <code>both</code> selects UI metadata even when both history and feedback
 flags are <code>false</code>. Enabled history, feedback or attachments also selects that
 dependency.</p>

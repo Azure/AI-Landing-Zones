@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title desc">
   <title id="title">What connects an Agent to a Foundry IQ knowledge base?</title>
-  <desc id="desc">The native Agent or Workflow registers a Model Context Protocol (MCP) project-connection tool for Foundry IQ, separately from the native Foundry Search connection. Provisioning supplies a dedicated CognitiveSearch connection ID for the knowledge base; the documented native tool requires a compatible RemoteTool connection. The application owner must configure that binding and verify source-specific user authorization. Search owns the knowledge base and either native Blob ingestion or a registered existing index. Purple dashed arrows show setup, not runtime traffic.</desc>
+  <desc id="desc">The native Agent uses official FoundryToolbox integration with current trusted call context. The managed Toolbox reaches Search through a project RemoteTool connection. Search owns the knowledge base and source ingestion. Managed user delegation requires consent and source permissions. Service mode uses source-supported service authentication and fails explicitly when user delegation is required. Purple dashed arrows show provisioning, not runtime traffic.</desc>
   <defs>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#32698e"/></marker>
     <marker id="setup-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#766798"/></marker>
@@ -23,9 +23,9 @@
   <text x="112" y="233" class="head">Workflow</text>
   <text x="62" y="267">Foundry IQ flag on</text>
   <rect x="370" y="176" width="262" height="110" class="node"/>
-  <text x="390" y="207" class="head">Project tool connection</text>
-  <text x="390" y="238">RemoteTool contract</text>
-  <text x="390" y="267">Operator must connect</text>
+  <text x="390" y="207" class="head">Foundry Toolbox</text>
+  <text x="390" y="238">Managed KB tool</text>
+  <text x="390" y="267">Platform provisioned</text>
   <path d="M276 226H370" class="flow"/>
   <text x="298" y="203">Tool call</text>
   <rect x="710" y="116" width="258" height="188" class="group"/>
@@ -53,13 +53,12 @@
   <rect x="32" y="580" width="260" height="90" class="node"/>
   <use href="#user-icon" transform="translate(50 605) scale(2)"/>
   <text x="103" y="615" class="head">App owner</text>
-  <text x="103" y="646">Connection setup</text>
+  <text x="103" y="646">Review + deploy</text>
   <path d="M292 625H315V537H522V320H501V286" class="setup"/>
-  <text x="350" y="584" class="head">Search and Foundry IQ use separate connections.</text>
-  <text x="350" y="614">Generated CognitiveSearch is not a RemoteTool connection.</text>
-  <text x="350" y="644">Application owner: bind the tool and redeploy.</text>
-  <text x="350" y="674">Test users with and without permission to each source.</text>
-  <text x="32" y="709">Blue arrows show retrieval requests and source lookups.</text>
-  <text x="32" y="741">Purple dashed arrows show application connection setup, not retrieval requests.</text>
-  <text x="32" y="773">MCP = Model Context Protocol.</text>
+  <text x="380" y="594" class="head">Project Toolbox + scoped workload access</text>
+  <text x="380" y="628">Review Toolbox binding, then deploy capability.</text>
+  <text x="380" y="660">Verify the selected mode and denied-access cases.</text>
+  <text x="32" y="709">Use each source's authorization contract. Missing required OBO fails explicitly.</text>
+  <text x="32" y="741">Blue arrows show requests. Purple dashed arrows show setup, not runtime traffic.</text>
+  <text x="32" y="773">OBO = on-behalf-of user delegation.</text>
 </svg>

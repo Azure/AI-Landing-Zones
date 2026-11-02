@@ -5691,7 +5691,7 @@ Each integration needs its own configuration and authorization.</p>
 </tr>
 <tr>
 <td>Foundry IQ</td>
-<td>A knowledge-base tool through its own prepared Foundry project connection</td>
+<td>Knowledge-base tools discovered through the official managed Foundry Toolbox integration</td>
 </tr>
 <tr>
 <td>Multimodal retrieval</td>
@@ -5754,7 +5754,7 @@ uses label <code>agent-lz</code>, not new tool-specific foundation parameters.</
 </tr>
 <tr>
 <td><code>FOUNDRY_IQ_ENABLED</code></td>
-<td><code>KNOWLEDGE_BASE_CONNECTION_ID</code>, <code>KNOWLEDGE_BASE_NAME</code></td>
+<td>Platform-published <code>TOOLBOX_ENDPOINT</code></td>
 <td><a href="../foundry-iq/#how-to-connect-a-knowledge-base">Foundry IQ source and connection</a></td>
 </tr>
 <tr>
@@ -5928,9 +5928,27 @@ history, functional snapshots and telemetry.</p>
 <h3 id="authenticated-toolbox-contract">Authenticated Toolbox contract</h3>
 <p>Foundry's <a href="https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent">hosted Toolbox integration</a>
 uses an authenticated SDK client and trusted platform invocation context.
-The application must actually invoke that supported integration.
+Native Foundry IQ uses the official MAF <code>FoundryToolbox</code> integration rather
+than a parallel token-forwarding client. It forwards the current request's
+Foundry call ID so that the service can resolve downstream user authorization.
 Do not fabricate platform context or assume the browser's Authorization
 header arrives unchanged inside a Hosted container.</p>
+<p>Provisioning registers and promotes the knowledge-base Toolbox after Search
+setup, then publishes the derived <code>TOOLBOX_ENDPOINT</code> under <code>agent-lz</code>.
+This internal binding is not another operator authentication choice.</p>
+<p>With OBO enabled, the managed service handles delegated knowledge-base access
+subject to consent and source permissions. Without OBO, component identities
+may access sources that accept service authentication, subject to scoped grants.</p>
+<p>There is no Blob-only capability allowlist. A tool requiring user delegation
+fails at invocation when OBO is unavailable, without blocking startup solely
+because its source type is enabled.
+Changing the operator mode must not silently change a protected source's
+audience or cause a privileged retry after user denial.</p>
+<p>Managed consent requests produce explicit UI <code>consent_required</code> errors.
+The UI does not accept dynamic consent links or implement automatic consent
+resumption. Complete the approved Foundry consent process and retry manually.
+In service mode, an explicit consent request instead returns
+<code>user_delegation_required</code>, directing the operator to enable OBO.</p>
 <p>The durable host uses its own explicit authenticated client/tool boundary.
 Foundry invocation context must not be simulated on Container Apps.
 Source-specific OBO and document permissions remain independently required;

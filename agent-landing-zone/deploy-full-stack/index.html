@@ -6142,8 +6142,9 @@ and protected retrieval do not have the same integration requirements.</p>
   virtual network (VNet), directly or through a virtual private network (VPN).
   It must resolve private service hostnames. An Azure Container Registry (ACR)
   Tasks build pool is not that host.</li>
-<li><strong>Identity inputs:</strong> obtain the delegated Foundry audience and tenant consent
-  plan from your identity administrator. <code>HOSTED_AGENT_RESOURCE_SCOPE</code> must be
+<li><strong>Identity inputs:</strong> select the <a href="../application-auth/#choose-user-delegation">user delegation mode</a>
+  and obtain the Foundry audience and corresponding consent/role plan.
+  <code>HOSTED_AGENT_RESOURCE_SCOPE</code> must be
   that audience followed by <code>/.default</code>, for example
   <code>https://ai.azure.com/.default</code> when that is the deployed audience.
   It is not the UI's <code>api://&lt;client-id&gt;/user_impersonation</code> login scope.</li>
@@ -6162,11 +6163,15 @@ and protected retrieval do not have the same integration requirements.</p>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Protected retrieval keeps the signed-in user's permissions</p>
-<p>The UI and native agent's retrieval capability require delegated Search
-authorization with <code>RETRIEVAL_AUTH_MODE=native_search</code>. The UI performs
-the downstream OBO exchange; the hosted connector supplies that credential
-to Search separately from its workload transport identity. A custom
-Toolbox integration is not required for this built-in path.</p>
+<p>Protected retrieval requires downstream user authorization for Search.
+Foundry invocation OBO and <code>RETRIEVAL_AUTH_MODE=native_search</code> are not
+substitutes for that authorization. The native Hosted application uses
+Foundry-managed delegation through the official MAF Toolbox integration.
+Provisioning publishes its derived <code>TOOLBOX_ENDPOINT</code> after Search setup.
+Managed consent requests are explicit UI errors requiring approved consent
+and manual retry, not automatic consent resumption.
+Missing context, consent or source authorization must fail explicitly. See the
+<a href="../application-auth/#hosted-retrieval-identity-boundary">current retrieval boundary</a>.</p>
 <p>Arrange downstream consent and source permissions, retain permission
 ingestion, and verify an allowed and a denied user before admitting
 sensitive content. Missing credentials fail closed. Do not enable
@@ -6307,6 +6312,7 @@ These are the only public native execution selectors, separate from VNet
 design and independently optional product features:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>ORCHESTRATION_HOST<span class="w"> </span>hosted
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>APPLICATION_MODE<span class="w"> </span>conversational
+azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_AUTH_MODE<span class="w"> </span>user_delegated
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>HOSTED_AGENT_RESOURCE_SCOPE<span class="w"> </span>&lt;approved-foundry-audience&gt;/.default
 azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_INGESTION_CONTAINER_APP<span class="w"> </span><span class="nb">false</span>
 </code></pre></div>
@@ -6315,6 +6321,16 @@ attachments default to off; Hosted does not turn them on. The default
 conversational selection with no declared storage consumer does not require
 application Cosmos. Workflow or <code>both</code> always selects UI metadata; enabling
 history, feedback or attachments also selects it.</p>
+<p>OBO remains the default. The alternative <code>HOSTED_AGENT_AUTH_MODE=service_identity</code>
+requires the coordinated native implementation and scoped component identity
+grants. It does not restrict source types or remove the UI login requirement.
+A source that requires user delegation fails explicitly when OBO is unavailable.
+The existing source permission default remains protected, and this mode does not
+require or automatically set ingestion permission options to <code>[]</code>.</p>
+<p>The selected value is published to App Configuration under <code>agent-lz</code>. A later
+change requires reconciling source policy, connection authentication and caller
+grants, followed by compatible application publications and new sessions.
+Do not treat a key edit or an OBO failure as an automatic mode change.</p>
 <p>See <a href="../application-settings/">Application settings</a> for the separate feature
 keys and inspect effective relevant <code>agent-lz</code> settings after configuration.
 Preserve the recorded host, mode and application binding during recovery.</p>

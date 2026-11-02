@@ -5855,6 +5855,11 @@ caller boundary. Protected document access still requires the
 <a href="../application-auth/#3-verify-the-retrieval-identity-boundary">hosted retrieval integration</a>;
 the bundled UI uses the same Search OBO path as standalone chat. Bootstrap
 alone does not establish downstream consent or source permissions.</p>
+<p>The explicit <a href="../application-auth/#choose-user-delegation">mode without OBO</a>
+changes downstream credentials, not portal bootstrap, UI admission, cookie
+isolation or conversation ownership. It uses each source's service-authentication
+contract and cannot replace required user delegation. Sources requiring OBO fail
+explicitly when it is unavailable.</p>
 <h3 id="bootstrap-and-mount-the-widget">Bootstrap and mount the widget</h3>
 <p>Acquire a UI API access token with your portal's existing authentication library.
 The example below expects that token in <code>uiAccessToken</code> and an element with
