@@ -1552,10 +1552,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#a-sql-query-fails-or-its-caller-is-cancelled" class="md-nav__link">
+  <a href="#agent-app-mcp-failures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A SQL query fails or its caller is cancelled
+        Agent App MCP failures
       
     </span>
   </a>
@@ -2021,6 +2021,34 @@
     
   
     Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
   
 
     
@@ -6356,10 +6384,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#a-sql-query-fails-or-its-caller-is-cancelled" class="md-nav__link">
+  <a href="#agent-app-mcp-failures" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A SQL query fails or its caller is cancelled
+        Agent App MCP failures
       
     </span>
   </a>
@@ -7129,20 +7157,67 @@ Use provisioning for infrastructure changes and a new process or hosted version
 for startup settings, as specified in those workflows.</p>
 <p><strong>Verify:</strong> Repeat the same authenticated task and test document authorization
 when retrieval is involved. Keep credentials and content out of diagnostics.</p>
-<h4 id="a-sql-query-fails-or-its-caller-is-cancelled">A SQL query fails or its caller is cancelled</h4>
-<p><strong>Diagnose:</strong> SQL result translation retains error-result behavior for actual
-Azure SDK, ODBC and Pydantic failures. Unexpected implementation failures
-propagate unchanged instead of being converted into disabled, success-shaped
-or generic error-result fallbacks. Distinguish a known dependency/data failure
-from an implementation defect; do not retry under broader datasource access.</p>
-<p><strong>Correct:</strong> Preserve read-only guards, datasource authorization and the
-1,000-row/30-second bounds. After caller cancellation, retain that original
-cancellation even if the worker completes, the driver or worker fails, or
-the worker cancels. Cursor/connection cleanup must wait until the worker
-finishes; do not close resources beneath a running worker.</p>
-<p><strong>Verify:</strong> Check the failure/cancellation outcome and cleanup using the
-owning component's regression tests. Caller cancellation is not evidence
-of instant SQL-server cancellation.
+<h4 id="agent-app-mcp-failures">Agent App MCP failures</h4>
+<p>Start at the first failed boundary, not the UI symptom. A successful
+<code>/healthz</code> probe establishes liveness only.</p>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Check</th>
+<th>Correct safely</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Entra setup fails during deploy</td>
+<td>Deployer's directory rights for API registration/service principal and app-role assignment</td>
+<td>Arrange required directory permissions; ARM Contributor alone is insufficient</td>
+</tr>
+<tr>
+<td>MCP discovery returns 401/403</td>
+<td>Actual caller, tenant, v2 audience, allowed client ID and <code>MCP.Invoke</code> role</td>
+<td>Repair the generated identity/assignment through the platform lifecycle; do not accept an ARM token, API key or user-context JSON</td>
+</tr>
+<tr>
+<td>Cosmos selection conflicts</td>
+<td>Deliberately set or persisted <code>DEPLOY_COSMOS_DB=false</code></td>
+<td>Unset the declaration for automatic selection or set it to <code>true</code>; it is not silently overridden</td>
+</tr>
+<tr>
+<td>Vector provisioning fails</td>
+<td>Throughput compatibility, preserved capabilities, model dimensions and new-container policies</td>
+<td>Review compatibility; do not recreate accounts/containers or convert throughput as a retry</td>
+</tr>
+<tr>
+<td>Catalog name/dimension change is rejected</td>
+<td>Existing catalog declarations and selected embedding model</td>
+<td>Arrange explicit migration/reindexing; in-place name/dimension changes are not a supported retry</td>
+</tr>
+<tr>
+<td>Sources are absent or metadata is incomplete</td>
+<td>Enabled approved source and active, completely imported metadata version</td>
+<td>Complete the administrative import; provisioning does not discover SQL schemas</td>
+</tr>
+<tr>
+<td>SQL connection or authorization fails</td>
+<td>MCP identity/secret, SQL read principal, approved objects, DNS, routes and TLS</td>
+<td>Obtain SQL-owner-approved read access or fix the declared network/secret; do not grant SQL access to the orchestrator</td>
+</tr>
+<tr>
+<td>Query exceeds a limit</td>
+<td>30-second SQL, 1,000-row and 256-KiB result limits; 75-second default complete deadline</td>
+<td>Ask a narrower question or repair the dependency; never silently truncate or fabricate rows</td>
+</tr>
+</tbody>
+</table>
+<p>Preserve source and object denial. There is no direct SQL fallback inside the
+orchestrator. Cancellation must not close cursor/connection resources while
+an ODBC worker is still running and does not guarantee instant SQL-server
+cancellation.</p>
+<p>Verify authenticated discovery, a known approved result, denied callers/objects
+and explicit limit/error behavior after repair. Use query IDs and metadata
+versions without logging tokens, SQL or business rows.
 See <a href="../nl2sql/#failures-cancellation-and-cleanup">SQL failure handling</a>.</p>
 <h4 id="access-denied-between-services">Access denied between services</h4>
 <p><strong>Symptom:</strong> A dependency returns HTTP 401/403 or names a denied action.</p>

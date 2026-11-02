@@ -1393,6 +1393,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent-landing-zone/agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5522,8 +5550,8 @@ or full Agent deployment quotes.</p>
 </tr>
 <tr>
 <td>Cosmos DB account</td>
-<td><strong>2</strong> — one for Foundry agent threads/state, one for workload documents</td>
-<td>Foundry-owned account holds thread/run/message documents</td>
+<td><strong>1 Foundry backing account</strong>, plus application Cosmos when selected or required</td>
+<td>Foundry owns its thread/run/message store; UI metadata and MCP catalogs belong to the conditional application account</td>
 </tr>
 <tr>
 <td>Key Vault</td>
@@ -5568,7 +5596,7 @@ can also differ from native Bicep defaults.</p>
 <tr>
 <td><strong>Workload data path</strong></td>
 <td>Workload-owned AI Search, Storage, Cosmos, Key Vault</td>
-<td>Yes by default, each individually toggleable / BYO-capable</td>
+<td>Service-specific selection; application Cosmos is conditional</td>
 </tr>
 <tr>
 <td><strong>Common platform</strong></td>
@@ -5739,9 +5767,9 @@ If regional processing is required, explicitly set the embedding entry's
 </tr>
 <tr>
 <td>Workload Cosmos DB</td>
-<td>✅</td>
-<td><code>deployCosmosDb</code></td>
-<td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>)</td>
+<td>🟧</td>
+<td><code>deployCosmosDb</code>; Agent azd requires it for selected consumers</td>
+<td>NoSQL, <strong>serverless</strong> (<code>EnableServerless</code>); MCP adds vector capability/policies to its separate catalog</td>
 </tr>
 <tr>
 <td>Workload Key Vault</td>
@@ -5758,6 +5786,14 @@ If regional processing is required, explicitly set the embedding entry's
 </tbody>
 </table>
 <h3 id="common-platform-services">Common platform services</h3>
+<p>For Agent Application, <code>DEPLOY_AGENT_APP_MCP=true</code> adds a separate Container App
+with its own identity and the application Cosmos catalog, on either consuming
+host. It reuses compatible selected infrastructure; it does not create another
+Search service or use Foundry backing Cosmos. Provisioning creates dependencies;
+application deployment supplies the image. SQL databases, read principals and
+approved metadata remain operator-owned onboarding.
+Generic Cosmos can be selected without MCP or the reference orchestrator.
+See <a href="../../agent-landing-zone/agent-app-mcp/">Agent App MCP Server</a>.</p>
 <table>
 <thead>
 <tr>

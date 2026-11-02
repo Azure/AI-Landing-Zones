@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5998,6 +6026,9 @@ Changing its Git remote does not change component repository URLs.</p>
 </ol>
 <p>Keep manifest names <code>agent-app-ui</code>, <code>agent-app-orchestrator</code>,
 <code>agent-app-ingestion</code> and definition names <code>ui</code>, <code>orchestrator</code>, <code>ingestion</code>.
+When MCP is selected, retain its component/service names as declared in the
+compatible manifest and application definition; pin changes with the same
+source/definition discipline.
 Hooks use these to map sibling folders. Existing checkouts are verified, not
 advanced automatically: preserve local work before relocating stale checkouts.
 Matching HEAD does not detect uncommitted source changes. Run
@@ -6015,18 +6046,26 @@ or logs. See <a href="../azure-devops/">Azure DevOps</a> for the optional pipeli
 that environment with <code>azd env set</code> to select a definition file or containing
 folder; omission selects the Agent Application.
 Select it <strong>before first provision</strong>.</p>
+<p>Custom-only applications remain supported without forcing bundled tools.
+Generic Cosmos can be selected with <code>DEPLOY_COSMOS_DB=true</code> or a declared Cosmos
+capability without the bundled orchestrator or MCP. That storage selection
+does not require vector policies; MCP or a retained MCP catalog does.
+See <a href="../configuration/#application-cosmos-db">Application Cosmos DB</a>.</p>
 <p>The <code>preup</code> lifecycle hook rejects invalid definitions and changed application IDs
 before Azure resource creation. The <code>preprovision</code> hook repeats validation for standalone
 <code>azd provision</code>, but cannot guarantee rejection before azd initializes its
 resource group. Run <code>azd hooks run preup</code> first for that safeguard.
 Do not edit a binding to force another application into an existing environment.</p>
 <details>
-<summary>Ingestion and additive composition</summary>
+<summary>Optional components and additive composition</summary>
 <p><code>DEPLOY_INGESTION_CONTAINER_APP</code> selects Agent Application composition, not components in
 an explicit custom definition. Foundation composition remains additive:
 Agent Application Container App placeholders can remain alongside custom resources.
 Published ingestion capability describes the platform's ingestion selection;
 your application must implement uploads if it needs them.
+<code>DEPLOY_AGENT_APP_MCP</code> likewise selects the reference application's optional
+server, not implicit tools in a custom-only definition. Declare and test the
+components and access your custom application actually consumes.
 If reusing Agent App UI, preserve its
 <a href="../conversations/#private-attachments">inline attachment contract</a>, including
 owner mappings, exact byte/serialized limits and no corporate ingestion

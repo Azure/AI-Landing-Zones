@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2036,6 +2064,17 @@
     <span class="md-ellipsis">
       
         Index, purge and cleanup effects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sql-metadata-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQL metadata onboarding
       
     </span>
   </a>
@@ -5406,6 +5445,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#sql-metadata-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQL metadata onboarding
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#inspect-results-and-recover" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5486,12 +5536,12 @@ They are not six-field Azure Functions timers.</p>
 <tr>
 <td><code>nl2sql_index</code></td>
 <td><code>CRON_RUN_NL2SQL_INDEX</code></td>
-<td>No schedule</td>
+<td>No schedule; optional metadata pipeline, not required for MCP</td>
 </tr>
 <tr>
 <td><code>nl2sql_purge</code></td>
 <td><code>CRON_RUN_NL2SQL_PURGE</code></td>
-<td>No schedule</td>
+<td>No schedule; optional metadata maintenance, not required for MCP</td>
 </tr>
 <tr>
 <td><code>multimodality_images_purge</code></td>
@@ -5594,11 +5644,11 @@ availability. <a href="../application-auth/">Application authentication</a> cove
 </tr>
 <tr>
 <td>NL2SQL index</td>
-<td>Indexes JSON metadata from <code>queries/</code>, <code>tables/</code> and <code>measures/</code>, including embeddings. It does not copy database rows.</td>
+<td>Optional SQL-metadata pipeline. For MCP, its destination must honor the approved Cosmos catalog, embedding dimensions and complete-version activation contract. It does not copy business rows.</td>
 </tr>
 <tr>
 <td>NL2SQL purge</td>
-<td>Deletes metadata index documents whose corresponding metadata blobs no longer exist. It does not delete database tables or rows.</td>
+<td>Metadata maintenance, not SQL table/row deletion. Review the target and active-version retention before authorizing cleanup; do not apply document Search cleanup to the MCP catalog.</td>
 </tr>
 <tr>
 <td>Image purge</td>
@@ -5630,6 +5680,14 @@ for the custom indexer's <code>SEARCH_RAG_INDEX_NAME</code> and
 <code>DOCUMENTS_IMAGES_STORAGE_CONTAINER</code>. Align them deliberately before scheduling
 image cleanup. A failed or invalid reference scan stops the purger rather than
 treating unknown state as an empty reference set.</p>
+<h2 id="sql-metadata-onboarding">SQL metadata onboarding</h2>
+<p>SQL metadata onboarding is not a document indexing or purge job.
+Use the MCP repository's administrative Python importer for approved metadata:
+it generates embeddings into the application Cosmos catalog and activates
+only a complete version. No ingestion Container App or recurring schedule is
+required. An optional metadata pipeline must honor that same contract; document
+Search-index jobs must not manage MCP catalog data.
+See <a href="../ingestion/#sql-metadata-is-separate-from-document-ingestion">SQL metadata boundaries</a>.</p>
 <h2 id="inspect-results-and-recover">Inspect results and recover</h2>
 <p>Use the queue for scheduled/running work, run summaries for outcomes, and
 per-file logs for errors, blocked files and confirmed indexed/deleted counts.

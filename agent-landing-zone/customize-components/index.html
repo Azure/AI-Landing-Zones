@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5499,6 +5527,10 @@ Use <a href="../local-development/">Run locally</a> to prepare a development env
 <td><a href="https://github.com/Azure/agent-app-orchestrator">Orchestrator</a>, application definitions and tool/connector owners under <code>src/</code></td>
 </tr>
 <tr>
+<td>NL2SQL generation, validation, execution, catalog import and MCP tool modules</td>
+<td><a href="https://github.com/Azure/agent-app-mcp">Agent App MCP Server</a>, separate from orchestrator definitions</td>
+</tr>
+<tr>
 <td>File parsing, chunking, source jobs, indexing</td>
 <td><a href="https://github.com/Azure/agent-app-ingestion">Ingestion</a>, <code>chunking/</code>, <code>jobs/</code>, and <code>tools/</code></td>
 </tr>
@@ -5529,7 +5561,7 @@ Hosting and tools are separate choices. To extend the application:</p>
    execution and human-input APIs, not a second execution loop, polling queue
    or application-owned checkpoint engine.</li>
 <li>Register the intended capabilities explicitly. Foundry IQ, Search, MCP and
-   optional <a href="../nl2sql/#direct-nl2sql-tool">NL2SQL</a> are tools/capabilities, not a
+   optional <a href="../nl2sql/">MCP NL2SQL</a> are tools/capabilities, not a
    mixed strategy registry or a user-facing host picker.</li>
 <li>Keep packaged instructions and typed tool inputs with the reviewed source.
    Test missing/invalid configuration and prompts. Functional App Configuration
@@ -5562,7 +5594,11 @@ from an MCP knowledge source consulted by Foundry IQ.</p>
 <li>Do not accept client-supplied groups, user IDs, indexes, or document URLs as
   proof of access. Add negative tests for cross-user and source-denied requests.</li>
 <li>For SQL, keep a read-only database principal as the primary security boundary.
-  Generated-SQL validation is not a substitute for database permissions.</li>
+  Generated-SQL validation is not a substitute for database permissions.
+  SQL generation, catalog retrieval and execution belong in Agent App MCP
+  Server, not the orchestrator. Extend its reviewed tool modules with typed
+  schemas, scoped permissions and tests. Only the two documented NL2SQL tools
+  are supplied; future capabilities require implementation.</li>
 </ul>
 <p>Retrieval backend selection does not switch every datasource or tool.
 Use <a href="../foundry-iq/">Foundry IQ</a> and the relevant source guide for source

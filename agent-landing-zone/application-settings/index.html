@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2147,6 +2175,17 @@
     <span class="md-ellipsis">
       
         Native application contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-app-mcp-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent App MCP contract
       
     </span>
   </a>
@@ -5462,6 +5501,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#agent-app-mcp-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent App MCP contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#transport-and-secret-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5494,7 +5544,7 @@
 
 <h1 id="application-settings">Application settings</h1>
 <p>Application settings control the UI, native agent/workflow and optional
-ingestion service. Azure App Configuration remains an intentional dependency.
+ingestion and MCP services. Azure App Configuration remains an intentional dependency.
 Components read the <code>agent-lz</code> label; a label is not an environment-isolation
 boundary. Keep stores, identities and secrets separate between environments.</p>
 <p><a href="../configuration/">Deployment settings</a> covers resource selection, provisioning
@@ -5666,7 +5716,7 @@ An unavailable required store is a readiness failure, not an offline mode.</p>
 </tr>
 <tr>
 <td><code>MCP_ENABLED</code></td>
-<td><code>false</code>; native MCP tool registration</td>
+<td><code>false</code>; native MCP registration, derived automatically when the integrated MCP component is selected</td>
 </tr>
 <tr>
 <td><code>MULTIMODAL_ENABLED</code></td>
@@ -5691,18 +5741,6 @@ An unavailable required store is a readiness failure, not an offline mode.</p>
 <tr>
 <td><code>NATIVE_UI_METADATA_CONTAINER</code></td>
 <td><code>native-ui-metadata</code>, with partition key <code>/principal_id</code></td>
-</tr>
-<tr>
-<td><code>NL2SQL_ENABLED</code></td>
-<td><code>false</code>; explicitly enables the optional direct SQL capability</td>
-</tr>
-<tr>
-<td><code>NL2SQL_SOURCE_REGISTRY</code></td>
-<td>Empty string by default; enabled direct NL2SQL requires explicit <code>cosmos</code></td>
-</tr>
-<tr>
-<td><code>DATASOURCES_CONTAINER</code></td>
-<td><code>datasources</code>, published for the selected direct NL2SQL Cosmos catalog</td>
 </tr>
 <tr>
 <td><code>NATIVE_TOOL_SECRET_NAMES</code></td>
@@ -5737,10 +5775,11 @@ including text, escaping and encoding overhead.
 Transport is implemented; model PDF/image understanding remains unverified.
 See <a href="../conversations/#private-attachments">Conversations &amp; files</a>.</p>
 <p>Native Hosted and DTS execution do not require application Cosmos.
-Enabled direct NL2SQL has a separate Cosmos datasource catalog dependency;
-the default catalog container is <code>datasources</code>, with read access scoped to
-that exact container. Its database connection,
-schema/example indexes and any actual secret consumer remain conditional.</p>
+Selecting Agent App MCP Server automatically requires application Cosmos for
+its separate source and vector-metadata containers. The MCP identity receives
+catalog and SQL access; the orchestrator receives MCP invocation access only.
+Generic application Cosmos and custom Cosmos capabilities remain independent
+of MCP selection. See <a href="../configuration/#application-cosmos-db">Application Cosmos DB</a>.</p>
 <p>For Hosted <code>both</code>, the shared configuration can describe the composition,
 but each publication must receive an explicit single-mode process input.
 Conversation uses <code>conversational</code>; the process publication uses <code>workflow</code>.
@@ -5749,6 +5788,143 @@ Do not let the shared composition value start a single Hosted process in
 When private attachments are enabled in Hosted <code>both</code>, keep the shared/UI and
 conversational publication flag enabled. Only the workflow publication
 receives <code>ENABLE_PRIVATE_ATTACHMENTS=false</code>; it does not support attachments.</p>
+<h2 id="agent-app-mcp-contract">Agent App MCP contract</h2>
+<p>Select the component with <code>DEPLOY_AGENT_APP_MCP=true</code> in the azd environment
+before provisioning; the default is <code>false</code>.
+This is a deployment selector, not another native runtime feature key.
+There is no second NL2SQL enable flag.</p>
+<p>The platform publishes the following values under <code>agent-lz</code> from the selected
+resources, models and identities. Do not copy endpoints between components,
+manually edit generated client authorization, or supply Cosmos keys.
+After MCP and the actual native consumers deploy, the lifecycle grants
+<code>MCP.Invoke</code>, publishes the allowlist and <code>MCP_ENABLED</code>, and verifies the
+effective authenticated connection. An accepted key write alone does not prove
+that the MCP process loaded new authorization settings.
+Server authentication settings are <strong>startup-only</strong>, not dynamically refreshed.
+The platform automatically restarts every active MCP revision after allowlist
+publication and before consumer activation. Use the normal <code>azd deploy</code>
+lifecycle; a manual operator restart is not part of that procedure.</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value or requirement</th>
+<th>Ownership</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCP_AUTH_TENANT_ID</code></td>
+<td>Entra tenant GUID</td>
+<td>Generated identity configuration</td>
+</tr>
+<tr>
+<td><code>MCP_AUTH_AUDIENCE</code></td>
+<td>Dedicated MCP API application client ID; JWT v2 audience</td>
+<td>Generated identity configuration</td>
+</tr>
+<tr>
+<td><code>MCP_AUTH_RESOURCE_SCOPE</code></td>
+<td><code>api://&lt;MCP API client ID&gt;/.default</code></td>
+<td>Generated client token scope</td>
+</tr>
+<tr>
+<td><code>MCP_ALLOWED_CLIENT_IDS</code></td>
+<td>JSON array of permitted application client IDs</td>
+<td>Lifecycle resolves actual callers, including both Hosted publications when selected</td>
+</tr>
+<tr>
+<td><code>MCP_COSMOS_ENDPOINT</code></td>
+<td>Application Cosmos endpoint</td>
+<td>Provisioning output</td>
+</tr>
+<tr>
+<td><code>MCP_COSMOS_DATABASE</code></td>
+<td>Application Cosmos database</td>
+<td>Provisioning output</td>
+</tr>
+<tr>
+<td><code>MCP_SOURCES_CONTAINER</code></td>
+<td><code>mcp-sources</code></td>
+<td>Provisioned source catalog</td>
+</tr>
+<tr>
+<td><code>MCP_METADATA_CONTAINER</code></td>
+<td><code>mcp-nl2sql-metadata</code></td>
+<td>Provisioned vector-metadata catalog</td>
+</tr>
+<tr>
+<td><code>MCP_EMBEDDING_DIMENSIONS</code></td>
+<td><code>3072</code> by default; must match model, import and vector policy</td>
+<td>Reviewed model selection, resolved before provision</td>
+</tr>
+<tr>
+<td><code>MCP_METADATA_TOP_K</code></td>
+<td><code>8</code> by default</td>
+<td>Bounded metadata retrieval</td>
+</tr>
+<tr>
+<td><code>MCP_QUERY_TIMEOUT_SECONDS</code></td>
+<td><code>75</code> by default</td>
+<td>Complete server-query deadline</td>
+</tr>
+<tr>
+<td><code>MCP_CLIENT_TIMEOUT</code></td>
+<td><code>90</code> by default; greater than the server deadline</td>
+<td>Consuming orchestrator</td>
+</tr>
+<tr>
+<td><code>AI_FOUNDRY_OPENAI_ENDPOINT</code></td>
+<td>Existing selected platform model endpoint</td>
+<td>Provisioning output</td>
+</tr>
+<tr>
+<td><code>CHAT_DEPLOYMENT_NAME</code></td>
+<td>Selected generation deployment</td>
+<td>Reviewed model selection</td>
+</tr>
+<tr>
+<td><code>EMBEDDING_DEPLOYMENT_NAME</code></td>
+<td>Selected embedding deployment</td>
+<td>Reviewed model selection</td>
+</tr>
+<tr>
+<td><code>KEY_VAULT_ENDPOINT</code></td>
+<td>Selected vault endpoint when a SQL-password source needs it</td>
+<td>Conditional output and secret-scoped grant</td>
+</tr>
+<tr>
+<td><code>MCP_SQL_SECRET_NAMES</code></td>
+<td><code>[]</code> by default; optional JSON array of SQL password-secret <strong>names</strong>, never values</td>
+<td>Operator declaration for scoped MCP vault grants</td>
+</tr>
+</tbody>
+</table>
+<p>Declare password-secret names through the reviewed deployment inputs before
+provisioning their scoped grants. This is a grant declaration, not a tool
+enable switch or a replacement for a source's <code>password_secret_name</code>.
+Adding a secret consumer later requires matching provision/deploy steps.</p>
+<p><code>APP_CONFIG_ENDPOINT</code> is the process bootstrap environment variable.
+<code>AZURE_CLIENT_ID</code> is optional when selecting an assigned managed identity;
+neither belongs in tool arguments. The endpoint uses HTTPS <code>/mcp</code> in Azure.
+Identity, endpoint, timeout or model/policy changes require the owning lifecycle
+and compatible processes; do not assume UI or native functional refresh changes
+the server or reindexes metadata.</p>
+<p>The server validates signature, the tenant's v2 issuer
+(<code>https://login.microsoftonline.com/&lt;tenant&gt;/v2.0</code>), audience and token validity,
+plus allowed <code>azp</code> and the <code>MCP.Invoke</code> application role.
+There is no API-key fallback or raw user-context authorization.
+The deployment helper configures the API registration/service principal,
+<code>MCP.Invoke</code> role and client assignments automatically. It requires the
+deployer's appropriate Entra directory permissions; Azure Contributor or ARM
+RBAC administration alone is insufficient. There is no broad ARM-token
+authentication fallback.
+Registration reuse uses the exact application object ID recorded in App
+Configuration, not an application name or subscription RBAC inference.
+SQL's 30-second execution timeout, 1,000-row limit and 256-KiB result ceiling
+are separate from the complete query deadline.
+See <a href="../agent-app-mcp/">Agent App MCP Server</a> for the lifecycle and
+<a href="../nl2sql/#results-and-execution-limits">NL2SQL</a> for results.</p>
 <p><span id="orchestrator-tls-compatibility"></span></p>
 <h2 id="transport-and-secret-changes">Transport and secret changes</h2>
 <p>Keep certificate and hostname verification enabled. A private endpoint needs

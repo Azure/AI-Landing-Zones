@@ -1321,6 +1321,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#agent-app-mcp-server-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent App MCP Server selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#agent-app-ingestion-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2008,6 +2019,34 @@
     
   
     Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
   
 
     
@@ -6029,6 +6068,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#agent-app-mcp-server-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent App MCP Server selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#agent-app-ingestion-selection" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6878,8 +6928,8 @@ When unset, they use the template defaults shown below.</p>
 </tr>
 <tr>
 <td><code>DEPLOY_COSMOS_DB</code></td>
-<td>Not selected for default conversational execution without a storage consumer; selected when required</td>
-<td>Application Cosmos resource selection follows actual consumers. Foundry backing storage is separate.</td>
+<td><code>false</code> without a required consumer; selected automatically when required</td>
+<td>Generic application Cosmos can also be explicitly selected without MCP or the orchestrator. Foundry backing storage is separate.</td>
 </tr>
 <tr>
 <td><code>ENABLE_COSMOS_ANALYTICAL_STORAGE</code></td>
@@ -6933,21 +6983,86 @@ The UI consumes
 (default <code>native-ui-metadata</code>, partition key <code>/principal_id</code>, owner <code>tid:oid</code>), with its grant
 assigned only to the frontend. Existing <code>COSMOS_DB_ENDPOINT</code> and
 <code>COSMOS_DB_ACCOUNT_RESOURCE_ID</code> outputs remain conditional; no separate native
-endpoint key is introduced. Enabled direct NL2SQL instead needs its own
-datasource catalog. A custom component may declare another application storage
+endpoint key is introduced. Agent App MCP Server selects the same application
+account for its separate approved-source and vector-metadata containers,
+with grants assigned to the MCP identity, not the orchestrator.
+A custom component may declare another application storage
 requirement. UI metadata contains descriptors and references, not bytes,
 transcripts or tokens. With conversational mode and every product flag off,
 bounded volatile UI owner maps are lost on restart.</p>
 <p>Do not omit a store required by a selected consumer, or enable ingestion just
 to supply metadata storage. Leave deployment selection consistent with the
-application definition and review all consumers before changing it.</p>
+application definition and review all consumers before changing it.
+An explicit Cosmos exclusion that conflicts with a required consumer fails
+with guidance to unset <code>DEPLOY_COSMOS_DB=false</code> for automatic selection or set
+it explicitly to <code>true</code>. Deliberately set or persisted <code>false</code> is not silently
+overridden.</p>
 <p>For an additional application storage requirement, opt in before provisioning:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_COSMOS_DB<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
+<p>This selection also works for generic storage without MCP or the reference
+orchestrator, including a custom <code>AGENTLZ_APP_DEFINITION</code>.
+Custom Cosmos capabilities can declare the dependency directly.
+Enabling Cosmos alone does not deploy MCP or enable vector search.
+Normal application Cosmos is serverless. Vector policies are selected only
+for MCP or a retained MCP catalog, not for generic Cosmos by itself.</p>
 <p>Direct foundation-template deployments also default <code>deployCosmosDb</code> to <code>false</code>;
 set it to <code>true</code> when application storage is needed. For an existing deployment,
 review the provision preview and retain the account until its consumers and
 data-retention requirements have been reviewed.</p>
+<h3 id="agent-app-mcp-server-selection">Agent App MCP Server selection</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DEPLOY_AGENT_APP_MCP</code></td>
+<td><code>false</code></td>
+<td>Adds the optional Agent App MCP Server Container App and requires application Cosmos for its NL2SQL catalog.</td>
+</tr>
+</tbody>
+</table>
+<p>Set this selector before provision. It is independent of
+<code>ORCHESTRATION_HOST=hosted|container_apps</code> and
+<code>APPLICATION_MODE=conversational|workflow|both</code>. Do not add a second NL2SQL
+enable flag or manually copy generated endpoint/authentication settings.</p>
+<p>Both Bicep and Terraform create the dependency when absent or reuse the
+compatible application account managed by this deployment. Provision captures
+and preserves the exact existing capability set and data, adds
+<code>EnableNoSQLVectorSearch</code> and provisions
+<code>mcp-sources</code> and <code>mcp-nl2sql-metadata</code>, partitioned by <code>/source_id</code>.
+The metadata vector policy uses <code>/embedding</code>, <code>float32</code>, cosine,
+<code>quantizedFlat</code> and the selected model dimensions (default <code>3072</code>).
+Model selection and dimensions must resolve before policies are provisioned.
+Existing catalog name/dimension changes are rejected in place; use an explicit
+migration/reindexing plan instead of changing settings on the existing catalog.</p>
+<p>Incompatible throughput or policies fail explicitly. The lifecycle does not
+recreate accounts/containers, convert shared throughput or choose an unrelated
+external or Foundry backing account. The MCP receives catalog read, model
+access and only required secret grants; the importer has separately authorized
+catalog write access. SQL users and grants remain the SQL owner's responsibility.
+<code>MCP_SQL_SECRET_NAMES=[]</code> declares optional SQL password-secret names for
+secret-scoped MCP vault grants; do not place passwords in that list.
+The deployment helper configures the Entra API registration/service principal
+and <code>MCP.Invoke</code> app role automatically, creating or reusing the registration
+by the exact application object ID recorded in App Configuration.
+The deployer must have directory
+rights for registration and application-role assignments, separate from ARM
+permissions; there is no broad ARM-token authentication fallback.</p>
+<p>Selection does not enable <code>DEPLOY_SEARCH_SERVICE</code>, create Search indexes or
+grant Search access. Other retrieval consumers keep their independent Search
+requirements. Generated settings are published under <code>agent-lz</code>; see the
+<a href="../application-settings/#agent-app-mcp-contract">MCP contract</a>.
+Use the <a href="../agent-app-mcp/#select-and-deploy">MCP component guide</a> for fresh and
+existing-installation steps. Setting the selector to <code>false</code> disables the
+runtime tools and does not delete metadata or grants. The catalog account,
+container declarations and vector policies are retained for owner-reviewed
+safe cleanup.</p>
 <p><span id="ingestion-application-selection"></span></p>
 <h3 id="agent-app-ingestion-selection">Agent App Ingestion selection</h3>
 <table>
@@ -7971,11 +8086,10 @@ See <a href="../hosted-agents/">Agent hosting</a>,
 <a href="../application-settings/">Application settings</a>.</p>
 <p><code>ENABLE_CHAT_HISTORY</code> and <code>ENABLE_USER_FEEDBACK</code> default to <code>false</code>;
 workflow mode, <code>both</code> or enabled history, feedback or attachments declares UI metadata
-storage directly. <code>NL2SQL_ENABLED=false</code> keeps
-the direct SQL catalog/connector dependencies unselected.
-<code>NL2SQL_SOURCE_REGISTRY</code> defaults to an empty string. When direct SQL is enabled,
-explicit <code>cosmos</code> selects the datasource catalog and publishes
-<code>DATASOURCES_CONTAINER=datasources</code>, with reader access to that exact container.
+storage directly. <code>DEPLOY_AGENT_APP_MCP=false</code> keeps the optional MCP server
+unselected. Selecting it requires application Cosmos and derives the consuming
+MCP connection and registration. Catalog and SQL access belong to the MCP
+identity, not the native execution host.
 Declare actual tool secret names through <code>NATIVE_TOOL_SECRET_NAMES</code> (default
 <code>[]</code>), a JSON array of names rather than values, and grant only the consuming
 component. This is a platform grant declaration; the native runtime does not
@@ -7986,8 +8100,9 @@ corporate publication. Workflow attachments are unsupported.
 Admission allows at most three files, 64 KiB per file and 256 KiB for the
 serialized inline turn. See <a href="../conversations/#private-attachments">Private attachments</a>
 for the MIME, encoding and owner contract.
-Native Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags also default
-to off; configured infrastructure alone does not register those tools.</p>
+Native Search, Foundry IQ, MCP and multimodal registration default to off;
+the integrated MCP lifecycle coordinates registration when selected.
+Configured infrastructure alone does not onboard SQL or populate its catalog.</p>
 <h3 id="hosted-foundation-and-publication-inputs">Hosted foundation and publication inputs</h3>
 <p>These inputs prepare hosting resources and metadata.
 The <a href="../application/#default-deployment">default application layout</a>
@@ -8150,6 +8265,10 @@ for diagnosis.</p>
 <tr>
 <td>Local binding records</td>
 <td>Preserve the original application, provider, group and backend bindings for updates, recovery and removal. Refreshing outputs does not recreate immutable bindings.</td>
+</tr>
+<tr>
+<td><code>COSMOS_VECTOR_SEARCH_ENABLED</code></td>
+<td>Internal azd-only marker for selected or retained MCP vector resources, not a new foundation output or operator enable flag. Preserve the owning lifecycle's state rather than editing it to force compatibility.</td>
 </tr>
 </tbody>
 </table>

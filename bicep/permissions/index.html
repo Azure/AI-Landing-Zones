@@ -1393,6 +1393,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent-landing-zone/agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5283,6 +5311,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#agent-app-mcp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent App MCP Server
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#foundry-project-search-and-image-pull" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5377,6 +5416,14 @@ granting access.</p>
 <tr>
 <td>Hosted agent runtime principal</td>
 <td>The actual principal discovered for the deployed agent; receives the runtime grants below.</td>
+</tr>
+<tr>
+<td>MCP Container App managed identity</td>
+<td>Reads approved SQL metadata and models and queries SQL when the component is selected; it is not the orchestrator identity.</td>
+</tr>
+<tr>
+<td>Administrative metadata importer</td>
+<td>Writes approved source/schema/example versions and generates embeddings; separate from the read-only MCP runtime.</td>
 </tr>
 <tr>
 <td>Signed-in application user</td>
@@ -5478,9 +5525,9 @@ vault-wide UI grant.</p>
 <td>Only for enabled registered capabilities.</td>
 </tr>
 <tr>
-<td>Scoped datasource-catalog reader</td>
-<td>Exact direct NL2SQL container, default <code>datasources</code></td>
-<td>Only when <code>NL2SQL_ENABLED=true</code> and explicit <code>NL2SQL_SOURCE_REGISTRY=cosmos</code>; no account-wide catalog grant. This is not execution state.</td>
+<td>MCP invocation authorization</td>
+<td>Dedicated MCP API application role <code>MCP.Invoke</code> and allowed client ID</td>
+<td>Only for the selected MCP caller; catalog and SQL grants belong to the MCP identity, not this runtime.</td>
 </tr>
 </tbody>
 </table>
@@ -5507,6 +5554,63 @@ Keep it compatible with both the native worker and UI client.
 Scheduler service permission is not product-user ownership, and the worker
 does not require public HTTP ingress, Dapr or an Azure Functions app.
 Hosted and DTS execution do not use application Cosmos checkpoints.</p>
+<h2 id="agent-app-mcp-server">Agent App MCP Server</h2>
+<p>The platform helper configures the dedicated Entra API registration/service
+principal, <code>MCP.Invoke</code> app role and actual caller assignments automatically.
+The deployer needs directory rights for those operations in addition to Azure
+resource and scoped role-assignment permissions. Azure Contributor does not
+grant directory administration. There is no broad ARM-token or API-key
+authentication fallback.</p>
+<table>
+<thead>
+<tr>
+<th>Principal</th>
+<th>Required access</th>
+<th>Boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MCP Container App identity</td>
+<td>Configuration read and image pull</td>
+<td>Base application resources</td>
+</tr>
+<tr>
+<td>MCP Container App identity</td>
+<td>Selected generation and embedding models</td>
+<td>Only the models it consumes</td>
+</tr>
+<tr>
+<td>MCP Container App identity</td>
+<td>Catalog read</td>
+<td>Exact <code>mcp-sources</code> and <code>mcp-nl2sql-metadata</code> containers in application Cosmos</td>
+</tr>
+<tr>
+<td>MCP Container App identity</td>
+<td>SQL read</td>
+<td>SQL owner approves/grants permitted views/tables; platform startup does not create database grants</td>
+</tr>
+<tr>
+<td>MCP Container App identity</td>
+<td>SQL password secret, when required</td>
+<td>Exact names declared in <code>MCP_SQL_SECRET_NAMES</code> (default <code>[]</code>), not vault-wide access</td>
+</tr>
+<tr>
+<td>Administrative importer</td>
+<td>Catalog write and embedding model access</td>
+<td>Complete approved-version import, not runtime catalog administration</td>
+</tr>
+<tr>
+<td>Hosted/Container Apps consumer</td>
+<td><code>MCP.Invoke</code>, allowed client ID and MCP-audience token</td>
+<td>Invocation only; no MCP catalog or SQL grant</td>
+</tr>
+</tbody>
+</table>
+<p>Normal application Cosmos is serverless and separate from Foundry backing
+Cosmos. MCP adds vector policies to its catalog, not UI containers or native
+execution state. No Search grants are added by MCP selection.
+See <a href="../../agent-landing-zone/agent-app-mcp/">MCP deployment and onboarding</a>.</p>
 <p><span id="microsoft-foundry-and-ai-search-assignments"></span></p>
 <h2 id="foundry-project-search-and-image-pull">Foundry project, Search and image pull</h2>
 <p>Bicep creates these cross-service assignments when the associated services

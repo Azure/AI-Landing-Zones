@@ -1566,6 +1566,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5635,14 +5663,24 @@ require separate publications when both are selected; pass their actual
 distinct endpoints to the UI. The Container Apps alternative uses the
 official Durable Extension worker/client and provisioned DTS binding.
 Do not treat every canonical runtime key as an implied <code>azd env</code> input.</p>
+<p>For optional SQL tools, set <code>DEPLOY_AGENT_APP_MCP=true</code> before provision.
+The default is <code>false</code>. Terraform provisions the separate MCP Container App,
+its identity and application Cosmos dependency with the same policies and
+scoped access contract as Bicep. The shared lifecycle generates the consuming
+MCP connection and authorization; no second NL2SQL enable flag is required.
+Search and document ingestion remain independent.
+See <a href="../agent-app-mcp/">Agent App MCP Server</a> for what is automatic and for
+operator-owned SQL permissions and approved metadata import.</p>
 <h3 id="step-3-provision-the-foundation">Step 3: Provision the foundation</h3>
 <p>Complete the <a href="../deploy-terraform-infra-only/#step-5-review-and-provision">Terraform infrastructure review</a>
 before the first apply. From the <strong>product root</strong>, with the intended azd
 environment selected:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
 </code></pre></div>
-<p>Skip this step if you have already completed and validated the
-infrastructure-only deployment guide for this environment.</p>
+<p>Skip this step only if you have already completed and validated the
+infrastructure-only guide with the same component selection and requirements.
+Adding MCP to an existing compatible installation requires a reviewed
+<code>azd provision</code> followed by <code>azd deploy</code>.</p>
 <p><a id="deploy-the-application"></a></p>
 <h3 id="step-4-deploy-the-application">Step 4: Deploy the application</h3>
 <p>For an already configured foundation:</p>
@@ -5654,6 +5692,13 @@ both stages after the same preparation.</p>
 agent version. Deploy fetches manifest-pinned sources, prepares the immutable
 hosted image when needed, binds it to the provisioned Foundry project and
 registry, then publishes the hosted version and selected Container Apps.
+When MCP is selected, its image deploys before the consuming application is
+activated; the lifecycle obtains actual caller identities and checks
+their authorization, publishes the allowlist/connection settings and
+automatically restarts every active MCP revision to load startup-only auth.
+Authenticated discovery precedes consumer activation; no manual MCP restart
+is required during normal deploy.
+Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.</p>
 <p>azd imports all flat Terraform outputs for the shared hooks automatically. Service
 configuration publishes App Configuration values under <code>agent-lz</code>, with Key

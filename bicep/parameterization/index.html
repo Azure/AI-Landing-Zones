@@ -1393,6 +1393,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../agent-landing-zone/agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5879,8 +5907,8 @@ pinned AVM to apply these settings. See
 </tr>
 <tr>
 <td><code>deployCosmosDb</code></td>
-<td><code>true</code></td>
-<td>Azure Cosmos DB account and database</td>
+<td><code>false</code></td>
+<td>Generic application Cosmos account/database; Agent azd composition selects it automatically for required consumers</td>
 </tr>
 <tr>
 <td><code>deployContainerApps</code></td>
@@ -5901,11 +5929,6 @@ pinned AVM to apply these settings. See
 <td><code>deployNsgs</code></td>
 <td><code>true</code></td>
 <td>Network Security Groups</td>
-</tr>
-<tr>
-<td><code>deployMcp</code></td>
-<td><code>true</code></td>
-<td>MCP (Model Context Protocol) server</td>
 </tr>
 <tr>
 <td><code>deployGroundingWithBing</code></td>
@@ -5959,6 +5982,14 @@ pinned AVM to apply these settings. See
 </tr>
 </tbody>
 </table>
+<p>Agent Application selects its optional server through
+<code>DEPLOY_AGENT_APP_MCP=false</code> (default) in the azd environment. Selecting <code>true</code>
+requires application Cosmos automatically; it does not enable Search or require
+a second NL2SQL flag. See the
+<a href="../../agent-landing-zone/configuration/#agent-app-mcp-server-selection">MCP selector reference</a>.
+An explicit conflicting <code>DEPLOY_COSMOS_DB=false</code> must be unset for automatic
+selection. Generic Cosmos can be selected independently without MCP or the
+bundled orchestrator, including in a custom application.</p>
 <div class="admonition note">
 <p class="admonition-title">Jumpbox, Bastion, and NAT Gateway</p>
 <p>These components are controlled independently with <code>deployJumpbox</code>, <code>deployBastion</code>, and <code>deployNatGateway</code>, so each topology can choose only the pieces it needs.</p>
@@ -6099,11 +6130,6 @@ pinned AVM to apply these settings. See
 <td><code>dataIngestContainerAppName</code></td>
 <td><code>null</code></td>
 <td>Data ingestion Container App name</td>
-</tr>
-<tr>
-<td><code>datasourcesContainerName</code></td>
-<td><code>null</code></td>
-<td>Cosmos DB container for datasources</td>
 </tr>
 <tr>
 <td><code>dbAccountName</code></td>
@@ -6644,6 +6670,11 @@ embedding default or the empty-list fallback.</p>
 </code></pre></div>
 <h3 id="database-containers">Database containers</h3>
 <p>The <code>databaseContainersList</code> parameter defines containers to create in the Cosmos DB database.</p>
+<p>The Agent Application composition owns its UI and MCP catalog-container
+contracts. Selecting MCP automatically creates its source and vector-metadata
+containers/policies; do not manually duplicate those entries here.
+Generic serverless Cosmos without MCP does not require vector policies.
+See <a href="../../agent-landing-zone/configuration/#application-cosmos-db">application Cosmos ownership</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">"databaseContainersList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>
@@ -6655,6 +6686,11 @@ embedding default or the empty-list fallback.</p>
 </code></pre></div>
 <h3 id="container-apps">Container apps</h3>
 <p>The <code>containerAppsList</code> parameter defines the container apps to deploy and their RBAC roles.</p>
+<p>The fragment below illustrates a custom foundation workload, not the bundled
+native orchestrator or MCP security profile. Do not copy its broad roles to
+Agent App MCP Server. The orchestrator consumes MCP without SQL/catalog grants;
+MCP has read-only catalog access and only required models/secrets.
+Use <a href="../permissions/#agent-app-mcp-server">component permissions</a>.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">"containerAppsList"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">    </span><span class="p">{</span>

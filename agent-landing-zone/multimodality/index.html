@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5623,13 +5651,12 @@ Foundry IQ Blob source's format contract and not the chat upload allowlist.</p>
 <td>Format-aware text splitting.</td>
 <td>Readable source text and embedding deployment for indexing.</td>
 </tr>
-<tr>
-<td>NL2SQL metadata</td>
-<td>Dedicated metadata processing and jobs.</td>
-<td>The schema/example indexes described in <a href="../nl2sql/">NL2SQL</a>, not document OCR.</td>
-</tr>
 </tbody>
 </table>
+<p>Approved SQL schemas and examples follow the
+<a href="../nl2sql/#approved-source-and-metadata-contract">MCP metadata import contract</a>,
+not document OCR or a schema/example Search index. Their embeddings are stored
+in application Cosmos; no document ingestion service is required.</p>
 <p>An unrecognized extension falls to the text chunker, which still rejects formats
 outside its supported set. That fallback does not mean every file type is
 supported. The factory also routes <code>.xls</code> to the spreadsheet chunker, but its

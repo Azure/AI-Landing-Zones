@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2153,6 +2181,17 @@
     <span class="md-ellipsis">
       
         Native runtime audit scope
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcp-query-correlation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP query correlation
       
     </span>
   </a>
@@ -5384,6 +5423,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#mcp-query-correlation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MCP query correlation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ingestion-audit-and-provenance" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5445,7 +5495,7 @@ retention policies or service backups.</p>
 <ol>
 <li>Record the deployed application revision and the time of the request.</li>
 <li>Follow its correlation information through the UI, orchestrator and the
-   selected retrieval or ingestion path.</li>
+   selected retrieval, MCP or ingestion path.</li>
 <li>Check both the HTTP outcome and the operation result. An ingestion envelope
    can return HTTP success while individual records failed.</li>
 <li>For denied access, inspect safe status and correlation fields. Do not
@@ -5455,7 +5505,7 @@ retention policies or service backups.</p>
 successful indexing, correct source access or production readiness.
 Use <a href="../troubleshooting/">Troubleshooting</a> for boundary-specific diagnosis.</p>
 <h2 id="native-runtime-audit-scope">Native runtime audit scope</h2>
-<p>Native entrypoints retain in-process tool/datasource audit hooks. They do
+<p>Native entrypoints retain in-process tool audit hooks. They do
 not mount retired request APIs or provide their complete request-lifecycle
 and remote-tool audit stream. A historical schema or
 <code>AUDIT_EVENTS_ENABLED=true</code> is not evidence that those paths emit events.
@@ -5467,6 +5517,18 @@ Audit delivery is best-effort, not an immutable ledger or a compliance
 certification. Disabling emission does not delete exported events.
 Correlate native UI actions, provider outcomes and in-process tool events
 without claiming complete remote-call coverage.</p>
+<h2 id="mcp-query-correlation">MCP query correlation</h2>
+<p>SQL generation, catalog retrieval and execution occur in the separate
+Agent App MCP Server, not as local orchestrator SQL helpers. Correlate the
+application request with the returned <code>query_id</code>, <code>source_id</code> and
+<code>metadata_version</code>, then inspect safe status/limit information at the server.
+Do not infer a complete server audit stream from an orchestrator tool event.</p>
+<p>Tokens, generated SQL, returned rows and internal reasoning are not logged
+by default. A successful zero-row query is distinct from an authorization,
+validation, dependency or limit failure. <code>/healthz</code> establishes liveness, not
+authenticated discovery or SQL readiness.
+See <a href="../nl2sql/#check-before-admitting-users">NL2SQL evidence</a> and
+<a href="../troubleshooting/#agent-app-mcp-failures">MCP troubleshooting</a>.</p>
 <h2 id="ingestion-audit-and-provenance">Ingestion audit and provenance</h2>
 <p>Ingestion emits audit events through its existing OpenTelemetry pipeline
 without an <code>AUDIT_EVENTS_ENABLED</code> opt-in. Export depends on telemetry setup.

@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5503,13 +5531,16 @@ and <a href="../application-testing/">Tests &amp; quality checks</a>. For deploy
 <li>Clone only the components you need from
   <a href="https://github.com/Azure/agent-app-orchestrator">orchestrator</a>,
   <a href="https://github.com/Azure/agent-app-ingestion">ingestion</a>, and
-  <a href="https://github.com/Azure/agent-app-ui">UI</a>.
+  <a href="https://github.com/Azure/agent-app-ui">UI</a>, or optional
+  <a href="https://github.com/Azure/agent-app-mcp">MCP server</a>.
   To reproduce the application, use the compatible source revisions in the
   platform's <a href="https://github.com/Azure/agent-landing-zone/blob/main/manifest.json">manifest</a>
   at your platform release. Repository <code>main</code> can contain newer patches.
   For contributions, use the repository's target branch and current checks.</li>
 </ul>
-<p>The credential providers try managed identity, then Azure CLI.
+<p>The UI, orchestrator and ingestion credential providers try managed identity,
+then Azure CLI. The MCP server and its administrative importer require a
+configured managed identity; Azure CLI sign-in is not their fallback.
 <code>AZURE_CLIENT_ID</code> selects a user-assigned managed identity when applicable.
 Do not copy an Azure workload's credentials to a workstation. Store secrets
 in Key Vault and never commit local environment files or tokens.</p>
@@ -5518,7 +5549,7 @@ Their <code>azure.yaml</code> files and deployment scripts assume an existing pl
 <code>azd deploy</code> can build, push, and replace running images. It is not a local
 startup or validation command.</p>
 <h2 id="prepare-each-repository">Prepare each repository</h2>
-<p>Run this setup <strong>separately from each component repository root</strong>. Keep separate
+<p>For UI, orchestrator and ingestion, run this setup <strong>separately from each component repository root</strong>. Keep separate
 virtual environments because the components have different dependency sets.
 The examples use an activated environment.</p>
 <div class="highlight"><pre><span></span><code>python -m venv .venv
@@ -5601,15 +5632,22 @@ with <code>TaskHub=agent-lz;Authentication=ManagedIdentity</code>, and keep nati
 <code>agent-lz-conversation</code> and <code>agent-lz-research-review</code> aligned with the UI client.</p>
 <p>The selected mode needs its model, configuration and tool dependencies.
 Hosted native execution does not require application Cosmos; DTS owns durable
-worker execution. UI product metadata and an enabled direct NL2SQL tool can
+worker execution. UI product metadata and a selected MCP server can
 have their own storage requirements. Do not require every optional source
 credential or secret to start an unrelated capability.</p>
-<p>For enabled direct SQL or Fabric SQL connectors, install Microsoft ODBC Driver
-18 for SQL Server and the native ODBC dependencies for your OS.
-Installing Python requirements alone does not install a database driver.
-Use a read-only database principal, reviewed datasource metadata and the
-bound schema/example indexes described in <a href="../nl2sql/">NL2SQL</a>.
-This is optional tool setup, not a global SQL strategy.</p>
+<p>The orchestrator consumes the authenticated MCP endpoint; it does not need an
+ODBC driver or SQL/catalog grants for NL2SQL. The separate MCP server owns
+those dependencies. Use <a href="../agent-app-mcp/">Agent App MCP Server</a> for catalog
+and identity responsibilities, not direct SQL configuration in this process.</p>
+<p>For local MCP development, follow the MCP repository's contributor setup and
+frozen dependency lock rather than the <code>requirements.txt</code> setup above.
+Its SQL execution environment requires Microsoft ODBC Driver 18 for SQL Server
+and native ODBC dependencies; installing Python packages alone does not
+install the driver. Use approved development metadata and read-only SQL access.
+Local startup neither provisions the catalog nor authorizes Azure callers.
+The administrative importer is separate from the MCP query service.
+Run <a href="../nl2sql/#import-the-approved-file">catalog import</a> on an authorized
+managed-identity runner, not an unconfigured workstation.</p>
 <p>Use host-specific native inputs and clients described in the
 <a href="../application-api/#native-execution-contracts">API reference</a>.
 Test installed SDK call shapes and owner/pending-request denial with synthetic

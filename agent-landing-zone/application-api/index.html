@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5782,8 +5810,13 @@ must be read from the stream, even if the HTTP status was <code>200</code>.</p>
 or request SDK. Select <code>APPLICATION_MODE</code> and <code>ORCHESTRATION_HOST</code> through
 deployment composition. UI session creation selects an already enabled
 application; it does not change the deployment's host or mode.
-Tools, including optional direct NL2SQL, are registered capabilities rather
-than strategy keys.</p>
+Tools, including optional MCP NL2SQL, are registered capabilities rather
+than strategy keys.
+The Agent/Workflow calls <code>nl2sql.list_sources()</code> and
+<code>nl2sql.query(source_id, question)</code> on the separate Agent App MCP Server;
+these are not browser-to-SQL APIs. See <a href="../nl2sql/#results-and-execution-limits">NL2SQL results</a>
+for the versioned typed result and <a href="../application-settings/#agent-app-mcp-contract">MCP settings</a>
+for authenticated transport.</p>
 <p>Retired ask/feedback streams and strategy-specific conversation
 envelopes are not the native protocol. UI feedback belongs to the product
 metadata service, not a feedback-shaped model invocation.</p>

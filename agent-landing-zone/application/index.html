@@ -1303,6 +1303,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#choose-only-the-capabilities-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose only the capabilities you need
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Choose only the capabilities you need">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-cosmos-means-in-this-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Cosmos means in this application
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#application-mode-and-host" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1584,6 +1612,34 @@
     
   
     Tools & MCP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
   
 
     
@@ -5476,6 +5532,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#choose-only-the-capabilities-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose only the capabilities you need
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Choose only the capabilities you need">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-cosmos-means-in-this-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Cosmos means in this application
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#application-mode-and-host" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5626,7 +5710,7 @@
 <h1 id="agent-application">Agent Application</h1>
 <p>Agent Application is the reference application included with Agent Landing Zone.
 It brings together a Chainlit chat/process interface, native Microsoft Agent
-Framework (MAF) execution and optional document processing. Use an Agent for
+Framework (MAF) execution, optional document processing and optional MCP tools. Use an Agent for
 conversation or a Workflow for a published process with human input.</p>
 <p>Start with <a href="../deploy-full-stack/">Deploy full stack</a> to deploy the application.
 The guides below explain how to configure, operate and extend it.</p>
@@ -5653,6 +5737,10 @@ The guides below explain how to configure, operate and extend it.</p>
 <td>Agent App Ingestion</td>
 <td>Provides optional application-managed document processing and indexing.</td>
 </tr>
+<tr>
+<td><a href="../agent-app-mcp/">Agent App MCP Server</a></td>
+<td>Runs in a separate Container App and queries approved Azure SQL/SQL Server data through two NL2SQL tools.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="default-deployment">Default deployment</h2>
@@ -5662,7 +5750,8 @@ orchestrator hosted in Microsoft Foundry. The public native selectors are
 The UI is included automatically. Native Hosted execution does
 not require application-owned Cosmos DB; Foundry backing resources and
 optional UI product storage are separate concerns.
-Search, Foundry IQ, MCP, NL2SQL and multimodal tool flags default to off.
+Search, Foundry IQ and multimodal tool flags default to off.
+Agent App MCP Server is also omitted by default (<code>DEPLOY_AGENT_APP_MCP=false</code>).
 Preparing a source does not register a tool. History, feedback and private
 attachments also default to off; conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.</p>
@@ -5672,6 +5761,70 @@ only when a selected custom processing path needs it; it is disabled by
 default. A private conversation attachment is not a shared source-ingestion
 request. Hosting owns native execution state, not the UI's history discovery,
 feedback or per-user document authorization.</p>
+<h2 id="choose-only-the-capabilities-you-need">Choose only the capabilities you need</h2>
+<table>
+<thead>
+<tr>
+<th>Your requirement</th>
+<th>What to select</th>
+<th>What is deployed or required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web conversation</td>
+<td>Default <code>conversational</code> mode and <code>hosted</code> host</td>
+<td>UI in Container Apps and a Foundry-hosted orchestrator; no application Cosmos without a storage consumer</td>
+</tr>
+<tr>
+<td>A process with human review</td>
+<td><code>workflow</code> or <code>both</code></td>
+<td>Native workflow execution plus Cosmos UI ownership/action metadata</td>
+</tr>
+<tr>
+<td>Durable Container Apps execution</td>
+<td><code>ORCHESTRATION_HOST=container_apps</code></td>
+<td>Native worker/client and Durable Task Scheduler instead of Hosted execution</td>
+</tr>
+<tr>
+<td>Saved history, feedback or private chat files</td>
+<td>The corresponding application feature</td>
+<td>Application Cosmos for product metadata; private file bytes are not stored there</td>
+</tr>
+<tr>
+<td>Questions over approved SQL data</td>
+<td><code>DEPLOY_AGENT_APP_MCP=true</code></td>
+<td>Separate MCP Container App, application Cosmos catalog and model access; operator-approved SQL access and metadata import</td>
+</tr>
+<tr>
+<td>Custom shared-document processing</td>
+<td><code>DEPLOY_INGESTION_CONTAINER_APP=true</code></td>
+<td>Optional ingestion component and its selected source/index dependencies</td>
+</tr>
+</tbody>
+</table>
+<p>The platform handles resource dependencies and generated connections.
+You still choose the data sources, arrange authorization and provide approved
+content. MCP selection does not create SQL databases or database grants,
+enable Search, or require the ingestion application.</p>
+<h3 id="what-cosmos-means-in-this-application">What Cosmos means in this application</h3>
+<p>There are separate storage responsibilities:</p>
+<ul>
+<li><strong>Application Cosmos</strong> is conditional. It is required automatically for
+  workflow/<code>both</code> UI metadata, enabled history, feedback or private attachments,
+  Agent App MCP Server, and declared custom Cosmos capabilities.
+  A compatible existing application account is reused, with separate containers
+  and scoped grants for each consumer.</li>
+<li><strong>Foundry backing Cosmos</strong> belongs to Foundry's service infrastructure.
+  It is not the application catalog or UI database.</li>
+<li><strong>Native execution state</strong> belongs to the selected host: Foundry persistence
+  for Hosted, or Durable Task Scheduler for Container Apps. UI Cosmos is not a
+  workflow checkpoint store.</li>
+</ul>
+<p>You may also select generic application Cosmos with <code>DEPLOY_COSMOS_DB=true</code>
+without MCP or the reference orchestrator, including for a custom application.
+See <a href="../configuration/#application-cosmos-db">Application Cosmos DB</a>.
+The normal standalone and customer-owned application paths remain available.</p>
 <h2 id="application-mode-and-host">Application mode and host</h2>
 <p><code>APPLICATION_MODE</code> selects <code>conversational</code>, <code>workflow</code> or <code>both</code>.
 <code>ORCHESTRATION_HOST</code> selects <code>hosted</code> or <code>container_apps</code>.
@@ -5687,7 +5840,7 @@ workflow are published as separate applications with separate endpoints.
 See <a href="../hosted-agents/">Agent hosting</a> and
 <a href="../workflows/">Workflows &amp; human input</a>.</p>
 <p>The application repositories contain the code. These guides are the shared
-documentation for all three components. The
+documentation for the application components. The
 <a href="https://github.com/Azure/agent-landing-zone/blob/main/manifest.json">release manifest</a>
 records their compatible versions.</p>
 <p><span id="capability-readiness"></span></p>
@@ -5702,7 +5855,10 @@ of native execution state. Private attachments have an explicit feature gate,
 an owner-bound inline native input path and their own retention requirements.
 They are conversational only; transport support is not proof of model
 PDF/image understanding.
-Additional channels and external tools have separate integration requirements.</p>
+Additional channels and external tools have separate integration requirements.
+For SQL, complete <a href="../agent-app-mcp/#onboard-sql-before-inviting-users">MCP source onboarding</a>:
+authorize a read-only database principal, import approved metadata and verify
+known results and denials. A deployed MCP container is not a populated catalog.</p>
 <p><span id="choose-a-task"></span>
 <span id="application-components"></span></p>
 <h2 id="find-your-guide">Find your guide</h2>
@@ -5713,7 +5869,9 @@ Additional channels and external tools have separate integration requirements.</
 <a href="../agent-strategies/">agents and prompts</a>, operate
 <a href="../workflows/">workflows and human input</a>, or connect
 <a href="../agent-tools/">tools and MCP servers</a>. A tool lets an agent perform an
-operation. Retrieval supplies information for its answer.</p>
+operation. Retrieval supplies information for its answer.
+For the optional SQL component, start with <a href="../agent-app-mcp/">Agent App MCP Server</a>
+to understand deployment, automatic configuration and operator responsibilities.</p>
 <p><span id="frontend"></span></p>
 <h3 id="chat-channels">Chat &amp; channels</h3>
 <p>Configure <a href="../application-auth/">sign-in and access</a>,

@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5552,11 +5580,14 @@ falling back to another backend or silently changing source authorization.</p>
 knowledge base and combines its configured sources. The selector applies to
 the application's registered knowledge-search capability, usable by an Agent
 or Workflow. It does not reroute the
-<a href="../nl2sql/#direct-nl2sql-tool">NL2SQL tool</a> or replace callable
+<a href="../nl2sql/">MCP NL2SQL tools</a> or replace callable
 <a href="../agent-tools/">MCP tools</a>.
 <a href="../application-settings/">Application settings</a> describes how to change runtime
 values. <a href="../agent-strategies/">Agents &amp; prompts</a> describes application selection
-independently of the host and its tools.</p>
+independently of the host and its tools.
+Agent App MCP Server stores approved SQL metadata and vectors in application
+Cosmos. It does not require Search; enabling it does not enable Foundry IQ
+or alter this knowledge base's sources.</p>
 <p><span id="before-you-start"></span>
 <span id="1-choose-who-manages-the-source"></span></p>
 <h2 id="managed-and-remote-sources">Managed and remote sources</h2>
@@ -5703,8 +5734,9 @@ See also
 <a href="../configuration/#search-shared-private-links">Private native Blob ingestion</a>.</p>
 <h2 id="generic-mcp-knowledge-sources">Generic MCP knowledge sources</h2>
 <p>Use this default-off preview to retrieve grounding from registered
-<code>mcpServer</code> knowledge sources. It is not the callable <code>mcp</code> agent strategy and
-does not create sources. Register each source on the selected knowledge base
+<code>mcpServer</code> knowledge sources. This is distinct from callable MCP tools and
+from deploying Agent App MCP Server. It does not create sources.
+Register each source on the selected knowledge base
 first, with the same name, server and tools as the runtime metadata.</p>
 <table>
 <thead>

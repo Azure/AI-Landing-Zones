@@ -1401,6 +1401,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-app-mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent App MCP Server
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -5446,10 +5474,11 @@ binds business entities and relationships to data.</p>
 authorization requirements.
 Deployment procedures are in the
 <a href="../deploy-full-stack/">full-stack deployment guide</a>.</p>
-<p>For direct database connections, use the separate
-<a href="../nl2sql/#direct-nl2sql-tool">NL2SQL tool</a>. A Fabric SQL endpoint configured
-for that connector is not a <code>fabricDataAgent</code> source, and enabling the tool
-does not publish a Fabric data agent.</p>
+<p>For approved Azure SQL or SQL Server connections, use the separate
+<a href="../nl2sql/">MCP NL2SQL tools</a>. Agent App MCP Server does not support Fabric
+SQL endpoints, semantic models or DAX. Its application Cosmos catalog is
+independent of Fabric's schema context; enabling MCP does not publish a
+Fabric data agent.</p>
 <p><span id="choose-the-connection"></span></p>
 <h2 id="data-agents-and-ontologies-are-different-sources">Data agents and ontologies are different sources</h2>
 <table>
