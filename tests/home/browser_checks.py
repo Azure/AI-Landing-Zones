@@ -229,6 +229,7 @@ def check_application_mcp_documentation(page, base):
     page.goto(base + "agent-landing-zone/application/")
     content = page.locator(".md-content__inner")
     expect(content.get_by_role("heading", name="What Cosmos means in this application")).to_have_count(1)
+    expect(content.get_by_role("heading", name="First time using Agent Application?", exact=True)).to_have_count(1)
     expect(content.locator('a[href*="agent-app-mcp/"]')).not_to_have_count(0)
     diagram = page.request.get(base + "media/agent-application-overview.svg")
     assert diagram.ok
@@ -244,8 +245,13 @@ def check_application_mcp_documentation(page, base):
     ):
         expect(content.get_by_role("heading", name=heading, exact=True)).to_have_count(1)
     blocks = content.locator("pre").all_text_contents()
-    assert any("azd env set DEPLOY_AGENT_APP_MCP true" in block and "azd up" in block for block in blocks)
-    assert any(block.index("azd provision") < block.index("azd deploy") for block in blocks if "azd provision" in block)
+    assert any("git clone --branch develop" in block for block in blocks)
+    assert any("azd env set DEPLOY_AGENT_APP_MCP true" in block and "azd provision" in block for block in blocks)
+    assert any(
+        block.index("azd provision") < block.index("azd deploy")
+        for block in blocks if "azd provision" in block and "azd deploy" in block
+    )
+    expect(content.get_by_role("heading", name="Start here: from deployment to the first question", exact=True)).to_have_count(1)
     assert "MCP.Invoke" in content.inner_text()
     assert "rather than automatically destroyed" in content.inner_text()
     assert "restarts every active MCP revision" in content.inner_text()
@@ -280,9 +286,13 @@ def check_application_mcp_documentation(page, base):
     )
     assert any(
         "$env:PYTHONPATH = 'src'" in block
-        and "samples\\approved-synthetic.json" in block for block in imports
+        and "--file C:\\approved\\approved-products.json" in block
+        and "$env:APP_CONFIG_ENDPOINT" in block
+        for block in imports
     )
-    assert any("samples/approved-synthetic.json" in block for block in imports)
+    assert any("--file /path/to/approved-products.json" in block and "APP_CONFIG_ENDPOINT" in block for block in imports)
+    expect(content.get_by_role("heading", name="Example approved source file", exact=True)).to_have_count(1)
+    expect(content.get_by_role("heading", name="Ask the first question", exact=True)).to_have_count(1)
     assert "Azure CLI login is not an importer credential fallback" in text
 
     page.goto(base + "agent-landing-zone/configuration/")
@@ -307,7 +317,7 @@ def check_prose_wrapping(page, base, screenshots):
                 content.locator(":scope > p").filter(has_text="The planning and Agent Application"),
                 *content.locator(":scope > ul > li").all(),
             ]
-            assert len(targets) == 7
+            assert len(targets) == 8
             for target in targets:
                 metrics = target.evaluate(r"""element => {
                     const words = [];
