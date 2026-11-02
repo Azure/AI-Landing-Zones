@@ -10,8 +10,8 @@
   min-height: 44px;
 }
 
-.alz-diagram .alz-diagram__toolbar + p {
-  margin-top: 0;
+.md-typeset .alz-diagram > p:has(img) {
+  margin-block: 0;
 }
 
 .alz-diagram__expand,
@@ -56,6 +56,11 @@
   top: calc(100% + 4px);
   white-space: nowrap;
   z-index: 2;
+}
+
+.alz-diagram__expand::after {
+  bottom: calc(100% + 4px);
+  top: auto;
 }
 
 .alz-diagram__expand:is(:hover, :focus-visible),

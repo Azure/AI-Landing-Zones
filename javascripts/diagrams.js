@@ -155,7 +155,7 @@
     figure.classList.add("alz-diagram");
     const toolbar = document.createElement("div");
     toolbar.className = "alz-diagram__toolbar";
-    figure.prepend(toolbar);
+    figure.append(toolbar);
     return { figure, toolbar };
   }
 
