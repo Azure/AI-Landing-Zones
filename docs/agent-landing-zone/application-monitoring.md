@@ -5,6 +5,82 @@ failures and inspect ingestion results. Audit events add structured evidence
 about application operations. They do not replace user authorization, data
 retention policies or service backups.
 
+## Native tracing
+
+Microsoft Foundry and Microsoft Agent Framework provide native
+OpenTelemetry-based tracing. The reference orchestrator uses that integration
+to record agent execution, model calls and tool operations.
+
+**Foundry Hosted:** the official hosting SDK configures OpenTelemetry and export
+using the Application Insights connection string.
+View execution in the Foundry project under **Agents > Traces**, with
+Application Insights for deeper investigation.
+
+**Container Apps with Durable Task Scheduler:** the native worker configures
+Azure Monitor export, and Agent Framework instrumentation is enabled by default.
+Investigate the worker and its dependencies in Application Insights.
+This host is separate from Foundry Hosted publications.
+
+### Set up trace export
+
+The standard full-stack deployment provisions or reuses Application Insights,
+connects it to Foundry and publishes `APPLICATIONINSIGHTS_CONNECTION_STRING`
+in App Configuration under `agent-lz`. The orchestrator reads it at startup.
+There is no separate application feature flag to enable basic tracing.
+
+When reusing infrastructure, verify that the Foundry project is connected to
+the intended Application Insights resource and that the connection string
+points to that same resource. Use the declared
+[deployment inputs](configuration.md), not a manually copied connection to a
+different environment.
+
+The investigating operator needs access to the Foundry project and its
+telemetry. The Foundry tracing quickstart lists Foundry User and
+Log Analytics Reader, with Privileged Monitoring Data Reader when protected
+tables require it.
+See the [official tracing prerequisites](https://learn.microsoft.com/azure/foundry/observability/quickstarts/quickstart-tracing-hosted-agent).
+
+Changing the export destination requires restarting or redeploying the
+affected process. It is not a per-message functional refresh.
+Generate a real request after deployment before looking for its trace.
+
+### View traces in Foundry
+
+1. Open the deployed Foundry project, then **Agents > Traces**.
+2. Select the Hosted agent and a time range that includes your request.
+3. Find the request by trace ID, response ID or time.
+4. Open the trace to inspect the hosting operation and its nested Agent
+   Framework spans, including the model and tools that actually ran.
+
+Foundry emits service-side invocation telemetry automatically.
+The application instrumentation supplies the agent/model/tool detail.
+A service invocation trace alone does not establish that every application
+span was exported.
+
+If traces are missing, check the selected project, connected Application
+Insights resource, startup configuration, ingestion delay, operator access
+and exporter errors. A custom process override
+`ENABLE_INSTRUMENTATION=false` disables Agent Framework instrumentation.
+For Container Apps, start in Application Insights rather than expecting a
+Hosted-agent entry in Foundry.
+
+### Traces, logs and content are separate
+
+Basic traces do not require prompt or response-content capture.
+Keep that capture off unless its privacy and retention requirements have been
+approved. Timing, outcome and correlation remain useful without transcripts.
+
+In the Container Apps worker, `AZURE_MONITOR_DISABLE_LOGGING=true` suppresses
+general application-log export, not tracing.
+`AUDIT_EVENTS_ENABLED` controls the orchestrator's supported audit hooks,
+not the creation of basic agent traces. The Hosted SDK owns its own telemetry
+setup, so do not apply the worker's logging switch as a universal control.
+
+See [telemetry settings](application-settings.md#telemetry-settings),
+[content capture](#content-capture-and-privacy) and
+[Agent Framework observability](https://learn.microsoft.com/agent-framework/agents/observability)
+for the separate controls.
+
 ## Check an application request
 
 1. Record the deployed application revision and the time of the request.
@@ -93,8 +169,9 @@ Keep prompt, completion and sensitive audit-content capture off unless its
 purpose, access controls and retention have been approved.
 For hosted orchestration, the deployment input
 `HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT` supplies
-`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`. A change requires a
-new hosted version.
+`OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` and defaults to `false`.
+A change requires a new hosted version. Leave it off when enabling or
+investigating basic traces.
 
 An audit-content allowlist does not establish that every native path has
 capture wired, nor guarantee that user-authored content is safe to export.

@@ -88,6 +88,7 @@ An unavailable required store is a readiness failure, not an offline mode.
 | Enable owner-scoped feedback | [User feedback](user-feedback.md) |
 | Connect a knowledge source | [Foundry IQ](foundry-iq.md), [SharePoint](sharepoint.md) |
 | Schedule custom ingestion | [Jobs & schedules](ingestion-jobs.md) |
+| Configure trace export and inspect agent execution | [Native tracing](application-monitoring.md#native-tracing) |
 | Configure administration and audit | [Administration](operations.md), [Monitoring & audit](application-monitoring.md) |
 
 ## Native application contract
@@ -119,6 +120,7 @@ startup.
 Workflow mode or `both` selects UI metadata even when both history and feedback
 flags are `false`. Enabled history, feedback or attachments also selects that
 dependency.
+
 The UI reads `DATABASE_ACCOUNT_NAME`, `DATABASE_NAME` and
 `NATIVE_UI_METADATA_CONTAINER`; only the frontend receives the metadata grant.
 Existing foundation outputs `COSMOS_DB_ENDPOINT` and
@@ -126,6 +128,7 @@ Existing foundation outputs `COSMOS_DB_ENDPOINT` and
 native Cosmos endpoint key. `/principal_id` is the authenticated `tid:oid`.
 Metadata contains owner mappings, references, feedback and descriptors, not
 file bytes, transcripts, tokens or native checkpoints.
+
 Conversational mode with all product flags off uses bounded volatile owner
 maps that are lost on UI restart. Native persistence does not restore them.
 
@@ -137,9 +140,10 @@ Transport is implemented; model PDF/image understanding remains unverified.
 See [Conversations & files](conversations.md#private-attachments).
 
 Native Hosted and DTS execution do not require application Cosmos.
-Selecting its `nl2sql` toolset requires application Cosmos for
+Selecting `nl2sql` on Agent App MCP Server requires application Cosmos for
 separate source and vector-metadata containers. An empty Agent App MCP server
 does not require that catalog or NL2SQL model/secret access.
+
 The MCP identity receives declared catalog/model access and SQL-owner-approved
 read access only for NL2SQL; the orchestrator receives MCP invocation access only.
 Generic application Cosmos and custom Cosmos capabilities remain independent
@@ -150,9 +154,36 @@ but each publication must receive an explicit single-mode process input.
 Conversation uses `conversational`; the process publication uses `workflow`.
 Do not let the shared composition value start a single Hosted process in
 `both` mode. See [Agent hosting](hosted-agents.md).
+
 When private attachments are enabled in Hosted `both`, keep the shared/UI and
 conversational publication flag enabled. Only the workflow publication
 receives `ENABLE_PRIVATE_ATTACHMENTS=false`; it does not support attachments.
+
+## Telemetry settings
+
+Native Agent Framework instrumentation is enabled by default.
+The selected host configures its exporter at startup. Basic tracing does not
+require an audit flag or message-content capture.
+Follow [Native tracing](application-monitoring.md#native-tracing) for setup
+and the Foundry viewing procedure.
+
+| Setting | Default or requirement | Scope |
+| --- | --- | --- |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Generated from the selected Application Insights resource; required for export there | Provisioning-managed App Configuration key under `agent-lz`; read at process startup |
+| `LOG_LEVEL` | `INFO` | Application logging level; not a tracing enable switch |
+| `AZURE_MONITOR_DISABLE_LOGGING` | `true` | Container Apps worker's general application-log export; tracing remains enabled |
+| `AUDIT_EVENTS_ENABLED` | `false` for the orchestrator | Supported orchestrator audit hooks; ingestion has a separate emission contract |
+| `HOSTED_AGENT_CAPTURE_MESSAGE_CONTENT` | `false` | azd deployment input mapped to `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` on Hosted publications; not an App Configuration feature key |
+
+Export-destination and process telemetry changes require a restart or
+redeployment. Changing Hosted content capture requires a new Hosted version.
+Do not treat runtime functional refresh as a telemetry reconfiguration path.
+
+General logs, audit events and captured message content have separate
+privacy and retention implications. Enabling one does not prove complete
+coverage of another.
+See [Monitoring & audit](application-monitoring.md) for the actual host and
+component boundaries.
 
 ## Agent App MCP contract
 
@@ -171,6 +202,7 @@ NL2SQL client/dependency initialization, not unauthenticated access.
 The only supported nonempty value is `["nl2sql"]`. Unknown names, duplicates
 and invalid values fail closed. In the reference application, a nonempty
 selection requires `DEPLOY_AGENT_APP_MCP=true`.
+
 Custom applications may explicitly supply `MCP_TOOLSETS` with their own
 compute, dependency and permission declarations. This is application/runtime configuration under
 `agent-lz`, not a new tool-specific Bicep or Terraform parameter.
@@ -178,10 +210,12 @@ compute, dependency and permission declarations. This is application/runtime con
 The platform publishes the following values under `agent-lz` from the selected
 resources, models and identities. Do not copy endpoints between components,
 manually edit generated client authorization, or supply Cosmos keys.
+
 After MCP and the actual native consumers deploy, the lifecycle grants
 `MCP.Invoke`, publishes the allowlist and `MCP_ENABLED`, and verifies the
 effective authenticated connection. An accepted key write alone does not prove
 that the MCP process loaded new authorization settings.
+
 Server authentication and toolset settings are **startup-only**, not dynamically refreshed.
 The platform automatically restarts every active MCP revision after allowlist
 publication and before consumer activation. Use the normal `azd deploy`
@@ -212,6 +246,7 @@ Declare password-secret names through the reviewed deployment inputs before
 provisioning their scoped grants. This is a grant declaration, not a tool
 enable switch or a replacement for a source's `password_secret_name`.
 Adding a secret consumer later requires matching provision/deploy steps.
+
 With `MCP_TOOLSETS=[]`, the server does not validate NL2SQL settings or open
 its Cosmos, model, SQL or Key Vault clients. Deselecting NL2SQL stops
 registration/initialization after restart/redeployment; retained catalog data
@@ -228,13 +263,16 @@ The server validates signature, the tenant's v2 issuer
 (`https://login.microsoftonline.com/<tenant>/v2.0`), audience and token validity,
 plus allowed `azp` and the `MCP.Invoke` application role.
 There is no API-key fallback or raw user-context authorization.
+
 The deployment helper configures the API registration/service principal,
 `MCP.Invoke` role and client assignments automatically. It requires the
 deployer's appropriate Entra directory permissions; Azure Contributor or ARM
 RBAC administration alone is insufficient. There is no broad ARM-token
 authentication fallback.
+
 Registration reuse uses the exact application object ID recorded in App
 Configuration, not an application name or subscription RBAC inference.
+
 SQL's 30-second execution timeout, 1,000-row limit and 256-KiB result ceiling
 are separate from the complete query deadline.
 See [Agent App MCP Server](agent-app-mcp.md) for the lifecycle and

@@ -30,7 +30,7 @@ after that baseline works.
 | 3. Complete sign-in | Follow [login setup in order](application-auth.md#configure-login-in-order), including the post-provision callback and user grants | Your pilot user can sign in and invoke the agent, an unapproved user is denied |
 | 4. Start a conversation | Open the frontend HTTPS URL from deployment outputs, sign in and send a simple greeting | The application receives a real model response |
 | 5. Add a capability | Select a route in the table below and complete its source/identity setup | The capability works with permitted data and rejects denied access |
-| 6. Operate | Set retention, review [monitoring](application-monitoring.md) and follow [updates and recovery](deployment-operations.md) | Owners know how to diagnose failures and apply controlled changes |
+| 6. Operate | Set retention, inspect [native traces](application-monitoring.md#native-tracing) and follow [updates and recovery](deployment-operations.md) | Owners can find a real request trace, diagnose failures and apply controlled changes |
 
 Provisioning and login setup are interleaved: register the UI application and
 arrange consent **before provision**, then configure its actual callback,
@@ -75,11 +75,14 @@ orchestrator hosted in Microsoft Foundry. The public native selectors are
 The UI is included automatically. Native Hosted execution does
 not require application-owned Cosmos DB; Foundry backing resources and
 optional UI product storage are separate concerns.
+
 Search, Foundry IQ and multimodal tool flags default to off.
 Agent App MCP Server is also omitted by default (`DEPLOY_AGENT_APP_MCP=false`).
 When deployed, its `MCP_TOOLSETS` still defaults to `[]`: no business tools
 or NL2SQL dependencies are initialized until explicitly selected.
-Preparing a source does not register a tool. History, feedback and private
+Preparing a source does not register a tool.
+
+History, feedback and private
 attachments also default to off; conversational UI owner maps are then bounded
 and volatile, not a restart-safe saved-session store.
 
@@ -164,6 +167,7 @@ of native execution state. Private attachments have an explicit feature gate,
 an owner-bound inline native input path and their own retention requirements.
 They are conversational only; transport support is not proof of model
 PDF/image understanding.
+
 Additional channels and external tools have separate integration requirements.
 For SQL, complete [MCP source onboarding](agent-app-mcp.md#onboard-sql-before-inviting-users):
 authorize a read-only database principal, import approved metadata and verify
@@ -228,6 +232,11 @@ Change [application settings](application-settings.md), use the
 [administrative panels](operations.md), and review
 [monitoring and audit events](application-monitoring.md).
 For failures, use [Troubleshooting](troubleshooting.md).
+
+Native Foundry and Agent Framework tracing is already integrated.
+Follow [Set up trace export](application-monitoring.md#set-up-trace-export)
+to verify Application Insights and find a request in Foundry.
+Message-content capture is a separate, default-off privacy choice.
 
 ### AgentOps
 
