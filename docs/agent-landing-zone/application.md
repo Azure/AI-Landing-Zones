@@ -3,7 +3,7 @@
 # Agent Application
 
 Agent Application is the reference application included with Agent Landing Zone.
-It brings together a Chainlit chat/process interface, native Microsoft Agent
+It brings together a chat and workflow interface, native Microsoft Agent
 Framework (MAF) execution, optional document processing and optional MCP tools. Use an Agent for
 conversation or a Workflow for a published process with human input.
 
