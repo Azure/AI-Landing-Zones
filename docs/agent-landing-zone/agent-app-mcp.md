@@ -9,6 +9,23 @@ The server uses the official Python MCP SDK, not Microsoft Agent Framework.
 It performs a bounded operation for each request; it does not host conversations,
 workflows, a scheduler or a UI.
 
+## Start here: from deployment to the first question
+
+Follow these steps in order. **Deploying the component does not connect a SQL
+source or populate its catalog.**
+
+| Step | What you do | Ready when |
+| --- | --- | --- |
+| 1. Deploy | Select `DEPLOY_AGENT_APP_MCP=true` and run the [platform lifecycle](#select-and-deploy) | The MCP Container App and its generated connection are available |
+| 2. Authorize SQL | Have the database owner approve the objects and grant the MCP identity read access | The server can reach and read only the approved database objects |
+| 3. Describe the data | Prepare an [approved source file](nl2sql.md#example-approved-source-file) with schemas and useful question/query examples | Every approved table or view has matching schema context |
+| 4. Import metadata | Run the [administrative importer](nl2sql.md#import-the-approved-file) using a separately authorized managed identity | It reports `Activated metadata_version:` |
+| 5. Ask and verify | Sign in to the application and ask a question about that source | A real MCP query returns a known result, and unauthorized access is denied |
+
+You do not add a connection string or an MCP token to the browser. The platform
+connects the consuming application to the server. You supply SQL authorization
+and approved metadata separately.
+
 ## What the component provides
 
 | MCP operation | Purpose |
@@ -164,6 +181,9 @@ See [Application Cosmos DB](configuration.md#application-cosmos-db).
 5. **Check a known result and denials.** Discover the two tools as an authorized
    application, list sources and query a known aggregate. Confirm unauthorized
    callers, sources and objects are denied before admitting users.
+
+For a complete source file and the matching first question, follow
+[the NL2SQL walkthrough](nl2sql.md#example-approved-source-file).
 
 No persistent ingestion Container App is required for this import. If you use
 an independent metadata pipeline, it must honor the same Cosmos schema, model
