@@ -4,9 +4,9 @@
 
 Agent Application can ground text answers in image descriptions extracted
 from documents. This differs from passing an image or audio directly to a
-model. The conversational interface and registered retrieval capability have
-their own input/output contracts; a host choice does not enable image or audio
-input.
+model. The conversational interface and retrieval tools accept different
+inputs and return different outputs. Selecting a host does not enable image
+or audio input.
 This page explains capability boundaries. The
 [full-stack deployment guide](deploy-full-stack.md) contains deployment procedures.
 
@@ -49,8 +49,9 @@ In `main.parameters.json`, the chat entry of `modelDeploymentList` uses
 and `name` identifies the deployment. A model change affects availability,
 quota and extraction compatibility.
 [Deployment settings](configuration.md) identifies the configuration inputs.
-The rendered source's model binding and extracted diagram content are the
-evidence of successful processing, not the model name alone.
+To verify processing, check the model binding in the rendered source.
+Then check the extracted diagram content. The model name alone is not
+evidence that processing succeeded.
 
 ### How to validate native image grounding
 
@@ -60,17 +61,17 @@ evidence of successful processing, not the model name alone.
    `parameters.modelDeploymentList.value`: the entry with
    `canonical_name: CHAT_DEPLOYMENT_NAME` declares `model.name`, `model.version`,
    deployment `name` and capacity. Choose an available model supported by the
-   extraction template; do not rename a deployment to imply another model.
+   extraction template. Renaming a deployment does not change its model.
 2. Run the [provision/deploy lifecycle](deploy-full-stack.md) with the reviewed
    model and source settings. The platform operator owns model quota and
-   service bindings; the source owner approves ingestion access.
+   service bindings. The source owner approves ingestion access.
 3. **After provision**, upload an approved PDF containing a legible diagram to
    the configured shared container. Wait for managed indexing, then inspect
    extracted text for a fact present only in that diagram.
 4. **At runtime**, ask for that fact through the enabled Foundry IQ capability.
    Verify the answer and citation, then repeat with a denied user.
-   Missing extracted text is an ingestion/model-binding issue; a missing
-   retrieved chunk can instead be a source-binding or authorization issue.
+   If extracted text is missing, check ingestion and the model binding.
+   If a chunk is not retrieved, also check the source binding and permissions.
 
 The ingestion identity's source/model access is independent of the user's
 retrieval permissions. Private connectivity follows
@@ -95,8 +96,9 @@ Foundry IQ Blob source's format contract and not the chat upload allowlist.
 
 Approved SQL schemas and examples follow the
 [MCP metadata import contract](nl2sql.md#approved-source-and-metadata-contract),
-not document OCR or a schema/example Search index. Their embeddings are stored
-in application Cosmos; no document ingestion service is required.
+not document OCR or a schema/example Search index.
+Their embeddings are stored in application Cosmos.
+This SQL metadata path does not require a document ingestion service.
 
 An unrecognized extension falls to the text chunker, which still rejects formats
 outside its supported set. That fallback does not mean every file type is
@@ -125,9 +127,11 @@ For example:
 ```
 
 Use the [declared-settings publisher](configuration.md#configuration-ownership-and-declarations),
-not an undeclared azd variable. **After deployment**, ingestion's configuration
-API can update allowlisted settings such as `CHUNKING_NUM_TOKENS` and
-`MULTIMODAL`; it does not accept every analysis/model setting.
+not an undeclared azd variable.
+
+**After deployment**, ingestion's configuration API can update supported
+settings such as `CHUNKING_NUM_TOKENS` and `MULTIMODAL`.
+The API does not accept every analysis or model setting.
 See [API reference](application-api.md#ingestion-administration).
 
 - `USE_DOCUMENT_INTELLIGENCE=false` selects Content Understanding using
@@ -148,9 +152,11 @@ See [API reference](application-api.md#ingestion-administration).
 
 Analysis-service dependencies are conditional. Selecting a text or spreadsheet
 chunker does not mean it performs OCR. Indexing still needs its configured
-embedding deployment and compatible vector dimensions. Transcript processing
-generates a summary, and sheet-based spreadsheet processing can summarize large
-content, so those paths can also call the chat model.
+embedding deployment and compatible vector dimensions.
+
+Transcript processing generates a summary and can call the chat model.
+Sheet-based spreadsheet processing can also call the chat model to summarize
+large content.
 
 ### Extract and retrieve figures
 
@@ -160,9 +166,10 @@ To try this on an isolated custom pipeline:
    approve the target index, image container, analysis service and model.
 2. Declare `MULTIMODAL=true` using the settings location above, together with
    the image storage/model settings below. The ingestion identity needs image
-   Blob write and model access; a querying user's access is separate.
+   Blob write and model access. The querying user needs separate retrieval
+   permissions.
 3. Publish settings and restart ingestion for consistent module-level clients.
-   Reprocess a small source document; changing a setting does not rebuild
+   Reprocess a small source document. Changing a setting does not rebuild
    already indexed chunks or captions.
 4. Inspect `relatedImages`, `imageCaptions` and caption vectors in the indexed
    chunks. Verify actual retrieval output before expanding the corpus.
@@ -181,9 +188,12 @@ excluded. Missing or failed caption generation can leave `No caption available.`
 rather than a useful description.
 
 The registered retrieval tool determines which indexed text and image fields
-reach an Agent or Workflow. Extracting figures in ingestion does not register
-an image tool, change the chat input contract or automatically pass original
-images to a model. Check actual tool output and model inputs.
+reach an Agent or Workflow.
+
+Figure extraction does not register a retrieval tool.
+It does not change which files the chat accepts.
+It also does not automatically send original images to the model.
+Check the tool output and the model inputs separately.
 
 Review the separate image cleanup configuration in
 [Jobs & schedules](ingestion-jobs.md#index-purge-and-cleanup-effects).
@@ -194,26 +204,40 @@ chunker setting.
 
 ## Private attachment boundary
 
-`ENABLE_PRIVATE_ATTACHMENTS` enables conversational attachments in
-`conversational` or `both`, not workflow input. Accepted files are UTF-8
-TXT/Markdown, PDF, PNG and JPEG, at most three files and 64 KiB per file.
-Both native envelopes must fit a 256 KiB serialized inline turn, including
-text, encoding/escaping and metadata overhead.
-Entries use `name`, `content_type` and `data_base64`, with strict Base64,
-format/signature and owner validation.
-
-Hosted uses official `input_file`/image input; DTS uses native
-`context_messages` and IDs. There is no Blob URL, SAS, ingestion dispatch
-or corporate publication. UI metadata retains descriptors only, not bytes,
-transcripts or tokens. Do not infer this allowlist from shared ingestion.
-Selecting `DEPLOY_INGESTION_CONTAINER_APP=true` only deploys that separate
-processing service. Transport tests do not verify model PDF/image understanding.
-See [Conversations & files](conversations.md#private-attachments).
-
+**Enable attachments.** Set `ENABLE_PRIVATE_ATTACHMENTS` for
+`conversational` or `both` mode. Workflow inputs do not support attachments.
 For setup, follow
 [enable private conversational input](ingestion.md#how-to-enable-private-conversational-input).
-The product flag is a lifecycle input selected before provision/deploy;
-custom ingestion's `MULTIMODAL` setting is not its substitute.
+Select this lifecycle input before provision/deploy.
+Custom ingestion's `MULTIMODAL` setting does not enable private attachments.
+
+**Check file limits.** Accepted files are UTF-8 TXT/Markdown, PDF, PNG and JPEG.
+Each turn accepts at most three files. Each file must be at most 64 KiB.
+For either host, the serialized inline turn must fit within 256 KiB.
+This total includes text, encoding/escaping and metadata overhead.
+Each file entry uses `name`, `content_type` and `data_base64`.
+The application validates Base64 encoding, file format/signature and ownership.
+
+**Understand the host path.** Foundry Hosted uses official `input_file`/image
+input. The Azure Container Apps integration uses the Azure Durable Task
+Scheduler (DTS) for durable execution. It supplies attachments through native
+`context_messages` and IDs.
+See [Agent hosting](hosted-agents.md) for the execution options.
+
+**Keep attachments separate from shared ingestion.** Private attachments do
+not use a Blob URL or SAS. They do not start an ingestion job or publish files
+to a shared collection. UI metadata stores file descriptors only.
+It does not store file bytes, transcripts or tokens.
+Shared ingestion supports a different set of file formats.
+Use the private attachment limits above for chat files.
+
+`DEPLOY_INGESTION_CONTAINER_APP=true` deploys the separate ingestion service.
+It does not enable private conversational attachments.
+
+**Verify model understanding separately.** Transport tests check attachment
+delivery. They do not prove that the model understands PDF or image content.
+Test the selected model with representative files.
+See [Conversations & files](conversations.md#private-attachments).
 
 <span id="diagnose-a-missing-image-answer"></span>
 
@@ -224,9 +248,10 @@ compatible model binding and the intended source reference. A processed shared
 PDF can still be absent from retrieval. Successful shared-source processing
 does not establish a private attachment feature.
 
-Supported functional parameters use scoped App Configuration refresh; existing
-workflows retain their functional snapshot. Structural source/model bindings,
-tool registration and host/publication changes need compatible deployment.
+Supported functional parameters use scoped App Configuration refresh.
+Existing workflows retain their functional snapshot.
+Changes to source/model bindings, tool registration or host/publication
+require a compatible deployment.
 UI and ingestion have their own reload rules. Follow
 [Application settings](application-settings.md) and the
 [full-stack deployment guide](deploy-full-stack.md).

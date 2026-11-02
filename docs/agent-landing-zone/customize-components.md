@@ -84,6 +84,9 @@ from an MCP knowledge source consulted by Foundry IQ.
   validation, timeout, cancellation, and result shaping at that boundary.
 - Follow [Tools & MCP](agent-tools.md) for supported integrations rather than
   embedding endpoint URLs or credentials in a prompt.
+- To extend the supplied subset with another Foundry tool, follow
+  [How to add another Foundry tool](agent-tools.md#how-to-add-another-foundry-tool)
+  for compatibility, registration, permissions and deployment.
 - Preserve the separation between workload authentication and delegated user
   authorization. Hosted Toolbox calls need validated platform call context.
   Native retrieval and protected downloads require their own user tokens.

@@ -7,6 +7,15 @@ The Agent Application explicitly builds its tool list: Foundry integrations
 for Search and Foundry IQ, an application-provided multimodal function,
 and tools discovered from a Model Context Protocol (MCP) server.
 
+Microsoft Foundry offers a broader
+[tool catalog and Toolbox integrations](https://learn.microsoft.com/azure/foundry/agents/concepts/toolbox-overview#supported-tools),
+including web search, code interpreter and OpenAPI tools.
+The integrations below are the reference application's starting point, not
+the limit of what you can build. You can add other Foundry tools, with
+application code, configuration or provisioning changes where required.
+Availability in Foundry does not establish compatibility with this
+application's model, SDK or selected host.
+
 Select the application experience and host through
 [Agents & prompts](agent-strategies.md) and
 [Agent hosting](hosted-agents.md), then register the required capabilities.
@@ -32,7 +41,9 @@ Each integration needs its own configuration and authorization.
 
 </div>
 
-## Tools available to the agent
+<span id="tools-available-to-the-agent"></span>
+
+## Tools integrated in the reference application
 
 | Integration | What the agent receives |
 | --- | --- |
@@ -102,6 +113,62 @@ The shared native implementation composes these capabilities in the
 orchestrator's `src/native/tools.py`. New tool implementations or changed
 registration schemas need reviewed code and a compatible image, not just
 another configuration key.
+
+## How to add another Foundry tool
+
+Use this procedure when the tool you need is not one of the supplied
+integrations. Make source changes in
+[Agent App Orchestrator](https://github.com/Azure/agent-app-orchestrator),
+not in the platform repository or the chat UI.
+
+1. **Choose the tool and integration path.** Start with Foundry's
+    [supported tools](https://learn.microsoft.com/azure/foundry/agents/concepts/toolbox-overview#supported-tools)
+    and follow the selected tool's setup guide. Check whether it supports
+    direct integration, Toolbox or MCP. A sample for a portal-managed prompt
+    agent is not automatically suitable for this application's code-defined
+    agents.
+2. **Check compatibility before editing.** Confirm the tool's requirements
+    for model, region, API/SDK version, network access and preview status.
+    Verify its invocation and authentication path for your selected
+    [host](hosted-agents.md): Foundry Hosted or Azure Container Apps.
+    If you support both, verify both separately. Do not copy Foundry-only
+    invocation context into the Container Apps integration.
+3. **Prepare the connection and permissions.** Create the resources and
+    Foundry project connection required by that tool, if applicable.
+    Grant the actual runtime caller only the necessary permissions.
+    Preserve delegated-user authorization where the source requires it.
+    A project connection alone does not register a callable tool.
+    Use managed identity where supported. Keep required secrets in Key Vault.
+4. **Wire the tool into the application.** Start at
+    `src/native/tools.py::compose_tools()`, which builds the reference
+    agent's tool list. Use the supported Foundry client integration or an
+    authenticated Toolbox/MCP client.
+    Keep custom implementation in focused tool/connector modules.
+    Reuse an existing MCP path if it meets the tool's contract.
+    Otherwise, add the required client and registration code.
+    Check that the application's pinned SDK supports the integration.
+    Not every catalog tool has a matching SDK helper.
+5. **Add the required configuration and infrastructure.** If the integration
+    introduces settings, add their validation and consumption in the component.
+    Declare nonsecret runtime settings through the platform's
+    [configuration procedure](application-settings.md#configure-an-agent-capability)
+    with label `agent-lz`. Add any required resource, connection, network
+    or scoped-grant provisioning before activation.
+    Platform infrastructure changes must cover both Bicep and Terraform.
+    An App Configuration entry alone does not implement a tool or load a secret.
+6. **Test, build and deploy the customized component.** Verify registration,
+    a real tool call, expected results, denied access and timeout/outage
+    behavior. For tools that write to another system, also verify approval,
+    idempotency and recovery. Follow
+    [component customization and adoption](customize-components.md#how-to-make-and-adopt-a-source-change)
+    to build a compatible image, pin the tested revision and deploy it
+    through the platform lifecycle. For a code change, update the Hosted
+    publication or Container Apps worker.
+    Changing a tool in the portal does not publish the customized application.
+
+Keep the previous tested component pins and settings for rollback. A tool
+available in Foundry is not a validated reference-application integration
+until its selected host, identity and source-access behavior are verified.
 
 <span id="choose-the-extension-point"></span>
 
