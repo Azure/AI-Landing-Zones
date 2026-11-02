@@ -2,20 +2,24 @@
 
 ## Objective
 
-Provision the Azure foundation with Terraform and deploy the Agent Application
-through the shared azd lifecycle. Defaults are `ORCHESTRATION_HOST=hosted`
-and `APPLICATION_MODE=conversational`: Foundry-hosted execution, an automatically
-included Container Apps UI. Foundry IQ sources and retrieval are configured
-when selected, not proved by the initial greeting.
+Deploy the Agent Application and the Azure resources it needs, using Terraform.
+The default setup provides a web chat in Azure Container Apps.
+Microsoft Foundry hosts the agent that answers messages.
 
-History, feedback and private attachments independently default to off.
-Workflow or `both` always selects UI metadata. Native Hosted execution does
-not require application Cosmos DB; enabled UI product metadata declares its
-own dependencies.
+Terraform creates the Azure foundation.
+The shared azd commands configure services and deploy the application:
 
-Terraform owns the foundation, not a second application deployment mechanism.
-`azd provision` creates and configures the foundation, `azd deploy` builds and
-publishes the selected application, and `azd up` runs both.
+| Command | Result |
+| --- | --- |
+| `azd provision` | Creates and configures Azure resources |
+| `azd deploy` | Builds and publishes the application |
+| `azd up` | Runs both stages; use only when application login is already configured |
+
+History, feedback and private attachments are off by default.
+To enable them or choose workflows, follow the
+[shared application and storage choices](deploy-full-stack.md#choose-optional-experiences-and-storage).
+Document retrieval also needs the [Foundry IQ setup](foundry-iq.md).
+The deployment greeting does not test these optional features.
 
 Only need Azure resources? Use
 [Deploy infra only with Terraform](deploy-terraform-infra-only.md).
@@ -162,17 +166,19 @@ azd deploy
 already prepared for the intended endpoint. Otherwise keep the separate
 stages so that the post-provision identity work happens before deploy.
 
-Provisioning does not build application images or create the running hosted
-agent version. Deploy fetches manifest-pinned sources, prepares the immutable
-hosted image when needed, binds it to the provisioned Foundry project and
-registry, then publishes the hosted version and selected Container Apps.
+Provisioning does not build images or publish a running agent.
+`azd deploy` fetches the sources selected in `manifest.json`.
+It builds the hosted image if needed and records its immutable digest.
+It binds the image to the provisioned Foundry project and registry.
+Then it publishes the hosted version and selected Container Apps.
 
-When MCP is selected, its image deploys before the consuming application is
-activated; the lifecycle obtains actual caller identities and checks
-their authorization, publishes the allowlist/connection settings and
-automatically restarts every active MCP revision to load startup-only auth.
-Authenticated discovery precedes consumer activation; no manual MCP restart
-is required during normal deploy.
+If MCP is selected, deployment publishes its image before activating the applications that call it.
+It resolves caller identities and checks their authorization.
+It publishes allowed-caller and connection settings.
+
+The lifecycle restarts every active MCP revision to load startup-only authentication.
+It checks authenticated discovery before activating consumers.
+A manual MCP restart is not required during normal deployment.
 
 Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.

@@ -113,6 +113,34 @@ def check_lifecycle_navigation(page, base, screenshots):
             active = active_item.locator(":scope > a.md-nav__link--active")
             expect(active).to_have_count(1)
             assert active.evaluate("element => new URL(element.href).pathname === location.pathname"), path
+            if path in ("agent-landing-zone/deploy-full-stack/",
+                        "agent-landing-zone/deploy-terraform-full-stack/"):
+                content = page.locator(".md-content__inner")
+                for paragraph in content.locator("p").all_text_contents():
+                    assert len(paragraph.split()) <= 70, (path, paragraph)
+                if path == "agent-landing-zone/deploy-full-stack/":
+                    sections = content.locator(":scope > h2, :scope > h3").evaluate_all(
+                        "headings => headings.map(heading => heading.id)"
+                    )
+                    journey = [
+                        "step-1-initialize-the-project", "step-2-select-the-deployment-target",
+                        "step-3-choose-the-application-and-network", "step-4-deploy",
+                        "validation", "updates-and-recovery", "rollback",
+                        "remove-an-environment",
+                    ]
+                    positions = [sections.index(section) for section in journey]
+                    assert positions == sorted(positions), sections
+                    expect(content.locator(
+                        "#choose-optional-experiences-and-storage"
+                    )).to_have_count(1)
+                    for anchor in (
+                        "full-stack-deploy", "deploy-the-full-stack", "deploy-full-stack",
+                        "step-1-get-the-code", "step-2-sign-in-and-create-an-environment",
+                        "step-3-choose-a-topology", "native-application-provisioning",
+                        "what-happens-during-the-deployment", "verify", "lifecycle",
+                        "clean-up", "next-steps", "related-runbooks",
+                    ):
+                        expect(content.locator("#" + anchor)).to_have_count(1)
             if width < 768:
                 page.locator('.md-header label[for="__drawer"]').click()
                 page.wait_for_function("""() =>
