@@ -5590,18 +5590,38 @@
 
 <h1 id="deploy-full-stack-with-terraform">Deploy full stack with Terraform</h1>
 <h2 id="objective">Objective</h2>
-<p>Provision the Azure foundation with Terraform and deploy the Agent Application
-through the shared azd lifecycle. Defaults are <code>ORCHESTRATION_HOST=hosted</code>
-and <code>APPLICATION_MODE=conversational</code>: Foundry-hosted execution, an automatically
-included Container Apps UI. Foundry IQ sources and retrieval are configured
-when selected, not proved by the initial greeting.</p>
-<p>History, feedback and private attachments independently default to off.
-Workflow or <code>both</code> always selects UI metadata. Native Hosted execution does
-not require application Cosmos DB; enabled UI product metadata declares its
-own dependencies.</p>
-<p>Terraform owns the foundation, not a second application deployment mechanism.
-<code>azd provision</code> creates and configures the foundation, <code>azd deploy</code> builds and
-publishes the selected application, and <code>azd up</code> runs both.</p>
+<p>Deploy the Agent Application and the Azure resources it needs, using Terraform.
+The default setup provides a web chat in Azure Container Apps.
+Microsoft Foundry hosts the agent that answers messages.</p>
+<p>Terraform creates the Azure foundation.
+The shared azd commands configure services and deploy the application:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>azd provision</code></td>
+<td>Creates and configures Azure resources</td>
+</tr>
+<tr>
+<td><code>azd deploy</code></td>
+<td>Builds and publishes the application</td>
+</tr>
+<tr>
+<td><code>azd up</code></td>
+<td>Runs both stages; use only when application login is already configured</td>
+</tr>
+</tbody>
+</table>
+<p>History, feedback and private attachments are off by default.
+To enable them or choose workflows, follow the
+<a href="../deploy-full-stack/#choose-optional-experiences-and-storage">shared application and storage choices</a>.
+Document retrieval also needs the <a href="../foundry-iq/">Foundry IQ setup</a>.
+The deployment greeting does not test these optional features.</p>
 <p>Only need Azure resources? Use
 <a href="../deploy-terraform-infra-only/">Deploy infra only with Terraform</a>.
 For the default Bicep provider, use
@@ -5709,16 +5729,17 @@ scope is not available yet, before user acceptance.</p>
 <p><code>azd up</code> is an alternative to Steps 3 and 4 only when login configuration is
 already prepared for the intended endpoint. Otherwise keep the separate
 stages so that the post-provision identity work happens before deploy.</p>
-<p>Provisioning does not build application images or create the running hosted
-agent version. Deploy fetches manifest-pinned sources, prepares the immutable
-hosted image when needed, binds it to the provisioned Foundry project and
-registry, then publishes the hosted version and selected Container Apps.</p>
-<p>When MCP is selected, its image deploys before the consuming application is
-activated; the lifecycle obtains actual caller identities and checks
-their authorization, publishes the allowlist/connection settings and
-automatically restarts every active MCP revision to load startup-only auth.
-Authenticated discovery precedes consumer activation; no manual MCP restart
-is required during normal deploy.</p>
+<p>Provisioning does not build images or publish a running agent.
+<code>azd deploy</code> fetches the sources selected in <code>manifest.json</code>.
+It builds the hosted image if needed and records its immutable digest.
+It binds the image to the provisioned Foundry project and registry.
+Then it publishes the hosted version and selected Container Apps.</p>
+<p>If MCP is selected, deployment publishes its image before activating the applications that call it.
+It resolves caller identities and checks their authorization.
+It publishes allowed-caller and connection settings.</p>
+<p>The lifecycle restarts every active MCP revision to load startup-only authentication.
+It checks authenticated discovery before activating consumers.
+A manual MCP restart is not required during normal deployment.</p>
 <p>Provision does not import SQL metadata or grant database permissions.
 There is no required standalone image-preparation command or second provision.</p>
 <p>azd imports all flat Terraform outputs for the shared hooks automatically. Service
