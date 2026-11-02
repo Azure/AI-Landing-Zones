@@ -10,6 +10,7 @@ import threading
 from playwright.sync_api import expect, sync_playwright
 
 from application_guides import check_application_guides
+from diagram_controls import check_diagram_controls
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -409,6 +410,16 @@ def run_application_docs(base, screenshots):
             browser.close()
 
 
+def run_diagram_docs(base, screenshots):
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(ignore_default_args=["--hide-scrollbars"])
+        try:
+            page = browser.new_page(viewport={"width": 1440, "height": 1000})
+            check_diagram_controls(page, base, screenshots)
+        finally:
+            browser.close()
+
+
 def check_prose_wrapping(page, base, screenshots):
     for width in (1880, 1440, 1280, 1024, 768, 390, 320):
         for text_scale in (1, 1.25):
@@ -692,6 +703,7 @@ def run(base, screenshots):
         check_application_mcp_documentation(page, base)
         check_agent_page_inventory(page, base)
         check_application_guides(page, base, screenshots)
+        check_diagram_controls(page, base, screenshots)
         check_prose_wrapping(page, base, screenshots)
         page.set_viewport_size({"width": 1440, "height": 500})
         for path in ("", "agent-landing-zone/application/"):
@@ -777,6 +789,8 @@ def main():
                         help="Check Agent documentation/navigation without the unrelated homepage suite")
     parser.add_argument("--application-guides-only", action="store_true",
                         help="Check application procedures and contextual diagrams only")
+    parser.add_argument("--diagram-controls-only", action="store_true",
+                        help="Check Agent diagram expansion, zoom, accessibility and page isolation")
     args = parser.parse_args()
     if args.screenshots:
         args.screenshots.mkdir(parents=True, exist_ok=True)
@@ -785,6 +799,7 @@ def main():
     worker.start()
     try:
         runner = (
+            run_diagram_docs if args.diagram_controls_only else
             run_application_docs if args.application_guides_only else
             run_agent_docs if args.agent_docs_only else run
         )

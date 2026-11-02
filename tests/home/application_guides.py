@@ -104,10 +104,10 @@ def check_application_guides(page, base, screenshots=None):
                 assert len((image.get_attribute("alt") or "").split()) >= 5, (
                     guide, "Missing diagram description"
                 )
-                links = content.locator(f"a[href*='{asset}']").filter(
-                    has_text=re.compile(r"open.*diagram", re.IGNORECASE)
+                links = content.locator(
+                    f"a.alz-diagram__expand[href*='{asset}'][aria-label='Expand diagram']"
                 )
-                assert links.count() >= 1, (guide, "Missing full-size diagram link")
+                assert links.count() == 1, (guide, "Missing or duplicate expand control")
                 assert any(link.is_visible() for link in links.all()), (guide, width)
             if screenshots and width == 1440 and guide in DIAGRAM_GUIDES:
                 content.screenshot(path=str(screenshots / f"{guide}-article.png"))
