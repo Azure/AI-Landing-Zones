@@ -6071,8 +6071,8 @@
 <h2 id="objective">Objective</h2>
 <p>Deploy the Azure infrastructure and the Agent Application with its default
 selection: <code>ORCHESTRATION_HOST=hosted</code> and <code>APPLICATION_MODE=conversational</code>.
-Foundry hosts execution, Agent App UI is included in Container Apps, and
-Foundry IQ prepares the selected native source. Native Hosted
+Foundry hosts execution and Agent App UI is included in Container Apps.
+Foundry IQ prepares a native source when that retrieval path is selected. Native Hosted
 execution does not require application Cosmos DB; selected UI product metadata
 and Foundry backing resources have their own storage requirements.
 History, feedback and private attachments default to off independently.
@@ -6084,8 +6084,9 @@ existing execution state is not automatically converted.</p>
 configuration and deployment are shared.</p>
 <p><span id="what-youll-have-after-this-runbook"></span></p>
 <h2 id="expected-outcome">Expected outcome</h2>
-<p>Your Agent Application deployed with a Container Apps UI, a Foundry-hosted
-orchestrator and native Foundry IQ ingestion and retrieval.</p>
+<p>Your Agent Application deployed with a Container Apps UI and a Foundry-hosted
+orchestrator. Document retrieval, SQL tools and product features are separate
+selections, not capabilities proved by the initial greeting.</p>
 <div class="runbook-diagram">
 <div class="runbook-diagram__summary">
 <p><strong>Default hosted application</strong></p>
@@ -6093,8 +6094,8 @@ orchestrator and native Foundry IQ ingestion and retrieval.</p>
 <li><strong>Application resource group:</strong> Agent App UI runs in Container Apps,
    alongside Container Registry, App Configuration and Key Vault.</li>
 <li><strong>Foundry resource group:</strong> the UI calls the hosted orchestrator over HTTPS.
-   The orchestrator uses the Foundry IQ knowledge base, with native ingestion
-   from the Blob source.</li>
+   When selected, the orchestrator uses the Foundry IQ knowledge base, with
+   native ingestion from the Blob source.</li>
 <li><strong>Network resource group:</strong> the illustrated private layout uses the workload
    VNet, private DNS and private endpoints. Bastion or jumpbox operator access
    is optional.</li>
@@ -6305,7 +6306,8 @@ The Container Apps alternative requires the official Durable Extension worker
 and DTS, not the Hosted HTTP entrypoint or a custom queue.
 Review <a href="../hosted-agents/">Agent hosting</a> before changing an existing layout.</p>
 <h4 id="ingestion-and-custom-applications">Ingestion and custom applications</h4>
-<p>Use native Foundry IQ ingestion for the configured Blob source. Keep its
+<p>When selecting shared-document retrieval, use native Foundry IQ ingestion for
+the configured Blob source. Keep its
 protected source policy; source ingestion does not prove user-authorized
 retrieval works. Review <a href="../ingestion/">Ingestion</a> if custom source processing is required.
 Private attachments have their own feature gate and file path; enabling
@@ -6318,6 +6320,9 @@ One environment binds to one application ID.</p>
 <h4 id="optional-sql-tools-through-mcp">Optional SQL tools through MCP</h4>
 <p>To query approved Azure SQL or SQL Server data, select
 <strong><a href="../agent-app-mcp/">Agent App MCP Server</a></strong> before provision:</p>
+<p>First select the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated MCP platform source</a>.
+The MCP component release alone does not add this integration to a checkout
+whose application definition does not include it.</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AGENT_APP_MCP<span class="w"> </span><span class="nb">true</span>
 </code></pre></div>
 <p>It defaults to <code>false</code> and adds a separate Container App with either
@@ -6418,11 +6423,23 @@ Deployment applies managed firewall rules automatically. If you use an external
 firewall, give the generated report to its owner to arrange the required access.</p>
 <p><span id="native-application-provisioning"></span></p>
 <h4 id="provision-and-deploy-the-selected-native-application">Provision and deploy the selected native application</h4>
-<p>For a new environment, run these commands in order:</p>
+<p>For a new environment, first provision:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>provision
-azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>Alternatively, run <code>azd up</code> to perform both stages in one command.
+<p><strong>Before deploying the application</strong>, complete steps 3-5 of
+<a href="../application-auth/#3-register-the-final-https-callback">login setup</a> using
+the frontend URL from provision outputs: register the exact callback, store
+the credentials as Key Vault references, publish UI settings and configure
+admission. Grant agent-scoped invocation access after the first agent
+publication when that scope does not exist yet, before pilot acceptance.
+The platform's Azure deployment does not complete tenant consent or UI login
+configuration for you.</p>
+<p>Then deploy from the same platform root and selected environment:</p>
+<div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
+</code></pre></div>
+<p>Use <code>azd up</code> to combine both stages only when the required callback,
+credentials and login configuration are already prepared for the intended
+endpoint. It does not replace the identity setup above.
 These commands work on Windows, Linux and macOS. The normal deployment runs
 its configuration checks automatically; no manual preparation command is needed.</p>
 <div class="admonition note">
@@ -6493,7 +6510,8 @@ prepare the selected environment's parameters and any additional resource groups
 first. This preparation can create resource groups. Neither preparation nor
 preview confirms that private application connections work.</p>
 </details>
-<p>For an initial deployment, continue to <a href="#validation">Validation</a> now.
+<p>For an initial deployment, continue to <a href="#validation">Validation</a> now, then
+follow <a href="../application/#first-time-using-agent-application">first use</a>.
 Use the maintenance procedures below only for a later operational change.</p>
 <h3 id="lifecycle-preparation">Lifecycle preparation</h3>
 <p>Run these tasks from the platform root with the intended environment selected,

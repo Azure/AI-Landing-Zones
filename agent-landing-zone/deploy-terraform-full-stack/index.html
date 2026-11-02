@@ -5591,7 +5591,8 @@
 <p>Provision the Azure foundation with Terraform and deploy the Agent Application
 through the shared azd lifecycle. Defaults are <code>ORCHESTRATION_HOST=hosted</code>
 and <code>APPLICATION_MODE=conversational</code>: Foundry-hosted execution, an automatically
-included Container Apps UI and the selected native Foundry IQ source.
+included Container Apps UI. Foundry IQ sources and retrieval are configured
+when selected, not proved by the initial greeting.
 History, feedback and private attachments independently default to off.
 Workflow or <code>both</code> always selects UI metadata. Native Hosted execution does
 not require application Cosmos DB; enabled UI product metadata declares its
@@ -5664,6 +5665,9 @@ distinct endpoints to the UI. The Container Apps alternative uses the
 official Durable Extension worker/client and provisioned DTS binding.
 Do not treat every canonical runtime key as an implied <code>azd env</code> input.</p>
 <p>For optional SQL tools, set <code>DEPLOY_AGENT_APP_MCP=true</code> before provision.
+Use the <a href="../agent-app-mcp/#use-the-coordinated-platform-source">coordinated MCP platform source</a>
+and its complete manifest/application definition, not an isolated component
+version change in another checkout.
 The default is <code>false</code>. Terraform provisions the separate MCP Container App,
 its identity and application Cosmos dependency with the same policies and
 scoped access contract as Bicep. The shared lifecycle generates the consuming
@@ -5681,13 +5685,19 @@ environment selected:</p>
 infrastructure-only guide with the same component selection and requirements.
 Adding MCP to an existing compatible installation requires a reviewed
 <code>azd provision</code> followed by <code>azd deploy</code>.</p>
+<p>Before Step 4, complete the <a href="../application-auth/#3-register-the-final-https-callback">post-provision login setup</a>:
+register the actual UI callback, store Key Vault credential references and
+publish sign-in/admission settings. The Azure foundation does not grant tenant
+consent. Complete agent-scoped invocation grants after publication if that
+scope is not available yet, before user acceptance.</p>
 <p><a id="deploy-the-application"></a></p>
 <h3 id="step-4-deploy-the-application">Step 4: Deploy the application</h3>
 <p>For an already configured foundation:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>deploy
 </code></pre></div>
-<p>For a new deployment, <code>azd up</code> is an alternative to Steps 3 and 4: it performs
-both stages after the same preparation.</p>
+<p><code>azd up</code> is an alternative to Steps 3 and 4 only when login configuration is
+already prepared for the intended endpoint. Otherwise keep the separate
+stages so that the post-provision identity work happens before deploy.</p>
 <p>Provisioning does not build application images or create the running hosted
 agent version. Deploy fetches manifest-pinned sources, prepares the immutable
 hosted image when needed, binds it to the provisioned Foundry project and

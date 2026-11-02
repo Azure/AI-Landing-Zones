@@ -1944,10 +1944,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#example-approved-source-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example approved source file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#import-the-approved-file" class="md-nav__link">
     <span class="md-ellipsis">
       
         Import the approved file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ask-the-first-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ask the first question
       
     </span>
   </a>
@@ -5552,10 +5574,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#example-approved-source-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example approved source file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#import-the-approved-file" class="md-nav__link">
     <span class="md-ellipsis">
       
         Import the approved file
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ask-the-first-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ask the first question
       
     </span>
   </a>
@@ -5800,6 +5844,51 @@ query execution. The default is <code>3072</code> dimensions. Cosmos vector-sear
 enablement does not generate embeddings by itself. Model/dimension or policy
 changes require explicit reindexing. Existing catalog name/dimension changes
 are rejected in place and require an explicit migration plan.</p>
+<h3 id="example-approved-source-file">Example approved source file</h3>
+<p>Suppose your existing database exposes an approved view named
+<code>dbo.ApprovedProducts</code> with <code>ProductId</code> and <code>ProductName</code> columns. The SQL owner
+must create or approve that view and grant the <strong>MCP server's identity</strong> read
+access before you use it. This example does not create the database or view.</p>
+<p>Save this UTF-8 JSON as <code>approved-products.json</code>. Replace the illustrative SQL
+hostname and database, and describe your actual approved view:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"products"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"products"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Approved products"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Product counts from the approved product view."</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"metadata_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"catalog-v1"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"sql_server"</span><span class="p">:</span><span class="w"> </span><span class="s2">"approved-sql.database.windows.net"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"sql_database"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ApprovedDatabase"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"allowed_objects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"dbo.ApprovedProducts"</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">"authentication"</span><span class="p">:</span><span class="w"> </span><span class="s2">"managed_identity"</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"records"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"products-schema"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"products"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"metadata_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"catalog-v1"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"schema"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"object_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dbo.ApprovedProducts"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dbo.ApprovedProducts(ProductId int, ProductName nvarchar(100)). Each row represents one product."</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"products-count"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"source_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"products"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"metadata_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"catalog-v1"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"kind"</span><span class="p">:</span><span class="w"> </span><span class="s2">"example"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"object_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dbo.ApprovedProducts"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Question: How many approved products are there? SQL: SELECT COUNT(*) AS ProductCount FROM dbo.ApprovedProducts"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>products</code> is the source identifier, not a database name or credential.
+The <code>schema</code> record describes the view's columns and business meaning.
+The <code>example</code> record pairs a useful question with approved read-only SQL.
+Neither record contains product rows. For multiple objects, add schema context
+for every item in <code>allowed_objects</code>, including approved relationships.</p>
 <h3 id="import-the-approved-file">Import the approved file</h3>
 <p>Use the MCP repository's administrative Python importer, not a tool call or
 document-ingestion job. Run it from the <strong>MCP repository root</strong> on an authorized
@@ -5808,23 +5897,68 @@ Supply <code>APP_CONFIG_ENDPOINT</code> for the application's store and, when us
 assigned identity, <code>AZURE_CLIENT_ID</code>. The identity needs configuration read,
 write access to both catalog containers and embedding-model inference access.
 Azure CLI login is not an importer credential fallback.</p>
+<p>Keep the identities distinct:</p>
+<table>
+<thead>
+<tr>
+<th>Identity</th>
+<th>Access needed</th>
+<th>Granted automatically by MCP selection?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Consuming Agent/Workflow</td>
+<td>Authenticated MCP invocation</td>
+<td>Yes, for the selected application callers</td>
+</tr>
+<tr>
+<td>MCP server</td>
+<td>Catalog read, selected models and approved SQL read</td>
+<td>Platform grants catalog/model access, SQL owner grants database access</td>
+</tr>
+<tr>
+<td>Administrative importer</td>
+<td>App Configuration read, catalog write and embedding-model access</td>
+<td>No, the operator authorizes this separate runner identity</td>
+</tr>
+</tbody>
+</table>
+<p>Use an existing approved Azure runner that can obtain its assigned managed
+identity token and reach App Configuration, Cosmos and the embedding endpoint.
+An ordinary laptop signed in with <code>az login</code> cannot run this importer as-is.
+Do not grant catalog write to the MCP server to work around an import error.
+See <a href="../../bicep/permissions/">application permissions</a> for role boundaries.</p>
 <p>The UTF-8 JSON file contains a <code>source</code> object and a <code>records</code> array using the
 fields above. Every approved object needs schema context; record source IDs
 and metadata versions must match the source. Do not supply precomputed
 embeddings or business rows: the importer generates the vectors.</p>
-<p>Install from the frozen lock:</p>
-<div class="highlight"><pre><span></span><code>uv sync --frozen
+<p>Obtain the released component on that runner, then install from its frozen lock.
+The platform normally downloads runtime components automatically for deployment,
+but that does not launch the administrative import:</p>
+<div class="highlight"><pre><span></span><code>git clone --branch v1.0.0 https://github.com/Azure/agent-app-mcp.git
+cd agent-app-mcp
+uv sync --frozen
 </code></pre></div>
 <p>The repository supplies <code>samples/approved-synthetic.json</code> for an authorized
 development test. Its illustrative source is not an automatically provisioned
 SQL connection. For your application, replace the sample path with your
 operator-approved JSON file.</p>
-<p>In Bash:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>tools.nl2sql.importer<span class="w"> </span>--file<span class="w"> </span>samples/approved-synthetic.json
+<p>Set the application's actual App Configuration endpoint. Set <code>AZURE_CLIENT_ID</code>
+only when selecting a user-assigned managed identity attached to this runner.
+Use that identity's client ID, not its object ID or the MCP API audience.</p>
+<p>For your approved file, in Bash:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">APP_CONFIG_ENDPOINT</span><span class="o">=</span><span class="s2">"https://&lt;application-config-store&gt;.azconfig.io"</span>
+<span class="c1"># Only for a user-assigned identity attached to this runner:</span>
+<span class="c1"># export AZURE_CLIENT_ID="&lt;importer-managed-identity-client-id&gt;"</span>
+<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>tools.nl2sql.importer<span class="w"> </span>--file<span class="w"> </span>/path/to/approved-products.json
 </code></pre></div>
 <p>In PowerShell:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">$env:PYTHONPATH</span> <span class="p">=</span> <span class="s1">'src'</span>
-<span class="n">uv</span> <span class="n">run</span> <span class="p">-</span><span class="n">-frozen</span> <span class="n">python</span> <span class="n">-m</span> <span class="n">tools</span><span class="p">.</span><span class="n">nl2sql</span><span class="p">.</span><span class="n">importer</span> <span class="p">-</span><span class="o">-file</span> <span class="n">samples</span><span class="p">\</span><span class="n">approved-synthetic</span><span class="p">.</span><span class="n">json</span>
+<div class="highlight"><pre><span></span><code><span class="nv">$env:APP_CONFIG_ENDPOINT</span> <span class="p">=</span> <span class="s1">'https://&lt;application-config-store&gt;.azconfig.io'</span>
+<span class="c"># Only for a user-assigned identity attached to this runner:</span>
+<span class="c"># $env:AZURE_CLIENT_ID = '&lt;importer-managed-identity-client-id&gt;'</span>
+<span class="nv">$env:PYTHONPATH</span> <span class="p">=</span> <span class="s1">'src'</span>
+<span class="n">uv</span> <span class="n">run</span> <span class="p">-</span><span class="n">-frozen</span> <span class="n">python</span> <span class="n">-m</span> <span class="n">tools</span><span class="p">.</span><span class="n">nl2sql</span><span class="p">.</span><span class="n">importer</span> <span class="p">-</span><span class="o">-file</span> <span class="n">C</span><span class="p">:\</span><span class="n">approved</span><span class="p">\</span><span class="n">approved-products</span><span class="p">.</span><span class="n">json</span>
 </code></pre></div>
 <p>The importer validates the file, generates embeddings, stages a unique catalog
 version and activates it only after every metadata write completes. It prints
@@ -5839,6 +5973,26 @@ containers and model inference permission. The MCP runtime's catalog reader
 identity cannot perform imports.
 Import does not create Azure resources or database grants, and requires no
 ingestion service, MCP write tool or Search metadata indexes.</p>
+<h3 id="ask-the-first-question">Ask the first question</h3>
+<p>After a successful import, sign in through the application's normal UI and ask:</p>
+<blockquote>
+<p>Using the products source, how many approved products are there?</p>
+</blockquote>
+<p>The Agent or a Workflow with the SQL capability registered calls
+<code>nl2sql.list_sources()</code> and then
+<code>nl2sql.query(source_id="products", question="How many approved products are there?")</code>.
+The user types a question, not SQL or credentials. Verify the count against
+the approved view using the same read-only database principal.</p>
+<p>No separate ingestion job or application redeploy is needed merely to import
+a new catalog version. New SQL destinations, network access or secret consumers
+can require their own owner-approved configuration and deployment changes.
+Keep generation models and embedding dimensions compatible.</p>
+<p>If <code>products</code> is absent, first verify import activation and source availability.
+If the application never calls an MCP tool, check component selection and
+application tool registration. If the tool is invoked but fails, check SQL
+permissions, network access and catalog/model configuration using
+<a href="../troubleshooting/#agent-app-mcp-failures">MCP troubleshooting</a>.
+Do not use <code>/healthz</code> alone as proof that SQL questions work.</p>
 <h2 id="results-and-execution-limits">Results and execution limits</h2>
 <p>The result uses <code>structuredContent</code> and a typed <code>outputSchema</code>, with a
 consistent JSON text representation for supported clients that require it.

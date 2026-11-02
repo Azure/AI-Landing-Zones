@@ -1581,6 +1581,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#start-the-first-conversation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start the first conversation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#context-during-a-chat" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5407,6 +5418,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#start-the-first-conversation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start the first conversation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#context-during-a-chat" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5503,6 +5525,19 @@
 <code>ENABLE_CHAT_HISTORY</code> and <code>ENABLE_USER_FEEDBACK</code> default to <code>false</code>.
 Private attachments are an independently selected optional capability.
 <code>ENABLE_PRIVATE_ATTACHMENTS</code> defaults to <code>false</code>.</p>
+<h2 id="start-the-first-conversation">Start the first conversation</h2>
+<p>After the operator completes <a href="../application-auth/">application access</a>, open
+the frontend HTTPS URL from deployment outputs using the required network
+connection. Sign in with an admitted account and start a conversation in the
+chat experience. Send a simple greeting and check that a real response arrives.</p>
+<p>Then test a follow-up that depends on the preceding turn. This checks context
+within that session. It does not prove that the UI can list or reopen saved
+conversations after a restart.</p>
+<p>Ask questions about documents or SQL only after those sources and their
+capabilities are configured. The application cannot infer your data sources
+from a greeting or from an empty deployed catalog.
+For a named process rather than chat, use
+<a href="../workflows/">Workflows &amp; human input</a>.</p>
 <h2 id="context-during-a-chat">Context during a chat</h2>
 <p>A conversational MAF Agent uses the selected host's native session state:
 Foundry persistence on Hosted or Durable Task Scheduler (DTS) through the

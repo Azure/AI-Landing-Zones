@@ -1281,6 +1281,34 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#first-time-using-agent-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First time using Agent Application?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="First time using Agent Application?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-what-to-add-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose what to add next
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-the-components-fit-together" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5510,6 +5538,34 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#first-time-using-agent-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First time using Agent Application?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="First time using Agent Application?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choose-what-to-add-next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choose what to add next
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#how-the-components-fit-together" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5714,6 +5770,109 @@ Framework (MAF) execution, optional document processing and optional MCP tools. 
 conversation or a Workflow for a published process with human input.</p>
 <p>Start with <a href="../deploy-full-stack/">Deploy full stack</a> to deploy the application.
 The guides below explain how to configure, operate and extend it.</p>
+<h2 id="first-time-using-agent-application">First time using Agent Application?</h2>
+<p>Start with ordinary authenticated chat. Add data sources and other capabilities
+after that baseline works.</p>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Your next step</th>
+<th>What to verify before continuing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Prepare</td>
+<td>Review the full-stack <a href="../deploy-full-stack/#prerequisites">prerequisites</a>, budget, region, permissions and network</td>
+<td>You have a deployment host, supported models and both Azure and Entra administrators where required</td>
+</tr>
+<tr>
+<td>2. Install</td>
+<td>Follow the full-stack guide for <a href="../deploy-full-stack/">Bicep</a> or <a href="../deploy-terraform-full-stack/">Terraform</a>, not both</td>
+<td>The selected infrastructure and real application images are deployed</td>
+</tr>
+<tr>
+<td>3. Complete sign-in</td>
+<td>Follow <a href="../application-auth/#configure-login-in-order">login setup in order</a>, including the post-provision callback and user grants</td>
+<td>Your pilot user can sign in and invoke the agent, an unapproved user is denied</td>
+</tr>
+<tr>
+<td>4. Start a conversation</td>
+<td>Open the frontend HTTPS URL from deployment outputs, sign in and send a simple greeting</td>
+<td>The application receives a real model response</td>
+</tr>
+<tr>
+<td>5. Add a capability</td>
+<td>Select a route in the table below and complete its source/identity setup</td>
+<td>The capability works with permitted data and rejects denied access</td>
+</tr>
+<tr>
+<td>6. Operate</td>
+<td>Set retention, review <a href="../application-monitoring/">monitoring</a> and follow <a href="../deployment-operations/">updates and recovery</a></td>
+<td>Owners know how to diagnose failures and apply controlled changes</td>
+</tr>
+</tbody>
+</table>
+<p>Provisioning and login setup are interleaved: register the UI application and
+arrange consent <strong>before provision</strong>, then configure its actual callback,
+secrets and admission <strong>after provision and before deploy</strong>.
+The deployment guide marks that handoff explicitly.</p>
+<p>The first greeting proves model connectivity, not document retrieval, SQL
+readiness, saved history or workflow recovery. The default application does
+not automatically know your organization's documents or databases.</p>
+<h3 id="choose-what-to-add-next">Choose what to add next</h3>
+<table>
+<thead>
+<tr>
+<th>You want to</th>
+<th>Follow</th>
+<th>Important distinction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ask about shared documents</td>
+<td><a href="../foundry-iq/">Foundry IQ</a> and <a href="../ingestion/">source ingestion</a></td>
+<td>Connect and authorize a source, enable its retrieval capability and check document allow/deny behavior</td>
+</tr>
+<tr>
+<td>Ask about approved SQL data</td>
+<td><a href="../agent-app-mcp/">Agent App MCP Server</a> and <a href="../nl2sql/">NL2SQL walkthrough</a></td>
+<td>A separate optional server, read-only SQL access and an approved metadata import, not a document-ingestion job</td>
+</tr>
+<tr>
+<td>Run a process with human review</td>
+<td><a href="../workflows/">Workflows &amp; human input</a></td>
+<td>Select <code>workflow</code> or <code>both</code>, publish the process and test both approval and rejection</td>
+</tr>
+<tr>
+<td>Reopen saved conversations</td>
+<td><a href="../conversations/">Conversations &amp; files</a></td>
+<td>Native execution persistence is not the same as enabled UI history discovery</td>
+</tr>
+<tr>
+<td>Collect ratings</td>
+<td><a href="../user-feedback/">User feedback</a></td>
+<td>Feedback is independently enabled and has its own metadata and access requirements</td>
+</tr>
+<tr>
+<td>Add private files to a conversation</td>
+<td><a href="../conversations/#private-attachments">Private attachments</a></td>
+<td>Independently enabled, conversational only, bounded formats/sizes, not shared knowledge publication</td>
+</tr>
+<tr>
+<td>Customize document processing</td>
+<td><a href="../ingestion/#3-custom-ingestion-only-when-needed">Agent App Ingestion</a></td>
+<td>Deploy it only for a processing path that needs it</td>
+</tr>
+<tr>
+<td>Add another channel or your own code</td>
+<td><a href="#chat-channels">Chat &amp; channels</a> and <a href="../build-your-own-app/">Bring your own app</a></td>
+<td>Each integration has its own identity, deployment and acceptance requirements</td>
+</tr>
+</tbody>
+</table>
 <h2 id="how-the-components-fit-together">How the components fit together</h2>
 <p><img alt="Agent Application overview: the UI connects to native MAF agents and workflows on one selected execution host, with separate conditional UI metadata and optional retrieval tools and source ingestion." src="../../media/agent-application-overview.svg" /></p>
 <p><a href="../../media/agent-application-overview.svg">Open the full-size diagram</a></p>

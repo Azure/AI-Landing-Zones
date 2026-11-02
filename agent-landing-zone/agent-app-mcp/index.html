@@ -1470,6 +1470,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#start-here-from-deployment-to-the-first-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start here: from deployment to the first question
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-the-component-provides" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1502,6 +1513,17 @@
   
     <nav class="md-nav" aria-label="Select and deploy">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-the-coordinated-platform-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use the coordinated platform source
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#fresh-application" class="md-nav__link">
@@ -5429,6 +5451,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#start-here-from-deployment-to-the-first-question" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Start here: from deployment to the first question
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-the-component-provides" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5461,6 +5494,17 @@
   
     <nav class="md-nav" aria-label="Select and deploy">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-the-coordinated-platform-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Use the coordinated platform source
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#fresh-application" class="md-nav__link">
@@ -5550,6 +5594,48 @@ orchestrator runs in Foundry Hosted Agents or Azure Container Apps.</p>
 <p>The server uses the official Python MCP SDK, not Microsoft Agent Framework.
 It performs a bounded operation for each request; it does not host conversations,
 workflows, a scheduler or a UI.</p>
+<h2 id="start-here-from-deployment-to-the-first-question">Start here: from deployment to the first question</h2>
+<p>Follow these steps in order. <strong>Deploying the component does not connect a SQL
+source or populate its catalog.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What you do</th>
+<th>Ready when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Deploy</td>
+<td>Select <code>DEPLOY_AGENT_APP_MCP=true</code> and run the <a href="#select-and-deploy">platform lifecycle</a></td>
+<td>The MCP Container App and its generated connection are available</td>
+</tr>
+<tr>
+<td>2. Authorize SQL</td>
+<td>Have the database owner approve the objects and grant the MCP identity read access</td>
+<td>The server can reach and read only the approved database objects</td>
+</tr>
+<tr>
+<td>3. Describe the data</td>
+<td>Prepare an <a href="../nl2sql/#example-approved-source-file">approved source file</a> with schemas and useful question/query examples</td>
+<td>Every approved table or view has matching schema context</td>
+</tr>
+<tr>
+<td>4. Import metadata</td>
+<td>Run the <a href="../nl2sql/#import-the-approved-file">administrative importer</a> using a separately authorized managed identity</td>
+<td>It reports <code>Activated metadata_version:</code></td>
+</tr>
+<tr>
+<td>5. Ask and verify</td>
+<td>Sign in to the application and ask a question about that source</td>
+<td>A real MCP query returns a known result, and unauthorized access is denied</td>
+</tr>
+</tbody>
+</table>
+<p>You do not add a connection string or an MCP token to the browser. The platform
+connects the consuming application to the server. You supply SQL authorization
+and approved metadata separately.</p>
 <h2 id="what-the-component-provides">What the component provides</h2>
 <table>
 <thead>
@@ -5626,18 +5712,32 @@ Runtime identities do not need those directory administration rights.</p>
 <h2 id="select-and-deploy">Select and deploy</h2>
 <p>The public selector is <code>DEPLOY_AGENT_APP_MCP</code>, default <code>false</code>. It selects the
 server, not the Agent's host or application mode.</p>
+<h3 id="use-the-coordinated-platform-source">Use the coordinated platform source</h3>
+<p>The MCP-enabled full-stack integration is available on the platform's
+<code>develop</code> branch. Use that checkout and its complete <code>manifest.json</code> and
+application definition together:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--branch<span class="w"> </span>develop<span class="w"> </span>https://github.com/Azure/agent-landing-zone.git
+<span class="nb">cd</span><span class="w"> </span>agent-landing-zone
+</code></pre></div>
+<p>The MCP component has its own release, but installing that component alone
+does not add the foundation selector, caller authorization or consumer
+integration to another platform checkout. Do not copy only its version into
+an unrelated manifest. For an existing installation, review and approve the
+complete platform update before changing its selected source.</p>
 <h3 id="fresh-application">Fresh application</h3>
 <p>Follow the full-stack guide's target, identity, model and network preparation
 <a href="../deploy-full-stack/#procedure">with Bicep</a> or
 <a href="../deploy-terraform-full-stack/#procedure">with Terraform</a>.
 Before first provision, from the platform root:</p>
 <div class="highlight"><pre><span></span><code>azd<span class="w"> </span>env<span class="w"> </span><span class="nb">set</span><span class="w"> </span>DEPLOY_AGENT_APP_MCP<span class="w"> </span><span class="nb">true</span>
-azd<span class="w"> </span>up
+azd<span class="w"> </span>provision
 </code></pre></div>
-<p><code>azd up</code> runs provisioning and application deployment. Provisioning creates or
-reuses dependencies and prepares their configuration; deployment builds and
-deploys the selected images and publishes the consuming application.
-SQL onboarding is a separate step, described below.</p>
+<p>After provision, complete the full-stack guide's UI callback, credentials and
+admission setup, then run <code>azd deploy</code> from the same platform root.
+Provisioning creates or reuses dependencies and prepares their configuration.
+Deployment builds the selected images and publishes the consuming application.
+Use <code>azd up</code> to combine both stages only when the required login configuration
+is already prepared. SQL onboarding is a separate step, described below.</p>
 <h3 id="add-to-an-existing-installation">Add to an existing installation</h3>
 <p>Use the same compatible platform/component line and the environment's recorded
 provider, application ID and resource destinations. Review the infrastructure
@@ -5736,6 +5836,8 @@ See <a href="../configuration/#application-cosmos-db">Application Cosmos DB</a>.
    application, list sources and query a known aggregate. Confirm unauthorized
    callers, sources and objects are denied before admitting users.</li>
 </ol>
+<p>For a complete source file and the matching first question, follow
+<a href="../nl2sql/#example-approved-source-file">the NL2SQL walkthrough</a>.</p>
 <p>No persistent ingestion Container App is required for this import. If you use
 an independent metadata pipeline, it must honor the same Cosmos schema, model
 dimensions and complete-version activation contract. Import is not an MCP
