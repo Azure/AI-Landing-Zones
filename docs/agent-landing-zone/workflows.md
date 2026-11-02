@@ -20,9 +20,15 @@ See [Agent hosting](hosted-agents.md) and
 
 ## Human review
 
-The research/review process is intentionally bounded: research or draft using
-the configured agent/tools, request human review, then produce an approved or
-rejected result. Approval is not permission to write to a business system.
+The reference application includes a draft-and-review workflow. It accepts a
+user-supplied topic and runs the configured agent to produce a draft, using
+its enabled tools when needed.
+
+The workflow pauses for a person to approve or reject the draft, with an
+optional comment. It then finishes by returning the original draft, the
+decision and the comment.
+
+Approval is not permission to write to a business system.
 Connecting a production write action requires its own tool authorization,
 idempotency and approval policy.
 
